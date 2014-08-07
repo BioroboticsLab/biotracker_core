@@ -18,9 +18,9 @@ public:
 	* This function tracks the provided object list within the provided frame.
 	* @param: fishList, the reference list of the tracking fishes.
 	* @param: frame, the reference image, which shall contain fishes.
-	* @return: void.
+	* @return: cv picture whis is to be drawn in video widget
 	*/
-	virtual void track(std::vector<TrackedObject> objectList, cv::Mat frame) = 0;
+	virtual cv::Mat track(std::vector<TrackedObject> objectList, cv::Mat frame) = 0;
 
 	/**
 	* Resets the tracker.
@@ -29,7 +29,6 @@ public:
 	virtual void reset() = 0;
 
 protected:
-	Rectification &_rectification;
 	Settings &_settings;
 
 };

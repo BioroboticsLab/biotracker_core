@@ -14,7 +14,7 @@ Settings::Settings(void) :
 {
 }
 
-Settings::Settings(std::vector<Param> params) :
+Settings::Settings(std::vector<TrackerParam::Param> params) :
 	_params(params)
 {
 
@@ -24,11 +24,12 @@ Settings::~Settings(void)
 {
 }
 
-void Settings::setParam(Param param)
+void Settings::setParam(TrackerParam::Param param)
 {
     setParam(_params,param);
 	setQSettingsParam(param);
 }
+
 
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
@@ -68,16 +69,16 @@ template <> void Settings::setParam2(std::string paramName, QString value)
 
 
 
-void Settings::setParam(std::vector<Param> &params, Param param)
+void Settings::setParam(std::vector<TrackerParam::Param> &params, TrackerParam::Param param)
 {
 	setParam(_params, param.pName(), param.pValue());
 }
 
-void Settings::setParam(std::vector<Param> &params, std::string paramName, std::string paramValue)
+void Settings::setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue)
 {
 	QMutexLocker locker(&paramMutex);
 	bool found = false;
-	for (std::vector<Param>::iterator &it = params.begin(); it != params.end(); ++it)
+	for (std::vector<TrackerParam::Param>::iterator &it = params.begin(); it != params.end(); ++it)
 	{	
 		if(it->pName().compare(paramName) == 0)
 		{
@@ -87,10 +88,10 @@ void Settings::setParam(std::vector<Param> &params, std::string paramName, std::
 		}
 	}
 	if(found == false)
-		params.push_back(Param(paramName,paramValue));
+		params.push_back(TrackerParam::Param(paramName,paramValue));
 }
 
-void Settings::setQSettingsParam(Param param)
+void Settings::setQSettingsParam(TrackerParam::Param param)
 {
 	setQSettingsParam(param.pName(),param.pValue());
 }
@@ -102,7 +103,7 @@ void Settings::setQSettingsParam(std::string paramName, std::string paramValue)
 	settings.setValue(StringHelper::toQString(paramName),StringHelper::toQString(paramValue));
 }
 
-void Settings::setQSettingsParams(std::vector<Param> params)
+void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
@@ -112,7 +113,7 @@ void Settings::setQSettingsParams(std::vector<Param> params)
 	}
 }
 
-std::vector<Param> Settings::getParams()
+std::vector<TrackerParam::Param> Settings::getParams()
 {
 	QMutexLocker locker(&paramMutex);
 	return _params;
@@ -121,7 +122,7 @@ std::vector<Param> Settings::getParams()
 template<> std::string Settings::getValueOfParam(std::string paramName, int size)
 {
 	QMutexLocker locker(&paramMutex);
-	for (std::vector<Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
+	for (std::vector<TrackerParam::Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
 	{	
 		if(it->pName().compare(paramName) == 0)
 		{
@@ -135,7 +136,7 @@ template<> std::string Settings::getValueOfParam(std::string paramName, int size
 template<> QString Settings::getValueOfParam(std::string paramName, int size)
 {
 	QMutexLocker locker(&paramMutex);
-	for (std::vector<Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
+	for (std::vector<TrackerParam::Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
 	{	
 		if(it->pName().compare(paramName) == 0)
 		{
@@ -255,16 +256,16 @@ template<> std::vector<cv::Point> Settings::getValueOfParam(std::string paramNam
 	return pointList;
 }
 
-std::vector<Param> Settings::getDefaultParamsFromQSettings()
+std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);	
-	std::vector<Param> defaultParams;
+	std::vector<TrackerParam::Param> defaultParams;
 
 	for(int key = 0; key < settings.allKeys().size(); key++)
 	{
 		QString string = settings.allKeys().at(key);
-		defaultParams.push_back(Param(string.toStdString(),settings.value(string).toString().toStdString()));
+		defaultParams.push_back(TrackerParam::Param(string.toStdString(),settings.value(string).toString().toStdString()));
 	}	
 	return defaultParams;
 }

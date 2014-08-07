@@ -6,9 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <QtCore/QThread>
-#include <video/Rectification.h>
+//#include <video/Rectification.h>
 #include <settings/Settings.h>
-#include <video/VideoHandler.h>
 #include <settings/Messages.h>
 #include <trackedObject/TrackedObject.h>
 #include <tracking/TrackingAlgorithm.h>
@@ -19,7 +18,7 @@ class TrackingThread : public QThread
 {
 	Q_OBJECT
 public:
-	TrackingThread(Rectification &rectification, Settings &settings);
+	TrackingThread(Settings &settings);
 	~TrackingThread(void);
 	void setTrackingAlgorithm();
 	/**
@@ -29,7 +28,7 @@ public:
 	void startCapture();
 
 		/**
-	 * Resets the background image.
+	 * Reset
 	 * @return void.
 	 */
 	void resetTracker();
@@ -66,7 +65,6 @@ private:
 	int _frameNumber;
 
 
-	Rectification &_rectification;
 	Settings &_settings;
 
 	TrackingAlgorithm<TrackedObject>* _tracker;

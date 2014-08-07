@@ -15,9 +15,13 @@
 //Open Tracker
 #include "ui_BioTracker.h"
 //#include <Rectification.h>
-//#include <Settings.h>
-//#include <TrackingThread.h>
+#include <settings/Settings.h>
+#include <tracking/TrackingThread.h>
 
+Q_DECLARE_METATYPE(cv::Mat)
+	class TrackingThread;
+	class VideoView;
+	class VideoHandler;
 
 
 class BioTracker: public QMainWindow
@@ -25,9 +29,24 @@ class BioTracker: public QMainWindow
 	Q_OBJECT
 
 public:
-	BioTracker(QWidget *parent = 0,  Qt::WindowFlags flags = 0);
+	BioTracker(Settings &settings, QWidget *parent = 0,  Qt::WindowFlags flags = 0);
 	~BioTracker();
 public slots:
+	// open file browser for video in/out
+	void browseVideo();
+	//runs video thread
+	void runCapture();
+	// stops video thread
+	void stopCapture();
+	// next frame 
+	void stepCapture();
+	// continue running video thread
+	void resumeCapture();	
+
+	// signal emitted by tracking thread: update the current frameNumber
+	void updateFrameNumber(int frameNumber);
+	// signal emitted by tracking thread (a.k.a. "new tracking data available")
+	void drawImage(cv::Mat image);
 
 
 	/**
@@ -55,19 +74,23 @@ private:
 	Ui::BioTrackerClass ui;
 
 /*	Rectification _rectification;
-	Settings _settings;
-	TrackingThread _trackingThread;
 */
+	TrackingThread* _trackingThread;
+
+	Settings& _settings;
 	bool _pauseVideo;
-	int currentFrame;
-
-	void initGui();
-	/*
+	int _currentFrame;
+	//disable or enable buttons for video navigating
+	void setPlayfieldEnabled(bool enabled);
+	void init();
+	void initGui();	
 	void initConnects();
-
+	
 signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
+
+	/*
 
 	// tell tracking thread to grab specific frame
 	void changeFrame(int);

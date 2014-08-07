@@ -16,8 +16,7 @@ QMutex frameNumberMutex;
 QMutex readyForNexFrameMutex;
 QMutex trackerMutex;
 
-TrackingThread::TrackingThread(Rectification &rectification, Settings &settings) :	
-	_rectification(rectification),
+TrackingThread::TrackingThread(Settings &settings) :	
 	_settings(settings),
 	_captureActive(false),
 	_fps(30),
@@ -26,9 +25,9 @@ TrackingThread::TrackingThread(Rectification &rectification, Settings &settings)
 	_frameNumber(0),
 	_tracker(NULL)
 {
-	_trackerActive = _settings.getValueOfParam<bool>(TRACKERPARAM::TRACKER_ENABLED);
+	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 
-	setTrackingAlgorithm();	
+	//setTrackingAlgorithm();	
 }
 
 TrackingThread::~TrackingThread(void)
@@ -44,7 +43,7 @@ void TrackingThread::startCapture()
 {
 	if(!isCaptureActive())
 	{
-		initCaptureForReadingVideoOrStream();
+		_capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));	
 		enableCapture(true);
 		QThread::start();
 	}
@@ -58,7 +57,6 @@ void TrackingThread::stopCapture()
 
 void TrackingThread::run()
 {
-	clock_t t;
 	cv::Mat frame;
 
 	while(isCaptureActive())
@@ -68,16 +66,28 @@ void TrackingThread::run()
 		{
 			continue;
 		}
+		if(isReadyForNextFrame()){
+			_capture.set(CV_CAP_PROP_POS_FRAMES, getAndIncrementFrameNumber());
+			// capture the frame
+			_capture >> frame;	
 
-		if(isReadyForNextFrame())
-		{
+			// exit if last frame is reached
+			//TODO: need to check memory violation thing here!
+			if(frame.empty())	{	break;	}
+
+			//TODO: if a tracking algorithm is selected
+			//send frame to tracking algorithm
+			
+
+
+			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
+			enableHandlingNextFrame(false);
+
+			// lets GUI draw the frame.
+			emit trackingSequenceDone(frame);
+			emit newFrameNumber(getFrameNumber() - 1);
 		}
 	}
-
-	if(!isCaptureActive())
-		_capture.release();
-
-	_frameNumber = 0;
 }
 
 void TrackingThread::enableCapture(bool enabled)
