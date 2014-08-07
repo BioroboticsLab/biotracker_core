@@ -3,3 +3,12 @@ BioTracker.vcxproj.filters
 BioTracker.vcxproj.user
 Debug/
 GeneratedFiles/
+/Release/*.log
+/Release/*.lastbuildstate
+/Release/*.tlog
+/Release/*.obj
+/Release/*.exe
+*.opensdf
+*.sdf
+*.suo
+*.exe
