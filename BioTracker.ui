@@ -110,8 +110,8 @@
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>../../pix/screenshot.png</normaloff>../../pix/screenshot.png</iconset>
+     <iconset resource="BioTracker.qrc">
+      <normaloff>:/BioTracker/pix/screenshot.png</normaloff>:/BioTracker/pix/screenshot.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -148,8 +148,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../pix/003400-glossy-black-icon-media-full-set/003337-glossy-black-icon-media-a-media25-arrows-skip-back.png</normaloff>../../pix/003400-glossy-black-icon-media-full-set/003337-glossy-black-icon-media-a-media25-arrows-skip-back.png</iconset>
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/arrows-skip-back.png</normaloff>:/BioTracker/pix/arrows-skip-back.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -174,8 +174,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../pix/003400-glossy-black-icon-media-full-set/003334-glossy-black-icon-media-a-media22-arrow-forward1.png</normaloff>../../pix/003400-glossy-black-icon-media-full-set/003334-glossy-black-icon-media-a-media22-arrow-forward1.png</iconset>
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/arrow-forward1.png</normaloff>:/BioTracker/pix/arrow-forward1.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -200,8 +200,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../pix/003400-glossy-black-icon-media-full-set/003340-glossy-black-icon-media-a-media28-stop.png</normaloff>../../pix/003400-glossy-black-icon-media-full-set/003340-glossy-black-icon-media-a-media28-stop.png</iconset>
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/stop.png</normaloff>:/BioTracker/pix/stop.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -226,8 +226,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../pix/003400-glossy-black-icon-media-full-set/003338-glossy-black-icon-media-a-media26-arrows-skip-forward.png</normaloff>../../pix/003400-glossy-black-icon-media-full-set/003338-glossy-black-icon-media-a-media26-arrows-skip-forward.png</iconset>
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/arrows-skip-forward.png</normaloff>:/BioTracker/pix/arrows-skip-forward.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -252,8 +252,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../pix/003400-glossy-black-icon-media-full-set/003333-glossy-black-icon-media-a-media21-arrow-back.png</normaloff>../../pix/003400-glossy-black-icon-media-full-set/003333-glossy-black-icon-media-a-media21-arrow-back.png</iconset>
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/arrow-back.png</normaloff>:/BioTracker/pix/arrow-back.png</iconset>
      </property>
      <property name="iconSize">
       <size>
