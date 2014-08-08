@@ -8,10 +8,10 @@
 #include <settings/Settings.h>
 
 
-template <typename T>
 class TrackingAlgorithm{
 public:
-
+	TrackingAlgorithm(Settings& settings);
+	virtual ~TrackingAlgorithm();
 
 	/**
 

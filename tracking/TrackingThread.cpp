@@ -5,6 +5,7 @@
 
 //#include "helper/CvHelper.h"
 #include "settings/Param.h"
+#include "tracking/algorithm/simpletracker/SimpleTracker.h"
 
 /**
 * Mutexes.
@@ -27,7 +28,10 @@ TrackingThread::TrackingThread(Settings &settings) :
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 
-	//setTrackingAlgorithm();	
+	//setTrackingAlgorithm();
+
+	// TODO: remove, this ist just for testing
+	_tracker = new SimpleTracker(_settings);
 }
 
 TrackingThread::~TrackingThread(void)
@@ -77,7 +81,10 @@ void TrackingThread::run()
 
 			//TODO: if a tracking algorithm is selected
 			//send frame to tracking algorithm
-			
+			// NOTE: this is just for testing!
+			if (_tracker) {
+				frame = _tracker->track(std::vector<TrackedObject>(), frame);
+			}
 
 
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
