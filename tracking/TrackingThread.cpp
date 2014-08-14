@@ -70,8 +70,7 @@ void TrackingThread::run()
 		{
 			continue;
 		}
-		if(isReadyForNextFrame()){
-			_capture.set(CV_CAP_PROP_POS_FRAMES, getAndIncrementFrameNumber());
+		if(isReadyForNextFrame()){			
 			// capture the frame
 			_capture >> frame;	
 
@@ -82,9 +81,9 @@ void TrackingThread::run()
 			//TODO: if a tracking algorithm is selected
 			//send frame to tracking algorithm
 			// NOTE: this is just for testing!
-			if (_tracker) {
-				frame = _tracker->track(std::vector<TrackedObject>(), frame);
-			}
+			//if (_tracker) {
+			//	frame = _tracker->track(std::vector<TrackedObject>(), frame);
+			//}
 
 
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
@@ -92,7 +91,8 @@ void TrackingThread::run()
 
 			// lets GUI draw the frame.
 			emit trackingSequenceDone(frame);
-			emit newFrameNumber(getFrameNumber() - 1);
+			emit newFrameNumber(getFrameNumber());
+			//cv::waitKey(33);
 		}
 	}
 }
