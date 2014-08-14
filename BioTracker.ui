@@ -32,28 +32,6 @@
     <property name="checkable">
      <bool>false</bool>
     </property>
-    <widget class="VideoView" name="videoView">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>641</width>
-       <height>451</height>
-      </rect>
-     </property>
-     <property name="cursor" stdset="0">
-      <cursorShape>CrossCursor</cursorShape>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-    </widget>
     <widget class="QSlider" name="sld_video">
      <property name="geometry">
       <rect>
@@ -86,6 +64,16 @@
      </property>
      <property name="tickInterval">
       <number>25</number>
+     </property>
+    </widget>
+    <widget class="VideoView" name="videoView" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>641</width>
+       <height>451</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -530,8 +518,9 @@
  <customwidgets>
   <customwidget>
    <class>VideoView</class>
-   <extends>QGraphicsView</extends>
+   <extends>QWidget</extends>
    <header>video/VideoView.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

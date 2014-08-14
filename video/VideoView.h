@@ -1,29 +1,26 @@
 #ifndef VideoView_H
 #define VideoView_H
 
-#include <opencv2/opencv.hpp>
-#include <QtWidgets/QGraphicsView>
+#include <QGLWidget>
+#include <cv.h>
 
-using namespace cv;
-
-/**
-* QT widget class to draw video in
-*/
-class VideoView :
-	
-	public QGraphicsView
+class VideoView : public QGLWidget
 {
 	Q_OBJECT
+public:
+	VideoView(QWidget *parent = 0);	
+	void showImage(cv::Mat img);
+	void updateDisplay();
 
 protected:
-	QGraphicsScene *_graphicsScene;
-	QGraphicsPixmapItem *_pixmapItem;
+	 void initializeGL(); 
+	 void paintGL(); 
+     void resizeGL(int width, int height);
+private:
+	GLuint texture; 
+    QVector<QVector2D> vertices; 
+    QVector<QVector2D> texCoords;     
+    cv::Mat displayImage;
 
-public:
-	VideoView(QWidget *parent = 0);
-	virtual ~VideoView();
-	void showImage(const Mat& img);
-
-
-};  
+};
 #endif // !VideoView_H

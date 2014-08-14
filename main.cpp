@@ -4,13 +4,17 @@
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
+	QApplication app(argc, argv);
+	if (!QGLFormat::hasOpenGL()) {
+        std::cerr << "This system has no OpenGL support" << std::endl;
+        return 1;
+    }
 	Settings settings;
 
-	a.setOrganizationName("Biorobotics Lab / FU Berlin");
-	a.setApplicationName("Bio Tracker");
+	app.setOrganizationName("Biorobotics Lab / FU Berlin");
+	app.setApplicationName("Bio Tracker");
 	
 	BioTracker w(settings);
 	w.show();
-	return a.exec();
+	return app.exec();
 }

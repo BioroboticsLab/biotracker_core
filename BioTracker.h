@@ -17,11 +17,11 @@
 //#include <Rectification.h>
 #include <settings/Settings.h>
 #include <tracking/TrackingThread.h>
+#include <video/VideoView.h>
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;
 	class VideoView;
-	class VideoHandler;
 
 
 class BioTracker: public QMainWindow
@@ -75,7 +75,7 @@ private:
 
 /*	Rectification _rectification;
 */
-	TrackingThread* _trackingThread;
+	TrackingThread* _trackingThread;	
 
 	Settings& _settings;
 	bool _pauseVideo;
@@ -85,6 +85,8 @@ private:
 	void init();
 	void initGui();	
 	void initConnects();
+
+
 	
 signals:
 	// tell tracking thread to grab next frame
