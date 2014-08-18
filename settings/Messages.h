@@ -23,8 +23,8 @@ namespace MSGS
 	enum MTYPE
 	{
 		NOTIFICATION,
-		WARNING//,
-		//ERROR
+		WARNING,
+		FAIL
 	};
 }  
 #endif // !Messages_h

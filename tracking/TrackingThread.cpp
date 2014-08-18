@@ -3,7 +3,8 @@
 #include <QFileInfo>
 #include <time.h>
 
-//#include "helper/CvHelper.h"
+#include "helper/CvHelper.h"
+#include "settings/Messages.h"
 #include "settings/Param.h"
 #include "tracking/algorithm/simpletracker/SimpleTracker.h"
 
@@ -48,17 +49,21 @@ void TrackingThread::startCapture()
 		if (! _capture.isOpened())
 		{
 			// could not open video
+			std::string errorMsg = "unable to open file " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
+			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
 			return;
 		}
+		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
+		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		enableCapture(true);
 		QThread::start();
 	}
 }
 
 void TrackingThread::stopCapture()
-{		
+{
 	enableCapture(false);
-	setFrameNumber(0);
+	setFrameNumber(0);	
 }
 
 void TrackingThread::run()
@@ -75,6 +80,7 @@ void TrackingThread::run()
 		if(isReadyForNextFrame()){			
 			// capture the frame
 			_capture >> frame;	
+			incrementFrameNumber();
 
 			// exit if last frame is reached
 			//TODO: need to check memory violation thing here!
@@ -111,6 +117,21 @@ bool TrackingThread::isCaptureActive()
 	return _captureActive;
 }
 
+
+void TrackingThread::setFrameNumber(int frameNumber)
+{
+	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	QMutexLocker locker(&frameNumberMutex);
+	if(frameNumber >= 0 && frameNumber <= videoLength)
+	{
+		_frameNumber = frameNumber;
+		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
+		cv::Mat frame;
+		_capture >> frame;
+		emit trackingSequenceDone(frame);
+	}
+}
+
 void TrackingThread::incrementFrameNumber()
 {
 	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
@@ -119,21 +140,30 @@ void TrackingThread::incrementFrameNumber()
 		++_frameNumber;
 }
 
-void TrackingThread::setFrameNumber(int frameNumber)
+void TrackingThread::nextFrame()
 {
-	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
-	QMutexLocker locker(&frameNumberMutex);
-	if(frameNumber >= 0 && frameNumber <= videoLength)
-		_frameNumber = frameNumber;
-}
+	// capture the frame
+	cv::Mat frame;
+	_capture >> frame;	
+	incrementFrameNumber();
 
+	// only works if last frame not yet reached
+	//TODO: need to check memory violation thing here!
+	if(!frame.empty())	
+	{	
+		//TODO: if a tracking algorithm is selected
+		//send frame to tracking algorithm
+		// NOTE: this is just for testing!
+		//if (_tracker) {
+		//	frame = _tracker->track(std::vector<TrackedObject>(), frame);
+		//}
+		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
+		enableHandlingNextFrame(false);
 
-int TrackingThread::getAndIncrementFrameNumber()
-{
-	int frameNumber;
-	QMutexLocker locker(&frameNumberMutex);
-	frameNumber = _frameNumber++;
-	return frameNumber;
+		// lets GUI draw the frame.
+		emit trackingSequenceDone(frame);
+		emit newFrameNumber(getFrameNumber());
+	}
 }
 
 int TrackingThread::getFrameNumber()

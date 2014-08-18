@@ -17,10 +17,10 @@ protected:
 	 void paintGL(); 
      void resizeGL(int width, int height);
 private:
-	GLuint texture; 
-    QVector<QVector2D> vertices; 
-    QVector<QVector2D> texCoords;     
-    cv::Mat displayImage;
+	GLuint _texture; 
+    QVector<QVector2D> _vertices; 
+    QVector<QVector2D> _texCoords;     
+    cv::Mat _displayImage;
 
 };
 #endif // !VideoView_H

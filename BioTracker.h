@@ -1,6 +1,8 @@
 #ifndef BioTracker_H
 #define BioTracker_H
 
+#include <time.h>
+
 // Open CV
 #include <cv.h>
 
@@ -13,8 +15,10 @@
 #include <QtCore/QString>
 
 //Open Tracker
+#include "settings/Messages.h"
+#include "helper/CvHelper.h"
+#include "helper/StringHelper.h"
 #include "ui_BioTracker.h"
-//#include <Rectification.h>
 #include <settings/Settings.h>
 #include <tracking/TrackingThread.h>
 #include <video/VideoView.h>
@@ -30,7 +34,6 @@ class BioTracker: public QMainWindow
 
 public:
 	BioTracker(Settings &settings, QWidget *parent = 0,  Qt::WindowFlags flags = 0);
-	~BioTracker();
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -40,7 +43,11 @@ public slots:
 	// stops video thread
 	void stopCapture();
 	// next frame 
-	void stepCapture();
+	void stepCaptureForward();
+	// previous frame
+	void stepCaptureBackward();
+	//pause video thread;
+	void pauseCapture();
 
 
 	// signal emitted by tracking thread: update the current frameNumber
@@ -54,20 +61,19 @@ public slots:
 	 * @param: message, the message to print.
 	 * @return: void.
 	 */
-//	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
+	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
 
 	/**
 	 * Sets the algorithm used for tracking
 	 * @param: trackingAlgId, the id of the algorithm.
 	 */
-	/*
-	void setTrackingAlg(int trackingAlgId);
+	
+	//void setTrackingAlg(int trackingAlgId);
 
-	// signal emitted by tracking thread: update the current frameNumber
-	void updateFrameNumber(int frameNumber);
-	void changeCurrentFrame();
+
+	//void changeCurrentFrame();
 	void changeCurrentFrameBySlider(int value);
-	*/
+	
 
 
 private:
@@ -84,7 +90,7 @@ private:
 	QIcon _iconPause;
 	QIcon _iconPlay;
 	//disable or enable buttons for video navigating
-	void setPlayfieldEnabled(bool enabled);
+	void setPlayfieldPaused(bool enabled);
 	void init();
 	void initGui();	
 	void initConnects();
@@ -95,15 +101,17 @@ signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
 
-	/*
+
 
 	// tell tracking thread to grab specific frame
 	void changeFrame(int);
-	*/
+
 
 	// tell tracking thread to pause video
-	void videoPause(bool);
-	
+	void videoPause(bool);	
+
+	//tell tracking thread to grab next frame
+	void grabNextFrame();
 
 };
 

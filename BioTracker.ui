@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1230</width>
-    <height>830</height>
+    <width>1134</width>
+    <height>831</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,37 +77,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="button_screenshot">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>570</y>
-      <width>41</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>16</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="BioTracker.qrc">
-      <normaloff>:/BioTracker/pix/screenshot.png</normaloff>:/BioTracker/pix/screenshot.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>30</width>
-      <height>30</height>
-     </size>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
@@ -123,7 +92,7 @@
     <widget class="QPushButton" name="button_previousFrame">
      <property name="geometry">
       <rect>
-       <x>56</x>
+       <x>79</x>
        <y>31</y>
        <width>43</width>
        <height>40</height>
@@ -149,7 +118,7 @@
     <widget class="QPushButton" name="button_playPause">
      <property name="geometry">
       <rect>
-       <x>156</x>
+       <x>131</x>
        <y>31</y>
        <width>43</width>
        <height>40</height>
@@ -201,7 +170,7 @@
     <widget class="QPushButton" name="button_nextFrame">
      <property name="geometry">
       <rect>
-       <x>208</x>
+       <x>187</x>
        <y>31</y>
        <width>43</width>
        <height>40</height>
@@ -224,38 +193,12 @@
       </size>
      </property>
     </widget>
-    <widget class="QPushButton" name="button_rewind">
-     <property name="geometry">
-      <rect>
-       <x>105</x>
-       <y>31</y>
-       <width>43</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/arrow-back.png</normaloff>:/BioTracker/pix/arrow-back.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>32</width>
-       <height>32</height>
-      </size>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>90</y>
-       <width>221</width>
+       <width>291</width>
        <height>71</height>
       </rect>
      </property>
@@ -265,7 +208,7 @@
      <widget class="QSplitter" name="splitter">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>30</x>
         <y>30</y>
         <width>201</width>
         <height>19</height>
@@ -299,6 +242,37 @@
        </property>
       </widget>
      </widget>
+    </widget>
+    <widget class="QPushButton" name="button_screenshot">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>30</y>
+       <width>41</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="BioTracker.qrc">
+       <normaloff>:/BioTracker/pix/screenshot.png</normaloff>:/BioTracker/pix/screenshot.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
     </widget>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
@@ -481,13 +455,54 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="groupBox_notification">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>540</y>
+      <width>331</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string> Notifications </string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <widget class="QTextEdit" name="edit_notification">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>311</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+     <property name="tabChangesFocus">
+      <bool>false</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1230</width>
+     <width>1134</width>
      <height>21</height>
     </rect>
    </property>

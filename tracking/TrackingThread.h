@@ -76,17 +76,11 @@ private:
 	int getFrameNumber();
 
 	/**
-	* Increments current frame number by 1.
-	* @return: void.
-	*/
+	 * Increments the current frame number of 1 frame.
+	 * @return: void.
+	 */
 	void incrementFrameNumber();
 
-	/**
-	* Gets current frame number and
-	* increments it by 1.
-	* @return: the current frame number.
-	*/
-	int getAndIncrementFrameNumber();
 
 	/**
 	* Checks if thread can handle next frame.
@@ -134,6 +128,11 @@ private:
 		* @param: frameNumber, specifies the current frame number.
 		*/
 		void setFrameNumber(int frameNumber);
+
+		/**
+		* Moves one frame forward
+		*/
+		void nextFrame();
 
 
 signals:
