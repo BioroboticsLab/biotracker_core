@@ -34,14 +34,14 @@ public:
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
-	//runs video thread
+	//checks current state (stopped,paused or playing)
+	//and then sends appropriate signal to tracking thread
 	void runCapture();
 	// stops video thread
 	void stopCapture();
 	// next frame 
 	void stepCapture();
-	// continue running video thread
-	void resumeCapture();	
+
 
 	// signal emitted by tracking thread: update the current frameNumber
 	void updateFrameNumber(int frameNumber);
@@ -78,8 +78,11 @@ private:
 	TrackingThread* _trackingThread;	
 
 	Settings& _settings;
-	bool _pauseVideo;
+	bool _videoPaused;
+	bool _videoStopped;
 	int _currentFrame;
+	QIcon _iconPause;
+	QIcon _iconPlay;
 	//disable or enable buttons for video navigating
 	void setPlayfieldEnabled(bool enabled);
 	void init();
@@ -96,10 +99,11 @@ signals:
 
 	// tell tracking thread to grab specific frame
 	void changeFrame(int);
+	*/
 
 	// tell tracking thread to pause video
 	void videoPause(bool);
-	*/
+	
 
 };
 

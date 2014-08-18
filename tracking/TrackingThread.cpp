@@ -40,14 +40,16 @@ TrackingThread::~TrackingThread(void)
 }
 
 
-
-
-
 void TrackingThread::startCapture()
 {
 	if(!isCaptureActive())
 	{
-		_capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));	
+		_capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
+		if (! _capture.isOpened())
+		{
+			// could not open video
+			return;
+		}
 		enableCapture(true);
 		QThread::start();
 	}
