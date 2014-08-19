@@ -61,9 +61,11 @@ void TrackingThread::startCapture()
 }
 
 void TrackingThread::stopCapture()
-{
+{	
+	//stop thread
 	enableCapture(false);
-	setFrameNumber(0);	
+	setFrameNumber(0);
+	emit newFrameNumber(0);
 }
 
 void TrackingThread::run()
@@ -100,9 +102,12 @@ void TrackingThread::run()
 			// lets GUI draw the frame.
 			emit trackingSequenceDone(frame);
 			emit newFrameNumber(getFrameNumber());
-			//cv::waitKey(33);
+			cv::waitKey(1);
 		}
 	}
+	if(!isCaptureActive())
+		_capture.release();
+	_frameNumber = 0;
 }
 
 void TrackingThread::enableCapture(bool enabled)
@@ -120,15 +125,25 @@ bool TrackingThread::isCaptureActive()
 
 void TrackingThread::setFrameNumber(int frameNumber)
 {
-	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
-	QMutexLocker locker(&frameNumberMutex);
-	if(frameNumber >= 0 && frameNumber <= videoLength)
-	{
-		_frameNumber = frameNumber;
-		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
-		cv::Mat frame;
-		_capture >> frame;
-		emit trackingSequenceDone(frame);
+	//do nothing if tracker is busy
+	if(isReadyForNextFrame())
+	{	
+		int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
+		QMutexLocker locker(&frameNumberMutex);
+		if(frameNumber >= 0 && frameNumber <= videoLength)
+		{
+			_frameNumber = frameNumber;
+		
+			if(isCaptureActive())
+			{
+				enableHandlingNextFrame(false);
+				_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
+				cv::Mat frame;
+				_capture >> frame;
+				cv::waitKey(1);
+				emit trackingSequenceDone(frame);
+			}			
+		}
 	}
 }
 

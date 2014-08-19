@@ -35,10 +35,10 @@ public:
 
 
 	/**
-	* Stops the video.
-	* @return: void.
+	* Checks if thread can handle next frame.
+	* @return: true if it can, false otherwise.
 	*/
-	void stopCapture();
+	bool isReadyForNextFrame();
 
 	/**
 	* Gets the length of the video.
@@ -81,13 +81,7 @@ private:
 	 */
 	void incrementFrameNumber();
 
-
-	/**
-	* Checks if thread can handle next frame.
-	* @return: true if it can, false otherwise.
-	*/
-	bool isReadyForNextFrame();
-
+	
 	/**
 	* Checks if thread is in pause state.
 	* @return: true if paused, false otherwise.
@@ -122,6 +116,11 @@ private:
 	public slots:
 		void enableHandlingNextFrame(bool nextFrame);
 		void enableVideoPause(bool videoPause);
+			/**
+		* Stops the video.
+		* @return: void.
+		*/
+		void stopCapture();
 
 		/**
 		* Sets the current frame number.

@@ -17,9 +17,9 @@
    <widget class="QGroupBox" name="groupBox_animatonArea">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>20</y>
-      <width>662</width>
+      <width>741</width>
       <height>512</height>
      </rect>
     </property>
@@ -37,7 +37,7 @@
       <rect>
        <x>10</x>
        <y>480</y>
-       <width>641</width>
+       <width>721</width>
        <height>24</height>
       </rect>
      </property>
@@ -71,7 +71,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>641</width>
+       <width>721</width>
        <height>451</height>
       </rect>
      </property>
@@ -281,10 +281,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>30</y>
-      <width>361</width>
-      <height>681</height>
+      <x>760</x>
+      <y>20</y>
+      <width>371</width>
+      <height>751</height>
      </rect>
     </property>
     <property name="mouseTracking">
@@ -302,14 +302,14 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>341</width>
+        <width>351</width>
         <height>201</height>
        </rect>
       </property>
       <widget class="QComboBox" name="comboBox">
        <property name="geometry">
         <rect>
-         <x>40</x>
+         <x>50</x>
          <y>30</y>
          <width>181</width>
          <height>22</height>
@@ -319,7 +319,7 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>40</x>
+         <x>50</x>
          <y>10</y>
          <width>111</width>
          <height>16</height>
@@ -332,7 +332,7 @@
       <widget class="QPushButton" name="pushButton_9">
        <property name="geometry">
         <rect>
-         <x>40</x>
+         <x>50</x>
          <y>60</y>
          <width>121</width>
          <height>23</height>
@@ -345,7 +345,7 @@
       <widget class="QGroupBox" name="groupBox_recordTracking">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>40</x>
          <y>90</y>
          <width>271</width>
          <height>51</height>
@@ -363,7 +363,7 @@
        <widget class="QLineEdit" name="edit_recordTrackingLocation">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>20</x>
           <y>20</y>
           <width>221</width>
           <height>21</height>
@@ -373,7 +373,7 @@
        <widget class="QPushButton" name="btnRecordTrackingLocation">
         <property name="geometry">
          <rect>
-          <x>240</x>
+          <x>250</x>
           <y>20</y>
           <width>21</width>
           <height>21</height>
@@ -387,7 +387,7 @@
       <widget class="QGroupBox" name="groupBox_trackingDataOutput">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>40</x>
          <y>150</y>
          <width>271</width>
          <height>51</height>
@@ -405,7 +405,7 @@
        <widget class="QPushButton" name="button_outputSearch">
         <property name="geometry">
          <rect>
-          <x>240</x>
+          <x>250</x>
           <y>20</y>
           <width>21</width>
           <height>21</height>
@@ -418,7 +418,7 @@
        <widget class="QLineEdit" name="edit_outputPath">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>20</x>
           <y>20</y>
           <width>221</width>
           <height>21</height>
@@ -432,7 +432,7 @@
        <rect>
         <x>10</x>
         <y>220</y>
-        <width>341</width>
+        <width>351</width>
         <height>211</height>
        </rect>
       </property>
@@ -445,8 +445,8 @@
        <rect>
         <x>10</x>
         <y>440</y>
-        <width>341</width>
-        <height>201</height>
+        <width>351</width>
+        <height>271</height>
        </rect>
       </property>
       <property name="title">
@@ -460,8 +460,8 @@
      <rect>
       <x>370</x>
       <y>540</y>
-      <width>331</width>
-      <height>171</height>
+      <width>381</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="title">
@@ -477,9 +477,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
-       <width>311</width>
-       <height>131</height>
+       <y>20</y>
+       <width>361</width>
+       <height>201</height>
       </rect>
      </property>
      <property name="lineWidth">
