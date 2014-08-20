@@ -97,10 +97,10 @@ void TrackingThread::run()
 
 			//TODO: if a tracking algorithm is selected
 			//send frame to tracking algorithm
-			// NOTE: this is just for testing!
-			//if (_tracker) {
-			//	frame = _tracker->track(std::vector<TrackedObject>(), frame);
-			//}
+			 //NOTE: this is just for testing!
+			if (_tracker) {
+				frame = _tracker->track(std::vector<TrackedObject>(), frame);
+			}
 
 
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
@@ -162,6 +162,13 @@ void TrackingThread::setFrameNumber(int frameNumber)
 				cv::Mat frame;
 				_capture >> frame;
 				cv::waitKey(1);
+				
+			//TODO: if a tracking algorithm is selected
+			//send frame to tracking algorithm
+			 //NOTE: this is just for testing!
+			if (_tracker) {
+				frame = _tracker->track(std::vector<TrackedObject>(), frame);
+			}
 				emit trackingSequenceDone(frame);
 			}			
 		}
@@ -190,9 +197,9 @@ void TrackingThread::nextFrame()
 		//TODO: if a tracking algorithm is selected
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
-		//if (_tracker) {
-		//	frame = _tracker->track(std::vector<TrackedObject>(), frame);
-		//}
+		if (_tracker) {
+			frame = _tracker->track(std::vector<TrackedObject>(), frame);
+		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);
 
