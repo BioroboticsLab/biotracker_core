@@ -9,6 +9,15 @@ BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags
 	init();
 }
 
+//function to test file existence
+inline bool file_exist(const std::string& name) {
+    if (FILE *file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
 
 void BioTracker::init(){
 	_videoPaused = true;
@@ -23,7 +32,19 @@ void BioTracker::init(){
 	qRegisterMetaType<std::string>("std::string");
 	initGui();
 	initConnects();
+	ui.sld_video->setDisabled(true);
+	if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))){
+		_currentFrame = _settings.getValueOfParam<int>(CAPTUREPARAM::CAP_PAUSED_AT_FRAME);
+		_videoStopped = false;
+		_videoPaused = true;
+		emit videoPause(true);
+		_trackingThread->startCapture();
+		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
+		ui.sld_video->setValue(_currentFrame);
+		ui.sld_video->setDisabled(false);	
+		emit changeFrame(_currentFrame);
 
+	}
 }
 
 void BioTracker::initGui()
@@ -44,11 +65,12 @@ void BioTracker::initConnects()
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
-	QObject::connect(ui.sld_video, SIGNAL( sliderMoved(int) ), this, SLOT( changeCurrentFrameBySlider(int)));
+	QObject::connect(ui.sld_video, SIGNAL( sliderReleased() ), this, SLOT( changeCurrentFrameBySlider()));
 
 	//tracking thread signals
 	QObject::connect(_trackingThread, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 	QObject::connect(this, SIGNAL(videoPause(bool)), _trackingThread, SLOT(enableVideoPause(bool)));
+	QObject::connect(this, SIGNAL(videoStop()), _trackingThread, SLOT(stopCapture()));
 	QObject::connect(_trackingThread, SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
 	QObject::connect(_trackingThread, SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread, SLOT( enableHandlingNextFrame(bool) ));
@@ -58,10 +80,17 @@ void BioTracker::initConnects()
 
 void BioTracker::browseVideo()
 {
+	stopCapture();
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv)"));
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
 		setPlayfieldPaused(true);
+		_videoStopped = false;
+		_videoPaused = true;
+		emit videoPause(true);
+		_trackingThread->startCapture();
+		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
+		ui.sld_video->setDisabled(false);
 	}
 	
 }
@@ -72,12 +101,14 @@ void BioTracker::setPlayfieldPaused(bool enabled){
 		//video is paused
 		case true:			
 			ui.button_nextFrame->setEnabled(true);
-			ui.button_previousFrame->setEnabled(true);						
+			ui.button_previousFrame->setEnabled(true);
+			ui.button_playPause->setIcon(_iconPlay);
 			break;
 		//video is playing
 		case false:			
 			ui.button_nextFrame->setEnabled(false);
-			ui.button_previousFrame->setEnabled(false);						
+			ui.button_previousFrame->setEnabled(false);
+			ui.button_playPause->setIcon(_iconPause);
 			break;
 	}
 }
@@ -88,13 +119,16 @@ void BioTracker::runCapture()
 	if (_videoStopped){
 		_videoStopped = false;
 		_videoPaused = false;
+		emit videoPause(false);
 		ui.button_playPause->setIcon(_iconPause);
 		_trackingThread->startCapture();
 		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
 		ui.sld_video->setEnabled(true);
 		setPlayfieldPaused(false);
+		ui.sld_video->setDisabled(false);
 	}
 	
+	//if not stopped resume/pause video
 	else
 	{	
 		_videoPaused = !_videoPaused;
@@ -109,9 +143,9 @@ void BioTracker::runCapture()
 		}
 		emit videoPause(_videoPaused);
 	}
-
 	
 }
+
 
 void BioTracker::stepCaptureForward()
 {
@@ -120,18 +154,20 @@ void BioTracker::stepCaptureForward()
 		_videoStopped = false;
 		emit videoPause(true);
 		_trackingThread->startCapture();
+		ui.sld_video->setDisabled(false);
 	}
 	_videoPaused = true;
 	emit grabNextFrame();
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 }
 
 void BioTracker::stepCaptureBackward()
 {
 	if(_currentFrame > 0)
 	{
-		_currentFrame -= 1;
-		emit changeFrame(_currentFrame);
-		ui.sld_video->setValue(_currentFrame);
+		updateFrameNumber(_currentFrame-1);
+		emit changeFrame(_currentFrame);		
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 	}
 }
 
@@ -139,21 +175,26 @@ void BioTracker::pauseCapture()
 {
 	emit videoPause(true);
 	_videoPaused = true;
-	ui.button_playPause->setIcon(_iconPlay);
+	setPlayfieldPaused(true);
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 }
 
 
 void BioTracker::stopCapture()
 {	
 	_videoStopped = true;
-	_videoPaused = true;
-	ui.button_playPause->setIcon(_iconPlay);
-	_trackingThread->stopCapture();
+	_videoPaused = true;	
+	emit videoStop();
+	if(!_trackingThread->wait(5000)) //Wait until it actually has terminated (max. 5 sec)
+	{
+		printGuiMessage("Thread deadlock detected! Terminating now!",MSGS::FAIL);
+		_trackingThread->terminate(); //Thread didn't exit in time, probably deadlocked, terminate it!
+		_trackingThread->wait(); //Note: We have to wait again here!
+	}
 	setPlayfieldPaused(true);
-	_currentFrame=0;
-	ui.sld_video->setValue(_currentFrame);
-	emit videoPause(false);
-
+	updateFrameNumber(0);
+	ui.sld_video->setDisabled(true);
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 }
 
 void BioTracker::updateFrameNumber(int frameNumber)
@@ -194,7 +235,11 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 	ui.edit_notification->append(msgLine);
 }
 
-void BioTracker::changeCurrentFrameBySlider(int value)
+void BioTracker::changeCurrentFrameBySlider()
 {	
-	emit changeFrame(value);	
+	int value = ui.sld_video->value();
+	if(_trackingThread->isReadyForNextFrame())
+		emit changeFrame(value);
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	updateFrameNumber(value);
 }

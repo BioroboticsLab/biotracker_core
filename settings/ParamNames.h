@@ -109,15 +109,11 @@ namespace FISHTANKPARAM
 		
 namespace CAPTUREPARAM
 {
-	// Video handler
-	const std::string CAP_TYPE					= "CAPTUREPARAM/CAP_TYPE";
+	// Video path	
 	const std::string CAP_VIDEO_FILE			= "CAPTUREPARAM/CAP_VIDEO_FILE";
-	const std::string CAP_CAM_ID				= "CAPTUREPARAM/CAP_CAM_ID";
-	const std::string CAP_FRAME_WIDTH			= "CAPTUREPARAM/CAP_FRAME_WIDTH";
-	const std::string CAP_FRAME_HEIGHT			= "CAPTUREPARAM/CAP_FRAME_HEIGHT";	
-	const std::string CAP_CAM_FPS				= "CAPTUREPARAM/CAP_CAM_FPS";
-	const std::string CAP_VID_FPS				= "CAPTUREPARAM/CAP_VID_FPS";
-	const std::string DELAY_TIME				= "CAPTUREPARAM/DELAY_TIME";
+	const std::string CAP_PAUSED_AT_FRAME		= "CAPTUREPARAM/CAP_PAUSED_AT_FRAME";
+
+
 
 	// Video paths
 	const std::string ENABLE_RECORD_RAW			= "CAPTUREPARAM/ENABLE_RECORD_RAW";

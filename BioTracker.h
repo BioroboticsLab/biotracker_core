@@ -72,7 +72,7 @@ public slots:
 
 
 	//void changeCurrentFrame();
-	void changeCurrentFrameBySlider(int value);
+	void changeCurrentFrameBySlider();
 	
 
 
@@ -106,8 +106,10 @@ signals:
 	// tell tracking thread to grab specific frame
 	void changeFrame(int);
 
+	//tell Tracker to stop
+	void videoStop();
 
-	// tell tracking thread to pause video
+	// tell tracking thread to pause/unpause video
 	void videoPause(bool);	
 
 	//tell tracking thread to grab next frame
