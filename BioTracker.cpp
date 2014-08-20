@@ -34,16 +34,7 @@ void BioTracker::init(){
 	initConnects();
 	ui.sld_video->setDisabled(true);
 	if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))){
-		_currentFrame = _settings.getValueOfParam<int>(CAPTUREPARAM::CAP_PAUSED_AT_FRAME);
-		_videoStopped = false;
-		_videoPaused = true;
-		emit videoPause(true);
-		_trackingThread->startCapture();
-		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
-		ui.sld_video->setValue(_currentFrame);
-		ui.sld_video->setDisabled(false);	
-		emit changeFrame(_currentFrame);
-
+		initCapture();
 	}
 }
 
@@ -51,6 +42,7 @@ void BioTracker::initGui()
 {
 	setPlayfieldPaused(true);
 	ui.actionOpen_Video->setEnabled(true);
+	ui.frame_num_edit->setEnabled(false);
 }
 
 void BioTracker::initConnects()
@@ -61,11 +53,14 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_playPause, SIGNAL(clicked()), this, SLOT(runCapture()));
 	QObject::connect(ui.button_stop, SIGNAL(clicked()), this, SLOT(stopCapture()));
 	QObject::connect(ui.button_nextFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureForward())); 
-	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward())); 
+	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
+	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
-	QObject::connect(ui.sld_video, SIGNAL( sliderReleased() ), this, SLOT( changeCurrentFrameBySlider()));
+	QObject::connect(ui.sld_video, SIGNAL( sliderReleased() ), this, SLOT( changeCurrentFramebySlider()));
+	QObject::connect(ui.sld_speed, SIGNAL( sliderMoved(int) ), this, SLOT( changeFps(int)));
+
 
 	//tracking thread signals
 	QObject::connect(_trackingThread, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
@@ -73,9 +68,12 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL(videoStop()), _trackingThread, SLOT(stopCapture()));
 	QObject::connect(_trackingThread, SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
 	QObject::connect(_trackingThread, SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
+	QObject::connect(_trackingThread, SIGNAL( sendFps(int) ), this, SLOT( showFps(int) ));
 	QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread, SLOT( enableHandlingNextFrame(bool) ));
-	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int)));
-	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame()));
+	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( nextFrame() ));
+	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
+	QObject::connect(this, SIGNAL( fpsChange(int)), _trackingThread, SLOT( setFps(int) ));
+	
 }
 
 void BioTracker::browseVideo()
@@ -84,13 +82,7 @@ void BioTracker::browseVideo()
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv)"));
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
-		setPlayfieldPaused(true);
-		_videoStopped = false;
-		_videoPaused = true;
-		emit videoPause(true);
-		_trackingThread->startCapture();
-		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
-		ui.sld_video->setDisabled(false);
+		initCapture();
 	}
 	
 }
@@ -117,28 +109,21 @@ void BioTracker::runCapture()
 {	
 	//check if video is stopped
 	if (_videoStopped){
-		_videoStopped = false;
-		_videoPaused = false;
-		emit videoPause(false);
-		ui.button_playPause->setIcon(_iconPause);
-		_trackingThread->startCapture();
-		ui.sld_video->setMaximum(_trackingThread->getVideoLength());
-		ui.sld_video->setEnabled(true);
+		initCapture();
+		_videoPaused=false;
 		setPlayfieldPaused(false);
-		ui.sld_video->setDisabled(false);
+		emit videoPause(false);
 	}
 	
 	//if not stopped resume/pause video
 	else
 	{	
 		_videoPaused = !_videoPaused;
-		if (_videoPaused){		
-			ui.button_playPause->setIcon(_iconPlay);
+		if (_videoPaused){				
 			setPlayfieldPaused(true);
 		}
 		else
-		{
-			ui.button_playPause->setIcon(_iconPause);
+		{			
 			setPlayfieldPaused(false);
 		}
 		emit videoPause(_videoPaused);
@@ -146,15 +131,29 @@ void BioTracker::runCapture()
 	
 }
 
+void BioTracker::initCapture()
+{
+	_currentFrame = _settings.getValueOfParam<int>(CAPTUREPARAM::CAP_PAUSED_AT_FRAME);
+	_videoStopped = false;
+	_videoPaused = true;
+	emit videoPause(true);
+	_trackingThread->startCapture();
+	ui.sld_video->setMaximum(_trackingThread->getVideoLength());		
+	ui.sld_video->setDisabled(false);
+	updateFrameNumber(_currentFrame);
+	emit changeFrame(_currentFrame);
+	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength(), this) );
+	ui.frame_num_edit->setEnabled(true);
+	ui.sld_speed->setValue(_trackingThread->getFps());
+	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(_trackingThread->getFps())));
+	setPlayfieldPaused(true);
+}
 
 void BioTracker::stepCaptureForward()
 {
 	//if video not yet loaded, load it now!
 	if(_videoStopped){
-		_videoStopped = false;
-		emit videoPause(true);
-		_trackingThread->startCapture();
-		ui.sld_video->setDisabled(false);
+		initCapture();
 	}
 	_videoPaused = true;
 	emit grabNextFrame();
@@ -201,6 +200,7 @@ void BioTracker::updateFrameNumber(int frameNumber)
 {
 	_currentFrame = frameNumber;
 	ui.sld_video->setValue(_currentFrame);
+	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
 }
 
 void BioTracker::drawImage(cv::Mat image)
@@ -235,11 +235,35 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 	ui.edit_notification->append(msgLine);
 }
 
-void BioTracker::changeCurrentFrameBySlider()
+void BioTracker::changeCurrentFramebySlider()
 {	
 	int value = ui.sld_video->value();
 	if(_trackingThread->isReadyForNextFrame())
 		emit changeFrame(value);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 	updateFrameNumber(value);
+}
+void BioTracker::changeCurrentFramebyEdit()
+{	
+	QString valueStr = ui.frame_num_edit->text();
+	if(StringHelper::isNumber(valueStr))
+	{
+		int value = valueStr.toInt();
+		if(_trackingThread->isReadyForNextFrame())
+			emit changeFrame(value);
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+		updateFrameNumber(value);
+	}	
+}
+
+void BioTracker::showFps(int fps)
+{
+	//show actual fps
+	ui.fps_edit->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+}
+void BioTracker::changeFps(int fps)
+{
+	//show target fps
+	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+	emit fpsChange(fps);
 }

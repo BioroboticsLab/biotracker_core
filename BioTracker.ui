@@ -80,8 +80,8 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>540</y>
+      <x>20</x>
+      <y>600</y>
       <width>311</width>
       <height>171</height>
      </rect>
@@ -208,8 +208,8 @@
      <widget class="QSplitter" name="splitter">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>30</y>
+        <x>6</x>
+        <y>22</y>
         <width>201</width>
         <height>19</height>
        </rect>
@@ -222,15 +222,18 @@
         <string>slow</string>
        </property>
       </widget>
-      <widget class="QSlider" name="horizontalSlider">
+      <widget class="QSlider" name="sld_speed">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>92</number>
+        <number>60</number>
        </property>
        <property name="value">
-        <number>45</number>
+        <number>30</number>
        </property>
        <property name="sliderPosition">
-        <number>45</number>
+        <number>30</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -241,6 +244,44 @@
         <string>fast</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QLabel" name="fps_label">
+      <property name="geometry">
+       <rect>
+        <x>81</x>
+        <y>44</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>30</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>216</x>
+        <y>17</y>
+        <width>71</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>measured fps:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="fps_edit"/>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QPushButton" name="button_screenshot">
@@ -458,9 +499,9 @@
    <widget class="QGroupBox" name="groupBox_notification">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>340</x>
       <y>540</y>
-      <width>381</width>
+      <width>411</width>
       <height>231</height>
      </rect>
     </property>
@@ -478,7 +519,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>361</width>
+       <width>391</width>
        <height>201</height>
       </rect>
      </property>
@@ -493,6 +534,29 @@
      </property>
      <property name="readOnly">
       <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QSplitter" name="splitter_2">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>561</y>
+      <width>205</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QLabel" name="lbl_frame">
+     <property name="text">
+      <string>Current frame:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="frame_num_edit">
+     <property name="text">
+      <string>0</string>
      </property>
     </widget>
    </widget>

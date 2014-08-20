@@ -48,12 +48,14 @@ public slots:
 	void stepCaptureBackward();
 	//pause video thread;
 	void pauseCapture();
+	//change video playback speed
+	void changeFps(int fps);
 
 
-	// signal emitted by tracking thread: update the current frameNumber
-	void updateFrameNumber(int frameNumber);
-	// signal emitted by tracking thread (a.k.a. "new tracking data available")
+	// SLOTS FOR TRACKING THREAD: 	
+	void updateFrameNumber(int frameNumber);	
 	void drawImage(cv::Mat image);
+	void showFps(int fps);
 
 
 	/**
@@ -72,7 +74,8 @@ public slots:
 
 
 	//void changeCurrentFrame();
-	void changeCurrentFrameBySlider();
+	void changeCurrentFramebySlider();
+	void changeCurrentFramebyEdit();
 	
 
 
@@ -94,6 +97,7 @@ private:
 	void init();
 	void initGui();	
 	void initConnects();
+	void initCapture();
 
 
 	
@@ -114,6 +118,9 @@ signals:
 
 	//tell tracking thread to grab next frame
 	void grabNextFrame();
+
+	//tell tracking thread to change playback speed
+	void fpsChange(int fps);
 
 };
 

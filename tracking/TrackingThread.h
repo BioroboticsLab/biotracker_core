@@ -46,6 +46,11 @@ public:
 	*/
 	int getVideoLength();
 
+	/**	
+	* @return  current fps setting
+	*/
+	int getFps();
+
 
 private:	
 
@@ -133,7 +138,10 @@ private:
 		*/
 		void nextFrame();
 
-
+		/**
+		* change framerate
+		*/
+		void setFps(int fps);
 signals:
 		/**
 		* Signals when a tracking sequence is done.
@@ -158,6 +166,8 @@ signals:
 		* send a message to the GUI.
 		*/
 		void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+		//send current fps to gui
+		void sendFps(int fps);
 
 };  
 

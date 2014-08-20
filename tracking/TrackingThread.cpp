@@ -56,6 +56,7 @@ void TrackingThread::startCapture()
 		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		enableCapture(true);
+		_fps = _capture.get(CV_CAP_PROP_FPS);
 		QThread::start();
 	}
 }
@@ -71,6 +72,7 @@ void TrackingThread::stopCapture()
 void TrackingThread::run()
 {
 	cv::Mat frame;
+	clock_t t;
 
 	while(isCaptureActive())
 	{	
@@ -79,7 +81,12 @@ void TrackingThread::run()
 		{
 			continue;
 		}
-		if(isReadyForNextFrame()){			
+		if(isReadyForNextFrame()){
+
+			// measure the capture start time
+			t = clock();
+			if (!_capture.isOpened())	{	break;	}
+
 			// capture the frame
 			_capture >> frame;	
 			incrementFrameNumber();
@@ -102,7 +109,21 @@ void TrackingThread::run()
 			// lets GUI draw the frame.
 			emit trackingSequenceDone(frame);
 			emit newFrameNumber(getFrameNumber());
-			cv::waitKey(1);
+			t = clock() - t;
+			int ms = 1000 / _fps;
+			//ms = t < ms ? ms - t : 0;
+			if (t <= ms)
+				ms -= t;
+			else {
+				/*qDebug() << "Warning: too slow for fps, "
+					<< "+" << t - ms << "ms";*/
+				ms = 0;
+			}
+
+			// calculate the running fps.
+			_runningFps = 1000 / (t + ms);
+			emit sendFps(_runningFps);
+			msleep(ms);
 		}
 	}
 	if(!isCaptureActive())
@@ -222,6 +243,14 @@ void TrackingThread::resetTracker()
 	_tracker->reset();
 }
 
+int TrackingThread::getFps()
+{
+	return _fps;
+}
+void TrackingThread::setFps(int fps)
+{
+	_fps = fps;
+}
 void TrackingThread::setTrackingAlgorithm(){
 }
 
