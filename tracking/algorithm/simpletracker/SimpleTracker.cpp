@@ -127,6 +127,7 @@ cv::Mat SimpleTracker::track(std::vector<TrackedObject> objectList, cv::Mat fram
 		}
 
 		// END OF TRACKING
+					
 
 		// Draw the result
 		cv::Mat canvas = frame;

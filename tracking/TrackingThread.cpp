@@ -7,6 +7,7 @@
 #include "settings/Messages.h"
 #include "settings/Param.h"
 #include "tracking/algorithm/simpletracker/SimpleTracker.h"
+#include "helper/StringHelper.h"
 
 /**
 * Mutexes.
@@ -101,13 +102,11 @@ void TrackingThread::run()
 			if (_tracker) {
 				frame = _tracker->track(std::vector<TrackedObject>(), frame);
 			}
-
-
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
 
 			// lets GUI draw the frame.
-			emit trackingSequenceDone(frame);
+			emit trackingSequenceDone(frame.clone());
 			emit newFrameNumber(getFrameNumber());
 			t = clock() - t;
 			int ms = 1000 / _fps;

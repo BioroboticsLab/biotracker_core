@@ -9,9 +9,11 @@ changed by Tobias von Falkenhausen
 */
 
 #include "VideoView.h"
+#include <cv.h>
 
 #include <QtOpenGL>
 #include <iostream>
+#include "helper/StringHelper.h"
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
