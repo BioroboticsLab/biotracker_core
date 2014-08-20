@@ -14,10 +14,11 @@ public:
 	static const float MAX_TRACK_DISTANCE_PER_FRAME;
 	static const float MAX_TRACK_DISTANCE;
 	static const int CANDIDATE_SCORE_THRESHOLD;
+	static const int MAX_NUMBER_OF_TRACKED_OBJECTS;
 
 	SimpleTracker(Settings& settings);
 	virtual ~SimpleTracker(void);
-	cv::Mat track(std::vector<TrackedObject> objectList, cv::Mat frame);
+	cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame);
 	void reset();
 
 private:
