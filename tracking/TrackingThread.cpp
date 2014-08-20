@@ -100,7 +100,7 @@ void TrackingThread::run()
 			//send frame to tracking algorithm
 			 //NOTE: this is just for testing!
 			if (_tracker) {
-				frame = _tracker->track(std::vector<TrackedObject>(), frame);
+				frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
@@ -166,7 +166,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 			//send frame to tracking algorithm
 			 //NOTE: this is just for testing!
 			if (_tracker) {
-				frame = _tracker->track(std::vector<TrackedObject>(), frame);
+				frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
 			}
 				emit trackingSequenceDone(frame);
 			}			
@@ -197,7 +197,7 @@ void TrackingThread::nextFrame()
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
 		if (_tracker) {
-			frame = _tracker->track(std::vector<TrackedObject>(), frame);
+			frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
 		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);

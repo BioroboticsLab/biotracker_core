@@ -20,7 +20,7 @@ public:
 	* @param: frame, the reference image, which shall contain fishes.
 	* @return: cv picture whis is to be drawn in video widget
 	*/
-	virtual cv::Mat track(std::vector<TrackedObject> objectList, cv::Mat frame) = 0;
+	virtual cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame) = 0;
 
 	/**
 	* Resets the tracker.

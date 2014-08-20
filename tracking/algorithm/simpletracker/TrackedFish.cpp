@@ -27,3 +27,10 @@ unsigned TrackedFish::age_of_last_known_position() const {
 	return _age_of_last_known_position;
 }
 
+void TrackedFish::set_associated_color(const cv::Scalar& color) {
+	_associated_color = color;
+}
+
+cv::Scalar TrackedFish::associated_color() {
+	return _associated_color;
+}

@@ -25,3 +25,4 @@ int FishCandidate::score() const {
 bool FishCandidate::operator==(const FishCandidate& other) const {
 	return _last_known_position == other._last_known_position;
 }
+
