@@ -34,6 +34,9 @@
     <ClCompile Include="tracking\TrackingAlgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tracking\algorithm\simpletracker\FishCandidate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\CvHelper.h" />
@@ -55,6 +58,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tracking\algorithm\simpletracker\SimpleTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tracking\algorithm\simpletracker\FishCandidate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
