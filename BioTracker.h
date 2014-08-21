@@ -55,7 +55,7 @@ public slots:
 	// SLOTS FOR TRACKING THREAD: 	
 	void updateFrameNumber(int frameNumber);	
 	void drawImage(cv::Mat image);
-	void showFps(int fps);
+	void showFps(double fps);
 
 
 	/**
@@ -120,7 +120,7 @@ signals:
 	void grabNextFrame();
 
 	//tell tracking thread to change playback speed
-	void fpsChange(int fps);
+	void fpsChange(double fps);
 
 };
 

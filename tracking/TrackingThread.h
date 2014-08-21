@@ -49,7 +49,7 @@ public:
 	/**	
 	* @return  current fps setting
 	*/
-	int getFps();
+	double getFps();
 
 
 private:	
@@ -65,8 +65,8 @@ private:
 	bool _readyForNextFrame;
 	bool _videoPause;
 
-	int _fps;
-	int _runningFps;
+	double _fps;
+	double _runningFps;
 	int _frameNumber;
 
 
@@ -141,7 +141,7 @@ private:
 		/**
 		* change framerate
 		*/
-		void setFps(int fps);
+		void setFps(double fps);
 signals:
 		/**
 		* Signals when a tracking sequence is done.
@@ -167,7 +167,7 @@ signals:
 		*/
 		void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
 		//send current fps to gui
-		void sendFps(int fps);
+		void sendFps(double fps);
 
 };  
 

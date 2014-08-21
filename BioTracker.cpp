@@ -1,4 +1,6 @@
 #include "BioTracker.h"
+#include <sstream>
+#include <string>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
@@ -68,11 +70,11 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL(videoStop()), _trackingThread, SLOT(stopCapture()));
 	QObject::connect(_trackingThread, SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
 	QObject::connect(_trackingThread, SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
-	QObject::connect(_trackingThread, SIGNAL( sendFps(int) ), this, SLOT( showFps(int) ));
+	QObject::connect(_trackingThread, SIGNAL( sendFps(double) ), this, SLOT( showFps(double) ));
 	QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread, SLOT( enableHandlingNextFrame(bool) ));
-	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( nextFrame() ));
+	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
-	QObject::connect(this, SIGNAL( fpsChange(int)), _trackingThread, SLOT( setFps(int) ));
+	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	
 }
 
@@ -145,7 +147,10 @@ void BioTracker::initCapture()
 	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength(), this) );
 	ui.frame_num_edit->setEnabled(true);
 	ui.sld_speed->setValue(_trackingThread->getFps());
-	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(_trackingThread->getFps())));
+	std::stringstream ss;
+	double fps = _trackingThread->getFps();
+    ss << std::setprecision(5) << fps;
+	ui.fps_label->setText(StringHelper::toQString(ss.str()));
 	setPlayfieldPaused(true);
 }
 
@@ -208,8 +213,11 @@ void BioTracker::drawImage(cv::Mat image)
 
 
 	if(image.data)
+	{	
 		ui.videoView->showImage(image);
 
+	}
+	
 	// signals when the frame was drawn, and the FishTrackerThread can continue to work;
 	emit nextFrameReady(true);
 	
@@ -256,14 +264,16 @@ void BioTracker::changeCurrentFramebyEdit()
 	}	
 }
 
-void BioTracker::showFps(int fps)
+void BioTracker::showFps(double fps)
 {
+	std::stringstream ss;
+    ss << std::setprecision(5) << fps;
 	//show actual fps
-	ui.fps_edit->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+	ui.fps_edit->setText(StringHelper::toQString(ss.str()));
 }
 void BioTracker::changeFps(int fps)
 {
 	//show target fps
 	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
-	emit fpsChange(fps);
+	emit fpsChange((double)fps);
 }

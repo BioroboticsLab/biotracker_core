@@ -33,7 +33,7 @@ TrackingThread::TrackingThread(Settings &settings) :
 	//setTrackingAlgorithm();
 
 	// TODO: remove, this ist just for testing
-	_tracker = new SimpleTracker(_settings);
+	//_tracker = new SimpleTracker(_settings);
 }
 
 TrackingThread::~TrackingThread(void)
@@ -69,7 +69,8 @@ void TrackingThread::stopCapture()
 	setFrameNumber(0);
 	emit newFrameNumber(0);
 }
-
+// alternative way to calculate sleep time to get target fps described here:
+// https://aaka.sh/patel/2013/06/28/live-video-webcam-recording-with-opencv/
 void TrackingThread::run()
 {
 	cv::Mat frame;
@@ -83,7 +84,6 @@ void TrackingThread::run()
 			continue;
 		}
 		if(isReadyForNextFrame()){
-
 			// measure the capture start time
 			t = clock();
 			if (!_capture.isOpened())	{	break;	}
@@ -107,20 +107,20 @@ void TrackingThread::run()
 
 			// lets GUI draw the frame.
 			emit trackingSequenceDone(frame.clone());
-			emit newFrameNumber(getFrameNumber());
+			emit newFrameNumber(getFrameNumber());			
+			//wait till frame is drawn
+			while(!isReadyForNextFrame()){
+			}
 			t = clock() - t;
-			int ms = 1000 / _fps;
-			//ms = t < ms ? ms - t : 0;
-			if (t <= ms)
-				ms -= t;
-			else {
-				/*qDebug() << "Warning: too slow for fps, "
-					<< "+" << t - ms << "ms";*/
+			double ms = 1000 / _fps;			
+			if (t < ms)
+				ms -= ((double) t +1);
+			else {	
 				ms = 0;
 			}
 
 			// calculate the running fps.
-			_runningFps = 1000 / (t + ms);
+			_runningFps = 1000 / (double)(t + ms);
 			emit sendFps(_runningFps);
 			msleep(ms);
 		}
@@ -249,11 +249,11 @@ void TrackingThread::resetTracker()
 	_tracker->reset();
 }
 
-int TrackingThread::getFps()
+double TrackingThread::getFps()
 {
 	return _fps;
 }
-void TrackingThread::setFps(int fps)
+void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
