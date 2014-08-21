@@ -64,7 +64,7 @@ private:
 	bool _trackerActive;
 	bool _readyForNextFrame;
 	bool _videoPause;
-
+	std::vector<TrackedObject> _trackedObjects;
 	double _fps;
 	double _runningFps;
 	int _frameNumber;
@@ -81,7 +81,7 @@ private:
 	int getFrameNumber();
 
 	/**
-	 * Increments the current frame number of 1 frame.
+	 * Increments the current frame number by 1 frame.
 	 * @return: void.
 	 */
 	void incrementFrameNumber();

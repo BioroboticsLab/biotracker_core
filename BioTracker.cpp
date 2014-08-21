@@ -57,6 +57,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_nextFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureForward())); 
 	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
+	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -276,4 +277,11 @@ void BioTracker::changeFps(int fps)
 	//show target fps
 	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
 	emit fpsChange((double)fps);
+}
+
+void BioTracker::takeScreenshot()
+{
+	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
+	filepath.append("/screenshot_").append(StringHelper::toQString(CvHelper::getCurrentDatetimeAsStd())).append(".png");
+	ui.videoView->takeScreenshot(filepath);
 }

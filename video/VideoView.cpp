@@ -9,11 +9,6 @@ changed by Tobias von Falkenhausen
 */
 
 #include "VideoView.h"
-#include <cv.h>
-
-#include <QtOpenGL>
-#include <iostream>
-#include "helper/StringHelper.h"
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
@@ -99,4 +94,9 @@ void VideoView::resizeGL(int width, int height)
 	glLoadIdentity();
 	glOrtho(-1.0, +1.0, +1.0, -1.0, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+void VideoView::takeScreenshot(QString screenShotFilename)
+{
+	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
 }

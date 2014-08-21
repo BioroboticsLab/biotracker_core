@@ -33,7 +33,8 @@ TrackingThread::TrackingThread(Settings &settings) :
 	//setTrackingAlgorithm();
 
 	// TODO: remove, this ist just for testing
-	//_tracker = new SimpleTracker(_settings);
+	_tracker = new SimpleTracker(_settings);
+	_trackedObjects = std::vector<TrackedObject>();
 }
 
 TrackingThread::~TrackingThread(void)
@@ -69,8 +70,7 @@ void TrackingThread::stopCapture()
 	setFrameNumber(0);
 	emit newFrameNumber(0);
 }
-// alternative way to calculate sleep time to get target fps described here:
-// https://aaka.sh/patel/2013/06/28/live-video-webcam-recording-with-opencv/
+// TODO: To calculate time to sleep more precisely use microseconds instead of milliseconds (e.g. via <chrono>)
 void TrackingThread::run()
 {
 	cv::Mat frame;
@@ -106,7 +106,7 @@ void TrackingThread::run()
 			//send frame to tracking algorithm
 			 //NOTE: this is just for testing!
 			if (_tracker) {
-				frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
+				frame = _tracker->track(_trackedObjects, getFrameNumber(), frame);
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
@@ -171,7 +171,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 			//send frame to tracking algorithm
 			 //NOTE: this is just for testing!
 			if (_tracker) {
-				frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
+				frame = _tracker->track(_trackedObjects, _frameNumber, frame);
 			}
 				emit trackingSequenceDone(frame);
 			}			
@@ -202,7 +202,7 @@ void TrackingThread::nextFrame()
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
 		if (_tracker) {
-			frame = _tracker->track(std::vector<TrackedObject>(), getFrameNumber(), frame);
+			frame = _tracker->track(_trackedObjects, getFrameNumber(), frame);
 		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);

@@ -3,6 +3,10 @@
 
 #include <QGLWidget>
 #include <cv.h>
+#include <opencv2/opencv.hpp>
+#include <QtOpenGL>
+#include <iostream>
+#include "helper/StringHelper.h"
 
 class VideoView : public QGLWidget
 {
@@ -11,6 +15,7 @@ public:
 	VideoView(QWidget *parent = 0);	
 	void showImage(cv::Mat img);
 	void updateDisplay();
+	void takeScreenshot(QString screenShotFilename);
 
 protected:
 	 void initializeGL(); 

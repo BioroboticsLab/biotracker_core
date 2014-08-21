@@ -111,6 +111,7 @@ namespace CAPTUREPARAM
 {
 	// Video path	
 	const std::string CAP_VIDEO_FILE			= "CAPTUREPARAM/CAP_VIDEO_FILE";
+	const std::string CAP_SCREENSHOT_PATH		= "CAPTUREPARAM/CAP_SCREENSHOT_PATH";
 	const std::string CAP_PAUSED_AT_FRAME		= "CAPTUREPARAM/CAP_PAUSED_AT_FRAME";
 
 

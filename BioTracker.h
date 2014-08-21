@@ -76,6 +76,8 @@ public slots:
 	//void changeCurrentFrame();
 	void changeCurrentFramebySlider();
 	void changeCurrentFramebyEdit();
+
+	void takeScreenshot();
 	
 
 
@@ -104,8 +106,6 @@ private:
 signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
-
-
 
 	// tell tracking thread to grab specific frame
 	void changeFrame(int);
