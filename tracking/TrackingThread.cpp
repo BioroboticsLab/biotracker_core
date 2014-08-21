@@ -75,17 +75,23 @@ void TrackingThread::run()
 {
 	cv::Mat frame;
 	clock_t t;
+	bool firstLoop = true;
 
 	while(isCaptureActive())
 	{	
 		// when pause event is started.
 		if(isVideoPause())
 		{
+			firstLoop = true;
 			continue;
 		}
-		if(isReadyForNextFrame()){
-			// measure the capture start time
+		//if thread just started (or is unpaused) start clock here
+		//after this timestamp will be taken right before picture is drawn 
+		//to take the amount of time into account it takes to draw the picture
+		if(firstLoop)
 			t = clock();
+		if(isReadyForNextFrame()){
+			// measure the capture start time			
 			if (!_capture.isOpened())	{	break;	}
 
 			// capture the frame
@@ -104,17 +110,10 @@ void TrackingThread::run()
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
-
-			// lets GUI draw the frame.
-			emit trackingSequenceDone(frame.clone());
-			emit newFrameNumber(getFrameNumber());			
-			//wait till frame is drawn
-			while(!isReadyForNextFrame()){
-			}
 			t = clock() - t;
 			double ms = 1000 / _fps;			
-			if (t < ms)
-				ms -= ((double) t +1);
+			if (t <= ms)
+				ms -= ((double) t);
 			else {	
 				ms = 0;
 			}
@@ -123,6 +122,12 @@ void TrackingThread::run()
 			_runningFps = 1000 / (double)(t + ms);
 			emit sendFps(_runningFps);
 			msleep(ms);
+			t = clock();
+			firstLoop = false;
+
+			// lets GUI draw the frame.
+			emit trackingSequenceDone(frame.clone());
+			emit newFrameNumber(getFrameNumber());
 		}
 	}
 	if(!isCaptureActive())
