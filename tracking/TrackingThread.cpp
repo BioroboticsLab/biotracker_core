@@ -30,11 +30,6 @@ TrackingThread::TrackingThread(Settings &settings) :
 	_maxSpeed(false)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
-
-	//setTrackingAlgorithm();
-
-	// TODO: remove, this ist just for testing
-	_tracker = new SimpleTracker(_settings);
 	_trackedObjects = std::vector<TrackedObject>();
 }
 
@@ -71,7 +66,7 @@ void TrackingThread::stopCapture()
 	setFrameNumber(0);
 	emit newFrameNumber(0);
 }
-// TODO: To calculate time to sleep more precisely use microseconds instead of milliseconds (e.g. via <chrono>)
+
 void TrackingThread::run()
 {
 	cv::Mat frame;
@@ -221,6 +216,7 @@ void TrackingThread::nextFrame()
 
 cv::Mat TrackingThread::doTracking(cv::Mat frame)
 {
+	QMutexLocker locker(&trackerMutex);
 	return _tracker->track(_trackedObjects, _frameNumber, frame);
 }
 
@@ -273,8 +269,19 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm()
+void TrackingThread::setTrackingAlgorithm(QString algName)
 {
+	QMutexLocker locker(&trackerMutex);
+	if (algName == "no algorithm")
+	{
+		delete _tracker;
+		_tracker = NULL;
+	}
+	else if(algName == "simple algorithm")
+	{
+		delete _tracker;
+		_tracker = new SimpleTracker(_settings);
+	}
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()

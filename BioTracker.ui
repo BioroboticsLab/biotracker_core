@@ -363,7 +363,7 @@
      <attribute name="title">
       <string>algorithm</string>
      </attribute>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="widget_alg" native="true">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -372,7 +372,7 @@
         <height>201</height>
        </rect>
       </property>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="cb_algorithms">
        <property name="geometry">
         <rect>
          <x>50</x>
@@ -493,7 +493,7 @@
        </widget>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_3">
+     <widget class="QGroupBox" name="groupBox_params">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -506,7 +506,7 @@
        <string>parameters</string>
       </property>
      </widget>
-     <widget class="QGroupBox" name="groupBox_4">
+     <widget class="QGroupBox" name="groupBox_tools">
       <property name="geometry">
        <rect>
         <x>10</x>

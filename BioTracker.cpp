@@ -42,6 +42,7 @@ void BioTracker::init(){
 
 void BioTracker::initGui()
 {
+	initAlgorithms();
 	setPlayfieldPaused(true);
 	ui.actionOpen_Video->setEnabled(true);
 	ui.frame_num_edit->setEnabled(false);
@@ -58,6 +59,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
+	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), _trackingThread, SLOT(setTrackingAlgorithm(QString)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -76,7 +78,16 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
-	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));	
+	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
+}
+
+void BioTracker::initAlgorithms()
+{
+	QString algNames[] = {"no algorithm","simple algorithm"};
+	for(QString &algName : algNames)
+	{
+		ui.cb_algorithms->addItem(algName);
+	}
 }
 
 void BioTracker::browseVideo()

@@ -100,6 +100,7 @@ private:
 	void initGui();	
 	void initConnects();
 	void initCapture();
+	void initAlgorithms();
 
 
 	

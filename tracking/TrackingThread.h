@@ -20,7 +20,7 @@ class TrackingThread : public QThread
 public:
 	TrackingThread(Settings &settings);
 	~TrackingThread(void);
-	void setTrackingAlgorithm();
+	
 	/**
 	* Starts the video thread.
 	* @return: void.
@@ -63,8 +63,7 @@ private:
 	bool _captureActive;
 	bool _trackerActive;
 	bool _readyForNextFrame;
-	bool _videoPause;
-	std::vector<TrackedObject> _trackedObjects;
+	bool _videoPause;	
 	double _fps;
 	double _runningFps;
 	int _frameNumber;
@@ -74,6 +73,7 @@ private:
 	Settings &_settings;
 
 	TrackingAlgorithm* _tracker;
+	std::vector<TrackedObject> _trackedObjects;
 
 	/**
 	* Gets current frame number.
@@ -154,6 +154,8 @@ private:
 		* enable maximum playback speed
 		*/
 		void setMaxSpeed (bool enabled);
+
+		void setTrackingAlgorithm(QString algName);
 signals:
 		/**
 		* Signals when a tracking sequence is done.

@@ -7,9 +7,9 @@ using namespace std;
 class History
 {
 public:
-	ObjectModel* getHistoryObject();
-	void add(ObjectModel*);
-	void removeLast();
+	ObjectModel* getHistoryObject(int frameNumber);
+	void add(ObjectModel*, int frameNumber);
+
 private:
 	deque<ObjectModel> HistoryObjects;
 	int id; //object ID 
