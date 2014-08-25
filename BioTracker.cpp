@@ -76,7 +76,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
-	
+	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));	
 }
 
 void BioTracker::browseVideo()
@@ -274,9 +274,19 @@ void BioTracker::showFps(double fps)
 }
 void BioTracker::changeFps(int fps)
 {
+	//maximum slider position will enable maxSpeed
+	if(fps > 60)
+	{
+		emit enableMaxSpeed(true);
+		ui.fps_label->setText("max");
+	}
+	else
+	{
 	//show target fps
 	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+	emit enableMaxSpeed(false);
 	emit fpsChange((double)fps);
+	}
 }
 
 void BioTracker::takeScreenshot()

@@ -10,3 +10,6 @@ GeneratedFiles/
 *.sdf
 *.suo
 *.exe
+*.psess
+*.vsp
+

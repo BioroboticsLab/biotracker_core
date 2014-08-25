@@ -121,6 +121,9 @@ signals:
 
 	//tell tracking thread to change playback speed
 	void fpsChange(double fps);
+	
+	//enable max playback speed
+	void enableMaxSpeed (bool enabled);
 
 };
 

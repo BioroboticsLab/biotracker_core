@@ -68,6 +68,7 @@ private:
 	double _fps;
 	double _runningFps;
 	int _frameNumber;
+	bool _maxSpeed;
 
 
 	Settings &_settings;
@@ -85,6 +86,12 @@ private:
 	 * @return: void.
 	 */
 	void incrementFrameNumber();
+
+	/**
+	* sends frame and everything else that is needed to selected 
+	* tracking algorithm and receives output frame
+	*/
+	cv::Mat doTracking(cv::Mat frame);
 
 	
 	/**
@@ -142,6 +149,11 @@ private:
 		* change framerate
 		*/
 		void setFps(double fps);
+		
+		/**
+		* enable maximum playback speed
+		*/
+		void setMaxSpeed (bool enabled);
 signals:
 		/**
 		* Signals when a tracking sequence is done.

@@ -26,7 +26,8 @@ TrackingThread::TrackingThread(Settings &settings) :
 	_readyForNextFrame(true),
 	_videoPause(false),
 	_frameNumber(0),
-	_tracker(NULL)
+	_tracker(NULL),
+	_maxSpeed(false)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 
@@ -104,20 +105,25 @@ void TrackingThread::run()
 
 			//TODO: if a tracking algorithm is selected
 			//send frame to tracking algorithm
-			 //NOTE: this is just for testing!
+			//NOTE: this is just for testing!
 			if (_tracker) {
-				frame = _tracker->track(_trackedObjects, getFrameNumber(), frame);
+				frame = doTracking(frame);
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
-			t = clock() - t;
-			double ms = 1000 / _fps;			
-			if (t <= ms)
-				ms -= ((double) t);
-			else {	
-				ms = 0;
-			}
 
+			t = clock() - t;
+			double ms = 1000 / _fps;
+			if(!_maxSpeed)
+			{
+				if (t <= ms)
+					ms -= ((double) t);
+				else {	
+					ms = 0;
+				}
+			}
+			else
+				ms = 0;
 			// calculate the running fps.
 			_runningFps = 1000 / (double)(t + ms);
 			emit sendFps(_runningFps);
@@ -158,7 +164,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 		if(frameNumber >= 0 && frameNumber <= videoLength)
 		{
 			_frameNumber = frameNumber;
-		
+
 			if(isCaptureActive())
 			{
 				enableHandlingNextFrame(false);
@@ -166,13 +172,13 @@ void TrackingThread::setFrameNumber(int frameNumber)
 				cv::Mat frame;
 				_capture >> frame;
 				cv::waitKey(1);
-				
-			//TODO: if a tracking algorithm is selected
-			//send frame to tracking algorithm
-			 //NOTE: this is just for testing!
-			if (_tracker) {
-				frame = _tracker->track(_trackedObjects, _frameNumber, frame);
-			}
+
+				//TODO: if a tracking algorithm is selected
+				//send frame to tracking algorithm
+				//NOTE: this is just for testing!
+				if (_tracker) {
+					frame = frame = doTracking(frame);
+				}
 				emit trackingSequenceDone(frame);
 			}			
 		}
@@ -202,7 +208,7 @@ void TrackingThread::nextFrame()
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
 		if (_tracker) {
-			frame = _tracker->track(_trackedObjects, getFrameNumber(), frame);
+			frame = doTracking(frame);
 		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);
@@ -211,6 +217,11 @@ void TrackingThread::nextFrame()
 		emit trackingSequenceDone(frame);
 		emit newFrameNumber(getFrameNumber());
 	}
+}
+
+cv::Mat TrackingThread::doTracking(cv::Mat frame)
+{
+	return _tracker->track(_trackedObjects, _frameNumber, frame);
 }
 
 int TrackingThread::getFrameNumber()
@@ -262,8 +273,14 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(){
+void TrackingThread::setTrackingAlgorithm()
+{
 }
 
-void TrackingThread::initCaptureForReadingVideoOrStream(){
+void TrackingThread::initCaptureForReadingVideoOrStream()
+{
+}
+void TrackingThread::setMaxSpeed(bool enabled)
+{
+	_maxSpeed = enabled;
 }
