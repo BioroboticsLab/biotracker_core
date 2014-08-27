@@ -60,7 +60,7 @@ void TrackingThread::startCapture()
 
 void TrackingThread::stopCapture()
 {	
-	//stop thread
+	enableHandlingNextFrame(false);
 	enableCapture(false);
 	setFrameNumber(0);
 	emit newFrameNumber(0);
@@ -267,7 +267,7 @@ void TrackingThread::setFps(double fps)
 void TrackingThread::setTrackingAlgorithm(QString algName)
 {
 	QMutexLocker locker(&trackerMutex);
-	if (algName == "no algorithm")
+	if (algName == "no tracking")
 	{
 		delete _tracker;
 		_tracker = NULL;
