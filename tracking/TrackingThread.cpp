@@ -12,7 +12,6 @@
 /**
 * Mutexes.
 */
-
 QMutex captureActiveMutex;
 QMutex videoPauseMutex;
 QMutex frameNumberMutex;
@@ -74,13 +73,15 @@ void TrackingThread::run()
 	bool firstLoop = true;
 
 	while(isCaptureActive())
-	{	
+	{			
 		// when pause event is started.
 		if(isVideoPause())
 		{
+			QMutexLocker locker(&videoPauseMutex);
 			firstLoop = true;
-			continue;
+			_pauseCond.wait(&videoPauseMutex);
 		}
+		
 		//if thread just started (or is unpaused) start clock here
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
@@ -129,6 +130,7 @@ void TrackingThread::run()
 			// lets GUI draw the frame.
 			emit trackingSequenceDone(frame.clone());
 			emit newFrameNumber(getFrameNumber());
+			
 		}
 	}
 	if(!isCaptureActive())
@@ -151,33 +153,22 @@ bool TrackingThread::isCaptureActive()
 
 void TrackingThread::setFrameNumber(int frameNumber)
 {
-	//do nothing if tracker is busy
-	if(isReadyForNextFrame())
-	{	
-		int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
-		QMutexLocker locker(&frameNumberMutex);
-		if(frameNumber >= 0 && frameNumber <= videoLength)
-		{
-			_frameNumber = frameNumber;
+	QMutexLocker frameLocker(&frameNumberMutex);	
+	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	
+	if(frameNumber >= 0 && frameNumber <= videoLength)
+	{
+		_frameNumber = frameNumber;		
+		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
+		cv::Mat frame;
+		_capture >> frame;
 
-			if(isCaptureActive())
-			{
-				enableHandlingNextFrame(false);
-				_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
-				cv::Mat frame;
-				_capture >> frame;
-				cv::waitKey(1);
-
-				//TODO: if a tracking algorithm is selected
-				//send frame to tracking algorithm
-				//NOTE: this is just for testing!
-				if (_tracker) {
-					frame = frame = doTracking(frame);
-				}
-				emit trackingSequenceDone(frame);
-			}			
+		if (_tracker) {
+			frame = frame = doTracking(frame);
 		}
-	}
+		emit trackingSequenceDone(frame);
+				
+	}	
 }
 
 void TrackingThread::incrementFrameNumber()
@@ -242,6 +233,10 @@ void TrackingThread::enableVideoPause(bool videoPause)
 {
 	QMutexLocker locker(&videoPauseMutex);
 	_videoPause = videoPause;
+	if(!videoPause)
+	{
+		_pauseCond.wakeAll();
+	}
 }
 
 bool TrackingThread::isVideoPause()

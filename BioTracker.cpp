@@ -257,9 +257,8 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 
 void BioTracker::changeCurrentFramebySlider()
 {	
-	int value = ui.sld_video->value();
-	if(_trackingThread->isReadyForNextFrame())
-		emit changeFrame(value);
+	int value = ui.sld_video->value();	
+	emit changeFrame(value);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 	updateFrameNumber(value);
 }

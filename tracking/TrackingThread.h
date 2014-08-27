@@ -11,7 +11,7 @@
 #include <settings/Messages.h>
 #include <trackedObject/TrackedObject.h>
 #include <tracking/TrackingAlgorithm.h>
-
+#include <QWaitCondition>
 
 
 class TrackingThread : public QThread
@@ -68,6 +68,7 @@ private:
 	double _runningFps;
 	int _frameNumber;
 	bool _maxSpeed;
+	QWaitCondition _pauseCond;
 
 
 	Settings &_settings;
