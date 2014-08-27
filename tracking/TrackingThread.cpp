@@ -50,7 +50,8 @@ void TrackingThread::startCapture()
 			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
 			return;
 		}
-		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
+		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) + 
+			" (#frames: " + StringHelper::iToSS(getVideoLength()) + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		enableCapture(true);
 		_fps = _capture.get(CV_CAP_PROP_FPS);
@@ -62,8 +63,16 @@ void TrackingThread::stopCapture()
 {	
 	enableHandlingNextFrame(false);
 	enableCapture(false);
-	setFrameNumber(0);
-	emit newFrameNumber(0);
+	if(isVideoPause())
+	{
+		_pauseCond.wakeAll();		
+	}
+	if(!this->wait(3000)) //Wait until thread actually has terminated (max. 3 sec)
+	{
+		emit notifyGUI("Thread deadlock detected! Terminating now!",MSGS::FAIL);
+		terminate(); //Thread didn't exit in time, probably deadlocked, terminate it!
+		wait(); //Note: We have to wait again here!
+	}
 }
 
 void TrackingThread::run()
@@ -81,7 +90,7 @@ void TrackingThread::run()
 			firstLoop = true;
 			_pauseCond.wait(&videoPauseMutex);
 		}
-		
+
 		//if thread just started (or is unpaused) start clock here
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
@@ -127,10 +136,13 @@ void TrackingThread::run()
 			t = clock();
 			firstLoop = false;
 
-			// lets GUI draw the frame.
-			emit trackingSequenceDone(frame.clone());
-			emit newFrameNumber(getFrameNumber());
-			
+			if(isCaptureActive())
+			{
+				// lets GUI draw the frame.
+				emit trackingSequenceDone(frame.clone());
+				emit newFrameNumber(getFrameNumber());
+			}
+
 		}
 	}
 	if(!isCaptureActive())
@@ -155,7 +167,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 {
 	QMutexLocker frameLocker(&frameNumberMutex);	
 	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
-	
+
 	if(frameNumber >= 0 && frameNumber <= videoLength)
 	{
 		_frameNumber = frameNumber;		
@@ -167,7 +179,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 			frame = frame = doTracking(frame);
 		}
 		emit trackingSequenceDone(frame);
-				
+
 	}	
 }
 

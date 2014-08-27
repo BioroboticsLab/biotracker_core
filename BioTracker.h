@@ -75,6 +75,7 @@ public slots:
 
 	//void changeCurrentFrame();
 	void changeCurrentFramebySlider();
+	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();
