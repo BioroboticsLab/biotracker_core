@@ -85,7 +85,7 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no algorithm","simple algorithm"};
+	QString algNames[] = {"no algorithm","simple algorithm", "Fish - Particle"};
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);

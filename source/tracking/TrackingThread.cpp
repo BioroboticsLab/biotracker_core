@@ -7,6 +7,7 @@
 #include "source/settings/Messages.h"
 #include "source/settings/Param.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
+#include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
 #include "source/helper/StringHelper.h"
 
 /**
@@ -288,6 +289,11 @@ void TrackingThread::setTrackingAlgorithm(QString algName)
 	{
 		delete _tracker;
 		_tracker = new SimpleTracker(_settings);
+	}
+	else if(algName == "Fish - Particle")
+	{
+		delete _tracker;
+		_tracker = new ParticleFishTracker(_settings);
 	}
 }
 

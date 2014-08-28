@@ -77,6 +77,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp" />
     <ClCompile Include="source\gui\BioTracker.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_BioTracker.cpp">
@@ -126,6 +127,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
     </CustomBuild>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
     <ClInclude Include="source\helper\CvHelper.h" />
@@ -204,7 +206,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.3.0" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="Version5.3.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

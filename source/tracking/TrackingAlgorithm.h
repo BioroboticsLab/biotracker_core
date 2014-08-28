@@ -6,6 +6,7 @@
 #include <vector>
 #include <source/video/Rectification.h>
 #include <source/settings/Settings.h>
+#include <QWidget>
 
 
 class TrackingAlgorithm{
@@ -21,6 +22,8 @@ public:
 	* @return: cv picture whis is to be drawn in video widget
 	*/
 	virtual cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame) = 0;
+
+	virtual void initGUI(QWidget& paramWidget, QWidget& toolWidget);
 
 	/**
 	* Resets the tracker.
