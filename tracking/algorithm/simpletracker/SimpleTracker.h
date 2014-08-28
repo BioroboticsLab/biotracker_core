@@ -19,6 +19,7 @@ public:
 	SimpleTracker(Settings& settings);
 	virtual ~SimpleTracker(void);
 	cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame);
+	void initGUI(QWidget& paramWidget, QWidget& toolWidget);
 	void reset();
 
 private:

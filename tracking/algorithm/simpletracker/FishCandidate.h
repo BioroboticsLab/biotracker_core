@@ -14,7 +14,6 @@ public:
 	void decreaseScore();
 	int score() const;
 	bool operator==(const FishCandidate& other) const;
-	bool operator<(const FishCandidate& other) const;
 private:
 	int _score;
 };
