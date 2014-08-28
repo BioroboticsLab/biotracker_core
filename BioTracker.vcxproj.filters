@@ -5,17 +5,6 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_VideoView.cpp" />
     <ClCompile Include="GeneratedFiles\Release\moc_TrackingThread.cpp" />
     <ClCompile Include="GeneratedFiles\Release\moc_VideoView.cpp" />
-    <ClCompile Include="helper\CvHelper.cpp" />
-    <ClCompile Include="helper\StringHelper.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="settings\Param.cpp" />
-    <ClCompile Include="settings\Settings.cpp" />
-    <ClCompile Include="trackedObject\TrackedObject.cpp" />
-    <ClCompile Include="tracking\TrackingThread.cpp" />
-    <ClCompile Include="video\VideoView.cpp" />
-    <ClCompile Include="BioTracker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_BioTracker.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -25,55 +14,66 @@
     <ClCompile Include="GeneratedFiles\qrc_BioTracker.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="tracking\algorithm\simpletracker\TrackedFish.cpp">
+    <ClCompile Include="source\settings\Param.cpp" />
+    <ClCompile Include="source\settings\Settings.cpp" />
+    <ClCompile Include="source\helper\CvHelper.cpp" />
+    <ClCompile Include="source\helper\StringHelper.cpp" />
+    <ClCompile Include="source\trackedObject\TrackedObject.cpp" />
+    <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tracking\algorithm\simpletracker\SimpleTracker.cpp">
+    <ClCompile Include="source\tracking\algorithm\simpletracker\SimpleTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tracking\TrackingAlgorithm.cpp">
+    <ClCompile Include="source\tracking\algorithm\simpletracker\TrackedFish.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tracking\algorithm\simpletracker\FishCandidate.cpp">
+    <ClCompile Include="source\tracking\TrackingAlgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\TrackingThread.cpp" />
+    <ClCompile Include="source\video\VideoView.cpp" />
+    <ClCompile Include="source\gui\BioTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="helper\CvHelper.h" />
-    <ClInclude Include="helper\StringHelper.h" />
-    <ClInclude Include="video\ImagePreProcessor.h" />
-    <ClInclude Include="settings\Messages.h" />
-    <ClInclude Include="trackedObject\ObjectModel.h" />
-    <ClInclude Include="settings\ParamNames.h" />
-    <ClInclude Include="video\Rectification.h" />
-    <ClInclude Include="settings\Param.h" />
-    <ClInclude Include="settings\Settings.h" />
-    <ClInclude Include="tracking\TrackingAlgorithm.h" />
-    <ClInclude Include="trackedObject\History.h" />
-    <ClInclude Include="trackedObject\TrackedObject.h" />
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tracking\algorithm\simpletracker\TrackedFish.h">
+    <ClInclude Include="source\settings\Messages.h" />
+    <ClInclude Include="source\settings\Param.h" />
+    <ClInclude Include="source\settings\ParamNames.h" />
+    <ClInclude Include="source\settings\Settings.h" />
+    <ClInclude Include="source\helper\CvHelper.h" />
+    <ClInclude Include="source\helper\StringHelper.h" />
+    <ClInclude Include="source\trackedObject\History.h" />
+    <ClInclude Include="source\trackedObject\ObjectModel.h" />
+    <ClInclude Include="source\trackedObject\TrackedObject.h" />
+    <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tracking\algorithm\simpletracker\SimpleTracker.h">
+    <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tracking\algorithm\simpletracker\FishCandidate.h">
+    <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\tracking\TrackingAlgorithm.h" />
+    <ClInclude Include="source\video\ImagePreProcessor.h" />
+    <ClInclude Include="source\video\Rectification.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="video\VideoView.h" />
-    <CustomBuild Include="tracking\TrackingThread.h" />
-    <CustomBuild Include="BioTracker.h">
+    <CustomBuild Include="source\tracking\TrackingThread.h" />
+    <CustomBuild Include="source\video\VideoView.h" />
+    <CustomBuild Include="source\gui\BioTracker.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="BioTracker.ui">
+    <CustomBuild Include="source\gui\BioTracker.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="BioTracker.qrc">
+    <CustomBuild Include="source\gui\BioTracker.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -116,5 +116,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="source\gui\resources\arrow-back.png" />
+    <Image Include="source\gui\resources\arrow-forward1.png" />
+    <Image Include="source\gui\resources\arrows-skip-back.png" />
+    <Image Include="source\gui\resources\arrows-skip-forward.png" />
+    <Image Include="source\gui\resources\pause-sign.png" />
+    <Image Include="source\gui\resources\screenshot.png" />
+    <Image Include="source\gui\resources\stop.png" />
   </ItemGroup>
 </Project>
