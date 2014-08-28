@@ -1,7 +1,7 @@
 #include "colorPatchTracker.h"
+#include "settings/Settings.h"
 
-
-ColorPatchTracker::ColorPatchTracker(Settings& settings) : _settings(settings)
+ColorPatchTracker::ColorPatchTracker(Settings& settings) : TrackingAlgorithm(settings)
 {
 }
 
