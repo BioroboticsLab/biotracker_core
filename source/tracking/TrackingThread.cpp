@@ -9,6 +9,7 @@
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
 #include "source/helper/StringHelper.h"
 
+
 /**
 * Mutexes.
 */
@@ -276,19 +277,11 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(QString algName)
+void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
-	if (algName == "no tracking")
-	{
-		delete _tracker;
-		_tracker = NULL;
-	}
-	else if(algName == "simple algorithm")
-	{
-		delete _tracker;
-		_tracker = new SimpleTracker(_settings);
-	}
+	delete _tracker;
+	_tracker = &trackingAlgorithm;		
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()

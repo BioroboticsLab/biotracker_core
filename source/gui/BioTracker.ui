@@ -269,7 +269,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="fps_edit"/>
+        <widget class="QLineEdit" name="fps_edit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

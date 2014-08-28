@@ -156,7 +156,7 @@ private:
 		*/
 		void setMaxSpeed (bool enabled);
 
-		void setTrackingAlgorithm(QString algName);
+		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
 signals:
 		/**
 		* Signals when a tracking sequence is done.

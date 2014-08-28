@@ -1,6 +1,7 @@
 #include "source/gui/BioTracker.h"
 #include <sstream>
 #include <string>
+#include <qvector2d.h>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
@@ -32,6 +33,8 @@ void BioTracker::init(){
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
+	qRegisterMetaType<TrackingAlgorithm*>("TrackingAlgorithm");
+	qRegisterMetaType<QVector2D>("QVector2D");
 	initGui();
 	initConnects();
 	ui.sld_video->setDisabled(true);
@@ -59,7 +62,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
-	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), _trackingThread, SLOT(setTrackingAlgorithm(QString)));
+	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -81,6 +84,8 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	
 }
 
 void BioTracker::initAlgorithms()
@@ -326,6 +331,32 @@ void BioTracker::changeFps(int fps)
 	emit enableMaxSpeed(false);
 	emit fpsChange((double)fps);
 	}
+}
+
+void BioTracker::trackingAlgChanged(QString trackingAlg)
+{
+	TrackingAlgorithm* tracker;
+	if (trackingAlg == "no tracking")
+	{		
+		tracker = NULL;
+	}
+	else if(trackingAlg == "simple algorithm")
+	{
+		tracker = new SimpleTracker(_settings);		
+	}
+	connectTrackingAlg(tracker);
+	emit changeTrackingAlg(*tracker);
+}
+
+void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
+{	
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventL		(QVector2D) ), tracker, SLOT(mousePressLeft(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventL		(QVector2D) ), tracker, SLOT(mouseReleaseLeft(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventR		(QVector2D) ), tracker, SLOT(mousePressRight(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventR		(QVector2D) ), tracker, SLOT(mouseReleaseRight(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventM		(QVector2D) ), tracker, SLOT(mousePressMiddle(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventM		(QVector2D) ), tracker, SLOT(mouseReleaseMiddle(QVector2D) ));
+	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 }
 
 void BioTracker::takeScreenshot()

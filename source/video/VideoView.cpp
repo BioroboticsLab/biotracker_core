@@ -12,7 +12,8 @@ changed by Tobias von Falkenhausen
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
-{}
+{
+}
 
 void VideoView::showImage(cv::Mat img)
 {
@@ -99,4 +100,40 @@ void VideoView::resizeGL(int width, int height)
 void VideoView::takeScreenshot(QString screenShotFilename)
 {
 	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
+}
+
+void VideoView::mousePressEvent(QMouseEvent *e)
+{
+	switch (e->button())
+	{
+		case Qt::LeftButton:       
+			emit mousePressEventL(QVector2D(e->pos()));			
+			break;
+		case Qt::RightButton:
+			emit mousePressEventR(QVector2D(e->pos()));
+			break;
+		case Qt::MiddleButton:      
+			emit mousePressEventM(QVector2D(e->pos()));
+			break;
+		default: 
+			break;
+	}
+}
+
+void VideoView::mouseReleaseEvent(QMouseEvent *e)
+{
+	switch (e->button())
+	{
+		case Qt::LeftButton:       
+			emit mouseReleaseEventL(QVector2D(e->pos()));			
+			break;
+		case Qt::RightButton:
+			emit mouseReleaseEventR(QVector2D(e->pos()));
+			break;
+		case Qt::MiddleButton:      
+			emit mouseReleaseEventM(QVector2D(e->pos()));
+			break;
+		default: 
+			break;
+	}
 }

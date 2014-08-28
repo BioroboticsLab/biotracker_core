@@ -22,10 +22,13 @@
 #include <source/settings/Settings.h>
 #include <source/tracking/TrackingThread.h>
 #include <source/video/VideoView.h>
+#include "source/tracking/TrackingAlgorithm.h"
+#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;
 	class VideoView;
+	class TrackingAlgorithm;
 
 
 class BioTracker: public QMainWindow
@@ -50,6 +53,8 @@ public slots:
 	void pauseCapture();
 	//change video playback speed
 	void changeFps(int fps);
+	//different tracking algorithm was selected
+	void trackingAlgChanged(QString trackingAlg);
 
 
 	// SLOTS FOR TRACKING THREAD: 	
@@ -102,6 +107,7 @@ private:
 	void initConnects();
 	void initCapture();
 	void initAlgorithms();
+	void connectTrackingAlg(TrackingAlgorithm* tracker);
 
 
 	
@@ -126,6 +132,9 @@ signals:
 	
 	//enable max playback speed
 	void enableMaxSpeed (bool enabled);
+
+	//change tracking algorithm
+	void changeTrackingAlg(TrackingAlgorithm &trackingAlgorithm);
 
 };
 

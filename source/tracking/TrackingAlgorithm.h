@@ -6,9 +6,12 @@
 #include <vector>
 #include <source/video/Rectification.h>
 #include <source/settings/Settings.h>
+#include <qvector2d.h>
+#include <source/settings/Messages.h>
 
 
-class TrackingAlgorithm{
+class TrackingAlgorithm : public QObject{
+	Q_OBJECT
 public:
 	TrackingAlgorithm(Settings& settings);
 	virtual ~TrackingAlgorithm();
@@ -27,6 +30,22 @@ public:
 	* @return: void.
 	*/
 	virtual void reset() = 0;
+
+public slots:
+	//mouse click events for each button
+	void mousePressLeft(QVector2D point);
+	void mouseReleaseLeft(QVector2D point);
+	void mousePressRight(QVector2D point);
+	void mouseReleaseRight(QVector2D point);
+	void mousePressMiddle(QVector2D point);
+	void mouseReleaseMiddle(QVector2D point);
+	
+signals:
+	/**
+	* send a message to the GUI.
+	*/
+	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+
 
 protected:
 	Settings &_settings;
