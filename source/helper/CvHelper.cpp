@@ -1,6 +1,6 @@
 #include "CvHelper.h"
 
-#include "helper/StringHelper.h"
+#include "source/helper/StringHelper.h"
 
 CvPoint CvHelper::subtractTwoCvPoints(CvPoint a, CvPoint b)
 {
