@@ -13,6 +13,8 @@
 #include <QtCore/QSettings>
 #include <QtGui/QCloseEvent>
 #include <QtCore/QString>
+#include <QDir>
+#include <QTemporaryDir>
 
 //Open Tracker
 #include "source/settings/Messages.h"
@@ -40,6 +42,8 @@ public:
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
+	// open file browser for picture in/out
+	void browsePicture();
 	//checks current state (stopped,paused or playing)
 	//and then sends appropriate signal to tracking thread
 	void runCapture();
@@ -107,6 +111,7 @@ private:
 	void initConnects();
 	void initCapture();
 	void initAlgorithms();
+	void initPicture(QStringList filenames);
 	void connectTrackingAlg(TrackingAlgorithm* tracker);
 
 

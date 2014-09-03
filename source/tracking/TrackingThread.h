@@ -13,7 +13,6 @@
 #include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 
-
 class TrackingThread : public QThread
 {
 	Q_OBJECT
@@ -26,6 +25,11 @@ public:
 	* @return: void.
 	*/
 	void startCapture();
+
+	/**
+	* Loads in pictures instead of a video
+	*/
+	void loadPictures(QStringList filenames);
 
 	/**
 	* Reset
@@ -58,8 +62,10 @@ private:
 	* Video handling.
 	*/
 	// For reading the video file or video stream
-	cv::VideoCapture _capture;
-
+	cv::VideoCapture _capture;	
+	
+	//defines whether to use pictures as source or a video
+	bool _pictureMode;
 	bool _captureActive;
 	bool _trackerActive;
 	bool _readyForNextFrame;
@@ -69,7 +75,11 @@ private:
 	int _frameNumber;
 	bool _maxSpeed;
 	QWaitCondition _pauseCond;
+	
+	//contains filenames of all pictures that were selected by user
+	QStringList _pictureFiles;
 
+	cv::Mat getPicture(int index);
 
 	Settings &_settings;
 
