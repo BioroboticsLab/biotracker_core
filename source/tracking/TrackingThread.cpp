@@ -215,7 +215,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 		}
 		else
 		{
-		_capture >> frame;
+			_capture >> frame;
 		}
 
 		if (_tracker) {
@@ -244,7 +244,7 @@ void TrackingThread::nextFrame()
 	}
 	else
 	{
-	_capture >> frame;
+		_capture >> frame;
 	}
 	incrementFrameNumber();
 
@@ -270,7 +270,19 @@ void TrackingThread::nextFrame()
 cv::Mat TrackingThread::doTracking(cv::Mat frame)
 {
 	QMutexLocker locker(&trackerMutex);
-	return _tracker->track(_trackedObjects, _frameNumber, frame);
+	cv::Mat retFrame;
+	try
+	{
+		retFrame=_tracker->track(_trackedObjects, _frameNumber, frame);
+		return retFrame;
+	}
+	catch(exception& e)
+	{
+		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
+	}
+	//return original frame if tracking didnt work
+	return frame;
+	
 }
 
 int TrackingThread::getFrameNumber()
