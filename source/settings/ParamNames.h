@@ -83,19 +83,8 @@ namespace FISHPARAM
 
 namespace GUIPARAM
 {
-	// FPS label
-	const std::string ENABLE_LABEL_FPS			= "GUIPARAM/ENABLE_LABEL_FPS";
-	// Fish id label
-	const std::string ENABLE_LABEL_FISH_ID		= "GUIPARAM/ENABLE_LABEL_FISH_ID";
-	// Replica marker
-	const std::string ENABLE_LABEL_REPLICA		= "GUIPARAM/ENABLE_LABEL_REPLICA";
-	// Fish position
-	const std::string ENABLE_LABEL_FISH_POS		= "GUIPARAM/ENABLE_LABEL_FISH_POS";
-	// Fish orientation
-	const std::string ENABLE_LABEL_FISH_ORI		= "GUIPARAM/ENABLE_LABEL_FISH_ORI";
-	
-	
-	
+	// true if video is loaded, false if picture is loaded
+	const std::string IS_SOURCE_VIDEO			= "GUIPARAM/IS_SOURCE_VIDEO";
 }
 
 namespace FISHTANKPARAM
@@ -105,6 +94,11 @@ namespace FISHTANKPARAM
 	const std::string FISHTANK_AREA_HEIGHT		= "FISHTANKPARAM/FISHTANK_AREA_HEIGHT";
 	const std::string FISHTANK_FISH_AMOUNT		= "FISHTANKPARAM/FISHTANK_FISH_AMOUNT";
 	const std::string FISHTANK_AREA_COORDINATES = "FISHTANKPARAM/FISHTANK_AREA_COORDINATES";
+}
+namespace PICTUREPARAM
+{
+	//path to picture
+	const std::string PICTURE_FILE = "PICTUREPARAM/PICTURE_FILE";
 }
 		
 namespace CAPTUREPARAM

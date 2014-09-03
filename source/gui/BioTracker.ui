@@ -269,7 +269,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="fps_edit"/>
+        <widget class="QLineEdit" name="fps_edit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -594,6 +598,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_Video"/>
+    <addaction name="actionOpen_Picture"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -609,6 +614,11 @@
   <action name="actionOpen_Video">
    <property name="text">
     <string>Open Video</string>
+   </property>
+  </action>
+  <action name="actionOpen_Picture">
+   <property name="text">
+    <string>Open Picture</string>
    </property>
   </action>
  </widget>

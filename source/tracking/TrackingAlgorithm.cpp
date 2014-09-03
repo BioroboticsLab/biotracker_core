@@ -1,7 +1,9 @@
 #include "TrackingAlgorithm.h"
 
-TrackingAlgorithm::TrackingAlgorithm(Settings& settings) : _settings(settings) {
+TrackingAlgorithm::TrackingAlgorithm(Settings & settings) : _settings(settings) 
+{
 }
 
-TrackingAlgorithm::~TrackingAlgorithm() {
+TrackingAlgorithm::~TrackingAlgorithm() 
+{
 }

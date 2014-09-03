@@ -1,6 +1,7 @@
 #include "source/gui/BioTracker.h"
 #include <sstream>
 #include <string>
+#include <qvector2d.h>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
@@ -32,6 +33,8 @@ void BioTracker::init(){
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
+	qRegisterMetaType<TrackingAlgorithm*>("TrackingAlgorithm");
+	qRegisterMetaType<QVector2D>("QVector2D");
 	initGui();
 	initConnects();
 	ui.sld_video->setDisabled(true);
@@ -52,6 +55,7 @@ void BioTracker::initConnects()
 {
 	//File -> Open Video
 	QObject::connect(ui.actionOpen_Video, SIGNAL(triggered()), this, SLOT(browseVideo()));
+	QObject::connect(ui.actionOpen_Picture, SIGNAL(triggered()), this, SLOT(browsePicture()));	
 	//video playfield buttons
 	QObject::connect(ui.button_playPause, SIGNAL(clicked()), this, SLOT(runCapture()));
 	QObject::connect(ui.button_stop, SIGNAL(clicked()), this, SLOT(stopCapture()));
@@ -59,7 +63,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
-	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), _trackingThread, SLOT(setTrackingAlgorithm(QString)));
+	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -81,6 +85,8 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	
 }
 
 void BioTracker::initAlgorithms()
@@ -98,9 +104,40 @@ void BioTracker::browseVideo()
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv)"));
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
+		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"true");
 		initCapture();
-	}
-	
+	}	
+}
+void BioTracker::browsePicture()
+{
+	stopCapture();
+	QStringList  filenames = QFileDialog::getOpenFileNames(this, tr("Open video"), "", 
+		tr("image Files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)"));
+	if(!filenames.isEmpty()){
+		_settings.setParam(PICTUREPARAM::PICTURE_FILE,filenames.first().toStdString());
+		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"false");		
+		initPicture(filenames);
+	}	
+}
+void BioTracker::initPicture(QStringList filenames)
+{	
+	_videoStopped = false;
+	_videoPaused = true;
+	emit videoPause(true);
+	_trackingThread->loadPictures(filenames);
+	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
+	ui.sld_video->setDisabled(false);
+	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	updateFrameNumber(_currentFrame);
+	emit changeFrame(_currentFrame);
+	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
+	ui.frame_num_edit->setEnabled(true);
+	ui.sld_speed->setValue(_trackingThread->getFps());
+	std::stringstream ss;
+	double fps = _trackingThread->getFps();
+    ss << std::setprecision(5) << fps;
+	ui.fps_label->setText(StringHelper::toQString(ss.str()));
+	setPlayfieldPaused(true);
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
@@ -217,11 +254,12 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
 	if(frameNumber == ui.sld_video->maximum())
 	{
-		emit videoStop();
+		
+		emit videoPause(true);
 		_videoPaused = true;
-		_videoStopped = true;
 		setPlayfieldPaused(true);
 		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(0));
+		
 	}
 }
 
@@ -278,18 +316,19 @@ void BioTracker::changeCurrentFramebySlider(int SliderAction)
 		fNum += ui.sld_video->pageStep();
 		if (fNum > ui.sld_video->maximum())
 			fNum = ui.sld_video->maximum();
+		changeCurrentFramebySlider();
 		break;
 	//SliderPageStepSub
 	case 4:
 		fNum -= ui.sld_video->pageStep();
 		if(fNum < 0 )
 			fNum = 0;
+		changeCurrentFramebySlider();
 		break;
 	default:
 		break;
 	}
-	updateFrameNumber(fNum);
-	changeCurrentFramebySlider();
+	updateFrameNumber(fNum);	
 }
 void BioTracker::changeCurrentFramebyEdit()
 {	
@@ -326,6 +365,32 @@ void BioTracker::changeFps(int fps)
 	emit enableMaxSpeed(false);
 	emit fpsChange((double)fps);
 	}
+}
+
+void BioTracker::trackingAlgChanged(QString trackingAlg)
+{
+	TrackingAlgorithm* tracker;
+	if (trackingAlg == "no tracking")
+	{		
+		tracker = NULL;
+	}
+	else if(trackingAlg == "simple algorithm")
+	{
+		tracker = new SimpleTracker(_settings);		
+	}
+	connectTrackingAlg(tracker);
+	emit changeTrackingAlg(*tracker);
+}
+
+void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
+{	
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventL		(QVector2D) ), tracker, SLOT(mousePressLeft(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventL		(QVector2D) ), tracker, SLOT(mouseReleaseLeft(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventR		(QVector2D) ), tracker, SLOT(mousePressRight(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventR		(QVector2D) ), tracker, SLOT(mouseReleaseRight(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventM		(QVector2D) ), tracker, SLOT(mousePressMiddle(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventM		(QVector2D) ), tracker, SLOT(mouseReleaseMiddle(QVector2D) ));
+	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 }
 
 void BioTracker::takeScreenshot()

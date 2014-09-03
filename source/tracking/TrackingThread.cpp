@@ -9,6 +9,7 @@
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
 #include "source/helper/StringHelper.h"
 
+
 /**
 * Mutexes.
 */
@@ -54,9 +55,19 @@ void TrackingThread::startCapture()
 			" (#frames: " + StringHelper::iToSS(getVideoLength()) + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		enableCapture(true);
+		_pictureMode = false;
 		_fps = _capture.get(CV_CAP_PROP_FPS);
 		QThread::start();
 	}
+}
+
+void TrackingThread::loadPictures(QStringList  filenames)
+{
+	_pictureMode = true;
+	_pictureFiles = filenames;
+	enableCapture(true);
+	_fps = 1;
+	QThread::start();	
 }
 
 void TrackingThread::stopCapture()
@@ -98,11 +109,19 @@ void TrackingThread::run()
 			t = clock();
 		if(isReadyForNextFrame()){
 			// measure the capture start time			
-			if (!_capture.isOpened())	{	break;	}
+			if (!_capture.isOpened() && !_pictureMode)	{	break;	}
 
-			// capture the frame
-			_capture >> frame;	
-			incrementFrameNumber();
+			if(_pictureMode)
+			{
+				incrementFrameNumber();
+				frame = getPicture(_frameNumber);
+			}
+			else
+			{
+				// capture the frame
+				_capture >> frame;	
+				incrementFrameNumber();
+			}			
 
 			// exit if last frame is reached
 			//TODO: need to check memory violation thing here!
@@ -145,9 +164,26 @@ void TrackingThread::run()
 
 		}
 	}
-	if(!isCaptureActive())
-		_capture.release();
+	//if(!isCaptureActive())
+	//	_capture.release();
 	_frameNumber = 0;
+}
+
+cv::Mat TrackingThread::getPicture(int index)
+{
+	//check if index in range
+	if(index < _pictureFiles.length() && index >= 0)
+	{
+		std::string filename = _pictureFiles.at(index).toStdString();
+		return cv::imread(filename);
+	}
+	else
+	{
+		//return empty Picture if index out of range
+		cv::Mat emptyPic;
+		return emptyPic;
+	}
+
 }
 
 void TrackingThread::enableCapture(bool enabled)
@@ -173,7 +209,14 @@ void TrackingThread::setFrameNumber(int frameNumber)
 		_frameNumber = frameNumber;		
 		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
 		cv::Mat frame;
+		if(_pictureMode)
+		{
+			frame = getPicture(_frameNumber);
+		}
+		else
+		{
 		_capture >> frame;
+		}
 
 		if (_tracker) {
 			frame = frame = doTracking(frame);
@@ -195,7 +238,14 @@ void TrackingThread::nextFrame()
 {
 	// capture the frame
 	cv::Mat frame;
-	_capture >> frame;	
+	if(_pictureMode)
+	{
+		frame = getPicture(_frameNumber+1);
+	}
+	else
+	{
+	_capture >> frame;
+	}
 	incrementFrameNumber();
 
 	// only works if last frame not yet reached
@@ -259,7 +309,14 @@ bool TrackingThread::isVideoPause()
 
 int TrackingThread::getVideoLength()
 {
-	return _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	if(_pictureMode)
+	{
+		return _pictureFiles.length();
+	}
+	else
+	{
+		return _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	}
 }
 
 
@@ -276,19 +333,11 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(QString algName)
+void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
-	if (algName == "no tracking")
-	{
-		delete _tracker;
-		_tracker = NULL;
-	}
-	else if(algName == "simple algorithm")
-	{
-		delete _tracker;
-		_tracker = new SimpleTracker(_settings);
-	}
+	delete _tracker;
+	_tracker = &trackingAlgorithm;		
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()
