@@ -1,4 +1,4 @@
-#include "BioTracker.h"
+#include "source/gui/BioTracker.h"
 #include <sstream>
 #include <string>
 
@@ -26,8 +26,8 @@ void BioTracker::init(){
 	_videoStopped = true;
 	_currentFrame = 0;
 	_trackingThread = new TrackingThread(_settings);
-	_iconPause.addFile(QStringLiteral(":/BioTracker/pix/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
-	_iconPlay.addFile(QStringLiteral(":/BioTracker/pix/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
+	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
+	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
 	//meta types
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
@@ -63,8 +63,10 @@ void BioTracker::initConnects()
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
+	QObject::connect(ui.sld_video, SIGNAL( sliderMoved(int) ), this, SLOT( updateFrameNumber(int)));
 	QObject::connect(ui.sld_video, SIGNAL( sliderReleased() ), this, SLOT( changeCurrentFramebySlider()));
-	QObject::connect(ui.sld_speed, SIGNAL( sliderMoved(int) ), this, SLOT( changeFps(int)));
+	QObject::connect(ui.sld_video, SIGNAL( actionTriggered(int) ), this, SLOT( changeCurrentFramebySlider(int)));	
+	QObject::connect(ui.sld_speed, SIGNAL( valueChanged(int) ), this, SLOT( changeFps(int)));
 
 
 	//tracking thread signals
@@ -152,11 +154,12 @@ void BioTracker::initCapture()
 	_videoPaused = true;
 	emit videoPause(true);
 	_trackingThread->startCapture();
-	ui.sld_video->setMaximum(_trackingThread->getVideoLength());		
+	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
 	ui.sld_video->setDisabled(false);
+	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
 	updateFrameNumber(_currentFrame);
 	emit changeFrame(_currentFrame);
-	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength(), this) );
+	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
 	ui.frame_num_edit->setEnabled(true);
 	ui.sld_speed->setValue(_trackingThread->getFps());
 	std::stringstream ss;
@@ -201,12 +204,6 @@ void BioTracker::stopCapture()
 	_videoStopped = true;
 	_videoPaused = true;	
 	emit videoStop();
-	if(!_trackingThread->wait(5000)) //Wait until it actually has terminated (max. 5 sec)
-	{
-		printGuiMessage("Thread deadlock detected! Terminating now!",MSGS::FAIL);
-		_trackingThread->terminate(); //Thread didn't exit in time, probably deadlocked, terminate it!
-		_trackingThread->wait(); //Note: We have to wait again here!
-	}
 	setPlayfieldPaused(true);
 	updateFrameNumber(0);
 	ui.sld_video->setDisabled(true);
@@ -218,6 +215,14 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	_currentFrame = frameNumber;
 	ui.sld_video->setValue(_currentFrame);
 	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
+	if(frameNumber == ui.sld_video->maximum())
+	{
+		emit videoStop();
+		_videoPaused = true;
+		_videoStopped = true;
+		setPlayfieldPaused(true);
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(0));
+	}
 }
 
 void BioTracker::drawImage(cv::Mat image)
@@ -259,8 +264,32 @@ void BioTracker::changeCurrentFramebySlider()
 {	
 	int value = ui.sld_video->value();	
 	emit changeFrame(value);
-	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
 	updateFrameNumber(value);
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	
+}
+void BioTracker::changeCurrentFramebySlider(int SliderAction)
+{
+	int fNum = _currentFrame;
+	switch(SliderAction)
+	{
+	//SliderPageStepAdd
+	case 3:
+		fNum += ui.sld_video->pageStep();
+		if (fNum > ui.sld_video->maximum())
+			fNum = ui.sld_video->maximum();
+		break;
+	//SliderPageStepSub
+	case 4:
+		fNum -= ui.sld_video->pageStep();
+		if(fNum < 0 )
+			fNum = 0;
+		break;
+	default:
+		break;
+	}
+	updateFrameNumber(fNum);
+	changeCurrentFramebySlider();
 }
 void BioTracker::changeCurrentFramebyEdit()
 {	

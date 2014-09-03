@@ -78,14 +78,8 @@
        <x>10</x>
        <y>20</y>
        <width>721</width>
-       <height>451</height>
+       <height>461</height>
       </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
      </property>
     </widget>
    </widget>
@@ -118,7 +112,7 @@
      </property>
      <property name="icon">
       <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/arrows-skip-back.png</normaloff>:/BioTracker/pix/arrows-skip-back.png</iconset>
+       <normaloff>:/BioTracker/resources/arrows-skip-back.png</normaloff>:/BioTracker/resources/arrows-skip-back.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -144,7 +138,7 @@
      </property>
      <property name="icon">
       <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/arrow-forward1.png</normaloff>:/BioTracker/pix/arrow-forward1.png</iconset>
+       <normaloff>:/BioTracker/resources/arrow-forward1.png</normaloff>:/BioTracker/resources/arrow-forward1.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -170,7 +164,7 @@
      </property>
      <property name="icon">
       <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/stop.png</normaloff>:/BioTracker/pix/stop.png</iconset>
+       <normaloff>:/BioTracker/resources/stop.png</normaloff>:/BioTracker/resources/stop.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -196,7 +190,7 @@
      </property>
      <property name="icon">
       <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/arrows-skip-forward.png</normaloff>:/BioTracker/pix/arrows-skip-forward.png</iconset>
+       <normaloff>:/BioTracker/resources/arrows-skip-forward.png</normaloff>:/BioTracker/resources/arrows-skip-forward.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -331,7 +325,7 @@
      </property>
      <property name="icon">
       <iconset resource="BioTracker.qrc">
-       <normaloff>:/BioTracker/pix/screenshot.png</normaloff>:/BioTracker/pix/screenshot.png</iconset>
+       <normaloff>:/BioTracker/resources/screenshot.png</normaloff>:/BioTracker/resources/screenshot.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -623,7 +617,7 @@
   <customwidget>
    <class>VideoView</class>
    <extends>QWidget</extends>
-   <header>video/VideoView.h</header>
+   <header>source/video/videoview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

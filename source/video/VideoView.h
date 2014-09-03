@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <QtOpenGL>
 #include <iostream>
-#include "helper/StringHelper.h"
+#include "source/helper/StringHelper.h"
 
 class VideoView : public QGLWidget
 {

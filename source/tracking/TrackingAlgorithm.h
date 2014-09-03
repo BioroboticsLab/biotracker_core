@@ -2,10 +2,10 @@
 #define TrackingAlgorithm_H
 
 #include <cv.h>
-#include <trackedObject/TrackedObject.h>
+#include <source/trackedObject/TrackedObject.h>
 #include <vector>
-#include <video/Rectification.h>
-#include <settings/Settings.h>
+#include <source/video/Rectification.h>
+#include <source/settings/Settings.h>
 
 
 class TrackingAlgorithm{

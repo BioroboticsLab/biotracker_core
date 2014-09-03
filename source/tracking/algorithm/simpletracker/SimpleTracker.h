@@ -3,7 +3,7 @@
 
 #include <opencv.hpp>
 
-#include "tracking/TrackingAlgorithm.h"
+#include "source/tracking/TrackingAlgorithm.h"
 #include "TrackedFish.h"
 #include "FishCandidate.h"
 

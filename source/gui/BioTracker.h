@@ -15,13 +15,13 @@
 #include <QtCore/QString>
 
 //Open Tracker
-#include "settings/Messages.h"
-#include "helper/CvHelper.h"
-#include "helper/StringHelper.h"
-#include "ui_BioTracker.h"
-#include <settings/Settings.h>
-#include <tracking/TrackingThread.h>
-#include <video/VideoView.h>
+#include "source/settings/Messages.h"
+#include "source/helper/CvHelper.h"
+#include "source/helper/StringHelper.h"
+#include "GeneratedFiles/ui_BioTracker.h"
+#include <source/settings/Settings.h>
+#include <source/tracking/TrackingThread.h>
+#include <source/video/VideoView.h>
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;
@@ -75,6 +75,7 @@ public slots:
 
 	//void changeCurrentFrame();
 	void changeCurrentFramebySlider();
+	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();

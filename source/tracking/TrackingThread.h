@@ -7,10 +7,10 @@
 #include <fstream>
 #include <QtCore/QThread>
 //#include <video/Rectification.h>
-#include <settings/Settings.h>
-#include <settings/Messages.h>
-#include <trackedObject/TrackedObject.h>
-#include <tracking/TrackingAlgorithm.h>
+#include <source/settings/Settings.h>
+#include <source/settings/Messages.h>
+#include <source/trackedObject/TrackedObject.h>
+#include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 
 

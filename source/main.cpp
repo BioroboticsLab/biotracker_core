@@ -1,6 +1,6 @@
-#include "BioTracker.h"
+#include "source/gui/BioTracker.h"
 #include <QtWidgets/QApplication>
-#include "settings/Settings.h"
+#include "source/settings/Settings.h"
 
 int main(int argc, char *argv[])
 {

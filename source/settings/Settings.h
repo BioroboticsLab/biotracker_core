@@ -9,8 +9,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QString>
 
-#include "settings/ParamNames.h"
-#include "settings/Param.h"
+#include "source/settings/ParamNames.h"
+#include "source/settings/Param.h"
 
 class Settings
 {

@@ -1,8 +1,8 @@
 #ifndef TrackedFish_H
 #define TrackedFish_H
 
-#include "trackedObject/TrackedObject.h"
-#include "trackedObject/History.h"
+#include "source/trackedObject/TrackedObject.h"
+#include "source/trackedObject/History.h"
 
 #include <opencv.hpp>
 

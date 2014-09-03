@@ -1,7 +1,7 @@
 #include "Settings.h"
 
-#include "helper/StringHelper.h"
-#include "helper/CvHelper.h"
+#include "source/helper/StringHelper.h"
+#include "source/helper/CvHelper.h"
 
 /**
 * Mutexes.
