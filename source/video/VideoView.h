@@ -18,12 +18,13 @@ public:
 	void takeScreenshot(QString screenShotFilename);
 
 protected:
-	void mousePressEvent(QMouseEvent *e);
-	void mouseReleaseEvent(QMouseEvent *e);
-
 	void initializeGL(); 
 	void paintGL(); 
     void resizeGL(int width, int height);
+	void mouseMoveEvent( QMouseEvent * e );
+	void mousePressEvent( QMouseEvent * e );
+	void mouseReleaseEvent( QMouseEvent * e );
+
 private:
 	GLuint _texture; 
     QVector<QVector2D> _vertices; 
@@ -32,15 +33,9 @@ private:
 
 signals:
 	//events for port mouse button 
-	void mousePressEventL(QVector2D point);
-	void mouseReleaseEventL(QVector2D Point);
-	//events for starboard mouse button
-	void mousePressEventR(QVector2D point);
-	void mouseReleaseEventR(QVector2D point);
-	//events for prow mouse button
-	void mousePressEventM(QVector2D point);
-	void mouseReleaseEventM(QVector2D point);
-
+	void moveEvent( QMouseEvent * e );
+	void pressEvent( QMouseEvent * e );
+	void releaseEvent( QMouseEvent * e );
 
 };
 #endif // !VideoView_H

@@ -168,3 +168,5 @@ void SimpleTracker::reset() {
 static bool isYounger(const TrackedFish& a, const TrackedFish& b) {
 	return a.age_of_last_known_position() < b.age_of_last_known_position();
 }
+
+void SimpleTracker::paint		( cv::Mat& image ){}

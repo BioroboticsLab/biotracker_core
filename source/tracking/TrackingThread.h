@@ -102,7 +102,7 @@ private:
 	* sends frame and everything else that is needed to selected 
 	* tracking algorithm and receives output frame
 	*/
-	cv::Mat doTracking(cv::Mat frame);
+	void doTracking(cv::Mat frame);
 
 	
 	/**

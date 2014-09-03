@@ -20,6 +20,7 @@ public:
 	virtual ~SimpleTracker	( void );
 	void track				( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame );
 	void reset				();
+	void paint			( cv::Mat& image );
 
 private:
 	cv::BackgroundSubtractorMOG2	_bg_subtractor;

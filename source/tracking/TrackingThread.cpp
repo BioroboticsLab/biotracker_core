@@ -131,7 +131,7 @@ void TrackingThread::run()
 			//send frame to tracking algorithm
 			//NOTE: this is just for testing!
 			if (_tracker) {
-				frame = doTracking(frame);
+				doTracking(frame);
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
@@ -219,7 +219,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 		}
 
 		if (_tracker) {
-			frame = frame = doTracking(frame);
+			doTracking(frame);
 		}
 		emit trackingSequenceDone(frame);
 
@@ -256,7 +256,7 @@ void TrackingThread::nextFrame()
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
 		if (_tracker) {
-			frame = doTracking(frame);
+			doTracking(frame);
 		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);
@@ -267,22 +267,18 @@ void TrackingThread::nextFrame()
 	}
 }
 
-cv::Mat TrackingThread::doTracking(cv::Mat frame)
+void TrackingThread::doTracking(cv::Mat frame)
 {
 	QMutexLocker locker(&trackerMutex);
 	cv::Mat retFrame;
 	try
 	{
-		retFrame=_tracker->track(_trackedObjects, _frameNumber, frame);
-		return retFrame;
+		_tracker->track(_trackedObjects, _frameNumber, frame);
 	}
 	catch(exception& e)
 	{
 		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
 	}
-	//return original frame if tracking didnt work
-	return frame;
-	
 }
 
 int TrackingThread::getFrameNumber()

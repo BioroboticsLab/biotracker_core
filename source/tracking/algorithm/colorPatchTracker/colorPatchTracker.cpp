@@ -8,3 +8,6 @@ ColorPatchTracker::ColorPatchTracker(Settings& settings) : TrackingAlgorithm(set
 ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
+void ColorPatchTracker::track(std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame){}
+void ColorPatchTracker::paint		( cv::Mat& image ){}
+void ColorPatchTracker::reset		(){}

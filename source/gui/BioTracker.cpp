@@ -1,7 +1,6 @@
 #include "source/gui/BioTracker.h"
 #include <sstream>
 #include <string>
-#include <qvector2d.h>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
@@ -33,8 +32,6 @@ void BioTracker::init(){
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
-	qRegisterMetaType<TrackingAlgorithm*>("TrackingAlgorithm");
-	qRegisterMetaType<QVector2D>("QVector2D");
 	initGui();
 	initConnects();
 	ui.sld_video->setDisabled(true);
@@ -91,7 +88,7 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no tracking","simple algorithm"};
+	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher"};
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);
@@ -378,18 +375,24 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
 		tracker = new SimpleTracker(_settings);		
 	}
+	else if(trackingAlg == "bees book tag matcher")
+	{
+		tracker = new BeesBookTagMatcher(_settings);
+	}
+	else if ( trackingAlg == "color patch tag matcher" )
+	{
+		tracker = new ColorPatchTracker(_settings);
+	}
 	connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);
 }
 
 void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 {	
-	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventL		(QVector2D) ), tracker, SLOT(mousePressLeft(QVector2D) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventL		(QVector2D) ), tracker, SLOT(mouseReleaseLeft(QVector2D) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventR		(QVector2D) ), tracker, SLOT(mousePressRight(QVector2D) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventR		(QVector2D) ), tracker, SLOT(mouseReleaseRight(QVector2D) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mousePressEventM		(QVector2D) ), tracker, SLOT(mousePressMiddle(QVector2D) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mouseReleaseEventM		(QVector2D) ), tracker, SLOT(mouseReleaseMiddle(QVector2D) ));
+	QObject::connect(ui.videoView,		SIGNAL ( pressEvent		(QMouseEvent*) ), tracker, SLOT(mousePressEvent(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), tracker, SLOT(mouseReleaseEvent(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( moveEvent		(QMouseEvent*) ), tracker, SLOT(mouseMoveEvent(QMouseEvent*) ));
+	
 	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 }
 

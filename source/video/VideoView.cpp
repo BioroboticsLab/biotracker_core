@@ -9,6 +9,7 @@ changed by Tobias von Falkenhausen
 */
 
 #include "VideoView.h"
+#include<QMouseEvent>
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
@@ -102,38 +103,17 @@ void VideoView::takeScreenshot(QString screenShotFilename)
 	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
 }
 
-void VideoView::mousePressEvent(QMouseEvent *e)
+void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
-	switch (e->button())
-	{
-		case Qt::LeftButton:       
-			emit mousePressEventL(QVector2D(e->pos()));			
-			break;
-		case Qt::RightButton:
-			emit mousePressEventR(QVector2D(e->pos()));
-			break;
-		case Qt::MiddleButton:      
-			emit mousePressEventM(QVector2D(e->pos()));
-			break;
-		default: 
-			break;
-	}
+	emit moveEvent ( e );
 }
 
-void VideoView::mouseReleaseEvent(QMouseEvent *e)
+void VideoView::mousePressEvent( QMouseEvent * e )
 {
-	switch (e->button())
-	{
-		case Qt::LeftButton:       
-			emit mouseReleaseEventL(QVector2D(e->pos()));			
-			break;
-		case Qt::RightButton:
-			emit mouseReleaseEventR(QVector2D(e->pos()));
-			break;
-		case Qt::MiddleButton:      
-			emit mouseReleaseEventM(QVector2D(e->pos()));
-			break;
-		default: 
-			break;
-	}
+	emit pressEvent ( e );
+}
+
+void VideoView::mouseReleaseEvent( QMouseEvent * e )
+{
+	emit releaseEvent ( e );
 }
