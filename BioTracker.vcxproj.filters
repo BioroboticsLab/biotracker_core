@@ -37,6 +37,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -63,6 +72,15 @@
     <ClInclude Include="source\tracking\TrackingAlgorithm.h" />
     <ClInclude Include="source\video\ImagePreProcessor.h" />
     <ClInclude Include="source\video\Rectification.h" />
+    <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="source\tracking\TrackingThread.h" />
