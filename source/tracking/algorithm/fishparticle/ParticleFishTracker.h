@@ -2,6 +2,7 @@
 #define COMPLEX_TRACKER_H_
 
 #include "source/tracking/TrackingAlgorithm.h"
+#include "preprocessing/FramePreprocessor.h"
 
 class ParticleFishTracker :
 	public TrackingAlgorithm
@@ -9,8 +10,12 @@ class ParticleFishTracker :
 public:
 	ParticleFishTracker(Settings& settings);
 	virtual ~ParticleFishTracker(void);
-	virtual cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame);
+	virtual void track(std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat& frame);
+	virtual void paint(cv::Mat& image);
 	virtual void reset();
+
+private:
+	FramePreprocessor _preprocessor;
 };
 
 #endif

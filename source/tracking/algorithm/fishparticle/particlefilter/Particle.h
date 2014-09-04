@@ -1,10 +1,13 @@
 #ifndef PARTICLE_H_
 #define PARTICLE_H_
 
+/**
+* Represents a 3D (x, y, angle) particle used in the particle filter. Has an ID
+* and a few utility methods (for calculating distances to other particles etc.).
+*/
 class Particle
 {
 public:
-	Particle(void);
 	Particle(int x, int y, float a, int id);
 	~Particle(void);
 
@@ -35,74 +38,46 @@ public:
 	float getY() { return _y; }
 
 	/**
-	 *
+	 * Standard setter for the angle of the particle. IN DEGREES.
 	 */
 	void setAngleDegree(float angle_degree) { _angle_degree = angle_degree; }
 
 	/**
-	 *
+	 * Standard getter for the angle of the particle.
 	 */
 	float getAngleDegree() { return _angle_degree; }
 
 	/**
-	 *
+	 * Sets the ID of the particle. IDs	should be unique within a set of particles.
 	 */
-	void setWidth(int width) { _width = width; }
-
-	/**
-	 *
-	 */
-	float getWidth() { return _width; }
-
-	/**
-	 *
-	 */
-	void setHeight(int height) { _height = height; }
-
-	/**
-	 *
-	 */
-	float getHeight() { return _height; }
-	
-	/**
-	 * TODO: Kommentare ausfüllen.
-	 */
-	void setBelief(double belief) { _belief = belief; }
-
-	void incrementBelief( ) {_belief++;}
-
-	void addBelief(Particle p) {_belief = _belief + p.getBelief();}
-
-	/**
-	 * TODO: Kommentare ausfüllen.
-	 */
-	double getBelief() { return _belief; }
-
 	void setID(int id) { _id = id; };
 	
+	/**
+	 * Gets the ID of the particle.	IDs should be unique within a set of particles.
+	 */
 	int getID() { return _id; };
 
-	bool operator < (Particle p) {return p._belief < _belief; }
-
-	void add( Particle p );
-	void mul( double a );
-	void mean( Particle p );
-	void mean_weighted( Particle p, float w1 = 0, float w2 = 0);
-	double mean_angle( double a, double b );
-	double mean_angle_weighted( double a, double b, float w1, float w2);
 	double dist(Particle p);
 
 private:
-	double _belief;
+	/**
+	 * The x position of the particle. One of the particle dimensions.
+	 */
 	float _x;
+
+	/**
+	 * The y position of the particle. One of the particle dimensions.
+	 */
 	float _y;
+
+	/**
+	 * The angle of the particle. One of the particle dimensions.
+	 */
 	float _angle_degree;
 
-	float _width;
-	float _height;
-
-	
-
+	/**
+	 * The ID of this particle. Should be unique within a set of particles.
+	 */
 	int _id;
 };
 

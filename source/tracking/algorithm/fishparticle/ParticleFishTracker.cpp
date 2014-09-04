@@ -2,25 +2,24 @@
 
 #include <opencv.hpp>
 
-#include "preprocessing/FramePreprocessor.h"
-
-ParticleFishTracker::ParticleFishTracker(Settings& settings) : TrackingAlgorithm(settings)
+ParticleFishTracker::ParticleFishTracker(Settings& settings) : TrackingAlgorithm(settings), _preprocessor(settings)
 {
 }
-
 
 ParticleFishTracker::~ParticleFishTracker(void)
 {
 }
 
-cv::Mat ParticleFishTracker::track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame) {
-	FramePreprocessor preprocessor(_settings);
-	cv::Mat image;
-	frame = preprocessor.preProcess(frame);
-	
-	return image;
+void ParticleFishTracker::track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat& frame) {
+	_preprocessor.preProcess(frame);
+	// TODO Rest
+}
+
+void ParticleFishTracker::paint(cv::Mat& image) {
+	// TODO paint
 }
 
 void ParticleFishTracker::reset() {
-	// do nothing ... for now
+	_preprocessor.reset();
+	// TODO reset more
 }

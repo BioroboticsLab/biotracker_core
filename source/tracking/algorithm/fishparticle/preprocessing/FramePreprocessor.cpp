@@ -1,10 +1,9 @@
 #include "FramePreprocessor.h"
 
-
-FramePreprocessor::FramePreprocessor(Settings& settings) : _settings(settings), _background_subtractor()
+// TODO parameter BG-Sub aus settings.
+FramePreprocessor::FramePreprocessor(Settings& settings) : _settings(settings), _background_subtractor(cv::BackgroundSubtractorMOG2(30, 16))
 {
 }
-
 
 FramePreprocessor::~FramePreprocessor(void)
 {
@@ -12,7 +11,6 @@ FramePreprocessor::~FramePreprocessor(void)
 
 cv::Mat FramePreprocessor::preProcess(cv::Mat image) {
 	image = backgroundSubtract(image);
-	// cv::circle(image, cv::Point(50,50), 10, cv::Scalar(0, 0, 255), -1);
 	return image;
 }
 
@@ -23,5 +21,5 @@ cv::Mat FramePreprocessor::backgroundSubtract(cv::Mat image) {
 }
 
 void FramePreprocessor::reset() {
-
+	_background_subtractor = cv::BackgroundSubtractorMOG2();
 }

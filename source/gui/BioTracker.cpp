@@ -383,6 +383,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
 		tracker = new ColorPatchTracker(_settings);
 	}
+	else if (trackingAlg == "Fish - Particle")
+	{
+		tracker = new ParticleFishTracker(_settings);
+	}
 	connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);
 }
