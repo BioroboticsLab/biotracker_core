@@ -80,8 +80,8 @@
     <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\BeesBookTagMatcher.cpp" />
-    <ClCompile Include="GeneratedFiles\Debug\moc_TrackingAlgorithm.cpp">
     <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_TrackingAlgorithm.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_TrackingAlgorithm.cpp">
@@ -155,6 +155,8 @@
     <ClInclude Include="source\video\Rectification.h" />
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\Settings.h" />
+    <ClInclude Include="source\trackedObject\History.h" />
+    <ClInclude Include="source\trackedObject\TrackedObject.h" />
     <CustomBuild Include="source\video\VideoView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing VideoView.h...</Message>
@@ -185,8 +187,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
     </CustomBuild>
-    <ClInclude Include="source\trackedObject\History.h" />
-    <ClInclude Include="source\trackedObject\TrackedObject.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="source\gui\BioTracker.ui">
