@@ -7,6 +7,7 @@
 #include <QtOpenGL>
 #include <iostream>
 #include "source/helper/StringHelper.h"
+#include "source/tracking/TrackingAlgorithm.h"
 
 class VideoView : public QGLWidget
 {
@@ -30,6 +31,10 @@ private:
     QVector<QVector2D> _vertices; 
     QVector<QVector2D> _texCoords;     
     cv::Mat _displayImage;
+	TrackingAlgorithm* _tracker;
+
+public slots:
+	void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
 
 signals:
 	//events for port mouse button 

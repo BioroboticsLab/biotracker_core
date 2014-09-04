@@ -26,7 +26,7 @@ public:
 	* @param: frame
 	*/
 	virtual void track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame )	= 0;
-	virtual void paint		( cv::Mat& image ) = 0; 
+	virtual void paint		(cv::Mat& image ) = 0; 
 	/**
 	* Resets the tracker.
 	* @return: void.
@@ -44,6 +44,11 @@ signals:
 	* send a message to the GUI.
 	*/
 	void notifyGUI			( std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION );
+	
+	/**
+	* send signal to VideoView and update display
+	*/
+	void update();
 
 
 protected:
