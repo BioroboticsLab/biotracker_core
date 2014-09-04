@@ -11,8 +11,11 @@ changed by Tobias von Falkenhausen
 #include "VideoView.h"
 #include<QMouseEvent>
 
+QMutex trackMutex;
+
 VideoView::VideoView(QWidget *parent)
-	: QGLWidget(parent)
+	: QGLWidget(parent),
+	_tracker(NULL)
 {
 }
 
@@ -29,8 +32,14 @@ void VideoView::showImage(cv::Mat img)
 
 void VideoView::paintGL()
 {
+
 	if(_displayImage.empty()) {
 		return; // Don't bother painting an image if we have none.
+	}
+	if(_tracker)
+	{
+		QMutexLocker locker(&trackMutex);
+		_tracker->paint(_displayImage);
 	}
 
 	qglClearColor(Qt::black); // Create a nice, black background for the parts of the widget with no image.
@@ -96,6 +105,12 @@ void VideoView::resizeGL(int width, int height)
 	glLoadIdentity();
 	glOrtho(-1.0, +1.0, +1.0, -1.0, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
+{
+	QMutexLocker locker(&trackMutex);	
+	_tracker = &trackingAlgorithm;		
 }
 
 void VideoView::takeScreenshot(QString screenShotFilename)
