@@ -18,14 +18,24 @@ public:
 	void takeScreenshot(QString screenShotFilename);
 
 protected:
-	 void initializeGL(); 
-	 void paintGL(); 
-     void resizeGL(int width, int height);
+	void initializeGL(); 
+	void paintGL(); 
+    void resizeGL(int width, int height);
+	void mouseMoveEvent( QMouseEvent * e );
+	void mousePressEvent( QMouseEvent * e );
+	void mouseReleaseEvent( QMouseEvent * e );
+
 private:
 	GLuint _texture; 
     QVector<QVector2D> _vertices; 
     QVector<QVector2D> _texCoords;     
     cv::Mat _displayImage;
+
+signals:
+	//events for port mouse button 
+	void moveEvent( QMouseEvent * e );
+	void pressEvent( QMouseEvent * e );
+	void releaseEvent( QMouseEvent * e );
 
 };
 #endif // !VideoView_H

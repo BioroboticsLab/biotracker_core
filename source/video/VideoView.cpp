@@ -9,10 +9,12 @@ changed by Tobias von Falkenhausen
 */
 
 #include "VideoView.h"
+#include<QMouseEvent>
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
-{}
+{
+}
 
 void VideoView::showImage(cv::Mat img)
 {
@@ -99,4 +101,19 @@ void VideoView::resizeGL(int width, int height)
 void VideoView::takeScreenshot(QString screenShotFilename)
 {
 	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
+}
+
+void VideoView::mouseMoveEvent( QMouseEvent * e )
+{
+	emit moveEvent ( e );
+}
+
+void VideoView::mousePressEvent( QMouseEvent * e )
+{
+	emit pressEvent ( e );
+}
+
+void VideoView::mouseReleaseEvent( QMouseEvent * e )
+{
+	emit releaseEvent ( e );
 }

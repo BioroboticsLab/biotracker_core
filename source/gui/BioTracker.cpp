@@ -52,6 +52,7 @@ void BioTracker::initConnects()
 {
 	//File -> Open Video
 	QObject::connect(ui.actionOpen_Video, SIGNAL(triggered()), this, SLOT(browseVideo()));
+	QObject::connect(ui.actionOpen_Picture, SIGNAL(triggered()), this, SLOT(browsePicture()));	
 	//video playfield buttons
 	QObject::connect(ui.button_playPause, SIGNAL(clicked()), this, SLOT(runCapture()));
 	QObject::connect(ui.button_stop, SIGNAL(clicked()), this, SLOT(stopCapture()));
@@ -59,7 +60,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_previousFrame, SIGNAL( clicked() ), this, SLOT(stepCaptureBackward()));
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
-	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), _trackingThread, SLOT(setTrackingAlgorithm(QString)));
+	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -81,11 +82,13 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	
 }
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no algorithm","simple algorithm", "Fish - Particle"};
+	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle};
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);
@@ -98,9 +101,40 @@ void BioTracker::browseVideo()
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv)"));
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
+		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"true");
 		initCapture();
-	}
-	
+	}	
+}
+void BioTracker::browsePicture()
+{
+	stopCapture();
+	QStringList  filenames = QFileDialog::getOpenFileNames(this, tr("Open video"), "", 
+		tr("image Files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)"));
+	if(!filenames.isEmpty()){
+		_settings.setParam(PICTUREPARAM::PICTURE_FILE,filenames.first().toStdString());
+		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"false");		
+		initPicture(filenames);
+	}	
+}
+void BioTracker::initPicture(QStringList filenames)
+{	
+	_videoStopped = false;
+	_videoPaused = true;
+	emit videoPause(true);
+	_trackingThread->loadPictures(filenames);
+	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
+	ui.sld_video->setDisabled(false);
+	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	updateFrameNumber(_currentFrame);
+	emit changeFrame(_currentFrame);
+	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
+	ui.frame_num_edit->setEnabled(true);
+	ui.sld_speed->setValue(_trackingThread->getFps());
+	std::stringstream ss;
+	double fps = _trackingThread->getFps();
+    ss << std::setprecision(5) << fps;
+	ui.fps_label->setText(StringHelper::toQString(ss.str()));
+	setPlayfieldPaused(true);
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
@@ -217,11 +251,12 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
 	if(frameNumber == ui.sld_video->maximum())
 	{
-		emit videoStop();
+		
+		emit videoPause(true);
 		_videoPaused = true;
-		_videoStopped = true;
 		setPlayfieldPaused(true);
 		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(0));
+		
 	}
 }
 
@@ -278,18 +313,19 @@ void BioTracker::changeCurrentFramebySlider(int SliderAction)
 		fNum += ui.sld_video->pageStep();
 		if (fNum > ui.sld_video->maximum())
 			fNum = ui.sld_video->maximum();
+		changeCurrentFramebySlider();
 		break;
 	//SliderPageStepSub
 	case 4:
 		fNum -= ui.sld_video->pageStep();
 		if(fNum < 0 )
 			fNum = 0;
+		changeCurrentFramebySlider();
 		break;
 	default:
 		break;
 	}
-	updateFrameNumber(fNum);
-	changeCurrentFramebySlider();
+	updateFrameNumber(fNum);	
 }
 void BioTracker::changeCurrentFramebyEdit()
 {	
@@ -326,6 +362,38 @@ void BioTracker::changeFps(int fps)
 	emit enableMaxSpeed(false);
 	emit fpsChange((double)fps);
 	}
+}
+
+void BioTracker::trackingAlgChanged(QString trackingAlg)
+{
+	TrackingAlgorithm* tracker;
+	if (trackingAlg == "no tracking")
+	{		
+		tracker = NULL;
+	}
+	else if(trackingAlg == "simple algorithm")
+	{
+		tracker = new SimpleTracker(_settings);		
+	}
+	else if(trackingAlg == "bees book tag matcher")
+	{
+		tracker = new BeesBookTagMatcher(_settings);
+	}
+	else if ( trackingAlg == "color patch tag matcher" )
+	{
+		tracker = new ColorPatchTracker(_settings);
+	}
+	connectTrackingAlg(tracker);
+	emit changeTrackingAlg(*tracker);
+}
+
+void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
+{	
+	QObject::connect(ui.videoView,		SIGNAL ( pressEvent		(QMouseEvent*) ), tracker, SLOT(mousePressEvent(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), tracker, SLOT(mouseReleaseEvent(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( moveEvent		(QMouseEvent*) ), tracker, SLOT(mouseMoveEvent(QMouseEvent*) ));
+	
+	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 }
 
 void BioTracker::takeScreenshot()

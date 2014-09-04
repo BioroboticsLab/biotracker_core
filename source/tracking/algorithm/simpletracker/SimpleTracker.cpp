@@ -22,7 +22,7 @@ const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 5;
 
 static bool isYounger(const TrackedFish&, const TrackedFish&);
 
-SimpleTracker::SimpleTracker(Settings& settings) : TrackingAlgorithm(settings), _bg_subtractor(BgSub())
+SimpleTracker::SimpleTracker(Settings & settings) : TrackingAlgorithm(settings), _bg_subtractor(BgSub())
 {
 }
 
@@ -31,7 +31,7 @@ SimpleTracker::~SimpleTracker(void)
 {
 }
 
-cv::Mat SimpleTracker::track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame) {
+void SimpleTracker::track(std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame) {
 	// TODO history, handle frame number,...
 	static cv::RNG rng(12345);
 
@@ -142,21 +142,21 @@ cv::Mat SimpleTracker::track(std::vector<TrackedObject>& objectList, unsigned lo
 
 	// END OF TRACKING
 
-	// Draw the result
-	cv::Mat canvas = frame;
+	//// Draw the result TODO: put this in paint function
+	//cv::Mat canvas = frame;
 
-	cv::circle(canvas, cv::Point(50, 50), 50, cv::Scalar(0, 0, 255), -1, 8, 0);
+	//cv::circle(canvas, cv::Point(50, 50), 50, cv::Scalar(0, 0, 255), -1, 8, 0);
 
-	for (TrackedFish& fish : _tracked_fish) {
-		cv::circle(canvas, fish.last_known_position(), 3, fish.associated_color(), -1, 8, 0 );
-	}
+	//for (TrackedFish& fish : _tracked_fish) {
+	//	cv::circle(canvas, fish.last_known_position(), 3, fish.associated_color(), -1, 8, 0 );
+	//}
 
-	for (FishCandidate& candidate : _fish_candidates) {
-		cv::Scalar color(255, 0, 0);
-		cv::circle(canvas, candidate.last_known_position(), 2, color, -1, 8, 0 );
-	} 
+	//for (FishCandidate& candidate : _fish_candidates) {
+	//	cv::Scalar color(255, 0, 0);
+	//	cv::circle(canvas, candidate.last_known_position(), 2, color, -1, 8, 0 );
+	//} 
 
-	return canvas;
+	//return canvas;
 }
 
 void SimpleTracker::reset() {
@@ -168,3 +168,5 @@ void SimpleTracker::reset() {
 static bool isYounger(const TrackedFish& a, const TrackedFish& b) {
 	return a.age_of_last_known_position() < b.age_of_last_known_position();
 }
+
+void SimpleTracker::paint		( cv::Mat& image ){}

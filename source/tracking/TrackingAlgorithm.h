@@ -4,35 +4,50 @@
 #include <cv.h>
 #include <source/trackedObject/TrackedObject.h>
 #include <vector>
-#include <source/video/Rectification.h>
 #include <source/settings/Settings.h>
-#include <QWidget>
+#include <qvector2d.h>
+#include <source/settings/Messages.h>
+#include <QMouseEvent>
 
 
-class TrackingAlgorithm{
+class TrackingAlgorithm : public QObject
+{
+	Q_OBJECT
+
 public:
-	TrackingAlgorithm(Settings& settings);
-	virtual ~TrackingAlgorithm();
+	TrackingAlgorithm( Settings & settings );
+	virtual	~TrackingAlgorithm();
 
 	/**
 
 	* This function tracks the provided object list within the provided frame.
-	* @param: fishList, the reference list of the tracking fishes.
-	* @param: frame, the reference image, which shall contain fishes.
-	* @return: cv picture whis is to be drawn in video widget
+	* @param: objectList
+	* @param: frame number
+	* @param: frame
 	*/
-	virtual cv::Mat track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat frame) = 0;
-
-	virtual void initGUI(QWidget& paramWidget, QWidget& toolWidget);
-
+	virtual void track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame )	= 0;
+	virtual void paint		( cv::Mat& image ) = 0; 
 	/**
 	* Resets the tracker.
 	* @return: void.
 	*/
 	virtual void reset() = 0;
 
+public slots:
+	//mouse click and move events
+	void mouseMoveEvent		( QMouseEvent * e );
+	void mousePressEvent	( QMouseEvent * e );
+	void mouseReleaseEvent	( QMouseEvent * e );
+	
+signals:
+	/**
+	* send a message to the GUI.
+	*/
+	void notifyGUI			( std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION );
+
+
 protected:
-	Settings &_settings;
+	Settings & _settings;
 
 };
 
