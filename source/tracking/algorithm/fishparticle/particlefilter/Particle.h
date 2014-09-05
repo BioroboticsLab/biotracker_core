@@ -22,7 +22,7 @@ public:
 	 * Gets the x position of the particle.
 	 * @return: the x position.
 	 */
-	float getX() { return _x; }
+	float getX() const { return _x; }
 
 	/**
 	 * Sets the y position of the particle.
@@ -35,7 +35,7 @@ public:
 	 * Gets the y position of the particle.
 	 * @return: the y position.
 	 */
-	float getY() { return _y; }
+	float getY() const { return _y; }
 
 	/**
 	 * Standard setter for the angle of the particle. IN DEGREES.
@@ -45,7 +45,21 @@ public:
 	/**
 	 * Standard getter for the angle of the particle.
 	 */
-	float getAngleDegree() { return _angle_degree; }
+	float getAngleDegree() const { return _angle_degree; }
+
+	/**
+	* Sets the score for this particle as given by the observer.
+	*/
+	void setScore(float score) {
+		_score = score;
+	}
+
+	/**
+	* Returns the score for this particle as assessed by the observer.
+	*/
+	float getScore() const {
+		return _score;
+	}
 
 	/**
 	 * Sets the ID of the particle. IDs	should be unique within a set of particles.
@@ -55,9 +69,9 @@ public:
 	/**
 	 * Gets the ID of the particle.	IDs should be unique within a set of particles.
 	 */
-	int getID() { return _id; };
+	int getID() const { return _id; };
 
-	double dist(Particle p);
+	double dist(Particle p) const;
 
 private:
 	/**
@@ -74,6 +88,11 @@ private:
 	 * The angle of the particle. One of the particle dimensions.
 	 */
 	float _angle_degree;
+
+	/**
+	* The score, given by the observer, for this particle.
+	*/
+	float _score;
 
 	/**
 	 * The ID of this particle. Should be unique within a set of particles.

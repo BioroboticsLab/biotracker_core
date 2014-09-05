@@ -18,7 +18,7 @@ Particle::~Particle(void)
 /**
 * Calculates the euclidian distance between 2 particles. Always >= 0.
 */
-double Particle::dist(Particle p)
+double Particle::dist(Particle p) const
 {
 	/*return	qSqrt(	qPow( _x - p.getX(), 2 ) + 
 	qPow( _y - p.getY(), 2 ) +

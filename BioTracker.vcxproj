@@ -77,6 +77,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp" />
+    <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\BeesBookTagMatcher.cpp" />
@@ -137,6 +139,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
     </CustomBuild>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h" />
+    <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h" />
