@@ -26,6 +26,7 @@ void SampleTracker::paint		( cv::Mat& image )
 }
 void SampleTracker::reset		(){}
 
+//this will draw a basic rectangle onto the diplay image 
 void SampleTracker::drawRectangle(cv::Mat image)
 {
 	cv::rectangle( image,
@@ -42,23 +43,26 @@ void SampleTracker::mouseMoveEvent		( QMouseEvent * e )
 		{
 			_selectorRecEnd.x = e->x();
 			_selectorRecEnd.y = e->y();
+			//draw rectangle!
 			emit update();
 		}
 }
 void SampleTracker::mousePressEvent		( QMouseEvent * e )
 {
+	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
+		//check for shift modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
 			int x = e->x(); int y = e->y();
 			std::string note = "shift + left button press on: x=" + StringHelper::iToSS(x) + " y=" + StringHelper::iToSS(y);
+			//initialize coordinates for selection tool
 			_selectorRecStart.x = e->x();
 			_selectorRecStart.y = e->y();
 			_selectorRecEnd.x = e->x();
 			_selectorRecEnd.y = e->y();
-			_showSelectorRec = true;
-			emit update();			
+			_showSelectorRec = true;		
 		}
 	}
 }
@@ -71,6 +75,7 @@ void SampleTracker::mouseReleaseEvent	( QMouseEvent * e )
 			_selectorRecEnd.x = e->x();
 			_selectorRecEnd.y = e->y();
 			_showSelectorRec = false;
+			//next draw will delete rectangle!
 			emit update();
 			std::string note = "selected area from " + StringHelper::iToSS(_selectorRecStart.x) + ":"+ StringHelper::iToSS(_selectorRecStart.y)
 				+ " to " +  StringHelper::iToSS(_selectorRecEnd.x) + ":"+ StringHelper::iToSS(_selectorRecEnd.y);

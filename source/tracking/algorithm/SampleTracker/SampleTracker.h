@@ -7,7 +7,7 @@
 
 class SampleTracker : public TrackingAlgorithm
 {
-	private:
+private:
 		cv::Point _selectorRecStart;
 		cv::Point _selectorRecEnd;
 		bool _showSelectorRec;
