@@ -170,3 +170,14 @@ static bool isYounger(const TrackedFish& a, const TrackedFish& b) {
 }
 
 void SimpleTracker::paint		( cv::Mat& image ){}
+
+void SimpleTracker::mouseMoveEvent		( QMouseEvent * e )
+{
+}
+void SimpleTracker::mousePressEvent		( QMouseEvent * e )
+{
+
+}
+void SimpleTracker::mouseReleaseEvent	( QMouseEvent * e )
+{	
+}

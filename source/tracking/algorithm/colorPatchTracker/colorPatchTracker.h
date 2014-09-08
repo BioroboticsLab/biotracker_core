@@ -16,6 +16,12 @@ class ColorPatchTracker : public TrackingAlgorithm
 		void track(std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame);
 		void paint			( cv::Mat& image );
 		void reset			( );
+
+	public slots:
+		//mouse click and move events
+		void mouseMoveEvent		( QMouseEvent * e );
+		void mousePressEvent	( QMouseEvent * e );
+		void mouseReleaseEvent	( QMouseEvent * e );
 };
 
 #endif

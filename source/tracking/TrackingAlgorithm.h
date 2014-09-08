@@ -35,9 +35,9 @@ public:
 
 public slots:
 	//mouse click and move events
-	void mouseMoveEvent		( QMouseEvent * e );
-	void mousePressEvent	( QMouseEvent * e );
-	void mouseReleaseEvent	( QMouseEvent * e );
+	virtual void mouseMoveEvent		( QMouseEvent * e ) = 0;
+	virtual void mousePressEvent	( QMouseEvent * e ) = 0;
+	virtual void mouseReleaseEvent	( QMouseEvent * e ) = 0;
 	
 signals:
 	/**
