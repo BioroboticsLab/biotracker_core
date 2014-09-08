@@ -9,7 +9,8 @@ changed by Tobias von Falkenhausen
 */
 
 #include "VideoView.h"
-#include<QMouseEvent>
+#include <QMouseEvent>
+#include <gl\GLU.h>
 
 QMutex trackMutex;
 
@@ -17,6 +18,7 @@ VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent),
 	_tracker(NULL)
 {
+	_zoomFactor = 1.0;
 }
 
 void VideoView::showImage(cv::Mat img)
@@ -57,7 +59,7 @@ void VideoView::paintGL()
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 
-	
+
 	// Non-mipmap way of mapping the texture (fast and clean):
 	// Allocate a texture name
 	glGenTextures(1, &_texture);
@@ -69,6 +71,10 @@ void VideoView::paintGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 	// wrap image onto the texture
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, imageCopy.data);
+
+	//adjust zoom level | 1.0 = no zooming
+	glScalef(_zoomFactor, _zoomFactor, 1.0);
+
 
 	// Draw it!
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
@@ -106,16 +112,20 @@ void VideoView::resizeGL(int width, int height)
 	// (also, center it in the widget)
 	float imgRatio = (float)_displayImage.cols/(float)_displayImage.rows;
 	float windowRatio = (float)width/(float)height;
-	if(windowRatio < imgRatio) {
+	if(windowRatio < imgRatio) 
+	{
 		glViewport(0, (height-width/imgRatio)/2, width, width/imgRatio);
-	} else {
+	} else 
+	{
 		glViewport((width-height*imgRatio)/2, 0, height*imgRatio, height);
 	}
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+
 	glOrtho(-1.0, +1.0, +1.0, -1.0, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 }
+
 
 void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
 {
@@ -141,4 +151,14 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 void VideoView::mouseReleaseEvent( QMouseEvent * e )
 {
 	emit releaseEvent ( e );
+}
+
+void VideoView::wheelEvent( QWheelEvent * e )
+{
+	int numDegrees = e->delta();
+	if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
+		_zoomFactor += 0.001 * numDegrees;
+		updateGL();
+	}
+	e->accept();
 }
