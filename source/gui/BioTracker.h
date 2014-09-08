@@ -29,6 +29,7 @@
 #include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
 #include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
 #include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
+#include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;

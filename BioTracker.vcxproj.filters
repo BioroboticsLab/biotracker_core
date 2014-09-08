@@ -64,6 +64,9 @@
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -108,6 +111,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

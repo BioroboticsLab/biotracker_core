@@ -77,3 +77,8 @@ void ParticleFishTracker::reset() {
 	_preprocessor.reset();
 	// TODO reset more
 }
+
+void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * e ){}
+void ParticleFishTracker::mousePressEvent	( QMouseEvent * e ){}
+void ParticleFishTracker::mouseReleaseEvent	( QMouseEvent * e ){}
+

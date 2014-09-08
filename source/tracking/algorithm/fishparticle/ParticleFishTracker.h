@@ -40,6 +40,13 @@ private:
 	cv::RNG _rng;
 
 	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
+
+	public slots:
+	//mouse click and move events
+	void mouseMoveEvent		( QMouseEvent * e );
+	void mousePressEvent	( QMouseEvent * e );
+	void mouseReleaseEvent	( QMouseEvent * e );
 };
+
 
 #endif

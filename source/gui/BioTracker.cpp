@@ -89,7 +89,7 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle"};
+	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle", "Sample Tracker"};
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);
@@ -387,6 +387,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	else if (trackingAlg == "Fish - Particle")
 	{
 		tracker = new ParticleFishTracker(_settings);
+	}
+		else if (trackingAlg == "Sample Tracker")
+	{
+		tracker = new SampleTracker(_settings);
 	}
 	connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);

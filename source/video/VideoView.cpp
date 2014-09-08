@@ -26,23 +26,27 @@ void VideoView::showImage(cv::Mat img)
 
 
 	//Draw the scene
-	update();
+	updateGL();
 }
 
 
 void VideoView::paintGL()
 {
 
-	if(_displayImage.empty()) {
-		return; // Don't bother painting an image if we have none.
+	if(_displayImage.empty()) 
+	{
+		// Don't bother painting an image if we have none.
+		return; 
 	}
+	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
 		QMutexLocker locker(&trackMutex);
-		_tracker->paint(_displayImage);
+		_tracker->paint(imageCopy);
 	}
 
-	qglClearColor(Qt::black); // Create a nice, black background for the parts of the widget with no image.
+	// Create a black background for the parts of the widget with no image.
+	qglClearColor(Qt::black); 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
@@ -55,16 +59,22 @@ void VideoView::paintGL()
 
 	
 	// Non-mipmap way of mapping the texture (fast and clean):
-	glGenTextures(1, &_texture); // Allocate a texture name.
-	glBindTexture(GL_TEXTURE_2D, _texture); // Select our current texture.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // When the texture area is larger then the image, upscale using linear interpolation.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // When the texture area is smaller than the image, downsample using linear interpolation.
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, _displayImage.cols, _displayImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, _displayImage.data);
+	// Allocate a texture name
+	glGenTextures(1, &_texture);
+	// Select our current texture.
+	glBindTexture(GL_TEXTURE_2D, _texture); 
+	// When the texture area is larger then the image, upscale using linear interpolation.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// When the texture area is smaller than the image, downsample using linear interpolation.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	// wrap image onto the texture
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, imageCopy.data);
 
-	// End of different methods, the last few lines are common for all methods.
+	// Draw it!
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
 
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); // Draw it!
-
+	// free memory
+	imageCopy.release();
 	glDeleteTextures(1, &_texture);
 }
 
