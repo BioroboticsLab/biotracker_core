@@ -83,6 +83,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
 	
 }
 
@@ -383,6 +384,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
 		tracker = new ColorPatchTracker(_settings);
 	}
+	else if (trackingAlg == "Fish - Particle")
+	{
+		tracker = new ParticleFishTracker(_settings);
+	}
 	connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);
 }
@@ -394,6 +399,7 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 	QObject::connect(ui.videoView,		SIGNAL ( moveEvent		(QMouseEvent*) ), tracker, SLOT(mouseMoveEvent(QMouseEvent*) ));
 	
 	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
+	QObject::connect( tracker, SIGNAL( update() ), ui.videoView, SLOT( updateGL() ));
 }
 
 void BioTracker::takeScreenshot()

@@ -1,10 +1,13 @@
 #ifndef PARTICLE_H_
 #define PARTICLE_H_
 
+/**
+* Represents a 3D (x, y, angle) particle used in the particle filter. Has an ID
+* and a few utility methods (for calculating distances to other particles etc.).
+*/
 class Particle
 {
 public:
-	Particle(void);
 	Particle(int x, int y, float a, int id);
 	~Particle(void);
 
@@ -19,7 +22,7 @@ public:
 	 * Gets the x position of the particle.
 	 * @return: the x position.
 	 */
-	float getX() { return _x; }
+	float getX() const { return _x; }
 
 	/**
 	 * Sets the y position of the particle.
@@ -32,77 +35,68 @@ public:
 	 * Gets the y position of the particle.
 	 * @return: the y position.
 	 */
-	float getY() { return _y; }
+	float getY() const { return _y; }
 
 	/**
-	 *
+	 * Standard setter for the angle of the particle. IN DEGREES.
 	 */
 	void setAngleDegree(float angle_degree) { _angle_degree = angle_degree; }
 
 	/**
-	 *
+	 * Standard getter for the angle of the particle.
 	 */
-	float getAngleDegree() { return _angle_degree; }
+	float getAngleDegree() const { return _angle_degree; }
 
 	/**
-	 *
-	 */
-	void setWidth(int width) { _width = width; }
+	* Sets the score for this particle as given by the observer.
+	*/
+	void setScore(float score) {
+		_score = score;
+	}
 
 	/**
-	 *
-	 */
-	float getWidth() { return _width; }
+	* Returns the score for this particle as assessed by the observer.
+	*/
+	float getScore() const {
+		return _score;
+	}
 
 	/**
-	 *
+	 * Sets the ID of the particle. IDs	should be unique within a set of particles.
 	 */
-	void setHeight(int height) { _height = height; }
-
-	/**
-	 *
-	 */
-	float getHeight() { return _height; }
-	
-	/**
-	 * TODO: Kommentare ausfüllen.
-	 */
-	void setBelief(double belief) { _belief = belief; }
-
-	void incrementBelief( ) {_belief++;}
-
-	void addBelief(Particle p) {_belief = _belief + p.getBelief();}
-
-	/**
-	 * TODO: Kommentare ausfüllen.
-	 */
-	double getBelief() { return _belief; }
-
 	void setID(int id) { _id = id; };
 	
-	int getID() { return _id; };
+	/**
+	 * Gets the ID of the particle.	IDs should be unique within a set of particles.
+	 */
+	int getID() const { return _id; };
 
-	bool operator < (Particle p) {return p._belief < _belief; }
-
-	void add( Particle p );
-	void mul( double a );
-	void mean( Particle p );
-	void mean_weighted( Particle p, float w1 = 0, float w2 = 0);
-	double mean_angle( double a, double b );
-	double mean_angle_weighted( double a, double b, float w1, float w2);
-	double dist(Particle p);
+	double dist(Particle p) const;
 
 private:
-	double _belief;
+	/**
+	 * The x position of the particle. One of the particle dimensions.
+	 */
 	float _x;
+
+	/**
+	 * The y position of the particle. One of the particle dimensions.
+	 */
 	float _y;
+
+	/**
+	 * The angle of the particle. One of the particle dimensions.
+	 */
 	float _angle_degree;
 
-	float _width;
-	float _height;
+	/**
+	* The score, given by the observer, for this particle.
+	*/
+	float _score;
 
-	
-
+	/**
+	 * The ID of this particle. Should be unique within a set of particles.
+	 */
 	int _id;
 };
 

@@ -51,13 +51,13 @@ void TrackingThread::startCapture()
 			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
 			return;
 		}
-		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) + 
-			" (#frames: " + StringHelper::iToSS(getVideoLength()) + ")";
-		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		enableCapture(true);
 		_pictureMode = false;
 		_fps = _capture.get(CV_CAP_PROP_FPS);
 		QThread::start();
+		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) + 
+			" (#frames: " + StringHelper::iToSS(getVideoLength()) + ")";
+		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 	}
 }
 
