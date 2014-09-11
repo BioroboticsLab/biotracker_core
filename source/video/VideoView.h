@@ -17,6 +17,7 @@ public:
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
+	void fitToWindow();
 
 protected:
 	void initializeGL(); 
@@ -35,7 +36,11 @@ private:
 	TrackingAlgorithm* _tracker;
 
 	/* Modified by user input. Initially 1.0 */
-	float _zoomFactor; 
+	float _zoomFactor;
+	float _panX;
+	float _panY;
+	bool _isPanning;
+	int _lastMPos[2];
 
 	public slots:
 		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
@@ -44,7 +49,11 @@ signals:
 		//events for port mouse button 
 		void moveEvent( QMouseEvent * e );
 		void pressEvent( QMouseEvent * e );
-		void releaseEvent( QMouseEvent * e );		
+		void releaseEvent( QMouseEvent * e );	
+		/**
+		* send a message to the GUI.
+		*/
+		void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
 
 };
 #endif // !VideoView_H
