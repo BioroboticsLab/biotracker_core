@@ -4,10 +4,13 @@
 
 #include "particlefilter/ParticleBrightnessObserver.h"
 
+
+static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2);
+
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings) : TrackingAlgorithm(settings), _preprocessor(settings), _rng(123)
+ParticleFishTracker::ParticleFishTracker(Settings& settings) : TrackingAlgorithm(settings), _preprocessor(settings), _rng(123), _min_score(0), _max_score(0)
 {
 }
 
@@ -19,6 +22,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
 void ParticleFishTracker::track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat& frame) {
+	try {
 	// TODO check if frameNumber is jumping -> should lead to reseed
 
 	// (1) Preprocess frame
@@ -29,15 +33,90 @@ void ParticleFishTracker::track(std::vector<TrackedObject>& objectList, unsigned
 		seedParticles(1000, 0, 0, frame.cols, frame.rows);
 	} else {
 		ParticleBrightnessObserver observer(_prepared_frame);
+		_sum_scores = 0;
 		for (Particle& p : _current_particles) {
 			observer.score(p);
+			if (p.getScore() > _max_score) {
+				_max_score = p.getScore();
+			}
+			if (p.getScore() < _min_score) {
+				_min_score = p.getScore();
+			}
+			_sum_scores += p.getScore();
 		}
-		// TODO importance resample
+		// Resample
+		// - Sort for better performance (big scores first)
+		std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate);
+		// - importance resampling
+		importanceResample();
 	}
 	// (3) Clustering (k-means)
 	// TODO
 	// (4) Store results in history
 	// TODO
+	} catch (cv::Exception exc) {
+		emit notifyGUI(exc.what(), MSGS::FAIL);
+	}
+}
+
+/**
+* Creates a set of new particles based on the old ones.
+* For each of the new particles an ancestor particle is chosen randomly from
+* the old particles, weighted proportionally to the old particles' score. The
+* new particle inherits all properties from its ancestor, but will be slightly
+* moved randomly (gaussian) in all dimensions.
+*/
+void ParticleFishTracker::importanceResample() {
+	// Make a copy and generate new particles.
+	std::vector<Particle> old_particles = _current_particles;
+	_current_particles.clear();
+
+	for (int i = 0; i < old_particles.size(); i++) {
+		size_t index = 0;
+		float rand = _rng.uniform(0.f, _sum_scores);
+		for (float position = 0; position + old_particles[index].getScore() < rand; ) {
+			position += old_particles[index].getScore();
+			++index;
+		}
+		Particle to_wiggle = old_particles[index];
+		wiggleParticle(to_wiggle);
+		_current_particles.push_back(to_wiggle);
+	}
+}
+
+/**
+* Moves a particle randomly (gaussian) in all its dimensions. Low-scoring
+* particles are wiggled more. The wiggling is restricted to within the
+* _prepared_frame's dimensions.
+*/
+void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
+	float wiggle_distance;
+	if (_max_score != _min_score) {
+		wiggle_distance = 7 * ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+	} else {
+		wiggle_distance = 7;
+	}
+	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
+	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
+	cutParticleCoords(to_wiggle);
+}
+
+/**
+* Restricts a particle's x and y coordinates to the current frame's size.
+*/
+void ParticleFishTracker::cutParticleCoords(Particle& to_cut) {
+	if (to_cut.getX() < 0) {
+		to_cut.setX(0);
+	}
+	if (to_cut.getX() >= _prepared_frame.cols) {
+		to_cut.setX(_prepared_frame.cols-1);
+	}
+	if (to_cut.getY() < 0) {
+		to_cut.setY(0);
+	}
+	if (to_cut.getY() >= _prepared_frame.rows) {
+		to_cut.setY(_prepared_frame.rows-1);
+	}
 }
 
 /**
@@ -63,10 +142,15 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 	if (!_prepared_frame.empty()) {
 		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
 		for (const Particle& p : _current_particles) {
-			cv::circle(image, cv::Point(p.getX(), p.getY()), 2, cv::Scalar(0, 255, 0), -1);
+			if (_min_score >= _max_score) {
+				cv::circle(image, cv::Point(p.getX(), p.getY()), 2, cv::Scalar(0, 255, 0), -1);
+			} else {
+				// Scale the score of the particle to get a nice color based on score.
+				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 230;
+				cv::circle(image, cv::Point(p.getX(), p.getY()), 2, cv::Scalar(0, 20 + scaled_score, 0), -1);
+			}
 		}
 	}
-	// TODO separate drawing and tracking (eliminate _prepared_frame)
 }
 
 /**
@@ -75,6 +159,8 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 */
 void ParticleFishTracker::reset() {
 	_preprocessor.reset();
+	_min_score = 0;
+	_max_score = 0;
 	// TODO reset more
 }
 
@@ -82,3 +168,9 @@ void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * e ){}
 void ParticleFishTracker::mousePressEvent	( QMouseEvent * e ){}
 void ParticleFishTracker::mouseReleaseEvent	( QMouseEvent * e ){}
 
+/**
+* Predicate used by this algorithm to sort particles, highest to lowest score.
+*/
+static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2) {
+	return p1.getScore() > p2.getScore();
+}

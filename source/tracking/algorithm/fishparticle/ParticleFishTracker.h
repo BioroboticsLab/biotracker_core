@@ -39,7 +39,29 @@ private:
 	*/
 	cv::RNG _rng;
 
+	/**
+	* The max. score the observer ever gave a particle.
+	*/
+	float _max_score;
+
+	/**
+	* The min. score the observer ever gave a particle.
+	*/
+	float _min_score;
+
+	/**
+	* The sum of all scores in _current_particles. Used for importance
+	* resampling.
+	*/
+	float _sum_scores;
+
 	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
+
+	void importanceResample();
+
+	void wiggleParticle(Particle& to_wiggle);
+
+	void cutParticleCoords(Particle& to_cut);
 
 	public slots:
 	//mouse click and move events

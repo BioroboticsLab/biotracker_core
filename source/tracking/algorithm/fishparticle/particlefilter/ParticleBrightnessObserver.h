@@ -8,11 +8,14 @@
 class ParticleBrightnessObserver
 {
 public:
-	explicit ParticleBrightnessObserver(const cv::Mat image);
+	explicit ParticleBrightnessObserver(cv::Mat image);
 	~ParticleBrightnessObserver(void);
 	void score(Particle& particle);
 private:
-	const cv::Mat& _image;
+	/**
+	* The grayscale image used for scoring particles.
+	*/
+	cv::Mat _image;
 };
 
 #endif
