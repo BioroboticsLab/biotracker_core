@@ -85,11 +85,19 @@ void ParticleFishTracker::importanceResample() {
 }
 
 /**
-* Moves a particle randomly (gaussian) in all its dimensions.
+* Moves a particle randomly (gaussian) in all its dimensions. Low-scoring
+* particles are wiggled more. The wiggling is restricted to within the
+* _prepared_frame's dimensions.
 */
 void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
-	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(4));
-	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(4));
+	float wiggle_distance;
+	if (_max_score != _min_score) {
+		wiggle_distance = 7 * ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+	} else {
+		wiggle_distance = 7;
+	}
+	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
+	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
 	cutParticleCoords(to_wiggle);
 }
 
