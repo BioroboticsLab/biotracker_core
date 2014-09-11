@@ -8,7 +8,8 @@ Particle::Particle(int x, int y, float a, int id) :
 	_x(x), 
 	_y(y), 
 	_angle_degree(a),
-	_id(id)
+	_id(id),
+	_score(0)
 {}
 
 Particle::~Particle(void)

@@ -48,14 +48,14 @@ public:
 	float getAngleDegree() const { return _angle_degree; }
 
 	/**
-	* Sets the score for this particle as given by the observer.
+	* Sets the score for this particle, given by the observer.
 	*/
 	void setScore(float score) {
 		_score = score;
 	}
 
 	/**
-	* Returns the score for this particle as assessed by the observer.
+	* Returns the score for this particle, given by the observer.
 	*/
 	float getScore() const {
 		return _score;
