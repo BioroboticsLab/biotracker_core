@@ -20,12 +20,12 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 
 		std::vector<myGrid> _Grids;
 
-		bool _activeGrid; //a new Grid has been set and can now be modified
 		bool _newGrid; //set new Grid and push last one in the vector
-		bool _modifyPositionGrid; //modify position of active Grid
-		bool _modifySizeGrid; //modify size of active Grid		
-		bool _modifyAngleXY; //modify angle of the ellipse in XY
-		bool _modifyTiltGrid; //modify ratio axis1/axis2
+		bool _activeGrid; //a new Grid has been set and can now be modified		
+		bool _modPosGrid; //modify position of active Grid
+		bool _modSizeGrid; //modify size of active Grid		
+		bool _modAngleXY; //modify angle of the ellipse in XY
+		bool _modTiltGrid; //modify ratio axis1/axis2
 
 		cv::Point diff; //auxiliar variable
 		cv::Point prevPosition; //auxiliar variable

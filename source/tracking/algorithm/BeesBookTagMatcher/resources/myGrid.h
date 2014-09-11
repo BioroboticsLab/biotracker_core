@@ -17,9 +17,10 @@
 class myGrid
 {
 public:
-	myGrid(cv::Point center, cv::Size Axes);
+	myGrid(cv::Point center, cv::Size Axes, double Angle);
 	~myGrid();
 
-	cv::Point center;	
-	cv::Size axes;
+	cv::Point	center;	
+	cv::Size	axes;
+	double		angle;
 };

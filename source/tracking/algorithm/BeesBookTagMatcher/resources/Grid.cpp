@@ -3,7 +3,7 @@
 namespace decoder {
 
 // === Constructors and initializer ===
-void Grid::init(float size, float angle, float tilt, int x, int y, Ellipse ell, bool permutation, ScoringMethod scoringMethod) {
+void Grid::init(Size size, float angle, float tilt, int x, int y, Mat tranImg, bool permutation, ScoringMethod scoringMethod) {
 	this->size = size;
 
 	this->angle = angle;
@@ -21,33 +21,33 @@ void Grid::init(float size, float angle, float tilt, int x, int y, Ellipse ell, 
 		_score.value = FISHER_INIT;
 	}
 
-	this->ell = ell;
+	this->transformedImage = tranImg;
 
 	// Need to binarize the image, because we need it for scoring
-	if (this->ell.transformedImage.type() != CV_8U) {
+	if (this->transformedImage.type() != CV_8U) {
 		Mat grayImage;
-		cvtColor(this->ell.transformedImage, grayImage, CV_BGR2GRAY);
-		this->ell.transformedImage = grayImage;
+		cvtColor(this->transformedImage, grayImage, CV_BGR2GRAY);
+		this->transformedImage = grayImage;
 	}
 
 	// Binarize image first (just for new Scoring)
-	adaptiveThreshold(this->ell.transformedImage, this->ell.binarizedImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 21, 3);
+	adaptiveThreshold(this->transformedImage, this->binarizedImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 21, 3);
 }
 
-Grid::Grid(float size, float angle, float tilt,  int x,  int y, Ellipse ell, ScoringMethod scoringMethod) {
-	init(size, angle, tilt, x, y, ell, false, scoringMethod);
+Grid::Grid(Size size, float angle, float tilt,  int x,  int y, Mat tranImg, ScoringMethod scoringMethod) {
+	init(size, angle, tilt, x, y, tranImg, false, scoringMethod);
 }
 
-Grid::Grid(float size, float angle, float tilt,  int x,  int y, Ellipse ell, bool permutation, ScoringMethod scoringMethod) {
-	init(size, angle, tilt, x, y, ell, permutation, scoringMethod);
+Grid::Grid(Size size, float angle, float tilt,  int x,  int y, Mat tranImg, bool permutation, ScoringMethod scoringMethod) {
+	init(size, angle, tilt, x, y, tranImg, permutation, scoringMethod);
 }
 
 Grid::Grid(ScoringMethod scoringMethod) {
-	init(0, 0, 0, 0, 0, Ellipse(), false, scoringMethod);
+	init(Size(0, 0), 0, 0, 0, 0, Mat(), false, scoringMethod);
 }
 
-Grid::Grid(float size, ScoringMethod scoringMethod) {
-	init(size, 0, 0, 0, 0, Ellipse(), false, scoringMethod);
+Grid::Grid(Size size, ScoringMethod scoringMethod) {
+	init(size, 0, 0, 0, 0, Mat(), false, scoringMethod);
 }
 
 Grid::~Grid() {
@@ -64,9 +64,9 @@ Grid::ScoringMethod Grid::scoringMethod() {
 double Grid::score() {
 
 	// determine whether the grid is a dummy or not
-	if (_score.metric == BINARYCOUNT && _score.value == BINARYCOUNT_INIT && ell.binarizedImage.total() > 0) {
+	if (_score.metric == BINARYCOUNT && _score.value == BINARYCOUNT_INIT && binarizedImage.total() > 0) {
 		_score.value = binaryCountScore();
-	} else if (_score.metric == FISHER && _score.value == FISHER_INIT && ell.transformedImage.total() > 0) {
+	} else if (_score.metric == FISHER && _score.value == FISHER_INIT && transformedImage.total() > 0) {
 		_score.value = fisherScore();
 	}
 	return _score.value;
@@ -74,7 +74,7 @@ double Grid::score() {
 
 double Grid::binaryCountScore() {
 
-	Mat &binImg = ell.binarizedImage;
+	Mat &binImg = binarizedImage;
 
 	Mat scores (3, 1, CV_64FC1);
 	// for each cell calculate its size (cell size) and its mean intensity (means)
@@ -105,7 +105,7 @@ double Grid::fisherScore() {
 	// 37/46 = 80.43% with Sb = |black - white| look into other intervariances
 	// 41/47 = 89.13% with kind of A scaling
 	// determine best orientation
-	Mat &roi = ell.transformedImage;
+	Mat &roi = transformedImage;
 
 	float Sb = 0;
 	float Sw = 0;
@@ -259,10 +259,10 @@ double Grid::fisherScore() {
 
 	Mat tagMask = Mat(roi.rows, roi.cols, CV_8UC1, Scalar(0));
 	// different center!! ellipse stuff!!!
-	circle(tagMask, ell.cen, (int) (size * TRR), Scalar(1), CV_FILLED);
+	circle(tagMask, Point(x, y), (int) (size.width * TRR), Scalar(1), CV_FILLED);
 
 	Mat matMask = Mat(roi.rows, roi.cols, CV_8UC1, Scalar(0));
-	circle(matMask, Point(x, y), (int) (size * ORR), Scalar(1), CV_FILLED);
+	circle(matMask, Point(x, y), (int) (size.width * ORR), Scalar(1), CV_FILLED);
 
 	Mat tagBlack;
 	threshold(roi, tagBlack, (black + white) / 2, 255, CV_THRESH_BINARY_INV);
@@ -290,10 +290,11 @@ vector<Point> Grid::renderScaledGridCell(unsigned short cell, double scale, int 
 
 	// Outer cells
 	if (cell < 12) {
-		double outerInnerRadiusDiff = ORR * size - IORR * size;
-		double outerCircleRadius = IORR * size + outerInnerRadiusDiff * 0.5 + (outerInnerRadiusDiff * 0.5 * scale);
-		double innerCircleRadius = IORR * size + outerInnerRadiusDiff * 0.5 - (outerInnerRadiusDiff * 0.5 * scale);
-
+		// all the "size.width" were set just to allow the software to run, must be modified-----------------------------
+		double outerInnerRadiusDiff = ORR * size.width - IORR * size.width;
+		double outerCircleRadius = IORR * size.width + outerInnerRadiusDiff * 0.5 + (outerInnerRadiusDiff * 0.5 * scale);
+		double innerCircleRadius = IORR * size.width + outerInnerRadiusDiff * 0.5 - (outerInnerRadiusDiff * 0.5 * scale);
+		
 		int arcStart = -180 + cell * 30 + 15 * (1 - scale);
 		int arcEnd = -180 + (cell + 1) * 30 - 15 * (1 - scale);
 		// outer arc
@@ -305,15 +306,17 @@ vector<Point> Grid::renderScaledGridCell(unsigned short cell, double scale, int 
 		return move(cont);
 	} else if (cell == 13) {
 		// supposed white inner half circle
-		ellipse2Poly(Point2f(x, y), Size2f(IRR * size * scale, IRR * size * scale), angle, -180 + offset * 30, offset * 30, 1, cont);
+		ellipse2Poly(Point2f(x, y), Size2f(IRR * size.width * scale, IRR * size.width * scale), angle, -180 + offset * 30, offset * 30, 1, cont);
 	} else if (cell == 14) {
 		//supposed black inner half circle
-		ellipse2Poly(Point2f(x, y), Size2f(IRR * size * scale, IRR * size * scale), angle, 180 + offset *30, offset * 30, 1, cont);
+		ellipse2Poly(Point2f(x, y), Size2f(IRR * size.width * scale, IRR * size.width * scale), angle, 180 + offset *30, offset * 30, 1, cont);
 	} else if (cell == 12) {
 		// outer (white) border
-		double outerInnerRadiusDiff = TRR * size - ORR * size;
-		double outerCircleRadius = ORR * size + outerInnerRadiusDiff * 0.5 + (outerInnerRadiusDiff * 0.5 * scale);
-		double innerCircleRadius = ORR * size + outerInnerRadiusDiff * 0.5 - (outerInnerRadiusDiff * 0.5 * scale);
+		double outerInnerRadiusDiff = TRR * size.width - ORR * size.width;
+		double outerCircleRadius = ORR * size.width + outerInnerRadiusDiff * 0.5 + (outerInnerRadiusDiff * 0.5 * scale);
+		double innerCircleRadius = ORR * size.width + outerInnerRadiusDiff * 0.5 - (outerInnerRadiusDiff * 0.5 * scale);
+
+		// -------------------------------------
 
 		vector < Point > cont2;
 		ellipse2Poly(Point2f(x, y), Size(outerCircleRadius, outerCircleRadius), angle + 90, 0, 360, 1,cont);
@@ -357,7 +360,7 @@ vector<float> Grid::generateEdge(int radius, int width, bool useBinaryImage) {
 
 	// Uses some kind of super resolution with getMeanAlongLine
 
-	Mat &image = useBinaryImage ? ell.binarizedImage : ell.transformedImage;
+	Mat &image = useBinaryImage ? binarizedImage : transformedImage;
 
 	int outerRadius = width > 1 ? radius + ceil(double(width) / 2) : radius;
 
@@ -440,7 +443,7 @@ Mat Grid::generateEdgeAsMat(int radius, int width, bool useBinaryImage) {
 float Grid::getMeanAlongLine(int xStart, int yStart, int xEnd, int yEnd, int size, bool useBinaryImage) {
 
 	// It's possibly better just to get the position of the pixel along the line, but lets fuck performance
-	Mat &image = useBinaryImage ? ell.binarizedImage : ell.transformedImage;
+	Mat &image = useBinaryImage ? binarizedImage : transformedImage;
 
 	Mat profile (size, 1, CV_8UC1);
 	int x = xStart;
@@ -480,7 +483,7 @@ float Grid::getMeanAlongLine(int xStart, int yStart, int xEnd, int yEnd, int siz
 // ======= DEBUG METHODS ========
 Mat Grid::drawGrid(double scale, bool useBinaryImage) {
 	Mat draw; // Matrix the image will be drawn into
-	Mat &roi = useBinaryImage ? ell.binarizedImage : ell.transformedImage;
+	Mat &roi = useBinaryImage ? binarizedImage : transformedImage;
 	roi.copyTo(draw);
 
 	if (roi.type() == CV_8UC1) {
@@ -495,7 +498,7 @@ Mat Grid::drawGrid(double scale, bool useBinaryImage) {
 	vector < Point > cont;
 
 	// render half of the inner circle (circular matrix design)
-	ellipse2Poly(Point2f(x, y), Size2f(IRR * size, IRR * size), angle, 0, -180, 1, cont);
+	ellipse2Poly(Point2f(x, y), Size2f(IRR * size.width, IRR * size.width), angle, 0, -180, 1, cont);
 	vector < Point > cont2;
 
 	// take first and last vertex of the polygon to get the respective diameter of the inner circle

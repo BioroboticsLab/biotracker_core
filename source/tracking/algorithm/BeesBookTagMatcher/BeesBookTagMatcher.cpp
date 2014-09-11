@@ -3,17 +3,16 @@
 #include <QApplication>
 #include "source/helper/CvHelper.h"
 
+//some variables can go out of boundary
+
 BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings ) : TrackingAlgorithm( settings )
 {
-	_activeGrid			= false;
 	_newGrid			= false;
-	_modifyPositionGrid = false;
-	_modifySizeGrid		= false;		
-	_modifyAngleXY		= false;
-	_modifyTiltGrid		= false;
-	
-	_tilt				= 1; // _axis1 and _axis2 have the same length for all new tag
-	_angle				= 0; //
+	_activeGrid			= false;	
+	_modPosGrid = false;
+	_modSizeGrid		= false;		
+	_modAngleXY		= false;
+	_modTiltGrid		= false;
 }
 
 
@@ -24,14 +23,15 @@ BeesBookTagMatcher::~BeesBookTagMatcher(void)
 void BeesBookTagMatcher::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
 void BeesBookTagMatcher::paint		( cv::Mat& image )
 {	
-	if(_modifySizeGrid || _newGrid || _activeGrid || _modifyPositionGrid || _modifyTiltGrid || _modifyAngleXY)
+	if(_modSizeGrid || _newGrid || _activeGrid || _modPosGrid || _modTiltGrid || _modAngleXY)
 	{
 		drawGrid(image);
 	}
 }
 void BeesBookTagMatcher::reset		(){}
 
-//this will draw a basic grid onto the display image 
+//this will draw a basic grid onto the display image
+//at the moment is drawing an ellipse since I haven't been able to use the Grid object
 void BeesBookTagMatcher::drawGrid(cv::Mat image)
 {
 	//float size = 8;
@@ -45,75 +45,85 @@ void BeesBookTagMatcher::drawGrid(cv::Mat image)
 	//decoder::Grid g(8, 160, 0, 34, 38, decoder::Ellipse(1672,Point2i(34,34),Size(24,23),155.56),0,decoder::Grid::ScoringMethod(0));	
 	//cv::Mat image3=g.drawGrid();
 
-	//Here only enters when the vector is not empty
+	//for loop to draw the Grids tored in _Grids vector.
 	if (_Grids.size()>0)
 	{		
 		for (int i=0; i<_Grids.size(); i++)
 		{
-			cv::ellipse(image, _Grids[i].center,_Grids[i].axes,_angle,0,360,Scalar(255, 0, 0 ),2,8,0);
+			cv::ellipse(image, _Grids[i].center,_Grids[i].axes,_Grids[i].angle,0,360,Scalar(255, 0, 0 ),2,8,0);
 			std::string note = "iterating " + StringHelper::iToSS(i) + 
 				" center: (" + StringHelper::iToSS(_Grids[i].center.x) + "," + StringHelper::iToSS(_Grids[i].center.y) + ") " +
-				"mayor axis: " + StringHelper::iToSS(_Grids[i].axes.width) + "minor axis: " + StringHelper::iToSS(_Grids[i].axes.height);
+				" mayor axis: " + StringHelper::iToSS(_Grids[i].axes.width) + " minor axis: " + StringHelper::iToSS(_Grids[i].axes.height)
+				+ " angle: " + StringHelper::iToSS(_Grids[i].angle);
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
 	}
-	//raius is initialized to 50 when it is a new grid
-	if (_modifySizeGrid || _newGrid || _modifyPositionGrid || _modifyTiltGrid || _modifyAngleXY)
+	
+	//A new Grid with default parameters is drawn
+	if (_modSizeGrid || _newGrid || _modPosGrid || _modTiltGrid || _modAngleXY)
 	{
 		cv::ellipse( image, _centerGrid, Size(_axis1,_axis2), _angle, 0, 360, _color, 2, 8, 0);
 	}	
 }
 
+//check if MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 {
-	//check if left button is clicked
+	//check if LEFT button is clicked
 	if ( e->button() == Qt::LeftButton && _activeGrid)
 	{
-		//check for shift modifier
+		//check for SHIFT modifier -modifies Grid's Size-
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{			
-			std::string note = "shift + left button press on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
+			std::string note = "shift + left button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 			//initialize coordinates for selection tool						
 			_color=cv::Scalar(255, 255, 0 );					
-			_modifySizeGrid = true;
+			_modSizeGrid = true;
 		}
+		//check for CTRL modifier -modifies ellipse angle-
 		else if(Qt::ControlModifier == QApplication::keyboardModifiers())
 		{			
-			std::string note = "control + left button press on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
+			std::string note = "control + left button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
 			emit notifyGUI(note,MSGS::NOTIFICATION);
-			//initialize coordinates for selection tool					
+			//load the previous position of the pointer
 			prevPosition.x = e->x();
 			prevPosition.y = e->y();						
-			_color=cv::Scalar(255, 255, 0 );					
-			_modifyTiltGrid = true;
+			_color=cv::Scalar(255, 255, 0 );
+			_modAngleXY = true;	
 		}
-		else
+		//hold LEFT click drags the ellipse -modifies Grid's position-
+		else if(Qt::AltModifier == QApplication::keyboardModifiers())
 		{			
-			std::string note = "shift + left button press on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
+			std::string note = "left button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 			//initialize coordinates for selection tool					
 			_color=cv::Scalar(255, 255, 0 );					
-			_modifyPositionGrid = true;
+			_modPosGrid = true;
 		}
 	}
-	//check if right button is clicked
+
+	//check if RIGHT button is clicked
 	else if ( e->button() == Qt::RightButton)
 	{
-		//check for ctrl modifier
+		//check for CTRL modifier
 		if(Qt::ControlModifier == QApplication::keyboardModifiers())
 		{
-			//a new grid, the provious one is pushed in the vector and a new one is generated
+			//a new grid, the provious one is pushed into _Grids vector and a new one is generated
 			if (_activeGrid)
 			{
-				_Grids.push_back(myGrid(_centerGrid,cv::Size(_axis1,_axis2)));
-				std::string note = "Tag number: " + StringHelper::iToSS(_Grids.size()) + " on: x=" + 
-					StringHelper::iToSS(_centerGrid.x) + " y=" + StringHelper::iToSS(_centerGrid.y);
+				_Grids.push_back(myGrid(_centerGrid,cv::Size(_axis1,_axis2),_angle));
+				//propierties of pushed grid are printed
+				std::string note = "Tag number: " + StringHelper::iToSS(_Grids.size()) + 
+					"center: (" + StringHelper::iToSS(_centerGrid.x) + "," + StringHelper::iToSS(_centerGrid.y) + ") " +
+					" mayor axis: " + StringHelper::iToSS(_axis1) + " minor axis: " + StringHelper::iToSS(_axis2) +
+					" angle: " + StringHelper::iToSS(_angle);
 				emit notifyGUI(note,MSGS::NOTIFICATION);
 				//initialize coordinates for selection tool
 				_centerGrid.x = e->x();
 				_centerGrid.y = e->y();			
-				_tilt = 1;		
+				_angle = 0;
+				_tilt = 1;				
 				_axis1 = 50;
 				_axis2 = _axis1 * _tilt;
 				_color=cv::Scalar(255, 0, 255 );
@@ -129,6 +139,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 				//initialize coordinates for selection tool
 				_centerGrid.x = e->x();
 				_centerGrid.y = e->y();
+				_angle = 0;
 				_tilt = 1;		
 				_axis1 = 50;
 				_axis2 = _axis1 * _tilt;
@@ -137,26 +148,31 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 				emit update();
 			}
 		}
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{
-			//rotation of the ellipse in XY
-			if (_activeGrid)
-			{				
-				std::string note = "Tag number: " + StringHelper::iToSS(_Grids.size()) + " on: x=" + 
-					StringHelper::iToSS(_centerGrid.x) + " y=" + StringHelper::iToSS(_centerGrid.y);
-				emit notifyGUI(note,MSGS::NOTIFICATION);
-				//load the previous position of the pointer
-				prevPosition.x = e->x();
-				prevPosition.y = e->y();						
-				_color=cv::Scalar(255, 255, 0 );
-				_modifyAngleXY = true;				
-			}
+		//check for SHIFT modifier -modifies Grid's tilt-
+		else if(Qt::ShiftModifier == QApplication::keyboardModifiers() && _activeGrid)
+		{	
+			std::string note = "shift + right button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
+			emit notifyGUI(note,MSGS::NOTIFICATION);
+			//initialize coordinates for selection tool					
+			prevPosition.x = e->x();
+			prevPosition.y = e->y();						
+			_color=cv::Scalar(255, 255, 0 );					
+			_modTiltGrid = true;			
 		}
 	}	
 }
+
+//check if pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
 {
-	if(_modifySizeGrid)
+	if (_modPosGrid) // "HOLD LEFT click" drags the ellipse
+	{
+		_centerGrid.x = e->x();
+		_centerGrid.y = e->y();
+		//draw figure!
+		emit update();
+	}
+	else if(_modSizeGrid) // "SHIFT + LEFT button + MOVE" modifies size of the ellipse
 	{
 		_endGrid.x = e->x();
 		_endGrid.y = e->y();
@@ -166,72 +182,80 @@ void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
 		//draw figure!
 		emit update();
 	}
-	else if (_modifyTiltGrid)
-	{		
-		_tilt = (prevPosition.x-e->x())/_axis1;
-		_axis2 = _axis1 * _tilt;
-		//draw figure!
-		emit update();
-	}
-	else if (_modifyPositionGrid)
-	{
-		_centerGrid.x = e->x();
-		_centerGrid.y = e->y();
-		//draw figure!
-		emit update();
-	}
-	else if (_modifyAngleXY)
-	{		
-		if (prevPosition.y - (e->y()) > 0)
-			_angle -=2;
-		else if (prevPosition.y - (e->y()) < 0)
+	else if (_modAngleXY) // "CTRL + LEFT button + MOVE"  rotates the ellipse
+	{	
+		//drag in right or down direction = clockwise rotation
+		if (e->x() - prevPosition.x > 0 || e->y() - prevPosition.y > 0)
 			_angle +=2;
+		//drag in left or up direction = counter clockwise rotation
+		else if (e->x() - prevPosition.x < 0 || e->y() - prevPosition.y < 0)
+			_angle -=2;
+		//update pointer position
+		prevPosition.x = e->x();
+		prevPosition.y = e->y();
 		//draw figure!
 		emit update();
 	}
+	else if (_modTiltGrid) // "SHIFT + RIGHT click + move" tilts the ellipse
+	{	
+		if (e->x() - prevPosition.x > 0) //drag in right direction increases _axis1
+			_axis1 += 2;
+		else if (e->x() - prevPosition.x < 0) //drag in left direction decreases _axis1
+			_axis1 = abs(_axis1-2);
+		else if (e->y() - prevPosition.y < 0) //drag in up direction increases _axis2
+			_axis2 += 2;
+		else if (e->y() - prevPosition.y > 0) //drag in down direction decreases _axis2
+			_axis2 = abs(_axis2-2);
+		//update pointer position
+		prevPosition.x = e->x();
+		prevPosition.y = e->y();
+		//draw figure!
+		emit update();	
+	}	
+	
 }
+
+//check if MOUSE BUTTON IS RELEASED
 void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 {
 	if ( e->button() == Qt::LeftButton)
 	{
-		if(_modifySizeGrid)
+		if(_modSizeGrid) 
 		{			
-			_modifySizeGrid = false;
-			//next draw will delete rectangle!
-			//emit update();
+			_modSizeGrid = false;			
 			std::string note = "Left button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")";
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
-		else if(_modifyTiltGrid)
+		else if(_modAngleXY) //deactivates ANGLE modification
 		{			
-			_modifyTiltGrid = false;
-			//next draw will delete rectangle!
-			//emit update();
-			std::string note = "Left button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")";
+			_angle = int(_angle)%360;
+			_modAngleXY = false;						
+			std::string note = "Left button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")" 
+				+ " angle " + StringHelper::iToSS(_angle);			
 			emit notifyGUI(note,MSGS::NOTIFICATION);
-		}
-		else if(_modifyPositionGrid)
+		}		
+		else if(_modPosGrid)
 		{			
-			_modifyPositionGrid = false;
-			//next draw will delete rectangle!
-			//emit update();
+			_modPosGrid = false;			
 			std::string note = "Left button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")";
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
 	}
 	else if ( e->button() == Qt::RightButton)
 	{
-		if(_newGrid)
+		if(_newGrid)	//NEW Grid set
 		{			
 			_newGrid = false;
 			_activeGrid = true;			
 			std::string note = "new active Grid on: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")";
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
-		else if(_modifyAngleXY)
+		else if(_modTiltGrid)
 		{			
-			_modifyAngleXY = false;						
-			std::string note = "Right button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")";
+			_tilt = double(_axis2)/_axis1; //_tilt value is calculated at the end of the modification
+			_modTiltGrid = false;			
+			std::string note = "Rigth button released, center of the Grid: (" + StringHelper::iToSS(_centerGrid.x) + ","+ StringHelper::iToSS(_centerGrid.y) + ")" + 
+				" Tilt " + QString::number(_tilt).toStdString();
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
 	}

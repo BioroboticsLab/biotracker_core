@@ -59,12 +59,13 @@ public:
 		ScoringMethod metric;
 	} _score;
 
-	float size;
+	Size size;
 	float x;
 	float y;
 	float angle;
 	float tilt;
-	Ellipse ell;
+	Mat transformedImage;
+	Mat binarizedImage;
 	bool permutation; // Determines whether the grid is just a rotated grid or a fitted one
 
 	/**
@@ -72,10 +73,10 @@ public:
 	 *
 	 * @see init
 	 */
-	Grid(float size, float angle, float tilt,  int x,  int y, Ellipse ell, ScoringMethod scoringMethod = BINARYCOUNT);
-	Grid(float size, float angle, float tilt,  int x,  int y, Ellipse ell, bool permutation, ScoringMethod scoringMethod = BINARYCOUNT);
+	Grid(Size size, float angle, float tilt,  int x,  int y, Mat transImg, ScoringMethod scoringMethod = BINARYCOUNT);
+	Grid(Size size, float angle, float tilt,  int x,  int y, Mat transImg, bool permutation, ScoringMethod scoringMethod = BINARYCOUNT);
 	Grid(ScoringMethod scoringMethod = BINARYCOUNT);
-	Grid(float s, ScoringMethod scoringMethod = BINARYCOUNT);
+	Grid(Size s, ScoringMethod scoringMethod = BINARYCOUNT);
 	virtual ~Grid();
 
 	/**
@@ -172,11 +173,11 @@ private:
 	 * @param tilt tilt of the grid?
 	 * @param x horizontal part of the position
 	 * @param y vertical part of the position
-	 * @param ell ellipse the grid belongs to
+	 * @param tranImg transformed image
 	 * @param score initial score of the grid
 	 * @param scoringMethod used scoring method
 	 */
-	void init(float size, float angle, float tilt,  int x,  int y, Ellipse ell, bool permutation, ScoringMethod scoringMethod);
+	void init(Size size, float angle, float tilt,  int x,  int y, Mat tranImg, bool permutation, ScoringMethod scoringMethod);
 
 	/**
 	 * returns the mean of the intensities along a line

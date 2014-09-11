@@ -21,7 +21,7 @@ public:
 	// ellipse' orientation in degrees
 	double angle;
 	/**
-	 * subimage of the cannyEdgeMap fpr the bounding box. transformed, so tht ellipse is now a circle with no angle.
+	 * subimage of the cannyEdgeMap for the bounding box. transformed, so tht ellipse is now a circle with no angle.
 	 */
 	Mat transformedImage;
 	Mat binarizedImage;
