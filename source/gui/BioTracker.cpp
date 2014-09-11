@@ -68,7 +68,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.sld_video, SIGNAL( sliderReleased() ), this, SLOT( changeCurrentFramebySlider()));
 	QObject::connect(ui.sld_video, SIGNAL( actionTriggered(int) ), this, SLOT( changeCurrentFramebySlider(int)));	
 	QObject::connect(ui.sld_speed, SIGNAL( valueChanged(int) ), this, SLOT( changeFps(int)));
-
+	QObject::connect(ui.videoView, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 
 	//tracking thread signals
 	QObject::connect(_trackingThread, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
@@ -136,6 +136,7 @@ void BioTracker::initPicture(QStringList filenames)
     ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(StringHelper::toQString(ss.str()));
 	setPlayfieldPaused(true);
+	ui.videoView->fitToWindow();
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
@@ -202,6 +203,7 @@ void BioTracker::initCapture()
     ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(StringHelper::toQString(ss.str()));
 	setPlayfieldPaused(true);
+	ui.videoView->fitToWindow();
 }
 
 void BioTracker::stepCaptureForward()
