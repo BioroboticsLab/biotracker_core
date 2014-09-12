@@ -71,7 +71,7 @@ public:
 	 */
 	int getID() const { return _id; };
 
-	double dist(Particle p) const;
+	double dist(const Particle& p) const;
 
 private:
 	/**
