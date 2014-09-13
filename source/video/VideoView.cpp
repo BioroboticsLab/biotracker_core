@@ -159,8 +159,8 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 		int dY = e->y() - _lastMPos[1];
 		_lastMPos[0] = e->x();
 		_lastMPos[1] = e->y();
-		_panX -= dX;
-		_panY -= dY;
+		_panX -= dX * _zoomFactor;
+		_panY -= dY * _zoomFactor;
 		resizeGL(this->width(), this->height());
 		//Draw the scene
 		updateGL();
