@@ -18,4 +18,4 @@ target_link_libraries(BeeTracker
     ${OpenCV_LIBS}
 )
 
-INSTALL(FILES "${CMAKE_SOURCE_DIR}/config.ini" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/config.ini)
+INSTALL(FILES "${CMAKE_SOURCE_DIR}/config.ini" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
