@@ -4,7 +4,7 @@
 #include "source/trackedObject/TrackedObject.h"
 #include "source/trackedObject/History.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 class TrackedFish :
 	public TrackedObject

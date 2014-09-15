@@ -80,8 +80,8 @@ std::string StringHelper::toLowerCase(std::string stringValue)
 
 int StringHelper::split(std::string &txt, std::vector<std::string> &strs, char ch)
 {
-    unsigned int pos = txt.find( ch );
-    unsigned int initialPos = 0;
+    std::size_t pos = txt.find( ch );
+    std::size_t initialPos = 0;
     strs.clear();
 
     // Decompose statement

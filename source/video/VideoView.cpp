@@ -4,7 +4,7 @@
 
 #include "VideoView.h"
 #include <QMouseEvent>
-#include <gl\GLU.h>
+#include <GL/glu.h>
 
 QMutex trackMutex;
 

@@ -1,5 +1,7 @@
 #include "Settings.h"
 
+#include <QMutex>
+
 #include "source/helper/StringHelper.h"
 #include "source/helper/CvHelper.h"
 
@@ -78,11 +80,11 @@ void Settings::setParam(std::vector<TrackerParam::Param> &params, std::string pa
 {
 	QMutexLocker locker(&paramMutex);
 	bool found = false;
-	for (std::vector<TrackerParam::Param>::iterator &it = params.begin(); it != params.end(); ++it)
+    for (TrackerParam::Param& param : params)
 	{	
-		if(it->pName().compare(paramName) == 0)
+        if(param.pName().compare(paramName) == 0)
 		{
-			it->setPValue(paramValue);
+            param.setPValue(paramValue);
 			found = true;
 			break;
 		}
@@ -122,11 +124,11 @@ std::vector<TrackerParam::Param> Settings::getParams()
 template<> std::string Settings::getValueOfParam(std::string paramName, int size)
 {
 	QMutexLocker locker(&paramMutex);
-	for (std::vector<TrackerParam::Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
+    for (TrackerParam::Param const& param : _params)
 	{	
-		if(it->pName().compare(paramName) == 0)
+        if(param.pName().compare(paramName) == 0)
 		{
-			return it->pValue();
+            return param.pValue();
 		}
 	}
 
@@ -136,11 +138,11 @@ template<> std::string Settings::getValueOfParam(std::string paramName, int size
 template<> QString Settings::getValueOfParam(std::string paramName, int size)
 {
 	QMutexLocker locker(&paramMutex);
-	for (std::vector<TrackerParam::Param>::iterator &it = _params.begin(); it != _params.end(); ++it)
+    for (TrackerParam::Param const& param : _params)
 	{	
-		if(it->pName().compare(paramName) == 0)
+        if(param.pName().compare(paramName) == 0)
 		{
-			return StringHelper::toQString(it->pValue());
+            return StringHelper::toQString(param.pValue());
 		}
 	}
 

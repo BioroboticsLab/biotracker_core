@@ -1,6 +1,6 @@
 #include "SimpleTracker.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 class BgSub : public cv::BackgroundSubtractorMOG2 {
 public:

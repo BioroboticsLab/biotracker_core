@@ -1,7 +1,7 @@
 #ifndef FISH_CANDIDATE_H_
 #define FISH_CANDIDATE_H_
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "TrackedFish.h"
 

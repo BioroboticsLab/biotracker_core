@@ -1,6 +1,6 @@
 #include "ParticleFishTracker.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "particlefilter/ParticleBrightnessObserver.h"
 

@@ -1,6 +1,7 @@
 #include "TrackingThread.h"
 
 #include <QFileInfo>
+#include <QMutex>
 #include <time.h>
 
 #include "source/helper/CvHelper.h"
