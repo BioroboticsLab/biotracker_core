@@ -10,8 +10,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 	Settings settings;
-    settings.setParam(TRACKERPARAM::TRACKING_ENABLED, "true");
-    settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE, "");
 
 	app.setOrganizationName("Biorobotics Lab / FU Berlin");
 	app.setApplicationName("Bio Tracker");
