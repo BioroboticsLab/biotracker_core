@@ -36,7 +36,7 @@ public:
 	 * @param: param, the parameter to set,
 	 * @return: void.
 	 */
-	void setParam(TrackerParam::Param param);	
+    void setParam(TrackerParam::Param param);
 
 	/**
 	 * Sets the parameter.
@@ -52,14 +52,6 @@ public:
 	 * @return: void.
 	 */
 	void setParams(std::vector<TrackerParam::Param> params);
-
-	/**
-	 * Sets a parameter within a parameter vector
-	 * @param: params, the parameter vector,
-	 * @param: param, the parameter to set,
-	 * @return: void.
-	 */
-	void setParam(std::vector<TrackerParam::Param> &params, TrackerParam::Param param);
 
 	/**
 	 * Sets a parameter within a parameter vector
