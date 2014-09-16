@@ -21,9 +21,9 @@ private:
 
 
 
-		void track			( std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame );
+        void track	( std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame );
 		void paint			( cv::Mat& image );
-		void reset			( );
+        void reset	( );
 
 
 	public slots:

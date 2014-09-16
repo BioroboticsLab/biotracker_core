@@ -1,7 +1,7 @@
 #ifndef PARTICLE_CLUSTERS_H_
 #define PARTICLE_CLUSTERS_H_
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "Particle.h"
 #include "source/settings/Settings.h"

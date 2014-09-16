@@ -1,6 +1,6 @@
 #include "ParticleClusters.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 
 ParticleClusters::ParticleClusters(Settings& settings) : _settings(settings), _centers(), _labels()

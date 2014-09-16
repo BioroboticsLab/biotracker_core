@@ -1,6 +1,6 @@
 #include "ParticleFishTracker.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "particlefilter/ParticleBrightnessObserver.h"
 
@@ -76,7 +76,7 @@ void ParticleFishTracker::importanceResample() {
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
 	_current_particles.clear();
 
-	for (int i = 0; i < old_particles.size()-random_new_particles; i++) {
+	for (size_t i = 0; i < old_particles.size()-random_new_particles; i++) {
 		size_t index = 0;
 		float rand = _rng.uniform(0.f, _sum_scores);
 		for (float position = 0; position + old_particles[index].getScore() < rand; ) {
@@ -131,7 +131,7 @@ void ParticleFishTracker::cutParticleCoords(Particle& to_cut) {
 * uniformly distributed particles.
 */
 void ParticleFishTracker::seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y) {
-	for (int i = 0; i<num_particles; i++) {
+	for (size_t i = 0; i<num_particles; i++) {
 		int x = _rng.uniform(min_x, max_x);
 		int y = _rng.uniform(min_y, max_y);
 		// TODO include random angle

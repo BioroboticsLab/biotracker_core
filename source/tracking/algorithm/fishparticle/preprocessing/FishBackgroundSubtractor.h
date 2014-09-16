@@ -1,7 +1,7 @@
 #ifndef FISH_BACKGROUND_SUBTRACTOR_H_
 #define FISH_BACKGROUND_SUBTRACTOR_H_
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "source/settings/Settings.h"
 

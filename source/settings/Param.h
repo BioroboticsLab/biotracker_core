@@ -35,13 +35,13 @@ public:
 	 * Gets the parameter name.
 	 * return the parameter name as standard string.
 	 */
-	std::string pName() { return _paramName; }
+    std::string pName() const { return _paramName; }
 
 	/**
 	 * Gets the value of the parameter.
 	 * return the parameter value as standard string.
 	 */
-	std::string pValue() { return _paramValue; }
+    std::string pValue() const { return _paramValue; }
 
 private:
 	std::string _paramName;

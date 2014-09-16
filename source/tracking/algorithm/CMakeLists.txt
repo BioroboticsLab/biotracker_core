@@ -1,0 +1,5 @@
+add_subdirectory(BeesBookTagMatcher)
+add_subdirectory(colorPatchTracker)
+add_subdirectory(fishparticle)
+add_subdirectory(SampleTracker)
+add_subdirectory(simpletracker)

@@ -1,7 +1,7 @@
 #ifndef SimpleTracker_H
 #define SimpleTracker_H
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "TrackedFish.h"

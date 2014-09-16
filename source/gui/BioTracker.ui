@@ -627,7 +627,7 @@
   <customwidget>
    <class>VideoView</class>
    <extends>QWidget</extends>
-   <header>source/video/videoview.h</header>
+   <header>source/video/VideoView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
