@@ -42,6 +42,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -53,9 +55,9 @@
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(CV_DIR)\x86\vc11\lib;$(CV_DIR)\build\include\opencv2;$(QTDIR)\lib;$(CV_DIR)\build\include\opencv;$(CV_DIR)\build\x86\vc11\lib;$(CV_DIR)\build\include;$(QTDIR)\include\QtXml;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include;.\GeneratedFiles;.;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtOpenGLExtensions;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CV_DIR)\build\lib\Release;$(CV_DIR)\build\lib\Debug;$(CV_DIR)\build\include\opencv2;$(QTDIR)\lib;$(CV_DIR)\build\include\opencv;$(CV_DIR)\build\include;$(QTDIR)\include\QtXml;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include;.\GeneratedFiles;.;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtOpenGLExtensions;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;Qt5Xmld.lib;opencv_calib3d$(CV_VERSION)d.lib;opencv_core$(CV_VERSION)d.lib;opencv_features2d$(CV_VERSION)d.lib;opencv_flann$(CV_VERSION)d.lib;opencv_highgui$(CV_VERSION)d.lib;opencv_imgproc$(CV_VERSION)d.lib;opencv_objdetect$(CV_VERSION)d.lib;opencv_video$(CV_VERSION)d.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -63,13 +65,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_MULTIMEDIAWIDGETS_LIB;QT_QUICK_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtMultimediaWidgets;$(QTDIR)\include\QtQuick;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(CV_DIR)\build\include\opencv2;$(CV_DIR)\build\include\opencv;$(CV_DIR)\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtMultimediaWidgets;$(QTDIR)\include\QtQuick;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(CV_DIR)\build\include\opencv2;$(CV_DIR)\build\include\opencv;$(CV_DIR)\build\include;$(CV_DIR)\build;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(CV_DIR)\build\x86\vc11\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -78,8 +80,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.cpp" />
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.cpp" />
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.cpp" />
@@ -145,8 +145,6 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
     </CustomBuild>
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.h" />
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.h" />
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.h" />
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.h" />
