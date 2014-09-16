@@ -279,7 +279,7 @@ void TrackingThread::doTracking(cv::Mat frame)
 	{
 		_tracker->track(_trackedObjects, _frameNumber, frame);
 	}
-	catch(exception& e)
+	catch(exception&)
 	{
 		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
 	}

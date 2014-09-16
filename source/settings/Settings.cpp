@@ -109,7 +109,7 @@ void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
-	for(int i = 0; i < params.size(); i++)
+	for(size_t i = 0; i < params.size(); i++)
 	{
 		settings.setValue(StringHelper::toQString(params.at(i).pName()),StringHelper::toQString(params.at(i).pValue()));
 	}

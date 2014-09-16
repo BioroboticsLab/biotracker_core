@@ -38,7 +38,6 @@ void VideoView::fitToWindow()
 		_zoomFactor = _displayImage.rows/(width/imgRatio);
 		_panY = -((height - (width/imgRatio))/2)*_zoomFactor;
 		_panX = 0;
-		emit notifyGUI("panY: " + StringHelper::iToSS(_panY),MSGS::NOTIFICATION);
 	} else 
 	{
 		_zoomFactor = _displayImage.cols/(height*imgRatio);
@@ -61,8 +60,16 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-		QMutexLocker locker(&trackMutex);
-		_tracker->paint(imageCopy);
+		try
+		{
+			QMutexLocker locker(&trackMutex);
+			_tracker->paint(imageCopy);
+		}
+		catch(exception&)
+		{
+			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
+		}
+
 	}
 
 	// Create a black background for the parts of the widget with no image.
@@ -112,7 +119,7 @@ void VideoView::initializeGL()
 {
 	// Create the surface we will use for the texture:
 	static const int coords[4][3] = { { +1, -1 }, { -1, -1 }, { -1, +1 }, { +1, +1 } };
-			
+
 	// OpenCV's coordinate system originates in the upper left corner.
 	// OpenGL originates in the lower left. Thus the image has to be flipped vertically		
 	for (int j = 0; j < 4; ++j) {
@@ -167,20 +174,19 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	}
 	//variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
-    GLdouble modelview[16];
-    GLdouble projection[16];
-	GLfloat winX, winY, winZ;
-    GLdouble posX, posY, posZ;
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLdouble posX, posY, posZ;
 
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
 	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	if(isOnPicture)
 	{	QPoint p  ((int)posX, (int)posY);
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit moveEvent ( modifiedEvent );		
+	const QPointF *localPos = new QPointF(p);
+	QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+	emit moveEvent ( modifiedEvent );		
 	}
 }
 
@@ -194,13 +200,12 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	}
 	//init variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
-    GLdouble modelview[16];
-    GLdouble projection[16];
-	GLfloat winX, winY, winZ;
-    GLdouble posX, posY, posZ;
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLdouble posX, posY, posZ;
 
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
 	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	if(isOnPicture)
@@ -219,16 +224,15 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 void VideoView::mouseReleaseEvent( QMouseEvent * e )
 {
 	_isPanning = false;
-	
+
 	//variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
-    GLdouble modelview[16];
-    GLdouble projection[16];
-	GLfloat winX, winY, winZ;
-    GLdouble posX, posY, posZ;
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLdouble posX, posY, posZ;
 
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
 	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	if(isOnPicture)

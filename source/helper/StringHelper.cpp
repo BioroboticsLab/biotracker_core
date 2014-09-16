@@ -37,7 +37,7 @@ bool StringHelper::isNumber(QString fullStringQ)
 {	
 	std::string fullString = fullStringQ.toLocal8Bit().data();
 
-	for(int i = 0; i < fullString.length(); i++)
+	for(size_t i = 0; i < fullString.length(); i++)
 	{
 		if(isdigit(fullString.at(i)))
 		{
@@ -73,9 +73,9 @@ QString StringHelper::toQString(std::string stdString)
 
 std::string StringHelper::toLowerCase(std::string stringValue)
 {
-	std::string lowCaseString(stringValue);
-	std::transform(lowCaseString.begin(), lowCaseString.end(), lowCaseString.begin(), tolower);
-	return lowCaseString;
+	
+	std::transform(stringValue.begin(), stringValue.end(), stringValue.begin(), tolower);
+	return std::move(stringValue);
 }
 
 int StringHelper::split(std::string &txt, std::vector<std::string> &strs, char ch)

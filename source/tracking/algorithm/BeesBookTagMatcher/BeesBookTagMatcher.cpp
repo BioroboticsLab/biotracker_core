@@ -48,7 +48,7 @@ void BeesBookTagMatcher::drawGrid(cv::Mat image)
 	//for loop to draw the Grids tored in _Grids vector.
 	if (_Grids.size()>0)
 	{		
-		for (int i=0; i<_Grids.size(); i++)
+		for (size_t i=0; i<_Grids.size(); i++)
 		{
 			cv::ellipse(image, _Grids[i].center,_Grids[i].axes,_Grids[i].angle,0,360,Scalar(255, 0, 0 ),2,8,0);
 			std::string note = "iterating " + StringHelper::iToSS(i) + 
