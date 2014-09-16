@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -121,7 +121,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_VideoView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="source\helper\CvHelper.cpp" />
     <ClCompile Include="source\helper\StringHelper.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\settings\Param.cpp" />
@@ -155,9 +154,7 @@
     <ClInclude Include="source\tracking\algorithm\colorPatchTracker\colorPatchTracker.h" />
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
-    <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
-    <ClInclude Include="source\helper\CvHelper.h" />
-    <ClInclude Include="source\helper\StringHelper.h" />
+    <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />    <ClInclude Include="source\helper\StringHelper.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h" />
     <ClInclude Include="source\video\ImagePreProcessor.h" />
@@ -241,7 +238,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.3.0" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2012_opengl" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
