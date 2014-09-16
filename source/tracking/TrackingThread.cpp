@@ -2,7 +2,8 @@
 
 #include <QFileInfo>
 #include <QMutex>
-#include <time.h>
+#include <chrono>
+#include <thread>
 
 #include "source/helper/CvHelper.h"
 #include "source/settings/Messages.h"
@@ -90,7 +91,7 @@ void TrackingThread::stopCapture()
 void TrackingThread::run()
 {
 	cv::Mat frame;
-	clock_t t;
+    std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
 
 	while(isCaptureActive())
@@ -107,7 +108,7 @@ void TrackingThread::run()
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
 		if(firstLoop)
-			t = clock();
+            t = std::chrono::system_clock::now();
 		if(isReadyForNextFrame()){
 			// measure the capture start time			
 			if (!_capture.isOpened() && !_pictureMode)	{	break;	}
@@ -137,23 +138,25 @@ void TrackingThread::run()
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
 
-			t = clock() - t;
-			double ms = 1000 / _fps;
+            std::chrono::milliseconds target_dur((int) (1000. / _fps));
+            std::chrono::milliseconds dur =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now() - t);
 			if(!_maxSpeed)
 			{
-				if (t <= ms)
-					ms -= ((double) t);
+                if (dur <= target_dur)
+                    target_dur -= dur;
 				else {	
-					ms = 0;
+                    target_dur = std::chrono::milliseconds(0);
 				}
 			}
 			else
-				ms = 0;
+                target_dur = std::chrono::milliseconds(0);
 			// calculate the running fps.
-			_runningFps = 1000 / (double)(t + ms);
+            _runningFps = 1000. / std::chrono::duration_cast<std::chrono::milliseconds>(dur + target_dur).count();
 			emit sendFps(_runningFps);
-			msleep(ms);
-			t = clock();
+            std::this_thread::sleep_for(target_dur);
+            t = std::chrono::system_clock::now();
 			firstLoop = false;
 
 			if(isCaptureActive())
