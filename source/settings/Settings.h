@@ -93,11 +93,9 @@ public:
 	/**
 	 * Gets the parameter value provided by parameter name. 
 	 * @param: paramName, the parameter name,
-	 * @param: size, if the parameter is a list or vector,
-	 *				 then one can provide the length of the list.
 	 * @return: the value of the parameter as the specified type.
 	 */
-	template <typename T> T getValueOfParam(std::string paramName, int size = 4);
+    template <typename T> T getValueOfParam(std::string paramName);
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.

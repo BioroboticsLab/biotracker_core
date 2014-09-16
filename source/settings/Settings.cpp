@@ -82,7 +82,7 @@ std::vector<TrackerParam::Param> Settings::getParams()
 	return _params;
 }
 
-template<> std::string Settings::getValueOfParam(std::string paramName, int size)
+template<> std::string Settings::getValueOfParam(std::string paramName)
 {
 	QMutexLocker locker(&paramMutex);
     for (TrackerParam::Param const& param : _params)
@@ -96,7 +96,7 @@ template<> std::string Settings::getValueOfParam(std::string paramName, int size
 	throw "Parameter cannot be obtained!";
 }
 
-template<> QString Settings::getValueOfParam(std::string paramName, int size)
+template<> QString Settings::getValueOfParam(std::string paramName)
 {
 	QMutexLocker locker(&paramMutex);
     for (TrackerParam::Param const& param : _params)
@@ -110,7 +110,7 @@ template<> QString Settings::getValueOfParam(std::string paramName, int size)
 	throw "Parameter cannot be obtained!";
 }
 
-template<> double Settings::getValueOfParam(std::string paramName, int size)
+template<> double Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -123,7 +123,7 @@ template<> double Settings::getValueOfParam(std::string paramName, int size)
 	return valueAsDouble;
 }
 
-template<> float Settings::getValueOfParam(std::string paramName, int size)
+template<> float Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -136,7 +136,7 @@ template<> float Settings::getValueOfParam(std::string paramName, int size)
 	return valueAsFloat;
 }
 
-template<> int Settings::getValueOfParam(std::string paramName, int size)
+template<> int Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -149,7 +149,7 @@ template<> int Settings::getValueOfParam(std::string paramName, int size)
 	return valueAsInt;
 }
 
-template<> bool Settings::getValueOfParam(std::string paramName, int size)
+template<> bool Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -162,7 +162,7 @@ template<> bool Settings::getValueOfParam(std::string paramName, int size)
 	return false;
 }
 
-template<> cv::Scalar Settings::getValueOfParam(std::string paramName, int size)
+template<> cv::Scalar Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -184,39 +184,6 @@ template<> cv::Scalar Settings::getValueOfParam(std::string paramName, int size)
 	}
 
 	return cvScalarValue;
-}
-
-template<> std::vector<cv::Point> Settings::getValueOfParam(std::string paramName, int size)
-{
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-
-	std::vector<cv::Point> pointList;
-	std::vector<cv::string> pointStringList;
-
-	int tokens = StringHelper::split(valueAsString,pointStringList,' ');
-	// 151,454-152,26-562,32-572,446
-	if(tokens == size)
-	{
-		std::vector<std::string> pstrings;
-		for(int i = 0; i < tokens; i++)
-		{
-			int p = StringHelper::split(pointStringList.at(i),pstrings,':');
-			if(p != 2)
-			{
-				break;
-			} else 
-			{
-                int x = std::stoi(pstrings.at(0));
-                int y = std::stoi(pstrings.at(1));
-				pointList.push_back(cv::Point(x,y));
-			}
-		}
-	}
-
-	if(pointList.size() != size)
-		return std::vector<cv::Point>();
-	return pointList;
 }
 
 std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
