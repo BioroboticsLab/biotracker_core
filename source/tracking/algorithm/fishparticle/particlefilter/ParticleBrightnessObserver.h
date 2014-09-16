@@ -1,7 +1,7 @@
 #ifndef PARTICLE_BRIGHTNESS_OBSERVER_
 #define PARTICLE_BRIGHTNESS_OBSERVER_
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "Particle.h"
 

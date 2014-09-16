@@ -36,8 +36,8 @@ void BeesBookTagMatcher::drawGrid(cv::Mat image)
 {
 	//for loop to draw the Grids tored in _Grids vector.
 	if (_Grids.size()>0)
-	{
-		for (int i=0; i<_Grids.size(); i++)
+	{		
+		for (size_t i=0; i<_Grids.size(); i++)
 		{
 			gtemp.init(_Grids[i].center, _Grids[i].axes, _Grids[i].angleTag, _Grids[i].angleGrid, _Grids[i].ID);
 			gtemp.drawGrid(image,0);

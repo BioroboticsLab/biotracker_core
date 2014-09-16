@@ -4,6 +4,7 @@
 #include "source/tracking/TrackingAlgorithm.h"
 #include "preprocessing/FramePreprocessor.h"
 #include "particlefilter/Particle.h"
+#include "particlefilter/ParticleClusters.h"
 
 /**
  * Implements a particle filtering algorithm to track multiple fish in a tank.
@@ -54,6 +55,8 @@ private:
 	* resampling.
 	*/
 	float _sum_scores;
+
+	ParticleClusters _clusters;
 
 	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
 

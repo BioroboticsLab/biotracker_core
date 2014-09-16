@@ -1,7 +1,7 @@
 #ifndef FRAME_PREPROCESSOR_H
 #define FRAME_PREPROCESSOR_H
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "FishBackgroundSubtractor.h"
 #include "source/settings/Settings.h"

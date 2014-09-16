@@ -70,6 +70,9 @@
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -120,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

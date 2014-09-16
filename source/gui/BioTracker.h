@@ -20,16 +20,17 @@
 #include "source/settings/Messages.h"
 #include "source/helper/CvHelper.h"
 #include "source/helper/StringHelper.h"
-#include "GeneratedFiles/ui_BioTracker.h"
-#include <source/settings/Settings.h>
-#include <source/tracking/TrackingThread.h>
-#include <source/video/VideoView.h>
+#include "source/settings/Settings.h"
+#include "source/tracking/TrackingThread.h"
+#include "source/video/VideoView.h"
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
 #include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
 #include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
 #include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
+
+#include "ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;

@@ -1,13 +1,13 @@
 #include "SimpleTracker.h"
 
-#include <opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 class BgSub : public cv::BackgroundSubtractorMOG2 {
 public:
 	BgSub() {
 		bShadowDetection = true;
 		nShadowDetection = 0;
-		fTau = 0.90;
+		fTau = 0.90f;
 		nmixtures = 30;
 	}
 };
@@ -50,7 +50,7 @@ void SimpleTracker::track(std::vector<TrackedObject>& objectList, ulong frameNum
 
 	std::vector<cv::Point2f> center(contours.size());
 	float radius_dummy;
-	for(int i = 0; i < contours.size(); i++) {
+	for(size_t i = 0; i < contours.size(); i++) {
 		cv::minEnclosingCircle(contours[i], center[i], radius_dummy);
 	}
 	std::vector<cv::Point2f> contourCenters(center.begin(), center.end());

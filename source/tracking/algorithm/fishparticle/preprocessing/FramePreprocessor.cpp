@@ -19,7 +19,7 @@ cv::Mat FramePreprocessor::preProcess(cv::Mat image) {
 	image = backgroundSubtract(image);
 	/*cv::erode(image, image, cv::Mat());
 	cv::dilate(image, image, cv::Mat());*/
-	cv::GaussianBlur(image, image, cv::Size(13, 13), 0);
+	cv::GaussianBlur(image, image, cv::Size(5, 5), 0);
 	return image;
 }
 
