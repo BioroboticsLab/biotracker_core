@@ -39,4 +39,4 @@ include_directories(
 add_subdirectory(source)
 
 INSTALL(FILES "${CMAKE_SOURCE_DIR}/config.ini" 
-	DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/source/)
