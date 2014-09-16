@@ -57,6 +57,7 @@ target_link_libraries(BioTracker
 	FishParticle
 	SampleTracker
 	SimpleTracker
+	LandmarkTracker
     Qt5::Widgets
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}
