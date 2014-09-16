@@ -1,4 +1,5 @@
 #include "source/gui/BioTracker.h"
+#include <chrono>
 #include <sstream>
 #include <string>
 
@@ -410,7 +411,12 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 
 void BioTracker::takeScreenshot()
 {
+    const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
+    const std::time_t t = std::chrono::system_clock::to_time_t(p);
+    std::string dateTime = std::ctime(&t);
+    // ctime adds a newline to the string due to historical reasons
+    dateTime = dateTime.substr(0, dateTime.size() - 1);
 	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
-	filepath.append("/screenshot_").append(StringHelper::toQString(CvHelper::getCurrentDatetimeAsStd())).append(".png");
+    filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
 }

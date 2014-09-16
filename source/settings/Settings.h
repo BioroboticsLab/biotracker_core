@@ -47,14 +47,6 @@ public:
 	void setParam(std::string paramName, std::string paramValue);
 
 	/**
-	 * Sets the parameter. Generic method.
-	 * @param: paramName, name of the parameter,
-	 * @param: value, value of the parameter,
-	 * @return: void.
-	 */
-	template <typename T> void setParam2(std::string paramName, T value);
-
-	/**
 	 * Sets the parameters.
 	 * @param: params, the parameter list to set,
 	 * @return: void.

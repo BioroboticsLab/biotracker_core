@@ -3,7 +3,6 @@
 #include <QMutex>
 
 #include "source/helper/StringHelper.h"
-#include "source/helper/CvHelper.h"
 
 /**
 * Mutexes.
@@ -38,38 +37,6 @@ void Settings::setParam(std::string paramName, std::string paramValue)
 	setParam(_params, paramName, paramValue);
 	setQSettingsParam(paramName, paramValue);	
 }
-
-template <> void Settings::setParam2(std::string paramName, bool value)
-{
-	//NOT IMPLEMENT YET
-}
-
-template <> void Settings::setParam2(std::string paramName, int value)
-{
-	//NOT IMPLEMENT YET
-}
-
-template <> void Settings::setParam2(std::string paramName, float value)
-{
-	//NOT IMPLEMENT YET
-}
-
-template <> void Settings::setParam2(std::string paramName, double value)
-{
-	//NOT IMPLEMENT YET
-}
-
-template <> void Settings::setParam2(std::string paramName, std::string value)
-{
-	//NOT IMPLEMENT YET
-}
-
-template <> void Settings::setParam2(std::string paramName, QString value)
-{
-	//NOT IMPLEMENT YET
-}
-
-
 
 void Settings::setParam(std::vector<TrackerParam::Param> &params, TrackerParam::Param param)
 {
@@ -215,9 +182,9 @@ template<> cv::Scalar Settings::getValueOfParam(std::string paramName, int size)
 	{
 		for(int i = 0; i < tokens; i++)
 		{
-			int r = CvHelper::stdStringToInt(stringList.at(0));
-			int g = CvHelper::stdStringToInt(stringList.at(1));
-			int b = CvHelper::stdStringToInt(stringList.at(2));
+            int r = std::stoi(stringList.at(0));
+            int g = std::stoi(stringList.at(1));
+            int b = std::stoi(stringList.at(2));
 			cvScalarValue = cv::Scalar(r,g,b);
 		}
 	}
@@ -246,8 +213,8 @@ template<> std::vector<cv::Point> Settings::getValueOfParam(std::string paramNam
 				break;
 			} else 
 			{
-				int x = CvHelper::stdStringToInt(pstrings.at(0));
-				int y = CvHelper::stdStringToInt(pstrings.at(1));
+                int x = std::stoi(pstrings.at(0));
+                int y = std::stoi(pstrings.at(1));
 				pointList.push_back(cv::Point(x,y));
 			}
 		}

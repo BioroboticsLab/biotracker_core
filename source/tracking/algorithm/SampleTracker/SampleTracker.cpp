@@ -1,8 +1,6 @@
 #include "SampleTracker.h"
 #include "source/helper/StringHelper.h"
 #include <QApplication>
-#include "source/helper/CvHelper.h"
-
 
 SampleTracker::SampleTracker( Settings & settings ) : TrackingAlgorithm( settings )
 {
@@ -16,7 +14,7 @@ SampleTracker::~SampleTracker(void)
 {
 }
 
-void SampleTracker::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
+void SampleTracker::track		( std::vector<TrackedObject> &, ulong, cv::Mat& ){}
 void SampleTracker::paint		( cv::Mat& image )
 {
 	if(_showSelectorRec)
