@@ -138,22 +138,22 @@ void TrackingThread::run()
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
 
-            std::chrono::milliseconds target_dur((int) (1000. / _fps));
-            std::chrono::milliseconds dur =
-                    std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::microseconds target_dur((int) (1000000. / _fps));
+            std::chrono::microseconds dur =
+                    std::chrono::duration_cast<std::chrono::microseconds>(
                         std::chrono::system_clock::now() - t);
 			if(!_maxSpeed)
 			{
                 if (dur <= target_dur)
                     target_dur -= dur;
 				else {	
-                    target_dur = std::chrono::milliseconds(0);
+                    target_dur = std::chrono::microseconds(0);
 				}
 			}
 			else
-                target_dur = std::chrono::milliseconds(0);
+                target_dur = std::chrono::microseconds(0);
 			// calculate the running fps.
-            _runningFps = 1000. / std::chrono::duration_cast<std::chrono::milliseconds>(dur + target_dur).count();
+            _runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
 			emit sendFps(_runningFps);
             std::this_thread::sleep_for(target_dur);
             t = std::chrono::system_clock::now();
