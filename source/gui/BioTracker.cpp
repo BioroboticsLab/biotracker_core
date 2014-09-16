@@ -246,6 +246,8 @@ void BioTracker::stopCapture()
 	updateFrameNumber(0);
 	ui.sld_video->setDisabled(true);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	ui.cb_algorithms->setCurrentIndex(0);
+	trackingAlgChanged("no tracking");
 }
 
 void BioTracker::updateFrameNumber(int frameNumber)
@@ -395,7 +397,8 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
 		tracker = new SampleTracker(_settings);
 	}
-	connectTrackingAlg(tracker);
+	if ( trackingAlg != "no tracking" )
+		connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);
 }
 
