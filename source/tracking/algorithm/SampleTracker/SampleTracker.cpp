@@ -26,21 +26,55 @@ void SampleTracker::paint		( cv::Mat& image )
 }
 void SampleTracker::reset		(){}
 
+void SampleTracker::forcePointIntoPicture(cv::Point & point, cv::Mat & image)
+{
+	//check if any coordinates outside picture
+	//and if so change them!
+	if ( point.x < 0 )
+		point.x = 0;
+	if ( point.x > image.cols )
+		point.x = image.cols;
+	if ( point.y < 0 )
+		point.y = 0;
+	if ( point.y > image.rows )
+		point.y = image.rows;
+}
+
 //this will draw a basic rectangle onto the diplay image 
 void SampleTracker::drawRectangle(cv::Mat image)
 {
-	cv::rectangle( image,
-           _selectorRecStart,
-           _selectorRecEnd,
-           cv::Scalar(255, 255, 0 ),
-           -1,
-           8 );
+	forcePointIntoPicture(_selectorRecStart,image);
+	forcePointIntoPicture(_selectorRecEnd,image);
+
+	int width	= _selectorRecEnd.x - _selectorRecStart.x;
+	int height	= _selectorRecEnd.y - _selectorRecStart.y;
+	int x,y;
+	//check into which direction rectangle is stretched
+	if		( width < 0 && height > 0 )
+	{		x = _selectorRecEnd.x;		y = _selectorRecStart.y;	}
+	else if ( width > 0 && height < 0 )
+	{		x = _selectorRecStart.x;		y = _selectorRecEnd.y;	}
+	else if ( width < 0 && height < 0 )
+	{		x = _selectorRecEnd.x;		y = _selectorRecEnd.y;	}
+	else
+	{		x = _selectorRecStart.x;		y = _selectorRecStart.y;	}
+	
+	cv::Mat roi = image(cv::Rect(x, y, abs(width), abs(height)));	
+	
+	cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(255, 255, 0)); 
+    double alpha = 0.3;
+    cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi); 
+	//cv::rectangle( image,
+ //          _selectorRecStart,
+ //          _selectorRecEnd,
+ //          cv::Scalar(255, 255, 0 ),           
+ //          4 );
 }
 
 void SampleTracker::mouseMoveEvent		( QMouseEvent * e )
 {
 	if(_showSelectorRec)
-		{
+		{			
 			_selectorRecEnd.x = e->x();
 			_selectorRecEnd.y = e->y();
 			//draw rectangle!

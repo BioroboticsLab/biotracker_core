@@ -12,6 +12,7 @@ private:
 		cv::Point _selectorRecEnd;
 		bool _showSelectorRec;
 		void drawRectangle(cv::Mat image);
+		void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
 
 	public:
 		SampleTracker	( Settings & settings );
