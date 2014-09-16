@@ -67,12 +67,6 @@
     <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,12 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h">
