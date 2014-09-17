@@ -31,7 +31,7 @@ SimpleTracker::~SimpleTracker(void)
 {
 }
 
-void SimpleTracker::track(std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame) {
+void SimpleTracker::track(std::vector<TrackedObject>&, ulong, cv::Mat & frame) {
 	// TODO history, handle frame number,...
 	static cv::RNG rng(12345);
 
@@ -169,15 +169,15 @@ static bool isYounger(const TrackedFish& a, const TrackedFish& b) {
 	return a.age_of_last_known_position() < b.age_of_last_known_position();
 }
 
-void SimpleTracker::paint		( cv::Mat& image ){}
+void SimpleTracker::paint		( cv::Mat& ){}
 
-void SimpleTracker::mouseMoveEvent		( QMouseEvent * e )
+void SimpleTracker::mouseMoveEvent		( QMouseEvent * )
 {
 }
-void SimpleTracker::mousePressEvent		( QMouseEvent * e )
+void SimpleTracker::mousePressEvent		( QMouseEvent * )
 {
 
 }
-void SimpleTracker::mouseReleaseEvent	( QMouseEvent * e )
+void SimpleTracker::mouseReleaseEvent	( QMouseEvent * )
 {	
 }

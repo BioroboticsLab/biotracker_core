@@ -20,7 +20,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher(void)
 {
 }
 
-void BeesBookTagMatcher::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
+void BeesBookTagMatcher::track		( std::vector<TrackedObject> &, ulong, cv::Mat& ){}
 void BeesBookTagMatcher::paint		( cv::Mat& image )
 {	
 	if(_modSizeGrid || _newGrid || _activeGrid || _modPosGrid || _modTiltGrid || _modAngleTag)
@@ -76,7 +76,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 			std::string note = "left button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 			//a differente tag is selected when clicking inside its area
-			for (int i=0; i<_Grids.size();i++)
+            for (size_t i=0; i<_Grids.size();i++)
 				{
 					if (cv::pointPolygonTest(_Grids[i].cellsContours[12],cv::Point(e->x(),e->y()),false)>0)
 					{
@@ -150,7 +150,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 	{
 		//modify bit value
 		//check if the pointer is inside one of the cellsContours
-		for (int i=0; i<g.cellsContours.size();i++)
+        for (size_t i=0; i<g.cellsContours.size();i++)
 		{			
 			if (cv::pointPolygonTest(g.cellsContours[i],cv::Point(e->x(),e->y()),false)>0)
 			{

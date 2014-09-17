@@ -21,14 +21,14 @@ QMutex readyForNexFrameMutex;
 QMutex trackerMutex;
 
 TrackingThread::TrackingThread(Settings &settings) :	
-	_settings(settings),
-	_captureActive(false),
-	_fps(30),
+    _captureActive(false),
 	_readyForNextFrame(true),
 	_videoPause(false),
-	_frameNumber(0),
-	_tracker(NULL),
-	_maxSpeed(false)
+    _fps(30),
+    _frameNumber(0),
+    _maxSpeed(false),
+    _settings(settings),
+    _tracker(NULL)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 	_trackedObjects = std::vector<TrackedObject>();
