@@ -39,24 +39,25 @@ void myGrid::drawGrid(cv::Mat &img, bool active) {
 	// contour vector
 	std::vector<std::vector <cv::Point> >	conts;	
 	cellsContours.clear();
-	int ites = 12;
+	//ites 0-11 bit cells
+	//ites 12 white semicircle
+	//ites 13 black semicircle
+	//ites 14 diamater
+	//ites 15 tag perimeter
+	int ites = 16;
 	
 	// render the bit cells
 	for (int i = 0; i < ites; i++)
-	{		
+	{
 		std::vector<cv::Point> subCont = renderGridCell(i);
 		conts.push_back(subCont);
-		cellsContours.push_back(subCont);
-	}
-	// render the diameter of the grid
-	std::vector < cv::Point > cont1;
-	cv::ellipse2Poly( center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid+180, 180, cont1);	
-	conts.push_back(cont1);
-	
+		//only the bit cells area stored in cellsContours
+		if (i<12 || i==15)			
+			cellsContours.push_back(subCont);
+	}	
 	conts.push_back(std::vector<cv::Point>());	//empty vector to allow the first n vector to be printed VS-2012 error
 
-	//the twelve cells are drawn
-	//cv::drawContours(img, conts, -1, cv::Scalar(0, 0, 0), 1);
+	//the twelve bit cells are drawn	
 	for (int i=0; i<12;i++)
 	{		
 		//each of the cells contour is colored according to its value
@@ -64,32 +65,30 @@ void myGrid::drawGrid(cv::Mat &img, bool active) {
 	}
 
 	//half white circle
-	cv::ellipse(img, center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid-180, cv::Scalar(255, 255, 255), 1, 8, 0);	
+	cv::drawContours(img, conts, 12, cv::Scalar(255, 255, 255), 1);	
 	//half black circle
-	cv::ellipse(img, center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid+180, cv::Scalar(0, 0, 0), 1, 8, 0);	
+	cv::drawContours(img, conts, 13, cv::Scalar(0, 0, 0), 1);	
 	
 	//at the end the diameter is redrawn in green
-	cv::drawContours(img, conts, 12, cv::Scalar(0, 255, 0), 1);
+	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
 	
 	//an ellipse is drawn as the tag contour, color according to active parameter
 	if (active)
-		cv::ellipse(img, center, axes, angleTag, 0, 360, cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::drawContours(img, conts, 15, cv::Scalar(0, 0, 255), 1);		
 	else
-		cv::ellipse(img, center, axes, angleTag, 0, 360, cv::Scalar(255, 255, 0), 1, 8, 0);
+		cv::drawContours(img, conts, 15, cv::Scalar(255, 255, 0), 1);
 }
 
 std::vector<cv::Point> myGrid::renderGridCell(unsigned short cell){
 
 	std::vector<cv::Point> globCont;
-	std::vector<cv::Point> globCont2;
-	//std::vector<cv::Point> endCont;
+	std::vector<cv::Point> globCont2;	
 
-	// Outer cells
-	if (cell < 12) {
-		
+	// Bit cells
+	if (cell < 12)
+	{	
 		int arcStart = -180+ angleGrid + cell * 30;
 		int arcEnd = -180 + angleGrid + (cell + 1) * 30;
-
 		// outer arc
 		ellipse2Poly(center, cv::Size((MR/OR)*axes.width,(MR/OR)*axes.height), angleTag, arcStart, arcEnd, 1, globCont);
 		// inner arc
@@ -97,9 +96,18 @@ std::vector<cv::Point> myGrid::renderGridCell(unsigned short cell){
 		// join outer and inner arc
 		globCont.insert(globCont.end(), globCont2.rbegin(), globCont2.rend());	
 	}
-
-	// Hier ist irgendein doofes problem auf das ich einfach nicht komme... der debugger sagt was von free aber ich versteh das nicht -.-;
-	// Inzwischen geht alles, nur zwischen dem return und dem ruecksprung in die andere Methode kommt es zum crash. Vermutung: ellipse2Poly benutzt irgend nen dynamischen speicherallokier zauber, wodurch beim ruecksprung in die aufrufene methode die freigabe des speichers nicht richtig funktioniert
+	// White semicircle
+	if (cell == 12)		
+		ellipse2Poly(center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid-180, 1, globCont);
+	// Black semicircle
+	if (cell == 13)		
+		ellipse2Poly(center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid+180, 1, globCont);
+	// Green diamater
+	if (cell == 14)
+	cv::ellipse2Poly( center, cv::Size((IR/OR)*axes.width,(IR/OR)*axes.height), angleTag, angleGrid, angleGrid+180, 180, globCont);
+	// Outer perimeter
+	if (cell == 15)
+		ellipse2Poly(center, axes, angleTag, 0, 360, 1, globCont);
 
 	return globCont;
 }

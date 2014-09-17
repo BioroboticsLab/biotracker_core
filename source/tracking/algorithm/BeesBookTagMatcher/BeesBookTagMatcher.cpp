@@ -36,16 +36,11 @@ void BeesBookTagMatcher::drawGrid(cv::Mat image)
 {
 	//for loop to draw the Grids tored in _Grids vector.
 	if (_Grids.size()>0)
-	{		
+	{
 		for (size_t i=0; i<_Grids.size(); i++)
 		{
 			gtemp.init(_Grids[i].center, _Grids[i].axes, _Grids[i].angleTag, _Grids[i].angleGrid, _Grids[i].ID);
-			gtemp.drawGrid(image,0);
-		/*	std::string note = "iterating " + StringHelper::iToSS(i) + 
-				" center: (" + StringHelper::iToSS(_Grids[i].center.x) + "," + StringHelper::iToSS(_Grids[i].center.y) + ") " +
-				" mayor axis: " + StringHelper::iToSS(_Grids[i].axes.width) + " minor axis: " + StringHelper::iToSS(_Grids[i].axes.height)
-				+ " angle: " + StringHelper::iToSS(_Grids[i].angleTag);
-			emit notifyGUI(note,MSGS::NOTIFICATION);*/
+			gtemp.drawGrid(image,0);		
 		}
 	}
 	//The current Grid is drawn
@@ -81,9 +76,17 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 		{			
 			std::string note = "left button pressed on: x=" + StringHelper::iToSS(e->x()) + " y=" + StringHelper::iToSS(e->y());
 			emit notifyGUI(note,MSGS::NOTIFICATION);
-			//initialize coordinates for selection tool					
-			g.center.x = e->x();
-			g.center.y = e->y();			
+			//a differente tag is selected when clicking inside its area
+			for (int i=0; i<_Grids.size();i++)
+				{
+					if (cv::pointPolygonTest(_Grids[i].cellsContours[12],cv::Point(e->x(),e->y()),false)>0)
+					{
+						_Grids.push_back(g);
+						g.init(_Grids[i].center, _Grids[i].axes, _Grids[i].angleTag, _Grids[i].angleGrid, _Grids[i].ID);
+						_Grids.erase(_Grids.begin()+i);
+						break;
+					}
+				}	
 			_modPosGrid = true;
 			emit update();
 		}
@@ -154,7 +157,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 			{
 				g.ID[i]	= !g.ID[i];
 				cout<<endl;
-				for(int i2=0; i2 < g.ID.size(); i2++)
+				for(int i2=0; i2 < 12; i2++)
 					cout<<g.ID[i2];
 				emit update();
 			}

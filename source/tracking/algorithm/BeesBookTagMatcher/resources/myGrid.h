@@ -44,13 +44,18 @@ public:
 
 	double getTilt();
 	//function that draws a grid, active grids are printed in a different color
-	void drawGrid(cv::Mat &img, bool active);
+	void drawGrid(cv::Mat &img, bool active);	
 
 	//function that generates a vector of points for a specific cell from the grid
 	/**	 
-	 * @param cell ID between [0,11]; which cell of the grid is to be rendered?
-	 * @param offset angle offset to draw inner half circles with different angles 1 offset = 30°
-	 * @return a vector with the contours of the cell
+	 * @ param cell ID between [0,14]; which cell of the grid is to be rendered?
+	 * @ param offset angle offset to draw inner half circles with different angles 1 offset = 30°
+	 * @ return a vector with the contours of the cell
+	 * @ 0-11 bit cells
+	 * @ 12 white semicircle
+	 * @ 13 black semicircle
+	 * @ 14 diameter
+	 * @ 15 tag perimeter
 	 */
 	std::vector<cv::Point> renderGridCell(unsigned short cell);
 };
