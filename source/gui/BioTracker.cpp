@@ -1,4 +1,5 @@
 #include "source/gui/BioTracker.h"
+#include <chrono>
 #include <sstream>
 #include <string>
 
@@ -81,7 +82,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
-	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(enableMaxSpeed(bool) ));
+	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
 	
@@ -245,6 +246,8 @@ void BioTracker::stopCapture()
 	updateFrameNumber(0);
 	ui.sld_video->setDisabled(true);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	ui.cb_algorithms->setCurrentIndex(0);
+	trackingAlgChanged("no tracking");
 }
 
 void BioTracker::updateFrameNumber(int frameNumber)
@@ -394,7 +397,8 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
 		tracker = new SampleTracker(_settings);
 	}
-	connectTrackingAlg(tracker);
+	if ( trackingAlg != "no tracking" )
+		connectTrackingAlg(tracker);
 	emit changeTrackingAlg(*tracker);
 }
 
@@ -410,7 +414,12 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 
 void BioTracker::takeScreenshot()
 {
+    const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
+    const std::time_t t = std::chrono::system_clock::to_time_t(p);
+    std::string dateTime = std::ctime(&t);
+    // ctime adds a newline to the string due to historical reasons
+    dateTime = dateTime.substr(0, dateTime.size() - 1);
 	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
-	filepath.append("/screenshot_").append(StringHelper::toQString(CvHelper::getCurrentDatetimeAsStd())).append(".png");
+    filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
 }

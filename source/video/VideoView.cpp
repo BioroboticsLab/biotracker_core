@@ -117,9 +117,6 @@ void VideoView::paintGL()
 
 void VideoView::initializeGL()
 {
-	// Create the surface we will use for the texture:
-	static const int coords[4][3] = { { +1, -1 }, { -1, -1 }, { -1, +1 }, { +1, +1 } };
-
 	// OpenCV's coordinate system originates in the upper left corner.
 	// OpenGL originates in the lower left. Thus the image has to be flipped vertically		
 	for (int j = 0; j < 4; ++j) {

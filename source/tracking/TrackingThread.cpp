@@ -5,7 +5,6 @@
 #include <chrono>
 #include <thread>
 
-#include "source/helper/CvHelper.h"
 #include "source/settings/Messages.h"
 #include "source/settings/Param.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"

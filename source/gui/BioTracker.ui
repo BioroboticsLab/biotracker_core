@@ -251,7 +251,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidgetHoriz">
       <property name="geometry">
        <rect>
         <x>216</x>
@@ -277,7 +277,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidgetVert">
       <property name="geometry">
        <rect>
         <x>40</x>

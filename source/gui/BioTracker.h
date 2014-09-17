@@ -18,7 +18,6 @@
 
 //Open Tracker
 #include "source/settings/Messages.h"
-#include "source/helper/CvHelper.h"
 #include "source/helper/StringHelper.h"
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingThread.h"

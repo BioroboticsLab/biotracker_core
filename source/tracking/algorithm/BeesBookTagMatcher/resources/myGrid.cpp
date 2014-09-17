@@ -1,7 +1,6 @@
 #include "myGrid.h"
 #include "source/helper/StringHelper.h"
 #include <QApplication>
-#include "source/helper/CvHelper.h"
 
 #include "cv.h"
 #include "source/settings/Settings.h"
