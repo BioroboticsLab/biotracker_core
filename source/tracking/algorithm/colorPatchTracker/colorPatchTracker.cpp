@@ -22,3 +22,5 @@ void ColorPatchTracker::mousePressEvent		( QMouseEvent * )
 void ColorPatchTracker::mouseReleaseEvent	( QMouseEvent * )
 {	
 }
+
+void ColorPatchTracker::mouseWheelEvent	( QWheelEvent * ) {}

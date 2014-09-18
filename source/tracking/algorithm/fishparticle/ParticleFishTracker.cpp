@@ -184,8 +184,9 @@ void ParticleFishTracker::reset() {
 }
 
 void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mousePressEvent	( QMouseEvent * ){}
-void ParticleFishTracker::mouseReleaseEvent	( QMouseEvent * ){}
+void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
+void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
+void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
 
 /**
 * Predicate used by this algorithm to sort particles, highest to lowest score.

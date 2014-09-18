@@ -7,5 +7,6 @@
         <file>resources/pause-sign.png</file>
         <file>resources/screenshot.png</file>
         <file>resources/stop.png</file>
+        <file>resources/panZoom.png</file>
     </qresource>
 </RCC>

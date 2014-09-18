@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -154,7 +154,8 @@
     <ClInclude Include="source\tracking\algorithm\colorPatchTracker\colorPatchTracker.h" />
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
-    <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />    <ClInclude Include="source\helper\StringHelper.h" />
+    <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
+    <ClInclude Include="source\helper\StringHelper.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h" />
     <ClInclude Include="source\video\ImagePreProcessor.h" />
@@ -225,10 +226,12 @@
     <None Include="config.ini" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\pix\panZoom.png" />
     <Image Include="source\gui\resources\arrow-back.png" />
     <Image Include="source\gui\resources\arrow-forward1.png" />
     <Image Include="source\gui\resources\arrows-skip-back.png" />
     <Image Include="source\gui\resources\arrows-skip-forward.png" />
+    <Image Include="source\gui\resources\panZoom.png" />
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
@@ -238,7 +241,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2012_opengl" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.3.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

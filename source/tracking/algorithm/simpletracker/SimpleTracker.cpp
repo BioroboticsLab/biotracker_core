@@ -181,3 +181,5 @@ void SimpleTracker::mousePressEvent		( QMouseEvent * )
 void SimpleTracker::mouseReleaseEvent	( QMouseEvent * )
 {	
 }
+
+void SimpleTracker::mouseWheelEvent	( QWheelEvent * e ) {}

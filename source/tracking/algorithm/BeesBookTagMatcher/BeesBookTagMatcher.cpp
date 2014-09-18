@@ -284,3 +284,6 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 		}
 	}
 }
+
+
+void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * ) {}

@@ -190,6 +190,8 @@ std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);	
+	//TODO: Hier checken ob Datei vorhanden -> wenn nicht da neu anlegen, default params setzen
+
 	std::vector<TrackerParam::Param> defaultParams;
 
 	for(int key = 0; key < settings.allKeys().size(); key++)

@@ -26,6 +26,7 @@ void BioTracker::init(){
 	_videoPaused = true;
 	_videoStopped = true;
 	_currentFrame = 0;
+	_isPanZoomMode = false;
 	_trackingThread = new TrackingThread(_settings);
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
@@ -62,6 +63,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.frame_num_edit, SIGNAL( returnPressed() ), this, SLOT( changeCurrentFramebyEdit()));
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
 	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
+	QObject::connect(ui.button_panZoom, SIGNAL(  clicked() ), this, SLOT(switchPanZoomMode()));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -404,12 +406,19 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 
 void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 {	
-	QObject::connect(ui.videoView,		SIGNAL ( pressEvent		(QMouseEvent*) ), tracker, SLOT(mousePressEvent(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), tracker, SLOT(mouseReleaseEvent(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( moveEvent		(QMouseEvent*) ), tracker, SLOT(mouseMoveEvent(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( pressEvent			(QMouseEvent*) ), 
+					tracker, SLOT(mousePressEvent		(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), 
+					tracker, SLOT(mouseReleaseEvent	(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( moveEvent			(QMouseEvent*) ), 
+					tracker, SLOT(mouseMoveEvent		(QMouseEvent*) ));
+	QObject::connect(ui.videoView,		SIGNAL ( mouseWheelEvent	(QWheelEvent*) ), 
+					tracker, SLOT(mouseWheelEvent		(QWheelEvent*) ));
 	
-	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
-	QObject::connect( tracker, SIGNAL( update() ), ui.videoView, SLOT( updateGL() ));
+	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), 
+					this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
+	QObject::connect( tracker, SIGNAL( update() ), 
+					ui.videoView, SLOT( updateGL() ));
 }
 
 void BioTracker::takeScreenshot()
@@ -422,4 +431,10 @@ void BioTracker::takeScreenshot()
 	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
     filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
+}
+
+void BioTracker::switchPanZoomMode()
+{
+	_isPanZoomMode = !_isPanZoomMode;
+	ui.videoView->setPanZoomMode(_isPanZoomMode);
 }

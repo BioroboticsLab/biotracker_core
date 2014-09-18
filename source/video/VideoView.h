@@ -34,6 +34,7 @@ private:
 	QVector<QVector2D> _texCoords;     
 	cv::Mat _displayImage;
 	TrackingAlgorithm* _tracker;
+	bool _isPanZoomMode;
 
 	/* Modified by user input. Initially 1.0 */
 	float _zoomFactor;
@@ -44,12 +45,14 @@ private:
 
 	public slots:
 		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
+		void setPanZoomMode (bool isPanZoom);
 
 signals:
 		//events for port mouse button 
-		void moveEvent( QMouseEvent * e );
-		void pressEvent( QMouseEvent * e );
-		void releaseEvent( QMouseEvent * e );	
+		void moveEvent			( QMouseEvent * e );
+		void pressEvent			( QMouseEvent * e );
+		void releaseEvent		( QMouseEvent * e );	
+		void mouseWheelEvent	( QWheelEvent * e );
 		/**
 		* send a message to the GUI.
 		*/

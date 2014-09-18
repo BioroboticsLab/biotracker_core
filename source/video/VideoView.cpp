@@ -15,6 +15,7 @@ VideoView::VideoView(QWidget *parent)
 	_zoomFactor = 1.0;
 	_panX = 0;
 	_panY = 0;
+	_isPanZoomMode = false;
 }
 
 void VideoView::showImage(cv::Mat img)
@@ -157,98 +158,131 @@ void VideoView::takeScreenshot(QString screenShotFilename)
 
 void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
-	if(_isPanning)
+	if (_isPanZoomMode)
 	{
-		int dX = e->x() - _lastMPos[0];
-		int dY = e->y() - _lastMPos[1];
-		_lastMPos[0] = e->x();
-		_lastMPos[1] = e->y();
-		_panX -= dX * _zoomFactor;
-		_panY -= dY * _zoomFactor;
-		resizeGL(this->width(), this->height());
-		//Draw the scene
-		updateGL();
+		if(_isPanning)
+		{
+			int dX = e->x() - _lastMPos[0];
+			int dY = e->y() - _lastMPos[1];
+			_lastMPos[0] = e->x();
+			_lastMPos[1] = e->y();
+			_panX -= dX * _zoomFactor;
+			_panY -= dY * _zoomFactor;
+			resizeGL(this->width(), this->height());
+			//Draw the scene
+			updateGL();
+		}
 	}
-	//variables required to map window coordinates to picture coordinates 
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLdouble posX, posY, posZ;
+	else
+	{
+		//variables required to map window coordinates to picture coordinates 
+		GLint viewport[4];
+		GLdouble modelview[16];
+		GLdouble projection[16];
+		GLdouble posX, posY, posZ;
 
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewport );
-	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
-	if(isOnPicture)
-	{	QPoint p  ((int)posX, (int)posY);
-	const QPointF *localPos = new QPointF(p);
-	QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-	emit moveEvent ( modifiedEvent );		
+		glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+		glGetDoublev( GL_PROJECTION_MATRIX, projection );
+		glGetIntegerv( GL_VIEWPORT, viewport );
+		GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+		if(isOnPicture)
+		{	
+			QPoint p  ((int)posX, (int)posY);
+			const QPointF *localPos = new QPointF(p);
+			QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+			emit moveEvent ( modifiedEvent );		
+		}
 	}
 }
 
 void VideoView::mousePressEvent( QMouseEvent * e )
 {
-	if(QApplication::keyboardModifiers() == Qt::NoModifier)
+	if (_isPanZoomMode)
 	{
-		_isPanning = true;
-		_lastMPos[0] = e->x();
-		_lastMPos[1] = e->y();		
+		if(QApplication::keyboardModifiers() == Qt::NoModifier)
+		{
+			_isPanning = true;
+			this->setCursor(Qt::ClosedHandCursor);
+			_lastMPos[0] = e->x();
+			_lastMPos[1] = e->y();		
+		}
+		if(e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick)
+		{
+			fitToWindow();
+		}
 	}
-	//init variables required to map window coordinates to picture coordinates 
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLdouble posX, posY, posZ;
+	else
+	{
+		//init variables required to map window coordinates to picture coordinates 
+		GLint viewport[4];
+		GLdouble modelview[16];
+		GLdouble projection[16];
+		GLdouble posX, posY, posZ;
 
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewport );
-	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
-	if(isOnPicture)
-	{
-		QPoint p  ((int)posX, (int)posY);
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit pressEvent ( modifiedEvent );
-	}
-	if(e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick)
-	{
-		fitToWindow();
+		glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+		glGetDoublev( GL_PROJECTION_MATRIX, projection );
+		glGetIntegerv( GL_VIEWPORT, viewport );
+		GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+		if(isOnPicture)
+		{
+			QPoint p  ((int)posX, (int)posY);
+			const QPointF *localPos = new QPointF(p);
+			QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+			emit pressEvent ( modifiedEvent );
+		}
 	}
 }
 
 void VideoView::mouseReleaseEvent( QMouseEvent * e )
 {
-	_isPanning = false;
-
-	//variables required to map window coordinates to picture coordinates 
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLdouble posX, posY, posZ;
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewport );
-	GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
-	if(isOnPicture)
+	if (_isPanZoomMode)
 	{
-		QPoint p  ((int)posX, (int)posY);
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit releaseEvent ( modifiedEvent );
+		this->setCursor(Qt::OpenHandCursor);
+		_isPanning = false;
+	}
+	else{
+		//variables required to map window coordinates to picture coordinates 
+		GLint viewport[4];
+		GLdouble modelview[16];
+		GLdouble projection[16];
+		GLdouble posX, posY, posZ;
+
+		glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+		glGetDoublev( GL_PROJECTION_MATRIX, projection );
+		glGetIntegerv( GL_VIEWPORT, viewport );
+		GLint isOnPicture = gluUnProject(e->x(), viewport[3] - e->y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+		if(isOnPicture)
+		{
+			QPoint p  ((int)posX, (int)posY);
+			const QPointF *localPos = new QPointF(p);
+			QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+			emit releaseEvent ( modifiedEvent );
+		}
 	}
 }
 
 void VideoView::wheelEvent( QWheelEvent * e )
 {
-	int numDegrees = e->delta();
-	if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
-		_zoomFactor += 0.001 * numDegrees;
-		resizeGL(this->width(), this->height());
-		//Draw the scene
-		updateGL();
+	if (_isPanZoomMode)
+	{
+		int numDegrees = e->delta();
+		if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
+			_zoomFactor += 0.001 * numDegrees;
+			resizeGL(this->width(), this->height());
+			//Draw the scene
+			updateGL();
+		}
 	}
+	else
+		emit mouseWheelEvent( e );
 	e->accept();
+}
+
+void VideoView::setPanZoomMode(bool isPanZoom)
+{
+	_isPanZoomMode = isPanZoom;
+	if(_isPanZoomMode)
+		this->setCursor(Qt::OpenHandCursor);
+	else
+		this->setCursor(Qt::ArrowCursor);
 }
