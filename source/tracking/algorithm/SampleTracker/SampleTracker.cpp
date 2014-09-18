@@ -116,4 +116,4 @@ void SampleTracker::mouseReleaseEvent	( QMouseEvent * e )
 	}
 }
 
-void SampleTracker::mouseWheelEvent ( QWheelEvent * e ) {}
+void SampleTracker::mouseWheelEvent ( QWheelEvent *) {}
