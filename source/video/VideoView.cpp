@@ -254,9 +254,13 @@ void VideoView::wheelEvent( QWheelEvent * e )
 		int numDegrees = e->delta();
 		if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
 			_zoomFactor += 0.001 * numDegrees;
-			//TODO: adjust _panX and _panY, so that zoom is centered on mouse cursor
-			//_panX =	-	((this->width()*_zoomFactor)/2) + picturePos.x();
-			//_panX =		((this->height()*_zoomFactor)/2)+ picturePos.y();
+			// adjust _panX and _panY, so that zoom is centered on mouse cursor
+			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/_zoomFactor )
+				_panX =		picturePos.x()-  ((this->width()*_zoomFactor)/2);
+			else
+				_panX = _panX/2;
+			if(picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows/_zoomFactor)
+				_panY =		picturePos.y() - ((this->height()*_zoomFactor)/2);
 			resizeGL(this->width(), this->height());
 			//Draw the scene
 			updateGL();
