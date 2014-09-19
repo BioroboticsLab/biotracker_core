@@ -31,6 +31,7 @@ class SimpleTracker : public TrackingAlgorithm
 		void mouseMoveEvent		( QMouseEvent * e );
 		void mousePressEvent	( QMouseEvent * e );
 		void mouseReleaseEvent	( QMouseEvent * e );
+		void mouseWheelEvent	( QWheelEvent * e );
 
 };
 

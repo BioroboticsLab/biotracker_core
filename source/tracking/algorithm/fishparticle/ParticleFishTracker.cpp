@@ -10,7 +10,13 @@ static bool compareReverseParticleScorePredicate(const Particle& p1, const Parti
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings) : TrackingAlgorithm(settings), _preprocessor(settings), _rng(123), _min_score(0), _max_score(0), _clusters(settings)
+ParticleFishTracker::ParticleFishTracker(Settings& settings)
+    : TrackingAlgorithm(settings)
+    , _preprocessor(settings)
+    , _rng(123)
+    , _max_score(0)
+    , _min_score(0)
+    , _clusters(settings)
 {
 }
 
@@ -21,7 +27,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 /**
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
-void ParticleFishTracker::track(std::vector<TrackedObject>& objectList, unsigned long frameNumber, cv::Mat& frame) {
+void ParticleFishTracker::track(std::vector<TrackedObject>&, unsigned long, cv::Mat& frame) {
 	try {
 		// TODO check if frameNumber is jumping -> should lead to reseed
 
@@ -76,7 +82,7 @@ void ParticleFishTracker::importanceResample() {
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
 	_current_particles.clear();
 
-	for (int i = 0; i < old_particles.size()-random_new_particles; i++) {
+	for (size_t i = 0; i < old_particles.size()-random_new_particles; i++) {
 		size_t index = 0;
 		float rand = _rng.uniform(0.f, _sum_scores);
 		for (float position = 0; position + old_particles[index].getScore() < rand; ) {
@@ -131,7 +137,7 @@ void ParticleFishTracker::cutParticleCoords(Particle& to_cut) {
 * uniformly distributed particles.
 */
 void ParticleFishTracker::seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y) {
-	for (int i = 0; i<num_particles; i++) {
+	for (size_t i = 0; i<num_particles; i++) {
 		int x = _rng.uniform(min_x, max_x);
 		int y = _rng.uniform(min_y, max_y);
 		// TODO include random angle
@@ -177,9 +183,10 @@ void ParticleFishTracker::reset() {
 	// TODO reset more...?
 }
 
-void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * e ){}
-void ParticleFishTracker::mousePressEvent	( QMouseEvent * e ){}
-void ParticleFishTracker::mouseReleaseEvent	( QMouseEvent * e ){}
+void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
+void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
+void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
+void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
 
 /**
 * Predicate used by this algorithm to sort particles, highest to lowest score.

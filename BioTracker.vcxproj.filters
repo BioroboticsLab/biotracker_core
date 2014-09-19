@@ -16,7 +16,6 @@
     </ClCompile>
     <ClCompile Include="source\settings\Param.cpp" />
     <ClCompile Include="source\settings\Settings.cpp" />
-    <ClCompile Include="source\helper\CvHelper.cpp" />
     <ClCompile Include="source\helper\StringHelper.cpp" />
     <ClCompile Include="source\trackedObject\TrackedObject.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp">
@@ -67,12 +66,6 @@
     <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,7 +81,6 @@
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
-    <ClInclude Include="source\helper\CvHelper.h" />
     <ClInclude Include="source\helper\StringHelper.h" />
     <ClInclude Include="source\trackedObject\History.h" />
     <ClInclude Include="source\trackedObject\ObjectModel.h" />
@@ -126,12 +118,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Ellipse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h">
@@ -205,5 +191,7 @@
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
+    <Image Include="..\..\pix\panZoom.png" />
+    <Image Include="source\gui\resources\panZoom.png" />
   </ItemGroup>
 </Project>

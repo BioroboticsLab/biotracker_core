@@ -12,6 +12,7 @@ private:
 		cv::Point _selectorRecEnd;
 		bool _showSelectorRec;
 		void drawRectangle(cv::Mat image);
+		void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
 
 	public:
 		SampleTracker	( Settings & settings );
@@ -20,9 +21,9 @@ private:
 
 
 
-		void track			( std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame );
+        void track	( std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame );
 		void paint			( cv::Mat& image );
-		void reset			( );
+        void reset	( );
 
 
 	public slots:
@@ -30,6 +31,7 @@ private:
 		void mouseMoveEvent		( QMouseEvent * e );
 		void mousePressEvent	( QMouseEvent * e );
 		void mouseReleaseEvent	( QMouseEvent * e );
+		void mouseWheelEvent	( QWheelEvent * e );
 		
 };
 

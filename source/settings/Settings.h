@@ -36,7 +36,7 @@ public:
 	 * @param: param, the parameter to set,
 	 * @return: void.
 	 */
-	void setParam(TrackerParam::Param param);	
+    void setParam(TrackerParam::Param param);
 
 	/**
 	 * Sets the parameter.
@@ -47,27 +47,11 @@ public:
 	void setParam(std::string paramName, std::string paramValue);
 
 	/**
-	 * Sets the parameter. Generic method.
-	 * @param: paramName, name of the parameter,
-	 * @param: value, value of the parameter,
-	 * @return: void.
-	 */
-	template <typename T> void setParam2(std::string paramName, T value);
-
-	/**
 	 * Sets the parameters.
 	 * @param: params, the parameter list to set,
 	 * @return: void.
 	 */
 	void setParams(std::vector<TrackerParam::Param> params);
-
-	/**
-	 * Sets a parameter within a parameter vector
-	 * @param: params, the parameter vector,
-	 * @param: param, the parameter to set,
-	 * @return: void.
-	 */
-	void setParam(std::vector<TrackerParam::Param> &params, TrackerParam::Param param);
 
 	/**
 	 * Sets a parameter within a parameter vector
@@ -109,11 +93,9 @@ public:
 	/**
 	 * Gets the parameter value provided by parameter name. 
 	 * @param: paramName, the parameter name,
-	 * @param: size, if the parameter is a list or vector,
-	 *				 then one can provide the length of the list.
 	 * @return: the value of the parameter as the specified type.
 	 */
-	template <typename T> T getValueOfParam(std::string paramName, int size = 4);
+    template <typename T> T getValueOfParam(std::string paramName);
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.

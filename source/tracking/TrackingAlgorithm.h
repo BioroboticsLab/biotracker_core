@@ -38,6 +38,7 @@ public slots:
 	virtual void mouseMoveEvent		( QMouseEvent * e ) = 0;
 	virtual void mousePressEvent	( QMouseEvent * e ) = 0;
 	virtual void mouseReleaseEvent	( QMouseEvent * e ) = 0;
+	virtual void mouseWheelEvent	( QWheelEvent * e ) = 0;
 	
 signals:
 	/**

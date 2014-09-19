@@ -8,17 +8,19 @@ ColorPatchTracker::ColorPatchTracker(Settings& settings) : TrackingAlgorithm(set
 ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
-void ColorPatchTracker::track(std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame){}
-void ColorPatchTracker::paint		( cv::Mat& image ){}
+void ColorPatchTracker::track(std::vector<TrackedObject> &, ulong, cv::Mat &){}
+void ColorPatchTracker::paint		( cv::Mat& ){}
 void ColorPatchTracker::reset		(){}
 
-void ColorPatchTracker::mouseMoveEvent		( QMouseEvent * e )
+void ColorPatchTracker::mouseMoveEvent		( QMouseEvent * )
 {
 }
-void ColorPatchTracker::mousePressEvent		( QMouseEvent * e )
+void ColorPatchTracker::mousePressEvent		( QMouseEvent * )
 {
 
 }
-void ColorPatchTracker::mouseReleaseEvent	( QMouseEvent * e )
+void ColorPatchTracker::mouseReleaseEvent	( QMouseEvent * )
 {	
 }
+
+void ColorPatchTracker::mouseWheelEvent	( QWheelEvent * ) {}
