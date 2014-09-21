@@ -228,10 +228,12 @@
     <None Include="config.ini" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\pix\panZoom.png" />
     <Image Include="source\gui\resources\arrow-back.png" />
     <Image Include="source\gui\resources\arrow-forward1.png" />
     <Image Include="source\gui\resources\arrows-skip-back.png" />
     <Image Include="source\gui\resources\arrows-skip-forward.png" />
+    <Image Include="source\gui\resources\panZoom.png" />
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
@@ -241,7 +243,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2012_opengl" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.3.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

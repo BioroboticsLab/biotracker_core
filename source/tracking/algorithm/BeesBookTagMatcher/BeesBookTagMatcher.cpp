@@ -37,7 +37,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher(void)
 {
 }
 
-void BeesBookTagMatcher::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
+void BeesBookTagMatcher::track		( std::vector<TrackedObject> &, ulong, cv::Mat& ){}
 void BeesBookTagMatcher::paint		( cv::Mat& image )
 {	
 	if(_activePoints)
@@ -53,10 +53,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 	//check if LEFT button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{	
-		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{
-			for (int i=0; i<_defPoints.size(); i++)
+		for (int i=0; i<_defPoints.size(); i++)
 			{
 				if (abs(e->x()-_defPoints[i].x)<2 && abs(e->y()-_defPoints[i].y)<2)
 				{
@@ -88,6 +85,9 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 					break;
 				}			
 			}
+		//check for SHIFT modifier
+		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
+		{			
 			if(!(_setP0 || _setP1 || _setP2 || _setP3 || _setP4))
 			{
 				if (_ready)
@@ -126,7 +126,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 			ratP3P4 = 0.5; //ratio P3/P4
 			emit update();
 		}
-	}
+	}	
 }
 //check if pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
@@ -213,6 +213,8 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 	}		
 }
 
+void BeesBookTagMatcher:: mouseWheelEvent	( QWheelEvent * e ){}
+
 //BeesBookTagMatcher private member functions
 //this draws a basic grid onto the display image
 void BeesBookTagMatcher::drawGrid(cv::Mat image)
@@ -239,7 +241,8 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 	{
 		cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 	}
-		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+	if (_defPoints.size() > 0)
+	cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
 	//the colors are set according to the point being modified
 	if (_setP0)
 	{
@@ -283,6 +286,7 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 			cv::circle(image,_defPoints[4], 1, cv::Scalar(0, 0, 255), 1);
 	}
 }
+
 double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
 {
 	double dist;

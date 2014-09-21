@@ -197,5 +197,7 @@
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
+    <Image Include="..\..\pix\panZoom.png" />
+    <Image Include="source\gui\resources\panZoom.png" />
   </ItemGroup>
 </Project>

@@ -63,6 +63,8 @@ public slots:
 	void changeFps(int fps);
 	//different tracking algorithm was selected
 	void trackingAlgChanged(QString trackingAlg);
+	//switch pan&zoom mode
+	void switchPanZoomMode();
 
 
 	// SLOTS FOR TRACKING THREAD: 	
@@ -105,6 +107,7 @@ private:
 	Settings& _settings;
 	bool _videoPaused;
 	bool _videoStopped;
+	bool _isPanZoomMode;
 	int _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
