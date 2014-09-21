@@ -21,6 +21,7 @@
 #define OR 3
 
 #define axisTag 30
+
 class myNewGrid
 {
 public:
@@ -36,13 +37,18 @@ public:
 	//Object properties
 	cv::Point								centerGrid;
 	cv::Point								centerTag;
+
 	cv::Size								axesGrid;
-	cv::Size								axesTag;	
+	cv::Size								axesTag;
+
 	double									angleGrid; //the angle of the grid
 	double									angleTag; //the angle of the tag
+
 	double									tiltGrid;
 	double									tiltTag;
+
 	std::vector<bool>						ID;
+
 	std::vector<std::vector <cv::Point> >	cellsContours;
 	std::vector<std::vector <cv::Point> >	gridAxes;
 
@@ -73,4 +79,12 @@ public:
 
 	//function that renders tag axes while being modified
 	void renderModTag();
+
+	//function that initialize a new grid from a vector of five points where
+	//P0 -- grid center
+	//P1 -- middle radius 1
+	//P2 -- inner radius 1
+	//P3 -- middle radius 2
+	//P4 -- inner radius 2	
+	void initPoints(std::vector<cv::Point> points);
 };

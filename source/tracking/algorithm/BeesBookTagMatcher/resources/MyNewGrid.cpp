@@ -53,14 +53,10 @@ void myNewGrid::drawModGrid(cv::Mat &img)
 		case 0:	case 1:	//draw middle axes
 			//cv::line(img, gridAxes[i][0], gridAxes[i][1], cv::Scalar(0, 255, 0), 1);
 			cv::line(img, centerGrid, gridAxes[i][1], cv::Scalar(0, 255, 0), 1);			
-			//cv::circle(img,gridAxes[i][0], 1, cv::Scalar(0, 0, 255), 1);
 			cv::circle(img,gridAxes[i][1], 1, cv::Scalar(0, 0, 255), 1);
 			break;				
 		
-		case 2: case 3:	//draw inner axes	
-			//cv::line(img, gridAxes[i][0], gridAxes[i][1], cv::Scalar(255, 0, 0), 1);
-			//cv::line(img, centerGrid, gridAxes[i][1], cv::Scalar(255, 0, 0), 1);
-			//cv::circle(img,gridAxes[i][0], 1, cv::Scalar(0, 0, 255), 1);
+		case 2: case 3:	//draw inner axes				
 			cv::circle(img,gridAxes[i][1], 1, cv::Scalar(0, 0, 255), 1);
 			break;		
 		
@@ -208,3 +204,5 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	conts.push_back(std::vector<cv::Point>());	//empty vector to allow the first n vector to be printed VS-2012 error
 	return conts;
 }
+
+void initPoints(std::vector<cv::Point> points){}

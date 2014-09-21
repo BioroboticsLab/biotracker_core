@@ -7,15 +7,29 @@
 
 BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings ) : TrackingAlgorithm( settings )
 {
-	_newGrid			= true;
-	_activeGrid			= false;
-	_activeTag			= false;
+		_activeGrid = false; //a new Grid has been set and can now be modified
+		_activeTag = false; //a new Grid has been set and the Tag perimeter can now be modified
 
-	_modPosGrid			= false;
-	_modHeightMid		= false;
-	_modWidthMid		= false;
-	_modHeightInn		= false;
-	_modWidthInn		= false;
+		_modPosGrid = false; //modify position of active Grid
+		_modPosTag = false; //modify position of active Tag
+
+		_modHeightInn = false; //modify height Inner circle and angleGrid
+		_modWidthInn = false; //modify width Inner circle and angleGrid
+		_modHeightMid = false; //modify height Middle circle and angleGrid
+		_modWidthMid = false; //modify width Middle circle and angleGrid		
+		_modHeightOut = false; //modify height Outer circle and angleTag
+		_modWidthOut = false; //modify width Outer circle and angleTag
+
+		_ready = true; //Ready for a new tag --ctrl + Right Click--
+		_activePoints = false; //a new set of points is being configured
+		_setP0 = false; //Set P0 --Left Click--
+		_setP1 = false; //Set P1 --Left Click--
+		_setP2 = false; //P1 has been set, P0, P1 and P2 are active --ctrl + Right Click--
+		_setP3 = false; //Set P3 --Left Click--
+		_setP4 = false;	//P3 has been set, P0, P1, P2, P3 and P4 are active --ctrl + Right Click--
+
+		ratP1P2 = 0.5; //ratio P1/P2
+		ratP3P4 = 0.5; //ratio P3/P4
 }
 
 
@@ -25,227 +39,250 @@ BeesBookTagMatcher::~BeesBookTagMatcher(void)
 
 void BeesBookTagMatcher::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
 void BeesBookTagMatcher::paint		( cv::Mat& image )
-{
-	if(_activeGrid || _activeTag)
-	{
-		drawGrid(image);		
+{	
+	if(_activePoints)
+	{		
+		drawPoints(image);
 	}
 }
 void BeesBookTagMatcher::reset		(){}
 
+//check if MOUSE BUTTON IS CLICKED
+void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
+{
+	//check if LEFT button is clicked
+	if ( e->button() == Qt::LeftButton)
+	{	
+		//check for SHIFT modifier
+		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
+		{
+			for (int i=0; i<_defPoints.size(); i++)
+			{
+				if (abs(e->x()-_defPoints[i].x)<2 && abs(e->y()-_defPoints[i].y)<2)
+				{
+					switch (i)
+					{
+					case 0:
+						_setP0 = true;
+						emit update();
+						break;
+					case 1:
+						_setP1 = true;
+						emit update();
+						break;
+					case 2:
+						_setP2 = true;
+						emit update();
+						break;
+					case 3:
+						_setP3 = true;
+						emit update();
+						break;
+					case 4:
+						_setP4 = true;
+						emit update();
+						break;							
+					default:
+						break;
+					}
+					break;
+				}			
+			}
+			if(!(_setP0 || _setP1 || _setP2 || _setP3 || _setP4))
+			{
+				if (_ready)
+				{
+					_defPoints.clear();	 //a new set of points is being generated
+					ratP1P2 = 0.5; //ratio P1/P2
+					ratP3P4 = 0.5; //ratio P3/P4
+					_defPoints.push_back(cv::Point(e->x(),e->y())); // P0 is pushed back, at this instant _defPoints.size() == 1
+					_defPoints.push_back(cv::Point(e->x(),e->y())); // P1 is pushed back, at this instant _defPoints.size() == 2
+					_defPoints.push_back(cv::Point(e->x(),e->y())); // P2 is pushed back, at this instant _defPoints.size() == 3		
+					_ready = false;
+					_activePoints = true;
+					_setP1 = true;
+					emit update();
+				}
+				else
+				{
+					_defPoints.push_back(cv::Point(e->x(),e->y())); // P3 is pushed back, at this instant _defPoints.size() == 4
+					_defPoints.push_back(cv::Point(e->x(),e->y())); // P4 is pushed back, at this instant _defPoints.size() == 5
+					_setP3 = true;			
+					emit update();
+				}			
+			}
+			
+		}			
+	}
+	//check if RIGHT button is clicked
+	if ( e->button() == Qt::RightButton)
+	{	
+		//check for CTRL modifier
+		if(Qt::ControlModifier == QApplication::keyboardModifiers()) //reset
+		{
+			_ready = true;
+			_defPoints.clear();	 //a new set of points is being generated
+			ratP1P2 = 0.5; //ratio P1/P2
+			ratP3P4 = 0.5; //ratio P3/P4
+			emit update();
+		}
+	}
+}
+//check if pointer MOVES
+void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
+{
+	if (_setP0)
+	{			
+		_defPoints[0]= cv::Point(e->x(),e->y());	// P0 is updated
+		_defPoints[2]= cv::Point((_defPoints[1].x-e->x())*ratP1P2 + e->x(),(_defPoints[1].y-e->y())*ratP1P2  + e->y()); // P2 is updated
+		if (_defPoints.size()>4)
+			_defPoints[4]= cv::Point((_defPoints[3].x-e->x())*ratP3P4 + e->x(),(_defPoints[3].y-e->y())*ratP3P4  + e->y()); // P4 is updated
+		emit update();
+	}
+	else if (_setP1)
+	{			
+		_defPoints[1]= cv::Point(e->x(),e->y()); // P1 is updated
+		_defPoints[2]= cv::Point((e->x()-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated
+		emit update();
+	}
+	else if (_setP2)//////////////////////
+	{			
+		ratP1P2 = dist(_defPoints[0],cv::Point(e->x(),e->y()))/dist(_defPoints[0],_defPoints[1]);
+		if (ratP1P2 > 1)
+			ratP1P2 = 1;
+		_defPoints[2]= cv::Point((_defPoints[1].x-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(_defPoints[1].y-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated
+		emit update();
+	}
+	else if (_setP3)
+	{			
+		_defPoints[3]=cv::Point(e->x(),e->y()); // P3 is updated
+		_defPoints[4]= cv::Point((e->x()-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated
+		emit update();
+	}
+	else if (_setP4)///////////////////////
+	{			
+		ratP3P4 = dist(_defPoints[0],cv::Point(e->x(),e->y()))/dist(_defPoints[0],_defPoints[3]);
+		if (ratP3P4 > 1)
+			ratP3P4 = 1;
+		_defPoints[4]= cv::Point((_defPoints[3].x-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(_defPoints[3].y-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated		
+		emit update();
+	}
+}
+//check if MOUSE BUTTON IS RELEASED
+void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
+{
+	// left button released
+	if (e->button() == Qt::LeftButton)
+	{
+		if (_setP0)
+		{
+			_defPoints[0]=cv::Point(e->x(),e->y()); // P0 is updated
+			_defPoints[2]= cv::Point((_defPoints[1].x-e->x())*ratP1P2 + e->x(),(_defPoints[1].y-e->y())*ratP1P2  + e->y()); // P2 is updated
+			if (_defPoints.size()>4)
+				_defPoints[4]= cv::Point((_defPoints[3].x-e->x())*ratP3P4 + e->x(),(_defPoints[3].y-e->y())*ratP3P4  + e->y()); // P4 is updated
+			_setP0 = false;
+			emit update();
+		}
+		else if (_setP1)
+		{
+			_defPoints[1]=cv::Point(e->x(),e->y());	// P1 is updated
+			_defPoints[2]= cv::Point((e->x()-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated			
+			_setP1 = false;
+			emit update();
+		}
+		else if (_setP2)
+		{
+			_defPoints[2]= cv::Point((_defPoints[1].x-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(_defPoints[1].y-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated
+			_setP2 = false;
+			emit update();
+		}
+		else if (_setP3)
+		{
+			_defPoints[3]=cv::Point(e->x(),e->y());	// P3 is updated	
+			_defPoints[4]= cv::Point((e->x()-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated			
+			_setP3 = false;
+			_ready = true;
+			emit update();
+		}
+		else if (_setP4)
+		{
+			_defPoints[4]= cv::Point((_defPoints[3].x-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(_defPoints[3].y-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated
+			_setP4 = false;
+			emit update();
+		}
+	}		
+}
+
+//BeesBookTagMatcher private member functions
 //this draws a basic grid onto the display image
 void BeesBookTagMatcher::drawGrid(cv::Mat image)
 {
 	if (_activeGrid)
 	{	
 		gNew.drawModGrid(image);
+		gNew.drawFullTag(image,1);
 	}
 	if (_activeTag)
 	{
 		gNew.drawFullTag(image,1);
 	}
 }
-
-//check if MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
-{
-	//check if LEFT button is clicked
-	if ( e->button() == Qt::LeftButton && _activeGrid)
+void BeesBookTagMatcher::drawPoints(cv::Mat image)
+{	
+	//lines are drawn in blue	
+	if (_defPoints.size() > 2)
+		cv::line(image, _defPoints[0], _defPoints[1], cv::Scalar(255, 0, 0), 1);
+	if (_defPoints.size() > 4)
+		cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(255, 0, 0), 1);
+	//points are drawn in yellow
+	for (int i=0; i< _defPoints.size(); i++)
 	{
-		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers()) //-modifies Grid's position-
-		{		
-			if (abs(e->x()- gNew.centerGrid.x) < 2 && abs(e->y()- gNew.centerGrid.y) < 2)
-			{				
-				//a differente tag is selected when clicking inside its area
-			/*for (int i=0; i<_Grids.size();i++)
-				{
-					if (cv::pointPolygonTest(_Grids[i].cellsContours[12],cv::Point(e->x(),e->y()),false)>0)
-					{
-						_Grids.push_back(g);
-						g.init(_Grids[i].center, _Grids[i].axes, _Grids[i].angleTag, _Grids[i].angleGrid, _Grids[i].ID);
-						_Grids.erase(_Grids.begin()+i);
-						break;
-					}
-				}	*/				
-				_modPosGrid = true;
-				emit update();
-			}
-			else if(abs(e->x()- gNew.gridAxes[0][1].x) < 2 && abs(e->y()- gNew.gridAxes[0][1].y) < 2)
-			{				
-				_modHeightMid = true;
-			}
-			else if(abs(e->x()- gNew.gridAxes[1][1].x) < 2 && abs(e->y()- gNew.gridAxes[1][1].y) < 2)
-			{			
-				_modWidthMid = true;
-			}
-			else if(abs(e->x()- gNew.gridAxes[2][1].x) < 2 && abs(e->y()- gNew.gridAxes[2][1].y) < 2)
-			{			
-				_modHeightInn = true;
-			}
-			else if(abs(e->x()- gNew.gridAxes[3][1].x) < 2 && abs(e->y()- gNew.gridAxes[3][1].y) < 2)
-			{							
-				_modWidthInn = true;
-			}
-
-		}
-		//check for CTRL modifier
-		else if(Qt::ControlModifier == QApplication::keyboardModifiers())
-		{				
-		}
-		//check for ALT modifier
-		else if(Qt::AltModifier == QApplication::keyboardModifiers())
-		{
-		}	
+		cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 	}
-
-	//check if RIGHT button is clicked
-	else if ( e->button() == Qt::RightButton)
+		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+	//the colors are set according to the point being modified
+	if (_setP0)
 	{
-		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())		
-		{		
-		}
-		//check for CTRL modifier		
-		else if(Qt::ControlModifier == QApplication::keyboardModifiers())
+		if (_defPoints.size() > 2)
+			cv::line(image, _defPoints[0], _defPoints[1], cv::Scalar(0, 255, 0), 1);
+		if (_defPoints.size() > 4)
+			cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(0, 255, 0), 1);
+		//points are drawn in yellow
+		for (int i=0; i< _defPoints.size(); i++)
 		{
-			if (_newGrid && !_activeGrid)
-			{				
-				_newGrid = false;
-				_activeGrid = true;
-				gNew.init(cv::Point (e->x(),e->y()), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, 
-					cv::Point (e->x(),e->y()), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0));
-				emit update();
-			}
-			else if (_activeGrid)
-			{				
-				_activeGrid = false;
-				_activeTag = true;				
-				emit update();
-			}
+			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 		}
-		//check for ALT modifier
-		else if(Qt::AltModifier == QApplication::keyboardModifiers())
-		{
-		}
+		cv::circle(image,_defPoints[0], 1, cv::Scalar(0, 0, 255), 1);
 	}
-		
-	//check if MIDDLE button is clicked
-	else if ( e->button() == Qt::MiddleButton)
-	{
-		if (_activeTag)
+	else if (_setP1 || _setP2)
+	{		
+		cv::line(image, _defPoints[0], _defPoints[1], cv::Scalar(0, 255, 0), 1);	
+		//points are drawn in yellow
+		for (int i=0; i< _defPoints.size(); i++)
 		{
-			_activeTag = false;
-			_activeGrid = true;
-			emit update();
+			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 		}
+		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+		if (_setP1)
+			cv::circle(image,_defPoints[1], 1, cv::Scalar(0, 0, 255), 1);
+		else
+			cv::circle(image,_defPoints[2], 1, cv::Scalar(0, 0, 255), 1);
+	}
+	else if (_setP3 || _setP4)
+	{		
+		cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(0, 255, 0), 1);	
+		//points are drawn in yellow
+		for (int i=0; i< _defPoints.size(); i++)
+		{
+			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
+		}
+		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+		if (_setP3)
+			cv::circle(image,_defPoints[3], 1, cv::Scalar(0, 0, 255), 1);
+		else
+			cv::circle(image,_defPoints[4], 1, cv::Scalar(0, 0, 255), 1);
 	}
 }
-
-//check if pointer MOVES
-void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
-{
-	if (_modPosGrid) // "ALT + LEFT button + MOVE" modifies grid center
-	{
-		gNew.centerGrid.x = e->x();
-		gNew.centerGrid.y = e->y();
-		//centerTag is also updated
-		gNew.centerTag.x = e->x();
-		gNew.centerTag.y = e->y();
-		//draw figure!
-		emit update();
-	}
-	else if (_modHeightMid) // "ALT + LEFT button + MOVE" modifies "height middle axis" length
-	{
-		//new length
-		gNew.axesGrid.height = dist(gNew.centerGrid,cv::Point(e->x(),e->y()));
-		//axesTag is also updated
-		gNew.axesTag.width = gNew.axesGrid.height * OR/MR;
-		//new angle
-		double angle = atan2(e->y() - gNew.centerGrid.y, e->x() - gNew.centerGrid.x) * 180.0 / CV_PI;			
-		gNew.angleGrid = angle+90;
-		//angleTag is also updated
-		gNew.angleTag = angle+90;
-	
-		//draw figure!
-		emit update();
-	}
-	else if (_modWidthMid) // "ALT + LEFT button + MOVE" modifies "width middle axis" length
-	{
-		//new length
-		gNew.axesGrid.width = dist(gNew.centerGrid,cv::Point(e->x(),e->y()));
-		//axesTag is also updated
-		gNew.axesTag.width = gNew.axesGrid.width * OR/MR;
-		//new angle
-		double angle = atan2(e->y() - gNew.centerGrid.y, e->x() - gNew.centerGrid.x) * 180.0 / CV_PI;		
-		gNew.angleGrid = angle;
-		//angleTag is also updated
-		gNew.angleTag = angle;
-		//draw figure!
-		emit update();
-	}
-	else if (_modHeightInn) // "ALT + LEFT button + MOVE" modifies "height inner axis" length
-	{
-		//new length
-		gNew.axesGrid.height = dist(gNew.centerGrid,cv::Point(e->x(),e->y()))*MR/IR;
-		//axesTag is also updated
-		gNew.axesTag.width = gNew.axesGrid.height * OR/MR;
-		//new angle
-		double angle = atan2(e->y() - gNew.centerGrid.y, e->x() - gNew.centerGrid.x) * 180.0 / CV_PI;		
-		gNew.angleGrid = angle+90;
-		//angleTag is also updated
-		gNew.angleTag = angle+90;
-		//draw figure!
-		emit update();
-	}
-	else if (_modWidthInn) // "ALT + LEFT button + MOVE" modifies "width inner axis" length
-	{
-		//new length
-		gNew.axesGrid.width = dist(gNew.centerGrid,cv::Point(e->x(),e->y()))*MR/IR;
-		//axesTag is also updated
-		gNew.axesTag.width = gNew.axesGrid.width * OR/MR;
-		//new angle
-		double angle = atan2(e->y() - gNew.centerGrid.y, e->x() - gNew.centerGrid.x) * 180.0 / CV_PI;		
-		gNew.angleGrid = angle;
-		//angleTag is also updated
-		gNew.angleTag = angle;
-		//draw figure!
-		emit update();
-	}
-}
-
-//check if MOUSE BUTTON IS RELEASED
-void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
-{
-	// left button released
-	if(e->button() == Qt::LeftButton && _modPosGrid)
-	{				
-		_modPosGrid = false;		
-	}
-	else if(e->button() == Qt::LeftButton && _modHeightMid)
-	{				
-		_modHeightMid = false;		
-	}
-	else if(e->button() == Qt::LeftButton && _modWidthMid)
-	{				
-		_modWidthMid = false;		
-	}
-	else if(e->button() == Qt::LeftButton && _modHeightInn)
-	{				
-		_modHeightInn = false;		
-	}
-	else if(e->button() == Qt::LeftButton && _modWidthInn)
-	{				
-		_modWidthInn = false;		
-	}
-	// right button released
-	else if (e->button() == Qt::RightButton && _newGrid)
-	{
-		//_newGrid=false;
-
-	}
-}
-
 double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
 {
 	double dist;
