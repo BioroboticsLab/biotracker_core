@@ -53,38 +53,39 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 	//check if LEFT button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{	
-		for (int i=0; i<_defPoints.size(); i++)
-			{
-				if (abs(e->x()-_defPoints[i].x)<2 && abs(e->y()-_defPoints[i].y)<2)
+		if (_defPoints.size() >0)
+			for (int i=_defPoints.size(); i>=0; i--)
 				{
-					switch (i)
+					if (abs(e->x()-_defPoints[i].x)<2 && abs(e->y()-_defPoints[i].y)<2)
 					{
-					case 0:
-						_setP0 = true;
-						emit update();
+						switch (i)
+						{
+						case 0:
+							_setP0 = true;
+							emit update();
+							break;
+						case 1:
+							_setP1 = true;
+							emit update();
+							break;
+						case 2:
+							_setP2 = true;
+							emit update();
+							break;
+						case 3:
+							_setP3 = true;
+							emit update();
+							break;
+						case 4:
+							_setP4 = true;
+							emit update();
+							break;							
+						default:
+							break;
+						}
 						break;
-					case 1:
-						_setP1 = true;
-						emit update();
-						break;
-					case 2:
-						_setP2 = true;
-						emit update();
-						break;
-					case 3:
-						_setP3 = true;
-						emit update();
-						break;
-					case 4:
-						_setP4 = true;
-						emit update();
-						break;							
-					default:
-						break;
-					}
-					break;
-				}			
-			}
+					}			
+				}
 		//check for SHIFT modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{			
@@ -242,7 +243,10 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 		cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 	}
 	if (_defPoints.size() > 0)
-	cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+	{
+		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
+	}
 	//the colors are set according to the point being modified
 	if (_setP0)
 	{
@@ -256,6 +260,7 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(0, 0, 255), 1);
+		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
 	}
 	else if (_setP1 || _setP2)
 	{		
@@ -266,6 +271,7 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
 		if (_setP1)
 			cv::circle(image,_defPoints[1], 1, cv::Scalar(0, 0, 255), 1);
 		else
@@ -280,6 +286,7 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
+		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
 		if (_setP3)
 			cv::circle(image,_defPoints[3], 1, cv::Scalar(0, 0, 255), 1);
 		else
