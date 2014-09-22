@@ -112,6 +112,7 @@ void VideoView::paintGL()
 	{	
 		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
 	}
+	
 
 	/**
 	* FOR PERFORMANCE TRY TO LOAD ONLY VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
@@ -161,8 +162,7 @@ void VideoView::paintGL()
 		// Draw it!
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
 
-		// free memory
-		emit notifyGUI(std::to_string(imageCopy.cols),MSGS::NOTIFICATION);
+		// free memory		
 		imageCopy.release();
 		glDeleteTextures(1, &_texture);
 }
@@ -301,8 +301,10 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	if (_isPanZoomMode)
 	{
 		int numDegrees = e->delta();
-		if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
-			_zoomFactor += 0.001 * numDegrees;
+		if (e->orientation() == Qt::Vertical
+			&& _zoomFactor - 0.001 * numDegrees > 0) 
+		{
+			_zoomFactor -= 0.001 * numDegrees;
 			// adjust _panX and _panY, so that zoom is centered on mouse cursor
 			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/_zoomFactor )
 				_panX =		picturePos.x()-  ((this->width()*_zoomFactor)/2);
@@ -314,6 +316,7 @@ void VideoView::wheelEvent( QWheelEvent * e )
 			//Draw the scene
 			updateGL();
 			e->accept();
+
 		}
 	}
 	else
