@@ -128,6 +128,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 			emit update();
 		}
 	}	
+	
 }
 //check if pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
@@ -293,6 +294,7 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 			cv::circle(image,_defPoints[4], 1, cv::Scalar(0, 0, 255), 1);
 	}
 }
+
 
 double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
 {
