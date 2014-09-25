@@ -7,39 +7,33 @@
 #include "source/tracking/TrackingAlgorithm.h"
 #include <iostream>
 #include <QPolygon>
+#include <utility>
 
-//initializion function
-void myNewGrid::init(cv::Point CenterGrid, cv::Size AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size AxesTag,double AngleTag, std::vector<bool> Id){
-	//Object properties are initialized
-	centerGrid = CenterGrid;
-	axesGrid = AxesGrid;
-	angleGrid = AngleGrid;
-	tiltGrid = getTilt(axesGrid);
-
-	centerTag = CenterTag;
-	axesTag = AxesTag;	
-	angleTag = AngleTag;
-	tiltTag = getTilt(axesTag);
-
-	ID = Id;	
-}
 //default constructor
 myNewGrid::myNewGrid()
-{
-	init(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0));	
-}
+: myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0))
+{}
+
 //constructor with 7 parameters
 myNewGrid::myNewGrid(cv::Point CenterGrid, cv::Size AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size AxesTag, double AngleTag, std::vector<bool> Id)
+  :centerGrid(CenterGrid)
+  ,centerTag(CenterTag)
+  ,axesGrid(AxesGrid)
+  ,axesTag(AxesTag)
+  ,angleGrid(AngleGrid)
+  ,angleTag(AngleTag)
+  ,tiltGrid(getTilt(axesGrid))
+  ,tiltTag(getTilt(axesTag))
+  ,ID(std::move(Id))
 {
-	init(CenterGrid, AxesGrid, AngleGrid, CenterTag, AxesTag, AngleTag,  Id);	
 }
-//default destrucor
+//destrucor
 myNewGrid::~myNewGrid(){}
 
 //updates and returns Tilt's value
-double myNewGrid::getTilt(cv::Size Axes)
+double myNewGrid::getTilt(cv::Size Axes) const
 {
-	return(double(Axes.height)/Axes.width);
+	return(static_cast<double>(Axes.height)/Axes.width);
 }
 
 void myNewGrid::drawModGrid(cv::Mat &img)
@@ -205,4 +199,4 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	return conts;
 }
 
-void initPoints(std::vector<cv::Point> points){}
+void initPoints(std::vector<cv::Point> /*points*/){}

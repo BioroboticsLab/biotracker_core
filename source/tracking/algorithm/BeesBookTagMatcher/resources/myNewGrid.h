@@ -25,13 +25,11 @@
 class myNewGrid
 {
 public:
-	//initializer function
-	void init(cv::Point CenterGrid, cv::Size AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size AxesTag,double AngleTag, std::vector<bool> Id);
 	//default constructor
 	myNewGrid();
 	//constructor with 7 parameters
 	myNewGrid(cv::Point CenterGrid, cv::Size AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size AxesTag,double AngleTag, std::vector<bool> Id);	
-	//default destructor
+	//destructor
 	~myNewGrid();
 
 	//Object properties
@@ -53,7 +51,7 @@ public:
 	std::vector<std::vector <cv::Point> >	gridAxes;
 
 	//function that calculates the tilt for an ellipse with the given axes.
-	double getTilt(cv::Size Axes);
+	double getTilt(cv::Size Axes) const;
 	//function that draws the grid axes while being modified.
 	void drawModGrid(cv::Mat &img);
 	//function that draws the grid without the tag.
@@ -86,5 +84,5 @@ public:
 	//P2 -- inner radius 1
 	//P3 -- middle radius 2
 	//P4 -- inner radius 2	
-	void initPoints(std::vector<cv::Point> points);
+	void initPoints(std::vector<cv::Point> /*points*/);
 };

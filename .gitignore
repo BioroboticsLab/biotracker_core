@@ -9,3 +9,4 @@ GeneratedFiles/
 *.vsp
 
 /Release
+/build
