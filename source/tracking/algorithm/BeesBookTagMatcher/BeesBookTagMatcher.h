@@ -12,20 +12,20 @@
 #include "cv.h"
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
-#include "resources/myGrid.h"
-#include "resources/myNewGrid.h"
+#include "source/tracking/algorithm/BeesBookTagMatcher/resources/myGrid.h"
+#include "source/tracking/algorithm/BeesBookTagMatcher/resources/myNewGrid.h"
 
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 	private:
-				
+
 		myGrid				g; //active Grid
 		myNewGrid			gNew; //active Grid
 		myGrid				gtemp; //Grids already in vector
 
 		std::vector<myGrid> _Grids; //vector of already set grids
 		std::vector<cv::Point> _defPoints; //vector of points which are used by the user to define a new grid
-				
+
 		bool _newGrid; //ready to generate a new grid
 
 		bool _activeGrid; //a new Grid has been set and can now be modified
@@ -37,7 +37,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		bool _modHeightInn; //modify height Inner circle and angleGrid
 		bool _modWidthInn; //modify width Inner circle and angleGrid
 		bool _modHeightMid; //modify height Middle circle and angleGrid
-		bool _modWidthMid; //modify width Middle circle and angleGrid		
+		bool _modWidthMid; //modify width Middle circle and angleGrid
 		bool _modHeightOut; //modify height Outer circle and angleTag
 		bool _modWidthOut; //modify width Outer circle and angleTag
 		//------ NEW FLAGS
@@ -52,17 +52,17 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		double	ratP1P2; //ratio P1/P2
 		double	ratP3P4; //ratio P3/P4
 		cv::Point diff; //auxiliar variable
-		cv::Point prevPosition; //auxiliar variable		
-				
+		cv::Point prevPosition; //auxiliar variable
+
 		// FUNCTIONS
 		void drawGrid(cv::Mat image); //function that draws a grid calling an instance of MyNewGrid
 		void drawPoints(cv::Mat image); //function that draws the points while being edited
-		double dist(cv::Point p1, cv::Point p2); //function that calculates the distance between two points		
+		double dist(cv::Point p1, cv::Point p2); //function that calculates the distance between two points
 
 	public:
 		BeesBookTagMatcher	( Settings & settings );
 		~BeesBookTagMatcher	( void );
-		
+
 
 
 
@@ -77,7 +77,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		void mousePressEvent	( QMouseEvent * e );
 		void mouseReleaseEvent	( QMouseEvent * e );
 		void mouseWheelEvent	( QWheelEvent * e );
-		
+
 };
 
 #endif
