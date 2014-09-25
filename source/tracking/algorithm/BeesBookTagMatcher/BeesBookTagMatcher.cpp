@@ -5,7 +5,7 @@
 //some variables can go out of boundary
 
 
-BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings ) : TrackingAlgorithm( settings )
+BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
 {
 		_activeGrid = false; //a new Grid has been set and can now be modified
 		_activeTag = false; //a new Grid has been set and the Tag perimeter can now be modified
