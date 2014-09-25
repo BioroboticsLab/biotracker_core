@@ -181,27 +181,51 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 			_defPoints[0]=cv::Point(e->x(),e->y()); // P0 is updated
 			_defPoints[2]= cv::Point((_defPoints[1].x-e->x())*ratP1P2 + e->x(),(_defPoints[1].y-e->y())*ratP1P2  + e->y()); // P2 is updated
 			if (_defPoints.size()>4)
+			{
 				_defPoints[4]= cv::Point((_defPoints[3].x-e->x())*ratP3P4 + e->x(),(_defPoints[3].y-e->y())*ratP3P4  + e->y()); // P4 is updated
+				angleP1P3 = ((_defPoints[1].x-_defPoints[0].x)*(_defPoints[3].x-_defPoints[0].x)+(_defPoints[1].y-_defPoints[0].y)*(_defPoints[3].y-_defPoints[0].y))
+					/(dist(_defPoints[0],_defPoints[1])*dist(_defPoints[0],_defPoints[3]));
+				angleP1P3 = acos(angleP1P3)*180.0/CV_PI; //angle P1P3 is updated
+				std::string note = "New angle: " + QString::number(angleP1P3).toStdString();
+				emit notifyGUI(note,MSGS::NOTIFICATION);
+			}			
 			_setP0 = false;
 			emit update();
 		}
 		else if (_setP1)
 		{
 			_defPoints[1]=cv::Point(e->x(),e->y());	// P1 is updated
-			_defPoints[2]= cv::Point((e->x()-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated			
+			_defPoints[2]= cv::Point((e->x()-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated
+			if (_defPoints.size()==5)
+			{
+				angleP1P3 = ((_defPoints[1].x-_defPoints[0].x)*(_defPoints[3].x-_defPoints[0].x)+(_defPoints[1].y-_defPoints[0].y)*(_defPoints[3].y-_defPoints[0].y))
+						/(dist(_defPoints[0],_defPoints[1])*dist(_defPoints[0],_defPoints[3]));
+				angleP1P3 = acos(angleP1P3)*180.0/CV_PI; //angle P1P3 is updated
+				std::string note = "New angle: " + QString::number(angleP1P3).toStdString();
+				emit notifyGUI(note,MSGS::NOTIFICATION);
+			}
 			_setP1 = false;
 			emit update();
 		}
 		else if (_setP2)
 		{
 			_defPoints[2]= cv::Point((_defPoints[1].x-_defPoints[0].x)*ratP1P2 + _defPoints[0].x,(_defPoints[1].y-_defPoints[0].y)*ratP1P2  + _defPoints[0].y); // P2 is updated
-			_setP2 = false;
+			std::string note = "New rat P1P2: " + QString::number(dist(_defPoints[0],_defPoints[2])).toStdString() + "/" 
+				+ QString::number(dist(_defPoints[0],_defPoints[1])).toStdString() 
+				+ " = " + QString::number(ratP1P2).toStdString(); // the new ratP1P2 is printed in the GUI
+			emit notifyGUI(note,MSGS::NOTIFICATION);
+			_setP2 = false;			
 			emit update();
 		}
 		else if (_setP3)
 		{
 			_defPoints[3]=cv::Point(e->x(),e->y());	// P3 is updated	
-			_defPoints[4]= cv::Point((e->x()-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated			
+			_defPoints[4]= cv::Point((e->x()-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(e->y()-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated
+			angleP1P3 = ((_defPoints[1].x-_defPoints[0].x)*(_defPoints[3].x-_defPoints[0].x)+(_defPoints[1].y-_defPoints[0].y)*(_defPoints[3].y-_defPoints[0].y))
+					/(dist(_defPoints[0],_defPoints[1])*dist(_defPoints[0],_defPoints[3]));
+			angleP1P3 = acos(angleP1P3)*180.0/CV_PI; //angle P1P3 is updated
+			std::string note = "New angle: " + QString::number(angleP1P3).toStdString();
+			emit notifyGUI(note,MSGS::NOTIFICATION);
 			_setP3 = false;
 			_ready = true;
 			emit update();
@@ -209,6 +233,10 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 		else if (_setP4)
 		{
 			_defPoints[4]= cv::Point((_defPoints[3].x-_defPoints[0].x)*ratP3P4 + _defPoints[0].x,(_defPoints[3].y-_defPoints[0].y)*ratP3P4  + _defPoints[0].y); // P4 is updated
+			std::string note = "New rat P3P4: " + QString::number(dist(_defPoints[0],_defPoints[4])).toStdString() + "/" 
+				+ QString::number(dist(_defPoints[0],_defPoints[3])).toStdString() 
+				+ " = " + QString::number(ratP3P4).toStdString(); // the new ratP3P4 is printed in the GUI
+			emit notifyGUI(note,MSGS::NOTIFICATION);
 			_setP4 = false;
 			emit update();
 		}

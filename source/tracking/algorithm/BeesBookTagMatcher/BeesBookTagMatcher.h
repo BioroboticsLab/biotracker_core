@@ -49,8 +49,10 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		bool _setP3; //Set P3 --Left Click--
 		bool _setP4; //P3 has been set, P0, P1, P2, P3 and P4 are active --ctrl + Right Click--
 
-		double	ratP1P2; //ratio P1/P2
-		double	ratP3P4; //ratio P3/P4
+		double	ratP1P2; //ratio P0P1/P0P2
+		double	ratP3P4; //ratio P0P3/P0P4
+		double	angleP1P3; //angle between P0P1 and P0P3
+
 		cv::Point diff; //auxiliar variable
 		cv::Point prevPosition; //auxiliar variable		
 				
