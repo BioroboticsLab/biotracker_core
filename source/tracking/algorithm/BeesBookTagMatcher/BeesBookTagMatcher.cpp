@@ -5,7 +5,7 @@
 //some variables can go out of boundary
 
 
-BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings ) : TrackingAlgorithm( settings )
+BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
 {
 		_activeGrid = false; //a new Grid has been set and can now be modified
 		_activeTag = false; //a new Grid has been set and the Tag perimeter can now be modified
@@ -243,7 +243,7 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 	}		
 }
 
-void BeesBookTagMatcher:: mouseWheelEvent	( QWheelEvent * e ){}
+void BeesBookTagMatcher:: mouseWheelEvent	( QWheelEvent *){}
 
 //BeesBookTagMatcher private member functions
 //this draws a basic grid onto the display image
@@ -267,9 +267,9 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 	if (_defPoints.size() > 4)
 		cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(255, 0, 0), 1);
 	//points are drawn in yellow
-	for (int i=0; i< _defPoints.size(); i++)
+	for (const auto &p : _defPoints)
 	{
-		cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
+		cv::circle(image, p, 1, cv::Scalar(0, 255, 255), 1);
 	}
 	if (_defPoints.size() > 0)
 	{
@@ -284,9 +284,9 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 		if (_defPoints.size() > 4)
 			cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(0, 255, 0), 1);
 		//points are drawn in yellow
-		for (int i=0; i< _defPoints.size(); i++)
+		for (const auto &p : _defPoints)
 		{
-			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
+			cv::circle(image, p, 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(0, 0, 255), 1);
 		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
@@ -295,9 +295,9 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 	{		
 		cv::line(image, _defPoints[0], _defPoints[1], cv::Scalar(0, 255, 0), 1);	
 		//points are drawn in yellow
-		for (int i=0; i< _defPoints.size(); i++)
+		for (const auto &p : _defPoints)
 		{
-			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
+			cv::circle(image, p, 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
 		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);
@@ -310,9 +310,9 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 	{		
 		cv::line(image, _defPoints[0], _defPoints[3], cv::Scalar(0, 255, 0), 1);	
 		//points are drawn in yellow
-		for (int i=0; i< _defPoints.size(); i++)
+		for (const auto &p : _defPoints)
 		{
-			cv::circle(image,_defPoints[i], 1, cv::Scalar(0, 255, 255), 1);
+			cv::circle(image, p, 1, cv::Scalar(0, 255, 255), 1);
 		}
 		cv::circle(image,_defPoints[0], 1, cv::Scalar(255, 255, 255), 1);
 		cv::circle(image,_defPoints[1], 1, cv::Scalar(200, 100, 200), 1);

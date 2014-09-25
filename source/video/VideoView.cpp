@@ -58,7 +58,7 @@ void VideoView::paintGL()
 		// Don't bother painting an image if we have none.
 		return; 
 	}
-	cv::Mat imageCopy = _displayImage.clone();
+	cv::Mat imageCopy = _displayImage;//.clone();
 	if(_tracker)
 	{
 		try
@@ -94,8 +94,6 @@ void VideoView::paintGL()
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-
-
 	// Non-mipmap way of mapping the texture (fast and clean):
 	// Allocate the texture
 	glGenTextures(1, &_texture);
@@ -106,30 +104,25 @@ void VideoView::paintGL()
 	// If texture area is smaller than the image, downsample using no interpolation.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
-	
 	// check window resolution and scale image if window resolution is lower than image resolution
 	if (_zoomFactor > 1)
 	{	
 		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
-	}
-	
+	}	
 
 	/**
-	* FOR PERFORMANCE TRY TO LOAD ONLY VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
-	* 
+	* FOR PERFORMANCE ONLY LOAD VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
 	*/
 	// create Texture Atlas
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4 );
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) imageCopy.step/imageCopy.channels());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE,0);// imageCopy.data);
 
 	// variables for splitting image into tiles:
 	// c = starting column, r = starting row
 	// width	= width  of visible part of picture
-	// height	= height			- " -
+	// height	= height	- " -		- " -
 	int c=0,r=0;
-	int width=imageCopy.cols;
-	int height=imageCopy.rows;
+	int width=_displayImage.cols;
+	int height=_displayImage.rows;
 	//Tile size
 	int N = 64;
 	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
@@ -138,33 +131,33 @@ void VideoView::paintGL()
 		c=upperLeft.x();
 	if(upperLeft.y() > 0 )
 		r=upperLeft.y();
-	if(lowerRight.x() < width-5)
-		width=lowerRight.x()+5;
-	if(lowerRight.y() < height-5)
-		height=lowerRight.y()+5;
+	if(lowerRight.x() < width-1)
+		width=lowerRight.x()+1;
+	if(lowerRight.y() < height-1)
+		height=lowerRight.y()+1;
 
+	if (_zoomFactor > 1)
+	{
+		c = (c*imageCopy.cols)/_displayImage.cols;
+		r = (r*imageCopy.rows)/_displayImage.rows;
+		width = (width*imageCopy.cols)/_displayImage.cols;
+		height = (height*imageCopy.rows)/_displayImage.rows;
+	}
 
-	//loop over rows and columns to create tiles
-	for ( r = 0; r < height; r += N )
-		for ( c = 0; c < width; c += N )
-		{
-			//create tile of preferred size T*T
-			cv::Mat tile = imageCopy(cv::Range(r, min(r + N, height)),
-				cv::Range(c, min(c + N, width)));
-			
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1 );
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) tile.step/tile.channels());
-			//insert tile into texture atlas
-			glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
-			tile.release();
-		}
+	//to avoid artifacts when using 'glTexSubImage2d' with opencv MAT data,
+	//set pixel storage mode to byte alignment
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1 );
+	//and define number of pixels in a row
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) imageCopy.step/imageCopy.channels());
+	cv::Mat tile = imageCopy(cv::Range(r, height),
+		cv::Range(c, width));
+	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
 
-		// Draw it!
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
-
-		// free memory		
-		imageCopy.release();
-		glDeleteTextures(1, &_texture);
+	// Draw it!
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
+	// free memory		
+	imageCopy.release();
+	glDeleteTextures(1, &_texture);
 }
 
 void VideoView::initializeGL()

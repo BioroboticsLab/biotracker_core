@@ -120,6 +120,9 @@ private:
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
 	void connectTrackingAlg(TrackingAlgorithm* tracker);
+	QWidget* loadUiFile();
+
+
 
 
 	

@@ -381,23 +381,23 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	}
 	else if(trackingAlg == "simple algorithm")
 	{
-		tracker = new SimpleTracker(_settings);		
+		tracker = new SimpleTracker(_settings, this);		
 	}
 	else if(trackingAlg == "bees book tag matcher")
 	{
-		tracker = new BeesBookTagMatcher(_settings);
+		tracker = new BeesBookTagMatcher(_settings, this);
 	}
 	else if ( trackingAlg == "color patch tag matcher" )
 	{
-		tracker = new ColorPatchTracker(_settings);
+		tracker = new ColorPatchTracker(_settings, this);
 	}
 	else if (trackingAlg == "Fish - Particle")
 	{
-		tracker = new ParticleFishTracker(_settings);
+		tracker = new ParticleFishTracker(_settings, this);
 	}
-		else if (trackingAlg == "Sample Tracker")
+	else if (trackingAlg == "Sample Tracker")
 	{
-		tracker = new SampleTracker(_settings);
+		tracker = new SampleTracker(_settings, this);
 	}
 	if ( trackingAlg != "no tracking" )
 		connectTrackingAlg(tracker);

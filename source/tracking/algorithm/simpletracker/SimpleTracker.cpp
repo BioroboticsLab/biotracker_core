@@ -22,7 +22,7 @@ const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 5;
 
 static bool isYounger(const TrackedFish&, const TrackedFish&);
 
-SimpleTracker::SimpleTracker(Settings & settings) : TrackingAlgorithm(settings), _bg_subtractor(BgSub())
+SimpleTracker::SimpleTracker(Settings & settings, QWidget *parent) : TrackingAlgorithm(settings, parent), _bg_subtractor(BgSub())
 {
 }
 

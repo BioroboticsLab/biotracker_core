@@ -10,8 +10,8 @@ static bool compareReverseParticleScorePredicate(const Particle& p1, const Parti
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings)
-    : TrackingAlgorithm(settings)
+ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
+    : TrackingAlgorithm(settings, parent)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)

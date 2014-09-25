@@ -2,7 +2,7 @@
 #include "source/helper/StringHelper.h"
 #include <QApplication>
 
-SampleTracker::SampleTracker( Settings & settings ) : TrackingAlgorithm( settings )
+SampleTracker::SampleTracker( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();

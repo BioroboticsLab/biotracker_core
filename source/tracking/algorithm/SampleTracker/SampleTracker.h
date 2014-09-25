@@ -15,7 +15,7 @@ private:
 		void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
 
 	public:
-		SampleTracker	( Settings & settings );
+		SampleTracker	( Settings & settings, QWidget *parent );
 		~SampleTracker	( void );
 		
 
