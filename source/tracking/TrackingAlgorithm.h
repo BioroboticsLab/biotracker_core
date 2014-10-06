@@ -11,6 +11,7 @@
 #include <qwidget.h>
 
 
+
 class TrackingAlgorithm : public QObject
 {
 	Q_OBJECT

@@ -10,9 +10,15 @@
 #include <utility>
 
 //default constructor
+//TODO: FIX ERROR
+//myNewGrid::myNewGrid()
+//: myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0))
+//{}
+//Tobias temporary fix:
 myNewGrid::myNewGrid()
-: myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0))
-{}
+{
+	myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0));
+}
 
 //constructor with 7 parameters
 myNewGrid::myNewGrid(cv::Point CenterGrid, cv::Size AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size AxesTag, double AngleTag, std::vector<bool> Id)

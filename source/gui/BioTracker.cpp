@@ -28,8 +28,13 @@ void BioTracker::init(){
 	_currentFrame = 0;
 	_isPanZoomMode = false;
 	_trackingThread = new TrackingThread(_settings);
+	_tracker = NULL;
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
+	_vboxParams = new QVBoxLayout();
+	ui.groupBox_params->setLayout(_vboxParams);	
+	_vboxTools = new QVBoxLayout();
+	ui.groupBox_tools->setLayout(_vboxTools);
 	//meta types
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
@@ -373,35 +378,46 @@ void BioTracker::changeFps(int fps)
 }
 
 void BioTracker::trackingAlgChanged(QString trackingAlg)
-{
-	TrackingAlgorithm* tracker;
+{	
+	//first remove ui containers of old algorithm
+	if(_tracker)
+	{
+		
+		_vboxParams->removeWidget(_paramsWidget);
+		_vboxTools->removeWidget(_toolsWidget);
+		delete _paramsWidget;
+		delete _toolsWidget;
+		
+	}
 	if (trackingAlg == "no tracking")
 	{		
-		tracker = NULL;
+		_tracker = NULL;
 	}
 	else if(trackingAlg == "simple algorithm")
 	{
-		tracker = new SimpleTracker(_settings, this);		
+		_tracker = new SimpleTracker(_settings, this);		
 	}
 	else if(trackingAlg == "bees book tag matcher")
 	{
-		tracker = new BeesBookTagMatcher(_settings, this);
+		_tracker = new BeesBookTagMatcher(_settings, this);
 	}
 	else if ( trackingAlg == "color patch tag matcher" )
 	{
-		tracker = new ColorPatchTracker(_settings, this);
+		_tracker = new ColorPatchTracker(_settings, this);
 	}
 	else if (trackingAlg == "Fish - Particle")
 	{
-		tracker = new ParticleFishTracker(_settings, this);
+		_tracker = new ParticleFishTracker(_settings, this);
 	}
 	else if (trackingAlg == "Sample Tracker")
 	{
-		tracker = new SampleTracker(_settings, this);
+		_tracker = new SampleTracker(_settings, this);
 	}
 	if ( trackingAlg != "no tracking" )
-		connectTrackingAlg(tracker);
-	emit changeTrackingAlg(*tracker);
+		connectTrackingAlg(_tracker);
+	ui.groupBox_params->repaint();
+	ui.groupBox_tools->repaint();
+	emit changeTrackingAlg(*_tracker);
 }
 
 void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
@@ -419,6 +435,13 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 					this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 	QObject::connect( tracker, SIGNAL( update() ), 
 					ui.videoView, SLOT( updateGL() ));
+	if(_tracker)
+	{
+		_paramsWidget = _tracker->getParamsWidget();
+		_vboxParams->addWidget(_paramsWidget);
+		_toolsWidget = _tracker->getToolsWidget();
+		_vboxTools->addWidget(_toolsWidget);
+	}
 }
 
 void BioTracker::takeScreenshot()

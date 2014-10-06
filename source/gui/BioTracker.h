@@ -120,7 +120,13 @@ private:
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
 	void connectTrackingAlg(TrackingAlgorithm* tracker);
-	QWidget* loadUiFile();
+	TrackingAlgorithm* _tracker;
+
+	//Containers to put in chosen algorithm specific ui stuff
+	QVBoxLayout *_vboxParams;
+	QVBoxLayout *_vboxTools;
+	QWidget *_paramsWidget;
+	QWidget *_toolsWidget;
 
 
 
