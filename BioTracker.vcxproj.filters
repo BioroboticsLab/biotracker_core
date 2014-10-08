@@ -17,7 +17,6 @@
     <ClCompile Include="source\settings\Param.cpp" />
     <ClCompile Include="source\settings\Settings.cpp" />
     <ClCompile Include="source\helper\StringHelper.cpp" />
-    <ClCompile Include="source\trackedObject\TrackedObject.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +74,12 @@
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\trackedObject\TrackedObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -85,9 +90,6 @@
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
     <ClInclude Include="source\helper\StringHelper.h" />
-    <ClInclude Include="source\trackedObject\History.h" />
-    <ClInclude Include="source\trackedObject\ObjectModel.h" />
-    <ClInclude Include="source\trackedObject\TrackedObject.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -120,9 +122,6 @@
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -130,6 +129,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\trackedObject\ObjectModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\trackedObject\TrackedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,6 +151,9 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="source\tracking\TrackingAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
