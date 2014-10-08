@@ -182,10 +182,10 @@ signals:
 		void newFrameNumber(int frameNumber);
 
 		/**
-		* Signal to run the capture thread.
+		* singal to gui that video is paused
 		*/
-		void enableCaptureThread();
-		void disableCaptureThread();
+		void invalidFile();
+	
 
 		/**
 		* send a message to the GUI.

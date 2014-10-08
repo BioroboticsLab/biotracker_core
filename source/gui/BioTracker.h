@@ -71,7 +71,7 @@ public slots:
 	void updateFrameNumber(int frameNumber);	
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
-
+	void invalidFile();
 
 	/**
 	 * Print proivided message to the GUI message area.
@@ -120,6 +120,7 @@ private:
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
 	void connectTrackingAlg(TrackingAlgorithm* tracker);
+	void setPlayfieldEnabled(bool enabled);
 	TrackingAlgorithm* _tracker;
 
 	//Containers to put in chosen algorithm specific ui stuff

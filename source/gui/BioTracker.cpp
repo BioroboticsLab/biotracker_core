@@ -9,6 +9,7 @@ BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags
 	_settings(settings)
 {
 	ui.setupUi(this);
+	setPlayfieldEnabled(false);
 	init();
 }
 
@@ -43,14 +44,15 @@ void BioTracker::init(){
 	initConnects();
 	ui.sld_video->setDisabled(true);
 	if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))){
-		initCapture();
+		setPlayfieldEnabled(true);
+		initCapture();		
 	}
 }
 
 void BioTracker::initGui()
 {
 	initAlgorithms();
-	setPlayfieldPaused(true);
+	//setPlayfieldPaused(true);
 	ui.actionOpen_Video->setEnabled(true);
 	ui.frame_num_edit->setEnabled(false);
 }
@@ -92,6 +94,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
 
 }
 
@@ -111,6 +114,7 @@ void BioTracker::browseVideo()
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
 		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"true");
+		setPlayfieldEnabled(true);
 		initCapture();
 	}	
 }
@@ -121,7 +125,8 @@ void BioTracker::browsePicture()
 		tr("image Files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)"));
 	if(!filenames.isEmpty()){
 		_settings.setParam(PICTUREPARAM::PICTURE_FILE,filenames.first().toStdString());
-		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"false");		
+		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"false");
+		setPlayfieldEnabled(true);
 		initPicture(filenames);
 	}	
 }
@@ -213,7 +218,19 @@ void BioTracker::initCapture()
 	setPlayfieldPaused(true);
 	ui.videoView->fitToWindow();
 }
-
+void BioTracker::invalidFile()
+{
+	setPlayfieldEnabled(false);
+	_videoStopped = true;
+}
+void BioTracker::setPlayfieldEnabled(bool enabled)
+{
+	ui.button_playPause->setEnabled(enabled);
+	ui.button_nextFrame->setEnabled(enabled);
+	ui.button_screenshot->setEnabled(enabled);
+	ui.button_previousFrame->setEnabled(enabled);
+	ui.button_stop->setEnabled(enabled);
+}
 void BioTracker::stepCaptureForward()
 {
 	//if video not yet loaded, load it now!
@@ -435,6 +452,8 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 	QObject::connect( tracker, SIGNAL( update() ), 
 		ui.videoView, SLOT( updateGL() ));
+	QObject::connect(tracker,		SIGNAL ( requestCurrentScreen() ), 
+		ui.videoView, SLOT( getCurrentScreen() ));
 	if(_tracker)
 	{
 		try

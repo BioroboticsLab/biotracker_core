@@ -50,6 +50,7 @@ void TrackingThread::startCapture()
 			// could not open video
 			std::string errorMsg = "unable to open file " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
 			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+			emit invalidFile();
 			return;
 		}
 		enableCapture(true);
