@@ -276,9 +276,9 @@ void TrackingThread::doTracking(cv::Mat frame)
 	cv::Mat retFrame;
 	try
 	{
-		_tracker->track(_trackedObjects, _frameNumber, frame);
+		_tracker->track( _frameNumber, frame);
 	}
-	catch(exception&)
+	catch(std::exception&)
 	{
 		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
 	}

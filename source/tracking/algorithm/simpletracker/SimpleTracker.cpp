@@ -31,7 +31,7 @@ SimpleTracker::~SimpleTracker(void)
 {
 }
 
-void SimpleTracker::track(std::vector<TrackedObject>&, ulong, cv::Mat & frame) {
+void SimpleTracker::track( ulong, cv::Mat & frame) {
 	// TODO history, handle frame number,...
 	static cv::RNG rng(12345);
 
@@ -61,7 +61,7 @@ void SimpleTracker::track(std::vector<TrackedObject>&, ulong, cv::Mat & frame) {
 	std::sort(_tracked_fish.begin(), _tracked_fish.end(), isYounger);
 	for (TrackedFish& trackedFish : _tracked_fish) {
 		unsigned age = trackedFish.age_of_last_known_position();
-		float maxRange = min(age * MAX_TRACK_DISTANCE_PER_FRAME, MAX_TRACK_DISTANCE);
+		float maxRange = std::min(age * MAX_TRACK_DISTANCE_PER_FRAME, MAX_TRACK_DISTANCE);
 		cv::Point2f currentPosition = trackedFish.last_known_position();
 
 		cv::Point2f minDistanceContour;
@@ -100,7 +100,7 @@ void SimpleTracker::track(std::vector<TrackedObject>&, ulong, cv::Mat & frame) {
 				}
 			}
 
-			if (minDistance < min(MAX_TRACK_DISTANCE_PER_FRAME * candidate.age_of_last_known_position(), MAX_TRACK_DISTANCE)) {
+			if (minDistance < std::min(MAX_TRACK_DISTANCE_PER_FRAME * candidate.age_of_last_known_position(), MAX_TRACK_DISTANCE)) {
 				candidate.setNextPosition(minDistanceContour);
 				candidate.increaseScore();
 				contourCenters.erase(std::find(contourCenters.begin(), contourCenters.end(), minDistanceContour));
@@ -118,7 +118,7 @@ void SimpleTracker::track(std::vector<TrackedObject>&, ulong, cv::Mat & frame) {
 
 		// (2.5) Drop/Promote candidates.
 		for (FishCandidate& promoted : candidates_to_promote) {
-			TrackedFish newFish(_tracked_fish.size() + 1, History());
+			TrackedFish newFish(_tracked_fish.size() + 1);
 			newFish.setNextPosition(promoted.last_known_position());
 			newFish.set_associated_color(cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)));
 			_tracked_fish.push_back(newFish);

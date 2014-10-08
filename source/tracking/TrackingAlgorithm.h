@@ -2,7 +2,7 @@
 #define TrackingAlgorithm_H
 
 #include <cv.h>
-#include <source/trackedObject/TrackedObject.h>
+#include <source/tracking/trackedObject/TrackedObject.h>
 #include <vector>
 #include <source/settings/Settings.h>
 #include <qvector2d.h>
@@ -27,7 +27,7 @@ public:
 	* @param: frame number
 	* @param: frame
 	*/
-	virtual void track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame )	= 0;
+	virtual void track		( ulong frameNumber, cv::Mat& frame )	= 0;
 
 	/**
 	* paint will be called by "VideoViews" paintGL method
@@ -54,6 +54,8 @@ public:
 	* parameter fields needed 
 	*/
 	virtual QWidget* getParamsWidget();
+	
+	void loadObjects( std::vector<TrackedObject> * objects );
 
 
 public slots:
@@ -78,6 +80,7 @@ signals:
 protected:
 	Settings & _settings;
 	QWidget * _parent;
+	std::vector<TrackedObject> * _trackedObjects;
 
 };
 

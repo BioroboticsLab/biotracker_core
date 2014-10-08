@@ -17,7 +17,7 @@ class SimpleTracker : public TrackingAlgorithm
 
 		SimpleTracker			( Settings & settings, QWidget *parent );
 		virtual ~SimpleTracker	( void );
-		void track				( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame );
+		void track				( ulong frameNumber, cv::Mat & frame );
 		void reset				();
 		void paint			( cv::Mat& image );
 

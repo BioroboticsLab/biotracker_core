@@ -18,7 +18,7 @@ SampleTracker::~SampleTracker(void)
 {
 }
 
-void SampleTracker::track		( std::vector<TrackedObject> &, ulong, cv::Mat& ){}
+void SampleTracker::track		( ulong, cv::Mat& ){}
 void SampleTracker::paint		( cv::Mat& image )
 {
 	if(_showSelectorRec)

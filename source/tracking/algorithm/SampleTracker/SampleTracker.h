@@ -36,11 +36,10 @@ private:
 
 
 
-        void track ( std::vector<TrackedObject>& objectList,
-                     ulong frameNumber,
-                     cv::Mat & frame );
-        void paint ( cv::Mat& image );
-        void reset ( );
+        void track ( ulong frameNumber,
+                     cv::Mat & frame ) override;
+        void paint ( cv::Mat& image ) override;
+        void reset ( ) override;
         QWidget* getParamsWidget () override;
         QWidget* getToolsWidget	() override;
 

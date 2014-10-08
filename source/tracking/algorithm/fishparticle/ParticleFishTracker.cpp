@@ -27,7 +27,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 /**
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
-void ParticleFishTracker::track(std::vector<TrackedObject>&, unsigned long, cv::Mat& frame) {
+void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 	try {
 		// TODO check if frameNumber is jumping -> should lead to reseed
 

@@ -9,7 +9,7 @@
 //#include <video/Rectification.h>
 #include <source/settings/Settings.h>
 #include <source/settings/Messages.h>
-#include <source/trackedObject/TrackedObject.h>
+#include <source/tracking/trackedObject/TrackedObject.h>
 #include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 

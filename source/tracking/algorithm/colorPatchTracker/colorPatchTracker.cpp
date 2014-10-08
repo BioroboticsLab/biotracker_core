@@ -8,7 +8,7 @@ ColorPatchTracker::ColorPatchTracker(Settings& settings, QWidget *parent) : Trac
 ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
-void ColorPatchTracker::track(std::vector<TrackedObject> &, ulong, cv::Mat &){}
+void ColorPatchTracker::track(ulong, cv::Mat &){}
 void ColorPatchTracker::paint		( cv::Mat& ){}
 void ColorPatchTracker::reset		(){}
 

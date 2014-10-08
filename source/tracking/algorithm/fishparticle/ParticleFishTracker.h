@@ -15,7 +15,7 @@ class ParticleFishTracker :
 public:
 	explicit ParticleFishTracker(Settings& settings, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
-	virtual void track(std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat& frame);
+	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);
 	virtual void reset();
 

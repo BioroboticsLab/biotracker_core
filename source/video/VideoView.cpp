@@ -66,7 +66,7 @@ void VideoView::paintGL()
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
 		}
-		catch(exception&)
+		catch(std::exception&)
 		{
 			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
 		}

@@ -444,7 +444,7 @@ void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 			_toolsWidget = _tracker->getToolsWidget();
 			_vboxTools->addWidget(_toolsWidget);
 		}
-		catch(exception&)
+		catch(std::exception&)
 		{
 			emit printGuiMessage("cannot create UI elements for selected algorithm",MSGS::FAIL);
 		}

@@ -7,9 +7,10 @@ TrackingAlgorithm::TrackingAlgorithm(Settings & settings, QWidget *parent)
 {
 }
 
-TrackingAlgorithm::~TrackingAlgorithm() 
-{
-}
+TrackingAlgorithm::~TrackingAlgorithm() {}
+
+void TrackingAlgorithm::loadObjects( std::vector<TrackedObject> * objects )
+{	_trackedObjects = objects;	}
 void TrackingAlgorithm::mouseMoveEvent		( QMouseEvent * e )	{}
 void TrackingAlgorithm::mousePressEvent		( QMouseEvent * e )	{}
 void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * e )	{}

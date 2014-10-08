@@ -37,7 +37,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher(void)
 {
 }
 
-void BeesBookTagMatcher::track		( std::vector<TrackedObject> &, ulong, cv::Mat& ){}
+void BeesBookTagMatcher::track		( ulong, cv::Mat& ){}
 void BeesBookTagMatcher::paint		( cv::Mat& image )
 {	
 	if(_activePoints)
