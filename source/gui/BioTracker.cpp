@@ -14,12 +14,12 @@ BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags
 
 //function to test file existence
 inline bool file_exist(const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
-        fclose(file);
-        return true;
-    } else {
-        return false;
-    }   
+	if (FILE *file = fopen(name.c_str(), "r")) {
+		fclose(file);
+		return true;
+	} else {
+		return false;
+	}   
 }
 
 void BioTracker::init(){
@@ -92,7 +92,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
-	
+
 }
 
 void BioTracker::initAlgorithms()
@@ -141,7 +141,7 @@ void BioTracker::initPicture(QStringList filenames)
 	ui.sld_speed->setValue(_trackingThread->getFps());
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
-    ss << std::setprecision(5) << fps;
+	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(StringHelper::toQString(ss.str()));
 	setPlayfieldPaused(true);
 	ui.videoView->fitToWindow();
@@ -151,17 +151,17 @@ void BioTracker::setPlayfieldPaused(bool enabled){
 	switch(enabled)
 	{
 		//video is paused
-		case true:			
-			ui.button_nextFrame->setEnabled(true);
-			ui.button_previousFrame->setEnabled(true);
-			ui.button_playPause->setIcon(_iconPlay);
-			break;
+	case true:			
+		ui.button_nextFrame->setEnabled(true);
+		ui.button_previousFrame->setEnabled(true);
+		ui.button_playPause->setIcon(_iconPlay);
+		break;
 		//video is playing
-		case false:			
-			ui.button_nextFrame->setEnabled(false);
-			ui.button_previousFrame->setEnabled(false);
-			ui.button_playPause->setIcon(_iconPause);
-			break;
+	case false:			
+		ui.button_nextFrame->setEnabled(false);
+		ui.button_previousFrame->setEnabled(false);
+		ui.button_playPause->setIcon(_iconPause);
+		break;
 	}
 }
 
@@ -174,7 +174,7 @@ void BioTracker::runCapture()
 		setPlayfieldPaused(false);
 		emit videoPause(false);
 	}
-	
+
 	//if not stopped resume/pause video
 	else
 	{	
@@ -188,7 +188,7 @@ void BioTracker::runCapture()
 		}
 		emit videoPause(_videoPaused);
 	}
-	
+
 }
 
 void BioTracker::initCapture()
@@ -208,7 +208,7 @@ void BioTracker::initCapture()
 	ui.sld_speed->setValue(_trackingThread->getFps());
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
-    ss << std::setprecision(5) << fps;
+	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(StringHelper::toQString(ss.str()));
 	setPlayfieldPaused(true);
 	ui.videoView->fitToWindow();
@@ -264,12 +264,12 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
 	if(frameNumber == ui.sld_video->maximum())
 	{
-		
+
 		emit videoPause(true);
 		_videoPaused = true;
 		setPlayfieldPaused(true);
 		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(0));
-		
+
 	}
 }
 
@@ -282,10 +282,10 @@ void BioTracker::drawImage(cv::Mat image)
 		ui.videoView->showImage(image);
 
 	}
-	
+
 	// signals when the frame was drawn, and the FishTrackerThread can continue to work;
 	emit nextFrameReady(true);
-	
+
 }
 
 void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
@@ -314,21 +314,21 @@ void BioTracker::changeCurrentFramebySlider()
 	emit changeFrame(value);
 	updateFrameNumber(value);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
-	
+
 }
 void BioTracker::changeCurrentFramebySlider(int SliderAction)
 {
 	int fNum = _currentFrame;
 	switch(SliderAction)
 	{
-	//SliderPageStepAdd
+		//SliderPageStepAdd
 	case 3:
 		fNum += ui.sld_video->pageStep();
 		if (fNum > ui.sld_video->maximum())
 			fNum = ui.sld_video->maximum();
 		changeCurrentFramebySlider();
 		break;
-	//SliderPageStepSub
+		//SliderPageStepSub
 	case 4:
 		fNum -= ui.sld_video->pageStep();
 		if(fNum < 0 )
@@ -356,7 +356,7 @@ void BioTracker::changeCurrentFramebyEdit()
 void BioTracker::showFps(double fps)
 {
 	std::stringstream ss;
-    ss << std::setprecision(5) << fps;
+	ss << std::setprecision(5) << fps;
 	//show actual fps
 	ui.fps_edit->setText(StringHelper::toQString(ss.str()));
 }
@@ -370,10 +370,10 @@ void BioTracker::changeFps(int fps)
 	}
 	else
 	{
-	//show target fps
-	ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
-	emit enableMaxSpeed(false);
-	emit fpsChange((double)fps);
+		//show target fps
+		ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+		emit enableMaxSpeed(false);
+		emit fpsChange((double)fps);
 	}
 }
 
@@ -382,12 +382,12 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	//first remove ui containers of old algorithm
 	if(_tracker)
 	{
-		
+
 		_vboxParams->removeWidget(_paramsWidget);
 		_vboxTools->removeWidget(_toolsWidget);
 		delete _paramsWidget;
 		delete _toolsWidget;
-		
+
 	}
 	if (trackingAlg == "no tracking")
 	{		
@@ -423,36 +423,43 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
 {	
 	QObject::connect(ui.videoView,		SIGNAL ( pressEvent			(QMouseEvent*) ), 
-					tracker, SLOT(mousePressEvent		(QMouseEvent*) ));
+		tracker, SLOT(mousePressEvent		(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), 
-					tracker, SLOT(mouseReleaseEvent	(QMouseEvent*) ));
+		tracker, SLOT(mouseReleaseEvent	(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( moveEvent			(QMouseEvent*) ), 
-					tracker, SLOT(mouseMoveEvent		(QMouseEvent*) ));
+		tracker, SLOT(mouseMoveEvent		(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( mouseWheelEvent	(QWheelEvent*) ), 
-					tracker, SLOT(mouseWheelEvent		(QWheelEvent*) ));
-	
+		tracker, SLOT(mouseWheelEvent		(QWheelEvent*) ));
+
 	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), 
-					this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
+		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 	QObject::connect( tracker, SIGNAL( update() ), 
-					ui.videoView, SLOT( updateGL() ));
+		ui.videoView, SLOT( updateGL() ));
 	if(_tracker)
 	{
-		_paramsWidget = _tracker->getParamsWidget();
-		_vboxParams->addWidget(_paramsWidget);
-		_toolsWidget = _tracker->getToolsWidget();
-		_vboxTools->addWidget(_toolsWidget);
+		try
+		{
+			_paramsWidget = _tracker->getParamsWidget();
+			_vboxParams->addWidget(_paramsWidget);
+			_toolsWidget = _tracker->getToolsWidget();
+			_vboxTools->addWidget(_toolsWidget);
+		}
+		catch(exception&)
+		{
+			emit printGuiMessage("cannot create UI elements for selected algorithm",MSGS::FAIL);
+		}
 	}
 }
 
 void BioTracker::takeScreenshot()
 {
-    const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
-    const std::time_t t = std::chrono::system_clock::to_time_t(p);
-    std::string dateTime = std::ctime(&t);
-    // ctime adds a newline to the string due to historical reasons
-    dateTime = dateTime.substr(0, dateTime.size() - 1);
+	const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
+	const std::time_t t = std::chrono::system_clock::to_time_t(p);
+	std::string dateTime = std::ctime(&t);
+	// ctime adds a newline to the string due to historical reasons
+	dateTime = dateTime.substr(0, dateTime.size() - 1);
 	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
-    filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
+	filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
 }
 

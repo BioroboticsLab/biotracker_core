@@ -88,18 +88,14 @@ void SampleTracker::mousePressEvent		( QMouseEvent * e )
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
-		//check for shift modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{
-			int x = e->x(); int y = e->y();
-			std::string note = "shift + left button press on: x=" + StringHelper::iToSS(x) + " y=" + StringHelper::iToSS(y);
-			//initialize coordinates for selection tool
-			_selectorRecStart.x = e->x();
-			_selectorRecStart.y = e->y();
-			_selectorRecEnd.x = e->x();
-			_selectorRecEnd.y = e->y();
-			_showSelectorRec = true;		
-		}
+		int x = e->x(); int y = e->y();
+		std::string note = "shift + left button press on: x=" + StringHelper::iToSS(x) + " y=" + StringHelper::iToSS(y);
+		//initialize coordinates for selection tool
+		_selectorRecStart.x = e->x();
+		_selectorRecStart.y = e->y();
+		_selectorRecEnd.x = e->x();
+		_selectorRecEnd.y = e->y();
+		_showSelectorRec = true;
 	}
 }
 void SampleTracker::mouseReleaseEvent	( QMouseEvent * e )
@@ -150,7 +146,7 @@ void SampleTracker::initUI()
 	_blueEdit = new QLineEdit(_parent);
 	_colorBut = new QPushButton("change color!", _parent);
 	_redEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	
+
 	_greenEdit->setValidator( new QIntValidator(0, 255, _parent) );
 	_blueEdit->setValidator( new QIntValidator(0, 255, _parent) );
 	_red = 0; _redEdit->setText("0");
