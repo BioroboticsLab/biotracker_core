@@ -28,6 +28,7 @@
 #include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
 #include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
 #include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
+#include "source/tracking/algorithm/LandmarkTracker/LandmarkTracker.h"
 
 #include "ui_BioTracker.h"
 
