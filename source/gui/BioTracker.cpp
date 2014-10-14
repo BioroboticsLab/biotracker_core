@@ -432,7 +432,7 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	}
 	else if (trackingAlg == "Landmark Tracker")
 	{
-		tracker = new LandmarkTracker(_settings);
+		_tracker = new LandmarkTracker(_settings, this);
 	}
 	if ( trackingAlg != "no tracking" )
 		connectTrackingAlg(_tracker);

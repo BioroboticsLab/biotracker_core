@@ -8,7 +8,7 @@
 
 
 
-LandmarkTracker::LandmarkTracker( Settings & settings ) : TrackingAlgorithm( settings )
+LandmarkTracker::LandmarkTracker( Settings & settings,  QWidget *parent) : TrackingAlgorithm( settings, parent )
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();
@@ -16,7 +16,7 @@ LandmarkTracker::LandmarkTracker( Settings & settings ) : TrackingAlgorithm( set
 	
 	//KML
 	std::cout<<"LANDMARK TRACKER"<<std::endl;
-	_clonedImage = false;
+	
 }
 
 
@@ -24,7 +24,7 @@ LandmarkTracker::~LandmarkTracker(void)
 {
 }
 
-void LandmarkTracker::track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame ){}
+void LandmarkTracker::track		( ulong frameNumber, cv::Mat& frame ){}
 void LandmarkTracker::paint		( cv::Mat& image )
 {
 	if(_showSelectorRec)
@@ -32,11 +32,6 @@ void LandmarkTracker::paint		( cv::Mat& image )
 		drawRectangle(image);
 	}
 	
-	if(!_clonedImage)
-	{
-		_image = image;
-		_clonedImage = true;
-	}
 }
 
 
@@ -101,7 +96,8 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 		}
 	}
 	
-	defineROI(_image);
+	//defineROI(_image);
+	defineROI(emit requestCurrentScreen());
 	
 }
 
@@ -112,8 +108,8 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 	//Define ROI
 	box.width	= abs(_selectorRecStart.x - _selectorRecEnd.x);
 	box.height	= abs(_selectorRecStart.y - _selectorRecEnd.y);
-	box.x	= min(_selectorRecStart.x , _selectorRecEnd.x);
-	box.y	= min(_selectorRecStart.y , _selectorRecEnd.y);
+	box.x	= std::min(_selectorRecStart.x , _selectorRecEnd.x);
+	box.y	= std::min(_selectorRecStart.y , _selectorRecEnd.y);
 
 	std::cout <<"Defined ROI" << std::endl;
 

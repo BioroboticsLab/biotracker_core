@@ -47,7 +47,7 @@ private:
 	public slots:
 		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
 		void setPanZoomMode (bool isPanZoom);
-		cv::Mat * getCurrentScreen();
+		cv::Mat getCurrentScreen();
 
 signals:
 		//events for port mouse button 

@@ -16,18 +16,17 @@ private:
 		//KML
 		void drawRectangle(cv::Mat image);
 		cv::Rect box;
-		cv::Mat _image;
-		bool _clonedImage;
+
 
 
 	public:
-		LandmarkTracker	( Settings & settings );
+		LandmarkTracker	( Settings & settings,  QWidget *parent );
 		~LandmarkTracker	( void );
 		
 
 
 
-		void track			( std::vector<TrackedObject>& objectList, ulong frameNumber, cv::Mat & frame );
+		void track			(  ulong frameNumber, cv::Mat & frame );
 		void paint			( cv::Mat& image );
 		void reset			( );
 

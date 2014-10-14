@@ -76,7 +76,7 @@ signals:
 	*/
 	void update();
 
-	cv::Mat * requestCurrentScreen();
+	cv::Mat requestCurrentScreen();
 
 
 protected:
