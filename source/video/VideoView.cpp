@@ -328,7 +328,7 @@ void VideoView::setPanZoomMode(bool isPanZoom)
 	else
 		this->setCursor(Qt::ArrowCursor);
 }
-cv::Mat * VideoView::getCurrentScreen()
+cv::Mat VideoView::getCurrentScreen()
 {
-	return & _displayImage;
+	return _displayImage.clone();
 }

@@ -100,7 +100,7 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle", "Sample Tracker"};
+	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle", "Sample Tracker", "Landmark Tracker"};
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);
@@ -110,7 +110,7 @@ void BioTracker::initAlgorithms()
 void BioTracker::browseVideo()
 {
 	stopCapture();
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv)"));
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open video"), "", tr("video Files (*.avi *.wmv *.mp4)"));
 	if(filename.compare("") != 0){
 		_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE,filename.toStdString());
 		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"true");
@@ -429,6 +429,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	else if (trackingAlg == "Sample Tracker")
 	{
 		_tracker = new SampleTracker(_settings, this);
+	}
+	else if (trackingAlg == "Landmark Tracker")
+	{
+		_tracker = new LandmarkTracker(_settings, this);
 	}
 	if ( trackingAlg != "no tracking" )
 		connectTrackingAlg(_tracker);
