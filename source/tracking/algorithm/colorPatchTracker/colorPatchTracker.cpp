@@ -1,6 +1,6 @@
 #include "colorPatchTracker.h"
 
-ColorPatchTracker::ColorPatchTracker(Settings& settings) : TrackingAlgorithm(settings)
+ColorPatchTracker::ColorPatchTracker(Settings& settings, QWidget *parent) : TrackingAlgorithm(settings, parent)
 {
 }
 
@@ -8,7 +8,7 @@ ColorPatchTracker::ColorPatchTracker(Settings& settings) : TrackingAlgorithm(set
 ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
-void ColorPatchTracker::track(std::vector<TrackedObject> &, ulong, cv::Mat &){}
+void ColorPatchTracker::track(ulong, cv::Mat &){}
 void ColorPatchTracker::paint		( cv::Mat& ){}
 void ColorPatchTracker::reset		(){}
 

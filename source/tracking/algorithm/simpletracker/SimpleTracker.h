@@ -15,9 +15,9 @@ class SimpleTracker : public TrackingAlgorithm
 		static const int	CANDIDATE_SCORE_THRESHOLD;
 		static const int	MAX_NUMBER_OF_TRACKED_OBJECTS;
 
-		SimpleTracker			( Settings & settings );
+		SimpleTracker			( Settings & settings, QWidget *parent );
 		virtual ~SimpleTracker	( void );
-		void track				( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat & frame );
+		void track				( ulong frameNumber, cv::Mat & frame );
 		void reset				();
 		void paint			( cv::Mat& image );
 

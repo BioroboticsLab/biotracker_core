@@ -9,7 +9,7 @@
 //#include <video/Rectification.h>
 #include <source/settings/Settings.h>
 #include <source/settings/Messages.h>
-#include <source/trackedObject/TrackedObject.h>
+#include <source/tracking/trackedObject/TrackedObject.h>
 #include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 
@@ -182,10 +182,10 @@ signals:
 		void newFrameNumber(int frameNumber);
 
 		/**
-		* Signal to run the capture thread.
+		* singal to gui that video is paused
 		*/
-		void enableCaptureThread();
-		void disableCaptureThread();
+		void invalidFile();
+	
 
 		/**
 		* send a message to the GUI.

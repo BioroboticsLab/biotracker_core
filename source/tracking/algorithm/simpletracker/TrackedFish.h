@@ -1,8 +1,7 @@
 #ifndef TrackedFish_H
 #define TrackedFish_H
 
-#include "source/trackedObject/TrackedObject.h"
-#include "source/trackedObject/History.h"
+#include "source/tracking/trackedObject/TrackedObject.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -10,7 +9,7 @@ class TrackedFish :
 	public TrackedObject
 {
 public:
-	TrackedFish(int id, History his);
+	TrackedFish(int id);
 	virtual ~TrackedFish(void);
 	int id() const;
 	void setNextPosition(cv::Point2f position);

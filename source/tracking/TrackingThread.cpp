@@ -50,6 +50,7 @@ void TrackingThread::startCapture()
 			// could not open video
 			std::string errorMsg = "unable to open file " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
 			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+			emit invalidFile();
 			return;
 		}
 		enableCapture(true);
@@ -276,9 +277,9 @@ void TrackingThread::doTracking(cv::Mat frame)
 	cv::Mat retFrame;
 	try
 	{
-		_tracker->track(_trackedObjects, _frameNumber, frame);
+		_tracker->track( _frameNumber, frame);
 	}
-	catch(exception&)
+	catch(std::exception&)
 	{
 		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
 	}

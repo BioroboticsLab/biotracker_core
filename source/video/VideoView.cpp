@@ -66,7 +66,7 @@ void VideoView::paintGL()
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
 		}
-		catch(exception&)
+		catch(std::exception&)
 		{
 			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
 		}
@@ -79,10 +79,10 @@ void VideoView::paintGL()
 
 	glLoadIdentity();
 
-	int corner1[2] = {imageCopy.cols,0};
+	int corner1[2] = {_displayImage.cols,0};
 	int corner2[2] = {0,0};
-	int corner3[2] = {0,imageCopy.rows};
-	int corner4[2] = {imageCopy.cols,imageCopy.rows};
+	int corner3[2] = {0,_displayImage.rows};
+	int corner4[2] = {_displayImage.cols,_displayImage.rows};
 	_vertices.clear();
 	_vertices.append(QVector2D(corner1[0],corner1[1]));
 	_vertices.append(QVector2D(corner2[0],corner2[1]));
@@ -94,8 +94,6 @@ void VideoView::paintGL()
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-
-
 	// Non-mipmap way of mapping the texture (fast and clean):
 	// Allocate the texture
 	glGenTextures(1, &_texture);
@@ -105,16 +103,59 @@ void VideoView::paintGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	// If texture area is smaller than the image, downsample using no interpolation.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-	//TODO: To make zooming and panning faster for high resolution images
-	// check window resolution and scale image here if window resolution is lower than image resolution
 
-	// wrap image onto the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, imageCopy.data);
+	// check window resolution and scale image if window resolution is lower than image resolution
+	if (_zoomFactor > 1)
+	{	
+		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
+	}	
+
+	/**
+	* FOR PERFORMANCE ONLY LOAD VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
+	*/
+	// create Texture Atlas
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE,0);// imageCopy.data);
+
+	// variables for splitting image into tiles:
+	// c = starting column, r = starting row
+	// width	= width  of visible part of picture
+	// height	= height	- " -		- " -
+	int c=0,r=0;
+	int width=_displayImage.cols;
+	int height=_displayImage.rows;
+	//Tile size
+	int N = 64;
+	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
+	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
+	if(upperLeft.x() > 0 )
+		c=upperLeft.x();
+	if(upperLeft.y() > 0 )
+		r=upperLeft.y();
+	if(lowerRight.x() < width-1)
+		width=lowerRight.x()+1;
+	if(lowerRight.y() < height-1)
+		height=lowerRight.y()+1;
+
+	if (_zoomFactor > 1)
+	{
+		c = (c*imageCopy.cols)/_displayImage.cols;
+		r = (r*imageCopy.rows)/_displayImage.rows;
+		width = (width*imageCopy.cols)/_displayImage.cols;
+		height = (height*imageCopy.rows)/_displayImage.rows;
+	}
+
+	//to avoid artifacts when using 'glTexSubImage2d' with opencv MAT data,
+	//set pixel storage mode to byte alignment
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1 );
+	//and define number of pixels in a row
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) imageCopy.step/imageCopy.channels());
+	cv::Mat tile = imageCopy(cv::Range(r, height),
+		cv::Range(c, width));
+	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
 
 	// Draw it!
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
-
-	// free memory
+	// free memory		
 	imageCopy.release();
 	glDeleteTextures(1, &_texture);
 }
@@ -126,6 +167,7 @@ void VideoView::initializeGL()
 	for (int j = 0; j < 4; ++j) {
 		_texCoords.append(QVector2D(j == 0 || j == 3, j == 2 || j == 3));	
 	}
+
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);	
@@ -252,8 +294,10 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	if (_isPanZoomMode)
 	{
 		int numDegrees = e->delta();
-		if (e->orientation() == Qt::Vertical && _zoomFactor + 0.001 * numDegrees > 0) {
-			_zoomFactor += 0.001 * numDegrees;
+		if (e->orientation() == Qt::Vertical
+			&& _zoomFactor - 0.001 * numDegrees > 0) 
+		{
+			_zoomFactor -= 0.001 * numDegrees;
 			// adjust _panX and _panY, so that zoom is centered on mouse cursor
 			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/_zoomFactor )
 				_panX =		picturePos.x()-  ((this->width()*_zoomFactor)/2);
@@ -265,6 +309,7 @@ void VideoView::wheelEvent( QWheelEvent * e )
 			//Draw the scene
 			updateGL();
 			e->accept();
+
 		}
 	}
 	else
@@ -282,4 +327,8 @@ void VideoView::setPanZoomMode(bool isPanZoom)
 		this->setCursor(Qt::OpenHandCursor);
 	else
 		this->setCursor(Qt::ArrowCursor);
+}
+cv::Mat * VideoView::getCurrentScreen()
+{
+	return & _displayImage;
 }

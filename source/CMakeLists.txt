@@ -15,11 +15,6 @@ file(GLOB settings_src
 	settings/*.cpp settings/*.h)
 source_group(settings FILES ${settings_src})
 
-file(GLOB trackedObject_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	trackedObject/*.cpp trackedObject/*.h)
-source_group(trackedObject FILES ${trackedObject_src})
-
 file(GLOB tracking_src
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	tracking/*.cpp tracking/*.h)
@@ -58,6 +53,8 @@ target_link_libraries(BioTracker
 	SampleTracker
 	SimpleTracker
 	LandmarkTracker
+	TrackedObject
+
     Qt5::Widgets
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}

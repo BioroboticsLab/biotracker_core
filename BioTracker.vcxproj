@@ -57,7 +57,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(CV_DIR)\build\lib\Release;$(CV_DIR)\build\lib\Debug;$(CV_DIR)\build\include\opencv2;$(QTDIR)\lib;$(CV_DIR)\build\include\opencv;$(CV_DIR)\build\include;$(QTDIR)\include\QtXml;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include;.\GeneratedFiles;.;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtOpenGLExtensions;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(CV_DIR)\build\x86\vc11\lib;.;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;Qt5Xmld.lib;opencv_calib3d$(CV_VERSION)d.lib;opencv_core$(CV_VERSION)d.lib;opencv_features2d$(CV_VERSION)d.lib;opencv_flann$(CV_VERSION)d.lib;opencv_highgui$(CV_VERSION)d.lib;opencv_imgproc$(CV_VERSION)d.lib;opencv_objdetect$(CV_VERSION)d.lib;opencv_video$(CV_VERSION)d.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -79,6 +79,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp" />
+    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp" />
@@ -127,7 +129,7 @@
     <ClCompile Include="source\settings\Settings.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\TrackedFish.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\SimpleTracker.cpp" />
-    <ClCompile Include="source\trackedObject\TrackedObject.cpp" />
+    <ClCompile Include="source\tracking\trackedObject\TrackedObject.cpp" />
     <ClCompile Include="source\tracking\TrackingAlgorithm.cpp" />
     <ClCompile Include="source\tracking\TrackingThread.cpp" />
     <ClCompile Include="source\video\VideoView.cpp" />
@@ -143,6 +145,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
     </CustomBuild>
+    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.h" />
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h" />
@@ -152,7 +155,11 @@
     <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h" />
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\BeesBookTagMatcher.h" />
     <ClInclude Include="source\tracking\algorithm\colorPatchTracker\colorPatchTracker.h" />
-    <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleTracker.h" />
+    <CustomBuild Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+    </CustomBuild>
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
     <ClInclude Include="source\helper\StringHelper.h" />
@@ -160,13 +167,12 @@
     <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h" />
     <ClInclude Include="source\video\ImagePreProcessor.h" />
     <ClInclude Include="source\settings\Messages.h" />
-    <ClInclude Include="source\trackedObject\ObjectModel.h" />
+    <ClInclude Include="source\tracking\trackedObject\ObjectModel.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\video\Rectification.h" />
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\Settings.h" />
-    <ClInclude Include="source\trackedObject\History.h" />
-    <ClInclude Include="source\trackedObject\TrackedObject.h" />
+    <ClInclude Include="source\tracking\trackedObject\TrackedObject.h" />
     <CustomBuild Include="source\video\VideoView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing VideoView.h...</Message>

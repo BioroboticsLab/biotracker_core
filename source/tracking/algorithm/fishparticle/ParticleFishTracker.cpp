@@ -10,8 +10,8 @@ static bool compareReverseParticleScorePredicate(const Particle& p1, const Parti
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings)
-    : TrackingAlgorithm(settings)
+ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
+    : TrackingAlgorithm(settings, parent)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
@@ -27,7 +27,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 /**
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
-void ParticleFishTracker::track(std::vector<TrackedObject>&, unsigned long, cv::Mat& frame) {
+void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 	try {
 		// TODO check if frameNumber is jumping -> should lead to reseed
 

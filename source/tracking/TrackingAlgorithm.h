@@ -2,12 +2,14 @@
 #define TrackingAlgorithm_H
 
 #include <cv.h>
-#include <source/trackedObject/TrackedObject.h>
+#include <source/tracking/trackedObject/TrackedObject.h>
 #include <vector>
 #include <source/settings/Settings.h>
 #include <qvector2d.h>
 #include <source/settings/Messages.h>
 #include <QMouseEvent>
+#include <qwidget.h>
+
 
 
 class TrackingAlgorithm : public QObject
@@ -15,7 +17,7 @@ class TrackingAlgorithm : public QObject
 	Q_OBJECT
 
 public:
-	TrackingAlgorithm( Settings & settings );
+	TrackingAlgorithm( Settings & settings, QWidget *parent );
 	virtual	~TrackingAlgorithm();
 
 	/**
@@ -25,20 +27,43 @@ public:
 	* @param: frame number
 	* @param: frame
 	*/
-	virtual void track		( std::vector<TrackedObject> & objectList, ulong frameNumber, cv::Mat& frame )	= 0;
-	virtual void paint		(cv::Mat& image ) = 0; 
+	virtual void track		( ulong frameNumber, cv::Mat& frame )	= 0;
+
 	/**
-	* Resets the tracker.
+	* paint will be called by "VideoViews" paintGL method
+	* so any picture manipulation stuff goes in here 
+	*/
+	virtual void paint		(cv::Mat& image ) = 0;
+
+	/**
+	* Resets the tracker. never called - yet
 	* @return: void.
 	*/
 	virtual void reset() = 0;
 
+	/**
+	* getToolsFrame() will be called once at start up
+	* to create a widget for gui with all 
+	* buttons needed for interaction 
+	*/
+	virtual QWidget* getToolsWidget();
+
+	/**
+	* getParamsWidget() will be called once at start up
+	* to create a widget for gui with all 
+	* parameter fields needed 
+	*/
+	virtual QWidget* getParamsWidget();
+	
+	void loadObjects( std::vector<TrackedObject> * objects );
+
+
 public slots:
 	//mouse click and move events
-	virtual void mouseMoveEvent		( QMouseEvent * e ) = 0;
-	virtual void mousePressEvent	( QMouseEvent * e ) = 0;
-	virtual void mouseReleaseEvent	( QMouseEvent * e ) = 0;
-	virtual void mouseWheelEvent	( QWheelEvent * e ) = 0;
+	virtual void mouseMoveEvent		( QMouseEvent * e );
+	virtual void mousePressEvent	( QMouseEvent * e );
+	virtual void mouseReleaseEvent	( QMouseEvent * e );
+	virtual void mouseWheelEvent	( QWheelEvent * e );
 	
 signals:
 	/**
@@ -51,9 +76,13 @@ signals:
 	*/
 	void update();
 
+	cv::Mat * requestCurrentScreen();
+
 
 protected:
 	Settings & _settings;
+	QWidget * _parent;
+	std::vector<TrackedObject> * _trackedObjects;
 
 };
 
