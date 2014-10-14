@@ -126,12 +126,10 @@ void TrackingThread::run()
 			}			
 
 			// exit if last frame is reached
-			//TODO: need to check memory violation thing here!
 			if(frame.empty())	{	break;	}
 
 			//TODO: if a tracking algorithm is selected
-			//send frame to tracking algorithm
-			//NOTE: this is just for testing!
+			//send frame to tracking algorithm			
 			if (_tracker) {
 				doTracking(frame);
 			}

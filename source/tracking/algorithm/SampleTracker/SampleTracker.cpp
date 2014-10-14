@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QIntValidator>
 #include <QPushButton>
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 SampleTracker::SampleTracker( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
 {
@@ -18,9 +20,45 @@ SampleTracker::~SampleTracker(void)
 {
 }
 
-void SampleTracker::track		( ulong, cv::Mat& ){}
+void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
+{
+	//dont do shit if we aint got an image
+	if(imgOriginal.empty())
+		return;
+	using namespace cv;
+	int iLowH = 110;
+	int iHighH = 130;
+
+	int iLowS = 0; 
+	int iHighS = 255;
+
+	int iLowV = 0;
+	int iHighV = 255;
+	Mat imgHSV;
+
+	cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+
+	Mat imgThresholded;
+
+	inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+
+	//morphological opening (remove small objects from the foreground)
+	erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+	dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
+
+	//morphological closing (fill small holes in the foreground)
+	dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
+	erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+	namedWindow( "Thresholded Image", WINDOW_AUTOSIZE );
+	imshow("Thresholded Image", imgThresholded); //show the thresholded image
+	cv::waitKey(10);
+
+}
+
 void SampleTracker::paint		( cv::Mat& image )
 {
+	//if(_imgTracked.rows > 0)
+	//	image = _imgTracked;
 	if(_showSelectorRec)
 	{
 		drawRectangle(image);
@@ -66,10 +104,11 @@ void SampleTracker::drawRectangle(cv::Mat image)
 	cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(_blue, _green, _red)); 
 	double alpha = 0.3;
 	cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi); 
+	//easier but without transparent effect:
 	//cv::rectangle( image,
 	//          _selectorRecStart,
 	//          _selectorRecEnd,
-	//          cv::Scalar(255, 255, 0 ),           
+	//          cv::Scalar( _blue, _green, _red ),           
 	//          4 );
 }
 

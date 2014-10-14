@@ -10,14 +10,22 @@
 #include <utility>
 
 //default constructor
-//TODO: FIX ERROR
+//THIS IS CPP 11
 //myNewGrid::myNewGrid()
 //: myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0))
 //{}
 //Tobias temporary fix:
 myNewGrid::myNewGrid()
-{
-	myNewGrid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0));
+{	
+	centerGrid = cv::Point (0,0);
+	axesGrid =   cv::Size (axisTag*(MR/OR),axisTag*(MR/OR));
+	angleGrid = 0;
+	centerTag = cv::Point (0,0);
+	axesTag  = cv::Size (axisTag,axisTag);
+	angleTag = 0;
+	tiltGrid = getTilt(axesGrid);
+    tiltTag = getTilt(axesTag);
+	ID = std::move(std::vector<bool> (12,0));
 }
 
 //constructor with 7 parameters

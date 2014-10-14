@@ -62,9 +62,6 @@
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,6 +75,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SampleTracker.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\trackedObject\ObjectModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -135,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\trackedObject\TrackedObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
