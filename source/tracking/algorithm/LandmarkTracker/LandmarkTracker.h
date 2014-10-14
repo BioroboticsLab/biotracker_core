@@ -1,21 +1,28 @@
-#ifndef SampleTracker_H
-#define SampleTracker_H
+#ifndef LandmarkTracker_H
+#define LandmarkTracker_H
 
 #include "cv.h"
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
-class SampleTracker : public TrackingAlgorithm
+
+class LandmarkTracker : public TrackingAlgorithm
 {
 private:
 		cv::Point _selectorRecStart;
 		cv::Point _selectorRecEnd;
 		bool _showSelectorRec;
+		
+		//KML
 		void drawRectangle(cv::Mat image);
+		cv::Rect box;
+		cv::Mat _image;
+		bool _clonedImage;
+
 
 	public:
-		SampleTracker	( Settings & settings );
-		~SampleTracker	( void );
+		LandmarkTracker	( Settings & settings );
+		~LandmarkTracker	( void );
 		
 
 
@@ -24,12 +31,15 @@ private:
 		void paint			( cv::Mat& image );
 		void reset			( );
 
+		void defineROI( cv::Mat image );
+
 
 	public slots:
 		//mouse click and move events
 		void mouseMoveEvent		( QMouseEvent * e );
 		void mousePressEvent	( QMouseEvent * e );
 		void mouseReleaseEvent	( QMouseEvent * e );
+		void mouseWheelEvent	( QWheelEvent * e );
 		
 };
 
