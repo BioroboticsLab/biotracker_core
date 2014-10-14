@@ -170,6 +170,7 @@
     </ClCompile>
     <ClCompile Include="source\gui\BioTracker.cpp" />
     <ClCompile Include="source\tracking\algorithm\colorPatchTracker\colorPatchTracker.cpp" />
+    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.cpp" />
     <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_BioTracker.cpp">
@@ -266,6 +267,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='2012 CTP Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker"</Command>
     </CustomBuild>
+    <ClInclude Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h" />
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleObject.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
