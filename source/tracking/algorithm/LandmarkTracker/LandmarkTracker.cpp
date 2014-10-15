@@ -63,7 +63,7 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
-		//check for shift modifier
+		/*//check for shift modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
 			int x = e->x(); int y = e->y();
@@ -75,7 +75,16 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 			_selectorRecEnd.y = e->y();
 			_showSelectorRec = true;	
 			emit notifyGUI(note,MSGS::NOTIFICATION);
-		}
+		}*/
+		int x = e->x(); int y = e->y();
+			
+		//initialize coordinates for selection tool
+		_selectorRecStart.x = e->x();
+		_selectorRecStart.y = e->y();
+		_selectorRecEnd.x = e->x();
+		_selectorRecEnd.y = e->y();
+		_showSelectorRec = true;	
+		//emit notifyGUI(note,MSGS::NOTIFICATION);
 	}
 }
 
@@ -114,7 +123,11 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 	std::cout <<"Defined ROI" << std::endl;
 
 	//Make an image out of just the selected ROI and display it in a new window
-	cv::Mat roi(image, box);
-	cv::namedWindow("ROI");
-	cv::imshow("ROI", roi);
+	if(box.width > 0 && box.height > 0){
+
+		cv::Mat roi(image, box);
+		cv::namedWindow("ROI");
+		cv::imshow("ROI", roi);
+	}
+
 }
