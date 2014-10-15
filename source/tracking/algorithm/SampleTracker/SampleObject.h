@@ -1,5 +1,5 @@
 #pragma once
-#include "source/tracking/trackedobject/objectmodel.h"
+#include "source/tracking/trackedObject/ObjectModel.h"
 #include <cv.h>
 class SampleObject :
 	public ObjectModel
