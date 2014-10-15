@@ -2,7 +2,6 @@
 
 #include <QMutex>
 
-#include "source/helper/StringHelper.h"
 
 /**
 * Mutexes.
@@ -63,7 +62,7 @@ void Settings::setQSettingsParam(std::string paramName, std::string paramValue)
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
-	settings.setValue(StringHelper::toQString(paramName),StringHelper::toQString(paramValue));
+	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
 }
 
 void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
@@ -72,7 +71,7 @@ void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
 	for(size_t i = 0; i < params.size(); i++)
 	{
-		settings.setValue(StringHelper::toQString(params.at(i).pName()),StringHelper::toQString(params.at(i).pValue()));
+		settings.setValue(QString::fromStdString(params.at(i).pName()),QString::fromStdString(params.at(i).pValue()));
 	}
 }
 
@@ -103,7 +102,7 @@ template<> QString Settings::getValueOfParam(std::string paramName)
 	{	
         if(param.pName().compare(paramName) == 0)
 		{
-            return StringHelper::toQString(param.pValue());
+            return QString::fromStdString(param.pValue());
 		}
 	}
 
@@ -153,8 +152,7 @@ template<> bool Settings::getValueOfParam(std::string paramName)
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
-
-	valueAsString = StringHelper::toLowerCase(valueAsString);
+	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
 
 	if(valueAsString.compare("true") == 0 || valueAsString.compare("1") == 0)
 		return true;
@@ -170,7 +168,7 @@ template<> cv::Scalar Settings::getValueOfParam(std::string paramName)
 	cv::Scalar cvScalarValue;
 	std::vector<cv::string> stringList;
 
-	int tokens = StringHelper::split(valueAsString,stringList,' ');
+	int tokens = split(valueAsString,stringList,' ');
 	// 255 255 255
 	if(tokens == 3)
 	{
@@ -200,5 +198,25 @@ std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 		defaultParams.push_back(TrackerParam::Param(string.toStdString(),settings.value(string).toString().toStdString()));
 	}	
 	return defaultParams;
+}
+
+int Settings::split(std::string &txt, std::vector<std::string> &strs, char ch)
+{
+    std::size_t pos = txt.find( ch );
+    std::size_t initialPos = 0;
+    strs.clear();
+
+    // Decompose statement
+    while( pos != std::string::npos ) {
+        strs.push_back( txt.substr( initialPos, pos - initialPos ) );
+        initialPos = pos + 1;
+
+        pos = txt.find( ch, initialPos );
+    }
+
+    // Add the last one
+    strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+
+    return strs.size();
 }
 

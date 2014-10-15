@@ -105,4 +105,5 @@ public:
 	
 private:
 	std::vector<TrackerParam::Param> _params;
+	int split(std::string &txt, std::vector<std::string> &strs, char ch);
 };

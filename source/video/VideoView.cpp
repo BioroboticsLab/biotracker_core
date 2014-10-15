@@ -107,6 +107,7 @@ void VideoView::paintGL()
 	// check window resolution and scale image if window resolution is lower than image resolution
 	if (_zoomFactor > 1)
 	{	
+		QMutexLocker locker(&trackMutex);
 		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
 	}	
 
@@ -216,7 +217,7 @@ void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
 
 void VideoView::takeScreenshot(QString screenShotFilename)
 {
-	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
+	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
 void VideoView::mouseMoveEvent( QMouseEvent * e )
