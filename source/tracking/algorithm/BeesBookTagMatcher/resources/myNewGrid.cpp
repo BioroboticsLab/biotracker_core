@@ -1,5 +1,4 @@
 #include "myNewGrid.h"
-#include "source/helper/StringHelper.h"
 #include <QApplication>
 
 #include "cv.h"

@@ -207,7 +207,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='2012 CTP Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="source\helper\StringHelper.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\settings\Param.cpp" />
     <ClCompile Include="source\settings\Settings.cpp" />
@@ -271,14 +270,11 @@
     <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleObject.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h" />
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h" />
-    <ClInclude Include="source\helper\StringHelper.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h" />
-    <ClInclude Include="source\video\ImagePreProcessor.h" />
     <ClInclude Include="source\settings\Messages.h" />
     <ClInclude Include="source\tracking\trackedObject\ObjectModel.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
-    <ClInclude Include="source\video\Rectification.h" />
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\Settings.h" />
     <ClInclude Include="source\tracking\trackedObject\TrackedObject.h" />

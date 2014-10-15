@@ -1,5 +1,4 @@
 #include "TrackingAlgorithm.h"
-#include "source/helper/StringHelper.h"
 
 TrackingAlgorithm::TrackingAlgorithm(Settings & settings, QWidget *parent) 
 	: _settings(settings),

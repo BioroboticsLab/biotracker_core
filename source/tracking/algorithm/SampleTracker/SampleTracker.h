@@ -18,18 +18,29 @@ private:
 	cv::Point _selectorRecStart;
 	cv::Point _selectorRecEnd;
 	bool _showSelectorRec;
+	bool _showOriginal;
 	void drawRectangle(cv::Mat image);
 	void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
 	std::vector<TrackedObject>		_trackedObjects;
 	void initUI();
-	int _red;
-	int _green;
-	int _blue;
+	//values for filtering a color (HSV format)
+	int _lowH;
+	int _highH;
+	int _lowS; 
+	int _highS;
+	int _lowV;
+	int _highV;
+	cv::Mat _imgTracked;
+	//gui elements to set those values
+	QLineEdit *_lowHEdit;
+	QLineEdit *_highHEdit;
+	QLineEdit *_lowSEdit;
+	QLineEdit *_highSEdit;
+	QLineEdit *_lowVEdit;
+	QLineEdit *_highVEdit;
 
-	QLineEdit *_redEdit;
-	QLineEdit *_greenEdit;
-	QLineEdit *_blueEdit;
 	QPushButton *_colorBut;
+	QPushButton *_modeBut;
 public:
 	SampleTracker	( Settings & settings, QWidget *parent );
 	~SampleTracker	( void );
@@ -46,7 +57,8 @@ public:
 
 
 	public slots:
-		void changeRectangleColor();
+		void changeFilterColor();
+		void switchMode();
 		//mouse click and move events
 		void mouseMoveEvent		( QMouseEvent * e );
 		void mousePressEvent	( QMouseEvent * e );

@@ -6,7 +6,6 @@
 #include <opencv2/opencv.hpp>
 #include <QtOpenGL>
 #include <iostream>
-#include "source/helper/StringHelper.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
 class VideoView : public QGLWidget

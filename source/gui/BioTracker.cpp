@@ -147,7 +147,7 @@ void BioTracker::initPicture(QStringList filenames)
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
 	ss << std::setprecision(5) << fps;
-	ui.fps_label->setText(StringHelper::toQString(ss.str()));
+	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
 	ui.videoView->fitToWindow();
 }
@@ -214,7 +214,7 @@ void BioTracker::initCapture()
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
 	ss << std::setprecision(5) << fps;
-	ui.fps_label->setText(StringHelper::toQString(ss.str()));
+	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
 	ui.videoView->fitToWindow();
 }
@@ -239,7 +239,7 @@ void BioTracker::stepCaptureForward()
 	}
 	_videoPaused = true;
 	emit grabNextFrame();
-	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 }
 
 void BioTracker::stepCaptureBackward()
@@ -248,7 +248,7 @@ void BioTracker::stepCaptureBackward()
 	{
 		updateFrameNumber(_currentFrame-1);
 		emit changeFrame(_currentFrame);		
-		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 	}
 }
 
@@ -257,7 +257,7 @@ void BioTracker::pauseCapture()
 	emit videoPause(true);
 	_videoPaused = true;
 	setPlayfieldPaused(true);
-	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 }
 
 
@@ -269,7 +269,7 @@ void BioTracker::stopCapture()
 	setPlayfieldPaused(true);
 	updateFrameNumber(0);
 	ui.sld_video->setDisabled(true);
-	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 	ui.cb_algorithms->setCurrentIndex(0);
 	trackingAlgChanged("no tracking");
 }
@@ -278,14 +278,14 @@ void BioTracker::updateFrameNumber(int frameNumber)
 {
 	_currentFrame = frameNumber;
 	ui.sld_video->setValue(_currentFrame);
-	ui.frame_num_edit->setText(StringHelper::toQString(StringHelper::iToSS(_currentFrame)));
+	ui.frame_num_edit->setText(QString::number(_currentFrame));
 	if(frameNumber == ui.sld_video->maximum())
 	{
 
 		emit videoPause(true);
 		_videoPaused = true;
 		setPlayfieldPaused(true);
-		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(0));
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(0).toStdString());
 
 	}
 }
@@ -321,7 +321,7 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 		msgLine += " ";
 		break;
 	}
-	msgLine.append(StringHelper::toQString(message));
+	msgLine.append(QString::fromStdString(message));
 	ui.edit_notification->append(msgLine);
 }
 
@@ -330,7 +330,7 @@ void BioTracker::changeCurrentFramebySlider()
 	int value = ui.sld_video->value();	
 	emit changeFrame(value);
 	updateFrameNumber(value);
-	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 
 }
 void BioTracker::changeCurrentFramebySlider(int SliderAction)
@@ -360,12 +360,14 @@ void BioTracker::changeCurrentFramebySlider(int SliderAction)
 void BioTracker::changeCurrentFramebyEdit()
 {	
 	QString valueStr = ui.frame_num_edit->text();
-	if(StringHelper::isNumber(valueStr))
+	//check if string is a number by using regular expression
+	QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
+	if(re.exactMatch(valueStr))
 	{
 		int value = valueStr.toInt();
 		if(_trackingThread->isReadyForNextFrame())
 			emit changeFrame(value);
-		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,StringHelper::iToSS(_currentFrame));
+		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 		updateFrameNumber(value);
 	}	
 }
@@ -375,7 +377,7 @@ void BioTracker::showFps(double fps)
 	std::stringstream ss;
 	ss << std::setprecision(5) << fps;
 	//show actual fps
-	ui.fps_edit->setText(StringHelper::toQString(ss.str()));
+	ui.fps_edit->setText(QString::fromStdString(ss.str()));
 }
 void BioTracker::changeFps(int fps)
 {
@@ -388,7 +390,7 @@ void BioTracker::changeFps(int fps)
 	else
 	{
 		//show target fps
-		ui.fps_label->setText(StringHelper::toQString(StringHelper::iToSS(fps)));
+		ui.fps_label->setText(QString::number(fps));
 		emit enableMaxSpeed(false);
 		emit fpsChange((double)fps);
 	}
@@ -482,7 +484,7 @@ void BioTracker::takeScreenshot()
 	// ctime adds a newline to the string due to historical reasons
 	dateTime = dateTime.substr(0, dateTime.size() - 1);
 	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
-	filepath.append("/screenshot_").append(StringHelper::toQString(dateTime)).append(".png");
+	filepath.append("/screenshot_").append(QString::fromStdString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
 }
 

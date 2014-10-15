@@ -16,7 +16,6 @@
     </ClCompile>
     <ClCompile Include="source\settings\Param.cpp" />
     <ClCompile Include="source\settings\Settings.cpp" />
-    <ClCompile Include="source\helper\StringHelper.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,7 +103,6 @@
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
-    <ClInclude Include="source\helper\StringHelper.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -114,8 +112,6 @@
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\video\ImagePreProcessor.h" />
-    <ClInclude Include="source\video\Rectification.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
