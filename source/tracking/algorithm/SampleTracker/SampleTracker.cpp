@@ -9,10 +9,7 @@ SampleTracker::SampleTracker( Settings & settings, QWidget *parent ) : TrackingA
 {
 	_showSelectorRec = false;
 	_showOriginal = false;
-	_selectorRecStart = cv::Point();
-	_selectorRecEnd = cv::Point();
 	initUI();
-	_imgTracked = NULL;
 	_lowH = 0;
 	_highH= 255;
 	_lowS = 0; 
