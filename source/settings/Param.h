@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <QtCore/QString>
+#include <utility>
 
 namespace TrackerParam{
 class Param
@@ -22,14 +23,14 @@ public:
 	 * @param: paramName, the parameter name as standard string,
 	 * @return: void.
 	 */
-	void setPName(std::string paramName) { _paramName = paramName; }
+	void setPName(std::string paramName) { _paramName = std::move(paramName); }
 
 	/**
 	 * Sets the parameter value.
 	 * @param: paramValue, the parameter name as standard string,
 	 * @return: void.
 	 */
-	void setPValue(std::string paramValue) { _paramValue = paramValue; }
+	void setPValue(std::string paramValue) { _paramValue = std::move(paramValue); }
 
 	/**
 	 * Gets the parameter name.

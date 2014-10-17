@@ -1,16 +1,19 @@
 #include "Param.h"
 
-using namespace TrackerParam;
+namespace TrackerParam {
+
 Param::Param(void)
 {
 }
 
 Param::Param(std::string paramName, std::string paramValue)
+  : _paramName(std::move(paramName))
+  , _paramValue(std::move(paramValue))
 {
-	setPName(paramName);
-	setPValue(paramValue);
 }
 
 Param::~Param(void)
 {
+}
+
 }
