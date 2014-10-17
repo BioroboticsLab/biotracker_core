@@ -6,7 +6,9 @@
 /**
 * Mutexes.
 */
-QMutex paramMutex;
+namespace {
+  QMutex paramMutex;
+}
 
 Settings::Settings(void) :
 	_params(getDefaultParamsFromQSettings())
@@ -75,13 +77,13 @@ void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
 	}
 }
 
-std::vector<TrackerParam::Param> Settings::getParams()
+std::vector<TrackerParam::Param> Settings::getParams() const
 {
 	QMutexLocker locker(&paramMutex);
 	return _params;
 }
 
-template<> std::string Settings::getValueOfParam(std::string paramName)
+template<> std::string Settings::getValueOfParam(std::string paramName) const
 {
 	QMutexLocker locker(&paramMutex);
     for (TrackerParam::Param const& param : _params)
@@ -95,7 +97,7 @@ template<> std::string Settings::getValueOfParam(std::string paramName)
 	throw "Parameter cannot be obtained!";
 }
 
-template<> QString Settings::getValueOfParam(std::string paramName)
+template<> QString Settings::getValueOfParam(std::string paramName) const
 {
 	QMutexLocker locker(&paramMutex);
     for (TrackerParam::Param const& param : _params)
@@ -109,7 +111,7 @@ template<> QString Settings::getValueOfParam(std::string paramName)
 	throw "Parameter cannot be obtained!";
 }
 
-template<> double Settings::getValueOfParam(std::string paramName)
+template<> double Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -122,7 +124,7 @@ template<> double Settings::getValueOfParam(std::string paramName)
 	return valueAsDouble;
 }
 
-template<> float Settings::getValueOfParam(std::string paramName)
+template<> float Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -135,7 +137,7 @@ template<> float Settings::getValueOfParam(std::string paramName)
 	return valueAsFloat;
 }
 
-template<> int Settings::getValueOfParam(std::string paramName)
+template<> int Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -148,7 +150,7 @@ template<> int Settings::getValueOfParam(std::string paramName)
 	return valueAsInt;
 }
 
-template<> bool Settings::getValueOfParam(std::string paramName)
+template<> bool Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
@@ -160,19 +162,19 @@ template<> bool Settings::getValueOfParam(std::string paramName)
 	return false;
 }
 
-template<> cv::Scalar Settings::getValueOfParam(std::string paramName)
+template<> cv::Scalar Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	QMutexLocker locker(&paramMutex);
 
 	cv::Scalar cvScalarValue;
-	std::vector<cv::string> stringList;
-
-	int tokens = split(valueAsString,stringList,' ');
+	
+	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
+	const size_t tokens = stringList.size();
 	// 255 255 255
 	if(tokens == 3)
 	{
-		for(int i = 0; i < tokens; i++)
+		for(size_t i = 0; i < tokens; i++)
 		{
             int r = std::stoi(stringList.at(0));
             int g = std::stoi(stringList.at(1));
@@ -200,23 +202,23 @@ std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 	return defaultParams;
 }
 
-int Settings::split(std::string &txt, std::vector<std::string> &strs, char ch)
+std::vector<std::string> Settings::split(const std::string &txt, char ch)
 {
+    std::vector<std::string> result;
     std::size_t pos = txt.find( ch );
     std::size_t initialPos = 0;
-    strs.clear();
 
     // Decompose statement
     while( pos != std::string::npos ) {
-        strs.push_back( txt.substr( initialPos, pos - initialPos ) );
+        result.push_back( txt.substr( initialPos, pos - initialPos ) );
         initialPos = pos + 1;
 
         pos = txt.find( ch, initialPos );
     }
 
     // Add the last one
-    strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+    result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
 
-    return strs.size();
+    return result;
 }
 
