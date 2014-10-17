@@ -1,5 +1,4 @@
 #include "BeesBookTagMatcher.h"
-#include "source/helper/StringHelper.h"
 #include <QApplication>
 
 //some variables can go out of boundary

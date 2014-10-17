@@ -8,7 +8,7 @@
 #include "source/settings/Messages.h"
 #include "source/settings/Param.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-#include "source/helper/StringHelper.h"
+//#include "source/helper/StringHelper.h"
 
 
 /**
@@ -58,7 +58,7 @@ void TrackingThread::startCapture()
 		_fps = _capture.get(CV_CAP_PROP_FPS);
 		QThread::start();
 		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) + 
-			" (#frames: " + StringHelper::iToSS(getVideoLength()) + ")";
+			" (#frames: " + QString::number(getVideoLength()).toStdString() + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 	}
 }
@@ -126,12 +126,10 @@ void TrackingThread::run()
 			}			
 
 			// exit if last frame is reached
-			//TODO: need to check memory violation thing here!
 			if(frame.empty())	{	break;	}
 
 			//TODO: if a tracking algorithm is selected
-			//send frame to tracking algorithm
-			//NOTE: this is just for testing!
+			//send frame to tracking algorithm			
 			if (_tracker) {
 				doTracking(frame);
 			}

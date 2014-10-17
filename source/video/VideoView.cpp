@@ -4,7 +4,15 @@
 
 #include "VideoView.h"
 #include <QMouseEvent>
-#include <GL/glu.h>
+
+// OS X puts the headers in a different location in the include path than
+// Windows and Linux, so we need to distinguish between OS X and the other
+// systems.
+#ifdef __APPLE__
+	#include <OpenGL/glu.h>
+#else
+	#include <GL/glu.h>
+#endif
 
 QMutex trackMutex;
 
@@ -107,6 +115,7 @@ void VideoView::paintGL()
 	// check window resolution and scale image if window resolution is lower than image resolution
 	if (_zoomFactor > 1)
 	{	
+		QMutexLocker locker(&trackMutex);
 		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
 	}	
 
@@ -216,7 +225,7 @@ void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
 
 void VideoView::takeScreenshot(QString screenShotFilename)
 {
-	cv::imwrite(StringHelper::toStdString(screenShotFilename),_displayImage);
+	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
 void VideoView::mouseMoveEvent( QMouseEvent * e )

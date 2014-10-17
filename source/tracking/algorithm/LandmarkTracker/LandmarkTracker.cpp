@@ -1,7 +1,5 @@
 #include "LandmarkTracker.h"
-#include "source/helper/StringHelper.h"
 #include <QApplication>
-//#include "source/helper/CvHelper.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "source/tracking/TrackingThread.h"
@@ -63,11 +61,11 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
-		//check for shift modifier
+		/*//check for shift modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
 			int x = e->x(); int y = e->y();
-			std::string note = "shift + left button press on: x=" + StringHelper::iToSS(x) + " y=" + StringHelper::iToSS(y);
+			std::string note = "shift + left button press on: x=" + QString::number(x).toStdString() + " y=" + QString::number(y).toStdString();
 			//initialize coordinates for selection tool
 			_selectorRecStart.x = e->x();
 			_selectorRecStart.y = e->y();
@@ -75,7 +73,16 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 			_selectorRecEnd.y = e->y();
 			_showSelectorRec = true;	
 			emit notifyGUI(note,MSGS::NOTIFICATION);
-		}
+		}*/
+		int x = e->x(); int y = e->y();
+			
+		//initialize coordinates for selection tool
+		_selectorRecStart.x = e->x();
+		_selectorRecStart.y = e->y();
+		_selectorRecEnd.x = e->x();
+		_selectorRecEnd.y = e->y();
+		_showSelectorRec = true;	
+		//emit notifyGUI(note,MSGS::NOTIFICATION);
 	}
 }
 
@@ -90,8 +97,8 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 			_showSelectorRec = false;
 			//next draw will delete rectangle!
 			emit update();
-			std::string note = "selected area from " + StringHelper::iToSS(_selectorRecStart.x) + ":"+ StringHelper::iToSS(_selectorRecStart.y)
-				+ " to " +  StringHelper::iToSS(_selectorRecEnd.x) + ":"+ StringHelper::iToSS(_selectorRecEnd.y);
+			std::string note = "selected area from " + QString::number(_selectorRecStart.x).toStdString() + ":"+ QString::number(_selectorRecStart.y).toStdString()
+				+ " to " +  QString::number(_selectorRecEnd.x).toStdString() + ":"+ QString::number(_selectorRecEnd.y).toStdString();
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
 	}
@@ -114,7 +121,11 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 	std::cout <<"Defined ROI" << std::endl;
 
 	//Make an image out of just the selected ROI and display it in a new window
-	cv::Mat roi(image, box);
-	cv::namedWindow("ROI");
-	cv::imshow("ROI", roi);
+	if(box.width > 0 && box.height > 0){
+
+		cv::Mat roi(image, box);
+		cv::namedWindow("ROI");
+		cv::imshow("ROI", roi);
+	}
+
 }

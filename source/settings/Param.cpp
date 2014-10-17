@@ -1,6 +1,5 @@
 #include "Param.h"
 
-#include "source/helper/StringHelper.h"
 using namespace TrackerParam;
 Param::Param(void)
 {
