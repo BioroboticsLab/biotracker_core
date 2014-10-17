@@ -16,7 +16,7 @@ class SimpleTracker : public TrackingAlgorithm
 		static const int	MAX_NUMBER_OF_TRACKED_OBJECTS;
 
 		SimpleTracker			( Settings & settings, QWidget *parent );
-		virtual ~SimpleTracker	( void );
+		virtual ~SimpleTracker	() override;
 		void track				( ulong frameNumber, cv::Mat & frame );
 		void reset				();
 		void paint			( cv::Mat& image );

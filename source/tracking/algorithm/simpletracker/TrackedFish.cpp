@@ -6,7 +6,7 @@ TrackedFish::TrackedFish(int id) : TrackedObject(id)
 }
 
 
-TrackedFish::~TrackedFish(void)
+TrackedFish::~TrackedFish()
 {
 }
 
@@ -31,6 +31,6 @@ void TrackedFish::set_associated_color(const cv::Scalar& color) {
 	_associated_color = color;
 }
 
-cv::Scalar TrackedFish::associated_color() {
+cv::Scalar TrackedFish::associated_color() const {
 	return _associated_color;
 }
