@@ -133,7 +133,7 @@ void VideoView::paintGL()
 	int width=_displayImage.cols;
 	int height=_displayImage.rows;
 	//Tile size
-	int N = 64;
+	//int N = 64;
 	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
 	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
 	if(upperLeft.x() > 0 )
@@ -211,7 +211,7 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
 	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
-	GLint isOnPicture = gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+	/*GLint isOnPicture = */ gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	pictureCoord.setX(static_cast<int>(posX));
 	pictureCoord.setY(static_cast<int>(posY));
 	return pictureCoord;
