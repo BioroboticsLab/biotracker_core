@@ -18,7 +18,7 @@ QMutex trackMutex;
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent),
-	_tracker(NULL)
+	_tracker(nullptr)
 {
 	_zoomFactor = 1.0;
 	_panX = 0;

@@ -12,7 +12,7 @@ class VideoView : public QGLWidget
 {
 	Q_OBJECT
 public:
-	VideoView(QWidget *parent = 0);	
+	VideoView(QWidget *parent = nullptr);	
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);

@@ -42,7 +42,7 @@ class BioTracker: public QMainWindow
 	Q_OBJECT
 
 public:
-	BioTracker(Settings &settings, QWidget *parent = 0,  Qt::WindowFlags flags = 0);
+	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
 public slots:
 	// open file browser for video in/out
 	void browseVideo();

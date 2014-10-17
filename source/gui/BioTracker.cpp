@@ -5,7 +5,7 @@
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
-	_trackingThread(NULL),
+	_trackingThread(nullptr),
 	_settings(settings)
 {
 	ui.setupUi(this);
@@ -29,7 +29,7 @@ void BioTracker::init(){
 	_currentFrame = 0;
 	_isPanZoomMode = false;
 	_trackingThread = new TrackingThread(_settings);
-	_tracker = NULL;
+	_tracker = nullptr;
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_vboxParams = new QVBoxLayout();
@@ -410,7 +410,7 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	}
 	if (trackingAlg == "no tracking")
 	{		
-		_tracker = NULL;
+		_tracker = nullptr;
 	}
 	else if(trackingAlg == "simple algorithm")
 	{

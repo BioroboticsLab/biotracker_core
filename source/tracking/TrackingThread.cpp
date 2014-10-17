@@ -28,7 +28,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     _frameNumber(0),
     _maxSpeed(false),
     _settings(settings),
-    _tracker(NULL)
+    _tracker(nullptr)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 	_trackedObjects = std::vector<TrackedObject>();
