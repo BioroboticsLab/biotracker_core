@@ -6,8 +6,14 @@
 
 #include <utility> // std::move
 
-
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2);
+/**
+ * Predicate used by this algorithm to sort particles, highest to lowest score.
+ */
+struct compareReverseParticleScorePredicate {
+  bool operator() (const Particle& p1, const Particle& p2) const {
+    return p1.getScore() > p2.getScore();
+  }
+};
 
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
@@ -55,7 +61,7 @@ void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 			}
 			// Resample
 			// - Sort for better performance (big scores first)
-			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate);
+			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate() );
 			// - importance resampling
 			importanceResample();
 		}
@@ -189,10 +195,3 @@ void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
-
-/**
-* Predicate used by this algorithm to sort particles, highest to lowest score.
-*/
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2) {
-	return p1.getScore() > p2.getScore();
-}
