@@ -130,7 +130,7 @@ template<> float Settings::getValueOfParam(std::string paramName) const
 	QMutexLocker locker(&paramMutex);
 	char* endptr;
 
-	float valueAsFloat = (float)strtod(valueAsString.c_str(), &endptr);
+	float valueAsFloat = static_cast<float>( strtod(valueAsString.c_str(), &endptr) );
     if (*endptr) 
 		throw "Value cannot convert to double number!";
     
@@ -143,7 +143,7 @@ template<> int Settings::getValueOfParam(std::string paramName) const
 	QMutexLocker locker(&paramMutex);
 	char* endptr;
 
-	int valueAsInt = (int)strtod(valueAsString.c_str(), &endptr);
+	int valueAsInt = static_cast<int>( strtod(valueAsString.c_str(), &endptr) );
     if (*endptr) 
 		throw "Value cannot convert to int number!";
     

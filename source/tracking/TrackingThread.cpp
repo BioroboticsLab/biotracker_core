@@ -136,7 +136,7 @@ void TrackingThread::run()
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
 
-			std::chrono::microseconds target_dur((int) (1000000. / _fps));
+			std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
             std::chrono::microseconds dur =
                     std::chrono::duration_cast<std::chrono::microseconds>(
                         std::chrono::system_clock::now() - t);

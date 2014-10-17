@@ -138,7 +138,7 @@ void BioTracker::initPicture(QStringList filenames)
 	_trackingThread->loadPictures(filenames);
 	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
 	ui.sld_video->setDisabled(false);
-	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	ui.sld_video->setPageStep(static_cast<int>(_trackingThread->getVideoLength()/20));
 	updateFrameNumber(_currentFrame);
 	emit changeFrame(_currentFrame);
 	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
@@ -205,7 +205,7 @@ void BioTracker::initCapture()
 	_trackingThread->startCapture();
 	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
 	ui.sld_video->setDisabled(false);
-	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	ui.sld_video->setPageStep(static_cast<int>(_trackingThread->getVideoLength()/20));
 	updateFrameNumber(_currentFrame);
 	emit changeFrame(_currentFrame);
 	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
