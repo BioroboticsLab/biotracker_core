@@ -26,7 +26,7 @@ BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings, QWidget *parent ) :
 		_setP1 = false; //Set P1 --Left Click--
 		_setP2 = false; //P1 has been set, P0, P1 and P2 are active --ctrl + Right Click--
 		_setP3 = false; //Set P3 --Left Click--
-		_setP4 = false;	//P3 has been set, P0, P1, P2, P3 and P4 are active --ctrl + Right Click--
+		_setP4 = false;	//P3 has been set, P0, P1, P2, P3 and P4 are active --ctrl + Right Click--		
 
 		ratP1P2 = 0.5; //ratio P1/P2
 		ratP3P4 = 0.5; //ratio P3/P4
