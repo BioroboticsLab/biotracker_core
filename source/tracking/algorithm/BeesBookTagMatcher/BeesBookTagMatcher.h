@@ -18,13 +18,12 @@
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 	private:
+				
+		myNewGrid			g; //active Grid
+		myNewGrid			gtemp; //Grids already in vector
 
-		myGrid				g; //active Grid
-		myNewGrid			gNew; //active Grid
-		myGrid				gtemp; //Grids already in vector
-
-		std::vector<myGrid> _Grids; //vector of already set grids
-		std::vector<cv::Point> _defPoints; //vector of points which are used by the user to define a new grid
+		std::vector<myNewGrid> _Grids; //vector of already set grids
+		
 
 		bool _newGrid; //ready to generate a new grid
 
@@ -45,13 +44,9 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		bool _activePoints; //a new set of points is being configured
 		bool _setP0; //Set P0 --Left Click--
 		bool _setP1; //Set P1 --Left Click--
-		bool _setP2; //P1 has been set, P0, P1 and P2 are active --ctrl + Right Click--
+		bool _setP2; //Set P2 --Left Click--
 		bool _setP3; //Set P3 --Left Click--
-		bool _setP4; //P3 has been set, P0, P1, P2, P3 and P4 are active --ctrl + Right Click--
-
-		double	ratP1P2; //ratio P0P1/P0P2
-		double	ratP3P4; //ratio P0P3/P0P4
-		double	angleP1P3; //angle between P0P1 and P0P3
+		bool _setP4; //Set P4 --Left Click--		
 
 		cv::Point diff; //auxiliar variable
 		cv::Point prevPosition; //auxiliar variable
@@ -60,7 +55,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		void drawGrid(cv::Mat image); //function that draws a grid calling an instance of MyNewGrid
 		void drawPoints(cv::Mat image); //function that draws the points while being edited
 		double dist(cv::Point p1, cv::Point p2); //function that calculates the distance between two points
-
+		
 	public:
 		BeesBookTagMatcher	( Settings & settings, QWidget *parent );
 		~BeesBookTagMatcher	( void );
