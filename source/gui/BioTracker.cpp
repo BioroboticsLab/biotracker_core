@@ -411,10 +411,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{		
         _tracker.reset();
 	}
-	else if(trackingAlg == "simple algorithm")
-	{
-        _tracker = std::make_shared<SimpleTracker>(_settings, this);
-	}
+//	else if(trackingAlg == "simple algorithm")
+//	{
+//        _tracker = std::make_shared<SimpleTracker>(_settings, this);
+//	}
 	else if(trackingAlg == "bees book tag matcher")
 	{
         _tracker = std::make_shared<BeesBookTagMatcher>(_settings, this);
@@ -427,10 +427,10 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	{
         _tracker = std::make_shared<ParticleFishTracker>(_settings, this);
 	}
-	else if (trackingAlg == "Sample Tracker")
-	{
+    else if (trackingAlg == "Sample Tracker")
+    {
         _tracker = std::make_shared<SampleTracker>(_settings, this);
-	}
+    }
 	else if (trackingAlg == "Landmark Tracker")
 	{
         _tracker = std::make_shared<LandmarkTracker>(_settings, this);

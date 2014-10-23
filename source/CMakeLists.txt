@@ -15,7 +15,7 @@ file(GLOB settings_src
 	settings/*.cpp settings/*.h)
 source_group(settings FILES ${settings_src})
 
-file(GLOB tracking_src
+file(GLOB_RECURSE tracking_src
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	tracking/*.cpp tracking/*.h)
 source_group(tracking FILES ${tracking_src})
@@ -33,7 +33,7 @@ file(GLOB_RECURSE qrc
 qt5_wrap_ui(UI_HEADERS ${ui})
 qt5_add_resources(UI_RESOURCES ${qrc})
 
-add_subdirectory(tracking)
+#add_subdirectory(tracking)
 
 add_executable(BioTracker 
 	${src} 
@@ -47,13 +47,13 @@ add_executable(BioTracker
 	${UI_RESOURCES})
  
 target_link_libraries(BioTracker
-	BeesBookTagMatcher
-	ColorPatchTracker
-	FishParticle
-	SampleTracker
-	SimpleTracker
-	LandmarkTracker
-	TrackedObject
+        #BeesBookTagMatcher
+        #ColorPatchTracker
+        #FishParticle
+        #SampleTracker
+        #SimpleTracker
+        #LandmarkTracker
+        #TrackedObject
 
     Qt5::Widgets
     Qt5::OpenGL

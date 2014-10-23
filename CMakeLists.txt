@@ -37,10 +37,11 @@ include_directories(
 	SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
 	SYSTEM ${OpenCV_INCLUDE_DIRS}
 	SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
+        SYSTEM ${PROJECT_SOURCE_DIR}/source/external
 )
 
 add_subdirectory(source)
 
-INSTALL(FILES "${CMAKE_SOURCE_DIR}/config.ini" 
+install(FILES "${CMAKE_SOURCE_DIR}/config.ini"
 	DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/source/)
 

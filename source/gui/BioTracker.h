@@ -22,7 +22,7 @@
 #include "source/tracking/TrackingThread.h"
 #include "source/video/VideoView.h"
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
+//#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
 #include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
 #include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"

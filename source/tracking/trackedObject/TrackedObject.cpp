@@ -1,11 +1,13 @@
 #include "TrackedObject.h"
 
-TrackedObject::TrackedObject(int id) : _id(id) {
+TrackedObject::TrackedObject(size_t id)
+    : _id(id)
+{
+    _objectTimeStamps.push_back(std::unique_ptr<ObjectModel>(new DerivedObjectModel(1)));
+    _objectTimeStamps.push_back(std::unique_ptr<ObjectModel>(new DerivedObjectModel(2)));
 }
-ObjectModel* TrackedObject::getObject(int /*frameNumber*/){
-  return nullptr;
-}
-void TrackedObject::add(ObjectModel*, int /*frameNumber*/){}
-void TrackedObject::exchange(ObjectModel*, int /*frameNumber*/){}
 
-TrackedObject::~TrackedObject() {}
+void TrackedObject::push_back(std::unique_ptr<ObjectModel>&& object)
+{
+    _objectTimeStamps.push_back(std::move(object));
+}
