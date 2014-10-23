@@ -35,7 +35,6 @@ TrackingThread::TrackingThread(Settings &settings) :
 
 TrackingThread::~TrackingThread(void)
 {
-	if(_tracker) delete _tracker;
 }
 
 
@@ -342,7 +341,7 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
+void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
 	_tracker = trackingAlgorithm;		

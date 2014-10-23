@@ -91,8 +91,8 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm*) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm*) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm*) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm*) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
 	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
 
 }

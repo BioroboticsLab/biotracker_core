@@ -2,6 +2,7 @@
 #define BioTracker_H
 
 #include <time.h>
+#include <memory>
 
 // Open CV
 #include <cv.h>
@@ -157,7 +158,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
+    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 
 };
 
