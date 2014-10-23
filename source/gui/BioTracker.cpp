@@ -5,7 +5,7 @@
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
-	_trackingThread(NULL),
+	_trackingThread(nullptr),
 	_settings(settings)
 {
 	ui.setupUi(this);
@@ -29,7 +29,7 @@ void BioTracker::init(){
 	_currentFrame = 0;
 	_isPanZoomMode = false;
 	_trackingThread = new TrackingThread(_settings);
-	_tracker = NULL;
+	_tracker = nullptr;
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_vboxParams = new QVBoxLayout();
@@ -92,8 +92,8 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
 	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm&) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm&) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm*) ), _trackingThread, SLOT(setTrackingAlgorithm(TrackingAlgorithm*) ));
+	QObject::connect(this, SIGNAL ( changeTrackingAlg(TrackingAlgorithm*) ), ui.videoView, SLOT(setTrackingAlgorithm(TrackingAlgorithm*) ));
 	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
 
 }
@@ -138,7 +138,7 @@ void BioTracker::initPicture(QStringList filenames)
 	_trackingThread->loadPictures(filenames);
 	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
 	ui.sld_video->setDisabled(false);
-	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	ui.sld_video->setPageStep(static_cast<int>(_trackingThread->getVideoLength()/20));
 	updateFrameNumber(_currentFrame);
 	emit changeFrame(_currentFrame);
 	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
@@ -205,7 +205,7 @@ void BioTracker::initCapture()
 	_trackingThread->startCapture();
 	ui.sld_video->setMaximum(_trackingThread->getVideoLength()-1);		
 	ui.sld_video->setDisabled(false);
-	ui.sld_video->setPageStep((int)(_trackingThread->getVideoLength()/20));
+	ui.sld_video->setPageStep(static_cast<int>(_trackingThread->getVideoLength()/20));
 	updateFrameNumber(_currentFrame);
 	emit changeFrame(_currentFrame);
 	ui.frame_num_edit->setValidator( new QIntValidator(0, _trackingThread->getVideoLength()-1, this) );
@@ -410,7 +410,7 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	}
 	if (trackingAlg == "no tracking")
 	{		
-		_tracker = NULL;
+		_tracker = nullptr;
 	}
 	else if(trackingAlg == "simple algorithm")
 	{
@@ -440,7 +440,7 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 		connectTrackingAlg(_tracker);
 	ui.groupBox_params->repaint();
 	ui.groupBox_tools->repaint();
-	emit changeTrackingAlg(*_tracker);
+	emit changeTrackingAlg(_tracker);
 }
 
 void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)

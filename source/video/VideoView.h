@@ -12,7 +12,7 @@ class VideoView : public QGLWidget
 {
 	Q_OBJECT
 public:
-	VideoView(QWidget *parent = 0);	
+	VideoView(QWidget *parent = nullptr);	
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
@@ -44,7 +44,7 @@ private:
 	int _lastMPos[2];
 
 	public slots:
-		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
+		void setTrackingAlgorithm(TrackingAlgorithm *trackingAlgorithm);
 		void setPanZoomMode (bool isPanZoom);
 		cv::Mat getCurrentScreen();
 

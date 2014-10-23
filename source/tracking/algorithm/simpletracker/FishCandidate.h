@@ -8,8 +8,8 @@
 class FishCandidate	: public TrackedFish
 {
 public:
-	FishCandidate(void);
-	virtual ~FishCandidate(void);
+	FishCandidate();
+	virtual ~FishCandidate() override;
 	void increaseScore();
 	void decreaseScore();
 	int score() const;

@@ -22,7 +22,7 @@ LandmarkTracker::~LandmarkTracker(void)
 {
 }
 
-void LandmarkTracker::track		( ulong frameNumber, cv::Mat& frame ){}
+void LandmarkTracker::track		( ulong /*frameNumber*/, cv::Mat& /*frame*/ ){}
 void LandmarkTracker::paint		( cv::Mat& image )
 {
 	if(_showSelectorRec)
@@ -74,7 +74,7 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 			_showSelectorRec = true;	
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}*/
-		int x = e->x(); int y = e->y();
+		// int x = e->x(); int y = e->y();
 			
 		//initialize coordinates for selection tool
 		_selectorRecStart.x = e->x();

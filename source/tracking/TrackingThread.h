@@ -9,7 +9,6 @@
 //#include <video/Rectification.h>
 #include <source/settings/Settings.h>
 #include <source/settings/Messages.h>
-#include <source/tracking/trackedObject/TrackedObject.h>
 #include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 
@@ -84,7 +83,6 @@ private:
 	Settings &_settings;
 
 	TrackingAlgorithm* _tracker;
-	std::vector<TrackedObject> _trackedObjects;
 
 	/**
 	* Gets current frame number.
@@ -166,7 +164,7 @@ private:
 		*/
 		void setMaxSpeed (bool enabled);
 
-		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
+		void setTrackingAlgorithm(TrackingAlgorithm *trackingAlgorithm);
 signals:
 		/**
 		* Signals when a tracking sequence is done.

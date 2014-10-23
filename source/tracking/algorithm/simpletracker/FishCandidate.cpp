@@ -1,12 +1,12 @@
 #include "FishCandidate.h"
 
 
-FishCandidate::FishCandidate(void) : TrackedFish(0), _score(1)
+FishCandidate::FishCandidate() : TrackedFish(0), _score(1)
 {
 }
 
 
-FishCandidate::~FishCandidate(void)
+FishCandidate::~FishCandidate()
 {
 }
 

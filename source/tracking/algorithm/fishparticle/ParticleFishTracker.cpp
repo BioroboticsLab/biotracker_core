@@ -4,8 +4,16 @@
 
 #include "particlefilter/ParticleBrightnessObserver.h"
 
+#include <utility> // std::move
 
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2);
+/**
+ * Predicate used by this algorithm to sort particles, highest to lowest score.
+ */
+struct compareReverseParticleScorePredicate {
+  bool operator() (const Particle& p1, const Particle& p2) const {
+    return p1.getScore() > p2.getScore();
+  }
+};
 
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
@@ -53,7 +61,7 @@ void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 			}
 			// Resample
 			// - Sort for better performance (big scores first)
-			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate);
+			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate() );
 			// - importance resampling
 			importanceResample();
 		}
@@ -77,9 +85,9 @@ void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 */
 void ParticleFishTracker::importanceResample() {
 	// Make a copy and generate new particles.
-	std::vector<Particle> old_particles = _current_particles;
-	size_t random_new_particles = _current_particles.size() * 0.01;
+	size_t random_new_particles = _current_particles.size() / 100;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
+	std::vector<Particle> old_particles = std::move(_current_particles);
 	_current_particles.clear();
 
 	for (size_t i = 0; i < old_particles.size()-random_new_particles; i++) {
@@ -187,10 +195,3 @@ void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
-
-/**
-* Predicate used by this algorithm to sort particles, highest to lowest score.
-*/
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2) {
-	return p1.getScore() > p2.getScore();
-}
