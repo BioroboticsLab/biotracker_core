@@ -7,6 +7,7 @@
 #include <QtOpenGL>
 #include <iostream>
 #include "source/tracking/TrackingAlgorithm.h"
+#include <memory>
 
 class VideoView : public QGLWidget
 {
