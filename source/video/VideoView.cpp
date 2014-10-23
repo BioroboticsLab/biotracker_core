@@ -217,10 +217,10 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	return pictureCoord;
 }
 
-void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
+void VideoView::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
 {
 	QMutexLocker locker(&trackMutex);	
-	_tracker = &trackingAlgorithm;		
+	_tracker = trackingAlgorithm;		
 }
 
 void VideoView::takeScreenshot(QString screenShotFilename)

@@ -31,7 +31,6 @@ TrackingThread::TrackingThread(Settings &settings) :
     _tracker(nullptr)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
-	_trackedObjects = std::vector<TrackedObject>();
 }
 
 TrackingThread::~TrackingThread(void)
@@ -343,11 +342,11 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
+void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
 	delete _tracker;
-	_tracker = &trackingAlgorithm;		
+	_tracker = trackingAlgorithm;		
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()
