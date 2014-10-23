@@ -345,7 +345,6 @@ void TrackingThread::setFps(double fps)
 void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
-	delete _tracker;
 	_tracker = trackingAlgorithm;		
 }
 

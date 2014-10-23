@@ -33,7 +33,7 @@ private:
 	QVector<QVector2D> _vertices; 
 	QVector<QVector2D> _texCoords;     
 	cv::Mat _displayImage;
-	TrackingAlgorithm* _tracker;
+    std::shared_ptr<TrackingAlgorithm> _tracker;
 	bool _isPanZoomMode;
 
 	/* Modified by user input. Initially 1.0 */
@@ -44,7 +44,7 @@ private:
 	int _lastMPos[2];
 
 	public slots:
-		void setTrackingAlgorithm(TrackingAlgorithm *trackingAlgorithm);
+        void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 		void setPanZoomMode (bool isPanZoom);
 		cv::Mat getCurrentScreen();
 

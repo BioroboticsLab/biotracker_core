@@ -119,9 +119,10 @@ private:
 	void initCapture();
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
-	void connectTrackingAlg(TrackingAlgorithm* tracker);
+    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
-	TrackingAlgorithm* _tracker;
+
+    std::shared_ptr<TrackingAlgorithm> _tracker;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
@@ -156,7 +157,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-	void changeTrackingAlg(TrackingAlgorithm *trackingAlgorithm);
+    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 
 };
 

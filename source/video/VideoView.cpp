@@ -217,7 +217,7 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	return pictureCoord;
 }
 
-void VideoView::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
+void VideoView::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm)
 {
 	QMutexLocker locker(&trackMutex);	
 	_tracker = trackingAlgorithm;		

@@ -29,7 +29,6 @@ void BioTracker::init(){
 	_currentFrame = 0;
 	_isPanZoomMode = false;
 	_trackingThread = new TrackingThread(_settings);
-	_tracker = nullptr;
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_vboxParams = new QVBoxLayout();
@@ -410,31 +409,31 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	}
 	if (trackingAlg == "no tracking")
 	{		
-		_tracker = nullptr;
+        _tracker.reset();
 	}
 	else if(trackingAlg == "simple algorithm")
 	{
-		_tracker = new SimpleTracker(_settings, this);		
+        _tracker = std::make_shared<SimpleTracker>(_settings, this);
 	}
 	else if(trackingAlg == "bees book tag matcher")
 	{
-		_tracker = new BeesBookTagMatcher(_settings, this);
+        _tracker = std::make_shared<BeesBookTagMatcher>(_settings, this);
 	}
 	else if ( trackingAlg == "color patch tag matcher" )
 	{
-		_tracker = new ColorPatchTracker(_settings, this);
+        _tracker = std::make_shared<ColorPatchTracker>(_settings, this);
 	}
 	else if (trackingAlg == "Fish - Particle")
 	{
-		_tracker = new ParticleFishTracker(_settings, this);
+        _tracker = std::make_shared<ParticleFishTracker>(_settings, this);
 	}
 	else if (trackingAlg == "Sample Tracker")
 	{
-		_tracker = new SampleTracker(_settings, this);
+        _tracker = std::make_shared<SampleTracker>(_settings, this);
 	}
 	else if (trackingAlg == "Landmark Tracker")
 	{
-		_tracker = new LandmarkTracker(_settings, this);
+        _tracker = std::make_shared<LandmarkTracker>(_settings, this);
 	}
 	if ( trackingAlg != "no tracking" )
 		connectTrackingAlg(_tracker);
@@ -443,22 +442,22 @@ void BioTracker::trackingAlgChanged(QString trackingAlg)
 	emit changeTrackingAlg(_tracker);
 }
 
-void BioTracker::connectTrackingAlg(TrackingAlgorithm* tracker)
+void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 {	
 	QObject::connect(ui.videoView,		SIGNAL ( pressEvent			(QMouseEvent*) ), 
-		tracker, SLOT(mousePressEvent		(QMouseEvent*) ));
+        tracker.get(), SLOT(mousePressEvent		(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), 
-		tracker, SLOT(mouseReleaseEvent	(QMouseEvent*) ));
+        tracker.get(), SLOT(mouseReleaseEvent	(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( moveEvent			(QMouseEvent*) ), 
-		tracker, SLOT(mouseMoveEvent		(QMouseEvent*) ));
+        tracker.get(), SLOT(mouseMoveEvent		(QMouseEvent*) ));
 	QObject::connect(ui.videoView,		SIGNAL ( mouseWheelEvent	(QWheelEvent*) ), 
-		tracker, SLOT(mouseWheelEvent		(QWheelEvent*) ));
+        tracker.get(), SLOT(mouseWheelEvent		(QWheelEvent*) ));
 
-	QObject::connect(tracker, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), 
+    QObject::connect(tracker.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)),
 		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
-	QObject::connect( tracker, SIGNAL( update() ), 
+    QObject::connect( tracker.get(), SIGNAL( update() ),
 		ui.videoView, SLOT( updateGL() ));
-	QObject::connect(tracker,		SIGNAL ( requestCurrentScreen() ), 
+    QObject::connect(tracker.get(),		SIGNAL ( requestCurrentScreen() ),
 		ui.videoView, SLOT( getCurrentScreen() ));
 	if(_tracker)
 	{
