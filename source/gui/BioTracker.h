@@ -156,7 +156,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-	void changeTrackingAlg(TrackingAlgorithm &trackingAlgorithm);
+	void changeTrackingAlg(TrackingAlgorithm *trackingAlgorithm);
 
 };
 

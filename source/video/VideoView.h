@@ -44,7 +44,7 @@ private:
 	int _lastMPos[2];
 
 	public slots:
-		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
+		void setTrackingAlgorithm(TrackingAlgorithm *trackingAlgorithm);
 		void setPanZoomMode (bool isPanZoom);
 		cv::Mat getCurrentScreen();
 
