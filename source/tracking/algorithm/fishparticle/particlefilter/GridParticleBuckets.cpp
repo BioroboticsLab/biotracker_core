@@ -18,6 +18,7 @@ GridParticleBuckets::~GridParticleBuckets(void)
 
 bool GridParticleBuckets::putInBucket(Particle particle) {
 	std::vector<Particle>& candidate = getBucketForParticle(particle);
+	return true;
 }
 
 std::vector<Particle>& GridParticleBuckets::getBucketForParticle(const Particle& particle) {

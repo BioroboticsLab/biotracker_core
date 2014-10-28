@@ -23,7 +23,7 @@ private:
 
 	std::vector<std::vector<std::vector<Particle>>> _buckets;
 
-	std::vector<Particle>& getBucketForParticle(const Particle& particle)
+	std::vector<Particle>& getBucketForParticle(const Particle& particle);
 };
 
 #endif
