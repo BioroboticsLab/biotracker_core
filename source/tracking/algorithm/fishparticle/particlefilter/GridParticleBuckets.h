@@ -9,7 +9,7 @@
 class GridParticleBuckets
 {
 public:
-	GridParticleBuckets(std::size_t max_per_bucket, std::size_t real_rows, std::size_t real_cols, std::size_t bucket_rows, std::size_t bucket_cols);
+	GridParticleBuckets(std::size_t max_per_bucket, std::size_t real_rows, std::size_t real_cols, std::size_t bucket_width, std::size_t bucket_height);
 	~GridParticleBuckets(void);
 
 	bool putInBucket(Particle particle);
@@ -17,8 +17,8 @@ public:
 private:
 	const std::size_t _real_rows;
 	const std::size_t _real_cols;
-	const std::size_t _bucket_rows;
-	const std::size_t _bucket_cols;
+	const std::size_t _bucket_width;
+	const std::size_t _bucket_height;
 	const std::size_t _max_per_bucket;
 
 	std::vector<std::vector<std::vector<Particle>>> _buckets;
