@@ -2,24 +2,18 @@
 #include <QtWidgets/QApplication>
 #include "source/settings/Settings.h"
 
-#include <source/external/cereal/archives/xml.hpp>
-#include <source/external/cereal/archives/json.hpp>
-#include <cereal/types/polymorphic.hpp>
-
-#include <fstream>
-
 int main(int argc, char *argv[])
 {
-    std::ofstream osxml("out.xml", std::ios::binary);
-    cereal::XMLOutputArchive archivexml(osxml);
+//    std::ofstream osxml("out.xml", std::ios::binary);
+//    cereal::XMLOutputArchive archivexml(osxml);
 
-    std::ofstream osjson("out.json", std::ios::binary);
-    cereal::JSONOutputArchive archivejson(osjson);
+//    std::ofstream osjson("out.json", std::ios::binary);
+//    cereal::JSONOutputArchive archivejson(osjson);
 
-    TrackedObject object(0);
+    //TrackedObject object(0);
     //std::unique_ptr<ObjectModel> model = std::unique_ptr<ObjectModel>(new DerivedObjectModel());
-    archivexml(object);
-    archivejson(object);
+    //archivexml(object);
+    //archivejson(object);
 
     QApplication app(argc, argv);
 	if (!QGLFormat::hasOpenGL()) {

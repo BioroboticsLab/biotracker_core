@@ -20,7 +20,7 @@ private:
 
 
 	public:
-		LandmarkTracker	( Settings & settings,  QWidget *parent );
+        LandmarkTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
 		~LandmarkTracker	( void );
 		
 

@@ -2,22 +2,25 @@
 #define TrackingAlgorithm_H
 
 #include <cv.h>
-#include <source/tracking/trackedObject/TrackedObject.h>
 #include <vector>
 #include <source/settings/Settings.h>
 #include <qvector2d.h>
 #include <source/settings/Messages.h>
 #include <QMouseEvent>
 #include <qwidget.h>
+#include <fstream>
 
+#include "tracking/trackedObject/TrackedObject.h"
 
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 class TrackingAlgorithm : public QObject
 {
 	Q_OBJECT
 
 public:
-	TrackingAlgorithm( Settings & settings, QWidget *parent );
+    TrackingAlgorithm( Settings& settings, std::string& serializationPath, QWidget *parent );
 	virtual	~TrackingAlgorithm();
 
 	/**
@@ -27,7 +30,7 @@ public:
 	* @param: frame number
 	* @param: frame
 	*/
-	virtual void track		( ulong frameNumber, cv::Mat& frame )	= 0;
+    virtual void track		( ulong frameNumber, cv::Mat& frame );
 
 	/**
 	* paint will be called by "VideoViews" paintGL method
@@ -55,8 +58,7 @@ public:
 	*/
 	virtual QWidget* getParamsWidget();
 	
-	void loadObjects( std::vector<TrackedObject> * objects );
-
+    void loadObjects(std::vector<TrackedObject> &&objects);
 
 public slots:
 	//mouse click and move events
@@ -78,12 +80,12 @@ signals:
 
 	cv::Mat requestCurrentScreen();
 
-
 protected:
 	Settings & _settings;
 	QWidget * _parent;
-	std::vector<TrackedObject> * _trackedObjects;
+    std::vector<TrackedObject> _trackedObjects;
 
+    std::string _serializationPathName;
 };
 
 

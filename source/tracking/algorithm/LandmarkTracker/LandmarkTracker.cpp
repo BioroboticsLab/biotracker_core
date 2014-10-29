@@ -6,7 +6,8 @@
 
 
 
-LandmarkTracker::LandmarkTracker( Settings & settings,  QWidget *parent) : TrackingAlgorithm( settings, parent )
+LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
+    : TrackingAlgorithm( settings, serializationPathName, parent )
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();

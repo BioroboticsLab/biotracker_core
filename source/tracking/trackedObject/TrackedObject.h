@@ -14,18 +14,23 @@ class TrackedObject
 {
 public:
     TrackedObject(size_t id);
-    void push_back(std::unique_ptr<ObjectModel>&& object);
+    //TODO: check if default ctor is really necessary
+    TrackedObject() {}
 
+    void push_back(std::shared_ptr<ObjectModel> object);
+    std::shared_ptr<ObjectModel> top() const;
+
+    size_t id() const { return _id; }
 
 private:
 	int _id;	
-    std::deque<std::unique_ptr<ObjectModel>> _objectTimeStamps;
+    std::deque<std::shared_ptr<ObjectModel>> _objectTimeStamps;
 
     friend class cereal::access;
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(_id, _objectTimeStamps);//, _objectTimeStamps);
+        ar(_id, _objectTimeStamps);
     }
 };
 

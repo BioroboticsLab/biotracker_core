@@ -3,7 +3,6 @@
 
 #include <cereal/access.hpp>
 
-
 /**
 * class representing the object/animal 
 * which is to be tracked
