@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\FishTracker\property\Rectification.cpp" />
     <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_glwidget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='2012 CTP Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -206,6 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='2012 CTP Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\helper\cv\Rectification.cpp" />
     <ClCompile Include="source\helper\SystemConfigCheck.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.cpp" />
@@ -297,6 +299,8 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='2012 CTP Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
     </CustomBuild>
+    <ClInclude Include="..\FishTracker\property\Rectification.h" />
+    <ClInclude Include="source\helper\cv\Rectification.h" />
     <ClInclude Include="source\helper\SystemConfigCheck.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.h" />
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.h" />
@@ -549,6 +553,7 @@
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.3.2" />
-		<UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2012_opengl" /></VisualStudio>
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2012_opengl" />
+    </VisualStudio>
   </ProjectExtensions>
 </Project>
