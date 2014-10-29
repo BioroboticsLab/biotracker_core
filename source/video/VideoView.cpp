@@ -127,8 +127,8 @@ void VideoView::paintGL()
 
 	//check which part of the picture is on screen
 	//by unprojecting lower right and upper left corner
-	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
-	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
+	QPoint lowerRight = unprojectScreenPos(QPoint(this->width(),this->height()));
+	QPoint upperLeft = unprojectScreenPos(QPoint(0,0));
    
 	//if image was dragged out abort painting
 	if (upperLeft.x() > _displayImage.cols || upperLeft.y() > _displayImage.rows || lowerRight.x() < 0 || lowerRight.y() < 0)
@@ -204,7 +204,7 @@ void VideoView::resizeGL(int width, int height)
 }
 
 
-QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
+QPoint VideoView::unprojectScreenPos(QPoint position)
 {
 	//variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
@@ -216,7 +216,7 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
 	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
-	/*GLint isOnPicture = */ gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+	/*GLint isOnPicture = */ gluUnProject(position.x(), viewport[3] - position.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	pictureCoord.setX(static_cast<int>(posX));
 	pictureCoord.setY(static_cast<int>(posY));
 	return pictureCoord;
@@ -253,7 +253,7 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	else
 	{
 
-		QPoint p  = unprojectMousePos(e->pos());
+		QPoint p  = unprojectScreenPos(e->pos());
 		const QPointF *localPos = new QPointF(p);
 		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());			
 		emit moveEvent ( modifiedEvent );		
@@ -279,7 +279,7 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	}
 	else
 	{
-		QPoint p  = unprojectMousePos(e->pos());
+		QPoint p  = unprojectScreenPos(e->pos());
 		const QPointF *localPos = new QPointF(p);
 		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
 		emit pressEvent ( modifiedEvent );
@@ -294,7 +294,7 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 		_isPanning = false;
 	}
 	else{
-		QPoint p  = unprojectMousePos(e->pos());
+		QPoint p  = unprojectScreenPos(e->pos());
 		const QPointF *localPos = new QPointF(p);
 		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
 		emit releaseEvent ( modifiedEvent );
@@ -303,7 +303,7 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 
 void VideoView::wheelEvent( QWheelEvent * e )
 {
-	QPoint picturePos  = unprojectMousePos(e->pos());
+	QPoint picturePos  = unprojectScreenPos(e->pos());
 
 	if (_isPanZoomMode)
 	{

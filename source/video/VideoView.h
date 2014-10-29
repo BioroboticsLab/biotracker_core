@@ -23,7 +23,7 @@ protected:
 	void initializeGL(); 
 	void paintGL(); 
 	void resizeGL(int width, int height);
-	QPoint unprojectMousePos(QPoint mouseCoord);
+	QPoint unprojectScreenPos(QPoint mouseCoord);
 	void mouseMoveEvent( QMouseEvent * e );
 	void mousePressEvent( QMouseEvent * e );
 	void mouseReleaseEvent( QMouseEvent * e );
