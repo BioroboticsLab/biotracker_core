@@ -74,14 +74,14 @@
     <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
+    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_SampleTracker.cpp">
-      <Filter>Generated Files\Debug</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_SampleTracker.cpp">
-      <Filter>Generated Files\Release</Filter>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\tracking\trackedObject\ObjectModel.cpp">
       <Filter>Source Files</Filter>
@@ -89,7 +89,7 @@
     <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.cpp">
+    <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\tracking\algorithm\LandmarkTracker\toolwindow.cpp">
@@ -121,11 +121,15 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_toolwindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_toolwindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\settings\Messages.h" />
+    <ClInclude Include="source\settings\Param.h" />
+    <ClInclude Include="source\settings\ParamNames.h" />
+    <ClInclude Include="source\settings\Settings.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\FishCandidate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -171,14 +175,8 @@
     <ClInclude Include="source\tracking\trackedObject\TrackedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\SampleTracker\SampleObject.h">
+    <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_toolwindow.h">
-      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="source\settings\Messages.h" />
     <ClInclude Include="source\settings\Param.h" />

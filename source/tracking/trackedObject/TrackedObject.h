@@ -12,6 +12,7 @@ public:
 	ObjectModel* getObject(int frameNumber);
 	void add(ObjectModel*, int frameNumber);
 	void exchange(ObjectModel*, int frameNumber);
+	virtual ~TrackedObject() = 0;
 private:
 	int _id;	
 	std::deque<ObjectModel> _objectTimeStamps;

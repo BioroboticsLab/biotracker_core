@@ -88,14 +88,14 @@ public:
 	 * Gets the parameters.
 	 * @return: a vector containing all tracking parameters.
 	 */
-	std::vector<TrackerParam::Param> getParams();
+	std::vector<TrackerParam::Param> getParams() const;
 
 	/**
 	 * Gets the parameter value provided by parameter name. 
 	 * @param: paramName, the parameter name,
 	 * @return: the value of the parameter as the specified type.
 	 */
-    template <typename T> T getValueOfParam(std::string paramName);
+    template <typename T> T getValueOfParam(std::string paramName) const;
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.
@@ -105,5 +105,5 @@ public:
 	
 private:
 	std::vector<TrackerParam::Param> _params;
-	int split(std::string &txt, std::vector<std::string> &strs, char ch);
+	static std::vector<std::string> split(const std::string &txt, char ch);
 };

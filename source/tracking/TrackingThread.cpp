@@ -28,15 +28,13 @@ TrackingThread::TrackingThread(Settings &settings) :
     _frameNumber(0),
     _maxSpeed(false),
     _settings(settings),
-    _tracker(NULL)
+    _tracker(nullptr)
 {
 	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
-	_trackedObjects = std::vector<TrackedObject>();
 }
 
 TrackingThread::~TrackingThread(void)
 {
-	if(_tracker) delete _tracker;
 }
 
 
@@ -136,7 +134,7 @@ void TrackingThread::run()
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
 
-			std::chrono::microseconds target_dur((int) (1000000. / _fps));
+			std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
             std::chrono::microseconds dur =
                     std::chrono::duration_cast<std::chrono::microseconds>(
                         std::chrono::system_clock::now() - t);
@@ -343,11 +341,10 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
+void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
-	delete _tracker;
-	_tracker = &trackingAlgorithm;		
+	_tracker = trackingAlgorithm;		
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()

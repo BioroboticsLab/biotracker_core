@@ -1,6 +1,7 @@
 #ifndef TrackingThread_h
 #define TrackingThread_h
 
+#include <memory>
 #include <cv.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -9,7 +10,6 @@
 //#include <video/Rectification.h>
 #include <source/settings/Settings.h>
 #include <source/settings/Messages.h>
-#include <source/tracking/trackedObject/TrackedObject.h>
 #include <source/tracking/TrackingAlgorithm.h>
 #include <QWaitCondition>
 
@@ -83,8 +83,7 @@ private:
 
 	Settings &_settings;
 
-	TrackingAlgorithm* _tracker;
-	std::vector<TrackedObject> _trackedObjects;
+	std::shared_ptr<TrackingAlgorithm>  _tracker;
 
 	/**
 	* Gets current frame number.
@@ -166,7 +165,7 @@ private:
 		*/
 		void setMaxSpeed (bool enabled);
 
-		void setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm);
+		void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 signals:
 		/**
 		* Signals when a tracking sequence is done.

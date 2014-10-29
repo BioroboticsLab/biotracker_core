@@ -3,9 +3,18 @@
 #include <opencv2/opencv.hpp>
 
 #include "particlefilter/ParticleBrightnessObserver.h"
+#include "particlefilter/GridParticleBuckets.h"
 
+#include <utility> // std::move
 
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2);
+/**
+ * Predicate used by this algorithm to sort particles, highest to lowest score.
+ */
+struct compareReverseParticleScorePredicate {
+  bool operator() (const Particle& p1, const Particle& p2) const {
+    return p1.getScore() > p2.getScore();
+  }
+};
 
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
@@ -27,7 +36,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 /**
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
-void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
+void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 	try {
 		// TODO check if frameNumber is jumping -> should lead to reseed
 
@@ -53,7 +62,7 @@ void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 			}
 			// Resample
 			// - Sort for better performance (big scores first)
-			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate);
+			std::sort(_current_particles.begin(), _current_particles.end(), compareReverseParticleScorePredicate());
 			// - importance resampling
 			importanceResample();
 		}
@@ -76,13 +85,14 @@ void ParticleFishTracker::track( unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
+	GridParticleBuckets buckets(200, _prepared_frame.rows, _prepared_frame.cols, 20, 20);
 	// Make a copy and generate new particles.
-	std::vector<Particle> old_particles = _current_particles;
-	size_t random_new_particles = _current_particles.size() * 0.01;
+	size_t random_new_particles = 0;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
+	std::vector<Particle> old_particles = std::move(_current_particles);
 	_current_particles.clear();
 
-	for (size_t i = 0; i < old_particles.size()-random_new_particles; i++) {
+	for (size_t i = 0; i < old_particles.size(); i++) {
 		size_t index = 0;
 		float rand = _rng.uniform(0.f, _sum_scores);
 		for (float position = 0; position + old_particles[index].getScore() < rand; ) {
@@ -90,9 +100,13 @@ void ParticleFishTracker::importanceResample() {
 			++index;
 		}
 		Particle to_wiggle = old_particles[index];
-		//if (!(++cluster_counts[_clusters.getClosestClusterIndex(to_wiggle)] > 200) || retry_count > 10) {
-		wiggleParticle(to_wiggle);
-		_current_particles.push_back(to_wiggle);
+
+		if (buckets.putInBucket(to_wiggle)) {
+			wiggleParticle(to_wiggle);
+			_current_particles.push_back(to_wiggle);
+		} else {
+			++random_new_particles;
+		}
 	}
 	seedParticles(random_new_particles, 0, 0, _prepared_frame.cols, _prepared_frame.rows);
 }
@@ -159,8 +173,8 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 255, 0), -1);
 			} else {
 				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 230;
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 20 + scaled_score, 0), -1);
+				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 200;
+				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 50 + scaled_score, 0), -1);
 			}
 		}
 
@@ -187,10 +201,3 @@ void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
 void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
-
-/**
-* Predicate used by this algorithm to sort particles, highest to lowest score.
-*/
-static bool compareReverseParticleScorePredicate(const Particle& p1, const Particle& p2) {
-	return p1.getScore() > p2.getScore();
-}

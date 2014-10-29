@@ -2,6 +2,7 @@
 #define BioTracker_H
 
 #include <time.h>
+#include <memory>
 
 // Open CV
 #include <cv.h>
@@ -42,7 +43,7 @@ class BioTracker: public QMainWindow
 	Q_OBJECT
 
 public:
-	BioTracker(Settings &settings, QWidget *parent = 0,  Qt::WindowFlags flags = 0);
+	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -119,9 +120,10 @@ private:
 	void initCapture();
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
-	void connectTrackingAlg(TrackingAlgorithm* tracker);
+    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
-	TrackingAlgorithm* _tracker;
+
+    std::shared_ptr<TrackingAlgorithm> _tracker;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
@@ -156,7 +158,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-	void changeTrackingAlg(TrackingAlgorithm &trackingAlgorithm);
+    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 
 };
 

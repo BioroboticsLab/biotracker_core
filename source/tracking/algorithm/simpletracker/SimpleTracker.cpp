@@ -20,7 +20,11 @@ const int SimpleTracker::CANDIDATE_SCORE_THRESHOLD = 30;
 
 const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 5;
 
-static bool isYounger(const TrackedFish&, const TrackedFish&);
+struct isYounger {
+  bool operator() (const TrackedFish& lhs, const TrackedFish& rhs) const {
+    return lhs.age_of_last_known_position() < rhs.age_of_last_known_position();
+  }
+};
 
 SimpleTracker::SimpleTracker(Settings & settings, QWidget *parent) : TrackingAlgorithm(settings, parent), _bg_subtractor(BgSub())
 {
@@ -58,7 +62,7 @@ void SimpleTracker::track( ulong, cv::Mat & frame) {
 
 	// TRACKING
 	// (1) Find the next contour belonging to each tracked fish (recently found fish first)
-	std::sort(_tracked_fish.begin(), _tracked_fish.end(), isYounger);
+	std::sort(_tracked_fish.begin(), _tracked_fish.end(), isYounger() );
 	for (TrackedFish& trackedFish : _tracked_fish) {
 		unsigned age = trackedFish.age_of_last_known_position();
 		float maxRange = std::min(age * MAX_TRACK_DISTANCE_PER_FRAME, MAX_TRACK_DISTANCE);
@@ -86,7 +90,7 @@ void SimpleTracker::track( ulong, cv::Mat & frame) {
 	if (_tracked_fish.size() < MAX_NUMBER_OF_TRACKED_OBJECTS) {
 		std::vector<FishCandidate> candidates_to_promote;
 		std::vector<FishCandidate> candidates_to_drop;
-		std::sort(_fish_candidates.begin(), _fish_candidates.end(), isYounger);
+		std::sort(_fish_candidates.begin(), _fish_candidates.end(), isYounger() );
 		for (FishCandidate& candidate : _fish_candidates) {
 			cv::Point2f currentPosition = candidate.last_known_position();
 			float minDistance = MAX_TRACK_DISTANCE + 1;
@@ -163,10 +167,6 @@ void SimpleTracker::reset() {
 	_bg_subtractor = BgSub();
 	_tracked_fish.clear();
 	_fish_candidates.clear();
-}
-
-static bool isYounger(const TrackedFish& a, const TrackedFish& b) {
-	return a.age_of_last_known_position() < b.age_of_last_known_position();
 }
 
 void SimpleTracker::paint		( cv::Mat& ){}

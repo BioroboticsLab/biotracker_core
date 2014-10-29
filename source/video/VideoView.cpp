@@ -4,13 +4,21 @@
 
 #include "VideoView.h"
 #include <QMouseEvent>
-#include <GL/glu.h>
+
+// OS X puts the headers in a different location in the include path than
+// Windows and Linux, so we need to distinguish between OS X and the other
+// systems.
+#ifdef __APPLE__
+	#include <OpenGL/glu.h>
+#else
+	#include <GL/glu.h>
+#endif
 
 QMutex trackMutex;
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent),
-	_tracker(NULL)
+	_tracker(nullptr)
 {
 	_zoomFactor = 1.0;
 	_panX = 0;
@@ -32,8 +40,8 @@ void VideoView::fitToWindow()
 {
 	int width = this->width();
 	int height = this->height();
-	float imgRatio = (float)_displayImage.cols/(float)_displayImage.rows;
-	float windowRatio = (float)width/(float)height;
+	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
 	{
 		_zoomFactor = _displayImage.rows/(width/imgRatio);
@@ -125,7 +133,7 @@ void VideoView::paintGL()
 	int width=_displayImage.cols;
 	int height=_displayImage.rows;
 	//Tile size
-	int N = 64;
+	//int N = 64;
 	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
 	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
 	if(upperLeft.x() > 0 )
@@ -149,7 +157,7 @@ void VideoView::paintGL()
 	//set pixel storage mode to byte alignment
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1 );
 	//and define number of pixels in a row
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) imageCopy.step/imageCopy.channels());
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, static_cast<int>(imageCopy.step)/imageCopy.channels());
 	cv::Mat tile = imageCopy(cv::Range(r, height),
 		cv::Range(c, width));
 	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
@@ -203,16 +211,16 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
 	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
-	GLint isOnPicture = gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
-	pictureCoord.setX((int)posX);
-	pictureCoord.setY((int)posY);
+	/*GLint isOnPicture = */ gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+	pictureCoord.setX(static_cast<int>(posX));
+	pictureCoord.setY(static_cast<int>(posY));
 	return pictureCoord;
 }
 
-void VideoView::setTrackingAlgorithm(TrackingAlgorithm &trackingAlgorithm)
+void VideoView::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm)
 {
 	QMutexLocker locker(&trackMutex);	
-	_tracker = &trackingAlgorithm;		
+	_tracker = trackingAlgorithm;		
 }
 
 void VideoView::takeScreenshot(QString screenShotFilename)

@@ -10,14 +10,14 @@ class TrackedFish :
 {
 public:
 	TrackedFish(int id);
-	virtual ~TrackedFish(void);
+	virtual ~TrackedFish() override;
 	int id() const;
 	void setNextPosition(cv::Point2f position);
 	void setNextPositionUnknown();
 	cv::Point2f last_known_position() const;
 	unsigned age_of_last_known_position() const;
 	void set_associated_color(const cv::Scalar& color);
-	cv::Scalar associated_color();
+	cv::Scalar associated_color() const;
 protected:
 	cv::Point2f _last_known_position;
 	unsigned _age_of_last_known_position;
