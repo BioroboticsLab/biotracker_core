@@ -79,6 +79,21 @@
     <ClCompile Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\trackedObject\ObjectModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -134,6 +149,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
