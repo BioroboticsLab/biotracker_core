@@ -8,6 +8,15 @@
 #include <QPolygon>
 #include <utility>
 
+// current tag design 
+/** inner radius */
+#define IR 1.2
+/** middle radius */
+#define MR 2.2
+/** outer radius */
+#define OR 3
+
+#define axisTag 25
 
 //default constructor
 //THIS IS CPP 11
