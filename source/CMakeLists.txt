@@ -5,11 +5,6 @@ file(GLOB gui_src
 	gui/*.cpp gui/*.h)
 source_group(gui FILES ${gui_src})
 
-file(GLOB helper_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	helper/*.cpp helper/*.h)
-source_group(helper FILES ${helper_src})
-
 file(GLOB settings_src
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	settings/*.cpp settings/*.h)

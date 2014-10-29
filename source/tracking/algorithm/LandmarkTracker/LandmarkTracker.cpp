@@ -8,14 +8,16 @@
 
 LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
     : TrackingAlgorithm( settings, serializationPathName, parent )
+    , toolWindow(nullptr)
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();
-    _selectorRecEnd = cv::Point();
+	_selectorRecEnd = cv::Point();
 	
+
 	//KML
 	std::cout<<"LANDMARK TRACKER"<<std::endl;
-	
+
 }
 
 
@@ -23,14 +25,15 @@ LandmarkTracker::~LandmarkTracker(void)
 {
 }
 
-void LandmarkTracker::track		( ulong /*frameNumber*/, cv::Mat& /*frame*/ ){}
+void LandmarkTracker::track		( ulong frameNumber, cv::Mat& frame ){}
+
 void LandmarkTracker::paint		( cv::Mat& image )
 {
 	if(_showSelectorRec)
 	{
 		drawRectangle(image);
 	}
-	
+
 }
 
 
@@ -40,43 +43,30 @@ void LandmarkTracker::reset		(){}
 void LandmarkTracker::drawRectangle(cv::Mat image)
 {
 	cv::rectangle( image,
-           _selectorRecStart,
-           _selectorRecEnd,
-           cv::Scalar(0, 0, 255 ),
-           1,
-           8 );
+		_selectorRecStart,
+		_selectorRecEnd,
+		cv::Scalar(0, 0, 255 ),
+		1,
+		8 );
 }
 
 void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 {
 	if(_showSelectorRec)
-		{
-			_selectorRecEnd.x = e->x();
-			_selectorRecEnd.y = e->y();
-			//draw rectangle!
-			emit update();
-		}
+	{
+		_selectorRecEnd.x = e->x();
+		_selectorRecEnd.y = e->y();
+		//draw rectangle!
+		emit update();
+	}
 }
 void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 {
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
-		/*//check for shift modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{
-			int x = e->x(); int y = e->y();
-			std::string note = "shift + left button press on: x=" + QString::number(x).toStdString() + " y=" + QString::number(y).toStdString();
-			//initialize coordinates for selection tool
-			_selectorRecStart.x = e->x();
-			_selectorRecStart.y = e->y();
-			_selectorRecEnd.x = e->x();
-			_selectorRecEnd.y = e->y();
-			_showSelectorRec = true;	
-			emit notifyGUI(note,MSGS::NOTIFICATION);
-		}*/
-		// int x = e->x(); int y = e->y();
-			
+		int x = e->x(); int y = e->y();
+
 		//initialize coordinates for selection tool
 		_selectorRecStart.x = e->x();
 		_selectorRecStart.y = e->y();
@@ -103,10 +93,12 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		}
 	}
-	
-	//defineROI(_image);
+
 	defineROI(emit requestCurrentScreen());
-	
+	startTool();
+
+
+
 }
 
 void LandmarkTracker::mouseWheelEvent ( QWheelEvent *) {}
@@ -125,8 +117,32 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 	if(box.width > 0 && box.height > 0){
 
 		cv::Mat roi(image, box);
-		cv::namedWindow("ROI");
-		cv::imshow("ROI", roi);
+		selectedRoi = roi.clone();
 	}
 
 }
+
+void LandmarkTracker::startTool()
+{
+
+	if(toolWindow == nullptr)
+	{
+		toolWindow =new ToolWindow(this);
+		toolWindow->initToolWindow();
+		toolWindow->show();
+	}
+}
+
+void LandmarkTracker::setToolPtr()
+{
+	toolWindow = nullptr;
+}
+
+cv::Mat LandmarkTracker::getSelectedRoi()
+{
+	return selectedRoi;
+}
+
+
+}
+

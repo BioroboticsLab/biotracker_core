@@ -16,8 +16,8 @@ void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned 
 	// Prepare arguments for cv::kmeans.
 	cv::Mat_<float> data(particles.size(), 2);
 	for (int i = 0; i < data.rows; i++) {
-		 data[i][0] = particles[i].getX();
-		 data[i][1] = particles[i].getY();
+		data[i][0] = particles[i].getX();
+		data[i][1] = particles[i].getY();
 	}
 	int k = num_clusters;
 	cv::Mat bestLabels;

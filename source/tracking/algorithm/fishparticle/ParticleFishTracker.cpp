@@ -26,7 +26,8 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serial
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
-{
+	, _showOriginal(false)
+{	
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)
@@ -38,6 +39,10 @@ ParticleFishTracker::~ParticleFishTracker(void)
 */
 void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 	try {
+		//dont do nothing if we ain't got an image
+		if(frame.empty())
+			return;
+
 		// TODO check if frameNumber is jumping -> should lead to reseed
 
 		// (1) Preprocess frame
@@ -85,7 +90,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
-	GridParticleBuckets buckets(200, _prepared_frame.rows, _prepared_frame.cols, 20, 20);
+	GridParticleBuckets buckets(25, _prepared_frame.rows, _prepared_frame.cols, 15, 15);
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
@@ -166,6 +171,9 @@ void ParticleFishTracker::seedParticles(unsigned num_particles, int min_x, int m
 * Draws the result of the tracking for the current frame.
 */
 void ParticleFishTracker::paint(cv::Mat& image) {
+	//dont paint if we want to see original image
+	if(_showOriginal)
+		return;
 	if (!_prepared_frame.empty()) {
 		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
 		for (const Particle& p : _current_particles) {
@@ -173,8 +181,8 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 255, 0), -1);
 			} else {
 				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 200;
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 50 + scaled_score, 0), -1);
+				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 220;
+				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
 			}
 		}
 
@@ -197,7 +205,28 @@ void ParticleFishTracker::reset() {
 	// TODO reset more...?
 }
 
-void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
+QWidget* ParticleFishTracker::getToolsWidget	()
+{
+	initUI();
+	QFrame *toolsFrame = new QFrame(_parent);
+	QFormLayout *layout = new QFormLayout;
+	layout->addRow(_modeBut);
+	toolsFrame->setLayout(layout);
+	return toolsFrame;
+}
+
+void ParticleFishTracker::initUI()
+{
+	_modeBut = new QPushButton("show Original!", _parent);	
+	QObject::connect(this->_modeBut, SIGNAL(clicked()), this, SLOT(switchMode()));
+}
+
+void ParticleFishTracker::switchMode()
+{
+	_showOriginal = !_showOriginal;
+	if (_showOriginal)
+		_modeBut->setText("show Filter!");
+	else
+		_modeBut->setText("show Original!");
+	emit update();
+}
