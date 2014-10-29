@@ -33,7 +33,7 @@ bool SystemConfigCheck::checkConfigFileExist(QString* notificationMessage)
 {
 	if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
 		notificationMessage->clear();
-		notificationMessage->append(QString::fromStdString(MSGS::SYSTEM::NO_CONFIGURATION_FILE));        
+		notificationMessage->append(QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));        
         return false;
     }
 
@@ -50,7 +50,7 @@ bool SystemConfigCheck::checkAll(QString* notificationMessage)
 		if(!(systemCheckOK &= checkConfigFileExist(notificationMessage)))
 		{
 			// try create the template configuration file
-			systemCheckOK = createTemplateConfigFile(notificationMessage);
+			//systemCheckOK = createTemplateConfigFile(notificationMessage);
 			continue;
 		}
 
