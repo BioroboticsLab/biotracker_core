@@ -85,7 +85,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
-	GridParticleBuckets buckets(200, _prepared_frame.rows, _prepared_frame.cols, 20, 20);
+	GridParticleBuckets buckets(25, _prepared_frame.rows, _prepared_frame.cols, 15, 15);
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
@@ -173,8 +173,8 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 255, 0), -1);
 			} else {
 				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 200;
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 50 + scaled_score, 0), -1);
+				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 220;
+				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
 			}
 		}
 
