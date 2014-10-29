@@ -1,3 +1,6 @@
+#ifndef MYNEWGRID_H_
+#define MYNEWGRID_H_
+
 // basic file operations
 #include <iostream>
 //random..
@@ -12,16 +15,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <bitset>
-
-// current tag design 
-/** inner radius */
-#define IR 1.2
-/** middle radius */
-#define MR 2.2
-/** outer radius */
-#define OR 3
-
-#define axisTag 25
 
 // current tag design -- without inner border
 /** outer radius to grid size ratio (tag design constant) */
@@ -99,3 +92,5 @@ public:
 	//function that renders tag axes while being modified
 	void renderModTag();		
 };
+
+#endif
