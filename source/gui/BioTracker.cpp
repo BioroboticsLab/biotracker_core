@@ -427,6 +427,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
         if (_serializationPathMap.count(trackingAlg))
         {
             path = _serializationPathMap.at(trackingAlg);
+            std::cout << "Trying to restore from: " << path << std::endl;
             std::vector<TrackedObject> storedObjects;
             {
                 std::ifstream is(path);

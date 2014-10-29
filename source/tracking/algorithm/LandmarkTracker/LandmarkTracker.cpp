@@ -142,7 +142,3 @@ cv::Mat LandmarkTracker::getSelectedRoi()
 {
 	return selectedRoi;
 }
-
-
-}
-

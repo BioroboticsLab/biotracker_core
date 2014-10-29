@@ -1,6 +1,7 @@
 #include "SimpleTracker.h"
 
 #include <opencv2/opencv.hpp>
+#include <QMutexLocker>
 
 class BgSub : public cv::BackgroundSubtractorMOG2 {
 public:
@@ -19,7 +20,7 @@ const float SimpleTracker::MAX_TRACK_DISTANCE = 1000;
 
 const int SimpleTracker::CANDIDATE_SCORE_THRESHOLD = 30;
 
-const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 5;
+const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 10;
 
 struct isYounger {
   bool operator() (const TrackedObject& lhs,
@@ -33,12 +34,7 @@ struct isYounger {
 SimpleTracker::SimpleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm(settings, serializationPathName, parent)
     , _bg_subtractor(BgSub())
-{
-    auto newFish = std::make_shared<TrackedFish>();
-    TrackedObject object(0);
-    object.push_back(newFish);
-    _trackedObjects.push_back(object);
-}
+{}
 
 void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
     // TODO history, handle frame number,...
@@ -155,25 +151,10 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
         _fish_candidates.clear();
     }
 
-    // END OF TRACKING
-
-    //// Draw the result TODO: put this in paint function
-    //cv::Mat canvas = frame;
-
-    //cv::circle(canvas, cv::Point(50, 50), 50, cv::Scalar(0, 0, 255), -1, 8, 0);
-
-    //for (TrackedFish& fish : _tracked_fish) {
-    //	cv::circle(canvas, fish.last_known_position(), 3, fish.associated_color(), -1, 8, 0 );
-    //}
-
-    //for (FishCandidate& candidate : _fish_candidates) {
-    //	cv::Scalar color(255, 0, 0);
-    //	cv::circle(canvas, candidate.last_known_position(), 2, color, -1, 8, 0 );
-    //}
-
-    //return canvas;
-
-    TrackingAlgorithm::track(frameNumber, frame);
+    {
+        QMutexLocker locker(&lastFrameLock);
+        lastFrame = frame;
+    }
 }
 
 void SimpleTracker::reset() {
@@ -182,7 +163,26 @@ void SimpleTracker::reset() {
     _fish_candidates.clear();
 }
 
-void SimpleTracker::paint		(cv::Mat &){}
+void SimpleTracker::paint (cv::Mat &image)
+{
+    {
+        QMutexLocker locker(&lastFrameLock);
+        if (lastFrame.empty()) return;
+        image = lastFrame;
+    }
+
+    for (TrackedObject& trackedObject : _trackedObjects)
+    {
+        std::shared_ptr<TrackedFish> fish =
+                std::dynamic_pointer_cast<TrackedFish>(trackedObject.top());
+        cv::circle(image, fish->last_known_position(), 3, fish->associated_color(), -1, 8, 0 );
+    }
+
+    for (FishCandidate& candidate : _fish_candidates) {
+        cv::Scalar color(255, 0, 0);
+        cv::circle(image, candidate.last_known_position(), 2, color, -1, 8, 0 );
+    }
+}
 
 void SimpleTracker::mouseMoveEvent		( QMouseEvent * )
 {

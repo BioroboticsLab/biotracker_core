@@ -2,6 +2,7 @@
 #define SimpleTracker_H
 
 #include <opencv2/opencv.hpp>
+#include <QMutex>
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "TrackedFish.h"
@@ -32,6 +33,9 @@ class SimpleTracker : public TrackingAlgorithm
         cv::BackgroundSubtractorMOG2 _bg_subtractor;
         //std::vector<TrackedFish>     _tracked_fish;
         std::vector<FishCandidate>   _fish_candidates;
+
+        QMutex lastFrameLock;
+        cv::Mat lastFrame;
 };
 
 #endif

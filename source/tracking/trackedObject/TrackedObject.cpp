@@ -15,5 +15,5 @@ void TrackedObject::push_back(std::shared_ptr<ObjectModel> object)
 std::shared_ptr<ObjectModel> TrackedObject::top() const
 {
     assert(_objectTimeStamps.size());
-    return _objectTimeStamps.at(_objectTimeStamps.size());
+    return _objectTimeStamps.at(_objectTimeStamps.size() - 1);
 }

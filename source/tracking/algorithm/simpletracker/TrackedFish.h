@@ -6,6 +6,20 @@
 #include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
 
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, cv::Point2f& point)
+{
+    archive(point.x, point.y);
+}
+
+template<class Archive>
+void serialize(Archive& archive, cv::Scalar& scalar)
+{
+    archive(scalar.val);
+}
+}
+
 class TrackedFish :
     public ObjectModel
 {
@@ -28,15 +42,13 @@ protected:
     cv::Scalar  _associated_color;
 
 private:
-    int dummy = 0;
     friend class cereal::access;
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(dummy);
-//        ar(_last_known_position,
-//           _age_of_last_known_position,
-//           _associated_color);
+        ar(_last_known_position,
+           _age_of_last_known_position,
+           _associated_color);
     }
 };
 
