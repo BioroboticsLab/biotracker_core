@@ -32,9 +32,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,6 +118,21 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_toolwindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_ParticleFishTracker.cpp">
+      <Filter>Generated Files\2012 CTP Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Release\moc_ParticleFishTracker.cpp">
+      <Filter>Generated Files\2012 CTP Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ParticleFishTracker.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ParticleFishTracker.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -137,9 +149,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\Particle.h">
@@ -211,6 +220,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
