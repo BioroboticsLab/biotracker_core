@@ -1,8 +1,14 @@
 #include "glwidget.h"
-#include <gl/gl.h>
-#include <gl/glu.h>
 #include <iostream>
 #include "toolwindow.h"
+
+#ifdef __APPLE__
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+#else
+	#include <GL/gl.h>
+	#include <GL/glu.h>	
+#endif
 
 GLWidget::GLWidget(QWidget *parent) :
 	QGLWidget(parent),parent_tw(static_cast<ToolWindow*>(parent)),zoomFactor(-90),rotX(0.5),rotY(50),rotZ(0)
