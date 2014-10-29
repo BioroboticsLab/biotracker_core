@@ -6,28 +6,44 @@
 #include "particlefilter/Particle.h"
 #include "particlefilter/ParticleClusters.h"
 
+//QT Stuff
+#include <QGroupBox>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QPushButton>
+
 /**
- * Implements a particle filtering algorithm to track multiple fish in a tank.
- */
+* Implements a particle filtering algorithm to track multiple fish in a tank.
+*/
 class ParticleFishTracker :
 	public TrackingAlgorithm
 {
+	Q_OBJECT
 public:
 	explicit ParticleFishTracker(Settings& settings, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);
 	virtual void reset();
+	QWidget* getToolsWidget	() override;
+
+	public slots:
+		void switchMode();
 
 private:
+	// indicating which image shall be viewed: original or tracked image
+	bool _showOriginal;
+	// corresponding switching button
+	QPushButton *_modeBut;
+
 	/**
-	 * Used to preprocess the image (mainly background subtraction).
-	 */
+	* Used to preprocess the image (mainly background subtraction).
+	*/
 	FramePreprocessor _preprocessor;
 
 	/**
-	 * The frame to be drawn the next time the GUI requests one.
-	 */
+	* The frame to be drawn the next time the GUI requests one.
+	*/
 	cv::Mat _prepared_frame;
 
 	/**
@@ -66,12 +82,8 @@ private:
 
 	void cutParticleCoords(Particle& to_cut);
 
-	public slots:
-	//mouse click and move events
-	void mouseMoveEvent		( QMouseEvent * e );
-	void mousePressEvent	( QMouseEvent * e );
-	void mouseReleaseEvent	( QMouseEvent * e );
-	void mouseWheelEvent	( QWheelEvent * e );
+	void initUI();
+
 };
 
 

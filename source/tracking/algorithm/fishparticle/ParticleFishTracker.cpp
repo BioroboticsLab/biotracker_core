@@ -26,7 +26,8 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
-{
+	, _showOriginal(false)
+{	
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)
@@ -38,6 +39,10 @@ ParticleFishTracker::~ParticleFishTracker(void)
 */
 void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 	try {
+		//dont do nothing if we ain't got an image
+		if(frame.empty())
+			return;
+
 		// TODO check if frameNumber is jumping -> should lead to reseed
 
 		// (1) Preprocess frame
@@ -166,6 +171,9 @@ void ParticleFishTracker::seedParticles(unsigned num_particles, int min_x, int m
 * Draws the result of the tracking for the current frame.
 */
 void ParticleFishTracker::paint(cv::Mat& image) {
+	//dont paint if we want to see original image
+	if(_showOriginal)
+		return;
 	if (!_prepared_frame.empty()) {
 		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
 		for (const Particle& p : _current_particles) {
@@ -197,7 +205,28 @@ void ParticleFishTracker::reset() {
 	// TODO reset more...?
 }
 
-void ParticleFishTracker::mouseMoveEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mousePressEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mouseReleaseEvent		( QMouseEvent * ){}
-void ParticleFishTracker::mouseWheelEvent		( QWheelEvent * ){}
+QWidget* ParticleFishTracker::getToolsWidget	()
+{
+	initUI();
+	QFrame *toolsFrame = new QFrame(_parent);
+	QFormLayout *layout = new QFormLayout;
+	layout->addRow(_modeBut);
+	toolsFrame->setLayout(layout);
+	return toolsFrame;
+}
+
+void ParticleFishTracker::initUI()
+{
+	_modeBut = new QPushButton("show Original!", _parent);	
+	QObject::connect(this->_modeBut, SIGNAL(clicked()), this, SLOT(switchMode()));
+}
+
+void ParticleFishTracker::switchMode()
+{
+	_showOriginal = !_showOriginal;
+	if (_showOriginal)
+		_modeBut->setText("show Filter!");
+	else
+		_modeBut->setText("show Original!");
+	emit update();
+}
