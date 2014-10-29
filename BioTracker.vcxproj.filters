@@ -133,6 +133,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_ParticleFishTracker.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="source\helper\SystemConfigCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -191,6 +194,9 @@
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
+    <ClInclude Include="source\helper\SystemConfigCheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="source\tracking\TrackingThread.h" />
@@ -272,9 +278,6 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="config.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="source\gui\resources\arrow-back.png" />
