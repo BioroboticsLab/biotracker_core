@@ -5,6 +5,8 @@
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
+#include "toolwindow.h"
+
 
 class LandmarkTracker : public TrackingAlgorithm
 {
@@ -16,6 +18,8 @@ private:
 		//KML
 		void drawRectangle(cv::Mat image);
 		cv::Rect box;
+		cv::Mat selectedRoi;
+		ToolWindow *toolWindow;
 
 
 
@@ -30,7 +34,13 @@ private:
 		void paint			( cv::Mat& image );
 		void reset			( );
 
+		//KML
 		void defineROI( cv::Mat image );
+		void startTool();
+
+		cv::Mat getSelectedRoi();
+
+		void setToolPtr();
 
 
 	public slots:
@@ -43,3 +53,4 @@ private:
 };
 
 #endif
+

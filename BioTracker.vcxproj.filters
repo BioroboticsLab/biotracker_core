@@ -14,8 +14,6 @@
     <ClCompile Include="GeneratedFiles\qrc_BioTracker.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\settings\Param.cpp" />
-    <ClCompile Include="source\settings\Settings.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\FishCandidate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,6 +92,35 @@
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\toolwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\settings\Param.cpp" />
+    <ClCompile Include="source\settings\Settings.cpp" />
+    <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_glwidget.cpp">
+      <Filter>Generated Files\2012 CTP Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Release\moc_glwidget.cpp">
+      <Filter>Generated Files\2012 CTP Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_glwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_glwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\glwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_toolwindow.cpp">
+      <Filter>Generated Files\2012 CTP Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Release\moc_toolwindow.cpp">
+      <Filter>Generated Files\2012 CTP Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_toolwindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_BioTracker.h">
@@ -148,12 +175,13 @@
     <ClInclude Include="source\tracking\trackedObject\TrackedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\settings\Messages.h" />
+    <ClInclude Include="source\settings\Param.h" />
+    <ClInclude Include="source\settings\ParamNames.h" />
+    <ClInclude Include="source\settings\Settings.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="source\tracking\TrackingThread.h" />
@@ -171,6 +199,18 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="source\tracking\algorithm\SampleTracker\SampleTracker.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\toolwindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\glwidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\toolwindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -209,6 +249,16 @@
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\2012 CTP Debug">
+      <UniqueIdentifier>{020b36a4-451f-4198-a90a-b46648ab68fc}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\2012 CTP Release">
+      <UniqueIdentifier>{420b4b69-b546-4b68-85a3-29234e196f7d}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
