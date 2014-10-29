@@ -120,22 +120,23 @@ void VideoView::paintGL()
 	}	
 
 	/**
-	* FOR PERFORMANCE ONLY LOAD VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
+	* FOR PERFORMANCE LOAD JUST THE VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
 	*/
 	// create Texture Atlas
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE,0);// imageCopy.data);
 
-	// variables for splitting image into tiles:
-	// c = starting column, r = starting row
-	// width	= width  of visible part of picture
-	// height	= height	- " -		- " -
+	//check which part of the picture is on screen
+	//by unprojecting lower right and upper left corner
+	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
+	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
+   
+	//if image was dragged out abort painting
+	if (upperLeft.x() > _displayImage.cols || upperLeft.y() > _displayImage.rows || lowerRight.x() < 0 || lowerRight.y() < 0)
+		return;
+	//otherwise set variables indicating which part of picture is visible
 	int c=0,r=0;
 	int width=_displayImage.cols;
 	int height=_displayImage.rows;
-	//Tile size
-	//int N = 64;
-	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
-	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
 	if(upperLeft.x() > 0 )
 		c=upperLeft.x();
 	if(upperLeft.y() > 0 )
@@ -145,6 +146,8 @@ void VideoView::paintGL()
 	if(lowerRight.y() < height-1)
 		height=lowerRight.y()+1;
 
+	//if image was scaled down previously 
+	//we need to adjust coordinates relatively
 	if (_zoomFactor > 1)
 	{
 		c = (c*imageCopy.cols)/_displayImage.cols;
@@ -152,6 +155,8 @@ void VideoView::paintGL()
 		width = (width*imageCopy.cols)/_displayImage.cols;
 		height = (height*imageCopy.rows)/_displayImage.rows;
 	}
+
+
 
 	//to avoid artifacts when using 'glTexSubImage2d' with opencv MAT data,
 	//set pixel storage mode to byte alignment
