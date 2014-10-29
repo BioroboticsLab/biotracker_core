@@ -43,14 +43,14 @@ bool SystemConfigCheck::checkConfigFileExist(QString* notificationMessage)
 bool SystemConfigCheck::checkAll(QString* notificationMessage)
 {
 	bool systemCheckOK = true;
-	int checkTime = 2;
+	int checkTimes = 2;
 
-	for (int i = 0; i < checkTime; i++)
+	for (int i = 0; i < checkTimes; i++)
 	{
 		if(!(systemCheckOK &= checkConfigFileExist(notificationMessage)))
 		{
 			// try create the template configuration file
-			//systemCheckOK = createTemplateConfigFile(notificationMessage);
+			systemCheckOK = createTemplateConfigFile(notificationMessage);
 			continue;
 		}
 
