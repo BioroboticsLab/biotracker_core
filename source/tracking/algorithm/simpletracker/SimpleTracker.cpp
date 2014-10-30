@@ -20,7 +20,7 @@ const float SimpleTracker::MAX_TRACK_DISTANCE = 1000;
 
 const int SimpleTracker::CANDIDATE_SCORE_THRESHOLD = 30;
 
-const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 10;
+const int SimpleTracker::MAX_NUMBER_OF_TRACKED_OBJECTS = 5;
 
 struct isYounger {
   bool operator() (const TrackedObject& lhs,
@@ -66,9 +66,17 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
     std::sort(_trackedObjects.begin(), _trackedObjects.end(), isYounger());
     for (TrackedObject& trackedObject : _trackedObjects)
     {
-        // get most recent ObjectModel of TrackedFish
+        // get object from last frame if available, otherwise the newest one
+        std::shared_ptr<ObjectModel> lastTrackedObject =
+                trackedObject.count(frameNumber - 1) ?
+                    trackedObject.get(frameNumber - 1) :
+                    trackedObject.top();
+        // dynamic cast to TrackedFish
+        auto lastTrackedFish = std::dynamic_pointer_cast<TrackedFish>(
+                    lastTrackedObject);
+        // deep copy
         std::shared_ptr<TrackedFish> trackedFish =
-                std::dynamic_pointer_cast<TrackedFish>(trackedObject.top());
+                std::make_shared<TrackedFish>(*lastTrackedFish);
         unsigned age = trackedFish->age_of_last_known_position();
         float maxRange = std::min(age * MAX_TRACK_DISTANCE_PER_FRAME, MAX_TRACK_DISTANCE);
         cv::Point2f currentPosition = trackedFish->last_known_position();
@@ -89,6 +97,8 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
         } else {
             trackedFish->setNextPositionUnknown();
         }
+        // store TrackedFish
+        trackedObject.add(frameNumber, trackedFish);
     }
 
     // (2) Try to find contours belonging to fish candidates, promoting to TrackedFish as appropriate
@@ -132,7 +142,7 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
             newFish->setNextPosition(promoted.last_known_position());
             newFish->set_associated_color(cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)));
             _fish_candidates.erase(std::find(_fish_candidates.begin(), _fish_candidates.end(), promoted));
-            newObject.push_back(newFish);
+            newObject.add(frameNumber, newFish);
             _trackedObjects.push_back(newObject);
         }
         candidates_to_promote.clear();
@@ -183,16 +193,3 @@ void SimpleTracker::paint (cv::Mat &image)
         cv::circle(image, candidate.last_known_position(), 2, color, -1, 8, 0 );
     }
 }
-
-void SimpleTracker::mouseMoveEvent		( QMouseEvent * )
-{
-}
-void SimpleTracker::mousePressEvent		( QMouseEvent * )
-{
-
-}
-void SimpleTracker::mouseReleaseEvent	( QMouseEvent * )
-{
-}
-
-void SimpleTracker::mouseWheelEvent	( QWheelEvent * ) {}

@@ -18,23 +18,22 @@ class SimpleTracker : public TrackingAlgorithm
 
         SimpleTracker(Settings & settings, std::string& serializationPathName, QWidget *parent);
 
-        void track             (ulong frameNumber, cv::Mat& frame) override;
-        void reset             () override;
-        void paint             (cv::Mat& image) override;
+        void track (ulong frameNumber, cv::Mat& frame) override;
+        void reset () override;
+        void paint (cv::Mat& image) override;
 
     public slots:
         //mouse click and move events
-        void mouseMoveEvent    (QMouseEvent * e) override;
-        void mousePressEvent   (QMouseEvent * e) override;
-        void mouseReleaseEvent (QMouseEvent * e) override;
-        void mouseWheelEvent   (QWheelEvent * e) override;
+        void mouseMoveEvent    (QMouseEvent * /* e */) override {}
+        void mousePressEvent   (QMouseEvent * /* e */) override {}
+        void mouseReleaseEvent (QMouseEvent * /* e */) override {}
+        void mouseWheelEvent   (QWheelEvent * /* e */) override {}
 
     private:
         cv::BackgroundSubtractorMOG2 _bg_subtractor;
-        //std::vector<TrackedFish>     _tracked_fish;
         std::vector<FishCandidate>   _fish_candidates;
 
-        QMutex lastFrameLock;
+        QMutex  lastFrameLock;
         cv::Mat lastFrame;
 };
 

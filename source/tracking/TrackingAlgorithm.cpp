@@ -22,7 +22,7 @@ void TrackingAlgorithm::track(ulong /* frameNumber */, cv::Mat &frame)
 {}
 
 void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects )
-{	_trackedObjects = std::move(objects);	}
+{	_trackedObjects = std::move(objects);  }
 void TrackingAlgorithm::mouseMoveEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mousePressEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * )	{}
