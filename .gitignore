@@ -1,12 +1,16 @@
-BioTracker.vcxproj.user
 Debug/
 GeneratedFiles/
+CMakeLists.txt.user
 *.opensdf
 *.sdf
 *.suo
 *.exe
 *.psess
 *.vsp
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.vspscc
 
 /Release
 /build
