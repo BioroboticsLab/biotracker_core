@@ -3,7 +3,7 @@
 #include "source/tracking/algorithm/nn2dMappingTracker/detector/IDetector.h"
 
 #include "source/tracking/algorithm/nn2dMappingTracker/detector/blob/BlobPose.h"
-#include "source/external/cvblobs/BlobResult.h"
+#include "source/external/opencvblobslib/library/BlobResult.h"
 
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
