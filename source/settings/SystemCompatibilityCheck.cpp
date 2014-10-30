@@ -1,4 +1,4 @@
-#include "SystemConfigCheck.h"
+#include "SystemCompatibilityCheck.h"
 
 #include <iostream>
 
@@ -10,15 +10,8 @@
 #include "source/settings/Messages.h"
 #include "source/settings/ParamNames.h"
 
-SystemConfigCheck::SystemConfigCheck(void)
-{
-}
 
-SystemConfigCheck::~SystemConfigCheck(void)
-{
-}
-
-bool SystemConfigCheck::checkOpenGLSupport(QString* notificationMessage)
+bool SystemCompatibilityCheck::checkOpenGLSupport(QString* notificationMessage)
 {
 	if (!QGLFormat::hasOpenGL()) {
 		notificationMessage->clear();
@@ -29,7 +22,7 @@ bool SystemConfigCheck::checkOpenGLSupport(QString* notificationMessage)
 	return true;
 }
 
-bool SystemConfigCheck::checkConfigFileExist(QString* notificationMessage)
+bool SystemCompatibilityCheck::checkConfigFileExist(QString* notificationMessage)
 {
 	if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
 		notificationMessage->clear();
@@ -40,7 +33,7 @@ bool SystemConfigCheck::checkConfigFileExist(QString* notificationMessage)
 	return true;
 }
 
-bool SystemConfigCheck::checkAll(QString* notificationMessage)
+bool SystemCompatibilityCheck::checkAll(QString* notificationMessage)
 {
 	bool systemCheckOK = true;
 	int checkTimes = 2;
@@ -63,7 +56,7 @@ bool SystemConfigCheck::checkAll(QString* notificationMessage)
 	return systemCheckOK;
 }
 
-bool SystemConfigCheck::createTemplateConfigFile(QString* notificationMessage)
+bool SystemCompatibilityCheck::createTemplateConfigFile(QString* notificationMessage)
 {
 	notificationMessage->clear();
 	QFile file(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE));
