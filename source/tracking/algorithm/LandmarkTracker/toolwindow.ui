@@ -146,7 +146,7 @@
   <customwidget>
    <class>GLWidget</class>
    <extends>QWidget</extends>
-   <header>glwidget.h</header>
+   <header location="global">source/tracking/algorithm/LandmarkTracker/glwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -21,13 +21,18 @@ struct compareReverseParticleScorePredicate {
 */
 ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
     : TrackingAlgorithm(settings, parent)
+    , _showOriginal(false)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
+<<<<<<< HEAD
 	, _showOriginal(false)
 {
+=======
+{	
+>>>>>>> master
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)

@@ -3,9 +3,10 @@
 #include "LandmarkTracker.h"
 
 
-ToolWindow::ToolWindow(LandmarkTracker *parentTracker, QWidget *parent) :
-	QDialog(parent), tracker(parentTracker),
-    ui(new Ui::ToolWindow)
+ToolWindow::ToolWindow(LandmarkTracker *parentTracker, QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::ToolWindow)
+    , tracker(parentTracker)
 {
 
 	ui->setupUi(this);
@@ -46,7 +47,7 @@ QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
     return p;
 }
 
-//Ausgabe für Vector
+//Ausgabe fÃ¼r Vector
 std::ostream &operator<<(std::ostream &os, const Vec3b &v)
 {
 	return os<<"("<<static_cast<unsigned>(v.val[0])<<", "<<static_cast<unsigned>(v.val[1])<<", "<<static_cast<unsigned>(v.val[2])<<")";

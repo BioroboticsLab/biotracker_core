@@ -23,7 +23,7 @@ LandmarkTracker::~LandmarkTracker(void)
 {
 }
 
-void LandmarkTracker::track		( ulong frameNumber, cv::Mat& frame ){}
+void LandmarkTracker::track		( ulong /* frameNumber */, cv::Mat& /* frame */ ){}
 
 void LandmarkTracker::paint		( cv::Mat& image )
 {
@@ -63,8 +63,6 @@ void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
-		int x = e->x(); int y = e->y();
-
 		//initialize coordinates for selection tool
 		_selectorRecStart.x = e->x();
 		_selectorRecStart.y = e->y();
