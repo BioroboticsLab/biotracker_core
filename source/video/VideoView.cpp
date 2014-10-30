@@ -40,6 +40,7 @@ void VideoView::fitToWindow()
 {
 	int width = this->width();
 	int height = this->height();
+	std::cout << std::to_string(width) << std::endl;
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
@@ -53,9 +54,9 @@ void VideoView::fitToWindow()
 		_panX = - ((width - (height*imgRatio))/2)*_zoomFactor;	
 		_panY = 0;
 	}
-	resizeGL(width, height);
+	//resizeGL(width, height);
 	//Draw the scene
-	updateGL();
+	//updateGL();
 }
 
 void VideoView::paintGL()
@@ -188,6 +189,8 @@ void VideoView::initializeGL()
 }
 void VideoView::resizeGL(int width, int height)
 {
+	fitToWindow();
+
 	glViewport(0,0,width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -201,6 +204,8 @@ void VideoView::resizeGL(int width, int height)
 	float bottom = top + height;
 	glOrtho(left, right, bottom, top, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
+
+	updateGL();
 }
 
 
