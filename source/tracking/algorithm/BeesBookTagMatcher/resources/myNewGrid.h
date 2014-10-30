@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #define _USE_MATH_DEFINES
-#include <math.h>
 #include <bitset>
 
 // current tag design -- without inner border

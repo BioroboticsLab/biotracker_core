@@ -2,12 +2,8 @@
 
 class QString;
 
-class SystemConfigCheck
+namespace SystemCompatibilityCheck
 {
-public:
-	SystemConfigCheck(void);
-	~SystemConfigCheck(void);
-
 	/**
 	 * Check the system supports openGL.
 	 * @param: notificationMessage, the notification message,

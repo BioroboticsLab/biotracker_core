@@ -3,7 +3,7 @@
 #include "source/gui/BioTracker.h"
 #include "source/settings/Settings.h"
 #include "source/settings/Messages.h"
-#include "source/helper/SystemConfigCheck.h"
+#include "source/settings/SystemCompatibilityCheck.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,9 +11,7 @@ int main(int argc, char *argv[])
 
 	QString* notificationMessage = new QString("No Error!");
 
-	SystemConfigCheck sysConfChk;
-
-	if(sysConfChk.checkAll(notificationMessage))
+	if(SystemCompatibilityCheck::checkAll(notificationMessage))
 	{
 		delete notificationMessage;
 
