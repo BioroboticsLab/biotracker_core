@@ -207,8 +207,27 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='2012 CTP Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_toolwindow.cpp" />
-    <ClCompile Include="source\helper\cv\Rectification.cpp" />
-    <ClCompile Include="source\helper\SystemConfigCheck.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\blob.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobContour.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobOperators.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobResult.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\ComponentLabeling.cpp" />
+    <ClCompile Include="source\helper\CvHelper.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\simpleBlob\SimpleBlobsDetector.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\Fish.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\FishModel.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\IFishAttributes.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.cpp" />
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\FishPose.cpp" />
+    <ClCompile Include="source\tracking\Rectification.cpp" />
+    <ClCompile Include="source\helper\StringHelper.cpp" />
+    <ClCompile Include="source\settings\SystemCompatibilityCheck.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp" />
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.cpp" />
@@ -273,6 +292,7 @@
     <ClCompile Include="source\settings\Settings.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\TrackedFish.cpp" />
     <ClCompile Include="source\tracking\algorithm\simpletracker\SimpleTracker.cpp" />
+    <ClCompile Include="source\tracking\imagePreProcessor\ImagePreProcessor.cpp" />
     <ClCompile Include="source\tracking\trackedObject\ObjectModel.cpp" />
     <ClCompile Include="source\tracking\algorithm\SampleTracker\SampleObject.cpp" />
     <ClCompile Include="source\tracking\trackedObject\TrackedObject.cpp" />
@@ -299,8 +319,30 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='2012 CTP Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
     </CustomBuild>
-    <ClInclude Include="source\helper\cv\Rectification.h" />
-    <ClInclude Include="source\helper\SystemConfigCheck.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\blob.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobContour.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobLibraryConfiguration.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobOperators.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobResult.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\ComponentLabeling.h" />
+    <ClInclude Include="source\helper\CvHelper.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\IDetector.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\simpleBlob\SimpleBlobsDetector.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\Fish.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\FishModel.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\IFishAttributes.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\FishPose.h" />
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\IPose.h" />
+    <ClInclude Include="source\tracking\Rectification.h" />
+    <ClInclude Include="source\helper\StringHelper.h" />
+    <ClInclude Include="source\settings\SystemCompatibilityCheck.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.h" />
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.h" />
@@ -414,6 +456,8 @@
     <ClInclude Include="source\tracking\algorithm\simpletracker\TrackedFish.h" />
     <ClInclude Include="source\tracking\algorithm\simpletracker\SimpleTracker.h" />
     <ClInclude Include="source\settings\Messages.h" />
+    <ClInclude Include="source\tracking\imagePreProcessor\IImageProcessor.h" />
+    <ClInclude Include="source\tracking\imagePreProcessor\ImagePreProcessor.h" />
     <ClInclude Include="source\tracking\trackedObject\ObjectModel.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Param.h" />
@@ -545,6 +589,9 @@
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\external\opencvblobslib\library\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

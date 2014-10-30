@@ -133,10 +133,70 @@
     <ClCompile Include="GeneratedFiles\Release\moc_ParticleFishTracker.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="source\helper\SystemConfigCheck.cpp">
+    <ClCompile Include="source\tracking\imagePreProcessor\ImagePreProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\helper\cv\Rectification.cpp">
+    <ClCompile Include="source\helper\CvHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helper\StringHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\Rectification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\settings\SystemCompatibilityCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\simpleBlob\SimpleBlobsDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\FishModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\IFishAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\FishPose.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\Fish.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\blob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobContour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobOperators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\ComponentLabeling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_toolwindow.cpp">
@@ -200,10 +260,82 @@
     <ClInclude Include="source\settings\Param.h" />
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
-    <ClInclude Include="source\helper\SystemConfigCheck.h">
+    <ClInclude Include="source\tracking\imagePreProcessor\IImageProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\helper\cv\Rectification.h">
+    <ClInclude Include="source\tracking\imagePreProcessor\ImagePreProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helper\CvHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helper\StringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\Rectification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\settings\SystemCompatibilityCheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\simpleBlob\SimpleBlobsDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\IDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\FishModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\IFishAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\FishPose.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\pose\IPose.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\Fish.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\blob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobContour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobLibraryConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobOperators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\ComponentLabeling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -298,5 +430,8 @@
     <Image Include="source\gui\resources\stop.png" />
     <Image Include="..\..\pix\panZoom.png" />
     <Image Include="source\gui\resources\panZoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\external\opencvblobslib\library\CMakeLists.txt" />
   </ItemGroup>
 </Project>

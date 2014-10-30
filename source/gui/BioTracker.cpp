@@ -148,7 +148,7 @@ void BioTracker::initPicture(QStringList filenames)
 	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
-	//ui.videoView->fitToWindow();
+	ui.videoView->fitToWindow();
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
@@ -215,7 +215,7 @@ void BioTracker::initCapture()
 	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
-	//ui.videoView->fitToWindow();
+	ui.videoView->fitToWindow();
 }
 void BioTracker::invalidFile()
 {
