@@ -19,8 +19,8 @@ struct compareReverseParticleScorePredicate {
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
-    : TrackingAlgorithm(settings, parent)
+ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
+    : TrackingAlgorithm(settings, serializationPathName, parent)
     , _showOriginal(false)
     , _preprocessor(settings)
     , _rng(123)

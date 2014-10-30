@@ -6,8 +6,11 @@ add_subdirectory(settings)
 add_subdirectory(tracking)
 add_subdirectory(video)
 
+file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.qrc")
+qt5_add_resources(UI_RESOURCES ${qrc})
+
 add_executable(BioTracker 
-    ${src} 
+    ${src} ${UI_RESOURCES}
 )
  
 target_link_libraries(BioTracker

@@ -20,7 +20,7 @@ class ParticleFishTracker :
 {
 	Q_OBJECT
 public:
-	explicit ParticleFishTracker(Settings& settings, QWidget *parent);
+    explicit ParticleFishTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);

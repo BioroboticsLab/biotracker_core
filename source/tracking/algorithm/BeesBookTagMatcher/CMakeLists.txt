@@ -1,11 +1,13 @@
-file(GLOB src
-	*.cpp *.h)
-
-file(GLOB resources_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	resources/*.cpp resources/*.h)
-source_group(resources FILES ${resources_src})
+set(src
+    BeesBookTagMatcher.cpp
+    resources/myGrid.cpp
+    resources/myNewGrid.cpp)
+    
+set(hdr
+    BeesBookTagMatcher.h
+    resources/myGrid.h
+    resources/myNewGrid.h)
 
 add_library(BeesBookTagMatcher STATIC
-	${src} 
-	${resources_src})
+    ${src} ${hdr}
+)

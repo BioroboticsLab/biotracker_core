@@ -5,7 +5,8 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-SampleTracker::SampleTracker( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
+SampleTracker::SampleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent )
+    : TrackingAlgorithm( settings, serializationPathName, parent )
 {
 	_showSelectorRec = false;
 	_showOriginal = false;

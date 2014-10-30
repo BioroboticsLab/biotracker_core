@@ -1,5 +1,9 @@
-file(GLOB src
-	*.cpp *.h)
+set(src
+    colorPatchTracker.cpp)
+    
+set(hdr
+    colorPatchTracker.h)
 
 add_library(ColorPatchTracker STATIC
-	${src})
+    ${src} ${hdr}
+)

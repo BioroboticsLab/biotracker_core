@@ -3,25 +3,53 @@
 
 #include "source/tracking/trackedObject/TrackedObject.h"
 
+#include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
 
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, cv::Point2f& point)
+{
+    archive(point.x, point.y);
+}
+
+template<class Archive>
+void serialize(Archive& archive, cv::Scalar& scalar)
+{
+    archive(scalar.val);
+}
+}
+
 class TrackedFish :
-	public TrackedObject
+    public ObjectModel
 {
 public:
-	TrackedFish(int id);
-	virtual ~TrackedFish() override;
-	int id() const;
-	void setNextPosition(cv::Point2f position);
-	void setNextPositionUnknown();
-	cv::Point2f last_known_position() const;
-	unsigned age_of_last_known_position() const;
-	void set_associated_color(const cv::Scalar& color);
-	cv::Scalar associated_color() const;
+    TrackedFish() {}
+    virtual ~TrackedFish() override {}
+
+    void setNextPosition(cv::Point2f position);
+    void setNextPositionUnknown();
+
+    cv::Point2f last_known_position() const;
+    unsigned age_of_last_known_position() const;
+
+    void set_associated_color(const cv::Scalar& color);
+    cv::Scalar associated_color() const;
+
 protected:
-	cv::Point2f _last_known_position;
-	unsigned _age_of_last_known_position;
-	cv::Scalar _associated_color;
+    cv::Point2f _last_known_position;
+    unsigned    _age_of_last_known_position;
+    cv::Scalar  _associated_color;
+
+private:
+    friend class cereal::access;
+    template <class Archive>
+    void serialize(Archive& ar)
+    {
+        ar(_last_known_position,
+           _age_of_last_known_position,
+           _associated_color);
+    }
 };
 
 #endif

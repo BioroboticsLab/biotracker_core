@@ -1,17 +1,21 @@
-file(GLOB src
-	*.cpp *.h)
+set(src
+    ParticleFishTracker.cpp
+    particlefilter/GridParticleBuckets.cpp
+    particlefilter/Particle.cpp
+    particlefilter/ParticleBrightnessObserver.cpp
+    particlefilter/ParticleClusters.cpp
+    preprocessing/FishBackgroundSubtractor.cpp
+    preprocessing/FramePreprocessor.cpp)
+    
+set(hdr
+    ParticleFishTracker.h
+    particlefilter/GridParticleBuckets.h
+    particlefilter/Particle.h
+    particlefilter/ParticleBrightnessObserver.h
+    particlefilter/ParticleClusters.h
+    preprocessing/FishBackgroundSubtractor.h
+    preprocessing/FramePreprocessor.h)
 
-file(GLOB particlefilter_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	particlefilter/*.cpp particlefilter/*.h)
-source_group(particlefilter FILES ${particlefilter_src})
-
-file(GLOB preprocessing_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	preprocessing/*.cpp preprocessing/*.h)
-source_group(preprocessing FILES ${preprocessing_src})
-
-add_library(FishParticle STATIC
-	${src} 
-	${particlefilter_src}
-	${preprocessing_src})
+add_library(FishParticleTracker STATIC
+    ${src} ${hdr}
+)
