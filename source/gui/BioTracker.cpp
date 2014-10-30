@@ -106,9 +106,23 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
+    // add NoTracker first
     for (auto& algByStr : Algorithms::byString)
     {
-        ui.cb_algorithms->addItem(algByStr.first);
+        if (algByStr.second == Algorithms::NoTracking)
+        {
+            ui.cb_algorithms->addItem(algByStr.first);
+            break;
+        }
+    }
+
+    // add Trackers
+    for (auto& algByStr : Algorithms::byString)
+    {
+        if (algByStr.second != Algorithms::NoTracking)
+        {
+            ui.cb_algorithms->addItem(algByStr.first);
+        }
     }
 }
 

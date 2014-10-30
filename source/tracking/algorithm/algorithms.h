@@ -44,13 +44,13 @@ namespace Algorithms {
     typedef std::map<QString, Type> map_string_t;
     static const map_string_t byString
     {
-        {"no tracking", NoTracking},
-        {"simple algorithm", TSimpleTracker},
-        {"bees book tag matcher", TBeesBookTagMatcher},
-        {"color patch tag matcher", TColorPatchTracker},
-        {"Fish - Particle", TParticleFishTracker},
-        {"Sample Tracker", TSampleTracker},
-        {"Landmark Tracker", TLandmarkTracker}
+        {"No tracking", NoTracking},
+        {"Simple algorithm", TSimpleTracker},
+        {"BeesBook tag matcher", TBeesBookTagMatcher},
+        {"Color patch tag matcher", TColorPatchTracker},
+        {"Fish Particle tracker", TParticleFishTracker},
+        {"Sample tracker", TSampleTracker},
+        {"Landmark tracker", TLandmarkTracker}
     };
 }
 
