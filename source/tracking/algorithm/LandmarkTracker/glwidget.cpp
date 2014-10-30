@@ -13,8 +13,13 @@
     #include <GL/glu.h>
 #endif
 
-GLWidget::GLWidget(QWidget *parent) :
-	QGLWidget(parent),parent_tw(static_cast<ToolWindow*>(parent)),zoomFactor(-90),rotX(0.5),rotY(50),rotZ(0)
+GLWidget::GLWidget(QWidget *parent)
+    : QGLWidget(parent)
+    , rotX(0.5)
+    , rotY(50)
+    , rotZ(0)
+    , zoomFactor(-90)
+    , parent_tw(static_cast<ToolWindow*>(parent))
 {}
 
 void GLWidget::initializeGL()
@@ -131,7 +136,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
    lastPos = e->pos();
 }
 
-void GLWidget::mouseReleaseEvent  (QMouseEvent * e)
+void GLWidget::mouseReleaseEvent  (QMouseEvent * /* e */)
 {
     std::cout<<"X: " <<rotX<<std::endl;
     std::cout<<"Y: " <<rotY<<std::endl;
