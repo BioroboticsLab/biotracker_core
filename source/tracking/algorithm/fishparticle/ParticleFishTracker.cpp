@@ -27,7 +27,7 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
     , _min_score(0)
     , _clusters(settings)
 	, _showOriginal(false)
-{	
+{
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)

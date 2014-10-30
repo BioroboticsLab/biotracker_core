@@ -136,9 +136,6 @@
     <ClCompile Include="source\helper\SystemConfigCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\FishTracker\property\Rectification.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\helper\cv\Rectification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -201,9 +198,6 @@
     <ClInclude Include="source\settings\ParamNames.h" />
     <ClInclude Include="source\settings\Settings.h" />
     <ClInclude Include="source\helper\SystemConfigCheck.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FishTracker\property\Rectification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\helper\cv\Rectification.h">
