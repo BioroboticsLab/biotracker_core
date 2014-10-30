@@ -7,12 +7,13 @@
 namespace CONFIGPARAM
 {
 	// System config
-	const std::string CONFIG_INI_FILE			= "./config.ini";
+	const std::string CONFIGURATION_FILE		= "./config.ini";
 }
 
 namespace APPLICATIONPARAM
 {
-	// System config
+	// System config	
+	const std::string APP_VERSION_NUM			= "0.1.0.0";
 	const std::string APP_VERSION				= "APPLICATIONPARAM/APP_VERSION";
 }
 
