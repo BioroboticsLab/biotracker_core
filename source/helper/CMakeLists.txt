@@ -1,10 +1,11 @@
-file(GLOB src
-	*.cpp *.h)
+set(src
+    SystemConfigCheck.cpp
+    cv/Rectification.cpp)
+    
+set(hdr
+    SystemConfigCheck.h
+    cv/Rectification.h)
 
-file(GLOB cv_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	cv/*.cpp cv/*.h)
-
-source_group(cv FILES ${cv_src})
-
-add_subdirectory(cv)
+add_library(Helper STATIC
+    ${src} ${hdr}
+)
