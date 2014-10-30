@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include "source/tracking/algorithm/algorithms.h"
+
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/vector.hpp>
@@ -104,11 +106,10 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle", "Sample Tracker", "Landmark Tracker"};
-	for(QString &algName : algNames)
-	{
-		ui.cb_algorithms->addItem(algName);
-	}	
+    for (auto& algByStr : Algorithms::byString)
+    {
+        ui.cb_algorithms->addItem(algByStr.first);
+    }
 }
 
 void BioTracker::browseVideo()
