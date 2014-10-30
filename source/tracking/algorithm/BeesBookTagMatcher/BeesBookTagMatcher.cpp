@@ -3,7 +3,7 @@
 
 
 BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
-{
+{	
 		_ready			= true; //Ready for a new tag --ctrl + Right Click--
 		_activeTag		= false; //if true, then a new Grid has been defined with the vector of points and the bits can now bi defined
 		_activePoints	= false; //a new set of points is being configured

@@ -103,7 +103,7 @@ void BioTracker::initAlgorithms()
 	for(QString &algName : algNames)
 	{
 		ui.cb_algorithms->addItem(algName);
-	}
+	}	
 }
 
 void BioTracker::browseVideo()

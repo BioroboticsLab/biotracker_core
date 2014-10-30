@@ -10,7 +10,7 @@
 #include <QMouseEvent>
 #include <qwidget.h>
 
-
+#include <typeinfo>
 
 class TrackingAlgorithm : public QObject
 {
@@ -56,7 +56,6 @@ public:
 	virtual QWidget* getParamsWidget();
 	
 	void loadObjects( std::vector<TrackedObject> * objects );
-
 
 public slots:
 	//mouse click and move events
