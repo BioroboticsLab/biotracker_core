@@ -17,7 +17,6 @@ public:
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
-	void fitToWindow();
 
 protected:
 	void initializeGL(); 
@@ -36,9 +35,13 @@ private:
 	cv::Mat _displayImage;
     std::shared_ptr<TrackingAlgorithm> _tracker;
 	bool _isPanZoomMode;
+	int _currentWidth;
+	int _currentHeight;
 
 	/* Modified by user input. Initially 1.0 */
 	float _zoomFactor;
+	/* ratio of window size to picture size */
+	float _screenPicRatio;
 	float _panX;
 	float _panY;
 	bool _isPanning;
@@ -48,6 +51,7 @@ private:
         void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 		void setPanZoomMode (bool isPanZoom);
 		cv::Mat getCurrentScreen();
+		void fitToWindow();
 
 signals:
 		//events for port mouse button 

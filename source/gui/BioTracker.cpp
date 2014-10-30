@@ -43,8 +43,8 @@ void BioTracker::init(){
 	initConnects();
 	ui.sld_video->setDisabled(true);
 	if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))){
-		setPlayfieldEnabled(true);
-		initCapture();		
+		setPlayfieldEnabled(true);		
+		initCapture();
 	}
 }
 
@@ -93,7 +93,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
-	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
+	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));	
 
 }
 
@@ -148,7 +148,7 @@ void BioTracker::initPicture(QStringList filenames)
 	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
-	ui.videoView->fitToWindow();
+	//ui.videoView->fitToWindow();
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
@@ -215,7 +215,7 @@ void BioTracker::initCapture()
 	ss << std::setprecision(5) << fps;
 	ui.fps_label->setText(QString::fromStdString(ss.str()));
 	setPlayfieldPaused(true);
-	ui.videoView->fitToWindow();
+	//ui.videoView->fitToWindow();
 }
 void BioTracker::invalidFile()
 {
@@ -459,6 +459,7 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		ui.videoView, SLOT( updateGL() ));
     QObject::connect(tracker.get(),		SIGNAL ( requestCurrentScreen() ),
 		ui.videoView, SLOT( getCurrentScreen() ));
+	
 	if(_tracker)
 	{
 		try

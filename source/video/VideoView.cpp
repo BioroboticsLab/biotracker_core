@@ -20,7 +20,7 @@ VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent),
 	_tracker(nullptr)
 {
-	_zoomFactor = 1.0;
+	_zoomFactor = 0;
 	_panX = 0;
 	_panY = 0;
 	_isPanZoomMode = false;
@@ -38,25 +38,36 @@ void VideoView::showImage(cv::Mat img)
 
 void VideoView::fitToWindow()
 {
+	_zoomFactor = 0;
 	int width = this->width();
 	int height = this->height();
-	std::cout << std::to_string(width) << std::endl;
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
 	{
-		_zoomFactor = _displayImage.rows/(width/imgRatio);
-		_panY = -((height - (width/imgRatio))/2)*_zoomFactor;
+		_panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
 		_panX = 0;
 	} else 
-	{
-		_zoomFactor = _displayImage.cols/(height*imgRatio);
-		_panX = - ((width - (height*imgRatio))/2)*_zoomFactor;	
+	{		
+		_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);	
 		_panY = 0;
 	}
+	glViewport(0,0,width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	width = width * (_screenPicRatio + _zoomFactor);
+	height = height *(_screenPicRatio + _zoomFactor);
+
+	float left = _panX;
+	float top	 = _panY;
+	float right = left + width;
+	float bottom = top + height;
+	glOrtho(left, right, bottom, top, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);	
 	//resizeGL(width, height);
 	//Draw the scene
-	//updateGL();
+	updateGL();
 }
 
 void VideoView::paintGL()
@@ -189,23 +200,46 @@ void VideoView::initializeGL()
 }
 void VideoView::resizeGL(int width, int height)
 {
-	fitToWindow();
+
+	//calculate ratio of screen to displayed image
+	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+	float windowRatio = static_cast<float>(width) / height;
+	if(windowRatio < imgRatio)
+	{
+		_screenPicRatio = _displayImage.rows/(width/imgRatio);		
+	}
+	else
+	{
+		_screenPicRatio = _displayImage.cols/(height*imgRatio);		
+	}
 
 	glViewport(0,0,width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	width = width * _zoomFactor;
-	height = height * _zoomFactor;
+	//if window really was resized,
+	//fit it to window at end of this function
+	bool sizeChanged = false;
+	if(_currentHeight != height || _currentWidth != width)
+	{
+		sizeChanged = true;
+		_currentHeight = height;
+		_currentWidth = width;
+	}
+
+	width = width * (_screenPicRatio + _zoomFactor);
+	height = height *(_screenPicRatio + _zoomFactor);
 
 	float left = _panX;
 	float top	 = _panY;
 	float right = left + width;
 	float bottom = top + height;
 	glOrtho(left, right, bottom, top, 0.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);	
+	if (sizeChanged)
+		fitToWindow();
 
-	updateGL();
+
 }
 
 
@@ -248,8 +282,8 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 			int dY = e->y() - _lastMPos[1];
 			_lastMPos[0] = e->x();
 			_lastMPos[1] = e->y();
-			_panX -= dX * _zoomFactor;
-			_panY -= dY * _zoomFactor;
+			_panX -= dX * (_screenPicRatio+_zoomFactor);
+			_panY -= dY * (_screenPicRatio+_zoomFactor);
 			resizeGL(this->width(), this->height());
 			//Draw the scene
 			updateGL();
@@ -314,16 +348,16 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	{
 		int numDegrees = e->delta();
 		if (e->orientation() == Qt::Vertical
-			&& _zoomFactor - 0.001 * numDegrees > 0) 
+			&& (_zoomFactor+_screenPicRatio) - 0.001 * numDegrees > 0) 
 		{
 			_zoomFactor -= 0.001 * numDegrees;
 			// adjust _panX and _panY, so that zoom is centered on mouse cursor
-			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/_zoomFactor )
-				_panX =		picturePos.x()-  ((this->width()*_zoomFactor)/2);
+			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/(_screenPicRatio+_zoomFactor) )
+				_panX =		picturePos.x()-  ((this->width()*(_screenPicRatio+_zoomFactor))/2);
 			else
 				_panX = _panX/2;
-			if(picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows/_zoomFactor)
-				_panY =		picturePos.y() - ((this->height()*_zoomFactor)/2);
+			if(picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows/(_screenPicRatio+_zoomFactor))
+				_panY =		picturePos.y() - ((this->height()*(_screenPicRatio+_zoomFactor))/2);
 			resizeGL(this->width(), this->height());
 			//Draw the scene
 			updateGL();
