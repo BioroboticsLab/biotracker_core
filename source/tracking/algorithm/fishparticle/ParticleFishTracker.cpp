@@ -21,12 +21,12 @@ struct compareReverseParticleScorePredicate {
 */
 ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm(settings, serializationPathName, parent)
+    , _showOriginal(false)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
-	, _showOriginal(false)
 {	
 }
 

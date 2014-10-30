@@ -1,0 +1,6 @@
+v 0.1.0.0
+  - framework struct embedded
+  - modulizing apps
+  - avaiable algorithm modules: 
+  -- BeesBookTagMatcher, colorPatchTracker, fishparticle, LandmarkTracker, SsampleTracker, simpleTracker
+  - precheck on proper system configuration

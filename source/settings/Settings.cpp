@@ -63,14 +63,14 @@ void Settings::setQSettingsParam(TrackerParam::Param param)
 void Settings::setQSettingsParam(std::string paramName, std::string paramValue)
 {
 	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
+	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
 }
 
 void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
 {
 	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);
+	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	for(size_t i = 0; i < params.size(); i++)
 	{
 		settings.setValue(QString::fromStdString(params.at(i).pName()),QString::fromStdString(params.at(i).pValue()));
@@ -189,7 +189,7 @@ template<> cv::Scalar Settings::getValueOfParam(std::string paramName) const
 std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 {
 	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIG_INI_FILE.c_str()), QSettings::IniFormat);	
+	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);	
 	//TODO: Hier checken ob Datei vorhanden -> wenn nicht da neu anlegen, default params setzen
 
 	std::vector<TrackerParam::Param> defaultParams;
