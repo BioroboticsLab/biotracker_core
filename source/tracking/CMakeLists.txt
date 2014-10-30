@@ -11,11 +11,11 @@ add_library(Tracking STATIC
 )
 
 add_subdirectory(algorithm)
-#add_subdirectory(imagePreProcessor)
+add_subdirectory(imagePreProcessor)
 add_subdirectory(trackedObject)
 
 target_link_libraries(Tracking
     Algorithms
-    #ImagePreProcessor
+    ImagePreProcessor
     TrackedObject
 )

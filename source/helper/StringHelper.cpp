@@ -93,7 +93,7 @@ int StringHelper::split(std::string &txt, std::vector<std::string> &strs, char c
     }
 
     // Add the last one
-    strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+    strs.push_back( txt.substr( initialPos, std::min<unsigned int>( pos, txt.size() ) - initialPos + 1 ) );
 
     return strs.size();
 }
