@@ -206,15 +206,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='2012 CTP Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\blob.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobContour.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobOperators.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\BlobResult.cpp" />
+    <ClCompile Include="source\external\opencvblobslib\library\ComponentLabeling.cpp" />
     <ClCompile Include="source\helper\CvHelper.cpp" />
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.cpp" />
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.cpp" />
-    <ClCompile Include="source\external\cvblobs\blob.cpp" />
-    <ClCompile Include="source\external\cvblobs\BlobContour.cpp" />
-    <ClCompile Include="source\external\cvblobs\BlobOperators.cpp" />
-    <ClCompile Include="source\external\cvblobs\BlobProperties.cpp" />
-    <ClCompile Include="source\external\cvblobs\BlobResult.cpp" />
-    <ClCompile Include="source\external\cvblobs\ComponentLabeling.cpp" />
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.cpp" />
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.cpp" />
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.cpp" />
@@ -319,16 +318,15 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='2012 CTP Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(CV_DIR)\build\include\opencv2" "-I$(CV_DIR)\build\include\opencv" "-I$(CV_DIR)\build\include" "-I$(CV_DIR)\build" "-I.\source\tracking\algorithm\SampleTracker" "-I.\source\tracking\algorithm\fishparticle"</Command>
     </CustomBuild>
+    <ClInclude Include="source\external\opencvblobslib\library\blob.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobContour.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobLibraryConfiguration.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobOperators.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\BlobResult.h" />
+    <ClInclude Include="source\external\opencvblobslib\library\ComponentLabeling.h" />
     <ClInclude Include="source\helper\CvHelper.h" />
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobPose.h" />
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\blob\BlobsDetector.h" />
-    <ClInclude Include="source\external\cvblobs\blob.h" />
-    <ClInclude Include="source\external\cvblobs\BlobContour.h" />
-    <ClInclude Include="source\external\cvblobs\BlobLibraryConfiguration.h" />
-    <ClInclude Include="source\external\cvblobs\BlobOperators.h" />
-    <ClInclude Include="source\external\cvblobs\BlobProperties.h" />
-    <ClInclude Include="source\external\cvblobs\BlobResult.h" />
-    <ClInclude Include="source\external\cvblobs\ComponentLabeling.h" />
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContourPose.h" />
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\contour\ContoursDetector.h" />
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.h" />
@@ -590,6 +588,9 @@
     <Image Include="source\gui\resources\pause-sign.png" />
     <Image Include="source\gui\resources\screenshot.png" />
     <Image Include="source\gui\resources\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\external\opencvblobslib\library\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -166,24 +166,6 @@
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\detector\FishPoseDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\external\cvblobs\blob.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\external\cvblobs\BlobContour.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\external\cvblobs\BlobOperators.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\external\cvblobs\BlobProperties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\external\cvblobs\BlobResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\external\cvblobs\ComponentLabeling.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -200,6 +182,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\blob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobContour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobOperators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\BlobResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\external\opencvblobslib\library\ComponentLabeling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -299,27 +296,6 @@
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\detector\IDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\external\cvblobs\blob.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\BlobContour.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\BlobLibraryConfiguration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\BlobOperators.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\BlobProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\BlobResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\external\cvblobs\ComponentLabeling.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\model\simple\SimpleFishAttributes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -339,6 +315,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\tracking\algorithm\nn2dMappingTracker\model\fish\history\History.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\blob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobContour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobLibraryConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobOperators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\BlobResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\external\opencvblobslib\library\ComponentLabeling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -433,5 +427,8 @@
     <Image Include="source\gui\resources\stop.png" />
     <Image Include="..\..\pix\panZoom.png" />
     <Image Include="source\gui\resources\panZoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\external\opencvblobslib\library\CMakeLists.txt" />
   </ItemGroup>
 </Project>
