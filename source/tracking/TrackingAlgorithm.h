@@ -3,18 +3,18 @@
 
 #include <cv.h>
 #include <vector>
-#include <source/settings/Settings.h>
 #include <qvector2d.h>
-#include <source/settings/Messages.h>
 #include <QMouseEvent>
 #include <qwidget.h>
 #include <fstream>
-
 #include <typeinfo>
 
-#include "source/tracking/trackedObject/TrackedObject.h"
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/polymorphic.hpp>
+
+#include <source/settings/Settings.h>
+#include <source/settings/Messages.h>
+#include "source/tracking/trackedObject/TrackedObject.h"
 
 class TrackingAlgorithm : public QObject
 {
@@ -85,7 +85,6 @@ protected:
 	Settings & _settings;
 	QWidget * _parent;
     std::vector<TrackedObject> _trackedObjects;
-
     std::string _serializationPathName;
 };
 

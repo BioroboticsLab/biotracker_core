@@ -16,6 +16,7 @@
 #include <QtCore/QString>
 #include <QDir>
 #include <QTemporaryDir>
+#include <QTemporaryFile>
 
 //Bio Tracker
 #include "source/settings/Messages.h"
@@ -120,7 +121,7 @@ private:
 	void setPlayfieldEnabled(bool enabled);
 
     std::shared_ptr<TrackingAlgorithm> _tracker;
-    std::map<Algorithms::Type, std::string> _serializationPathMap;
+    std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;

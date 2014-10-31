@@ -439,9 +439,11 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
         // restore previous state
         std::string path;
         std::vector<TrackedObject> storedObjects;
-        if (_serializationPathMap.count(trackingAlg))
+        if (_serializationTmpFileMap.count(trackingAlg))
         {
-            path = _serializationPathMap.at(trackingAlg);
+            auto& file = _serializationTmpFileMap.at(trackingAlg);
+            assert(file.open());
+            path = file.fileName().toStdString();
             std::cout << "Trying to restore from: " << path << std::endl;
             {
                 std::ifstream is(path);
@@ -450,8 +452,10 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
             }
         } else
         {
-            path = std::tmpnam(nullptr);
-            _serializationPathMap[trackingAlg] = path;
+            // create a new QTemporaryFile and return a reference
+            QTemporaryFile& tmpFile = _serializationTmpFileMap[trackingAlg];
+            if (tmpFile.open()) path = tmpFile.fileName().toStdString();
+            else assert(false);
         }
         _tracker = std::shared_ptr<TrackingAlgorithm>(
             (Algorithms::byType.at(trackingAlg))(_settings, path, this));
