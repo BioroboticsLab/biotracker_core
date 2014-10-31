@@ -73,10 +73,16 @@ set(hdr
     helper/StringHelper.h
 )
 
-file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.qrc")
-qt5_add_resources(UI_RESOURCES ${qrc})
+set(ui
+    gui/BioTracker.ui
+    tracking/algorithm/LandmarkTracker/toolwindow.ui
+)
 
-file(GLOB_RECURSE ui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.ui")
+set(qrc
+    gui/BioTracker.qrc
+)
+
+qt5_add_resources(UI_RESOURCES ${qrc})
 qt5_wrap_ui(UI_HEADERS ${ui})
 
 add_executable(BioTracker 
@@ -89,3 +95,29 @@ target_link_libraries(BioTracker
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
 )
+
+# add files to source groups to preserve folder structure in visual studio
+# adapted from: http://goo.gl/Xde41i
+
+set(ALL_FILES ${src} ${hdr} ${ui} ${qrc})
+
+foreach(FILE ${ALL_FILES}) 
+  get_filename_component(PARENT_DIR "${FILE}" PATH)
+
+  # skip src or include and changes /'s to \\'s
+  string(REGEX REPLACE "(\\./)?(src|include)/?" "" GROUP "${PARENT_DIR}")
+  string(REPLACE "/" "\\" GROUP "${GROUP}")
+
+  # group into categories
+  if ("${FILE}" MATCHES ".*\\.cpp")
+    set(GROUP "Source Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.h")
+    set(GROUP "Header Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.ui")
+    set(GROUP "UI Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.qrc")
+    set(GROUP "Ressource Files\\${GROUP}")
+  endif()
+
+  source_group("${GROUP}" FILES "${FILE}")
+endforeach()
