@@ -24,6 +24,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	# using Visual Studio C++
+    # Force to always compile with W3
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+    endif()
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
