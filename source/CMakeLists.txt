@@ -53,7 +53,6 @@ target_link_libraries(BioTracker
 	SampleTracker
 	SimpleTracker
 	LandmarkTracker
-	Nn2dMappingTracker
 	TrackedObject
 
     Qt5::Widgets
