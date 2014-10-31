@@ -360,15 +360,12 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="fps_edit">
-                  <property name="minimumSize">
-                   <size>
-                    <width>60</width>
-                    <height>0</height>
-                   </size>
-                  </property>
+                 <widget class="QLabel" name="fps_label">
                   <property name="text">
-                   <string/>
+                   <string>30</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -386,12 +383,15 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="fps_label">
-                  <property name="text">
-                   <string>30</string>
+                 <widget class="QLabel" name="fps_edit">
+                  <property name="minimumSize">
+                   <size>
+                    <width>60</width>
+                    <height>0</height>
+                   </size>
                   </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <property name="text">
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -612,7 +612,7 @@
      <x>0</x>
      <y>0</y>
      <width>982</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
