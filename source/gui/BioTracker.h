@@ -26,7 +26,7 @@
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/algorithms.h"
 
-#include "source/gui/ui_BioTracker.h"
+#include "source/ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;

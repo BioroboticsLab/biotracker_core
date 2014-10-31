@@ -7,7 +7,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
 
-#include "source/tracking/algorithm/LandmarkTracker/ui_toolwindow.h"
+#include "source/ui_toolwindow.h"
 
 class LandmarkTracker;
 
