@@ -44,7 +44,7 @@ include_directories(
 	SYSTEM ${OpenCV_INCLUDE_DIRS}
 	SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
 	SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
-        SYSTEM ${PROJECT_SOURCE_DIR}/source/external
+        SYSTEM ${PROJECT_SOURCE_DIR}/external
 )
 
 add_subdirectory(source)
