@@ -18,6 +18,22 @@
 namespace CvHelper
 {
 
+	template<typename Inputiterator>
+	std::ostream &print_sequence(std::ostream &os, Inputiterator first, Inputiterator last, std::string delimiter = ", ") {
+	  os << "[";
+	  if (first != last) {
+	    os << *first;
+	    for(++first; first != last; ++first) {
+	      os << delimiter;
+	      os << *first;
+	    }
+	  }
+	  return os << "]";
+	}
+	
+	inline std::ostream& operator<<(std::ostream &os, const CvPoint &p) {
+	  return os << "(" << p.x << ", " << p.y << ")";
+	}
 	
 	/**
 	 * Subtract operation for two CvPoints.
