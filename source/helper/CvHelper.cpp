@@ -2,6 +2,9 @@
 
 #include "source/helper/StringHelper.h"
 
+#include <sstream>
+
+
 CvPoint CvHelper::subtractTwoCvPoints(CvPoint a, CvPoint b)
 {
 	return cvPoint(a.x - b.x, a.y - b.y);
@@ -292,17 +295,9 @@ int CvHelper::stdStringToInt(const std::string &string)
 
 std::string CvHelper::convertStdVectorCvPointToStdString(const std::vector<cv::Point> &points)
 {
-	std::string pointListString;
-	for (size_t i = 0; i < points.size(); i++)
-	{
-		const auto x = points[i].x;
-		const auto y = points[i].y;
-		pointListString += std::to_string(x) + ":" + std::to_string(y);
-		if(i < points.size() - 1) {
-		  pointListString += " ";
-		}
-	}
-	return pointListString;
+	std::stringstream ss;
+	CvHelper::print_sequence(ss, points.cbegin(), points.cend());
+	return ss.str();
 }
 
 std::string CvHelper::convertCvScalarToStdString(cv::Scalar scalar)
