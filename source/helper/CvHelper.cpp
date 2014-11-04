@@ -156,7 +156,7 @@ std::deque<cv::Point2f> CvHelper::convertMat2Point2fDeque(cv::Mat mat)
 	return point2fS;
 }
 
-cv::Mat CvHelper::convertPoint2fDeque2Mat(std::deque<cv::Point2f> points)
+cv::Mat CvHelper::convertPoint2fDeque2Mat(const std::deque<cv::Point2f> &points)
 {
 	cv::Mat mat;
 
@@ -165,21 +165,19 @@ cv::Mat CvHelper::convertPoint2fDeque2Mat(std::deque<cv::Point2f> points)
 
 	mat = cv::Mat(points.size(), 2, CV_32F);
 
-	for (int i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < points.size(); ++i)
 	{
-		cv::Point2f p = points.at(i);
-		mat.at<float>(i,0)= p.x;
-		mat.at<float>(i,1)= p.y;
+		mat.at<float>(i,0)= points[i].x;
+		mat.at<float>(i,1)= points[i].y;
 	}
 	
 	return mat;
 }
 
-QList<std::deque<cv::Point2f>> CvHelper::convertMatList2Point2fDequeList(QList<cv::Mat> mats)
+QList<std::deque<cv::Point2f>> CvHelper::convertMatList2Point2fDequeList(const QList<cv::Mat> &mats)
 {
 	QList<std::deque<cv::Point2f>> pointList;
-	cv::Mat mat;
-	foreach (mat , mats)
+	for(const auto &mat : mats)
 	{
 		pointList << CvHelper::convertMat2Point2fDeque(mat);
 	}
@@ -216,14 +214,15 @@ cv::Point2f CvHelper::getMirrowPoint(cv::Point2f point2Mirror, cv::Point2f point
 	return cv::Point2f(finalMat.at<float>(0,0),finalMat.at<float>(0,1));
 }
 
-std::deque<cv::Point2f> CvHelper::getMirrowPoints(std::deque<cv::Point2f> points2Mirror, cv::Point2f pointOfOrigin, float angelAsGrad)
+std::deque<cv::Point2f> CvHelper::getMirrowPoints(const std::deque<cv::Point2f> &points2Mirror, cv::Point2f pointOfOrigin, float angelAsGrad)
 {
 	std::deque<cv::Point2f> mirrowedPoints;
 	
-	for(int i = 0; i < points2Mirror.size(); i++)
+	for(const auto &p : points2Mirror)
 	{
-		cv::Point2f p = CvHelper::getMirrowPoint(points2Mirror.at(i), pointOfOrigin, angelAsGrad);
-		mirrowedPoints.push_back(p);
+		mirrowedPoints.push_back(
+		  CvHelper::getMirrowPoint(p, pointOfOrigin, angelAsGrad)
+		);
 	}
 	return mirrowedPoints;
 
@@ -254,22 +253,22 @@ std::deque<cv::Point2f> CvHelper::getMirrowLine(cv::Point2f pointOfOrigin, float
 
 std::vector<cv::Point> CvHelper::convertMat2Vector(cv::Mat mat)
 {
-	std::vector<cv::Point> value(mat.rows);
-	for (int i = 0; i < value.size(); i++)
+	std::vector<cv::Point> value;
+	value.reserve(mat.rows);
+	for (int i = 0; i < mat.rows; i++)
 	{
-		cv::Point p((int)mat.at<float>(i,0),(int)mat.at<float>(i,1));
-		value.at(i) = p;		
+		value.emplace_back(mat.at<float>(i,0), mat.at<float>(i,1));
 	}
 	return value;
 }
 
-cv::Mat CvHelper::convertVector2Mat(std::vector<cv::Point> vect)
+cv::Mat CvHelper::convertVector2Mat(const std::vector<cv::Point> &vect)
 {
 	cv::Mat mat(vect.size(),2,CV_32F);
-	for (int i = 0; i < vect.size(); i++)
+	for (size_t i = 0; i < vect.size(); i++)
 	{
-		mat.at<float>(i,0) = (float)vect.at(i).x;
-		mat.at<float>(i,1) = (float)vect.at(i).y;
+		mat.at<float>(i,0) = vect[i].x;
+		mat.at<float>(i,1) = vect[i].y;
 	}
 	return mat;
 }
@@ -284,40 +283,35 @@ float CvHelper::radToDeg(float rad)
 	return rad * 180.0 / CV_PI;
 }
 
-int CvHelper::stdStringToInt(std::string string)
+int CvHelper::stdStringToInt(const std::string &string)
 {
 	int numb;
 	std::istringstream ( string ) >> numb;
 	return numb;
 }
 
-std::string CvHelper::convertStdVectorCvPointToStdString(std::vector<cv::Point> points)
+std::string CvHelper::convertStdVectorCvPointToStdString(const std::vector<cv::Point> &points)
 {
 	std::string pointListString;
-	for (int i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < points.size(); i++)
 	{
-		int x = points.at(i).x;
-		int y = points.at(i).y;
-		if(i < points.size() - 1)
-			pointListString.append(StringHelper::iToSS(x)).append(":").append(StringHelper::iToSS(y)).append(" ");
-		else
-			pointListString.append(StringHelper::iToSS(x)).append(":").append(StringHelper::iToSS(y));
+		const auto x = points[i].x;
+		const auto y = points[i].y;
+		pointListString += std::to_string(x) + ":" + std::to_string(y);
+		if(i < points.size() - 1) {
+		  pointListString += " ";
+		}
 	}
 	return pointListString;
 }
 
 std::string CvHelper::convertCvScalarToStdString(cv::Scalar scalar)
 {
-	std::string scalarString;
+	const int r = scalar.val[0];
+	const int g = scalar.val[1];
+	const int b = scalar.val[2];
 
-	int r = scalar.val[0,0];
-	int g = scalar.val[0,1];
-	int b = scalar.val[0,2];
-
-	scalarString.append(StringHelper::iToSS(r)).append(" ").append(StringHelper::iToSS(g)).append(" ").append(StringHelper::iToSS(b)).append(" ");
-
-	return scalarString;
-
+	return std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
 }
 
 std::string CvHelper::getCurrentDatetimeAsStd()

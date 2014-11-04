@@ -9,12 +9,16 @@
 
 #include <cv.h>
 
+#include <ostream>
+#include <string>
 
 /**
  * Computer vision helper class, contains only static methods
  */
 namespace CvHelper
 {
+
+	
 	/**
 	 * Subtract operation for two CvPoints.
 	 * @return: the difference of the CvPoints. 
@@ -122,29 +126,29 @@ namespace CvHelper
 	//double getAngleToTarget(cv::Point2f currentPos, cv::Point2f targetPos);	
 
 	cv::Point2f getMirrowPoint(cv::Point2f point2Mirror, cv::Point2f pointOfOrigin, float angelAsGrad);
-	std::deque<cv::Point2f> getMirrowPoints(std::deque<cv::Point2f> points2Mirror, cv::Point2f pointOfOrigin, float angelAsGrad);
+	std::deque<cv::Point2f> getMirrowPoints(const std::deque<cv::Point2f> &points2Mirror, cv::Point2f pointOfOrigin, float angelAsGrad);
 	std::deque<cv::Point2f> getMirrowLine(cv::Point2f pointOfOrigin, float width, float height, float angelAsGrad);
 
 
 	std::deque<cv::Point2f> convertMat2Point2fDeque(cv::Mat mat);
-	cv::Mat convertPoint2fDeque2Mat(std::deque<cv::Point2f> points);
-	QList<std::deque<cv::Point2f>> convertMatList2Point2fDequeList(QList<cv::Mat> mats);
+	cv::Mat convertPoint2fDeque2Mat(const std::deque<cv::Point2f> &points);
+	QList<std::deque<cv::Point2f>> convertMatList2Point2fDequeList(const QList<cv::Mat> &mats);
 	std::vector<cv::Point> convertMat2Vector(cv::Mat mat);
-	cv::Mat convertVector2Mat(std::vector<cv::Point> vect);
+	cv::Mat convertVector2Mat(const std::vector<cv::Point> &vect);
 
 	/**
 	 * Converts a string to an integer number.
 	 * @param: string, a string containing a number.
 	 * @return: a converted integer number.
 	 */ 
-	int stdStringToInt(std::string string);
+	int stdStringToInt(const std::string &string);
 
 	/**
 	 * Converts a list of cv::Point to a proper string, which could be save into the config.ini file.
 	 * @param: points, a list of cv::Point.
 	 * @return: a converted formated string for the config.ini file.
 	 */ 
-	std::string convertStdVectorCvPointToStdString(std::vector<cv::Point> points);
+	std::string convertStdVectorCvPointToStdString(const std::vector<cv::Point> &points);
 
 	/**
 	 * Converts a cv::Scalar to a proper standard string, which could be save into the config.ini file.
