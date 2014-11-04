@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <string>
-
+#include <utility> // std::move
 
 bool StringHelper::hasEnding(std::string const &fullString, std::string const &ending)
 {
@@ -28,25 +28,15 @@ bool StringHelper::startsWithDigit(std::string const &fullString)
 
 }
 
-bool StringHelper::startsWithDigitQ(QString fullString)
+bool StringHelper::startsWithDigitQ(const QString &fullString)
 {
 	return StringHelper::startsWithDigit(fullString.toLocal8Bit().data());
 }
 
-bool StringHelper::isNumber(QString fullStringQ)
+bool StringHelper::isNumber(const QString &fullStringQ)
 {	
-	std::string fullString = fullStringQ.toLocal8Bit().data();
-
-	for(int i = 0; i < fullString.length(); i++)
-	{
-		if(isdigit(fullString.at(i)))
-		{
-			return true;
-		}
-
-	}
-
-	return false;
+	const std::string fullString = fullStringQ.toLocal8Bit().data();
+	return std::any_of(fullString.cbegin(), fullString.cend(), isdigit);
 }
 
 std::string StringHelper::iToSS(int int_num)
@@ -61,27 +51,26 @@ std::string StringHelper::boolToSS(bool bool_value)
 	return std::string("false");
 }
 
-std::string StringHelper::toStdString(QString qString)
+std::string StringHelper::toStdString(const QString &qString)
 {
 	return qString.toStdString();
 }
 
-QString StringHelper::toQString(std::string stdString)
+QString StringHelper::toQString(const std::string &stdString)
 {
 	return QString::fromUtf8(stdString.c_str());
 }
 
 std::string StringHelper::toLowerCase(std::string stringValue)
 {
-	std::string lowCaseString(stringValue);
-	std::transform(lowCaseString.begin(), lowCaseString.end(), lowCaseString.begin(), tolower);
-	return lowCaseString;
+	std::transform(stringValue.begin(), stringValue.end(), stringValue.begin(), tolower);
+	return std::move(stringValue);
 }
 
-int StringHelper::split(std::string &txt, std::vector<std::string> &strs, char ch)
+int StringHelper::split(const std::string &txt, std::vector<std::string> &strs, char ch)
 {
-    unsigned int pos = txt.find( ch );
-    unsigned int initialPos = 0;
+    size_t pos = txt.find( ch );
+    size_t initialPos = 0;
     strs.clear();
 
     // Decompose statement
@@ -93,7 +82,7 @@ int StringHelper::split(std::string &txt, std::vector<std::string> &strs, char c
     }
 
     // Add the last one
-    strs.push_back( txt.substr( initialPos, std::min<unsigned int>( pos, txt.size() ) - initialPos + 1 ) );
+    strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
 
     return strs.size();
 }
