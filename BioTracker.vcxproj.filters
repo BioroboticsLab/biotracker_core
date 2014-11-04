@@ -89,9 +89,6 @@
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\GridParticleBuckets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\toolwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\settings\Param.cpp" />
     <ClCompile Include="source\settings\Settings.cpp" />
     <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_glwidget.cpp">
@@ -108,15 +105,6 @@
     </ClCompile>
     <ClCompile Include="source\tracking\algorithm\LandmarkTracker\glwidget.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_toolwindow.cpp">
-      <Filter>Generated Files\2012 CTP Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\2012 CTP Release\moc_toolwindow.cpp">
-      <Filter>Generated Files\2012 CTP Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_toolwindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.cpp">
       <Filter>Source Files</Filter>
@@ -201,6 +189,21 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_toolwindow.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tracking\algorithm\LandmarkTracker\toolwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Debug\moc_toolwindow.cpp">
+      <Filter>Generated Files\2012 CTP Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\2012 CTP Release\moc_toolwindow.cpp">
+      <Filter>Generated Files\2012 CTP Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_toolwindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_toolwindow.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,6 +341,9 @@
     <ClInclude Include="source\external\opencvblobslib\library\ComponentLabeling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_toolwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="source\tracking\TrackingThread.h" />
@@ -363,13 +369,13 @@
     <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\glwidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\toolwindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\LandmarkTracker.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="source\tracking\algorithm\fishparticle\ParticleFishTracker.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="source\tracking\algorithm\LandmarkTracker\toolwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
