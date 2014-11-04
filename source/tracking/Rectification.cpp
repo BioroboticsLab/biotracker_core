@@ -1,4 +1,5 @@
 #include "Rectification.h"
+#include <algorithm> // std::max_element, std::min_element, std::min, std::max
 
 Rectification::Rectification(void)
 {}
@@ -6,12 +7,12 @@ Rectification::Rectification(void)
 Rectification::Rectification(double areaHeight_cm, double areaWidth_cm,
 		std::vector<cv::Point> areaCoordinates, int camCaptureWidth_px,
 		int camCaptureHeight_px) :
+	_areaCoordinates(std::move(areaCoordinates)),
 	_q(3, 1, CV_32F),
 	_camCaptureWidth_px(camCaptureWidth_px),
 	_camCaptureHeight_px(camCaptureHeight_px),
-	_areaHeight_cm(areaHeight_cm),
 	_areaWidth_cm(areaWidth_cm),
-	_areaCoordinates(areaCoordinates)
+	_areaHeight_cm(areaHeight_cm)
 {
 	std::vector<cv::Point2f> areaCoordinates_2f;
 	cv::Mat(_areaCoordinates).copyTo(areaCoordinates_2f);
@@ -60,46 +61,54 @@ bool Rectification::inArea(cv::Point2f point_cm) const
 }
 
 
-int Rectification::minXPx()
-{
-	int minX = _camCaptureWidth_px;
-	for (int i = 0; i < _areaCoordinates.size(); i++)
-	{
-		if(_areaCoordinates.at(i).x < minX)
-			minX = _areaCoordinates.at(i).x;
-	}
-	return minX;
+namespace {
+  
+  struct cvPoint_less_x {
+    bool operator()(const cv::Point &lhs, const cv::Point &rhs) const {
+      return lhs.x < rhs.x;
+    }
+  };
+  
+  struct cvPoint_less_y {
+    bool operator()(const cv::Point &lhs, const cv::Point &rhs) const {
+      return lhs.y < rhs.y;
+    }
+  };
+  
 }
 
-int Rectification::maxXPx()
+int Rectification::minXPx() const
 {
-	int maxX = -1;
-	for (int i = 0; i < _areaCoordinates.size(); i++)
-	{
-		if(_areaCoordinates.at(i).x > maxX)
-			maxX = _areaCoordinates.at(i).x;
+	if (_areaCoordinates.empty()) {
+		return _camCaptureWidth_px;
 	}
-	return maxX;
+	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_x());
+	return std::min(_camCaptureWidth_px, it->x);
 }
 
-int Rectification::minYPx()
+int Rectification::maxXPx() const
 {
-	int minY = _camCaptureHeight_px;
-	for (int i = 0; i < _areaCoordinates.size(); i++)
-	{
-		if(_areaCoordinates.at(i).y < minY)
-			minY = _areaCoordinates.at(i).y;
+	if (_areaCoordinates.empty()) {
+	  return -1;
 	}
-	return minY;
+	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_x());
+	return it->x;
 }
 
-int Rectification::maxYPx()
+int Rectification::minYPx() const
 {
-	int maxY = -1;
-	for (int i = 0; i < _areaCoordinates.size(); i++)
-	{
-		if(_areaCoordinates.at(i).y > maxY)
-			maxY = _areaCoordinates.at(i).y;
+	if (_areaCoordinates.empty()) {
+		return _camCaptureHeight_px;
 	}
-	return maxY;
+	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_y());
+	return std::min(_camCaptureHeight_px, it->y);
+}
+
+int Rectification::maxYPx() const
+{
+	if (_areaCoordinates.empty()) {
+	  return -1;
+	}
+	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_y());
+	return it->y;
 }
