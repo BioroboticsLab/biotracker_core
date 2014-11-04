@@ -6,8 +6,8 @@
 
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializationPath, QWidget *parent)
     : _settings(settings)
-    , _serializationPathName(serializationPath)
     , _parent(parent)
+    , _serializationPathName(serializationPath)
 {}
 
 TrackingAlgorithm::~TrackingAlgorithm()
@@ -18,7 +18,7 @@ TrackingAlgorithm::~TrackingAlgorithm()
     archive(_trackedObjects);
 }
 
-void TrackingAlgorithm::track(ulong /* frameNumber */, cv::Mat &frame)
+void TrackingAlgorithm::track(ulong /* frameNumber */, cv::Mat &/*frame*/)
 {}
 
 void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects )
