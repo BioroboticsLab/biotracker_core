@@ -17,24 +17,24 @@ namespace StringHelper
 	 */
 	bool hasEnding(std::string const &fullString, std::string const &ending);
 
-	bool startsWithDigitQ(QString fullString);
+	bool startsWithDigitQ(const QString &fullString);
 	bool startsWithDigit(std::string const &fullString);
 
-	bool isNumber(QString fullString);
+	bool isNumber(const QString &fullString);
 
 	/**
 	 * Convert QString to standard string.
 	 * @param: qString, the string to convert,
 	 * @return: a standard string.
 	 */
-	std::string toStdString(QString qString);
+	std::string toStdString(const QString &qString);
 
 	/**
 	 * Convert standard string to QString
 	 * @param: stdString, the string to convert,
 	 * @return: a qt string.
 	 */
-	QString toQString(std::string stdString);
+	QString toQString(const std::string &stdString);
 
 	/**
 	 * Convert integer to standard string.
@@ -65,5 +65,5 @@ namespace StringHelper
 	 * @param: strs, a reference to a vector containing the splitted result,
 	 * @param: ch, the split character.
 	 **/
-	int split(std::string &txt, std::vector<std::string> &strs, char ch);
+	int split(const std::string &txt, std::vector<std::string> &strs, char ch);
 };
