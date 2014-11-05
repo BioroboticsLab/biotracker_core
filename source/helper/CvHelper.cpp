@@ -1,7 +1,4 @@
 #include "CvHelper.h"
-
-#include "source/helper/StringHelper.h"
-
 #include <sstream>
 
 
