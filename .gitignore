@@ -7,6 +7,7 @@ GeneratedFiles/
 *.exe
 *.psess
 *.vsp
+*.ipch
 
 /Release
 /build
