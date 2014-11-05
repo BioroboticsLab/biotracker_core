@@ -32,7 +32,7 @@ QPointF CvHelper::norm(double x, double y)
 
 QPointF CvHelper::norm(QPoint p)
 {
-	return CvHelper::norm((double) p.x(), (double) p.y());
+	return CvHelper::norm(static_cast<double>(p.x()), static_cast<double>(p.y()));
 }
 
 QPointF CvHelper::norm(QPointF p)
@@ -52,7 +52,7 @@ double CvHelper::getSqDistance(double x1, double y1, double x2, double y2)
 
 double CvHelper::getDistance(QPoint p1, QPoint p2)
 {
-	return getDistance((double) p1.x(), (double) p1.y(), (double) p2.x(), (double) p2.y());
+  return getDistance(static_cast<double>(p1.x()), static_cast<double>(p1.y()), static_cast<double>(p2.x()), static_cast<double>(p2.y()));
 }
 
 double CvHelper::getDistance(QPointF p1, QPointF p2)
@@ -67,7 +67,7 @@ double CvHelper::getDistance(cv::Point2f p1, cv::Point2f p2)
 
 double CvHelper::getDistance(cv::Point p1, cv::Point p2)
 {
-	return sqrt(double((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)));
+  return sqrt(static_cast<double>((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)));
 }
 
 double CvHelper::getSqDistance(cv::Point2f p1, cv::Point2f p2)

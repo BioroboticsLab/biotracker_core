@@ -411,7 +411,7 @@ void BioTracker::changeFps(int fps)
 		//show target fps
 		ui.fps_label->setText(QString::number(fps));
 		emit enableMaxSpeed(false);
-		emit fpsChange((double)fps);
+		emit fpsChange(static_cast<double>(fps));
 	}
 }
 
