@@ -66,4 +66,4 @@ namespace StringHelper
 	 * @param: ch, the split character.
 	 **/
 	int split(const std::string &txt, std::vector<std::string> &strs, char ch);
-};
+}
