@@ -32,5 +32,5 @@ namespace SystemCompatibilityCheck
 	 * @return: true, if creatian is successful, false otherwise.
 	 */
 	bool createTemplateConfigFile(QString* notificationMessage);
-};
+}
 
