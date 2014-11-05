@@ -5,7 +5,6 @@
 
 #include <QtCore/QSettings>
 
-#include "source/helper/StringHelper.h"
 #include "source/settings/Settings.h"
 
 
