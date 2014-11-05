@@ -16,7 +16,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
 	# minimal optimization and debug symbols for debug builds
 	set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 	# enable optimization and warnings-are-errors for release builds
-	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG -Werror")
+	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG -Werror -pedantic -Woverloaded-virtual -Wold-style-cast -Wnon-virtual-dtor -Wsign-promo")
 	# enable C++1y
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
         # enable all warnings
