@@ -5,6 +5,7 @@
 #include "preprocessing/FramePreprocessor.h"
 #include "particlefilter/Particle.h"
 #include "particlefilter/ParticleClusters.h"
+#include "particlefilter/particleParams.h"
 
 //QT Stuff
 #include <QGroupBox>
@@ -26,6 +27,7 @@ public:
 	virtual void paint(cv::Mat& image);
 	virtual void reset();
 	QWidget* getToolsWidget	() override;
+	QWidget* getParamsWidget() override;
 
 	public slots:
 		void switchMode();
@@ -73,6 +75,8 @@ private:
 	float _sum_scores;
 
 	ParticleClusters _clusters;
+	
+	ParticleParams _params;
 
 	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
 

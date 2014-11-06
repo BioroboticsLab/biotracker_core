@@ -27,6 +27,7 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serial
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
+	, _params(parent, settings)
 {
 }
 
@@ -51,7 +52,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		// (2) Resampling (importance resampling) or seeding
 		if (_current_particles.empty()) {
 			// TODO params for this algorithm in settings.
-			seedParticles(1000, 0, 0, frame.cols, frame.rows);
+			seedParticles(_params.getNumParticles(), 0, 0, frame.cols, frame.rows);
 		} else {
 			ParticleBrightnessObserver observer(_prepared_frame);
 			_sum_scores = 0;
@@ -229,4 +230,9 @@ void ParticleFishTracker::switchMode()
 	else
 		_modeBut->setText("show Original!");
 	emit update();
+}
+
+QWidget * ParticleFishTracker::getParamsWidget()
+{
+	return _params.getParamsWidget();
 }
