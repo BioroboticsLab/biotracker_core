@@ -5,7 +5,7 @@ cmake_policy (SET CMP0020 NEW)
 project(BioTracker)
 
 # project dependecies
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED PATHS "/usr/local/")
 find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
