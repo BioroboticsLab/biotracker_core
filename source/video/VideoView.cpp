@@ -81,15 +81,18 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-		try
-		{
+        try
+        {
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
-		}
-		catch(std::exception&)
-		{
-			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
-		}
+        }
+        catch(std::exception& err)
+        {
+            std::stringstream ss;
+            ss << "critical error in selected tracking algorithm's paint method!";
+            ss << "\n" << err.what();
+            emit notifyGUI(ss.str() ,MSGS::FAIL);
+        }
 
 	}
 

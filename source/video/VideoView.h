@@ -17,6 +17,7 @@ public:
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
+	using QGLWidget::moveEvent;
 
 protected:
 	void initializeGL(); 

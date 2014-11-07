@@ -11,7 +11,7 @@ class ColorPatchTracker : public TrackingAlgorithm
 		cv::Mat imgMask;
 	public:
 		ColorPatchTracker();
-		ColorPatchTracker(Settings& settings, QWidget *parent);
+        ColorPatchTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
 		~ColorPatchTracker(void);
 		void track( ulong frameNumber, cv::Mat & frame );
 		void paint			( cv::Mat& image );

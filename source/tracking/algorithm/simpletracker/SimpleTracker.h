@@ -2,6 +2,7 @@
 #define SimpleTracker_H
 
 #include <opencv2/opencv.hpp>
+#include <QMutex>
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "TrackedFish.h"
@@ -9,30 +10,31 @@
 
 class SimpleTracker : public TrackingAlgorithm
 {
-	public:
-		static const float	MAX_TRACK_DISTANCE_PER_FRAME;
-		static const float	MAX_TRACK_DISTANCE;
-		static const int	CANDIDATE_SCORE_THRESHOLD;
-		static const int	MAX_NUMBER_OF_TRACKED_OBJECTS;
+    public:
+        static const float MAX_TRACK_DISTANCE_PER_FRAME;
+        static const float MAX_TRACK_DISTANCE;
+        static const int   CANDIDATE_SCORE_THRESHOLD;
+        static const int   MAX_NUMBER_OF_TRACKED_OBJECTS;
 
-		SimpleTracker			( Settings & settings, QWidget *parent );
-        virtual ~SimpleTracker	() override;
-		void track				( ulong frameNumber, cv::Mat & frame );
-		void reset				();
-		void paint			( cv::Mat& image );
+        SimpleTracker(Settings & settings, std::string& serializationPathName, QWidget *parent);
 
-	private:
-		cv::BackgroundSubtractorMOG2	_bg_subtractor;
-		std::vector<TrackedFish>		_tracked_fish;
-		std::vector<FishCandidate>		_fish_candidates;
+        void track (ulong frameNumber, cv::Mat& frame) override;
+        void reset () override;
+        void paint (cv::Mat& image) override;
 
-	public slots:
-		//mouse click and move events
-		void mouseMoveEvent		( QMouseEvent * e );
-		void mousePressEvent	( QMouseEvent * e );
-		void mouseReleaseEvent	( QMouseEvent * e );
-		void mouseWheelEvent	( QWheelEvent * e );
+    public slots:
+        //mouse click and move events
+        void mouseMoveEvent    (QMouseEvent * /* e */) override {}
+        void mousePressEvent   (QMouseEvent * /* e */) override {}
+        void mouseReleaseEvent (QMouseEvent * /* e */) override {}
+        void mouseWheelEvent   (QWheelEvent * /* e */) override {}
 
+    private:
+        cv::BackgroundSubtractorMOG2 _bg_subtractor;
+        std::vector<FishCandidate>   _fish_candidates;
+
+        QMutex  lastFrameLock;
+        cv::Mat lastFrame;
 };
 
 #endif
