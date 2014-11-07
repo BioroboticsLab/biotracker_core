@@ -296,8 +296,8 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	{
 
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());			
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit moveEvent ( modifiedEvent );		
 
 	}
@@ -322,8 +322,8 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	else
 	{
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit pressEvent ( modifiedEvent );
 	}
 }
@@ -337,8 +337,8 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 	}
 	else{
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit releaseEvent ( modifiedEvent );
 	}
 }

@@ -26,17 +26,19 @@ public:
 	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);
 	virtual void reset();
-	QWidget* getToolsWidget	() override;
-	QWidget* getParamsWidget() override;
+    std::shared_ptr<QWidget> getToolsWidget	() override;
+    std::shared_ptr<QWidget> getParamsWidget() override;
 
-	public slots:
+    public slots:
 		void switchMode();
 
 private:
+    std::shared_ptr<QWidget> _toolsWidget;
+
 	// indicating which image shall be viewed: original or tracked image
 	bool _showOriginal;
 	// corresponding switching button
-	QPushButton *_modeBut;
+    QPushButton *_modeBut;
 
 	/**
 	* Used to preprocess the image (mainly background subtraction).
@@ -86,7 +88,7 @@ private:
 
 	void cutParticleCoords(Particle& to_cut);
 
-	void initUI();
+    void initToolsWidget();
 
 };
 

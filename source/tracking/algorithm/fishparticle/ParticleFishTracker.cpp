@@ -28,7 +28,9 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serial
     , _min_score(0)
     , _clusters(settings)
 	, _params(parent, settings)
+    , _toolsWidget(std::make_shared<QFrame>())
 {
+    initToolsWidget();
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)
@@ -206,19 +208,16 @@ void ParticleFishTracker::reset() {
 	// TODO reset more...?
 }
 
-QWidget* ParticleFishTracker::getToolsWidget	()
+std::shared_ptr<QWidget> ParticleFishTracker::getToolsWidget	()
 {
-	initUI();
-	QFrame *toolsFrame = new QFrame(_parent);
-	QFormLayout *layout = new QFormLayout;
-	layout->addRow(_modeBut);
-	toolsFrame->setLayout(layout);
-	return toolsFrame;
+    return _toolsWidget;
 }
 
-void ParticleFishTracker::initUI()
+void ParticleFishTracker::initToolsWidget()
 {
-	_modeBut = new QPushButton("show Original!", _parent);	
+    QFormLayout *layout = new QFormLayout(_toolsWidget.get());
+    _modeBut = new QPushButton("show Original!", _toolsWidget.get());
+    layout->addRow(_modeBut);
 	QObject::connect(this->_modeBut, SIGNAL(clicked()), this, SLOT(switchMode()));
 }
 
@@ -232,7 +231,7 @@ void ParticleFishTracker::switchMode()
 	emit update();
 }
 
-QWidget * ParticleFishTracker::getParamsWidget()
+std::shared_ptr<QWidget> ParticleFishTracker::getParamsWidget()
 {
 	return _params.getParamsWidget();
 }

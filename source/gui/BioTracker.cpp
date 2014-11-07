@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 
+#include "source/helper/stdext.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 #include <cereal/types/polymorphic.hpp>
@@ -35,13 +36,11 @@ void BioTracker::init(){
 	_videoStopped = true;
 	_currentFrame = 0;
 	_isPanZoomMode = false;
-	_trackingThread = new TrackingThread(_settings);
+    _trackingThread = std::make_unique<TrackingThread>(_settings);
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
-	_vboxParams = new QVBoxLayout();
-	ui.groupBox_params->setLayout(_vboxParams);	
-	_vboxTools = new QVBoxLayout();
-	ui.groupBox_tools->setLayout(_vboxTools);
+    _vboxParams = new QVBoxLayout(ui.groupBox_params);
+    _vboxTools = new QVBoxLayout(ui.groupBox_tools);
 	//meta types
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
@@ -87,20 +86,20 @@ void BioTracker::initConnects()
 	QObject::connect(ui.videoView, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 
 	//tracking thread signals
-	QObject::connect(_trackingThread, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
-	QObject::connect(this, SIGNAL(videoPause(bool)), _trackingThread, SLOT(enableVideoPause(bool)));
-	QObject::connect(this, SIGNAL(videoStop()), _trackingThread, SLOT(stopCapture()));
-	QObject::connect(_trackingThread, SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
-	QObject::connect(_trackingThread, SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
-	QObject::connect(_trackingThread, SIGNAL( sendFps(double) ), this, SLOT( showFps(double) ));
-	QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread, SLOT( enableHandlingNextFrame(bool) ));
-	QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread, SLOT( setFrameNumber(int) ));
-	QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread, SLOT( nextFrame() ));
-	QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread, SLOT( setFps(double) ));
-	QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread, SLOT(setMaxSpeed(bool) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
+    QObject::connect(_trackingThread.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
+    QObject::connect(this, SIGNAL(videoPause(bool)), _trackingThread.get(), SLOT(enableVideoPause(bool)));
+    QObject::connect(this, SIGNAL(videoStop()), _trackingThread.get(), SLOT(stopCapture()));
+    QObject::connect(_trackingThread.get(), SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
+    QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
+    QObject::connect(_trackingThread.get(), SIGNAL( sendFps(double) ), this, SLOT( showFps(double) ));
+    QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread.get(), SLOT( enableHandlingNextFrame(bool) ));
+    QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread.get(), SLOT( setFrameNumber(int) ));
+    QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread.get(), SLOT( nextFrame() ));
+    QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread.get(), SLOT( setFps(double) ));
+    QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread.get(), SLOT(setMaxSpeed(bool) ));
+    QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread.get(), SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
-	QObject::connect(_trackingThread, SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));	
+    QObject::connect(_trackingThread.get(), SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
 
 }
 
@@ -421,10 +420,10 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 	//first remove ui containers of old algorithm
 	if(_tracker)
 	{
-		_vboxParams->removeWidget(_paramsWidget);
-		_vboxTools->removeWidget(_toolsWidget);
-		delete _paramsWidget;
-		delete _toolsWidget;
+        _vboxParams->removeWidget(_paramsWidget.get());
+        _vboxTools->removeWidget(_toolsWidget.get());
+        _paramsWidget.reset();
+        _toolsWidget.reset();
 	}
 
     if (trackingAlg == Algorithms::NoTracking)
@@ -488,9 +487,9 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		try
 		{
 			_paramsWidget = _tracker->getParamsWidget();
-			_vboxParams->addWidget(_paramsWidget);
+            _vboxParams->addWidget(_paramsWidget.get());
 			_toolsWidget = _tracker->getToolsWidget();
-			_vboxTools->addWidget(_toolsWidget);
+            _vboxTools->addWidget(_toolsWidget.get());
 		}
 		catch(std::exception&)
 		{

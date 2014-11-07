@@ -100,7 +100,7 @@ private:
 
 /*	Rectification _rectification;
 */
-	TrackingThread* _trackingThread;	
+    std::unique_ptr<TrackingThread> _trackingThread;
 
 	Settings& _settings;
 	bool _videoPaused;
@@ -126,8 +126,8 @@ private:
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
-	QWidget *_paramsWidget;
-	QWidget *_toolsWidget;
+    std::shared_ptr<QWidget> _paramsWidget;
+    std::shared_ptr<QWidget> _toolsWidget;
 
 
 

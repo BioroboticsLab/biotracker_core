@@ -5,7 +5,6 @@
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
-
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QLineEdit>
@@ -15,15 +14,18 @@ class SampleTracker : public TrackingAlgorithm
 {
 	Q_OBJECT
 private:
-	cv::Point _selectorRecStart;
+    std::shared_ptr<QFrame> _paramsFrame;
+    std::shared_ptr<QFrame> _toolsFrame;
+    cv::Point _selectorRecStart;
 	cv::Point _selectorRecEnd;
 	bool _showSelectorRec;
 	bool _showOriginal;
 	void drawRectangle(cv::Mat image);
 	void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
-	std::vector<TrackedObject>		_trackedObjects;
-	void initUI();
-	//values for filtering a color (HSV format)
+    std::vector<TrackedObject> _trackedObjects;
+    void initParamsFrame();
+    void initToolsFrame();
+    //values for filtering a color (HSV format)
 	int _lowH;
 	int _highH;
 	int _lowS; 
@@ -41,30 +43,24 @@ private:
 
 	QPushButton *_colorBut;
 	QPushButton *_modeBut;
+
 public:
     SampleTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
-	~SampleTracker	( void );
 
-
-
-
-	void track ( ulong frameNumber,
-		cv::Mat & frame ) override;
+    void track ( ulong frameNumber, cv::Mat & frame ) override;
 	void paint ( cv::Mat& image ) override;
 	void reset ( ) override;
-	QWidget* getParamsWidget () override;
-	QWidget* getToolsWidget	() override;
+    std::shared_ptr<QWidget> getParamsWidget () override;
+    std::shared_ptr<QWidget> getToolsWidget	() override;
 
-
-	public slots:
-		void changeFilterColor();
-		void switchMode();
-		//mouse click and move events
-		void mouseMoveEvent		( QMouseEvent * e );
-		void mousePressEvent	( QMouseEvent * e );
-		void mouseReleaseEvent	( QMouseEvent * e );
-		void mouseWheelEvent	( QWheelEvent * e );
-
+public slots:
+    void changeFilterColor();
+    void switchMode();
+    //mouse click and move events
+    void mouseMoveEvent		( QMouseEvent * e );
+    void mousePressEvent	( QMouseEvent * e );
+    void mouseReleaseEvent	( QMouseEvent * e );
+    void mouseWheelEvent	( QWheelEvent * e );
 };
 
 #endif

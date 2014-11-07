@@ -28,10 +28,8 @@ public slots:
 
 public:
 	explicit ToolWindow(LandmarkTracker *parentTracker, QWidget *parent = nullptr);
-    ~ToolWindow();
 
     void initToolWindow();
-	
 
     Vec3b values;
     Mat roiMat;
@@ -57,7 +55,7 @@ public:
 
 
 private:
-    Ui::ToolWindow *ui;
+    Ui::ToolWindow ui;
 
 	LandmarkTracker *tracker;
 
