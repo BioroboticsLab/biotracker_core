@@ -1,6 +1,7 @@
 #ifndef PARTICLEPARAMS_H
 #define PARTICLEPARAMS_H
 
+#include <memory>
 #include <QApplication>
 #include <QGroupBox>
 #include <QFormLayout>
