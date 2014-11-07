@@ -172,20 +172,16 @@ void BioTracker::initPicture(QStringList filenames)
 }
 
 void BioTracker::setPlayfieldPaused(bool enabled){
-	switch(enabled)
-	{
+    if(enabled) {
 		//video is paused
-	case true:			
 		ui.button_nextFrame->setEnabled(true);
 		ui.button_previousFrame->setEnabled(true);
 		ui.button_playPause->setIcon(_iconPlay);
-		break;
-		//video is playing
-	case false:			
-		ui.button_nextFrame->setEnabled(false);
+    } else {
+        //video is playing
+        ui.button_nextFrame->setEnabled(false);
 		ui.button_previousFrame->setEnabled(false);
 		ui.button_playPause->setIcon(_iconPause);
-		break;
 	}
 }
 

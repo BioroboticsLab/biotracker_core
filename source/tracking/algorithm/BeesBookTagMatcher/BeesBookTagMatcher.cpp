@@ -47,7 +47,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 		if (_activePoints)
 			for (int i=0; i<5; i++)
 				{
-					if (abs(e->x()-g.absPoints[i].x)<2 && abs(e->y()-g.absPoints[i].y)<2)
+                    if (std::abs<double>(e->x()-g.absPoints[i].x)<2 && std::abs<double>(e->y()-g.absPoints[i].y)<2)
 					{
 						switch (i)
 						{
