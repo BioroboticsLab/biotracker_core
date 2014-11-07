@@ -24,7 +24,8 @@ public:
 	int getNumParticles();
 
 private:
-	Settings & _settings;
+    QWidget * _parent;
+    Settings & _settings;
 	//parameters:	
 	int _numParticles;
 	float _resampleProportion;
@@ -35,7 +36,6 @@ private:
 	float _observerPosVar;
 	float _observerAngleVar;
 	int _observerScoreMinimum;
-	QWidget * _parent;
 
 	//gui elements to set paramaters:
 	QSlider * _numPartSlide;
