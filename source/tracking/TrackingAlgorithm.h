@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <qwidget.h>
 #include <fstream>
+#include <memory>
 #include <typeinfo>
 
 #include <cereal/archives/xml.hpp>
@@ -50,14 +51,14 @@ public:
 	* to create a widget for gui with all 
 	* buttons needed for interaction 
 	*/
-	virtual QWidget* getToolsWidget();
+    virtual std::shared_ptr<QWidget> getToolsWidget();
 
 	/**
 	* getParamsWidget() will be called once at start up
 	* to create a widget for gui with all 
 	* parameter fields needed 
 	*/
-	virtual QWidget* getParamsWidget();
+    virtual std::shared_ptr<QWidget> getParamsWidget();
 	
 	void loadObjects(std::vector<TrackedObject> &&objects);
 
@@ -83,7 +84,6 @@ signals:
 
 protected:
 	Settings & _settings;
-	QWidget * _parent;
     std::vector<TrackedObject> _trackedObjects;
     std::string _serializationPathName;
 };

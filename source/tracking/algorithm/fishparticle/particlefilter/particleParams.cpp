@@ -1,7 +1,8 @@
 #include "particleParams.h"
 
 ParticleParams::ParticleParams(QWidget *parent, Settings & settings) :
-_parent(parent)
+QObject(parent)
+, _paramsFrame(std::make_shared<QFrame>())
 , _settings(settings)
 , _numParticles(1000)
 {
@@ -16,36 +17,34 @@ ParticleParams::~ParticleParams()
 void ParticleParams::init()
 {
 	loadParamsFromSettings();
-	initGuiElements();
+    initParamsFrame();
 	makeConnects();
 }
 
-void ParticleParams::initGuiElements()
+void ParticleParams::initParamsFrame()
 {
-	_numPartSlide = new QSlider(_parent);
+    _numPartSlide = new QSlider(_paramsFrame.get());
 	_numPartSlide->setMaximum(5000);
 	_numPartSlide->setMinimum(0);
 	_numPartSlide->setOrientation(Qt::Horizontal);
 	_numPartSlide->setValue(_numParticles);
-	_numPartEdit = new QLineEdit(_parent);
+    _numPartEdit = new QLineEdit(_paramsFrame.get());
 	_numPartEdit->setText(QString::number(_numParticles));
-	_numPartEdit->setValidator(new QIntValidator(0, _numPartSlide->maximum(), _parent));
+    _numPartEdit->setValidator(new QIntValidator(0, _numPartSlide->maximum(), _paramsFrame.get()));
+
+    QFormLayout *layout = new QFormLayout(_paramsFrame.get());
+    QHBoxLayout *row = new QHBoxLayout();
+
+    row->addWidget(new QLabel("Number of Particles", _paramsFrame.get()));
+    row->addWidget(_numPartSlide);
+    row->addWidget(_numPartEdit);
+    layout->addRow(row);
 }
 
-QWidget* ParticleParams::getParamsWidget()
+std::shared_ptr<QWidget> ParticleParams::getParamsWidget()
 {
-	QFrame *paramsFrame = new QFrame(_parent);
-	QFormLayout *layout = new QFormLayout;
-	QHBoxLayout *row = new QHBoxLayout;
-
-	row->addWidget(new QLabel("Number of Particles"));
-	row->addWidget(_numPartSlide);
-	row->addWidget(_numPartEdit);	
-	layout->addRow(row);
-	paramsFrame->setLayout(layout);
-	return paramsFrame;
+    return _paramsFrame;
 }
-QWidget* ParticleParams::getToolsWidget(){ return std::nullptr_t(); }
 
 void ParticleParams::makeConnects()
 {

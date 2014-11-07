@@ -1,5 +1,6 @@
 #include <QtWidgets/QApplication>
 
+#include "source/helper/stdext.h"
 #include "source/gui/BioTracker.h"
 #include "source/settings/Settings.h"
 #include "source/settings/Messages.h"
@@ -9,13 +10,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-	QString* notificationMessage = new QString("No Error!");
+    auto notificationMessage = std::make_unique<QString>("No Error!");
 
-	if(SystemCompatibilityCheck::checkAll(notificationMessage))
+    if(SystemCompatibilityCheck::checkAll(notificationMessage.get()))
 	{
-		delete notificationMessage;
-
-		Settings settings;
+        Settings settings;
 
 		app.setOrganizationName("Biorobotics Lab / FU Berlin");
 		app.setApplicationName("Bio Tracker");
@@ -24,14 +23,13 @@ int main(int argc, char *argv[])
 		w.show();
 		return app.exec();
 	} else 
-	{
+    {
 		QMessageBox msgBox;
 		msgBox.setWindowTitle(QString::fromStdString(MSGS::SYSTEM::APPLICATION_CANNOT_START));
-		msgBox.setText(*notificationMessage);
+        msgBox.setText(*notificationMessage);
 		msgBox.setStandardButtons(QMessageBox::Ok);		
 		msgBox.exec();
 	}
 
-	delete notificationMessage;
-	return EXIT_FAILURE;
+    return EXIT_FAILURE;
 }

@@ -5,8 +5,8 @@
 #include <cereal/types/vector.hpp>
 
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializationPath, QWidget *parent)
-    : _settings(settings)
-    , _parent(parent)
+    : QObject(parent)
+    , _settings(settings)
     , _serializationPathName(serializationPath)
 {}
 
@@ -27,5 +27,5 @@ void TrackingAlgorithm::mouseMoveEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mousePressEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseWheelEvent		( QWheelEvent * )	{}
-QWidget* TrackingAlgorithm::getToolsWidget	()	{ return  new QWidget(_parent,0); }
-QWidget* TrackingAlgorithm::getParamsWidget	()	{ return  new QWidget(_parent,0); }
+std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()	{ return std::make_shared<QWidget>(); }
+std::shared_ptr<QWidget> TrackingAlgorithm::getParamsWidget()	{ return std::make_shared<QWidget>(); }

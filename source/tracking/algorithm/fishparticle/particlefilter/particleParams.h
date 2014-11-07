@@ -17,14 +17,13 @@ class ParticleParams : public QObject
 public:
 	ParticleParams( QWidget *parent, Settings & settings );
 	~ParticleParams();	
-	QWidget* getParamsWidget();
-	QWidget* getToolsWidget();	
+    std::shared_ptr<QWidget> getParamsWidget();
 	void loadParamsFromSettings();
 	void saveParamsToSettings();
 	int getNumParticles();
 
 private:
-    QWidget * _parent;
+    std::shared_ptr<QWidget> _paramsFrame;
     Settings & _settings;
 	//parameters:	
 	int _numParticles;
@@ -41,7 +40,7 @@ private:
 	QSlider * _numPartSlide;
 	QLineEdit * _numPartEdit;
 
-	void initGuiElements();
+    void initParamsFrame();
 	void init();
 	void makeConnects();
 

@@ -25,8 +25,8 @@ bool SystemCompatibilityCheck::checkOpenGLSupport(QString* notificationMessage)
 bool SystemCompatibilityCheck::checkConfigFileExist(QString* notificationMessage)
 {
 	if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
-		notificationMessage->clear();
-		notificationMessage->append(QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));        
+        notificationMessage->clear();
+        notificationMessage->append(QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));
         return false;
     }
 
