@@ -6,7 +6,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
-#include "ui_toolwindow.h"
+
+#include "source/ui_toolwindow.h"
 
 class LandmarkTracker;
 

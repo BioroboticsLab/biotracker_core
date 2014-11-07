@@ -4,6 +4,8 @@
 #include <QtCore/QList>
 #include <QtCore/QPoint>
 
+#include <utility> // std::move
+
 /**
  *	Rectification class normalizing the tracking image
  */
@@ -46,7 +48,7 @@ public:
 	 * @param: areaCoordinates, the coordinate list of the considered area.
 	 * @return: void.
 	 */
-	void setArea(std::vector<cv::Point> areaCoordinates) { _areaCoordinates = areaCoordinates; }
+	void setArea(std::vector<cv::Point> areaCoordinates) { _areaCoordinates = std::move(areaCoordinates); }
 
 	/**
 	 * Sets the real world dimension the tank.
@@ -58,10 +60,10 @@ public:
 
 	std::vector<cv::Point> area() const { return _areaCoordinates; }
 
-	int minXPx();
-	int maxXPx();
-	int minYPx();
-	int maxYPx();
+	int minXPx() const;
+	int maxXPx() const;
+	int minYPx() const;
+	int maxYPx() const;
 
 private: 
 	std::vector<cv::Point> _areaCoordinates;

@@ -1,6 +1,7 @@
-BioTracker.vcxproj.user
 Debug/
 GeneratedFiles/
+CMakeLists.txt.user
+desktop.ini
 *.opensdf
 *.sdf
 *.suo
@@ -8,6 +9,11 @@ GeneratedFiles/
 *.psess
 *.vsp
 *.ipch
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.vspscc
 
 /Release
 /build
+*.kate-swp

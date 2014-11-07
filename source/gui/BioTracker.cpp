@@ -1,7 +1,14 @@
 #include "source/gui/BioTracker.h"
 #include <chrono>
+#include <fstream>
 #include <sstream>
 #include <string>
+
+#include "source/tracking/algorithm/algorithms.h"
+
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/vector.hpp>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
 	QMainWindow(parent, flags),
@@ -99,11 +106,24 @@ void BioTracker::initConnects()
 
 void BioTracker::initAlgorithms()
 {
-	QString algNames[] = {"no tracking", "simple algorithm", "bees book tag matcher", "color patch tag matcher", "Fish - Particle", "Sample Tracker", "Landmark Tracker"};
-	for(QString &algName : algNames)
-	{
-		ui.cb_algorithms->addItem(algName);
-	}	
+    // add NoTracker first
+    for (auto& algByStr : Algorithms::byString)
+    {
+        if (algByStr.second == Algorithms::NoTracking)
+        {
+            ui.cb_algorithms->addItem(algByStr.first);
+            break;
+        }
+    }
+
+    // add Trackers
+    for (auto& algByStr : Algorithms::byString)
+    {
+        if (algByStr.second != Algorithms::NoTracking)
+        {
+            ui.cb_algorithms->addItem(algByStr.first);
+        }
+    }
 }
 
 void BioTracker::browseVideo()
@@ -270,7 +290,7 @@ void BioTracker::stopCapture()
 	ui.sld_video->setDisabled(true);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 	ui.cb_algorithms->setCurrentIndex(0);
-	trackingAlgChanged("no tracking");
+    trackingAlgChanged(Algorithms::NoTracking);
 }
 
 void BioTracker::updateFrameNumber(int frameNumber)
@@ -306,7 +326,7 @@ void BioTracker::drawImage(cv::Mat image)
 
 void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 {
-	QString msgLine =  "<span style=\"color:blue\">";	
+    QString msgLine =  "<span style=\"color:blue\">";
 	msgLine += QDateTime::currentDateTime().toString("hh:mm:ss");
 	msgLine += "</span>&nbsp;&nbsp;&nbsp;";
 	switch (mType)
@@ -391,54 +411,61 @@ void BioTracker::changeFps(int fps)
 		//show target fps
 		ui.fps_label->setText(QString::number(fps));
 		emit enableMaxSpeed(false);
-		emit fpsChange((double)fps);
+		emit fpsChange(static_cast<double>(fps));
 	}
 }
 
-void BioTracker::trackingAlgChanged(QString trackingAlg)
-{	
+void BioTracker::trackingAlgChanged(QString trackingAlgStr)
+{
+    trackingAlgChanged(Algorithms::byString.at(trackingAlgStr));
+}
+
+void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
+{
 	//first remove ui containers of old algorithm
 	if(_tracker)
 	{
-
 		_vboxParams->removeWidget(_paramsWidget);
 		_vboxTools->removeWidget(_toolsWidget);
 		delete _paramsWidget;
 		delete _toolsWidget;
+	}
 
-	}
-	if (trackingAlg == "no tracking")
-	{		
+    if (trackingAlg == Algorithms::NoTracking)
+    {
         _tracker.reset();
-	}
-	else if(trackingAlg == "simple algorithm")
-	{
-        _tracker = std::make_shared<SimpleTracker>(_settings, this);
-	}
-	else if(trackingAlg == "bees book tag matcher")
-	{
-        _tracker = std::make_shared<BeesBookTagMatcher>(_settings, this);
-	}
-	else if ( trackingAlg == "color patch tag matcher" )
-	{
-        _tracker = std::make_shared<ColorPatchTracker>(_settings, this);
-	}
-	else if (trackingAlg == "Fish - Particle")
-	{
-        _tracker = std::make_shared<ParticleFishTracker>(_settings, this);
-	}
-	else if (trackingAlg == "Sample Tracker")
-	{
-        _tracker = std::make_shared<SampleTracker>(_settings, this);
-	}
-	else if (trackingAlg == "Landmark Tracker")
-	{
-        _tracker = std::make_shared<LandmarkTracker>(_settings, this);
-	}
-	if ( trackingAlg != "no tracking" )
-		connectTrackingAlg(_tracker);
-	ui.groupBox_params->repaint();
-	ui.groupBox_tools->repaint();
+    } else
+    {
+        // restore previous state
+        std::string path;
+        std::vector<TrackedObject> storedObjects;
+        if (_serializationTmpFileMap.count(trackingAlg))
+        {
+            auto& file = _serializationTmpFileMap.at(trackingAlg);
+            assert(file.open());
+            path = file.fileName().toStdString();
+            std::cout << "Trying to restore from: " << path << std::endl;
+            {
+                std::ifstream is(path);
+                cereal::XMLInputArchive ar(is);
+                ar(storedObjects);
+            }
+        } else
+        {
+            // create a new QTemporaryFile and return a reference
+            QTemporaryFile& tmpFile = _serializationTmpFileMap[trackingAlg];
+            if (tmpFile.open()) path = tmpFile.fileName().toStdString();
+            else assert(false);
+        }
+        _tracker = std::shared_ptr<TrackingAlgorithm>(
+            (Algorithms::byType.at(trackingAlg))(_settings, path, this));
+        _tracker->loadObjects(std::move(storedObjects));
+
+        connectTrackingAlg(_tracker);
+    }
+
+    ui.groupBox_params->repaint();
+    ui.groupBox_tools->repaint();
 	emit changeTrackingAlg(_tracker);
 }
 

@@ -42,7 +42,7 @@ private:
 	QPushButton *_colorBut;
 	QPushButton *_modeBut;
 public:
-	SampleTracker	( Settings & settings, QWidget *parent );
+    SampleTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
 	~SampleTracker	( void );
 
 

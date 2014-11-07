@@ -6,7 +6,9 @@
 
 
 
-LandmarkTracker::LandmarkTracker( Settings & settings,  QWidget *parent) : TrackingAlgorithm( settings, parent ), toolWindow(nullptr)
+LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
+    : TrackingAlgorithm( settings, serializationPathName, parent )
+    , toolWindow(nullptr)
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();
@@ -138,5 +140,3 @@ cv::Mat LandmarkTracker::getSelectedRoi()
 {
 	return selectedRoi;
 }
-
-

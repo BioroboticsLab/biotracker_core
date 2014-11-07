@@ -40,7 +40,7 @@ QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
     QPixmap p;
 	
     cvtColor(mat, rgb, CV_BGR2RGB);
-    p.convertFromImage(QImage((const unsigned char*)(rgb.data), rgb.cols, rgb.rows, QImage::Format_RGB888));
+    p.convertFromImage(QImage(static_cast<const unsigned char*>(rgb.data), rgb.cols, rgb.rows, QImage::Format_RGB888));
 
     std::cout<<"Pixmap set..."<<std::endl;
 
