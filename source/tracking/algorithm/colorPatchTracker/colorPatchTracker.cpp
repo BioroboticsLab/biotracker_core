@@ -1,6 +1,7 @@
 #include "colorPatchTracker.h"
 
-ColorPatchTracker::ColorPatchTracker(Settings& settings, QWidget *parent) : TrackingAlgorithm(settings, parent)
+ColorPatchTracker::ColorPatchTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
+    : TrackingAlgorithm(settings, serializationPathName, parent)
 {
 }
 

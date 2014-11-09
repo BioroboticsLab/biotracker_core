@@ -19,15 +19,18 @@ struct compareReverseParticleScorePredicate {
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
-    : TrackingAlgorithm(settings, parent)
+ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
+    : TrackingAlgorithm(settings, serializationPathName, parent)
     , _showOriginal(false)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
+	, _params(parent, settings)
+    , _toolsWidget(std::make_shared<QFrame>())
 {
+    initToolsWidget();
 }
 
 ParticleFishTracker::~ParticleFishTracker(void)
@@ -51,7 +54,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		// (2) Resampling (importance resampling) or seeding
 		if (_current_particles.empty()) {
 			// TODO params for this algorithm in settings.
-			seedParticles(1000, 0, 0, frame.cols, frame.rows);
+			seedParticles(_params.getNumParticles(), 0, 0, frame.cols, frame.rows);
 		} else {
 			ParticleBrightnessObserver observer(_prepared_frame);
 			_sum_scores = 0;
@@ -205,19 +208,16 @@ void ParticleFishTracker::reset() {
 	// TODO reset more...?
 }
 
-QWidget* ParticleFishTracker::getToolsWidget	()
+std::shared_ptr<QWidget> ParticleFishTracker::getToolsWidget	()
 {
-	initUI();
-	QFrame *toolsFrame = new QFrame(_parent);
-	QFormLayout *layout = new QFormLayout;
-	layout->addRow(_modeBut);
-	toolsFrame->setLayout(layout);
-	return toolsFrame;
+    return _toolsWidget;
 }
 
-void ParticleFishTracker::initUI()
+void ParticleFishTracker::initToolsWidget()
 {
-	_modeBut = new QPushButton("show Original!", _parent);	
+    QFormLayout *layout = new QFormLayout(_toolsWidget.get());
+    _modeBut = new QPushButton("show Original!", _toolsWidget.get());
+    layout->addRow(_modeBut);
 	QObject::connect(this->_modeBut, SIGNAL(clicked()), this, SLOT(switchMode()));
 }
 
@@ -229,4 +229,9 @@ void ParticleFishTracker::switchMode()
 	else
 		_modeBut->setText("show Original!");
 	emit update();
+}
+
+std::shared_ptr<QWidget> ParticleFishTracker::getParamsWidget()
+{
+	return _params.getParamsWidget();
 }

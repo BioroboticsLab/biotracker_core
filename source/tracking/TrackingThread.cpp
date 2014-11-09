@@ -271,14 +271,14 @@ void TrackingThread::doTracking(cv::Mat frame)
 {
 	QMutexLocker locker(&trackerMutex);
 	cv::Mat retFrame;
-	try
-	{
+    try
+    {
 		_tracker->track( _frameNumber, frame);
-	}
-	catch(std::exception&)
-	{
-		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
-	}
+    }
+    catch(std::exception&)
+    {
+        emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
+    }
 }
 
 int TrackingThread::getFrameNumber()

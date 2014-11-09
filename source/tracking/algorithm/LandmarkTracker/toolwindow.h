@@ -6,7 +6,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
-#include "ui_toolwindow.h"
+
+#include "source/ui_toolwindow.h"
 
 class LandmarkTracker;
 
@@ -27,10 +28,8 @@ public slots:
 
 public:
 	explicit ToolWindow(LandmarkTracker *parentTracker, QWidget *parent = nullptr);
-    ~ToolWindow();
 
     void initToolWindow();
-	
 
     Vec3b values;
     Mat roiMat;
@@ -56,7 +55,7 @@ public:
 
 
 private:
-    Ui::ToolWindow *ui;
+    Ui::ToolWindow ui;
 
 	LandmarkTracker *tracker;
 

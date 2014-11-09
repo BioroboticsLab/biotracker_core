@@ -5,7 +5,7 @@
 
 #include <QtCore/QSettings>
 
-#include "source/helper/StringHelper.h"
+#include "source/helper/stdext.h"
 #include "source/settings/Settings.h"
 
 
@@ -18,11 +18,6 @@ public:
 	 * @param params, parameters for the image pre-processing.
 	 */
 	ImagePreProcessor(Settings &settings);
-
-	/**
-	 * The standard destructor.
-	 */
-	~ImagePreProcessor(void);
 
 	/**
 	 * Init function. Sets the property for the imge pre-processing.
@@ -120,7 +115,7 @@ private:
 	cv::Mat _dilatedImage;
 
 	// background subtraction
-	cv::BackgroundSubtractorMOG2* _pMOG;
+    std::unique_ptr<cv::BackgroundSubtractorMOG2> _pMOG;
 
 	//parameters for image pre-processing
 	bool _backgroundSubtractionEnabled;

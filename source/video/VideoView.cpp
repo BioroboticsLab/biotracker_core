@@ -81,15 +81,18 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-		try
-		{
+        try
+        {
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
-		}
-		catch(std::exception&)
-		{
-			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
-		}
+        }
+        catch(std::exception& err)
+        {
+            std::stringstream ss;
+            ss << "critical error in selected tracking algorithm's paint method!";
+            ss << "\n" << err.what();
+            emit notifyGUI(ss.str() ,MSGS::FAIL);
+        }
 
 	}
 
@@ -293,8 +296,8 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	{
 
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());			
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit moveEvent ( modifiedEvent );		
 
 	}
@@ -319,8 +322,8 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	else
 	{
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit pressEvent ( modifiedEvent );
 	}
 }
@@ -334,8 +337,8 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 	}
 	else{
 		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit releaseEvent ( modifiedEvent );
 	}
 }

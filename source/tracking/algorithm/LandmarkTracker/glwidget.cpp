@@ -56,7 +56,7 @@ void GLWidget::resizeGL(int w, int h)
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45, (float)w/h, 0.01, 500);
+    gluPerspective(45, static_cast<float>(w)/h, 0.01, 500);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //gluLookAt(0,0,5, 0,0,0, 0,1,0);
@@ -119,8 +119,8 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-   GLfloat dx = (GLfloat) (e->x() - lastPos.x()) / width();
-   GLfloat dy = (GLfloat) (e->y() - lastPos.y()) / height();
+   GLfloat dx = static_cast<GLfloat>(e->x() - lastPos.x()) / width();
+   GLfloat dy = static_cast<GLfloat>(e->y() - lastPos.y()) / height();
 
    if (e->buttons() & Qt::LeftButton) {
     rotX += 180 * dy;
