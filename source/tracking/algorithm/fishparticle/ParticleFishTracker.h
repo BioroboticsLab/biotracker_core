@@ -5,6 +5,7 @@
 #include "preprocessing/FramePreprocessor.h"
 #include "particlefilter/Particle.h"
 #include "particlefilter/ParticleClusters.h"
+#include "particlefilter/particleParams.h"
 
 //QT Stuff
 #include <QGroupBox>
@@ -20,21 +21,24 @@ class ParticleFishTracker :
 {
 	Q_OBJECT
 public:
-	explicit ParticleFishTracker(Settings& settings, QWidget *parent);
+    explicit ParticleFishTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);
 	virtual void reset();
-	QWidget* getToolsWidget	() override;
+    std::shared_ptr<QWidget> getToolsWidget	() override;
+    std::shared_ptr<QWidget> getParamsWidget() override;
 
-	public slots:
+    public slots:
 		void switchMode();
 
 private:
+    std::shared_ptr<QWidget> _toolsWidget;
+
 	// indicating which image shall be viewed: original or tracked image
 	bool _showOriginal;
 	// corresponding switching button
-	QPushButton *_modeBut;
+    QPushButton *_modeBut;
 
 	/**
 	* Used to preprocess the image (mainly background subtraction).
@@ -73,6 +77,8 @@ private:
 	float _sum_scores;
 
 	ParticleClusters _clusters;
+	
+	ParticleParams _params;
 
 	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
 
@@ -82,7 +88,7 @@ private:
 
 	void cutParticleCoords(Particle& to_cut);
 
-	void initUI();
+    void initToolsWidget();
 
 };
 

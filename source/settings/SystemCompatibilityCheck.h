@@ -16,7 +16,7 @@ namespace SystemCompatibilityCheck
 	 * @param: notificationMessage, the notification message,
 	 * @return: true, system has config.ini file, false otherwise.
 	 */
-	bool checkConfigFileExist(QString* notificationMessage);
+    bool checkConfigFileExist(QString* notificationMessage);
 	
 
 	/**
@@ -24,7 +24,7 @@ namespace SystemCompatibilityCheck
 	 * @param: notificationMessage, the notification message,
 	 * @return: true, if whole system is ready for proper running, false otherwise.
 	 */
-	bool checkAll(QString* notificationMessage);
+    bool checkAll(QString* notificationMessage);
 
 	/**
 	 * Create a template configuration file.
@@ -32,5 +32,5 @@ namespace SystemCompatibilityCheck
 	 * @return: true, if creatian is successful, false otherwise.
 	 */
 	bool createTemplateConfigFile(QString* notificationMessage);
-};
+}
 

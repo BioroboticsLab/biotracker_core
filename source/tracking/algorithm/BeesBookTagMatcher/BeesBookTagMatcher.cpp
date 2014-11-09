@@ -2,7 +2,8 @@
 #include <QApplication>
 
 
-BeesBookTagMatcher::BeesBookTagMatcher( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
+BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent )
+    : TrackingAlgorithm( settings, serializationPathName, parent )
 {	
 		_ready			= true; //Ready for a new tag --ctrl + Right Click--
 		_activeTag		= false; //if true, then a new Grid has been defined with the vector of points and the bits can now bi defined
@@ -46,7 +47,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 		if (_activePoints)
 			for (int i=0; i<5; i++)
 				{
-					if (abs(e->x()-g.absPoints[i].x)<2 && abs(e->y()-g.absPoints[i].y)<2)
+                    if (std::abs<double>(e->x()-g.absPoints[i].x)<2 && std::abs<double>(e->y()-g.absPoints[i].y)<2)
 					{
 						switch (i)
 						{

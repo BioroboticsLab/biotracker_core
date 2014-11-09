@@ -9,13 +9,9 @@ ImagePreProcessor::ImagePreProcessor(Settings &settings) :
 	init();
 }
 
-ImagePreProcessor::~ImagePreProcessor(void)
-{
-}
-
 void ImagePreProcessor::init()
 {
-	_pMOG = new cv::BackgroundSubtractorMOG2(
+    _pMOG = std::make_unique<cv::BackgroundSubtractorMOG2>(
 		_settings.getValueOfParam<int>(TRACKERPARAM::BG_MOG2_HISTORY),
 		_settings.getValueOfParam<int>(TRACKERPARAM::BG_MOG2_VAR_THRESHOLD),
 		_settings.getValueOfParam<bool>(TRACKERPARAM::BG_MOG2_SHADOW_DETECTION));	
