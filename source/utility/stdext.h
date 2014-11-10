@@ -1,3 +1,6 @@
+#ifndef STDEXT_H
+#define STDEXT_H
+
 /* implementation of std::make_unique for c++<14
  * implementation according to N3656
  * see: http://isocpp.org/files/papers/N3656.txt
@@ -39,4 +42,6 @@ namespace std {
         typename _Unique_if<T>::_Known_bound
         make_unique(Args&&...) = delete;
 }
+#endif
+
 #endif
