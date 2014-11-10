@@ -153,7 +153,6 @@
     </ClCompile>
     <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.cpp" />
-    <ClCompile Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.cpp" />
     <ClCompile Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.cpp" />
@@ -240,7 +239,6 @@
     </CustomBuild>
     <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\MyNewGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleClusters.h" />
-    <ClInclude Include="source\tracking\algorithm\BeesBookTagMatcher\resources\myGrid.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\particlefilter\ParticleBrightnessObserver.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FishBackgroundSubtractor.h" />
     <ClInclude Include="source\tracking\algorithm\fishparticle\preprocessing\FramePreprocessor.h" />

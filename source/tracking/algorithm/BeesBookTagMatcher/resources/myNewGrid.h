@@ -9,18 +9,21 @@
 //tools
 #include <vector>
 #include <string>
-#define _USE_MATH_DEFINES
+
 #include <math.h>
+#define _USE_MATH_DEFINES
 #include <bitset>
 
-// current tag design 
-/** inner radius */
+// current tag design
+// These parameters are only used when a new tag is set.
+// To draw tags from the vector use the parameters from each tag
+/* inner radius */
 #define IR 1.2
-/** middle radius */
+/* middle radius */
 #define MR 2.2
-/** outer radius */
+/* outer radius */
 #define OR 3
-
+/* default size */
 #define axisTag 25
 
 // current tag design -- without inner border
@@ -30,50 +33,53 @@ class myNewGrid
 {
 public:
 	//initializer function
-	void init(cv::Point2d CenterGrid, cv::Size2d AxesGrid, double AngleGrid, cv::Point2d CenterTag, cv::Size2d AxesTag,double AngleTag, std::vector<bool> Id);
+	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);
+	//void init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id);
 	//default constructor
 	myNewGrid();
 	//constructor with 1 parameter
-	myNewGrid(cv::Point2d centerGrid);
+	myNewGrid(cv::Point2f centerGrid);
 	//constructor with 7 parameters
-	myNewGrid(cv::Point2d CenterGrid, cv::Size2d AxesGrid, double AngleGrid, cv::Point CenterTag, cv::Size2d AxesTag,double AngleTag, std::vector<bool> Id);	
+	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);	
+	//myNewGrid(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id);	
 	//destructor
 	~myNewGrid();
 
 	//Object properties	
-	cv::Point2d								centerGrid;
-	cv::Point2d								centerTag;
+	cv::Point2f								centerGrid; //center of the grid
+	cv::Point2f								centerTag;  //center of the ellipse defined by the tag itself, usually is equal to centerGrid but it might be diferent
 
-	cv::Size2d								axesGrid;	//alpha --> the orientation of the bee
-	cv::Size2d								axesTag;	//phi -->The 
+	cv::Size2f								axesGrid;	//major and minor axes of the ellipse defined by the Grid
+	cv::Size2f								axesTag;	//major and minor axes of the ellipse defined by the Tag
 
+	double									angleGrid;	//the angle of the grid, is the angle where the bit cells start to be drawn, it is calculated from phi and alpha
+	double									angleTag;	//this angle denotes the orientation of the ellipses (both ellipses should have the same phi parameter) (measured from the y-axis)
+	
+	double									scale;		//scale parameter for the tag, referenced to axisTag.
 	double									alpha;		//bee orientation, where 0 degrees is the x-axis and from there the angle is measured counterclockwise
 	double									theta;		//this angle denotes the tilt of the grid
-	double									phi;		//this angle denotes the orientation of the ellipse (measured from the y-axis)
-	double									angleGrid;	//the angle of the grid
-	double									angleTag;	//the angle of the tag
+	double									phi;		//this angle denotes the orientation of the ellipses (both ellipses should have the same phi parameter) (measured from the y-axis)
 	
-	double									ratP1P3;	//ratio P0P1/P0P3
-	double									ratP2P4;	//ratio P0P2/P0P4	
 	double									angleP1P2;	//angle between P0P1 and P0P2
 
 
 	std::vector<bool>						ID;
 
 	std::vector<std::vector <cv::Point> >	cellsContours;
-	std::vector<std::vector <cv::Point> >	gridAxes;
-	std::vector<cv::Point2d>				absPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the image)
-	std::vector<cv::Point2d>				relPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the center)
+	
+	//std::vector<std::vector <cv::Point> >	gridAxes;
+	std::vector<cv::Point2f>				absPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the image)
+	std::vector<cv::Point2f>				relPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)
 	
 	//function that generates the set of 9 points that define a grid
-	void initPoints(cv::Point2d center);
-	//function that updates the set of 9 points that define a grid
+	void initPoints();
+	//function that updates the set of 9 points that define a grid from parameters.
 	void updatePoints(int m);
-	//function that calculates the vector of parameters of the grid.
-	void updateParam();
+	//function that calculates the vector of parameters of the grid from points configuration.
+	void updateParam();	
 	//function that updates the minor axis of the ellipse using theta as parameter.
 	void updateAxes();
-	//function that draws the grid without the tag.
+	//function that draws the points without the tag.
 	void drawModPoints(cv::Mat &img);
 	//function that draws the grid without the tag.
 	void drawGrid(cv::Mat &img);
@@ -96,6 +102,6 @@ public:
 	//function that renders all the necessary cells in a Tag calling renderGridCell
 	std::vector<std::vector <cv::Point>> renderFullTag();
 
-	//function that renders tag axes while being modified
-	void renderModTag();		
+	////function that renders tag axes while being modified
+	//void renderModTag();		
 };
