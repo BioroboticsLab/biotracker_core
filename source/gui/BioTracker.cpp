@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "source/helper/stdext.h"
+#include "source/utility/stdext.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 #include <cereal/types/polymorphic.hpp>
@@ -106,21 +106,21 @@ void BioTracker::initConnects()
 void BioTracker::initAlgorithms()
 {
     // add NoTracker first
-    for (auto& algByStr : Algorithms::byString())
+    for (auto& algByStr : Algorithms::Registry::getInstance().typeByString())
     {
         if (algByStr.second == Algorithms::NoTracking)
         {
-            ui.cb_algorithms->addItem(algByStr.first);
+            ui.cb_algorithms->addItem(QString::fromStdString(algByStr.first));
             break;
         }
     }
 
     // add Trackers
-    for (auto& algByStr : Algorithms::byString())
+    for (auto& algByStr : Algorithms::Registry::getInstance().typeByString())
     {
         if (algByStr.second != Algorithms::NoTracking)
         {
-            ui.cb_algorithms->addItem(algByStr.first);
+            ui.cb_algorithms->addItem(QString::fromStdString(algByStr.first));
         }
     }
 }
@@ -412,7 +412,7 @@ void BioTracker::changeFps(int fps)
 
 void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 {
-    trackingAlgChanged(Algorithms::byString().at(trackingAlgStr));
+    trackingAlgChanged(Algorithms::Registry::getInstance().typeByString().at(trackingAlgStr.toStdString()));
 }
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
@@ -452,8 +452,8 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
             if (tmpFile.open()) path = tmpFile.fileName().toStdString();
             else assert(false);
         }
-        _tracker = std::shared_ptr<TrackingAlgorithm>(
-            (Algorithms::byType().at(trackingAlg))(_settings, path, this));
+        _tracker = Algorithms::Registry::getInstance().make_new_tracker(trackingAlg, _settings, path, this);
+        assert(_tracker);
         _tracker->loadObjects(std::move(storedObjects));
 
         connectTrackingAlg(_tracker);

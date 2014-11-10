@@ -5,6 +5,12 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include "source/tracking/algorithm/algorithms.h"
+
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
+}
+
 SampleTracker::SampleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm( settings, serializationPathName, parent)
     , _paramsFrame(std::make_shared<QFrame>())

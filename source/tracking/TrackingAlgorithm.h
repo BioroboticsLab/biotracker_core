@@ -88,5 +88,4 @@ protected:
     std::string _serializationPathName;
 };
 
-
 #endif // !TrackingAlgorithm_H

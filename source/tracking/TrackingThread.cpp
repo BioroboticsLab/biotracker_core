@@ -8,7 +8,7 @@
 #include "source/settings/Messages.h"
 #include "source/settings/Param.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-//#include "source/helper/StringHelper.h"
+//#include "source/utility/StringHelper.h"
 
 
 /**
