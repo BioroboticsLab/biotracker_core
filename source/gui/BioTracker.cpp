@@ -106,7 +106,7 @@ void BioTracker::initConnects()
 void BioTracker::initAlgorithms()
 {
     // add NoTracker first
-    for (auto& algByStr : Algorithms::byString)
+    for (auto& algByStr : Algorithms::byString())
     {
         if (algByStr.second == Algorithms::NoTracking)
         {
@@ -116,7 +116,7 @@ void BioTracker::initAlgorithms()
     }
 
     // add Trackers
-    for (auto& algByStr : Algorithms::byString)
+    for (auto& algByStr : Algorithms::byString())
     {
         if (algByStr.second != Algorithms::NoTracking)
         {
@@ -412,7 +412,7 @@ void BioTracker::changeFps(int fps)
 
 void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 {
-    trackingAlgChanged(Algorithms::byString.at(trackingAlgStr));
+    trackingAlgChanged(Algorithms::byString().at(trackingAlgStr));
 }
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
@@ -453,7 +453,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
             else assert(false);
         }
         _tracker = std::shared_ptr<TrackingAlgorithm>(
-            (Algorithms::byType.at(trackingAlg))(_settings, path, this));
+            (Algorithms::byType().at(trackingAlg))(_settings, path, this));
         _tracker->loadObjects(std::move(storedObjects));
 
         connectTrackingAlg(_tracker);

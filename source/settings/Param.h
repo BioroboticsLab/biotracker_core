@@ -15,6 +15,7 @@ public:
 	Param(void);
 
 	Param(std::string paramName, std::string paramValue);
+    Param(QString const& paramName, QString const& paramValue);
 
 	~Param(void);
 
