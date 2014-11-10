@@ -4,7 +4,7 @@
  */
 
 #include <memory>
-#if (!defined(_MSC_VER) && __cplusplus <= 201402L) || (defined(_MSC_VER) && _MSC_VER < 1800)
+#if (!defined(_MSC_VER) && __cplusplus <= 201103L) || (defined(_MSC_VER) && _MSC_VER < 1800)
 #include <cstddef>
 #include <type_traits>
 #include <utility>
