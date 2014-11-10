@@ -14,7 +14,7 @@ namespace Algorithms {
 typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, std::string& serializationPath, QWidget *parent);
 typedef uint8_t Type;
 
-static const Type NoTracking = 0;
+static Type NoTracking = 0;
 // construct on first use idiom
 Type getNextId();
 
@@ -26,9 +26,9 @@ public:
 
 private:
     friend class Singleton<Registry>;
-    Registry() {}
-    map_string_t _typeByString = { {"No Tracking", NoTracking} };
-    map_type_t _trackerByType = { {NoTracking, nullptr} };
+	Registry();
+	map_string_t _typeByString;// { std::make_pair(std::string("No Tracking"), NoTracking) };
+	map_type_t _trackerByType;// = { std::make_pair(NoTracking, nullptr) };
 
 public:
     /**

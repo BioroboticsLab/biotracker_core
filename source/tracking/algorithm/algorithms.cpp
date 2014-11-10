@@ -2,6 +2,12 @@
 
 namespace Algorithms {
 
+Registry::Registry()
+{
+	_typeByString.insert(std::make_pair("No Tracking", NoTracking));
+	_trackerByType.insert(std::make_pair(NoTracking, nullptr));
+}
+
 bool Registry::register_tracker_type(std::string name, new_tracker_function_t f)
 {
     if (_typeByString.find(name) != _typeByString.end()) {
