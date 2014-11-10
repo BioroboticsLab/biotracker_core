@@ -94,69 +94,38 @@ template<> std::string Settings::getValueOfParam(std::string paramName) const
 		}
 	}
 
-	throw "Parameter cannot be obtained!";
+    throw std::invalid_argument("Parameter cannot be obtained");
 }
 
 template<> QString Settings::getValueOfParam(std::string paramName) const
 {
-	QMutexLocker locker(&paramMutex);
-    for (TrackerParam::Param const& param : _params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            return QString::fromStdString(param.pValue());
-		}
-	}
-
-	throw "Parameter cannot be obtained!";
+    return QString::fromStdString(getValueOfParam<std::string>(paramName));
 }
 
 template<> double Settings::getValueOfParam(std::string paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	double valueAsDouble = strtod(valueAsString.c_str(), &endptr);
-    if (*endptr) 
-		throw "Value cannot convert to double number!";
-    
-	return valueAsDouble;
+    const std::string valueAsString = getValueOfParam<std::string>(paramName);
+    return std::stod(valueAsString);
 }
 
 template<> float Settings::getValueOfParam(std::string paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	float valueAsFloat = static_cast<float>( strtod(valueAsString.c_str(), &endptr) );
-    if (*endptr) 
-		throw "Value cannot convert to double number!";
-    
-	return valueAsFloat;
+    const std::string valueAsString = getValueOfParam<std::string>(paramName);
+    return std::stof(valueAsString);
 }
 
 template<> int Settings::getValueOfParam(std::string paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	int valueAsInt = static_cast<int>( strtod(valueAsString.c_str(), &endptr) );
-    if (*endptr) 
-		throw "Value cannot convert to int number!";
-    
-	return valueAsInt;
+    const std::string valueAsString = getValueOfParam<std::string>(paramName);
+    return std::stoi(valueAsString);
 }
 
 template<> bool Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
 	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
 
-	if(valueAsString.compare("true") == 0 || valueAsString.compare("1") == 0)
+    if(valueAsString == "true" || valueAsString == "1")
 		return true;
     
 	return false;
@@ -165,25 +134,18 @@ template<> bool Settings::getValueOfParam(std::string paramName) const
 template<> cv::Scalar Settings::getValueOfParam(std::string paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-
-	cv::Scalar cvScalarValue;
-	
 	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
-	const size_t tokens = stringList.size();
-	// 255 255 255
-	if(tokens == 3)
-	{
-		for(size_t i = 0; i < tokens; i++)
-		{
-            int r = std::stoi(stringList.at(0));
-            int g = std::stoi(stringList.at(1));
-            int b = std::stoi(stringList.at(2));
-			cvScalarValue = cv::Scalar(r,g,b);
-		}
-	}
 
-	return cvScalarValue;
+    if(stringList.size() != 3)
+	{
+        throw std::invalid_argument("Number of tokens must be 3");
+    }
+
+    int r = std::stoi(stringList.at(0));
+    int g = std::stoi(stringList.at(1));
+    int b = std::stoi(stringList.at(2));
+
+    return cv::Scalar(r,g,b);
 }
 
 std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
@@ -194,10 +156,9 @@ std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 
 	std::vector<TrackerParam::Param> defaultParams;
 
-	for(int key = 0; key < settings.allKeys().size(); key++)
-	{
-		QString string = settings.allKeys().at(key);
-		defaultParams.push_back(TrackerParam::Param(string.toStdString(),settings.value(string).toString().toStdString()));
+    for (QString const& key : settings.allKeys())
+    {
+        defaultParams.emplace_back(key,settings.value(key).toString());
 	}	
 	return defaultParams;
 }
