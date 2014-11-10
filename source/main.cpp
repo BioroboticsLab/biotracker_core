@@ -1,6 +1,6 @@
 #include <QtWidgets/QApplication>
 
-#include "source/helper/stdext.h"
+#include "source/utility/stdext.h"
 #include "source/gui/BioTracker.h"
 #include "source/settings/Settings.h"
 #include "source/settings/Messages.h"

@@ -1,11 +1,16 @@
 #include "ParticleFishTracker.h"
 
+#include <utility> // std::move
+
 #include <opencv2/opencv.hpp>
 
+#include "source/tracking/algorithm/algorithms.h"
 #include "particlefilter/ParticleBrightnessObserver.h"
 #include "particlefilter/GridParticleBuckets.h"
 
-#include <utility> // std::move
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<ParticleFishTracker>("Particle Fish Tracker");
+}
 
 /**
  * Predicate used by this algorithm to sort particles, highest to lowest score.

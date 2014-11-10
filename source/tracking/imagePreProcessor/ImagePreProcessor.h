@@ -5,7 +5,7 @@
 
 #include <QtCore/QSettings>
 
-#include "source/helper/stdext.h"
+#include "source/utility/stdext.h"
 #include "source/settings/Settings.h"
 
 
