@@ -21,9 +21,39 @@
     </sizepolicy>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>5</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
     <item>
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QWidget" name="videoAreaWidget" native="true">
          <property name="sizePolicy">
@@ -33,6 +63,21 @@
           </sizepolicy>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
           <item>
            <widget class="QGroupBox" name="trackingArea">
             <property name="sizePolicy">
@@ -57,6 +102,21 @@
              <bool>false</bool>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
              <item>
               <widget class="VideoView" name="videoView" native="true"/>
              </item>
@@ -106,12 +166,42 @@
              </size>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
              <item>
               <widget class="QGroupBox" name="playback">
                <property name="title">
                 <string>Video Controls</string>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QPushButton" name="button_previousFrame">
                   <property name="styleSheet">
@@ -293,6 +383,21 @@
                 <string>Playback Speed</string>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QSplitter" name="splitter">
                   <property name="sizePolicy">
@@ -428,6 +533,21 @@
              <bool>false</bool>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
              <item>
               <widget class="QTextEdit" name="edit_notification">
                <property name="enabled">
@@ -493,6 +613,21 @@
            <string>Algorithm</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QWidget" name="widget_alg" native="true">
              <property name="sizePolicy">
@@ -502,12 +637,42 @@
               </sizepolicy>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="spacing">
+               <number>5</number>
+              </property>
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="topMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <property name="bottomMargin">
+               <number>5</number>
+              </property>
               <item>
                <widget class="QGroupBox" name="groupBox">
                 <property name="title">
                  <string>Choose algorithm:</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
                  <item>
                   <widget class="QComboBox" name="cb_algorithms"/>
                  </item>
@@ -533,6 +698,21 @@
                  <bool>false</bool>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
                  <item>
                   <widget class="QLineEdit" name="edit_outputPath"/>
                  </item>
@@ -612,7 +792,7 @@
      <x>0</x>
      <y>0</y>
      <width>982</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
