@@ -4,8 +4,7 @@
  */
 
 #include <memory>
-#if __cplusplus <= 201402L
-#if (defined(_MSC_VER) && _MSC_VER < 1800)
+#if (!defined(_MSC_VER) && __cplusplus <= 201402L) || (defined(_MSC_VER) && _MSC_VER < 1800)
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -40,5 +39,4 @@ namespace std {
         typename _Unique_if<T>::_Known_bound
         make_unique(Args&&...) = delete;
 }
-#endif
 #endif
