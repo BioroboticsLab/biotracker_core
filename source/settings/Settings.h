@@ -57,7 +57,7 @@ public:
 	 * @param: paramName, the parameter name,
 	 * @return: the value of the parameter as the specified type.
 	 */
-    template <typename T> T getValueOfParam(std::string paramName) const;
+    template <typename T> T getValueOfParam(const std::string &paramName) const;
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.

@@ -4,12 +4,15 @@
 #include <algorithm> // std::find_if
 #include <utility> // std::move
 
-
-/**
-* Mutexes.
-*/
 namespace {
-  QMutex paramMutex;
+	QMutex paramMutex;
+
+	struct ParamNameCompare {
+		const std::string &name;
+		bool operator()(const TrackerParam::Param &p) const {
+			return p.pName() == name;
+		}
+	};
 }
 
 Settings::Settings(void) :
@@ -37,11 +40,7 @@ void Settings::setParam(std::string paramName, std::string paramValue)
 
 void Settings::setParamInVector(std::string paramName, std::string paramValue)
 {
-	const auto pos = std::find_if(_params.begin(), _params.end(),
-			[&paramName](const TrackerParam::Param &p) {
-				return p.pName() == paramName;
-			}
-	);
+	const auto pos = std::find_if(_params.begin(), _params.end(), ParamNameCompare{paramName});
 	if (pos != _params.end()) {
 		pos->setPValue(std::move(paramValue));
 	}
@@ -62,44 +61,42 @@ std::vector<TrackerParam::Param> Settings::getParams() const
 	return _params;
 }
 
-template<> std::string Settings::getValueOfParam(std::string paramName) const
+template<> std::string Settings::getValueOfParam(const std::string &paramName) const
 {
 	QMutexLocker locker(&paramMutex);
-    for (TrackerParam::Param const& param : _params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            return param.pValue();
-		}
+	const auto pos = std::find_if(_params.cbegin(), _params.cend(), ParamNameCompare{paramName});
+	if (pos != _params.cend()) {
+		return pos->pValue();
 	}
-
-    throw std::invalid_argument("Parameter cannot be obtained");
+	else {
+		throw std::invalid_argument("Parameter cannot be obtained");
+	}
 }
 
-template<> QString Settings::getValueOfParam(std::string paramName) const
+template<> QString Settings::getValueOfParam(const std::string &paramName) const
 {
     return QString::fromStdString(getValueOfParam<std::string>(paramName));
 }
 
-template<> double Settings::getValueOfParam(std::string paramName) const
+template<> double Settings::getValueOfParam(const std::string &paramName) const
 {
     const std::string valueAsString = getValueOfParam<std::string>(paramName);
     return std::stod(valueAsString);
 }
 
-template<> float Settings::getValueOfParam(std::string paramName) const
+template<> float Settings::getValueOfParam(const std::string &paramName) const
 {
     const std::string valueAsString = getValueOfParam<std::string>(paramName);
     return std::stof(valueAsString);
 }
 
-template<> int Settings::getValueOfParam(std::string paramName) const
+template<> int Settings::getValueOfParam(const std::string &paramName) const
 {
     const std::string valueAsString = getValueOfParam<std::string>(paramName);
     return std::stoi(valueAsString);
 }
 
-template<> bool Settings::getValueOfParam(std::string paramName) const
+template<> bool Settings::getValueOfParam(const std::string &paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
@@ -110,7 +107,7 @@ template<> bool Settings::getValueOfParam(std::string paramName) const
 	return false;
 }
 
-template<> cv::Scalar Settings::getValueOfParam(std::string paramName) const
+template<> cv::Scalar Settings::getValueOfParam(const std::string &paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
