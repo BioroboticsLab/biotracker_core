@@ -33,13 +33,6 @@ public:
 
 	/**
 	 * Sets the parameter.
-	 * @param: param, the parameter to set,
-	 * @return: void.
-	 */
-    void setParam(TrackerParam::Param param);
-
-	/**
-	 * Sets the parameter.
 	 * @param: paramName, name of the parameter,
 	 * @param: paramValue, value of the parameter,
 	 * @return: void.
