@@ -48,7 +48,7 @@ void Settings::setParamInVector(std::string paramName, std::string paramValue)
 
 void Settings::setParamInConfigFile(const std::string &paramName, const std::string &paramValue)
 {
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
+    QSettings settings(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE), QSettings::IniFormat);
 	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
 }
 
