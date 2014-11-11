@@ -66,8 +66,10 @@ public:
 	static std::vector<TrackerParam::Param> getDefaultParamsFromQSettings();
 	
 private:
+
 	/**
 	 * Sets a parameter within this' parameter vector
+	 * This helper method is NOT threadsafe!
 	 * @param: paramName, the parameter name to set,
 	 * @param: paramValue, the parameter value to set,
 	 * @return: void.
@@ -76,6 +78,7 @@ private:
 
 	/**
 	 * Sets the parameter for the config.ini file.
+	 * This helper method is NOT threadsafe!
 	 * @param: paramName, the parameter name.
 	 * @param: paramValue, the parameter value.
 	 * @return: void.
