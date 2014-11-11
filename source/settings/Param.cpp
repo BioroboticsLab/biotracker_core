@@ -12,8 +12,11 @@ Param::Param(std::string paramName, std::string paramValue)
 {
 }
 
+Param::Param(const QString &paramName, const QString &paramValue)
+    : Param(paramName.toStdString(), paramValue.toStdString())
+{}
+
 Param::~Param(void)
-{
-}
+{}
 
 }

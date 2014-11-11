@@ -40,6 +40,7 @@ class BioTracker: public QMainWindow
 
 public:
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
+    ~BioTracker();
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -128,10 +129,6 @@ private:
 	QVBoxLayout *_vboxTools;
     std::shared_ptr<QWidget> _paramsWidget;
     std::shared_ptr<QWidget> _toolsWidget;
-
-
-
-
 	
 signals:
 	// tell tracking thread to grab next frame

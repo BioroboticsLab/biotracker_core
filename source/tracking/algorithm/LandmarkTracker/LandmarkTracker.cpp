@@ -2,9 +2,12 @@
 #include <QApplication>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "source/tracking/algorithm/algorithms.h"
 #include "source/tracking/TrackingThread.h"
 
-
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<LandmarkTracker>("Landmark Tracker");
+}
 
 LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
     : TrackingAlgorithm( settings, serializationPathName, parent )

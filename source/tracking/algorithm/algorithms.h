@@ -7,51 +7,71 @@
 
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
-#include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
-#include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
-#include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
-#include "source/tracking/algorithm/LandmarkTracker/LandmarkTracker.h"
+#include "source/utility/stdext.h"
+#include "source/utility/singleton.h"
 
 namespace Algorithms {
-    enum Type
-    {
-        NoTracking,
-        TBeesBookTagMatcher,
-        TColorPatchTracker,
-        TParticleFishTracker,
-        TLandmarkTracker,
-        TSampleTracker,
-        TSimpleTracker
-    };
+typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, std::string& serializationPath, QWidget *parent);
+typedef uint8_t Type;
 
-    template<typename T>
-    TrackingAlgorithm* createInstance(Settings& settings, std::string& serializationPathName, QWidget* parent)
-    { return new T(settings, serializationPathName, parent); }
+static const Type NoTracking = 0;
+// construct on first use idiom
+Type getNextId();
 
-    typedef std::map<Type, TrackingAlgorithm*(*)(Settings&, std::string&, QWidget*)> map_type_t;
-    static const map_type_t byType
-    {
-        {TBeesBookTagMatcher,  &createInstance<BeesBookTagMatcher>},
-        {TColorPatchTracker,   &createInstance<ColorPatchTracker>},
-        {TParticleFishTracker, &createInstance<ParticleFishTracker>},
-//        {TLandmarkTracker,     &createInstance<LandmarkTracker>},
-        {TSampleTracker,       &createInstance<SampleTracker>},
-        {TSimpleTracker,       &createInstance<SimpleTracker>}
-    };
+class Registry : public Singleton<Registry> {
 
-    typedef std::map<QString, Type> map_string_t;
-    static const map_string_t byString
-    {
-        {"No tracking",             NoTracking},
-        {"Simple algorithm",        TSimpleTracker},
-        {"BeesBook tag matcher",    TBeesBookTagMatcher},
-        {"Color patch tag matcher", TColorPatchTracker},
-        {"Fish Particle tracker",   TParticleFishTracker},
-        {"Sample tracker",          TSampleTracker},
- //       {"Landmark tracker",        TLandmarkTracker}
+public:
+    typedef std::map<const Type, new_tracker_function_t> map_type_t;
+    typedef std::map<const std::string, const Type> map_string_t;
+
+private:
+    friend class Singleton<Registry>;
+	Registry();
+	map_string_t _typeByString;
+	map_type_t _trackerByType;
+
+public:
+    /**
+     * @see register_tracker_type(std::string, new_tracker_function_t);
+     * automagically creates f :)
+     * @param name : name of tracking alg
+     * @return
+     */
+    template<class TRACKER>
+    bool register_tracker_type(std::string name);
+
+    /**
+     * creates a new tracker-instance
+     * @param name
+     * @param tracker_arg : forwarded to tracking algs constructor
+     * @return : new instance
+     */
+    std::shared_ptr<TrackingAlgorithm> make_new_tracker(const Type name, Settings& settings, std::string& serializationPath, QWidget *parent) const;
+
+    map_string_t const& typeByString() const { return _typeByString; }
+    map_type_t const& trackerByType() const { return _trackerByType; }
+
+private:
+    /**
+     * adds new tracker-type to this
+     * @param name : name of tracking alg
+     * @param f : function that creates a new instance
+     * @return dummy value
+     * @throws
+     */
+    bool register_tracker_type(std::string name, new_tracker_function_t f);
+};
+
+template<class TRACKER>
+bool Registry::register_tracker_type(std::string name) {
+    struct local_function {
+        static std::shared_ptr<TrackingAlgorithm> f(Settings& settings, std::string& serializationPath, QWidget *parent) {
+            return std::make_shared<TRACKER>(settings, serializationPath, parent);
+        }
     };
+    return this->register_tracker_type(std::move(name), local_function::f);
+}
+
 }
 
 #endif

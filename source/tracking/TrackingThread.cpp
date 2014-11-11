@@ -8,7 +8,7 @@
 #include "source/settings/Messages.h"
 #include "source/settings/Param.h"
 #include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-//#include "source/helper/StringHelper.h"
+//#include "source/utility/StringHelper.h"
 
 
 /**
@@ -95,11 +95,13 @@ void TrackingThread::run()
 	while(isCaptureActive())
 	{			
 		// when pause event is started.
-		if(isVideoPause())
+        while(isVideoPause())
 		{
 			QMutexLocker locker(&videoPauseMutex);
 			firstLoop = true;
-			_pauseCond.wait(&videoPauseMutex);
+            _pauseCond.wait(&videoPauseMutex, 100);
+            if (!isCaptureActive())
+                return;
 		}
 
 		//if thread just started (or is unpaused) start clock here
@@ -335,8 +337,19 @@ void TrackingThread::resetTracker()
 
 double TrackingThread::getFps()
 {
-	return _fps;
+    return _fps;
 }
+
+void TrackingThread::stop()
+{
+    {
+        QMutexLocker locker(&captureActiveMutex);
+        _captureActive = false;
+    }
+    QThread::wait();
+    return;
+}
+
 void TrackingThread::setFps(double fps)
 {
 	_fps = fps;

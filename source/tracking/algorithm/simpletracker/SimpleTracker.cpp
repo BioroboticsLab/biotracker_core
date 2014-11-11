@@ -1,5 +1,7 @@
 #include "SimpleTracker.h"
 
+#include "source/tracking/algorithm/algorithms.h"
+
 #include <opencv2/opencv.hpp>
 #include <QMutexLocker>
 
@@ -30,6 +32,10 @@ struct isYounger {
              std::dynamic_pointer_cast<TrackedFish>(rhs.top())->age_of_last_known_position();
   }
 };
+
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<SimpleTracker>("Simple Tracker");
+}
 
 SimpleTracker::SimpleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm(settings, serializationPathName, parent)

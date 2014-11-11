@@ -1,80 +1,55 @@
 #include "Settings.h"
 
 #include <QMutex>
+#include <algorithm> // std::find_if
+#include <utility> // std::move
 
-
-/**
-* Mutexes.
-*/
 namespace {
-  QMutex paramMutex;
+	QMutex paramMutex;
+
+	struct ParamNameCompare {
+		const std::string &name;
+		bool operator()(const TrackerParam::Param &p) const {
+			return p.pName() == name;
+		}
+	};
 }
 
-Settings::Settings(void) :
+Settings::Settings() :
 	_params(getDefaultParamsFromQSettings())
 
 {
 }
 
 Settings::Settings(std::vector<TrackerParam::Param> params) :
-	_params(params)
-{
-
-}
-
-Settings::~Settings(void)
+	_params(std::move(params))
 {
 }
 
-void Settings::setParam(TrackerParam::Param param)
-{
-    setQSettingsParam(param);
-}
-
+Settings::~Settings() = default;
 
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
-	setParam(_params, paramName, paramValue);
-	setQSettingsParam(paramName, paramValue);	
+	QMutexLocker locker(&paramMutex);
+	setParamInVector(paramName, paramValue);
+	setParamInConfigFile(paramName, paramValue);
 }
 
-void Settings::setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue)
+void Settings::setParamInVector(std::string paramName, std::string paramValue)
 {
-	QMutexLocker locker(&paramMutex);
-	bool found = false;
-    for (TrackerParam::Param& param : params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            param.setPValue(paramValue);
-			found = true;
-			break;
-		}
+	const auto pos = std::find_if(_params.begin(), _params.end(), ParamNameCompare{paramName});
+	if (pos != _params.end()) {
+		pos->setPValue(std::move(paramValue));
 	}
-	if(found == false)
-		params.push_back(TrackerParam::Param(paramName,paramValue));
+	else {
+		_params.emplace_back(std::move(paramName), std::move(paramValue));
+	}
 }
 
-void Settings::setQSettingsParam(TrackerParam::Param param)
+void Settings::setParamInConfigFile(const std::string &paramName, const std::string &paramValue)
 {
-	setQSettingsParam(param.pName(),param.pValue());
-}
-
-void Settings::setQSettingsParam(std::string paramName, std::string paramValue)
-{
-	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
+    QSettings settings(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE), QSettings::IniFormat);
 	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
-}
-
-void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
-{
-	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
-	for(size_t i = 0; i < params.size(); i++)
-	{
-		settings.setValue(QString::fromStdString(params.at(i).pName()),QString::fromStdString(params.at(i).pValue()));
-	}
 }
 
 std::vector<TrackerParam::Param> Settings::getParams() const
@@ -83,142 +58,101 @@ std::vector<TrackerParam::Param> Settings::getParams() const
 	return _params;
 }
 
-template<> std::string Settings::getValueOfParam(std::string paramName) const
+template<> std::string Settings::getValueOfParam(const std::string &paramName) const
 {
 	QMutexLocker locker(&paramMutex);
-    for (TrackerParam::Param const& param : _params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            return param.pValue();
-		}
+	const auto pos = std::find_if(_params.cbegin(), _params.cend(), ParamNameCompare{paramName});
+	if (pos != _params.cend()) {
+		return pos->pValue();
 	}
-
-	throw "Parameter cannot be obtained!";
-}
-
-template<> QString Settings::getValueOfParam(std::string paramName) const
-{
-	QMutexLocker locker(&paramMutex);
-    for (TrackerParam::Param const& param : _params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            return QString::fromStdString(param.pValue());
-		}
+	else {
+		throw std::invalid_argument("Parameter cannot be obtained");
 	}
-
-	throw "Parameter cannot be obtained!";
 }
 
-template<> double Settings::getValueOfParam(std::string paramName) const
+template<> QString Settings::getValueOfParam(const std::string &paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	double valueAsDouble = strtod(valueAsString.c_str(), &endptr);
-    if (*endptr) 
-		throw "Value cannot convert to double number!";
-    
-	return valueAsDouble;
+	return QString::fromStdString(getValueOfParam<std::string>(paramName));
 }
 
-template<> float Settings::getValueOfParam(std::string paramName) const
+template<> double Settings::getValueOfParam(const std::string &paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	float valueAsFloat = static_cast<float>( strtod(valueAsString.c_str(), &endptr) );
-    if (*endptr) 
-		throw "Value cannot convert to double number!";
-    
-	return valueAsFloat;
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stod(valueAsString);
 }
 
-template<> int Settings::getValueOfParam(std::string paramName) const
+template<> float Settings::getValueOfParam(const std::string &paramName) const
 {
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-	char* endptr;
-
-	int valueAsInt = static_cast<int>( strtod(valueAsString.c_str(), &endptr) );
-    if (*endptr) 
-		throw "Value cannot convert to int number!";
-    
-	return valueAsInt;
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stof(valueAsString);
 }
 
-template<> bool Settings::getValueOfParam(std::string paramName) const
+template<> int Settings::getValueOfParam(const std::string &paramName) const
+{
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stoi(valueAsString);
+}
+
+template<> bool Settings::getValueOfParam(const std::string &paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
 	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
 
-	if(valueAsString.compare("true") == 0 || valueAsString.compare("1") == 0)
+	if(valueAsString == "true" || valueAsString == "1") {
 		return true;
-    
+	}
 	return false;
 }
 
-template<> cv::Scalar Settings::getValueOfParam(std::string paramName) const
+template<> cv::Scalar Settings::getValueOfParam(const std::string &paramName) const
 {
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	QMutexLocker locker(&paramMutex);
-
-	cv::Scalar cvScalarValue;
-	
 	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
-	const size_t tokens = stringList.size();
-	// 255 255 255
-	if(tokens == 3)
+
+	if(stringList.size() != 3)
 	{
-		for(size_t i = 0; i < tokens; i++)
-		{
-            int r = std::stoi(stringList.at(0));
-            int g = std::stoi(stringList.at(1));
-            int b = std::stoi(stringList.at(2));
-			cvScalarValue = cv::Scalar(r,g,b);
-		}
+		throw std::invalid_argument("Number of tokens must be 3");
 	}
 
-	return cvScalarValue;
+	int r = std::stoi(stringList.at(0));
+	int g = std::stoi(stringList.at(1));
+	int b = std::stoi(stringList.at(2));
+
+	return cv::Scalar(r,g,b);
 }
 
 std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 {
 	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);	
+	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	//TODO: Hier checken ob Datei vorhanden -> wenn nicht da neu anlegen, default params setzen
 
 	std::vector<TrackerParam::Param> defaultParams;
 
-	for(int key = 0; key < settings.allKeys().size(); key++)
+	for (QString const& key : settings.allKeys())
 	{
-		QString string = settings.allKeys().at(key);
-		defaultParams.push_back(TrackerParam::Param(string.toStdString(),settings.value(string).toString().toStdString()));
-	}	
+		defaultParams.emplace_back(key,settings.value(key).toString());
+	}
 	return defaultParams;
 }
 
 std::vector<std::string> Settings::split(const std::string &txt, char ch)
 {
-    std::vector<std::string> result;
-    std::size_t pos = txt.find( ch );
-    std::size_t initialPos = 0;
+	std::vector<std::string> result;
+	std::size_t pos = txt.find( ch );
+	std::size_t initialPos = 0;
 
-    // Decompose statement
-    while( pos != std::string::npos ) {
-        result.push_back( txt.substr( initialPos, pos - initialPos ) );
-        initialPos = pos + 1;
+	// Decompose statement
+	while( pos != std::string::npos ) {
+		result.push_back( txt.substr( initialPos, pos - initialPos ) );
+		initialPos = pos + 1;
 
-        pos = txt.find( ch, initialPos );
-    }
+		pos = txt.find( ch, initialPos );
+	}
 
-    // Add the last one
-    result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+	// Add the last one
+	result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
 
-    return result;
+	return result;
 }
 
