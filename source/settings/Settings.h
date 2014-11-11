@@ -54,15 +54,6 @@ public:
 	void setParams(std::vector<TrackerParam::Param> params);
 
 	/**
-	 * Sets a parameter within a parameter vector
-	 * @param: params, the parameter vector,
-	 * @param: paramName, the parameter name to set,
-	 * @param: paramValue, the parameter value to set,
-	 * @return: void.
-	 */
-	void setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue);
-
-	/**
 	 * Sets the parameter for the config.ini file.
 	 * @param: param, the parameter to set.
 	 * @return: void.
@@ -104,6 +95,14 @@ public:
 	static std::vector<TrackerParam::Param> getDefaultParamsFromQSettings();
 	
 private:
+	/**
+	 * Sets a parameter within this' parameter vector
+	 * @param: paramName, the parameter name to set,
+	 * @param: paramValue, the parameter value to set,
+	 * @return: void.
+	 */
+	void setParamInVector(std::string paramName, std::string paramValue);
+
 	std::vector<TrackerParam::Param> _params;
 	static std::vector<std::string> split(const std::string &txt, char ch);
 };

@@ -1,6 +1,8 @@
 #include "Settings.h"
 
 #include <QMutex>
+#include <algorithm> // std::find_if
+#include <utility> // std::move
 
 
 /**
@@ -34,25 +36,24 @@ void Settings::setParam(TrackerParam::Param param)
 
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
-	setParam(_params, paramName, paramValue);
+	setParamInVector(paramName, paramValue);
 	setQSettingsParam(paramName, paramValue);	
 }
 
-void Settings::setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue)
+void Settings::setParamInVector(std::string paramName, std::string paramValue)
 {
 	QMutexLocker locker(&paramMutex);
-	bool found = false;
-    for (TrackerParam::Param& param : params)
-	{	
-        if(param.pName().compare(paramName) == 0)
-		{
-            param.setPValue(paramValue);
-			found = true;
-			break;
-		}
+	const auto pos = std::find_if(_params.begin(), _params.end(),
+			[&paramName](const TrackerParam::Param &p) {
+				return p.pName() == paramName;
+			}
+	);
+	if (pos != _params.end()) {
+		pos->setPValue(std::move(paramValue));
 	}
-	if(found == false)
-		params.push_back(TrackerParam::Param(paramName,paramValue));
+	else {
+		_params.emplace_back(std::move(paramName), std::move(paramValue));
+	}
 }
 
 void Settings::setQSettingsParam(TrackerParam::Param param)
