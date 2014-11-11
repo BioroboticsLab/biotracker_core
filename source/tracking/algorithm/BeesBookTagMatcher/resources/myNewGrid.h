@@ -1,3 +1,6 @@
+#ifndef MYNEWGRID_H_
+#define MYNEWGRID_H_
+
 // basic file operations
 #include <iostream>
 //random..
@@ -13,18 +16,6 @@
 #include <math.h>
 #define _USE_MATH_DEFINES
 #include <bitset>
-
-// current tag design
-// These parameters are only used when a new tag is set.
-// To draw tags from the vector use the parameters from each tag
-/* inner radius */
-#define IR 1.2
-/* middle radius */
-#define MR 2.2
-/* outer radius */
-#define OR 3
-/* default size */
-#define axisTag 25
 
 // current tag design -- without inner border
 /** outer radius to grid size ratio (tag design constant) */
@@ -105,3 +96,5 @@ public:
 	////function that renders tag axes while being modified
 	//void renderModTag();		
 };
+
+#endif

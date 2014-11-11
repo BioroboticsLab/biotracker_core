@@ -12,15 +12,6 @@
 #include <math.h>
 #include <bitset>
 
-// current tag design -- without inner border
-/** outer radius to grid size ratio (tag design constant) */
-#define IR 1.2
-/** tag radius to grid size ratio */
-#define MR 2.2
-/** inner outer radius to grid size ratio */
-#define OR 3
-
-#define axisTag 30
 class myGrid
 {
 public:

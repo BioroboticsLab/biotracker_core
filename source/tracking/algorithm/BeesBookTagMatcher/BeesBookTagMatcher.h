@@ -56,7 +56,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		double dist(cv::Point p1, cv::Point p2); //function that calculates the distance between two points
 		
 	public:
-		BeesBookTagMatcher	( Settings & settings, QWidget *parent );
+        BeesBookTagMatcher	( Settings &settings, std::string &serializationPathName, QWidget *parent );
 		~BeesBookTagMatcher	( void );
 		
 

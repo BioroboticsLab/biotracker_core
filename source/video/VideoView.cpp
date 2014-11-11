@@ -20,7 +20,7 @@ VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent),
 	_tracker(nullptr)
 {
-	_zoomFactor = 1.0;
+	_zoomFactor = 0;
 	_panX = 0;
 	_panY = 0;
 	_isPanZoomMode = false;
@@ -38,22 +38,34 @@ void VideoView::showImage(cv::Mat img)
 
 void VideoView::fitToWindow()
 {
+	_zoomFactor = 0;
 	int width = this->width();
 	int height = this->height();
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
 	{
-		_zoomFactor = _displayImage.rows/(width/imgRatio);
-		_panY = -((height - (width/imgRatio))/2)*_zoomFactor;
+		_panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
 		_panX = 0;
 	} else 
-	{
-		_zoomFactor = _displayImage.cols/(height*imgRatio);
-		_panX = - ((width - (height*imgRatio))/2)*_zoomFactor;	
+	{		
+		_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);	
 		_panY = 0;
 	}
-	resizeGL(width, height);
+	glViewport(0,0,width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	width = width * (_screenPicRatio + _zoomFactor);
+	height = height *(_screenPicRatio + _zoomFactor);
+
+	float left = _panX;
+	float top	 = _panY;
+	float right = left + width;
+	float bottom = top + height;
+	glOrtho(left, right, bottom, top, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);	
+	//resizeGL(width, height);
 	//Draw the scene
 	updateGL();
 }
@@ -69,15 +81,18 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-		try
-		{
+        try
+        {
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
-		}
-		catch(std::exception&)
-		{
-			emit notifyGUI("critical error in selected tracking algorithm's paint method!",MSGS::FAIL);
-		}
+        }
+        catch(std::exception& err)
+        {
+            std::stringstream ss;
+            ss << "critical error in selected tracking algorithm's paint method!";
+            ss << "\n" << err.what();
+            emit notifyGUI(ss.str() ,MSGS::FAIL);
+        }
 
 	}
 
@@ -120,22 +135,23 @@ void VideoView::paintGL()
 	}	
 
 	/**
-	* FOR PERFORMANCE ONLY LOAD VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
+	* FOR PERFORMANCE LOAD JUST THE VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
 	*/
 	// create Texture Atlas
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE,0);// imageCopy.data);
 
-	// variables for splitting image into tiles:
-	// c = starting column, r = starting row
-	// width	= width  of visible part of picture
-	// height	= height	- " -		- " -
+	//check which part of the picture is on screen
+	//by unprojecting lower right and upper left corner
+	QPoint lowerRight = unprojectScreenPos(QPoint(this->width(),this->height()));
+	QPoint upperLeft = unprojectScreenPos(QPoint(0,0));
+   
+	//if image was dragged out abort painting
+	if (upperLeft.x() > _displayImage.cols || upperLeft.y() > _displayImage.rows || lowerRight.x() < 0 || lowerRight.y() < 0)
+		return;
+	//otherwise set variables indicating which part of picture is visible
 	int c=0,r=0;
 	int width=_displayImage.cols;
 	int height=_displayImage.rows;
-	//Tile size
-	//int N = 64;
-	QPoint lowerRight = unprojectMousePos(QPoint(this->width(),this->height()));
-	QPoint upperLeft = unprojectMousePos(QPoint(0,0));
 	if(upperLeft.x() > 0 )
 		c=upperLeft.x();
 	if(upperLeft.y() > 0 )
@@ -145,6 +161,8 @@ void VideoView::paintGL()
 	if(lowerRight.y() < height-1)
 		height=lowerRight.y()+1;
 
+	//if image was scaled down previously 
+	//we need to adjust coordinates relatively
 	if (_zoomFactor > 1)
 	{
 		c = (c*imageCopy.cols)/_displayImage.cols;
@@ -152,6 +170,8 @@ void VideoView::paintGL()
 		width = (width*imageCopy.cols)/_displayImage.cols;
 		height = (height*imageCopy.rows)/_displayImage.rows;
 	}
+
+
 
 	//to avoid artifacts when using 'glTexSubImage2d' with opencv MAT data,
 	//set pixel storage mode to byte alignment
@@ -183,23 +203,50 @@ void VideoView::initializeGL()
 }
 void VideoView::resizeGL(int width, int height)
 {
+
+	//calculate ratio of screen to displayed image
+	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+	float windowRatio = static_cast<float>(width) / height;
+	if(windowRatio < imgRatio)
+	{
+		_screenPicRatio = _displayImage.rows/(width/imgRatio);		
+	}
+	else
+	{
+		_screenPicRatio = _displayImage.cols/(height*imgRatio);		
+	}
+
 	glViewport(0,0,width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	width = width * _zoomFactor;
-	height = height * _zoomFactor;
+	//if window really was resized,
+	//fit it to window at end of this function
+	bool sizeChanged = false;
+	if(_currentHeight != height || _currentWidth != width)
+	{
+		sizeChanged = true;
+		_currentHeight = height;
+		_currentWidth = width;
+	}
+
+	width = width * (_screenPicRatio + _zoomFactor);
+	height = height *(_screenPicRatio + _zoomFactor);
 
 	float left = _panX;
 	float top	 = _panY;
 	float right = left + width;
 	float bottom = top + height;
 	glOrtho(left, right, bottom, top, 0.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);	
+	if (sizeChanged)
+		fitToWindow();
+
+
 }
 
 
-QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
+QPoint VideoView::unprojectScreenPos(QPoint position)
 {
 	//variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
@@ -211,13 +258,13 @@ QPoint VideoView::unprojectMousePos(QPoint mouseCoord)
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
 	glGetDoublev( GL_PROJECTION_MATRIX, projection );
 	glGetIntegerv( GL_VIEWPORT, viewport );
-	/*GLint isOnPicture = */ gluUnProject(mouseCoord.x(), viewport[3] - mouseCoord.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+	/*GLint isOnPicture = */ gluUnProject(position.x(), viewport[3] - position.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
 	pictureCoord.setX(static_cast<int>(posX));
 	pictureCoord.setY(static_cast<int>(posY));
 	return pictureCoord;
 }
 
-void VideoView::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
+void VideoView::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm)
 {
 	QMutexLocker locker(&trackMutex);	
 	_tracker = trackingAlgorithm;		
@@ -238,8 +285,8 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 			int dY = e->y() - _lastMPos[1];
 			_lastMPos[0] = e->x();
 			_lastMPos[1] = e->y();
-			_panX -= dX * _zoomFactor;
-			_panY -= dY * _zoomFactor;
+			_panX -= dX * (_screenPicRatio+_zoomFactor);
+			_panY -= dY * (_screenPicRatio+_zoomFactor);
 			resizeGL(this->width(), this->height());
 			//Draw the scene
 			updateGL();
@@ -248,9 +295,9 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	else
 	{
 
-		QPoint p  = unprojectMousePos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());			
+		QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit moveEvent ( modifiedEvent );		
 
 	}
@@ -274,9 +321,9 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	}
 	else
 	{
-		QPoint p  = unprojectMousePos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+		QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit pressEvent ( modifiedEvent );
 	}
 }
@@ -289,31 +336,31 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 		_isPanning = false;
 	}
 	else{
-		QPoint p  = unprojectMousePos(e->pos());
-		const QPointF *localPos = new QPointF(p);
-		QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),*localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());	
+		QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit releaseEvent ( modifiedEvent );
 	}
 }
 
 void VideoView::wheelEvent( QWheelEvent * e )
 {
-	QPoint picturePos  = unprojectMousePos(e->pos());
+	QPoint picturePos  = unprojectScreenPos(e->pos());
 
 	if (_isPanZoomMode)
 	{
 		int numDegrees = e->delta();
 		if (e->orientation() == Qt::Vertical
-			&& _zoomFactor - 0.001 * numDegrees > 0) 
+			&& (_zoomFactor+_screenPicRatio) - 0.001 * numDegrees > 0) 
 		{
 			_zoomFactor -= 0.001 * numDegrees;
 			// adjust _panX and _panY, so that zoom is centered on mouse cursor
-			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/_zoomFactor )
-				_panX =		picturePos.x()-  ((this->width()*_zoomFactor)/2);
+			if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols/(_screenPicRatio+_zoomFactor) )
+				_panX =		picturePos.x()-  ((this->width()*(_screenPicRatio+_zoomFactor))/2);
 			else
 				_panX = _panX/2;
-			if(picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows/_zoomFactor)
-				_panY =		picturePos.y() - ((this->height()*_zoomFactor)/2);
+			if(picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows/(_screenPicRatio+_zoomFactor))
+				_panY =		picturePos.y() - ((this->height()*(_screenPicRatio+_zoomFactor))/2);
 			resizeGL(this->width(), this->height());
 			//Draw the scene
 			updateGL();
