@@ -31,7 +31,7 @@ Settings::~Settings(void)
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
 	setParamInVector(paramName, paramValue);
-	setQSettingsParam(paramName, paramValue);	
+	setParamInConfigFile(paramName, paramValue);	
 }
 
 void Settings::setParamInVector(std::string paramName, std::string paramValue)
@@ -50,26 +50,11 @@ void Settings::setParamInVector(std::string paramName, std::string paramValue)
 	}
 }
 
-void Settings::setQSettingsParam(TrackerParam::Param param)
-{
-	setQSettingsParam(param.pName(),param.pValue());
-}
-
-void Settings::setQSettingsParam(std::string paramName, std::string paramValue)
+void Settings::setParamInConfigFile(const std::string &paramName, const std::string &paramValue)
 {
 	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
-}
-
-void Settings::setQSettingsParams(std::vector<TrackerParam::Param> params)
-{
-	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
-	for(size_t i = 0; i < params.size(); i++)
-	{
-		settings.setValue(QString::fromStdString(params.at(i).pName()),QString::fromStdString(params.at(i).pValue()));
-	}
 }
 
 std::vector<TrackerParam::Param> Settings::getParams() const
