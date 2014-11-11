@@ -47,28 +47,6 @@ public:
 	void setParams(std::vector<TrackerParam::Param> params);
 
 	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: param, the parameter to set.
-	 * @return: void.
-	 */
-	void setQSettingsParam(TrackerParam::Param param);
-
-	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: paramName, the parameter name.
-	 * @param: paramValue, the parameter value.
-	 * @return: void.
-	 */
-	void setQSettingsParam(std::string paramName, std::string paramValue);
-
-	/**
-	 * Sets the parameters for the config.ini file (use QSettings class).
-	 * @param: params, the parameter list to set,
-	 * @return: void.
-	 */
-	void setQSettingsParams(std::vector<TrackerParam::Param> params);
-
-	/**
 	 * Gets the parameters.
 	 * @return: a vector containing all tracking parameters.
 	 */
@@ -95,6 +73,14 @@ private:
 	 * @return: void.
 	 */
 	void setParamInVector(std::string paramName, std::string paramValue);
+
+	/**
+	 * Sets the parameter for the config.ini file.
+	 * @param: paramName, the parameter name.
+	 * @param: paramValue, the parameter value.
+	 * @return: void.
+	 */
+	void setParamInConfigFile(const std::string &paramName, const std::string &paramValue);
 
 	std::vector<TrackerParam::Param> _params;
 	static std::vector<std::string> split(const std::string &txt, char ch);
