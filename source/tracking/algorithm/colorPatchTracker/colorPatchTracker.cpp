@@ -1,5 +1,11 @@
 #include "colorPatchTracker.h"
 
+#include "source/tracking/algorithm/algorithms.h"
+
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<ColorPatchTracker>("Color Patch Tracker");
+}
+
 ColorPatchTracker::ColorPatchTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm(settings, serializationPathName, parent)
 {

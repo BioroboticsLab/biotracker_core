@@ -58,7 +58,7 @@ void ParticleParams::loadParamsFromSettings()
 	{
 		_numParticles = _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::NUMBER_OF_PARTICLES);
 	}
-	catch (const char *)
+	catch (std::invalid_argument&)
 	{
 		//no value in config.ini found -> set it to standard value
 		_numParticles = 1000;

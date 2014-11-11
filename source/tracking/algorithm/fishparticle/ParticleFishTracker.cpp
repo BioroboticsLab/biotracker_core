@@ -1,11 +1,16 @@
 #include "ParticleFishTracker.h"
 
+#include <utility> // std::move
+
 #include <opencv2/opencv.hpp>
 
+#include "source/tracking/algorithm/algorithms.h"
 #include "particlefilter/ParticleBrightnessObserver.h"
 #include "particlefilter/GridParticleBuckets.h"
 
-#include <utility> // std::move
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<ParticleFishTracker>("Particle Fish Tracker");
+}
 
 /**
  * Predicate used by this algorithm to sort particles, highest to lowest score.
@@ -21,14 +26,14 @@ struct compareReverseParticleScorePredicate {
 */
 ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
     : TrackingAlgorithm(settings, serializationPathName, parent)
+    , _toolsWidget(std::make_shared<QFrame>())
     , _showOriginal(false)
     , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
     , _clusters(settings)
-	, _params(parent, settings)
-    , _toolsWidget(std::make_shared<QFrame>())
+    , _params(parent, settings)
 {
     initToolsWidget();
 }

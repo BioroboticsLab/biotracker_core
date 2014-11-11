@@ -1,6 +1,11 @@
 #include "BeesBookTagMatcher.h"
 #include <QApplication>
 
+#include "source/tracking/algorithm/algorithms.h"
+
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<BeesBookTagMatcher>("BeesBook Tag Matcher");
+}
 
 BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent )
     : TrackingAlgorithm( settings, serializationPathName, parent )

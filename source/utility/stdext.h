@@ -1,11 +1,13 @@
+#ifndef STDEXT_H
+#define STDEXT_H
+
 /* implementation of std::make_unique for c++<14
  * implementation according to N3656
  * see: http://isocpp.org/files/papers/N3656.txt
  */
 
 #include <memory>
-#if __cplusplus <= 201402L
-#if (defined(_MSC_VER) && _MSC_VER < 1800)
+#if (!defined(_MSC_VER) && __cplusplus <= 201103L) || (defined(_MSC_VER) && _MSC_VER < 1800)
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -41,4 +43,5 @@ namespace std {
         make_unique(Args&&...) = delete;
 }
 #endif
+
 #endif

@@ -16,9 +16,9 @@ class Settings
 {
 public:
 	/**
-	 * The standard constructor.
+	 * The default constructor.
 	 */
-	Settings(void);
+	Settings();
 
 	/**
 	 * The constructor with provided parameters.
@@ -27,16 +27,9 @@ public:
 	Settings(std::vector<TrackerParam::Param> params);
 
 	/**
-	 * The standard destructor.
+	 * destructor.
 	 */
-	~Settings(void);
-
-	/**
-	 * Sets the parameter.
-	 * @param: param, the parameter to set,
-	 * @return: void.
-	 */
-    void setParam(TrackerParam::Param param);
+	~Settings();
 
 	/**
 	 * Sets the parameter.
@@ -54,37 +47,6 @@ public:
 	void setParams(std::vector<TrackerParam::Param> params);
 
 	/**
-	 * Sets a parameter within a parameter vector
-	 * @param: params, the parameter vector,
-	 * @param: paramName, the parameter name to set,
-	 * @param: paramValue, the parameter value to set,
-	 * @return: void.
-	 */
-	void setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue);
-
-	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: param, the parameter to set.
-	 * @return: void.
-	 */
-	void setQSettingsParam(TrackerParam::Param param);
-
-	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: paramName, the parameter name.
-	 * @param: paramValue, the parameter value.
-	 * @return: void.
-	 */
-	void setQSettingsParam(std::string paramName, std::string paramValue);
-
-	/**
-	 * Sets the parameters for the config.ini file (use QSettings class).
-	 * @param: params, the parameter list to set,
-	 * @return: void.
-	 */
-	void setQSettingsParams(std::vector<TrackerParam::Param> params);
-
-	/**
 	 * Gets the parameters.
 	 * @return: a vector containing all tracking parameters.
 	 */
@@ -95,15 +57,34 @@ public:
 	 * @param: paramName, the parameter name,
 	 * @return: the value of the parameter as the specified type.
 	 */
-    template <typename T> T getValueOfParam(std::string paramName) const;
+	template <typename T> T getValueOfParam(const std::string &paramName) const;
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.
 	 * @return a vector contains track parameters.
 	 */
 	static std::vector<TrackerParam::Param> getDefaultParamsFromQSettings();
-	
+
 private:
+
+	/**
+	 * Sets a parameter within this' parameter vector
+	 * This helper method is NOT threadsafe!
+	 * @param: paramName, the parameter name to set,
+	 * @param: paramValue, the parameter value to set,
+	 * @return: void.
+	 */
+	void setParamInVector(std::string paramName, std::string paramValue);
+
+	/**
+	 * Sets the parameter for the config.ini file.
+	 * This helper method is NOT threadsafe!
+	 * @param: paramName, the parameter name.
+	 * @param: paramValue, the parameter value.
+	 * @return: void.
+	 */
+	void setParamInConfigFile(const std::string &paramName, const std::string &paramValue);
+
 	std::vector<TrackerParam::Param> _params;
 	static std::vector<std::string> split(const std::string &txt, char ch);
 };
