@@ -16,9 +16,9 @@ class Settings
 {
 public:
 	/**
-	 * The standard constructor.
+	 * The default constructor.
 	 */
-	Settings(void);
+	Settings();
 
 	/**
 	 * The constructor with provided parameters.
@@ -27,9 +27,9 @@ public:
 	Settings(std::vector<TrackerParam::Param> params);
 
 	/**
-	 * The standard destructor.
+	 * destructor.
 	 */
-	~Settings(void);
+	~Settings();
 
 	/**
 	 * Sets the parameter.
@@ -57,14 +57,14 @@ public:
 	 * @param: paramName, the parameter name,
 	 * @return: the value of the parameter as the specified type.
 	 */
-    template <typename T> T getValueOfParam(const std::string &paramName) const;
+	template <typename T> T getValueOfParam(const std::string &paramName) const;
 
 	/** 
 	 * Initialize the tracker with default parameters, from the config.ini file.
 	 * @return a vector contains track parameters.
 	 */
 	static std::vector<TrackerParam::Param> getDefaultParamsFromQSettings();
-	
+
 private:
 
 	/**
