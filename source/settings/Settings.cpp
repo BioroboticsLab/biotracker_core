@@ -15,27 +15,24 @@ namespace {
 	};
 }
 
-Settings::Settings(void) :
+Settings::Settings() :
 	_params(getDefaultParamsFromQSettings())
 
 {
 }
 
 Settings::Settings(std::vector<TrackerParam::Param> params) :
-	_params(params)
-{
-
-}
-
-Settings::~Settings(void)
+	_params(std::move(params))
 {
 }
+
+Settings::~Settings() = default;
 
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
 	QMutexLocker locker(&paramMutex);
 	setParamInVector(paramName, paramValue);
-	setParamInConfigFile(paramName, paramValue);	
+	setParamInConfigFile(paramName, paramValue);
 }
 
 void Settings::setParamInVector(std::string paramName, std::string paramValue)
@@ -75,25 +72,25 @@ template<> std::string Settings::getValueOfParam(const std::string &paramName) c
 
 template<> QString Settings::getValueOfParam(const std::string &paramName) const
 {
-    return QString::fromStdString(getValueOfParam<std::string>(paramName));
+	return QString::fromStdString(getValueOfParam<std::string>(paramName));
 }
 
 template<> double Settings::getValueOfParam(const std::string &paramName) const
 {
-    const std::string valueAsString = getValueOfParam<std::string>(paramName);
-    return std::stod(valueAsString);
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stod(valueAsString);
 }
 
 template<> float Settings::getValueOfParam(const std::string &paramName) const
 {
-    const std::string valueAsString = getValueOfParam<std::string>(paramName);
-    return std::stof(valueAsString);
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stof(valueAsString);
 }
 
 template<> int Settings::getValueOfParam(const std::string &paramName) const
 {
-    const std::string valueAsString = getValueOfParam<std::string>(paramName);
-    return std::stoi(valueAsString);
+	const std::string valueAsString = getValueOfParam<std::string>(paramName);
+	return std::stoi(valueAsString);
 }
 
 template<> bool Settings::getValueOfParam(const std::string &paramName) const
@@ -101,9 +98,9 @@ template<> bool Settings::getValueOfParam(const std::string &paramName) const
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
 
-    if(valueAsString == "true" || valueAsString == "1")
+	if(valueAsString == "true" || valueAsString == "1") {
 		return true;
-    
+	}
 	return false;
 }
 
@@ -112,50 +109,50 @@ template<> cv::Scalar Settings::getValueOfParam(const std::string &paramName) co
 	std::string valueAsString = getValueOfParam<std::string>(paramName);
 	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
 
-    if(stringList.size() != 3)
+	if(stringList.size() != 3)
 	{
-        throw std::invalid_argument("Number of tokens must be 3");
-    }
+		throw std::invalid_argument("Number of tokens must be 3");
+	}
 
-    int r = std::stoi(stringList.at(0));
-    int g = std::stoi(stringList.at(1));
-    int b = std::stoi(stringList.at(2));
+	int r = std::stoi(stringList.at(0));
+	int g = std::stoi(stringList.at(1));
+	int b = std::stoi(stringList.at(2));
 
-    return cv::Scalar(r,g,b);
+	return cv::Scalar(r,g,b);
 }
 
 std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
 {
 	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);	
+	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	//TODO: Hier checken ob Datei vorhanden -> wenn nicht da neu anlegen, default params setzen
 
 	std::vector<TrackerParam::Param> defaultParams;
 
-    for (QString const& key : settings.allKeys())
-    {
-        defaultParams.emplace_back(key,settings.value(key).toString());
-	}	
+	for (QString const& key : settings.allKeys())
+	{
+		defaultParams.emplace_back(key,settings.value(key).toString());
+	}
 	return defaultParams;
 }
 
 std::vector<std::string> Settings::split(const std::string &txt, char ch)
 {
-    std::vector<std::string> result;
-    std::size_t pos = txt.find( ch );
-    std::size_t initialPos = 0;
+	std::vector<std::string> result;
+	std::size_t pos = txt.find( ch );
+	std::size_t initialPos = 0;
 
-    // Decompose statement
-    while( pos != std::string::npos ) {
-        result.push_back( txt.substr( initialPos, pos - initialPos ) );
-        initialPos = pos + 1;
+	// Decompose statement
+	while( pos != std::string::npos ) {
+		result.push_back( txt.substr( initialPos, pos - initialPos ) );
+		initialPos = pos + 1;
 
-        pos = txt.find( ch, initialPos );
-    }
+		pos = txt.find( ch, initialPos );
+	}
 
-    // Add the last one
-    result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+	// Add the last one
+	result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
 
-    return result;
+	return result;
 }
 
