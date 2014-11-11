@@ -55,6 +55,10 @@ public:
 	*/
 	double getFps();
 
+    /**
+     * @brief stops the currently running thread
+     */
+    void stop();
 
 private:	
 

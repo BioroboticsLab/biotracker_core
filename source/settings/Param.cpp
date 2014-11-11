@@ -17,7 +17,6 @@ Param::Param(const QString &paramName, const QString &paramValue)
 {}
 
 Param::~Param(void)
-{
-}
+{}
 
 }

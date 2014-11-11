@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 #include "source/utility/stdext.h"
 #include "source/tracking/algorithm/algorithms.h"
@@ -18,7 +19,12 @@ BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags
 {
 	ui.setupUi(this);
 	setPlayfieldEnabled(false);
-	init();
+    init();
+}
+
+BioTracker::~BioTracker()
+{
+    _trackingThread->stop();
 }
 
 //function to test file existence
