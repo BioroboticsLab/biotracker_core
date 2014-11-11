@@ -1,6 +1,7 @@
 #ifndef TrackingThread_h
 #define TrackingThread_h
 
+#include <memory>
 #include <cv.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -82,7 +83,7 @@ private:
 
 	Settings &_settings;
 
-	TrackingAlgorithm* _tracker;
+	std::shared_ptr<TrackingAlgorithm>  _tracker;
 
 	/**
 	* Gets current frame number.
@@ -164,7 +165,7 @@ private:
 		*/
 		void setMaxSpeed (bool enabled);
 
-		void setTrackingAlgorithm(TrackingAlgorithm *trackingAlgorithm);
+		void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 signals:
 		/**
 		* Signals when a tracking sequence is done.

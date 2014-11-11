@@ -35,7 +35,6 @@ TrackingThread::TrackingThread(Settings &settings) :
 
 TrackingThread::~TrackingThread(void)
 {
-	if(_tracker) delete _tracker;
 }
 
 
@@ -272,14 +271,14 @@ void TrackingThread::doTracking(cv::Mat frame)
 {
 	QMutexLocker locker(&trackerMutex);
 	cv::Mat retFrame;
-	try
-	{
+    try
+    {
 		_tracker->track( _frameNumber, frame);
-	}
-	catch(std::exception&)
-	{
-		emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
-	}
+    }
+    catch(std::exception&)
+    {
+        emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
+    }
 }
 
 int TrackingThread::getFrameNumber()
@@ -342,10 +341,9 @@ void TrackingThread::setFps(double fps)
 {
 	_fps = fps;
 }
-void TrackingThread::setTrackingAlgorithm(TrackingAlgorithm * trackingAlgorithm)
+void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
 	QMutexLocker locker(&trackerMutex);
-	delete _tracker;
 	_tracker = trackingAlgorithm;		
 }
 

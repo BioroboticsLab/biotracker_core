@@ -2,6 +2,7 @@
 #define BioTracker_H
 
 #include <time.h>
+#include <memory>
 
 // Open CV
 #include <cv.h>
@@ -15,6 +16,7 @@
 #include <QtCore/QString>
 #include <QDir>
 #include <QTemporaryDir>
+#include <QTemporaryFile>
 
 //Bio Tracker
 #include "source/settings/Messages.h"
@@ -22,14 +24,9 @@
 #include "source/tracking/TrackingThread.h"
 #include "source/video/VideoView.h"
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
-#include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
-#include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
-#include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
-#include "source/tracking/algorithm/LandmarkTracker/LandmarkTracker.h"
+#include "source/tracking/algorithm/algorithms.h"
 
-#include "ui_BioTracker.h"
+#include "source/ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 	class TrackingThread;
@@ -62,7 +59,8 @@ public slots:
 	//change video playback speed
 	void changeFps(int fps);
 	//different tracking algorithm was selected
-	void trackingAlgChanged(QString trackingAlg);
+    void trackingAlgChanged(Algorithms::Type trackingAlg);
+    void trackingAlgChanged(QString trackingAlgStr);
 	//switch pan&zoom mode
 	void switchPanZoomMode();
 
@@ -102,7 +100,7 @@ private:
 
 /*	Rectification _rectification;
 */
-	TrackingThread* _trackingThread;	
+    std::unique_ptr<TrackingThread> _trackingThread;
 
 	Settings& _settings;
 	bool _videoPaused;
@@ -119,15 +117,17 @@ private:
 	void initCapture();
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
-	void connectTrackingAlg(TrackingAlgorithm* tracker);
+    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
-	TrackingAlgorithm* _tracker;
+
+    std::shared_ptr<TrackingAlgorithm> _tracker;
+    std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
-	QWidget *_paramsWidget;
-	QWidget *_toolsWidget;
+    std::shared_ptr<QWidget> _paramsWidget;
+    std::shared_ptr<QWidget> _toolsWidget;
 
 
 
@@ -156,7 +156,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-	void changeTrackingAlg(TrackingAlgorithm *trackingAlgorithm);
+    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 
 };
 

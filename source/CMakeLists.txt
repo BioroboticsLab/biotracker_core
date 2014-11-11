@@ -1,62 +1,66 @@
-set(src main.cpp)
+file(GLOB_RECURSE src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB_RECURSE hdr RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE ui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.ui)
+file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 
-file(GLOB gui_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	gui/*.cpp gui/*.h)
-source_group(gui FILES ${gui_src})
-
-file(GLOB helper_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	helper/*.cpp helper/*.h)
-source_group(helper FILES ${helper_src})
-
-file(GLOB settings_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	settings/*.cpp settings/*.h)
-source_group(settings FILES ${settings_src})
-
-file(GLOB tracking_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	tracking/*.cpp tracking/*.h)
-source_group(tracking FILES ${tracking_src})
-
-file(GLOB video_src
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	video/*.cpp video/*.h)
-source_group(video FILES ${video_src})
-
-file(GLOB_RECURSE ui 
-	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.ui")
-file(GLOB_RECURSE qrc 
-	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.qrc")
-
-qt5_wrap_ui(UI_HEADERS ${ui})
 qt5_add_resources(UI_RESOURCES ${qrc})
-
-add_subdirectory(tracking)
+qt5_wrap_ui(UI_HEADERS ${ui})
 
 add_executable(BioTracker 
-	${src} 
-	${gui_src} 
-	${helper_src}
-	${settings_src}
-	${trackedObject_src}
-	${tracking_src}
-	${video_src}
-	${UI_HEADERS}
-	${UI_RESOURCES})
+    ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
+)
  
 target_link_libraries(BioTracker
-	BeesBookTagMatcher
-	ColorPatchTracker
-	FishParticle
-	SampleTracker
-	SimpleTracker
-	LandmarkTracker
-	TrackedObject
-
     Qt5::Widgets
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
 )
+
+# add files to source groups to preserve folder structure in visual studio
+# adapted from: http://goo.gl/Xde41i
+
+set(ALL_FILES ${src} ${hdr} ${ui} ${qrc})
+
+foreach(FILE ${ALL_FILES}) 
+  get_filename_component(PARENT_DIR "${FILE}" PATH)
+
+  # skip src or include and changes /'s to \\'s
+  string(REGEX REPLACE "(\\./)?(src|include)/?" "" GROUP "${PARENT_DIR}")
+  string(REPLACE "/" "\\" GROUP "${GROUP}")
+
+  # group into categories
+  if ("${FILE}" MATCHES ".*\\.cpp")
+    set(GROUP "Source Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.h")
+    set(GROUP "Header Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.ui")
+    set(GROUP "UI Files\\${GROUP}")
+  elseif("${FILE}" MATCHES ".*\\.qrc")
+    set(GROUP "Ressource Files\\${GROUP}")
+  endif()
+
+  source_group("${GROUP}" FILES "${FILE}")
+endforeach()
+
+# also add generated files to a group
+
+set(GENERATED_FILES ${UI_RESOURCES} ${UI_HEADERS})
+
+foreach(FILE ${GENERATED_FILES})
+  get_filename_component(REL_FILE ${FILE} NAME ${CMAKE_CURRENT_SOURCE_DIR})
+  #message(${REL_FILE})
+  get_filename_component(PARENT_DIR "${REL_FILE}" PATH)
+  #message(${PARENT_DIR})
+
+  # skip src or include and changes /'s to \\'s
+  string(REGEX REPLACE "(\\./)?(src|include)/?" "" GROUP "${PARENT_DIR}")
+  string(REPLACE "/" "\\" GROUP "${GROUP}")
+
+  # group into categories
+  set(GROUP "Generated Files\\${GROUP}")
+
+  source_group("${GROUP}" FILES "${FILE}")
+endforeach()
+
+
