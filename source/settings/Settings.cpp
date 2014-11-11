@@ -28,12 +28,6 @@ Settings::~Settings(void)
 {
 }
 
-void Settings::setParam(TrackerParam::Param param)
-{
-    setQSettingsParam(param);
-}
-
-
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
 	setParamInVector(paramName, paramValue);
