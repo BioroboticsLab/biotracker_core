@@ -30,13 +30,13 @@ Settings::~Settings(void)
 
 void Settings::setParam(std::string paramName, std::string paramValue)
 {
+	QMutexLocker locker(&paramMutex);
 	setParamInVector(paramName, paramValue);
 	setParamInConfigFile(paramName, paramValue);	
 }
 
 void Settings::setParamInVector(std::string paramName, std::string paramValue)
 {
-	QMutexLocker locker(&paramMutex);
 	const auto pos = std::find_if(_params.begin(), _params.end(),
 			[&paramName](const TrackerParam::Param &p) {
 				return p.pName() == paramName;
@@ -52,7 +52,6 @@ void Settings::setParamInVector(std::string paramName, std::string paramValue)
 
 void Settings::setParamInConfigFile(const std::string &paramName, const std::string &paramValue)
 {
-	QMutexLocker locker(&paramMutex);
 	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
 	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
 }
