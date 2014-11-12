@@ -22,37 +22,7 @@ namespace APPLICATIONPARAM
 */
 namespace FISHPARTICLE_PARAM
 {
-	/**
-	* The size of the gaussian blur applied to the background subtracted image.
-	* type: int, value % 2 == 1, value > 0
-	* default: 7
-	*/
-	const std::string GAUSSIAN_BLUR_SIZE = "FISHPARTICLE_PARAM/GAUSSIAN_BLUR_SIZE";
-
-	/**
-	* The termination criterion for the particle clustering (k-means). Will
-	* terminate if clusters move less than this value (pixels). Smaller: more
-	* accurate, but slower.
-	* type: int, value > 0
-	* default: 3
-	*/
-	const std::string CLUSTERING_EPSILON = "FISHPARTICLE_PARAM/CLUSTERING_EPSILON";
-
-	/**
-	* The minimum score a particle will get by the observer. Smaller value leads
-	* to more clustering around particles with high scores.
-	* type: float
-	* default: 10.0f
-	*/
-	const std::string MINIMUM_SCORE = "FISHPARTICLE_PARAM/MINIMUM_SCORE";
-
-	/**
-	* The number of particles used by the algorithm. Higher value leads to
-	* better accuracy, more detection and lower framerate.
-	* type: unsigned
-	* default: 1000
-	*/
-	const std::string NUM_PARTICLES = "FISHPARTICLE_PARAM/NUM_PARTICLES";
+	
 
 	/**
 	* The number of fish tracked by the algorithm -> also the number of
@@ -62,29 +32,7 @@ namespace FISHPARTICLE_PARAM
 	*/
 	const std::string NUM_FISH = "FISHPARTICLE_PARAM/NUM_FISH";
 
-	/**
-	* The maximum number of particles allowed in a section of the frame. Small
-	* number leads to fish losing all particles, high number leads to few fish
-	* attracting all particles.
-	* type: unsigned
-	* default: 25
-	*/
-	const std::string MAX_PARTICLES_PER_BUCKET = "FISHPARTICLE_PARAM/MAX_PARTICLES_PER_BUCKET";
 
-	/**
-	* The width and height (pixels) of the buckets the frame is divided into.
-	* type: unsigned
-	* default: 15
-	*/
-	const std::string BUCKET_SIZE = "FISHPARTICLE_PARAM/BUCKET_SIZE";
-
-	/**
-	* The standard deviation by which a low-scoring particle will be randomly
-	* moved during resampling. Less for higher-scoring particles.
-	* type: double
-	* default: 7.0
-	*/
-	const std::string PARTICLE_WIGGLE_DISTANCE = "FISHPARTICLE_PARAM/PARTICLE_WIGGLE_DISTANCE";
 
 	/**
 	* Sets whether the system will draw small dots on the frame where each particle	is.
@@ -141,14 +89,13 @@ namespace TRACKERPARAM
 namespace PARTICLEFILTERPARAM
 {
 	const std::string NUMBER_OF_PARTICLES		= "PARTICLEFILTERPARAM/NUMBER_OF_PARTICLES";
-	const std::string RESAMPLE_PROPORTION		= "PARTICLEFILTERPARAM/RESAMPLE_PROPORTION";
-	const std::string RESAMPLE_STEPS			= "PARTICLEFILTERPARAM/RESAMPLE_STEPS";
-	const std::string NOISE_OF_COORDINATES		= "PARTICLEFILTERPARAM/NOISE_OF_COORDINATES";
-	const std::string NOISE_OF_ANGLE			= "PARTICLEFILTERPARAM/NOISE_OF_ANGLE";
-	const std::string MAX_PARTICLE_IN_FAMILY	= "PARTICLEFILTERPARAM/MAX_PARTICLE_IN_FAMILY";
-	const std::string OBSERVER_POSE_VAR			= "PARTICLEFILTERPARAM/OBSERVER_POSE_VAR";
-	const std::string OBSERVER_ANGLE_VAR		= "PARTICLEFILTERPARAM/OBSERVER_ANGLE_VAR";
-	const std::string OBSERVER_SCORE_MINIMUM    = "PARTICLEFILTERPARAM/OBSERVER_SCORE_MINIMUM";
+	const std::string GAUSSIAN_BLUR_SIZE		= "PARTICLEFILTERPARAM/GAUSSIAN_BLUR_SIZE";
+	const std::string CLUSTERING_EPSILON		= "PARTICLEFILTERPARAM/CLUSTERING_EPSILON";
+	const std::string MINIMUM_SCORE				= "PARTICLEFILTERPARAM/MINIMUM_SCORE";	
+	const std::string MAX_PARTICLES_PER_BUCKET	= "PARTICLEFILTERPARAM/MAX_PARTICLES_PER_BUCKET";
+	const std::string BUCKET_SIZE				= "PARTICLEFILTERPARAM/BUCKET_SIZE";
+	const std::string PARTICLE_WIGGLE_DISTANCE	= "PARTICLEFILTERPARAM/PARTICLE_WIGGLE_DISTANCE";
+	const std::string NUM_CLUSTERS				= "PARTICLEFILTERPARAM/NUM_CLUSTERS";
 }
 
 namespace FISHPARAM
