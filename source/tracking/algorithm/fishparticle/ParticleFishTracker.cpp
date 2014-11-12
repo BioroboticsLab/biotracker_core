@@ -98,6 +98,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
+	//TODO: get params for grid buckets
 	GridParticleBuckets buckets(25, _prepared_frame.rows, _prepared_frame.cols, 15, 15);
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
