@@ -85,7 +85,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 
 		// (4) Store results in history
 		// TODO
-	} catch (cv::Exception exc) {
+	} catch (const cv::Exception &exc) {
 		emit notifyGUI(exc.what(), MSGS::FAIL);
 	}
 }
