@@ -28,12 +28,12 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serial
     : TrackingAlgorithm(settings, serializationPathName, parent)
     , _toolsWidget(std::make_shared<QFrame>())
     , _showOriginal(false)
-    , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
-    , _clusters(settings)
     , _params(parent, settings)
+	, _preprocessor(settings, _params)
+	, _clusters(settings, _params)
 {
     initToolsWidget();
 }
@@ -61,7 +61,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 			// TODO params for this algorithm in settings.
 			seedParticles(_params.getNumParticles(), 0, 0, frame.cols, frame.rows);
 		} else {
-			ParticleBrightnessObserver observer(_prepared_frame);
+			ParticleBrightnessObserver observer(_prepared_frame, _params);
 			_sum_scores = 0;
 			for (Particle& p : _current_particles) {
 				observer.score(p);
@@ -81,7 +81,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		}
 
 		// (3) Clustering
-		_clusters.cluster(_current_particles, 5);
+		_clusters.cluster(_current_particles, _params.getNumberOfClusters());
 
 		// (4) Store results in history
 		// TODO
@@ -99,7 +99,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 */
 void ParticleFishTracker::importanceResample() {
 	//TODO: get params for grid buckets
-	GridParticleBuckets buckets(25, _prepared_frame.rows, _prepared_frame.cols, 15, 15);
+	GridParticleBuckets buckets(_params.getMaxParticlesPerBucket(), _prepared_frame.rows, _prepared_frame.cols, _params.getBucketSize(), _params.getBucketSize());
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
@@ -133,9 +133,10 @@ void ParticleFishTracker::importanceResample() {
 void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
 	float wiggle_distance;
 	if (_max_score != _min_score) {
-		wiggle_distance = 7 * ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+		wiggle_distance = _params.getParticleWiggleDistance() 
+			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
 	} else {
-		wiggle_distance = 7;
+		wiggle_distance = _params.getParticleWiggleDistance();
 	}
 	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
 	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
