@@ -3,7 +3,7 @@
 #include <opencv2/opencv.hpp>
 
 
-ParticleClusters::ParticleClusters(Settings& settings) : _settings(settings), _centers(), _labels()
+ParticleClusters::ParticleClusters(Settings& settings, ParticleParams& params) : _settings(settings), _centers(), _labels(), _params(params)
 {
 }
 
@@ -21,7 +21,7 @@ void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned 
 	}
 	int k = num_clusters;
 	cv::Mat bestLabels;
-	cv::TermCriteria criteria(cv::TermCriteria::EPS, 0, 3);
+	cv::TermCriteria criteria(cv::TermCriteria::EPS, 0, _params.getClusteringEpsilon());
 	int attempts = 1;
 	int flags = cv::KMEANS_PP_CENTERS;
 	cv::Mat centers;
