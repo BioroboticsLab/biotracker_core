@@ -80,7 +80,7 @@ private:
 
 	ParticleClusters _clusters;
 
-	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
+	void seedParticles(size_t num_particles, int min_x, int min_y, int max_x, int max_y);
 
 	void importanceResample();
 
