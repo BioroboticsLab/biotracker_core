@@ -15,7 +15,7 @@ GridParticleBuckets::~GridParticleBuckets(void)
 {
 }
 
-bool GridParticleBuckets::putInBucket(Particle particle) {
+bool GridParticleBuckets::putInBucket(const Particle &particle) {
 	std::vector<Particle>& candidate = getBucketForParticle(particle);
 	if (candidate.size() >= _max_per_bucket) {
 		return false;
