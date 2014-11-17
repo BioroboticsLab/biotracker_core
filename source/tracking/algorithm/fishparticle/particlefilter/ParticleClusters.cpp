@@ -3,7 +3,11 @@
 #include <opencv2/opencv.hpp>
 
 
-ParticleClusters::ParticleClusters(Settings& settings, ParticleParams& params) : _settings(settings), _centers(), _labels(), _params(params)
+ParticleClusters::ParticleClusters(Settings& settings, ParticleParams& params)
+	: _settings(settings)
+	, _params(params)
+	, _centers(),
+	_labels()
 {
 }
 
