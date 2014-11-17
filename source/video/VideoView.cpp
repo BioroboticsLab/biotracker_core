@@ -203,9 +203,13 @@ void VideoView::initializeGL()
 }
 void VideoView::resizeGL(int width, int height)
 {
-	//dont do anything if either width or height are 0
+	// dont do anything if  width or height are 0 
+	// or there is no image to display
 	if (width <= 0 || height <= 0)
 		return;
+	if (_displayImage.empty())
+		return;
+
 	//calculate ratio of screen to displayed image
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
