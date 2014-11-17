@@ -5,11 +5,12 @@
 
 #include "Particle.h"
 #include "source/settings/Settings.h"
+#include "tracking/algorithm/fishparticle/particlefilter/particleParams.h"
 
 class ParticleClusters
 {
 public:
-	explicit ParticleClusters(Settings& settings);
+	explicit ParticleClusters(Settings& settings, ParticleParams& params);
 	~ParticleClusters(void);
 	void cluster(const std::vector<Particle>& particles, unsigned num_clusters);
 	unsigned getClosestClusterIndex(const Particle& particle);
@@ -18,6 +19,7 @@ public:
 	void clear();
 private:
 	Settings& _settings;
+	ParticleParams& _params;
 	cv::Mat _centers;
 	cv::Mat _labels;
 };
