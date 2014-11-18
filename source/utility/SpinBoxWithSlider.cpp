@@ -19,8 +19,7 @@ SteppedSpinBox::SteppedSpinBox(QWidget *p)
 {
 }
 
-
- int SteppedSpinBox::valueFromText(const QString &text) const  {
+int SteppedSpinBox::valueFromText(const QString &text) const  {
 	int value = text.toInt();
 	value = qMax(value, this->minimum());
 	value = qMin(value, this->maximum());
@@ -29,15 +28,25 @@ SteppedSpinBox::SteppedSpinBox(QWidget *p)
 }
 
 
-
+/**
+ * Integer Spinbox + Slider.
+ * representable values: {min, min + step_size, min + 2 * step_size, ..., max - step_size, max}
+ *     Default (step_size = 1): {min, min + 1, min + 2, ..., max - 1, max}
+ *
+ * @param parent
+ * @param name
+ * @param min : lower bound
+ * @param max : upper bound, max >= min && max == min + n * step_size; n \in \setn
+ * @param start_value : min <= start_value <= max && start_value == min + n * step_size; n \in \setn
+ * @param step_size : >= 1
+ */
 SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, const QString &name, int min, int max, int start_value, int step_size)
 	: QWidget(parent)
 	, m_step_size(step_size)
-	, m_name(new QLabel(name, this))
-	, m_spinbox(new SteppedSpinBox(this))
-	, m_slider(new QSlider(this))
-	, m_layout(new QHBoxLayout())
-
+	, m_layout(this)
+	, m_name(name, this)
+	, m_slider(this)
+	, m_spinbox(this)
 {
 	{
 		if (m_step_size < 1) {
@@ -53,90 +62,99 @@ SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, const QString &name, int m
 			throw std::invalid_argument("range length isn't a multiple of step size");
 		}
 		if ((start_value - min) % m_step_size) {
-			throw std::invalid_argument("");
+			throw std::invalid_argument("invalid start value");
 		}
 	}
 
-	m_spinbox->setRange(min, max);
-	m_spinbox->setValue(start_value);
+	m_spinbox.setRange(min, max);
+	m_spinbox.setValue(start_value);
 
-	m_slider->setOrientation(Qt::Horizontal);
-	m_slider->setRange(0, (max - min) / m_step_size);
-	m_slider->setValue((start_value - min) / m_step_size);
+	m_slider.setOrientation(Qt::Horizontal);
+	m_slider.setRange(0, (max - min) / m_step_size);
+	m_slider.setValue((start_value - min) / m_step_size);
 
 
-	QObject::connect(m_spinbox, SIGNAL(valueChanged(int)),
+	QObject::connect(&m_spinbox, SIGNAL(valueChanged(int)),
 	                 this,      SLOT(SpinBoxValueChanged(int)));
-	QObject::connect(m_slider,  SIGNAL(valueChanged(int)),
+	QObject::connect(&m_slider,  SIGNAL(valueChanged(int)),
 	                 this,      SLOT(SliderValueChanged(int)));
 
-	m_spinbox->setSingleStep(m_step_size);
+	m_spinbox.setSingleStep(m_step_size);
 
-	m_layout->addWidget(m_name);
-	m_layout->addWidget(m_slider);
-	m_layout->addWidget(m_spinbox);
+	m_layout.addWidget(&m_name);
+	m_layout.addWidget(&m_slider);
+	m_layout.addWidget(&m_spinbox);
 }
 
 SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, QFormLayout *layout, const QString &name, int min, int max, int start_value, int step_size)
 	: SpinBoxWithSlider(parent, name, min, max, start_value, step_size)
 {
 	if (layout) {
-		layout->addRow(this->getLayout());
+		layout->addRow(this);
 	}
 }
 
 void SpinBoxWithSlider::SpinBoxValueChanged(int val) {
-	m_slider->setValue((val - m_spinbox->minimum()) / m_step_size );
+	m_slider.setValue((val - m_spinbox.minimum()) / m_step_size );
 	emit valueChanged(this->value());
 }
 void SpinBoxWithSlider::SliderValueChanged(int value) {
-	m_spinbox->setValue(m_spinbox->minimum() + value * m_step_size);
+	m_spinbox.setValue(m_spinbox.minimum() + value * m_step_size);
 	emit valueChanged(this->value());
 }
 
+/**
+ * double Spinbox + Slider.
+ *
+ * @param parent
+ * @param name
+ * @param min
+ * @param max
+ * @param start_value
+ * @param precision : decimal places
+ */
 DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent, const QString &name, double min, double max, double start_value, int precision)
 	: QWidget(parent)
 	, m_factor(pow(10, precision))
-	, m_name(new QLabel(name, this))
-	, m_spinbox(new QDoubleSpinBox(this))
-	, m_slider(new QSlider(this))
-	, m_layout(new QHBoxLayout())
-
+	, m_layout(this)
+	, m_name(name, this)
+	, m_slider(this)
+	, m_spinbox(this)
 {
-	m_spinbox->setRange(min, max);
-	m_spinbox->setValue(start_value);
-	m_spinbox->setDecimals(precision);
-	m_spinbox->setSingleStep(1.0 / m_factor);
+	m_spinbox.setRange(min, max);
+	m_spinbox.setValue(start_value);
+	m_spinbox.setDecimals(precision);
+	m_spinbox.setSingleStep(1.0 / m_factor);
 
-	m_slider->setOrientation(Qt::Horizontal);
-	m_slider->setRange(m_factor * min, m_factor * max);
-	m_slider->setValue(m_factor * start_value);
+	m_slider.setOrientation(Qt::Horizontal);
+	m_slider.setRange(m_factor * min, m_factor * max);
+	m_slider.setValue(m_factor * start_value);
 
 
-	QObject::connect(m_spinbox, SIGNAL(valueChanged(double)),
+	QObject::connect(&m_spinbox, SIGNAL(valueChanged(double)),
 	                 this,      SLOT(SpinBoxValueChanged(double)));
-	QObject::connect(m_slider,  SIGNAL(valueChanged(int)),
+	QObject::connect(&m_slider,  SIGNAL(valueChanged(int)),
 	                 this,      SLOT(SliderValueChanged(int)));
 
-	m_layout->addWidget(m_name);
-	m_layout->addWidget(m_slider);
-	m_layout->addWidget(m_spinbox);
+	m_layout.addWidget(&m_name);
+	m_layout.addWidget(&m_slider);
+	m_layout.addWidget(&m_spinbox);
 }
 
 DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent, QFormLayout *layout, const QString &name, double min, double max, double start_value, int precision)
 	: DoubleSpinBoxWithSlider(parent, name, min, max, start_value, precision)
 {
 	if (layout) {
-		layout->addRow(this->getLayout());
+		layout->addRow(this);
 	}
 }
 
 void DoubleSpinBoxWithSlider::SpinBoxValueChanged(double val) {
-	m_slider->setValue(val * m_factor);
+	m_slider.setValue(val * m_factor);
 	emit valueChanged(this->value());
 }
 
 void DoubleSpinBoxWithSlider::SliderValueChanged(int value) {
-	m_spinbox->setValue(static_cast<double>(value) / m_factor);
+	m_spinbox.setValue(static_cast<double>(value) / m_factor);
 	emit valueChanged(this->value());
 }

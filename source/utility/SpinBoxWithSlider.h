@@ -36,12 +36,8 @@ public:
 	SpinBoxWithSlider(const SpinBoxWithSlider&) = delete;
 	SpinBoxWithSlider& operator=(const SpinBoxWithSlider&) = delete;
 
-	QLayout* getLayout() {
-		return m_layout;
-	}
-
 	int value() const {
-		return m_spinbox->value();
+		return m_spinbox.value();
 	}
 
 	virtual ~SpinBoxWithSlider() override = default;
@@ -54,14 +50,12 @@ signals:
 	void valueChanged(int i);
 
 private:
-	int m_step_size;
-	QLabel *m_name;
-	QSpinBox *m_spinbox;
-	QSlider *m_slider;
-	QHBoxLayout *m_layout;
+	int         m_step_size;
+	QHBoxLayout m_layout;
+	QLabel      m_name;
+	QSlider     m_slider;
+	QSpinBox    m_spinbox;
 };
-
-
 
 
 class DoubleSpinBoxWithSlider: public QWidget {
@@ -73,12 +67,8 @@ public:
 	DoubleSpinBoxWithSlider(const DoubleSpinBoxWithSlider&) = delete;
 	DoubleSpinBoxWithSlider& operator=(const DoubleSpinBoxWithSlider&) = delete;
 
-	QLayout* getLayout() {
-		return m_layout;
-	}
-
 	double value() const {
-		return m_spinbox->value();
+		return m_spinbox.value();
 	}
 
 	virtual ~DoubleSpinBoxWithSlider() override = default;
@@ -91,14 +81,12 @@ signals:
 	void valueChanged(double i);
 
 private:
-	int m_factor;
-	QLabel *m_name;
-	QDoubleSpinBox *m_spinbox;
-	QSlider *m_slider;
-	QHBoxLayout *m_layout;
+	int            m_factor;
+	QHBoxLayout    m_layout;
+	QLabel         m_name;
+	QSlider        m_slider;
+	QDoubleSpinBox m_spinbox;
 };
-
-
 
 
 #endif /* SPINBOXWITHSLIDER_H_ */
