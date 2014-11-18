@@ -8,7 +8,7 @@
 #include "SpinBoxWithSlider.h"
 #include <stdexcept> // std::invalid_argument
 
-constexpr int pow(int base, unsigned int exp) {
+int pow(int base, unsigned int exp) {
 	return exp == 0 ? 1 : base * pow(base, exp - 1);
 }
 
@@ -43,10 +43,10 @@ SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, const QString &name, int m
 		if (m_step_size < 1) {
 			throw std::invalid_argument("step isn't strictly positive");
 		}
-		if (not (min < max)) {
+		if (! (min < max)) {
 			throw std::invalid_argument("invalid range");
 		}
-		if (not (min <= start_value && start_value <= max)) {
+		if (! (min <= start_value && start_value <= max)) {
 			throw std::invalid_argument("start value isn't in range");
 		}
 		if ((max - min) % m_step_size) {
