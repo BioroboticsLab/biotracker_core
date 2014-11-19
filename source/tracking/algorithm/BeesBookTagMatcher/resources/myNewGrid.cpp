@@ -8,16 +8,6 @@
 #include <QPolygon>
 #include <utility>
 
-// current tag design 
-/** inner radius */
-#define IR 1.2
-/** middle radius */
-#define MR 2.2
-/** outer radius */
-#define OR 3
-
-#define axisTag 25
-
 //default constructor
 //THIS IS CPP 11
 //myNewGrid::myNewGrid()
@@ -25,7 +15,7 @@
 //{}
 //Tobias temporary fix:
 //void myNewGrid::init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id)
-void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
+void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id)
 {
 	scale		= Scale;						//new variable, is the scale of the tag referenced to axisTag (25 pixels)
 	centerTag	= CenterGrid;
@@ -33,7 +23,8 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
 	alpha		= Alpha;						//new variable, is the orientation of the tag, measured counterclockwise from x-axis.
 	theta		= Theta;						//new variable, indicates how tilted is the grid.
 	phi			= Phi;							//new variable, is the orientation of the ellipse that represents the tag, measured counterclockwise from x-axis.
-	ID           = std::move(Id);
+	rho			= Rho;							//new variable, angle between orientation and mid-circle vectors.
+	ID          = std::move(Id);
 	  
 	angleTag	= -(phi*180/M_PI);				//this angle denotes the orientation of the ellipses (both ellipses should have the same value) (measured clockwise from the x-axis)
 	angleGrid	= (phi-alpha-M_PI/2)*180/M_PI;	//the angle of the grid, is the angle where the bit cells start to be drawn, it is calculated from phi and alpha
@@ -43,78 +34,100 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
   
 	initPoints();  
 }
-
+//default constructor
 myNewGrid::myNewGrid()
 {	
-	init(1, cv::Point (0,0), M_PI/2, 0, M_PI/2, std::vector<bool> (12,0));	
+	init(1, cv::Point(0, 0), M_PI / 2, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
 }
 //constructor with 1 parameter
 myNewGrid::myNewGrid(cv::Point2f CenterGrid)
 {	
-	init(1, CenterGrid, M_PI/2, 0, M_PI/2, std::vector<bool> (12,0));
-	//init(CenterGrid, cv::Size2f (axisTag*(MR/OR),axisTag*(MR/OR)), M_PI/2, CenterGrid, cv::Size2f (axisTag,axisTag), M_PI/2, std::vector<bool> (12,0));	
+	init(1, CenterGrid, M_PI / 2, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
 }
 //constructor with 7 parameters
-myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
+myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id)
 {
-	init(Scale, CenterGrid, Alpha, Theta, Phi, Id);
-	//init(CenterGrid, AxesGrid, AngleGrid, CenterTag, AxesTag, AngleTag, Id);  
+	init(Scale, CenterGrid, Alpha, Theta, Phi, Rho, Id);
 }
 //destrucor
 myNewGrid::~myNewGrid(){}
+
 //This function initializes the vector with the coordinates of the points that define the grid
 //Use this function only when a new tag is initialized
 void myNewGrid::initPoints()
 {
 	absPoints.clear();
 	relPoints.clear();
-	//The coordinates of the center are absolute in the image coordinates
-	absPoints.push_back(centerGrid);							// P0 is pushed back, at this instant absPoints.size() == 1
-	absPoints.push_back(centerGrid+cv::Point2f(0,-axisTag*(MR/OR)));// P1 is pushed back, at this instant absPoints.size() == 2
-	//absPoints.push_back(center+cv::Point2f(axisTag*(MR/OR),0)); // P2 is pushed back, at this instant absPoints.size() == 3
-	//absPoints.push_back(center+cv::Point2f(0,axisTag*(MR/OR))); // P3 is pushed back, at this instant absPoints.size() == 4
-	//absPoints.push_back(center+cv::Point2f(-axisTag*(MR/OR),0));// P4 is pushed back, at this instant absPoints.size() == 5	
-	//absPoints.push_back(center+cv::Point2f(0,-axisTag));		// P5 is pushed back, at this instant absPoints.size() == 6
-	//absPoints.push_back(center+cv::Point2f(axisTag,0));			// P6 is pushed back, at this instant absPoints.size() == 7
-	//absPoints.push_back(center+cv::Point2f(0,axisTag));			// P7 is pushed back, at this instant absPoints.size() == 8
-	//absPoints.push_back(center+cv::Point2f(-axisTag,0));		// P8 is pushed back, at this instant absPoints.size() == 9
-	////absPoints.push_back(center);								// P9 is pushed back, at this instant absPoints.size() == 10
+	std::vector<cv::Point> tempCont;
+
+	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesGrid.width, axesGrid.height), angleTag, angleGrid, angleGrid + 360, 1, tempCont);
+		
+	//The coordinates of the following four points shall be interpreted as relative to the centerGrid variable
+	relPoints.push_back(cv::Point2f(0,0));					// R0 is pushed back, at this instant relPoints.size() == 1		
+	relPoints.push_back(cv::Point2f(0,-axisTag*(MR/OR)));	// R1 is pushed back, at this instant relPoints.size() == 2
+	//relPoints.push_back(tempCont[89]);						// R1 is pushed back, at this instant relPoints.size() == 2
+	relPoints.push_back(cv::Point2f(axisTag*(MR/OR),0));	// R2 is pushed back, at this instant relPoints.size() == 3
+	//relPoints.push_back(tempCont[0]);						// R2 is pushed back, at this instant relPoints.size() == 3
+	relPoints.push_back(cv::Point2f(0,axisTag*(MR/OR)));	// R3 is pushed back, at this instant relPoints.size() == 4
+	//relPoints.push_back(tempCont[269]);						// R3 is pushed back, at this instant relPoints.size() == 4
+	relPoints.push_back(cv::Point2f(-axisTag*(MR/OR),0));	// R4 is pushed back, at this instant relPoints.size() == 5
+	//relPoints.push_back(tempCont[179]);						// R4 is pushed back, at this instant relPoints.size() == 5
 	
-	//The coordinates of the following four points shall be interpratated as relative to the center
-	relPoints.push_back(cv::Point2f(0,0));						// R0 is pushed back, at this instant relPoints.size() == 1
-	relPoints.push_back(cv::Point2f(0,-axisTag*(MR/OR)));		// R1 is pushed back, at this instant relPoints.size() == 2
-	//relPoints.push_back(cv::Point2f(axisTag*(MR/OR),0));		// R2 is pushed back, at this instant relPoints.size() == 3
-	//relPoints.push_back(cv::Point2f(0,axisTag*(MR/OR)));		// R3 is pushed back, at this instant relPoints.size() == 4
-	//relPoints.push_back(cv::Point2f(-axisTag*(MR/OR),0));		// R4 is pushed back, at this instant relPoints.size() == 5	
-	//relPoints.push_back(cv::Point2f(0,-axisTag));				// R5 is pushed back, at this instant relPoints.size() == 6
-	//relPoints.push_back(cv::Point2f(axisTag,0));				// R6 is pushed back, at this instant relPoints.size() == 7
-	//relPoints.push_back(cv::Point2f(0,axisTag));				// R7 is pushed back, at this instant relPoints.size() == 8
-	//relPoints.push_back(cv::Point2f(-axisTag,0));				// R8 is pushed back, at this instant relPoints.size() == 9
-	////relPoints.push_back(cv::Point2f(0,0));						// R5 is pushed back, at this instant relPoints.size() == 10
+	tempCont.clear();
+	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesTag.width, axesTag.height), angleTag, angleGrid, angleGrid + 360, 1, tempCont);
+
+	relPoints.push_back(cv::Point2f(0,-axisTag));			// R5 is pushed back, at this instant relPoints.size() == 6
+	//relPoints.push_back(tempCont[89]);						// R5 is pushed back, at this instant relPoints.size() == 6
+	relPoints.push_back(cv::Point2f(axisTag,0));			// R6 is pushed back, at this instant relPoints.size() == 7
+	//relPoints.push_back(tempCont[0]);						// R6 is pushed back, at this instant relPoints.size() == 7
+	relPoints.push_back(cv::Point2f(0,axisTag));			// R7 is pushed back, at this instant relPoints.size() == 8
+	//relPoints.push_back(tempCont[269]);						// R7 is pushed back, at this instant relPoints.size() == 8
+	relPoints.push_back(cv::Point2f(-axisTag,0));			// R8 is pushed back, at this instant relPoints.size() == 9	
+	//relPoints.push_back(tempCont[179]);						// R8 is pushed back, at this instant relPoints.size() == 9
+
+	//The coordinates of the center are absolute in the image coordinates
+	absPoints.push_back(centerGrid);						// P0 is pushed back, at this instant absPoints.size() == 1
+	absPoints.push_back(centerGrid + relPoints[1]);			// P1 is pushed back, at this instant absPoints.size() == 2
+	absPoints.push_back(centerGrid + relPoints[2]);			// P2 is pushed back, at this instant absPoints.size() == 3
+	absPoints.push_back(centerGrid + relPoints[3]);			// P3 is pushed back, at this instant absPoints.size() == 4
+	absPoints.push_back(centerGrid + relPoints[4]);			// P4 is pushed back, at this instant absPoints.size() == 5	
+	absPoints.push_back(centerGrid + relPoints[5]);			// P5 is pushed back, at this instant absPoints.size() == 6
+	absPoints.push_back(centerGrid + relPoints[6]);			// P6 is pushed back, at this instant absPoints.size() == 7
+	absPoints.push_back(centerGrid + relPoints[7]);			// P7 is pushed back, at this instant absPoints.size() == 8
+	absPoints.push_back(centerGrid + relPoints[8]);			// P8 is pushed back, at this instant absPoints.size() == 9	
 }
-//updates one of the two points vector
-//m = 1 --> updates absPoints from relPoints (when the center coordinates are modified)
-//m = 2 --> updates relPoints from absPoints (when the coordinates of one of the outter points is modified)
-//m = 3 --> updates relPoints and absPoints from Parameters (option called by drawDragGrid)
+
+//Method that updates one of the two points vector
+//m == 1 --> updates absPoints from relPoints (when the center coordinates are modified)
+//m == 2 --> updates relPoints from absPoints (when the coordinates of one of the outter points is modified)
+//m == 3 --> updates relPoints and absPoints from Parameters (option called by drawDragGrid)
 void myNewGrid::updatePoints(int m)
 {
+	//This is the case when the tag is draged
 	if (m==1)
-		for (int i=1; i<10; i++)
-			absPoints[i]=relPoints[i]+absPoints[0];
+		for (int i=1; i<9; i++)
+			absPoints[i]=relPoints[i]+absPoints[0];		
 	else if (m==2)
-		for (int i=1; i<10; i++)
+		for (int i=1; i<9; i++)
 			relPoints[i]=absPoints[i]-absPoints[0];
-	else if (m==3)
+	//This is the case for scaling with the wheel
+	else if (m == 3)
+		for (int i = 1; i<9; i++)
+		{
+		relPoints[i] = relPoints[i] * scale;
+		absPoints[i] = relPoints[i] + absPoints[0];
+		}			
+	
+	else if (m==4)
 	{
 		alpha = -angleGrid*M_PI/180 - M_PI/2;
 		std::cout<<"alpha "<<alpha<<" angleGrid " <<angleGrid<<std::endl;		
-		/*for (int i=1; i<9; i++)
+		for (int i=1; i<9; i++)
 		{
 			relPoints[i]=cv::Point2f(relPoints[i].x*cos(alpha)-relPoints[i].y*sin(alpha),relPoints[i].x*sin(alpha)+relPoints[i].y*cos(alpha));
 			absPoints[i]=relPoints[i]+absPoints[0];
 			std::cout<<relPoints[i]<<std::endl;
-		}
-		updateParam();*/
+		}		
 	}
 	return;
 }
@@ -180,10 +193,16 @@ void myNewGrid::updateParam()
 	angleTag = -phi*180/M_PI;
 	return;
 }
-//function that updates the minor axis of the ellipse using as parameter theta.
+
+//Method that updates the values of the parameters
+// m == 1 -->
 void myNewGrid::updateAxes()
-{
-	axesTag.height=axisTag*cos(theta);
+{	
+	//Updates lengths from scale
+	axesTag.width = scale*axisTag;
+	axesGrid.width = scale*axisTag*(MR / OR);
+	//Updates lengths from theta
+	axesTag.height=axesTag.width*cos(theta);
 	axesGrid.height=axesGrid.width*cos(theta);
 	return;
 }
