@@ -122,7 +122,7 @@ void BeesBookTagMatcher::mousePressEvent		( QMouseEvent * e )
 	//check if RIGHT button is clicked
 	if ( e->button() == Qt::RightButton)
 	{	//check for CTRL modifier
-		if(Qt::ControlModifier == QApplication::keyboardModifiers()) //reset
+		if(Qt::ControlModifier == QApplication::keyboardModifiers()) //a new tag with center at the pointer coord is generated
 		{
 			if (_ready)
 			{
@@ -147,7 +147,7 @@ void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
 		g.absPoints[0]= cv::Point(e->x(),e->y());	// P0 (center) is updated		
 		g.updatePoints(1);
 		g.centerGrid = g.absPoints[0];
-		g.centerTag = g.absPoints[9];
+		g.centerTag = g.absPoints[0];
 		emit update();
 	}
 	else if (_setP1)
@@ -198,8 +198,16 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 			_setP3 = false;
 		else if (_setP4)
 			_setP4 = false;
-		else if (_activePoints)
-			emit update();
+		else if (_setP5)
+			_setP4 = false;
+		else if (_setP6)
+			_setP4 = false;
+		else if (_setP7)
+			_setP4 = false;
+		else if (_setP8)
+			_setP4 = false;
+		/*else if (_activePoints)
+			emit update();*/
 	}
 	// right button released
 	if (e->button() == Qt::RightButton)
@@ -211,12 +219,17 @@ void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * e)
 {
 	if (_activeDragGrid) // The Grid is active for draging
 	{			
-			g.angleGrid=g.angleGrid-e->delta()/96;
+			//g.angleGrid=g.angleGrid-e->delta()/96;
+			g.scale = g.scale + e->delta() / 96*0.1;		//scale variable is updated by 0.1
+			std::cout << "scale " << g.scale <<std::endl;
+			g.updateAxes();
 			g.updatePoints(3);
 			emit update();
 		//std::cout<<"alpha "<<g.alpha<<" angleGrid " <<g.angleGrid<<" extra "<< e->delta()/96<<std::endl;
 	}	
 }
+
+//DRAWING FUNCTIONS
 
 //BeesBookTagMatcher private member functions
 //this draws a basic grid onto the display image
@@ -225,8 +238,10 @@ void BeesBookTagMatcher::drawDragGrid(cv::Mat image)
 	std::cout<<"DRAWDRAGGRID"<<std::endl;	
 	g.drawFullTag(image,1); //the grid is drawn as active
 	cv::circle(image, g.absPoints[0], 1, cv::Scalar(255, 255, 255), 1); //the center is drawn in white
-	cv::circle(image, g.absPoints[5], 1, cv::Scalar(0, 255, 255), 1); //the orientation point is printed in yellow
-	cv::circle(image, g.absPoints[1], 1, cv::Scalar(0, 255, 255), 1); //the orientation point is printed in yellow
+	cv::circle(image, g.absPoints[5], 1, cv::Scalar(0, 255, 255), 1);	//the orientation point is printed in yellow
+	cv::circle(image, g.absPoints[1], 1, cv::Scalar(0, 255, 255), 1);	//the orientation point is printed in yellow
+	cv::circle(image, g.absPoints[6], 1, cv::Scalar(0, 255, 0), 1);		//the orientation point is printed in yellow
+	cv::circle(image, g.absPoints[2], 1, cv::Scalar(0, 255, 0), 1);		//the orientation point is printed in yellow
 }
 //BeesBookTagMatcher private member functions
 //this draws a basic grid onto the display image
@@ -236,6 +251,7 @@ void BeesBookTagMatcher::drawGrid(cv::Mat image)
 	std::cout<<"DRAWGRID"<<std::endl;
 	g.drawFullTag(image,1); //the grid is drawn	
 }
+
 void BeesBookTagMatcher::drawPoints(cv::Mat image)
 {
 	if (_activePoints)
@@ -244,11 +260,8 @@ void BeesBookTagMatcher::drawPoints(cv::Mat image)
 	}		
 }
 
-
 double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
-{
-	double dist;
+{	
 	diff = p1-p2;
-	dist = sqrt(diff.x*diff.x + diff.y*diff.y);
-	return dist;
+	return sqrt(diff.x*diff.x + diff.y*diff.y);	
 }
