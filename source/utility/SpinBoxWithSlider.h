@@ -50,11 +50,11 @@ signals:
 	void valueChanged(int i);
 
 private:
-	int         m_step_size;
-	QHBoxLayout m_layout;
-	QLabel      m_name;
-	QSlider     m_slider;
-	QSpinBox    m_spinbox;
+	int            m_step_size;
+	QHBoxLayout    m_layout;
+	QLabel         m_name;
+	QSlider        m_slider;
+	SteppedSpinBox m_spinbox;
 };
 
 
