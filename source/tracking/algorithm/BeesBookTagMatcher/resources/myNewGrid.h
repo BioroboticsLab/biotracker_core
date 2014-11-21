@@ -35,7 +35,7 @@ public:
 	//default constructor
 	myNewGrid();
 	//constructor with 1 parameter
-	myNewGrid(cv::Point2f centerGrid);
+	myNewGrid(cv::Point2f centerGrid, double Alpha);
 	//constructor with 7 parameters
 	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id);	
 	//destructor
@@ -55,35 +55,32 @@ public:
 	double									alpha;		//bee orientation, where 0 degrees is the x-axis and from there the angle is measured counterclockwise
 	double									theta;		//this angle denotes the tilt of the grid
 	double									phi;		//this angle denotes the orientation of the ellipses (both ellipses should have the same phi parameter) (measured from the y-axis)
+	
 	//test
 	double									rho;		//this is the angle between orientation and mid-circle vectors.
 	
-	double									angleP1P2;	//angle between P0P1 and P0P2
-
-
 	std::vector<bool>						ID;
 
 	std::vector<std::vector <cv::Point> >	cellsContours;
 	
 	//std::vector<std::vector <cv::Point> >	gridAxes;
-	std::vector<cv::Point2f>				absPoints; //vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)
+	std::vector<cv::Point2f>				absPoints; //vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
 	std::vector<cv::Point2f>				relPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)
 	
 	//Object methods
-	//function that generates the set of 9 points that define a grid
-	void initPoints();
 	//function that updates the set of 9 points that define a grid from parameters.
 	void updatePoints(int m);
-	//function that calculates the vector of parameters of the grid from points configuration.
-	void updateParam();	
-	//function that updates the minor axis of the ellipse using theta as parameter.
+	//function that updates parameters when the tag is translated.
+	void translation(cv::Point newCenter);
+	//function that updates parameters when the tag orientation is modified.
+	void orientation(cv::Point newP1);
+	//function that updates the mayor axis using scale and the minor axis using theta as parameter.
 	void updateAxes();
-	//function that draws the points without the tag.
-	void drawModPoints(cv::Mat &img);
-	//function that draws the grid without the tag.
-	void drawGrid(cv::Mat &img);
-	//function that draws a grid, active grids are printed in a different color.
-	void drawFullTag(cv::Mat &img, bool active);
+	//function that is called to set the binary ID
+	void updateID(cv::Point newID);
+
+	//function that calculates the vector of parameters of the grid from points configuration.
+	void updateParam();		
 
 	//function that generates a vector of points for a specific cell from the grid
 	/**	 
@@ -96,13 +93,11 @@ public:
 	 * @ 14 diameter
 	 * @ 15 tag perimeter
 	 */
-	std::vector<cv::Point> renderGridCell(unsigned short cell);
-	
+	std::vector<cv::Point> renderGridCell(unsigned short cell);	
 	//function that renders all the necessary cells in a Tag calling renderGridCell
 	std::vector<std::vector <cv::Point>> renderFullTag();
-
-	////function that renders tag axes while being modified
-	//void renderModTag();		
+	//function that draws a grid, active grids are printed in a different color.
+	void drawFullTag(cv::Mat &img, int active);
 };
 
 #endif

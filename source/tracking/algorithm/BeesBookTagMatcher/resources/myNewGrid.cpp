@@ -31,8 +31,12 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
 	  
 	axesGrid	= cv::Size2f (Scale*axisTag*(MR/OR),Scale*axisTag*(MR/OR)*cos(theta));
 	axesTag		= cv::Size2f (Scale*axisTag,Scale*axisTag*cos(theta));	
-  
-	initPoints();  
+	
+	//The size of the vectors is set
+	absPoints.resize(3);
+	relPoints.resize(3);
+	//The vectors are initialized
+	updatePoints(1);
 }
 //default constructor
 myNewGrid::myNewGrid()
@@ -40,9 +44,9 @@ myNewGrid::myNewGrid()
 	init(1, cv::Point(0, 0), M_PI / 2, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
 }
 //constructor with 1 parameter
-myNewGrid::myNewGrid(cv::Point2f CenterGrid)
+myNewGrid::myNewGrid(cv::Point2f CenterGrid, double Alpha)
 {	
-	init(1, CenterGrid, M_PI / 2, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
+	init(1, CenterGrid, Alpha, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
 }
 //constructor with 7 parameters
 myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id)
@@ -54,83 +58,95 @@ myNewGrid::~myNewGrid(){}
 
 //This function initializes the vector with the coordinates of the points that define the grid
 //Use this function only when a new tag is initialized
-void myNewGrid::initPoints()
-{
-	absPoints.clear();
-	relPoints.clear();
-	std::vector<cv::Point> tempCont;
+//void myNewGrid::initPoints()
+//{
+//	absPoints.clear();
+//	relPoints.clear();
+//	std::vector<cv::Point> tempCont;
+//			
+//	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesGrid.width, axesGrid.height), angleTag, angleGrid + 3 * 30, angleGrid + 4 * 30, 30, tempCont);
+//	//The coordinates of the following four points shall be interpreted as relative to the centerGrid variable
+//	relPoints.push_back(cv::Point2f(0,0));					// R0 is pushed back, at this instant relPoints.size() == 1		
+//	//relPoints.push_back(cv::Point2f(0,-axisTag));			// R1 is pushed back, at this instant relPoints.size() == 2	
+//	relPoints.push_back(tempCont[0]);			// R1 is pushed back, at this instant relPoints.size() == 2	
+//	//std::cout << "R1 bis " << tempCont[0] << std::endl;			// R1 is pushed back, at this instant relPoints.size() == 2		
+//	//std::cout << "R1 " << relPoints[1] << std::endl;			// R1 is pushed back, at this instant relPoints.size() == 2		
+//	
+//	//tempCont.clear();
+//	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesGrid.width, axesGrid.height), angleTag, angleGrid + 6 * 30, angleGrid + 7 * 30, 30, tempCont);
+//
+//	relPoints.push_back(tempCont[0]);			// R2 is pushed back, at this instant relPoints.size() == 3
+//	//std::cout << "R2 " << tempCont[0] << std::endl;			// R2 is pushed back, at this instant relPoints.size() == 3
+//	
+//
+//	//The coordinates of the center are absolute in the image coordinates
+//	absPoints.push_back(centerGrid);						// P0 is pushed back, at this instant absPoints.size() == 1
+//	absPoints.push_back(centerGrid + relPoints[1]);			// P1 is pushed back, at this instant absPoints.size() == 2
+//	absPoints.push_back(centerGrid + relPoints[2]);			// P2 is pushed back, at this instant absPoints.size() == 3	
+//}
 
-	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesGrid.width, axesGrid.height), angleTag, angleGrid, angleGrid + 360, 1, tempCont);
-		
-	//The coordinates of the following four points shall be interpreted as relative to the centerGrid variable
-	relPoints.push_back(cv::Point2f(0,0));					// R0 is pushed back, at this instant relPoints.size() == 1		
-	relPoints.push_back(cv::Point2f(0,-axisTag*(MR/OR)));	// R1 is pushed back, at this instant relPoints.size() == 2
-	//relPoints.push_back(tempCont[89]);						// R1 is pushed back, at this instant relPoints.size() == 2
-	relPoints.push_back(cv::Point2f(axisTag*(MR/OR),0));	// R2 is pushed back, at this instant relPoints.size() == 3
-	//relPoints.push_back(tempCont[0]);						// R2 is pushed back, at this instant relPoints.size() == 3
-	relPoints.push_back(cv::Point2f(0,axisTag*(MR/OR)));	// R3 is pushed back, at this instant relPoints.size() == 4
-	//relPoints.push_back(tempCont[269]);						// R3 is pushed back, at this instant relPoints.size() == 4
-	relPoints.push_back(cv::Point2f(-axisTag*(MR/OR),0));	// R4 is pushed back, at this instant relPoints.size() == 5
-	//relPoints.push_back(tempCont[179]);						// R4 is pushed back, at this instant relPoints.size() == 5
-	
-	tempCont.clear();
-	ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesTag.width, axesTag.height), angleTag, angleGrid, angleGrid + 360, 1, tempCont);
-
-	relPoints.push_back(cv::Point2f(0,-axisTag));			// R5 is pushed back, at this instant relPoints.size() == 6
-	//relPoints.push_back(tempCont[89]);						// R5 is pushed back, at this instant relPoints.size() == 6
-	relPoints.push_back(cv::Point2f(axisTag,0));			// R6 is pushed back, at this instant relPoints.size() == 7
-	//relPoints.push_back(tempCont[0]);						// R6 is pushed back, at this instant relPoints.size() == 7
-	relPoints.push_back(cv::Point2f(0,axisTag));			// R7 is pushed back, at this instant relPoints.size() == 8
-	//relPoints.push_back(tempCont[269]);						// R7 is pushed back, at this instant relPoints.size() == 8
-	relPoints.push_back(cv::Point2f(-axisTag,0));			// R8 is pushed back, at this instant relPoints.size() == 9	
-	//relPoints.push_back(tempCont[179]);						// R8 is pushed back, at this instant relPoints.size() == 9
-
-	//The coordinates of the center are absolute in the image coordinates
-	absPoints.push_back(centerGrid);						// P0 is pushed back, at this instant absPoints.size() == 1
-	absPoints.push_back(centerGrid + relPoints[1]);			// P1 is pushed back, at this instant absPoints.size() == 2
-	absPoints.push_back(centerGrid + relPoints[2]);			// P2 is pushed back, at this instant absPoints.size() == 3
-	absPoints.push_back(centerGrid + relPoints[3]);			// P3 is pushed back, at this instant absPoints.size() == 4
-	absPoints.push_back(centerGrid + relPoints[4]);			// P4 is pushed back, at this instant absPoints.size() == 5	
-	absPoints.push_back(centerGrid + relPoints[5]);			// P5 is pushed back, at this instant absPoints.size() == 6
-	absPoints.push_back(centerGrid + relPoints[6]);			// P6 is pushed back, at this instant absPoints.size() == 7
-	absPoints.push_back(centerGrid + relPoints[7]);			// P7 is pushed back, at this instant absPoints.size() == 8
-	absPoints.push_back(centerGrid + relPoints[8]);			// P8 is pushed back, at this instant absPoints.size() == 9	
-}
-
-//Method that updates one of the two points vector
-//m == 1 --> updates absPoints from relPoints (when the center coordinates are modified)
-//m == 2 --> updates relPoints from absPoints (when the coordinates of one of the outter points is modified)
-//m == 3 --> updates relPoints and absPoints from Parameters (option called by drawDragGrid)
+//Method that updates the two points vectors.
 void myNewGrid::updatePoints(int m)
 {
+	std::vector<cv::Point> tempCont; //auxiliar variable to catch the coordinates
 	//This is the case when the tag is draged
 	if (m==1)
-		for (int i=1; i<9; i++)
-			absPoints[i]=relPoints[i]+absPoints[0];		
-	else if (m==2)
-		for (int i=1; i<9; i++)
-			relPoints[i]=absPoints[i]-absPoints[0];
-	//This is the case for scaling with the wheel
-	else if (m == 3)
-		for (int i = 1; i<9; i++)
-		{
-		relPoints[i] = relPoints[i] * scale;
-		absPoints[i] = relPoints[i] + absPoints[0];
-		}			
-	
-	else if (m==4)
 	{
-		alpha = -angleGrid*M_PI/180 - M_PI/2;
-		std::cout<<"alpha "<<alpha<<" angleGrid " <<angleGrid<<std::endl;		
-		for (int i=1; i<9; i++)
+		//P0 is the center
+		relPoints[0] = cv::Point2f(0, 0);
+		absPoints[0] = centerGrid;
+		for (int i = 1; i < 3; i++)
 		{
-			relPoints[i]=cv::Point2f(relPoints[i].x*cos(alpha)-relPoints[i].y*sin(alpha),relPoints[i].x*sin(alpha)+relPoints[i].y*cos(alpha));
-			absPoints[i]=relPoints[i]+absPoints[0];
-			std::cout<<relPoints[i]<<std::endl;
+			//P1 is the orientation
+			//P2 is the radius
+			ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesTag.width, axesTag.height), angleTag, angleGrid + (i*3) * 30, angleGrid + (i*3+1) * 30, 30, tempCont);
+			relPoints[i] = tempCont[0];
+			absPoints[i] = relPoints[i] + absPoints[0];
 		}		
-	}
+	}				
 	return;
 }
+//Method that updates the parameters when the tag is translated.
+void myNewGrid::translation(cv::Point newCenter)
+{
+	centerGrid = newCenter;
+	centerTag = newCenter;
+	updatePoints(1);
+	return;
+}
+//Method that updates parameters when the tag orientation is modified.
+void myNewGrid::orientation(cv::Point newP1)
+{	
+	alpha = atan2(newP1.x - centerGrid.x, newP1.y - centerGrid.y) - M_PI / 2;
+	angleGrid = (phi - alpha - M_PI / 2) * 180 / M_PI;	
+	updatePoints(1);
+	return;
+}
+//Method that updates the mayor axis using scale and the minor axis using theta as parameter.
+void myNewGrid::updateAxes()
+{	
+	//Updates lengths from scale
+	axesTag.width = scale*axisTag;
+	axesGrid.width = scale*axisTag*(MR / OR);
+	//Updates lengths from theta
+	axesTag.height=axesTag.width*cos(theta);
+	axesGrid.height=axesGrid.width*cos(theta);
+	//Points vectors are updated
+	updatePoints(1);
+	return;
+}
+//function that is called to set the binary ID
+void myNewGrid::updateID(cv::Point newID)
+{
+	int bla;
+	for (int i = 0; i < 12; i++)
+	{
+		if (cv::pointPolygonTest(cellsContours[i], newID, 0) > 0) //check for every cell		
+			ID[i] = !ID[i]; //the current value of the cell is changed		
+	}	
+	return;
+}
+
 //updates the tag parameters from the points positions
 //s --> scale parameter relative to axisTag
 //(x0,y0) --> center of the tag and grid
@@ -143,124 +159,54 @@ void myNewGrid::updateParam()
 	cv::Point3d			v2;
 	cv::Point3d			norm;
 
-	//calculate the Z component for P3 and P4 in order to calculate a normal vector to them through cross product
-	v1.x=relPoints[3].x;
-	v1.y=relPoints[3].y;
-	v1.z=sqrt(pow(axisTag*(MR/OR),2)-(pow(v1.x,2)+pow(v1.y,2)));
-	std::cout <<"radius grid"<<axisTag*(MR/OR)<<std::endl;
-	std::cout << "vector1 "<< v1.x <<" "<< v1.y <<" "<< v1.z <<std::endl;
-	
-	v2.x=relPoints[4].x;
-	v2.y=relPoints[4].y;
-	v2.z=sqrt(pow(axisTag*(MR/OR),2)-(pow(v2.x,2)+pow(v2.y,2)));
-	std::cout << "vector2 "<< v2.x <<" "<< v2.y <<" "<< v2.z <<std::endl;
+	//calculate the Z component for P1 and P2 in order to calculate a normal vector to them through cross product
+	v1.x = relPoints[1].x;
+	v1.y = relPoints[1].y;
+	v1.z = sqrt(pow(axisTag*(MR / OR), 2) - (pow(v1.x, 2) + pow(v1.y, 2)));
+	std::cout << "radius grid" << axisTag*(MR / OR) << std::endl;
+	std::cout << "vector1 " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+
+	v2.x = relPoints[2].x;
+	v2.y = relPoints[2].y;
+	v2.z = sqrt(pow(axisTag*(MR / OR), 2) - (pow(v2.x, 2) + pow(v2.y, 2)));
+	std::cout << "vector2 " << v2.x << " " << v2.y << " " << v2.z << std::endl;
 	//cross product and normal to the plane
 	norm = v2.cross(v1);
 	//to assure that the normal vector points upwards
 	if (norm.z<0)
 	{
-		norm.x=-norm.x;
-		norm.y=-norm.y;
-		norm.z=-norm.z;
+		norm.x = -norm.x;
+		norm.y = -norm.y;
+		norm.z = -norm.z;
 	}
-	std::cout << "normal "<< norm.x <<" "<< norm.y <<" "<< norm.z <<std::endl;
+	std::cout << "normal " << norm.x << " " << norm.y << " " << norm.z << std::endl;
 	//roll (theta) and yaw (phi) angles
-	cv::Point			x2d(1,0);
-	cv::Point			y2d(0,-1); //we use (0,-1) to get the angle relative to the vertical of the hive, were upwards is 0
-	cv::Point3d			z3d(0,0,1);
+	cv::Point			x2d(1, 0);
+	cv::Point			y2d(0, -1); //we use (0,-1) to get the angle relative to the vertical of the hive, were upwards is 0
+	cv::Point3d			z3d(0, 0, 1);
 	//roll angle, the angle between the normal to the plane and the z-axis is 
-	theta=acos(norm.dot(z3d)/(sqrt(norm.dot(norm))));
-	std::cout<<"theta "<<theta*180/M_PI<<std::endl;
+	theta = acos(norm.dot(z3d) / (sqrt(norm.dot(norm))));
+	std::cout << "theta " << theta * 180 / M_PI << std::endl;
 
 	//yaw angle
-	if (norm.x == 0 && norm.y==0)
-		phi =0;
+	if (norm.x == 0 && norm.y == 0)
+		phi = 0;
 	else
-		phi=acos(y2d.dot(cv::Point2d(norm.x,norm.y))/sqrt(pow(norm.x,2)+pow(norm.y,2)));
-	std::cout<<"phi "<<phi*180/M_PI<<std::endl;
+		phi = acos(y2d.dot(cv::Point2d(norm.x, norm.y)) / sqrt(pow(norm.x, 2) + pow(norm.y, 2)));
+	std::cout << "phi " << phi * 180 / M_PI << std::endl;
 
 	//alpha angle (bee orientation)
-	alpha=acos(x2d.dot(cv::Point2d(relPoints[3]))/sqrt(relPoints[3].dot(relPoints[3])));
-	if (relPoints[3].y>0)
-		alpha =2*M_PI-alpha;
-	std::cout<<"alpha "<<alpha*180/M_PI<<std::endl;
+	alpha = acos(x2d.dot(cv::Point2d(relPoints[1])) / sqrt(relPoints[3].dot(relPoints[1])));
+	if (relPoints[1].y>0)
+		alpha = 2 * M_PI - alpha;
+	std::cout << "alpha " << alpha * 180 / M_PI << std::endl;
 
 	updateAxes();
 
 	centerGrid = absPoints[0];
 	centerTag = absPoints[0];
-	angleGrid = -(alpha-phi)*180/M_PI-90;
-	angleTag = -phi*180/M_PI;
-	return;
-}
-
-//Method that updates the values of the parameters
-// m == 1 -->
-void myNewGrid::updateAxes()
-{	
-	//Updates lengths from scale
-	axesTag.width = scale*axisTag;
-	axesGrid.width = scale*axisTag*(MR / OR);
-	//Updates lengths from theta
-	axesTag.height=axesTag.width*cos(theta);
-	axesGrid.height=axesGrid.width*cos(theta);
-	return;
-}
-
-void myNewGrid::drawModPoints(cv::Mat &img)
-{	
-	cv::circle(img, absPoints[0], 1, cv::Scalar(255, 255, 255), 1);
-	for (int i=1;i<5;i++)
-	{
-		cv::circle(img, absPoints[i], 1, cv::Scalar(0, 255, 0), 1);
-		cv::circle(img, absPoints[i+4], 1, cv::Scalar(0, 255, 255), 1);
-	}
-	return;
-}
-
-void myNewGrid::drawGrid(cv::Mat &img)
-{	
-	//render of the Tag is generated
-	std::vector<std::vector <cv::Point>> conts = renderFullTag();
-	//the twelve bit cells are drawn	
-	for (int i=0; i<12;i++)
-	{		
-		//each of the cells contour is colored according to its value
-		cv::drawContours(img, conts, i, cv::Scalar(ID[i]*255, ID[i]*255, ID[i]*255), 1);
-	}
-
-	//half white circle
-	cv::drawContours(img, conts, 12, cv::Scalar(255, 255, 255), 1);	
-	//half black circle
-	cv::drawContours(img, conts, 13, cv::Scalar(0, 0, 0), 1);	
-	//at the end the diameter is redrawn in green
-	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
-	return;
-}
-
-void myNewGrid::drawFullTag(cv::Mat &img, bool active)
-{	
-	std::vector<std::vector <cv::Point>> conts = renderFullTag();
-	//the twelve bit cells are drawn	
-	for (int i=0; i<12;i++)
-	{		
-		//each of the cells contour is colored according to its value
-		cv::drawContours(img, conts, i, cv::Scalar(ID[i]*255, ID[i]*255, ID[i]*255), 1);
-	}
-
-	//half white circle
-	cv::drawContours(img, conts, 12, cv::Scalar(255, 255, 255), 1);	
-	//half black circle
-	cv::drawContours(img, conts, 13, cv::Scalar(0, 0, 0), 1);	
-	
-	//at the end the diameter is redrawn in green
-	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
-	
-	//an ellipse is drawn as the tag contour, color according to active parameter
-	if (active)
-		cv::drawContours(img, conts, 15, cv::Scalar(0, 0, 255), 1);		
-	else
-		cv::drawContours(img, conts, 15, cv::Scalar(255, 255, 0), 1);
+	angleGrid = -(alpha - phi) * 180 / M_PI - 90;
+	angleTag = -phi * 180 / M_PI;
 	return;
 }
 
@@ -297,40 +243,6 @@ std::vector<cv::Point> myNewGrid::renderGridCell(unsigned short cell)
 	return globCont;
 }
 
-//void myNewGrid::renderModTag()
-//{
-//	// axes vector	
-//	std::vector<cv::Point> subCont;
-//
-//	gridAxes.clear();	
-//	//middle axes
-//	//height
-//	ellipse2Poly(centerGrid, cv::Size(axesGrid.width, axesGrid.height), angleGrid, 90, 270, 180, subCont);
-//	gridAxes.push_back(subCont);	
-//	//width
-//	ellipse2Poly(centerGrid, cv::Size(axesGrid.width, axesGrid.height), angleGrid, -180, 180, 180, subCont);
-//	gridAxes.push_back(subCont);	
-//	//inner axes
-//	//height
-//	ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleGrid, 90, 270, 180, subCont);
-//	gridAxes.push_back(subCont);	
-//	//width
-//	ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleGrid, -180, 180, 180, subCont);
-//	gridAxes.push_back(subCont);	
-//	//outer axes
-//	//height
-//	ellipse2Poly(centerGrid, cv::Size((OR/MR)*axesGrid.width,(OR/MR)*axesGrid.height), angleGrid, 90, 270, 180, subCont);
-//	gridAxes.push_back(subCont);	
-//	//width
-//	ellipse2Poly(centerGrid, cv::Size((OR/MR)*axesGrid.width,(OR/MR)*axesGrid.height), angleGrid, -180, 180, 180, subCont);
-//	gridAxes.push_back(subCont);
-//	
-//	//axesTag parameter is updated
-//	axesTag.width = axesGrid.width * OR/MR;
-//	axesTag.height = axesGrid.height * OR/MR;
-//	return;
-//}
-
 std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 {
 	// contour vector
@@ -341,8 +253,7 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	//ites 13 black semicircle
 	//ites 14 diamater
 	//ites 15 tag perimeter
-	int ites = 16;
-	
+	int ites = 16;	
 	
 	// render the bit cells
 	for (int i = 0; i < ites; i++)	
@@ -355,4 +266,32 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	}	
 	conts.push_back(std::vector<cv::Point>());	//empty vector to allow the first n vector to be printed VS-2012 error
 	return conts;
+}
+
+void myNewGrid::drawFullTag(cv::Mat &img, int active)
+{
+	std::vector<std::vector <cv::Point>> conts = renderFullTag();
+	//the twelve bit cells are drawn	
+	for (int i = 0; i<12; i++)
+	{
+		//each of the cells contour is colored according to its value
+		cv::drawContours(img, conts, i, cv::Scalar(ID[i] * 255, ID[i] * 255, ID[i] * 255), 1);
+	}
+
+	//half white circle
+	cv::drawContours(img, conts, 12, cv::Scalar(255, 255, 255), 1);
+	//half black circle
+	cv::drawContours(img, conts, 13, cv::Scalar(0, 0, 0), 1);
+
+	//at the end the diameter is redrawn in green
+	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
+
+	//an ellipse is drawn as the tag contour, color according to active parameter
+	if (active == 1)
+		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 255), 1);
+	else if (active == 2)
+		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 0), 1);
+	else if (active == 3)
+		cv::drawContours(img, conts, 15, cv::Scalar(0, 0, 255), 1);
+	return;
 }

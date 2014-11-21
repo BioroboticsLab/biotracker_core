@@ -9,47 +9,45 @@
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/myGrid.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/myNewGrid.h"
+#include <math.h>
+#define _USE_MATH_DEFINES
 
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 	private:
 				
-		myNewGrid			g;			//active Grid
-		myNewGrid			gtemp;		//Grids already in vector
+		myNewGrid			g;				//active Grid
+		myNewGrid			gtemp;			//auxiliar instance for drwaing grids already in vector
 
-		std::vector<myNewGrid> _Grids;	//vector of already set grids
+		std::vector<myNewGrid> _Grids;		//vector of ready grids
 		
-		// FLAGS
-		bool _newGrid;					//ready to generate a new grid
-
-		bool _activeDragGrid;			//a new Grid has been set and can now be draged
-		bool _activeGrid;				//a new Grid has been set and can now be modified
-		bool _activeTag;				//a new Grid has been set and the Tag perimeter can now be modified
-
-		bool _modPosGrid;				//modify position of active Grid
-		bool _modPosTag;				//modify position of active Tag
-
 		//------ NEW FLAGS
-		bool _ready;					//Ready for a new tag --ctrl + Right Click--
-		bool _activePoints;				//a new set of points is being configured
-		bool _setP0;					//Set P0 --Left Click and drag--
-		bool _setP1;					//Set P1 --Left Click and drag--
-		bool _setP2;					//Set P2 --Left Click and drag--
-		bool _setP3;					//Set P3 --Left Click and drag--
-		bool _setP4;					//Set P4 --Left Click and drag--
-		bool _setP5;					//Set P5 --Left Click and drag--
-		bool _setP6;					//Set P6 --Left Click and drag--
-		bool _setP7;					//Set P7 --Left Click and drag--
-		bool _setP8;					//Set P8 --Left Click and drag--
+		bool _ready;						//Ready for a new tag --Ctrl + LCM--
+		bool _setTag;						//a new set of points is being configured
+		
+		bool _activeTag;					//a new Tag has been set and can now be modified
+		
+		bool _setP0;						//Set P0 --Left Click and drag--
+		bool _setP1;						//Set P1 --Left Click and drag--
+		bool _setP2;						//Set P2 --Left Click and drag--
+		bool _setTheta;						//activated with shift + LCM for rotation in 3D
 
-		cv::Point diff; //auxiliar variable
-		cv::Point prevPosition; //auxiliar variable
+		std::vector<cv::Point> orient;		//auxiliar variable for drawing the orientation while setting the Tag
+		cv::Point diff;						//auxiliar variable
+		cv::Point prevPosition;				//auxiliar variable
 
-		// FUNCTIONS
-		void drawGrid(cv::Mat image); //function that draws a grid calling an instance of MyNewGrid
-		void drawDragGrid(cv::Mat image); //function that draws a grid that can be draged and rotated calling an instance of MyNewGrid
-		void drawPoints(cv::Mat image); //function that draws the points while being edited
-		double dist(cv::Point p1, cv::Point p2); //function that calculates the distance between two points
+		// FUNCTIONS		
+		void drawSetTags(cv::Mat image);										//function that draws the Tags set so far calling instances of MyNewGrid.
+		void drawOrientation(cv::Mat image, std::vector<cv::Point> orient);		//function that draws the orientation vector while being set.		
+		void drawActiveTag(cv::Mat image);										//function that draws an active tag calling an instance of MyNewGrid
+		void setTag(cv::Point location);										//function called while setting the tag (it initializes orient vector)
+		void cancelTag();														//function that cancels the active tag and activates the previous one.
+		bool selectPoint(cv::Point location);									//function that checks if one of the set Points is selected, returns true when one of the points is selected
+		///////////////
+		void setTheta(cv::Point location);														//function that allows P1 and P2 to be modified to calculate the tag's angle in space.
+		/////////////
+		void selectTag(cv::Point location);										//function that checks if one of the already set Tags is selected.
+		double dist(cv::Point p1, cv::Point p2);								//function that calculates the distance between two points
 		
 	public:
         BeesBookTagMatcher	( Settings &settings, std::string &serializationPathName, QWidget *parent );
