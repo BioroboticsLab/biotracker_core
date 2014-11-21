@@ -12,30 +12,31 @@
 #include <QObject>
 #include <QLabel>
 #include "settings/Settings.h"
+#include "utility/SpinBoxWithSlider.h"
 
 class ParticleParams : public QObject
 {
 	Q_OBJECT
 public:
 	ParticleParams( QWidget *parent, Settings & settings );
-	~ParticleParams();	
-    std::shared_ptr<QWidget> getParamsWidget();
+	~ParticleParams();
+	std::shared_ptr<QWidget> getParamsWidget();
 	void loadParamsFromSettings();
 	void saveParamsToSettings();
 
-	int			getNumParticles()			{ return _numParticles; }
-	int			getClusteringEpsilon()		{ return _clusteringEpsilon; }
-	double		getMinScore()				{ return _minScore; }
-	unsigned	getMaxParticlesPerBucket()	{ return _maxParticlesPerBucket; }
-	unsigned	getBucketSize()				{ return _bucketSize; }
-	double		getParticleWiggleDistance()	{ return _particleWiggleDistance; }
-	unsigned	getNumberOfClusters()		{ return _numClusters; }
-	int			getGaussianBlurSize()		{ return _gaussianBlurSize; }
-	
+	int      getNumParticles()           const { return _numParticles; }
+	int      getClusteringEpsilon()      const { return _clusteringEpsilon; }
+	double   getMinScore()               const { return _minScore; }
+	unsigned getMaxParticlesPerBucket()  const { return _maxParticlesPerBucket; }
+	unsigned getBucketSize()             const { return _bucketSize; }
+	double   getParticleWiggleDistance() const { return _particleWiggleDistance; }
+	unsigned getNumberOfClusters()       const { return _numClusters; }
+	int      getGaussianBlurSize()       const { return _gaussianBlurSize; }
+
 
 private:
-    std::shared_ptr<QWidget> _paramsFrame;
-    Settings & _settings;
+	std::shared_ptr<QWidget> _paramsFrame;
+	Settings & _settings;
 	//parameters:
 
 	/**
@@ -44,7 +45,7 @@ private:
 	* default: 1000
 	*/
 	int _numParticles;
-	
+
 	/**
 	* The termination criterion for the particle clustering (k-means). Will
 	* terminate if clusters move less than this value (pixels). Smaller: more
@@ -52,7 +53,7 @@ private:
 	* type: int, value > 0
 	* default: 3
 	*/
-	int _clusteringEpsilon;	
+	int _clusteringEpsilon;
 
 	/**
 	* The minimum score a particle will get by the observer. Smaller value leads
@@ -98,30 +99,30 @@ private:
 	int _gaussianBlurSize;
 
 	//gui elements to set paramaters:
-	QSlider *	_numPartSlide;
-	QLineEdit * _numPartEdit;
-	QSlider *	_clusteringEpsSlide;
-	QLineEdit * _clusteringEpsEdit;
-	QSlider *	_minScoreSlide;
-	QLineEdit * _minScoreEdit;
-	QSlider *	_maxBucketPartSlide;
-	QLineEdit *	_maxBucketPartEdit;
-	QSlider *	_bucketSizeSlide;
-	QLineEdit * _bucketSizeEdit;
-	QSlider *	_gaussianBlurSizeSlide;
-	QLineEdit * _gaussianBlurSizeEdit;
-	QSlider *	_wiggleDistanceSlide;
-	QLineEdit * _wiggleDistanceEdit;
-	QSlider *	_numClustersSlide;
-	QLineEdit * _numClustersEdit;
+	SpinBoxWithSlider       *_numPartSlide;
+	SpinBoxWithSlider       *_clusteringEpsSlide;
+	DoubleSpinBoxWithSlider *_minScoreSlide;
+	SpinBoxWithSlider       *_maxBucketPartSlide;
+	SpinBoxWithSlider       *_bucketSizeSlide;
+	SpinBoxWithSlider       *_gaussianBlurSizeSlide;
+	DoubleSpinBoxWithSlider *_wiggleDistanceSlide;
+	SpinBoxWithSlider       *_numClustersSlide;
 
-    void initParamsFrame();
+private slots:
+
+	void numPartChanged(int val)           { _numParticles = val; }
+	void clusteringEpsChanged(int val)     {_clusteringEpsilon = val; }
+	void minScoreChanged(double val)       { _minScore = val; }
+	void maxBucketPartChanged(int val)     { _maxParticlesPerBucket = static_cast<unsigned>(val); }
+	void bucketSizeChanged(int val)        { _bucketSize = static_cast<unsigned>(val); }
+	void gaussianBlurSizeChanged(int val)  { _gaussianBlurSize = val; }
+	void wiggleDistanceChanged(double val) { _particleWiggleDistance = val; }
+	void numClustersChanged(int val)       { _numClusters = static_cast<unsigned>(val); }
+
+private:
+
+	void initParamsFrame();
 	void init();
-	void makeConnects();
-
-	public slots:
-	void paramSlided();
-	void paramEdited();
 };
 #endif // !PARTICLEPARAMS
 
