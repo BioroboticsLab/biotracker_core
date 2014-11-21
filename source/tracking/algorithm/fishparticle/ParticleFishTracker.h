@@ -41,11 +41,6 @@ private:
     QPushButton *_modeBut;
 
 	/**
-	* Used to preprocess the image (mainly background subtraction).
-	*/
-	FramePreprocessor _preprocessor;
-
-	/**
 	* The frame to be drawn the next time the GUI requests one.
 	*/
 	cv::Mat _prepared_frame;
@@ -76,11 +71,16 @@ private:
 	*/
 	float _sum_scores;
 
-	ParticleClusters _clusters;
-	
 	ParticleParams _params;
 
-	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
+	/**
+	* Used to preprocess the image (mainly background subtraction).
+	*/
+	FramePreprocessor _preprocessor;
+
+	ParticleClusters _clusters;
+
+	void seedParticles(size_t num_particles, int min_x, int min_y, int max_x, int max_y);
 
 	void importanceResample();
 
