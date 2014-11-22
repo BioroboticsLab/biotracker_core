@@ -196,7 +196,7 @@ void myNewGrid::updateParam()
 	std::cout << "phi " << phi * 180 / M_PI << std::endl;
 
 	//alpha angle (bee orientation)
-	alpha = acos(x2d.dot(cv::Point2d(relPoints[1])) / sqrt(relPoints[3].dot(relPoints[1])));
+    alpha = acos(x2d.dot(relPoints[1]) / sqrt(relPoints[3].dot(relPoints[1])));
 	if (relPoints[1].y>0)
 		alpha = 2 * M_PI - alpha;
 	std::cout << "alpha " << alpha * 180 / M_PI << std::endl;
