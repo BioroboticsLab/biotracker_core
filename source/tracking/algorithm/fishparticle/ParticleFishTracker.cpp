@@ -1,6 +1,8 @@
 #include "ParticleFishTracker.h"
 
 #include <utility> // std::move
+#include <algorithm> // std::generate_n
+#include <iterator> // std::back_inserter
 
 #include <opencv2/opencv.hpp>
 
@@ -28,12 +30,12 @@ ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serial
     : TrackingAlgorithm(settings, serializationPathName, parent)
     , _toolsWidget(std::make_shared<QFrame>())
     , _showOriginal(false)
-    , _preprocessor(settings)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
-    , _clusters(settings)
     , _params(parent, settings)
+	, _preprocessor(settings, _params)
+	, _clusters(settings, _params)
 {
     initToolsWidget();
 }
@@ -61,7 +63,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 			// TODO params for this algorithm in settings.
 			seedParticles(_params.getNumParticles(), 0, 0, frame.cols, frame.rows);
 		} else {
-			ParticleBrightnessObserver observer(_prepared_frame);
+			ParticleBrightnessObserver observer(_prepared_frame, _params);
 			_sum_scores = 0;
 			for (Particle& p : _current_particles) {
 				observer.score(p);
@@ -81,11 +83,11 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		}
 
 		// (3) Clustering
-		_clusters.cluster(_current_particles, 5);
+		_clusters.cluster(_current_particles, _params.getNumberOfClusters());
 
 		// (4) Store results in history
 		// TODO
-	} catch (cv::Exception exc) {
+	} catch (const cv::Exception &exc) {
 		emit notifyGUI(exc.what(), MSGS::FAIL);
 	}
 }
@@ -98,7 +100,8 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
-	GridParticleBuckets buckets(25, _prepared_frame.rows, _prepared_frame.cols, 15, 15);
+	//TODO: get params for grid buckets
+	GridParticleBuckets buckets(_params.getMaxParticlesPerBucket(), _prepared_frame.rows, _prepared_frame.cols, _params.getBucketSize(), _params.getBucketSize());
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
 	std::vector<unsigned> cluster_counts(_clusters.centers().rows);
@@ -107,7 +110,7 @@ void ParticleFishTracker::importanceResample() {
 
 	for (size_t i = 0; i < old_particles.size(); i++) {
 		size_t index = 0;
-		float rand = _rng.uniform(0.f, _sum_scores);
+		const float rand = _rng.uniform(0.f, _sum_scores);
 		for (float position = 0; position + old_particles[index].getScore() < rand; ) {
 			position += old_particles[index].getScore();
 			++index;
@@ -132,9 +135,10 @@ void ParticleFishTracker::importanceResample() {
 void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
 	float wiggle_distance;
 	if (_max_score != _min_score) {
-		wiggle_distance = 7 * ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+		wiggle_distance = _params.getParticleWiggleDistance() 
+			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
 	} else {
-		wiggle_distance = 7;
+		wiggle_distance = _params.getParticleWiggleDistance();
 	}
 	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
 	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
@@ -163,16 +167,15 @@ void ParticleFishTracker::cutParticleCoords(Particle& to_cut) {
 * Fills the list of current particles (_current_particles) with num_particles
 * uniformly distributed particles.
 */
-void ParticleFishTracker::seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y) {
-	for (size_t i = 0; i<num_particles; i++) {
-		int x = _rng.uniform(min_x, max_x);
-		int y = _rng.uniform(min_y, max_y);
+void ParticleFishTracker::seedParticles(size_t num_particles, int min_x, int min_y, int max_x, int max_y) {
+	_current_particles.reserve(_current_particles.size() + num_particles);
+	std::generate_n(std::back_inserter(_current_particles), num_particles, [&]() {
+		const int x = _rng.uniform(min_x, max_x);
+		const int y = _rng.uniform(min_y, max_y);
 		// TODO include random angle
-		float a = 0;
-
-		Particle newParticle(x, y, a, _current_particles.size() + 1);
-		_current_particles.push_back(newParticle);
-	}
+		const float a = 0;
+		return Particle(x, y, a, _current_particles.size() + 1);
+	});
 }
 
 /**

@@ -12,7 +12,7 @@ public:
 	GridParticleBuckets(std::size_t max_per_bucket, std::size_t real_rows, std::size_t real_cols, std::size_t bucket_width, std::size_t bucket_height);
 	~GridParticleBuckets(void);
 
-	bool putInBucket(Particle particle);
+	bool putInBucket(const Particle &particle);
 
 private:
 	const std::size_t _real_rows;
