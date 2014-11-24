@@ -82,6 +82,8 @@ signals:
 
 	cv::Mat requestCurrentScreen();
 
+	void forceTracking();
+
 protected:
 	Settings & _settings;
     std::vector<TrackedObject> _trackedObjects;

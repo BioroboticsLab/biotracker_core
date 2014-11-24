@@ -67,6 +67,8 @@ private:
 	*/
 	// For reading the video file or video stream
 	cv::VideoCapture _capture;	
+	//current frame
+	cv::Mat _frame;
 	
 	//defines whether to use pictures as source or a video
 	bool _pictureMode;
@@ -100,12 +102,7 @@ private:
 	 * @return: void.
 	 */
 	void incrementFrameNumber();
-
-	/**
-	* sends frame and everything else that is needed to selected 
-	* tracking algorithm and receives output frame
-	*/
-	void doTracking(cv::Mat frame);
+	
 
 	
 	/**
@@ -170,6 +167,12 @@ private:
 		void setMaxSpeed (bool enabled);
 
 		void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+
+		/**
+		* sends frame and everything else that is needed to selected
+		* tracking algorithm
+		*/
+		void doTracking();
 signals:
 		/**
 		* Signals when a tracking sequence is done.

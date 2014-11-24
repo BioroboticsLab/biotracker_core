@@ -8,6 +8,7 @@
 #include <iostream>
 #include "source/tracking/TrackingAlgorithm.h"
 #include <memory>
+#include <chrono>
 
 class VideoView : public QGLWidget
 {
@@ -43,10 +44,13 @@ private:
 	float _zoomFactor;
 	/* ratio of window size to picture size */
 	float _screenPicRatio;
+
 	float _panX;
 	float _panY;
 	bool _isPanning;
 	int _lastMPos[2];
+	std::chrono::system_clock::time_point _lastZoomedTime;
+	QPoint _lastZoomedPoint;
 
 	public slots:
         void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
