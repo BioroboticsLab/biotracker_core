@@ -282,6 +282,11 @@ void TrackingThread::doTracking()
         emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
     }
 }
+void TrackingThread::doTrackingAndUpdateScreen()
+{
+	doTracking();
+	emit trackingSequenceDone(_frame);
+}
 
 int TrackingThread::getFrameNumber()
 {
