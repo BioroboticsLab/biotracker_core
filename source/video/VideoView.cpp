@@ -371,16 +371,10 @@ void VideoView::wheelEvent( QWheelEvent * e )
 				_panY = _lastZoomedPoint.y() - ((this->height()*(_screenPicRatio + _zoomFactor)) / 2);
 			}
 			else
-			{ 
-				//check if picture is bigger than window (otherwise we can just put it into center of the window)
-				if (picturePos.x() > 0 && picturePos.x() < _displayImage.cols && this->width() < _displayImage.cols / (_screenPicRatio + _zoomFactor))
-					// adjust _panX and _panY, so that zoom is centered on mouse cursor
-					_panX = picturePos.x() - ((this->width()*(_screenPicRatio + _zoomFactor)) / 2);
-				else
-					//TODO: put window into center of window
-					_panX = _panX / 2;
-				if (picturePos.y() > 0 && picturePos.y() < _displayImage.rows && this->height() < _displayImage.rows / (_screenPicRatio + _zoomFactor))
-					_panY = picturePos.y() - ((this->height()*(_screenPicRatio + _zoomFactor)) / 2);
+			{ 			
+				// adjust _panX and _panY, so that zoom is centered on mouse cursor
+				_panX = picturePos.x() - ((this->width()*(_screenPicRatio + _zoomFactor)) / 2);				
+				_panY = picturePos.y() - ((this->height()*(_screenPicRatio + _zoomFactor)) / 2);
 				_lastZoomedPoint = picturePos;
 			}
 			_lastZoomedTime = std::chrono::system_clock::now();
