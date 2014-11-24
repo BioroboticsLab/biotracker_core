@@ -130,6 +130,12 @@ private:
 	*/
 	void initCaptureForReadingVideoOrStream();
 
+	/**
+	* sends frame and everything else that is needed to selected
+	* tracking algorithm
+	*/
+	void doTracking();
+
 
 	/** 
 	* thread running method.
@@ -168,11 +174,7 @@ private:
 
 		void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 
-		/**
-		* sends frame and everything else that is needed to selected
-		* tracking algorithm
-		*/
-		void doTracking();
+		void doTrackingAndUpdateScreen();
 signals:
 		/**
 		* Signals when a tracking sequence is done.

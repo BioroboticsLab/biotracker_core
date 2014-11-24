@@ -489,7 +489,7 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		ui.videoView, SLOT( getCurrentScreen() ));
 
 	QObject::connect(tracker.get(), SIGNAL( forceTracking() ),
-		_trackingThread.get(), SLOT( doTracking() ));
+		_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
 	
 	if(_tracker)
 	{
