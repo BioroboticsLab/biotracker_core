@@ -9,6 +9,7 @@ namespace {
 
 	struct ParamNameCompare {
 		const std::string &name;
+		ParamNameCompare(const std::string &name) :name(name) {};
 		bool operator()(const TrackerParam::Param &p) const {
 			return p.pName() == name;
 		}

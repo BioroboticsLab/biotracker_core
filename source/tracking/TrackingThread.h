@@ -91,11 +91,6 @@ private:
 
 	std::shared_ptr<TrackingAlgorithm>  _tracker;
 
-	/**
-	* Gets current frame number.
-	* @return: the current frame number.
-	*/
-	int getFrameNumber();
 
 	/**
 	 * Increments the current frame number by 1 frame.
@@ -156,6 +151,12 @@ private:
 		* @param: frameNumber, specifies the current frame number.
 		*/
 		void setFrameNumber(int frameNumber);
+
+		/**
+		* Gets current frame number.
+		* @return: the current frame number.
+		*/
+		int getFrameNumber();
 
 		/**
 		* Moves one frame forward
