@@ -174,7 +174,7 @@ void ParticleFishTracker::seedParticles(size_t num_particles, int min_x, int min
 		const int y = _rng.uniform(min_y, max_y);
 		// TODO include random angle
 		const float a = 0;
-		return Particle(x, y, a, _current_particles.size() + 1);
+		return Particle(x, y, a, static_cast<int>(_current_particles.size() + 1));
 	});
 }
 
