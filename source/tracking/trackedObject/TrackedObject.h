@@ -28,7 +28,7 @@ public:
     size_t id() const { return _id; }
 
 private:
-    int _id;
+    size_t _id;
     std::map<size_t, std::shared_ptr<ObjectModel>> _objectsByFrame;
 
     friend class cereal::access;
