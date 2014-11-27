@@ -21,22 +21,32 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
 	# using Clang or GCC
 	# minimal optimization and debug symbols for debug builds
 	set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
-	# enable optimization and warnings-are-errors for release builds
-  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG -Werror")
+        # enable optimization for release builds
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG")
   # enable C++1y
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
   # enable all warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Woverloaded-virtual -Wold-style-cast -Wnon-virtual-dtor -Wsign-promo")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  # warnings are errors
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-error=unused-variable -Wno-error=unused-parameter")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	# using Visual Studio C++
-  # Force to always compile with W3
+  # Force to always compile with W4 and treat warnings as errors
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
   endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-but-set-variable")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND

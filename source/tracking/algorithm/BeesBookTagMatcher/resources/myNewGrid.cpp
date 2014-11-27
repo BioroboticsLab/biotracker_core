@@ -138,7 +138,6 @@ void myNewGrid::updateAxes()
 //function that is called to set the binary ID
 void myNewGrid::updateID(cv::Point newID)
 {
-	int bla;
 	for (int i = 0; i < 12; i++)
 	{
 		if (cv::pointPolygonTest(cellsContours[i], newID, 0) > 0) //check for every cell		
