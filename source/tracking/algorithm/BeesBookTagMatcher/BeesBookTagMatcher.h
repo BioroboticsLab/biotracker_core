@@ -15,6 +15,10 @@
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 	private:
+
+		//////////////// TEST FLAGS!!!! ---------------------
+		bool _testNewTag;			//RCM first click set a new tag with defined parameters
+		
 				
 		myNewGrid			g;				//active Grid
 		myNewGrid			gtemp;			//auxiliar instance for drwaing grids already in vector
@@ -41,10 +45,10 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		void drawOrientation(cv::Mat image, std::vector<cv::Point> orient);		//function that draws the orientation vector while being set.		
 		void drawActiveTag(cv::Mat image);										//function that draws an active tag calling an instance of MyNewGrid
 		void setTag(cv::Point location);										//function called while setting the tag (it initializes orient vector)
-		void cancelTag();														//function that cancels the active tag and activates the previous one.
+		void cancelTag(cv::Point2f location);														//function that cancels the active tag and activates the previous one.
 		bool selectPoint(cv::Point location);									//function that checks if one of the set Points is selected, returns true when one of the points is selected
 		///////////////
-		void setTheta(cv::Point location);														//function that allows P1 and P2 to be modified to calculate the tag's angle in space.
+		void setTheta(cv::Point location);										//function that allows P1 and P2 to be modified to calculate the tag's angle in space.
 		/////////////
 		void selectTag(cv::Point location);										//function that checks if one of the already set Tags is selected.
 		double dist(cv::Point p1, cv::Point p2);								//function that calculates the distance between two points
