@@ -195,7 +195,7 @@ void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * e)
 //function that draws the set Tags so far.
 void BeesBookTagMatcher::drawSetTags(cv::Mat image)
 {
-	for (int i = 0; i < _Grids.size(); i++)
+    for (size_t i = 0; i < _Grids.size(); i++)
 	{
 		gtemp = myNewGrid(_Grids[i].scale, _Grids[i].centerGrid, _Grids[i].alpha, _Grids[i].theta, _Grids[i].phi, _Grids[i].rho, _Grids[i].ID);
 		gtemp.drawFullTag(image, 2); //the grids are drawn as set
@@ -333,7 +333,7 @@ void BeesBookTagMatcher::setTheta(cv::Point location)
 void BeesBookTagMatcher::selectTag(cv::Point location)
 {
 	if (_Grids.size()>0)
-		for (int i = 0; i < _Grids.size(); i++)
+        for (size_t i = 0; i < _Grids.size(); i++)
 		{
 		if (dist(location, _Grids[i].centerTag) < _Grids[i].axesTag.height)
 			{

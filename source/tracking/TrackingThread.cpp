@@ -87,8 +87,7 @@ void TrackingThread::stopCapture()
 }
 
 void TrackingThread::run()
-{
-	cv::Mat frame;
+{	
     std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
 
@@ -116,22 +115,22 @@ void TrackingThread::run()
 			if(_pictureMode)
 			{
 				incrementFrameNumber();
-				frame = getPicture(_frameNumber);
+				_frame = getPicture(_frameNumber);
 			}
 			else
 			{
 				// capture the frame
-				_capture >> frame;	
+				_capture >> _frame;
 				incrementFrameNumber();
 			}			
 
 			// exit if last frame is reached
-			if(frame.empty())	{	break;	}
+			if (_frame.empty())	{ break; }
 
 			//TODO: if a tracking algorithm is selected
 			//send frame to tracking algorithm			
 			if (_tracker) {
-				doTracking(frame);
+				doTracking();
 			}
 			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 			enableHandlingNextFrame(false);
@@ -160,7 +159,7 @@ void TrackingThread::run()
 			if(isCaptureActive())
 			{
 				// lets GUI draw the frame.
-				emit trackingSequenceDone(frame.clone());
+				emit trackingSequenceDone(_frame.clone());
 				emit newFrameNumber(getFrameNumber());
 			}
 
@@ -210,20 +209,19 @@ void TrackingThread::setFrameNumber(int frameNumber)
 	{
 		_frameNumber = frameNumber;		
 		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
-		cv::Mat frame;
 		if(_pictureMode)
 		{
-			frame = getPicture(_frameNumber);
+			_frame = getPicture(_frameNumber);
 		}
 		else
 		{
-			_capture >> frame;
+			_capture >> _frame;
 		}
 
 		if (_tracker) {
-			doTracking(frame);
+			doTracking();
 		}
-		emit trackingSequenceDone(frame);
+		emit trackingSequenceDone(_frame);
 
 	}	
 }
@@ -239,48 +237,55 @@ void TrackingThread::incrementFrameNumber()
 void TrackingThread::nextFrame()
 {
 	// capture the frame
-	cv::Mat frame;
 	if(_pictureMode)
 	{
-		frame = getPicture(_frameNumber+1);
+		_frame = getPicture(_frameNumber + 1);
 	}
 	else
 	{
-		_capture >> frame;
+		_capture >> _frame;
 	}
 	incrementFrameNumber();
 
 	// only works if last frame not yet reached
 	//TODO: need to check memory violation thing here!
-	if(!frame.empty())	
+	if (!_frame.empty())
 	{	
 		//TODO: if a tracking algorithm is selected
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
 		if (_tracker) {
-			doTracking(frame);
+			doTracking();
 		}
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
 		enableHandlingNextFrame(false);
 
 		// lets GUI draw the frame.
-		emit trackingSequenceDone(frame);
+		emit trackingSequenceDone(_frame);
 		emit newFrameNumber(getFrameNumber());
 	}
 }
 
-void TrackingThread::doTracking(cv::Mat frame)
+
+void TrackingThread::doTracking()
 {
+	//do nothing if we aint got a frame
+	if (_frame.empty())
+		return;
 	QMutexLocker locker(&trackerMutex);
-	cv::Mat retFrame;
     try
     {
-		_tracker->track( _frameNumber, frame);
+		_tracker->track( _frameNumber, _frame);
     }
     catch(std::exception&)
     {
         emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
     }
+}
+void TrackingThread::doTrackingAndUpdateScreen()
+{
+	doTracking();
+	emit trackingSequenceDone(_frame);
 }
 
 int TrackingThread::getFrameNumber()
