@@ -80,6 +80,11 @@ signals:
 	*/
 	void update();
 
+	/**
+	* send Signal to Tracking Thread for current frame number
+	*/
+	int requestFrameNumber();
+
 	cv::Mat requestCurrentScreen();
 
 	void forceTracking();
