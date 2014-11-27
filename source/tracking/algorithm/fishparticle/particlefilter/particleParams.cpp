@@ -72,10 +72,10 @@ void ParticleParams::loadParamsFromSettings()
 		_numParticles = _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::NUMBER_OF_PARTICLES);
 		_clusteringEpsilon = _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::CLUSTERING_EPSILON);
 		_minScore = _settings.getValueOfParam<double>(PARTICLEFILTERPARAM::MINIMUM_SCORE);
-		_maxParticlesPerBucket = (unsigned)_settings.getValueOfParam<int>(PARTICLEFILTERPARAM::MAX_PARTICLES_PER_BUCKET);
-		_bucketSize = (unsigned) _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::BUCKET_SIZE);
+        _maxParticlesPerBucket = static_cast<unsigned>(_settings.getValueOfParam<int>(PARTICLEFILTERPARAM::MAX_PARTICLES_PER_BUCKET));
+        _bucketSize = static_cast<unsigned>(_settings.getValueOfParam<int>(PARTICLEFILTERPARAM::BUCKET_SIZE));
 		_particleWiggleDistance = _settings.getValueOfParam<double>(PARTICLEFILTERPARAM::PARTICLE_WIGGLE_DISTANCE);
-		_numClusters = (unsigned) _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::NUM_CLUSTERS);
+        _numClusters = static_cast<unsigned>(_settings.getValueOfParam<int>(PARTICLEFILTERPARAM::NUM_CLUSTERS));
 		_gaussianBlurSize = _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::GAUSSIAN_BLUR_SIZE);
 	}	
 	catch (std::invalid_argument&)
