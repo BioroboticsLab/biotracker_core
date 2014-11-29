@@ -20,7 +20,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	# using Clang or GCC
 	# minimal optimization and debug symbols for debug builds
-	set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+	set(CMAKE_CXX_FLAGS_DEBUG "-O1 -ggdb")
         # enable optimization for release builds
   set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG")
   # enable C++1y
