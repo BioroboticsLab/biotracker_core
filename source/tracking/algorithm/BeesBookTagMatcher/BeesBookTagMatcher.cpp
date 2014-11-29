@@ -18,6 +18,9 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 		_setP1			= false; //Set P1 --Left Click--
 		_setP2			= false; //Set P2 --Left Click--
 		_setTheta		= false; //activated with shift + LCM for rotation in 3D
+
+		/////////// TEST FLAGS ---------------
+		_testNewTag = false;
 }
 
 
@@ -89,11 +92,22 @@ void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
 		//check for SHIFT modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
+			/*if (!_testNewTag)
+			{
+				_ready = true;
+				_activeTag = true;
+				_testNewTag = true;
+			}
+			else
+			{
+				_setP1 = true;
+				setTheta(cv::Point(95, 95));
+			}			*/
 		}			
 		//check for CTRL modifier
 		if (Qt::ControlModifier == QApplication::keyboardModifiers())
 		{
-			cancelTag(); //The Tag being currently configured is cancelled
+			cancelTag(cv::Point2f(e->x(), e->y())); //The Tag being currently configured is cancelled
 		}
 	}	
 	
@@ -156,7 +170,10 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 	}
 	// right button released
 	if (e->button() == Qt::RightButton)
-	{		
+	{	
+		//if (_testNewTag)
+		//	g = myNewGrid(); //set a new tag
+		//emit update();
 	}
 }
 //check if WHEEL IS ACTIVE
@@ -196,7 +213,8 @@ void BeesBookTagMatcher::drawOrientation(cv::Mat image, std::vector<cv::Point> o
 void BeesBookTagMatcher::drawActiveTag(cv::Mat image)
 {		
 	//std::cout<<"DRAW ACTIVE GRID"<<std::endl;	
-	g.drawFullTag(image,1); //the grid is drawn as active	
+	g.drawFullTag(image,1); //the grid is drawn as active
+	g.updatePoints();
 	for (int i = 0; i < 3; i++)
 	{
 		cv::circle(image, g.absPoints[i], 1, cv::Scalar(0, 0, 255), 1); //the point is drawn in red					
@@ -211,13 +229,15 @@ void BeesBookTagMatcher::drawActiveTag(cv::Mat image)
 }
 
 //this one cancels the active tag and activates the previous one.
-void BeesBookTagMatcher::cancelTag()
+void BeesBookTagMatcher::cancelTag(cv::Point2f location)
 {
 	if (_Grids.size() > 0)
 	{
 		g = myNewGrid(_Grids[_Grids.size() - 1].scale, _Grids[_Grids.size() - 1].centerGrid, _Grids[_Grids.size() - 1].alpha, _Grids[_Grids.size() - 1].theta, _Grids[_Grids.size() - 1].phi, _Grids[_Grids.size() - 1].rho, _Grids[_Grids.size() - 1].ID); //previous Tag is loaded
 		_Grids.pop_back(); //last tag is set as active and removed from the vector
 	}
+	else
+		g = myNewGrid(location, M_PI/2);
 	emit update();
 	return;
 }
@@ -274,26 +294,39 @@ bool BeesBookTagMatcher::selectPoint(cv::Point location)
 //this one allows P1 and P2 to be modified to calculate the tag's angle in space.
 void BeesBookTagMatcher::setTheta(cv::Point location)
 {
-	cv::Point3d			v1;
-	cv::Point3d			v2;
-	cv::Point3d			norm;
-
-	//calculate the Z component for P1 and P2 in order to calculate a normal vector to them through cross product
+	std::cout << " --------------------------------------------------------------- " << std::endl;		
+	
+	double		prop;
+	double		angle;
+	//when P1 is being modified
 	if (_setP1)
-	{
-		v1.x = g.relPoints[1].x;
-		v1.y = g.relPoints[1].y;
-		v1.z = sqrt(pow(g.scale*axisTag, 2) - (pow(v1.x, 2) + pow(v1.y, 2)));
-		std::cout << "radius Tag " << g.scale*axisTag << std::endl;
-		std::cout << "vector1 " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+	{	
+		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
+		if (prop > 1)
+			prop = 1;
+		else if (prop < 0.5)
+			prop = 0.5;		
+		//g.realCoord[1] = g.ellipsePoint(cv::Point2f(0, 0), cv::Size(prop*axisTag, prop*axisTag), g.angleTag, g.angleGrid + 90);			
+		g.realCoord[1] = g.polar2rect(prop*axisTag, g.alpha);
+		std::cout << "realCoord 1: x = " << g.realCoord[1].x << ", y = " << g.realCoord[1].y << std::endl;
+		//std::cout << " test  --- " << g.polar2rect(prop*axisTag, g.alpha) << std::endl;
 	}
+	//when P2 is being modified
 	else if (_setP2)
-	{
-		v2.x = g.relPoints[2].x;
-		v2.y = g.relPoints[2].y;
-		v2.z = sqrt(pow(g.scale*axisTag, 2) - (pow(v2.x, 2) + pow(v2.y, 2)));
-		std::cout << "vector2 " << v2.x << " " << v2.y << " " << v2.z << std::endl;
+	{		
+		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
+		if (prop > 1)
+			prop = 1;
+		else if (prop < 0.5)
+			prop = 0.5;		
+		//g.realCoord[2] = g.ellipsePoint(cv::Point2f(0, 0), cv::Size(prop*axisTag, prop*axisTag), g.angleTag, g.angleGrid + 180);
+		angle = atan2(g.realCoord[2].x, g.realCoord[2].y) - M_PI / 2;
+		g.realCoord[2] = g.polar2rect(prop*axisTag, angle);
+		std::cout << "realCoord 2: x = " << g.realCoord[2].x << ", y = " << g.realCoord[2].y << std::endl;
 	}
+	//updates parameters
+	g.updateParam();
+	return;
 }
 
 //this one checks if one of the already set Tags is selected
