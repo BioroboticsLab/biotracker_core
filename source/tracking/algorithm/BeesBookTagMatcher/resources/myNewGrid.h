@@ -64,12 +64,14 @@ public:
 	std::vector<std::vector <cv::Point> >	cellsContours;
 	
 	//std::vector<std::vector <cv::Point> >	gridAxes;
-	std::vector<cv::Point2f>				absPoints; //vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
-	std::vector<cv::Point2f>				relPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)
+	std::vector<cv::Point2f>				absPoints;	//vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
+	std::vector<cv::Point2f>				relPoints;	//vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)
+	////////
+	std::vector<cv::Point2f>				realCoord;	//vector of points which are used by the user to define a new grid (relative and exact coordinates for computing purposes)
 	
 	//Object methods
 	//function that updates the set of 9 points that define a grid from parameters.
-	void updatePoints(int m);
+	void updatePoints();
 	//function that updates parameters when the tag is translated.
 	void translation(cv::Point newCenter);
 	//function that updates parameters when the tag orientation is modified.
@@ -78,6 +80,12 @@ public:
 	void updateAxes();
 	//function that is called to set the binary ID
 	void updateID(cv::Point newID);
+
+	/////////function that determines coordinates for a point on an ellipse's contour 
+	cv::Point2f ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T);
+	
+	//function that obtains the cartesians coordinates from polar elements
+	cv::Point2f polar2rect(double radius, double angle);
 
 	//function that calculates the vector of parameters of the grid from points configuration.
 	void updateParam();		

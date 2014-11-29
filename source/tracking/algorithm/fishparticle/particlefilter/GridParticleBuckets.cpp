@@ -28,8 +28,8 @@ std::vector<Particle>& GridParticleBuckets::getBucketForParticle(const Particle&
 	float x = particle.getX();
 	float y = particle.getY();
 
-	std::size_t bucket_x = x / _bucket_width;
-	std::size_t bucket_y = y / _bucket_height;
+	std::size_t bucket_x = static_cast<size_t>(x / _bucket_width);
+	std::size_t bucket_y = static_cast<size_t>(y / _bucket_height);
 
 	return _buckets[bucket_x][bucket_y];
 }
