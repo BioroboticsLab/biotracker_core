@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 cmake_policy (SET CMP0020 NEW)
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(cotire)
+
 project(BioTracker)
 
 # project dependecies
@@ -24,7 +27,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
     # enable optimization for release builds
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG")
     # enable C++1y
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -fPIC")
     # enable all warnings
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Woverloaded-virtual -Wold-style-cast -Wnon-virtual-dtor -Wsign-promo")
     # warnings are errors
