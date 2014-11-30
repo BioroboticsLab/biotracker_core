@@ -2,7 +2,6 @@
 #define SampleTracker_H
 
 #include "cv.h"
-#include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
 #include <QGroupBox>

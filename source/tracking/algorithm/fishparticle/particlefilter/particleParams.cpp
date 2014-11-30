@@ -1,5 +1,7 @@
 #include "particleParams.h"
 
+#include "source/settings/Settings.h"
+
 ParticleParams::ParticleParams(QWidget *parent, Settings & settings) :
 QObject(parent)
 , _paramsFrame(std::make_shared<QFrame>())
@@ -78,7 +80,7 @@ void ParticleParams::loadParamsFromSettings()
         _numClusters = static_cast<unsigned>(_settings.getValueOfParam<int>(PARTICLEFILTERPARAM::NUM_CLUSTERS));
 		_gaussianBlurSize = _settings.getValueOfParam<int>(PARTICLEFILTERPARAM::GAUSSIAN_BLUR_SIZE);
 	}	
-	catch (std::invalid_argument&)
+    catch (const boost::property_tree::ptree_bad_path&)
 	{
 		//TODO: send GUI MSG that no previous settings were found
 	}

@@ -11,8 +11,21 @@
 #include <QSlider>
 #include <QObject>
 #include <QLabel>
-#include "settings/Settings.h"
 #include "utility/SpinBoxWithSlider.h"
+
+namespace PARTICLEFILTERPARAM
+{
+    static const std::string NUMBER_OF_PARTICLES      = "PARTICLEFILTERPARAM.NUMBER_OF_PARTICLES";
+    static const std::string GAUSSIAN_BLUR_SIZE       = "PARTICLEFILTERPARAM.GAUSSIAN_BLUR_SIZE";
+    static const std::string CLUSTERING_EPSILON       = "PARTICLEFILTERPARAM.CLUSTERING_EPSILON";
+    static const std::string MINIMUM_SCORE            = "PARTICLEFILTERPARAM.MINIMUM_SCORE";
+    static const std::string MAX_PARTICLES_PER_BUCKET = "PARTICLEFILTERPARAM.MAX_PARTICLES_PER_BUCKET";
+    static const std::string BUCKET_SIZE              = "PARTICLEFILTERPARAM.BUCKET_SIZE";
+    static const std::string PARTICLE_WIGGLE_DISTANCE = "PARTICLEFILTERPARAM.PARTICLE_WIGGLE_DISTANCE";
+    static const std::string NUM_CLUSTERS             = "PARTICLEFILTERPARAM.NUM_CLUSTERS";
+}
+
+class Settings;
 
 class ParticleParams : public QObject
 {
