@@ -5,7 +5,6 @@
 #define BeesBookTagMatcher_H
 
 #include "cv.h"
-#include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/myGrid.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/myNewGrid.h"
