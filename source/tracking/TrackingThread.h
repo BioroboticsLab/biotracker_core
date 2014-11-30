@@ -2,16 +2,16 @@
 #define TrackingThread_h
 
 #include <memory>
-#include <cv.h>
+
 #include <opencv2/opencv.hpp>
-#include <iostream>
-#include <fstream>
-#include <QtCore/QThread>
-//#include <video/Rectification.h>
-#include <source/settings/Settings.h>
-#include <source/settings/Messages.h>
-#include <source/tracking/TrackingAlgorithm.h>
+
+#include <QThread>
 #include <QWaitCondition>
+
+#include "source/settings/Messages.h"
+#include "source/tracking/TrackingAlgorithm.h"
+
+class Settings;
 
 class TrackingThread : public QThread
 {
