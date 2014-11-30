@@ -80,7 +80,6 @@ include_directories(
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
     SYSTEM ${PROJECT_SOURCE_DIR}/external
-    SYSTEM ${PROJECT_SOURCE_DIR}/external/property_tree/include
 )
 
 add_subdirectory(source)
