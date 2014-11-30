@@ -6,10 +6,8 @@
 #include <thread>
 
 #include "source/settings/Messages.h"
-#include "source/settings/Param.h"
-#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-//#include "source/utility/StringHelper.h"
-
+#include "source/settings/Settings.h"
+#include "source/settings/ParamNames.h"
 
 /**
 * Mutexes.
@@ -30,7 +28,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     _settings(settings),
     _tracker(nullptr)
 {
-	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
+    _trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 }
 
 TrackingThread::~TrackingThread(void)
@@ -42,7 +40,7 @@ void TrackingThread::startCapture()
 {
 	if(!isCaptureActive())
 	{
-		_capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
+        _capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
 		if (! _capture.isOpened())
 		{
 			// could not open video

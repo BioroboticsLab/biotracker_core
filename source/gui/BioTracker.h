@@ -1,38 +1,23 @@
 #ifndef BioTracker_H
 #define BioTracker_H
 
-#include <time.h>
 #include <memory>
-
-// Open CV
-#include <cv.h>
 
 // QT 
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QFileDialog>
-#include <QtCore/QSettings>
-#include <QtGui/QCloseEvent>
 #include <QtCore/QString>
-#include <QDir>
-#include <QTemporaryDir>
 #include <QTemporaryFile>
 
 //Bio Tracker
-#include "source/settings/Messages.h"
-#include "source/settings/Settings.h"
-#include "source/tracking/TrackingThread.h"
-#include "source/video/VideoView.h"
-#include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 #include "source/ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
-	class TrackingThread;
-	class VideoView;
-	class TrackingAlgorithm;
-
+class TrackingThread;
+class VideoView;
+class TrackingAlgorithm;
+class Settings;
 
 class BioTracker: public QMainWindow
 {
@@ -86,15 +71,12 @@ public slots:
 	
 	//void setTrackingAlg(int trackingAlgId);
 
-
 	//void changeCurrentFrame();
 	void changeCurrentFramebySlider();
 	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();
-	
-
 
 private:
 	Ui::BioTrackerClass ui;

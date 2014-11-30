@@ -3,9 +3,6 @@
 
 #include <map>
 
-#include <qwidget.h>
-
-#include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/utility/stdext.h"
 #include "source/utility/singleton.h"

@@ -1,3 +1,6 @@
 [submodule "source/tracking/algorithm/BeesBookImgAnalysisTracker"]
 	path = source/tracking/algorithm/BeesBookImgAnalysisTracker
     url = git@maserati.mi.fu-berlin.de:beesbook-img-tracker
+[submodule "external/property_tree"]
+	path = external/property_tree
+	url = https://github.com/boostorg/property_tree.git
