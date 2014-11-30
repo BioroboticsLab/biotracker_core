@@ -5,6 +5,8 @@
 #include "VideoView.h"
 #include <QMouseEvent>
 
+#include "source/tracking/TrackingAlgorithm.h"
+
 // OS X puts the headers in a different location in the include path than
 // Windows and Linux, so we need to distinguish between OS X and the other
 // systems.
@@ -24,6 +26,7 @@ VideoView::VideoView(QWidget *parent)
 	_panX = 0;
 	_panY = 0;
 	_isPanZoomMode = false;
+	_lastPannedTime = std::chrono::system_clock::now();
 	_lastZoomedTime = std::chrono::system_clock::now();
 	_lastZoomedPoint = QPoint(0, 0);
 }
@@ -185,7 +188,7 @@ void VideoView::paintGL()
 	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
 
 	// Draw it!
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
+	glDrawArrays(GL_POLYGON, 0, 4);
 	// free memory		
 	imageCopy.release();
 	glDeleteTextures(1, &_texture);
@@ -287,24 +290,28 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
 	if (_isPanZoomMode)
 	{
-		if(_isPanning)
-		{
-			int dX = e->x() - _lastMPos[0];
-			int dY = e->y() - _lastMPos[1];
-			_lastMPos[0] = e->x();
-			_lastMPos[1] = e->y();
-			_panX -= dX * (_screenPicRatio+_zoomFactor);
-			_panY -= dY * (_screenPicRatio+_zoomFactor);
-			resizeGL(this->width(), this->height());
-			//Draw the scene
-			updateGL();
+		const auto elapsed = std::chrono::system_clock::now() - _lastPannedTime;
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+			if(_isPanning)
+			{
+				int dX = e->x() - _lastMPos[0];
+				int dY = e->y() - _lastMPos[1];
+				_lastMPos[0] = e->x();
+				_lastMPos[1] = e->y();
+				_panX -= dX * (_screenPicRatio+_zoomFactor);
+				_panY -= dY * (_screenPicRatio+_zoomFactor);
+				resizeGL(this->width(), this->height());
+				//Draw the scene
+				updateGL();
+			}
+			_lastPannedTime = std::chrono::system_clock::now();
 		}
 	}
 	else
 	{
 
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
+		const QPointF localPos(p);
         QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit moveEvent ( modifiedEvent );		
 
@@ -359,9 +366,9 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	{
 		int numDegrees = e->delta();
 		if (e->orientation() == Qt::Vertical
-			&& (_zoomFactor+_screenPicRatio) - 0.001 * numDegrees > 0) 
+			&& (_zoomFactor+_screenPicRatio) - 0.002 * numDegrees > 0)
 		{
-			_zoomFactor -= 0.001 * numDegrees;
+			_zoomFactor -= 0.002 * numDegrees;
 
 			auto elapsed = std::chrono::system_clock::now() - _lastZoomedTime;
 			//when we zoomed only recently, center zoom to same spot again
@@ -379,10 +386,12 @@ void VideoView::wheelEvent( QWheelEvent * e )
 			}
 			_lastZoomedTime = std::chrono::system_clock::now();
 			
-			resizeGL(this->width(), this->height());
-			//Draw the scene
-			updateGL();
-			e->accept();
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+				resizeGL(this->width(), this->height());
+				//Draw the scene
+				updateGL();
+				e->accept();
+			}
 		}
 	}
 	else
