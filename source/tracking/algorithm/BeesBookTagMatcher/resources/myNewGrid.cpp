@@ -15,15 +15,13 @@
 //{}
 //Tobias temporary fix:
 //void myNewGrid::init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id)
-void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id)
+void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
 {
-	scale		= Scale;						//new variable, is the scale of the tag referenced to axisTag (25 pixels)
-	centerTag	= CenterGrid;
+	scale		= Scale;						//new variable, is the scale of the tag referenced to axisTag (25 pixels)	
 	centerGrid	= CenterGrid;
 	alpha		= Alpha;						//new variable, is the orientation of the tag, measured counterclockwise from x-axis.
 	theta		= Theta;						//new variable, indicates how tilted is the grid.
-	phi			= Phi;							//new variable, is the orientation of the ellipse that represents the tag, measured counterclockwise from x-axis.
-	rho			= Rho;							//new variable, angle between orientation and mid-circle vectors.
+	phi			= Phi;							//new variable, is the orientation of the ellipse that represents the tag, measured counterclockwise from x-axis.	
 	ID          = std::move(Id);
 	  
 	angleTag	= -phi * 180 / M_PI;			//this angle denotes the orientation of the ellipses (both ellipses should have the same value) (measured clockwise from the x-axis)
@@ -39,57 +37,63 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
 
 	//The vectors are initialized
 	updatePoints();
+	updateVectors();
 }
 //default constructor
 myNewGrid::myNewGrid()
 {	
-	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
+	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<bool>(12, 0));
 }
 //constructor with 1 parameter
 myNewGrid::myNewGrid(cv::Point2f CenterGrid, double Alpha)
 {	
-	init(1, CenterGrid, Alpha, 0, M_PI / 2, M_PI / 2, std::vector<bool>(12, 0));
+	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<bool>(12, 0));
 }
 //constructor with 7 parameters
-myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id)
+myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
 {
-	init(Scale, CenterGrid, Alpha, Theta, Phi, Rho, Id);
+	init(Scale, CenterGrid, Alpha, Theta, Phi, Id);
 }
 //destrucor
 myNewGrid::~myNewGrid(){}
 
-//Method that updates the two points vectors.
+//Method that update both of the points vectors.
 void myNewGrid::updatePoints()
 {
 	std::vector<cv::Point> tempCont; //auxiliar variable to catch the coordinates	
 	//P0 is the center
 	relPoints[0] = cv::Point2f(0, 0);		
 	absPoints[0] = centerGrid;
-	/////
-	realCoord[0] = cv::Point2f(0, 0);
+	
 	for (int i = 1; i < 3; i++)
 	{
 		//P1 is the orientation
 		//P2 is the radius
 		ellipse2Poly(cv::Point2f(0, 0), cv::Size(axesTag.width, axesTag.height), angleTag, angleGrid + (i*3) * 30, angleGrid + (i*3+1) * 30, 30, tempCont);
 		relPoints[i] = tempCont[0];
-		absPoints[i] = relPoints[i] + absPoints[0];				
+		absPoints[i] = relPoints[i] + absPoints[0];					
+	}
+	return;
+}
+//Method that updates the vector use to obtain orientation in space.
+void myNewGrid::updateVectors()
+{	
+	//P0 is the center	
+	realCoord[0] = cv::Point2f(0, 0);
+	for (int i = 1; i < 3; i++)
+	{
+		//P1 is the orientation
+		//P2 is the radius				
 		realCoord[i] = ellipsePoint(cv::Point2f(0, 0), cv::Size(axesTag.width, axesTag.height), angleTag, angleGrid + (i * 3) * 30);
 	}
-	//////////
-	//std::cout << std::endl << "From updatePoints " << std::endl;	
-	//std::cout << "angleGrid: " << angleGrid << std::endl;
-	//std::cout << "angleTag " << angleTag << std::endl;
-	//std::cout << "relPoints[1] " << relPoints[1] << " -- relPoints[2] " << relPoints[2] << std::endl;
-	//std::cout << "realCoord[1] " << realCoord[1] << " -- realCoord[2] " << realCoord[2] << std::endl;
+
 	return;
 }
 
 //Method that updates the parameters when the tag is translated.
 void myNewGrid::translation(cv::Point newCenter)
 {
-	centerGrid = newCenter;
-	centerTag = newCenter;
+	centerGrid = newCenter;	
 	updatePoints();
 	return;
 }
@@ -147,14 +151,6 @@ cv::Point2f myNewGrid::ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, dou
 	return ellPoint;
 }
 
-cv::Point2f myNewGrid::polar2rect(double radius, double angle)
-{
-	cv::Point2f  point;
-	point.x = radius * cos(angle);
-	point.y = -radius * sin(angle);
-	return point;
-}
-
 //updates the tag parameters from the points positions
 //s --> scale parameter relative to axisTag
 //(x0,y0) --> center of the tag and grid
@@ -178,8 +174,8 @@ void myNewGrid::updateParam()
 		v1.z = 0;
 	else
 		v1.z = sqrt(temp1);	
-	std::cout << "vector1: x = " << relPoints[1].x << ", y = " << relPoints[1].y << std::endl;
-	std::cout << "vector1: x = " << v1.x << ", y = " << v1.y << ", z = " << v1.z << std::endl;
+	//std::cout << "vector1: x = " << relPoints[1].x << ", y = " << relPoints[1].y << "(for image)" << std::endl;
+	//std::cout << "vector1: x = " << v1.x << ", y = " << v1.y << ", z = " << v1.z << "(for trigonometry)" << std::endl;
 	//calculate the Z component for P2 in order to calculate a normal vector to them through cross product
 	v2.x = realCoord[2].x;
 	v2.y = realCoord[2].y;
@@ -189,17 +185,17 @@ void myNewGrid::updateParam()
 	else
 		v2.z = sqrt(temp1);		
 	//angle between the projection of both vectors in XY	
-	temp2 = acos(realCoord[1].dot(realCoord[2]) / (sqrt(realCoord[1].dot(realCoord[1]))*sqrt(realCoord[2].dot(realCoord[2]))));
-	// protection
+	temp2 = acos(realCoord[1].dot(realCoord[2]) / (sqrt(realCoord[1].dot(realCoord[1]))*sqrt(realCoord[2].dot(realCoord[2]))));	
+	// protection, acos only operates in the range [1,-1]
 	if (temp2 >= -1 && temp2 <= 1)
 	{
 		temp2 = acos(temp2);
-		std::cout << "--------- angle V1 and V2 = " << temp2 << std::endl;
+		//std::cout << "--------- angle V1 and V2 = " << temp2 << std::endl;
 		if (temp2 < M_PI / 2)
 			v2.z = -v2.z;
 	}	
-	std::cout << "vector2: x = " << relPoints[2].x << ", y = " << relPoints[2].y << std::endl;
-	std::cout << "vector2: x = " << v2.x << ", y = " << v2.y << ", z = " << v2.z << std::endl;
+	//std::cout << "vector2: x = " << relPoints[2].x << ", y = " << relPoints[2].y << "(for image)" << std::endl;
+	//std::cout << "vector2: x = " << v2.x << ", y = " << v2.y << ", z = " << v2.z << "(for trigonometry)" << std::endl;
 	//cross product and normal to the plane
 	norm = v2.cross(v1);
 	//to assure that the normal vector points upwards
@@ -209,55 +205,48 @@ void myNewGrid::updateParam()
 		norm.y = -norm.y;
 		norm.z = -norm.z;
 	}
-	std::cout << "normal: x = " << norm.x << ", y = " << norm.y << ", z = " << norm.z << std::endl;	
+	//std::cout << "normal: x = " << norm.x << ", y = " << norm.y << ", z = " << norm.z << std::endl;	
 	
 	//roll (theta) and yaw (phi) angles
 	cv::Point			x2d(1, 0);
-	cv::Point			y2d(0, -1); //we use (0,-1) to get the angle relative to the vertical of the hive, were upwards is 0
+	cv::Point			y2d(0, 1); //we use (0,-1) to get the angle relative to the vertical of the hive, were upwards is 0
 	cv::Point3d			z3d(0, 0, 1);
 	
 	//roll angle, the angle between the normal to the plane and the z-axis is
 	temp2 = norm.dot(z3d) / (sqrt(norm.dot(norm)));
-	// protection
+	// protection, acos only takes values in the range [1,-1]
 	if (temp2 >= -1 && temp2 <= 1)
 		theta = acos(temp2);
-	std::cout << "theta " << theta * 180 / M_PI << std::endl;
+	//std::cout << "theta " << theta * 180 / M_PI << std::endl;
 	//yaw angle
 	if (norm.x == 0 && norm.y == 0)
 			phi = 0;
 	else		
-	{
-		temp2 = y2d.dot(cv::Point2d(norm.x, norm.y)) / sqrt(pow(norm.x, 2) + pow(norm.y, 2));
-		// protection
+	{		
+		temp2 = y2d.dot(cv::Point2d(norm.x, norm.y)) / sqrt(pow(norm.x, 2) + pow(norm.y, 2));		
+		// protection, acos only opetrates in the range [1,-1]
 		if (temp2 >= -1 && temp2 <= 1)
-			phi = acos(temp2);		
-		//if (norm.x > 0)
-		//	phi = -phi;
-		std::cout << "phi " << phi * 180 / M_PI << std::endl;
+			phi = acos(temp2);
+			//if norm.x component is negative the obtained angle should be taken as negative
+			if (norm.x < 0)
+				phi = -phi;
+		//std::cout << "phi " << phi * 180 / M_PI << std::endl;
 	}	
-	
-	//alpha angle (bee orientation)
-    //alpha = acos(x2d.dot(realCoord[1]) / sqrt(realCoord[1].dot(realCoord[1])));
-	//if (realCoord[1].y>0)
-	//	alpha = 2 * M_PI - alpha;
-//	temp2 = acos(x2d.dot(realCoord[1]) / sqrt(realCoord[1].dot(realCoord[1])));
-//	if (realCoord[1].y>0)
-//		temp2 = 2 * M_PI - temp2;
-
-//	std::cout << "alpha temp2 " << temp2 * 180 / M_PI << std::endl << std::endl;
-	std::cout << "alpha " << alpha * 180 / M_PI << std::endl << std::endl;
-
+	//alpha is not updated
+	//std::cout << "alpha " << alpha * 180 / M_PI << std::endl << std::endl;
+	//axes are updated to display the ellipse
 	updateAxes();
-		
+	//the angles of the ellipse and the grid are calculated for displaying purposes
 	angleGrid = (phi-alpha-M_PI/2)*180/M_PI;
 	angleTag = -phi * 180 / M_PI;
 	
-	std::cout << std::endl << "From updateParameters " << std::endl;
+	//std::cout << std::endl << "From updateParameters " << std::endl;
 
 	updatePoints();
 	return;
 }
 
+//function that generates a vector of points for a specific cell from the grid
 std::vector<cv::Point> myNewGrid::renderGridCell(unsigned short cell)
 {
 	std::vector<cv::Point> globCont;
@@ -285,12 +274,12 @@ std::vector<cv::Point> myNewGrid::renderGridCell(unsigned short cell)
 	if (cell == 14)
 	cv::ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid-180, 180, globCont);
 	// Outer perimeter
-	if (cell == 15)
-		ellipse2Poly(centerTag, axesTag, angleTag, 0, 360, 1, globCont);
+	if (cell == 15)		
+		ellipse2Poly(centerGrid, axesTag, angleTag, 0, 360, 1, globCont);
 
 	return globCont;
 }
-
+//function that renders all the necessary cells in a Tag calling renderGridCell
 std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 {
 	// contour vector
@@ -315,7 +304,7 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	conts.push_back(std::vector<cv::Point>());	//empty vector to allow the first n vector to be printed VS-2012 error
 	return conts;
 }
-
+//function that draws a grid, active grids are printed in a different color.
 void myNewGrid::drawFullTag(cv::Mat &img, int active)
 {
 	std::vector<std::vector <cv::Point>> conts = renderFullTag();
@@ -335,11 +324,21 @@ void myNewGrid::drawFullTag(cv::Mat &img, int active)
 	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
 
 	//an ellipse is drawn as the tag contour, color according to active parameter
-	if (active == 1)
+	if (active == 1) //the tag is active
 		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 255), 1);
-	else if (active == 2)
+	else if (active == 2) //the tag is already set
 		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 0), 1);
-	else if (active == 3)
+	else if (active == 3) //the tag hasn't been set yet
 		cv::drawContours(img, conts, 15, cv::Scalar(0, 0, 255), 1);
 	return;
+}
+
+
+//function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
+cv::Point2f myNewGrid::polar2rect(double radius, double angle)
+{
+	cv::Point2f  point;
+	point.x = radius * cos(angle);
+	point.y = -radius * sin(angle);
+	return point;
 }
