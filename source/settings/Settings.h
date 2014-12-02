@@ -26,7 +26,7 @@ public:
 	 */
 	template <typename T>
 	void setParam(std::string const& paramName, T&& paramValue) {
-		_ptree.put<T>(paramName, std::move(paramValue));
+        _ptree.put<T>(paramName, std::forward<T>(paramValue));
 		boost::property_tree::write_ini(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
 	}
 
