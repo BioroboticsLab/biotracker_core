@@ -23,7 +23,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # using Clang or GCC
     # minimal optimization and debug symbols for debug builds
-    set(CMAKE_CXX_FLAGS_DEBUG "-O1 -ggdb")
+    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
     # enable optimization for release builds
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG")
     # enable C++1y
@@ -41,8 +41,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
     endif()
-    # warnings are errors
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zm133")
+	# disable warning 4503 on visual studio (boost)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4503")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 

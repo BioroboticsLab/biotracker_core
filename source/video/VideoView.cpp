@@ -44,8 +44,8 @@ void VideoView::showImage(cv::Mat img)
 void VideoView::fitToWindow()
 {
 	_zoomFactor = 0;
-	int width = this->width();
-	int height = this->height();
+	float width = static_cast<float>(this->width());
+	float height = static_cast<float>(this->height());
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
@@ -57,7 +57,7 @@ void VideoView::fitToWindow()
 		_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);	
 		_panY = 0;
 	}
-	glViewport(0,0,width, height);
+	glViewport(0,0,this->width(), this->height());
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -112,10 +112,10 @@ void VideoView::paintGL()
 	int corner3[2] = {0,_displayImage.rows};
 	int corner4[2] = {_displayImage.cols,_displayImage.rows};
 	_vertices.clear();
-	_vertices.append(QVector2D(corner1[0],corner1[1]));
-	_vertices.append(QVector2D(corner2[0],corner2[1]));
-	_vertices.append(QVector2D(corner3[0],corner3[1]));
-	_vertices.append(QVector2D(corner4[0],corner4[1]));
+	_vertices.append(QVector2D(static_cast<float>(corner1[0]), static_cast<float>(corner1[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner3[0]), static_cast<float>(corner3[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner4[0]), static_cast<float>(corner4[1])));
 
 	glVertexPointer(2, GL_FLOAT, 0, _vertices.constData());
 	glTexCoordPointer(2, GL_FLOAT, 0, _texCoords.constData());
@@ -136,7 +136,8 @@ void VideoView::paintGL()
 	if (_zoomFactor > 1)
 	{	
 		QMutexLocker locker(&trackMutex);
-		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
+		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / _zoomFactor),
+												  static_cast<int>(imageCopy.rows / _zoomFactor)), cv::INTER_AREA);//resize image
 	}	
 
 	/**
@@ -241,8 +242,8 @@ void VideoView::resizeGL(int width, int height)
 		_currentWidth = width;
 	}
 
-	width = width * (_screenPicRatio + _zoomFactor);
-	height = height *(_screenPicRatio + _zoomFactor);
+	width = static_cast<int>(width * (_screenPicRatio + _zoomFactor));
+	height = static_cast<int>(height *(_screenPicRatio + _zoomFactor));
 
 	float left = _panX;
 	float top	 = _panY;
@@ -368,7 +369,7 @@ void VideoView::wheelEvent( QWheelEvent * e )
 		if (e->orientation() == Qt::Vertical
 			&& (_zoomFactor+_screenPicRatio) - 0.002 * numDegrees > 0)
 		{
-			_zoomFactor -= 0.002 * numDegrees;
+			_zoomFactor -= 0.002f * numDegrees;
 
 			auto elapsed = std::chrono::system_clock::now() - _lastZoomedTime;
 			//when we zoomed only recently, center zoom to same spot again
