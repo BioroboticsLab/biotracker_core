@@ -1,11 +1,15 @@
 #include "source/gui/BioTracker.h"
+
 #include <chrono>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <thread>
 
+#include "source/settings/Settings.h"
 #include "source/utility/stdext.h"
+#include "source/tracking/TrackingThread.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 #include <cereal/types/polymorphic.hpp>
@@ -54,9 +58,14 @@ void BioTracker::init(){
 	initGui();
 	initConnects();
 	ui.sld_video->setDisabled(true);
-	if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))){
-		setPlayfieldEnabled(true);		
-		initCapture();
+	if (_settings.getValueOfParam<bool>(GUIPARAM::IS_SOURCE_VIDEO)) {
+		if (file_exist(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE))) {
+			setPlayfieldEnabled(true);
+			initCapture();
+		}
+	} else if (file_exist(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE))) {
+		const QStringList files(QString::fromStdString(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE)));
+		initPicture(std::move(files));
 	}
 }
 
@@ -515,7 +524,7 @@ void BioTracker::takeScreenshot()
 	std::string dateTime = std::ctime(&t);
 	// ctime adds a newline to the string due to historical reasons
 	dateTime = dateTime.substr(0, dateTime.size() - 1);
-	QString filepath = _settings.getValueOfParam<QString>(CAPTUREPARAM::CAP_SCREENSHOT_PATH);
+    QString filepath = QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_SCREENSHOT_PATH));
 	filepath.append("/screenshot_").append(QString::fromStdString(dateTime)).append(".png");
 	ui.videoView->takeScreenshot(filepath);
 }
