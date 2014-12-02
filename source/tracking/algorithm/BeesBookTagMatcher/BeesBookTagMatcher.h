@@ -31,7 +31,10 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		
 		bool _setP0;						//Set P0 --Left Click and drag--
 		bool _setP1;						//Set P1 --Left Click and drag--
-		bool _setP2;						//Set P2 --Left Click and drag--		
+		bool _setP2;						//Set P2 --Left Click and drag--
+
+		//------- Test
+		bool _setOrient;					//to modify exclusively the tag orientation.
 
 		std::vector<cv::Point> orient;		//auxiliar variable for drawing the orientation while setting the Tag
 		cv::Point diff;						//auxiliar variable
