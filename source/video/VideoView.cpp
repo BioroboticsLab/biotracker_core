@@ -5,6 +5,8 @@
 #include "VideoView.h"
 #include <QMouseEvent>
 
+#include "source/tracking/TrackingAlgorithm.h"
+
 // OS X puts the headers in a different location in the include path than
 // Windows and Linux, so we need to distinguish between OS X and the other
 // systems.
@@ -24,6 +26,7 @@ VideoView::VideoView(QWidget *parent)
 	_panX = 0;
 	_panY = 0;
 	_isPanZoomMode = false;
+	_lastPannedTime = std::chrono::system_clock::now();
 	_lastZoomedTime = std::chrono::system_clock::now();
 	_lastZoomedPoint = QPoint(0, 0);
 }
@@ -41,8 +44,8 @@ void VideoView::showImage(cv::Mat img)
 void VideoView::fitToWindow()
 {
 	_zoomFactor = 0;
-	int width = this->width();
-	int height = this->height();
+	float width = static_cast<float>(this->width());
+	float height = static_cast<float>(this->height());
 	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
 	float windowRatio = static_cast<float>(width) / height;
 	if(windowRatio < imgRatio) 
@@ -54,7 +57,7 @@ void VideoView::fitToWindow()
 		_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);	
 		_panY = 0;
 	}
-	glViewport(0,0,width, height);
+	glViewport(0,0,this->width(), this->height());
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -109,10 +112,10 @@ void VideoView::paintGL()
 	int corner3[2] = {0,_displayImage.rows};
 	int corner4[2] = {_displayImage.cols,_displayImage.rows};
 	_vertices.clear();
-	_vertices.append(QVector2D(corner1[0],corner1[1]));
-	_vertices.append(QVector2D(corner2[0],corner2[1]));
-	_vertices.append(QVector2D(corner3[0],corner3[1]));
-	_vertices.append(QVector2D(corner4[0],corner4[1]));
+	_vertices.append(QVector2D(static_cast<float>(corner1[0]), static_cast<float>(corner1[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner3[0]), static_cast<float>(corner3[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner4[0]), static_cast<float>(corner4[1])));
 
 	glVertexPointer(2, GL_FLOAT, 0, _vertices.constData());
 	glTexCoordPointer(2, GL_FLOAT, 0, _texCoords.constData());
@@ -133,7 +136,8 @@ void VideoView::paintGL()
 	if (_zoomFactor > 1)
 	{	
 		QMutexLocker locker(&trackMutex);
-		cv::resize(imageCopy,imageCopy,cv::Size(imageCopy.cols/_zoomFactor,imageCopy.rows/_zoomFactor),cv::INTER_AREA);//resize image
+		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / _zoomFactor),
+												  static_cast<int>(imageCopy.rows / _zoomFactor)), cv::INTER_AREA);//resize image
 	}	
 
 	/**
@@ -185,7 +189,7 @@ void VideoView::paintGL()
 	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
 
 	// Draw it!
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); 
+	glDrawArrays(GL_POLYGON, 0, 4);
 	// free memory		
 	imageCopy.release();
 	glDeleteTextures(1, &_texture);
@@ -238,8 +242,8 @@ void VideoView::resizeGL(int width, int height)
 		_currentWidth = width;
 	}
 
-	width = width * (_screenPicRatio + _zoomFactor);
-	height = height *(_screenPicRatio + _zoomFactor);
+	width = static_cast<int>(width * (_screenPicRatio + _zoomFactor));
+	height = static_cast<int>(height *(_screenPicRatio + _zoomFactor));
 
 	float left = _panX;
 	float top	 = _panY;
@@ -287,24 +291,28 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
 	if (_isPanZoomMode)
 	{
-		if(_isPanning)
-		{
-			int dX = e->x() - _lastMPos[0];
-			int dY = e->y() - _lastMPos[1];
-			_lastMPos[0] = e->x();
-			_lastMPos[1] = e->y();
-			_panX -= dX * (_screenPicRatio+_zoomFactor);
-			_panY -= dY * (_screenPicRatio+_zoomFactor);
-			resizeGL(this->width(), this->height());
-			//Draw the scene
-			updateGL();
+		const auto elapsed = std::chrono::system_clock::now() - _lastPannedTime;
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+			if(_isPanning)
+			{
+				int dX = e->x() - _lastMPos[0];
+				int dY = e->y() - _lastMPos[1];
+				_lastMPos[0] = e->x();
+				_lastMPos[1] = e->y();
+				_panX -= dX * (_screenPicRatio+_zoomFactor);
+				_panY -= dY * (_screenPicRatio+_zoomFactor);
+				resizeGL(this->width(), this->height());
+				//Draw the scene
+				updateGL();
+			}
+			_lastPannedTime = std::chrono::system_clock::now();
 		}
 	}
 	else
 	{
 
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
+		const QPointF localPos(p);
         QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
 		emit moveEvent ( modifiedEvent );		
 
@@ -359,9 +367,9 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	{
 		int numDegrees = e->delta();
 		if (e->orientation() == Qt::Vertical
-			&& (_zoomFactor+_screenPicRatio) - 0.001 * numDegrees > 0) 
+			&& (_zoomFactor+_screenPicRatio) - 0.002 * numDegrees > 0)
 		{
-			_zoomFactor -= 0.001 * numDegrees;
+			_zoomFactor -= 0.002f * numDegrees;
 
 			auto elapsed = std::chrono::system_clock::now() - _lastZoomedTime;
 			//when we zoomed only recently, center zoom to same spot again
@@ -379,10 +387,12 @@ void VideoView::wheelEvent( QWheelEvent * e )
 			}
 			_lastZoomedTime = std::chrono::system_clock::now();
 			
-			resizeGL(this->width(), this->height());
-			//Draw the scene
-			updateGL();
-			e->accept();
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+				resizeGL(this->width(), this->height());
+				//Draw the scene
+				updateGL();
+				e->accept();
+			}
 		}
 	}
 	else

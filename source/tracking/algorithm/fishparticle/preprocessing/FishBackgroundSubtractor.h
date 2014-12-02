@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "source/settings/Settings.h"
+class Settings;
 
 /**
 * Doing the background subtraction, a configured cv::BackgroundSubtractorMOG2.
