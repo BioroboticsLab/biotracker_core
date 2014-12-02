@@ -1,7 +1,10 @@
 #pragma once
 
+#pragma warning(push, 0)   
+#pragma warning(disable:4503)
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#pragma warning(pop)
 
 #include "source/settings/ParamNames.h"
 
@@ -26,8 +29,11 @@ public:
 	 */
 	template <typename T>
 	void setParam(std::string const& paramName, T&& paramValue) {
-		_ptree.put<T>(paramName, std::move(paramValue));
+#pragma warning(push, 0)   
+#pragma warning(disable:4503)
+		_ptree.put<T>(paramName, std::forward<T>(paramValue));
 		boost::property_tree::write_ini(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+#pragma warning(pop)
 	}
 
 	/**
@@ -37,7 +43,10 @@ public:
 	 */
 	template <typename T>
 	T getValueOfParam(const std::string &paramName) const {
+#pragma warning(push, 0)   
+#pragma warning(disable:4503)
 		return _ptree.get<T>(paramName);
+#pragma warning(pop)
 	}
 
 private:
