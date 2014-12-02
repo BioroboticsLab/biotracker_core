@@ -4,7 +4,6 @@
 #include <opencv2/opencv.hpp>
 
 #include "FishBackgroundSubtractor.h"
-#include "source/settings/Settings.h"
 #include "tracking/algorithm/fishparticle/particlefilter/particleParams.h"
 
 /**

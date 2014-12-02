@@ -31,19 +31,18 @@ class myNewGrid
 {
 public:
 	//initializer function
-	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id);	
+	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);	
 	//default constructor
 	myNewGrid();
 	//constructor with 1 parameter
 	myNewGrid(cv::Point2f centerGrid, double Alpha);
 	//constructor with 7 parameters
-	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, double Rho, std::vector<bool> Id);	
+	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);	
 	//destructor
 	~myNewGrid();
 
 	//Object properties	
-	cv::Point2f								centerGrid; //center of the grid
-	cv::Point2f								centerTag;  //center of the ellipse defined by the tag itself, usually is equal to centerGrid but it might be diferent
+	cv::Point2f								centerGrid; //center of the grid	
 
 	cv::Size2f								axesGrid;	//major and minor axes of the ellipse defined by the Grid
 	cv::Size2f								axesTag;	//major and minor axes of the ellipse defined by the Tag
@@ -57,27 +56,32 @@ public:
 	double									phi;		//this angle denotes the orientation of the ellipses (both ellipses should have the same phi parameter) (measured from the y-axis)
 	
 	//test
-	double									rho;		//this is the angle between orientation and mid-circle vectors.
+	//double									rho;		//this is the angle between orientation and mid-circle vectors.
 	
 	std::vector<bool>						ID;
 
 	std::vector<std::vector <cv::Point> >	cellsContours;
-	
-	//std::vector<std::vector <cv::Point> >	gridAxes;
-	std::vector<cv::Point2f>				absPoints; //vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
-	std::vector<cv::Point2f>				relPoints; //vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)
+		
+	std::vector<cv::Point2f>				absPoints;	//vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
+	std::vector<cv::Point2f>				relPoints;	//vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)	
+	std::vector<cv::Point2f>				realCoord;	//vector of points which are used by the user to define a new grid (relative and exact coordinates for computing purposes)
 	
 	//Object methods
-	//function that updates the set of 9 points that define a grid from parameters.
-	void updatePoints(int m);
+	//function that updates the set of 3 points that define a grid from parameters (for displaying pursoses).
+	void updatePoints();
+	//function that updates the set of 3 points that define a grid from parameters (for arithmetic purposes).
+	void updateVectors();
 	//function that updates parameters when the tag is translated.
 	void translation(cv::Point newCenter);
 	//function that updates parameters when the tag orientation is modified.
 	void orientation(cv::Point newP1);
-	//function that updates the mayor axis using scale and the minor axis using theta as parameter.
+	//function that updates the mayor axis and the minor axis using theta and scale as parameters.
 	void updateAxes();
 	//function that is called to set the binary ID
 	void updateID(cv::Point newID);
+
+	//function that determines coordinates for a point on an ellipse's contour (for arithmetic purposes).
+	cv::Point2f ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T);
 
 	//function that calculates the vector of parameters of the grid from points configuration.
 	void updateParam();		
@@ -94,10 +98,14 @@ public:
 	 * @ 15 tag perimeter
 	 */
 	std::vector<cv::Point> renderGridCell(unsigned short cell);	
+	
 	//function that renders all the necessary cells in a Tag calling renderGridCell
 	std::vector<std::vector <cv::Point>> renderFullTag();
 	//function that draws a grid, active grids are printed in a different color.
 	void drawFullTag(cv::Mat &img, int active);
+
+	//function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
+	cv::Point2f polar2rect(double radius, double angle);
 };
 
 #endif

@@ -1,13 +1,51 @@
 #pragma once
 
-#include <cv.h>
 #include <opencv2/opencv.hpp>
 
-#include <QtCore/QSettings>
-
 #include "source/utility/stdext.h"
-#include "source/settings/Settings.h"
 
+namespace PREPROCESSORPARAM
+{
+    // Parameter for the opencv BackgroundSubtractorMOG2 class
+    static const std::string BG_MOG2_HISTORY			= "TRACKERPARAM.BG_MOG2_HISTORY";
+    static const std::string BG_MOG2_VAR_THRESHOLD		= "TRACKERPARAM.BG_MOG2_VAR_THRESHOLD";
+    static const std::string BG_MOG2_SHADOW_DETECTION	= "TRACKERPARAM.BG_MOG2_SHADOW_DETECTION";
+    static const std::string BG_MOG2_BACKGROUND_RATIO	= "TRACKERPARAM.BG_MOG2_BACKGROUND_RATIO";
+
+    // Parameters for enabling methods
+    static const std::string ENABLE_BG_SUBTRACTION		= "TRACKERPARAM.ENABLE_BG_SUBTRACTION";
+    static const std::string ENABLE_BG_IMAGE			= "TRACKERPARAM.ENABLE_BG_IMAGE";
+    static const std::string ENABLE_BINARIZING			= "TRACKERPARAM.ENABLE_BINARIZING";
+    static const std::string ENABLE_ERODE				= "TRACKERPARAM.ENABLE_ERODE";
+    static const std::string ENABLE_DILATE				= "TRACKERPARAM.ENABLE_DILATE";
+    static const std::string IMAGE_VIEW_TYPE			= "TRACKERPARAM.IMAGE_VIEW_TYPE";
+
+    // Mapping issue
+    static const std::string MAX_MAPPED_DISTANCE_PX	= "TRACKERPARAM.MAX_MAPPED_DISTANCE_PX";
+    static const std::string MAX_MAPPED_DISTANCE_CM	= "TRACKERPARAM.MAX_MAPPED_DISTANCE_CM";
+
+    // Blob dectection issue
+    static const std::string MAX_BLOB_SIZE				= "TRACKERPARAM.MAX_BLOB_SIZE";
+    static const std::string MIN_BLOB_SIZE				= "TRACKERPARAM.MIN_BLOB_SIZE";
+
+    // Parameters for image pre-processing step
+    static const std::string SIZE_ERODE					= "TRACKERPARAM.SIZE_ERODE";
+    static const std::string SIZE_DILATE				= "TRACKERPARAM.SIZE_DILATE";
+    static const std::string THRESHOLD_BINARIZING		= "TRACKERPARAM.THRESHOLD_BINARIZING";
+
+    // Image processing type
+    enum IMAGE_DISPLAY_TYPE {
+        IMAGE_OR = 0,
+        IMAGE_BI = 1,
+        IMAGE_ER = 2,
+        IMAGE_DI = 3,
+        IMAGE_FG = 4,
+        IMAGE_BG = 5,
+        IMAGE_PP = 6,
+    };
+}
+
+class Settings;
 
 class ImagePreProcessor
 {
@@ -99,7 +137,7 @@ public:
 	 *		 IMAGE_PP, final proceedied image,
 	 * @return: type of image.
 	 */
-	cv::Mat imageDisplayType(TRACKERPARAM::IMAGE_DISPLAY_TYPE imageDisplayType);
+    cv::Mat imageDisplayType(PREPROCESSORPARAM::IMAGE_DISPLAY_TYPE imageDisplayType);
 
 private:
 	// System properties
