@@ -4,6 +4,9 @@
 #include <QFile>
 #include <QMessageBox>
 
+#pragma warning(push, 0)   
+#pragma warning(disable:4503)
+
 Settings::Settings()
 {
 	if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
@@ -29,3 +32,5 @@ const boost::property_tree::ptree Settings::getDefaultParams()
 
 	return pt;
 }
+
+#pragma warning(pop)

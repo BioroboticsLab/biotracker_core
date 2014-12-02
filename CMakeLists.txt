@@ -41,8 +41,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
     endif()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zm133")
+	# disable warning 4503 on visual studio (boost)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4503")
     # warnings are errors
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
