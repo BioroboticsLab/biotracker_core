@@ -1,10 +1,9 @@
 #pragma once
 
-#include <cv.h>
+#include <opencv2/opencv.hpp>
+
 #include <QtCore/QList>
 #include <QtCore/QPoint>
-
-#include <utility> // std::move
 
 /**
  *	Rectification class normalizing the tracking image

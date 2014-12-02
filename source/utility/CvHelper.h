@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cv.h>
+#include <opencv2/opencv.hpp>
 
 /**
  * Computer vision helper class, contains only static methods
