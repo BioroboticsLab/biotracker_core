@@ -1,159 +1,31 @@
 #include "Settings.h"
+#include "Messages.h"
 
-#include <QMutex>
-#include <algorithm> // std::find_if
-#include <utility> // std::move
+#include <QFile>
+#include <QMessageBox>
 
-namespace {
-	QMutex paramMutex;
-
-	struct ParamNameCompare {
-		const std::string &name;
-		ParamNameCompare(const std::string &name) :name(name) {};
-		bool operator()(const TrackerParam::Param &p) const {
-			return p.pName() == name;
-		}
-	};
-}
-
-Settings::Settings() :
-	_params(getDefaultParamsFromQSettings())
-
+Settings::Settings()
 {
-}
-
-Settings::Settings(std::vector<TrackerParam::Param> params) :
-	_params(std::move(params))
-{
-}
-
-Settings::~Settings() = default;
-
-void Settings::setParam(std::string paramName, std::string paramValue)
-{
-	QMutexLocker locker(&paramMutex);
-	setParamInVector(paramName, paramValue);
-	setParamInConfigFile(paramName, paramValue);
-}
-
-void Settings::setParamInVector(std::string paramName, std::string paramValue)
-{
-	const auto pos = std::find_if(_params.begin(), _params.end(), ParamNameCompare{paramName});
-	if (pos != _params.end()) {
-		pos->setPValue(std::move(paramValue));
-	}
-	else {
-		_params.emplace_back(std::move(paramName), std::move(paramValue));
+	if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
+		QMessageBox::warning(nullptr, "No configuration file",
+		                     QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));
+		_ptree = getDefaultParams();
+		boost::property_tree::write_ini(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+	} else {
+		boost::property_tree::ptree pt;
+		boost::property_tree::read_ini(CONFIGPARAM::CONFIGURATION_FILE, pt);
+		_ptree = pt;
 	}
 }
 
-void Settings::setParamInConfigFile(const std::string &paramName, const std::string &paramValue)
+const boost::property_tree::ptree Settings::getDefaultParams()
 {
-    QSettings settings(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE), QSettings::IniFormat);
-	settings.setValue(QString::fromStdString(paramName),QString::fromStdString(paramValue));
+	boost::property_tree::ptree pt;
+
+	pt.put(TRACKERPARAM::TRACKING_ENABLED, false);
+	pt.put(CAPTUREPARAM::CAP_VIDEO_FILE, "");
+	pt.put(PICTUREPARAM::PICTURE_FILE, "");
+	pt.put(GUIPARAM::IS_SOURCE_VIDEO, true);
+
+	return pt;
 }
-
-std::vector<TrackerParam::Param> Settings::getParams() const
-{
-	QMutexLocker locker(&paramMutex);
-	return _params;
-}
-
-template<> std::string Settings::getValueOfParam(const std::string &paramName) const
-{
-	QMutexLocker locker(&paramMutex);
-	const auto pos = std::find_if(_params.cbegin(), _params.cend(), ParamNameCompare{paramName});
-	if (pos != _params.cend()) {
-		return pos->pValue();
-	}
-	else {
-		throw std::invalid_argument("Parameter cannot be obtained");
-	}
-}
-
-template<> QString Settings::getValueOfParam(const std::string &paramName) const
-{
-	return QString::fromStdString(getValueOfParam<std::string>(paramName));
-}
-
-template<> double Settings::getValueOfParam(const std::string &paramName) const
-{
-	const std::string valueAsString = getValueOfParam<std::string>(paramName);
-	return std::stod(valueAsString);
-}
-
-template<> float Settings::getValueOfParam(const std::string &paramName) const
-{
-	const std::string valueAsString = getValueOfParam<std::string>(paramName);
-	return std::stof(valueAsString);
-}
-
-template<> int Settings::getValueOfParam(const std::string &paramName) const
-{
-	const std::string valueAsString = getValueOfParam<std::string>(paramName);
-	return std::stoi(valueAsString);
-}
-
-template<> bool Settings::getValueOfParam(const std::string &paramName) const
-{
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	std::transform(valueAsString.begin(), valueAsString.end(), valueAsString.begin(), ::tolower);
-
-	if(valueAsString == "true" || valueAsString == "1") {
-		return true;
-	}
-	return false;
-}
-
-template<> cv::Scalar Settings::getValueOfParam(const std::string &paramName) const
-{
-	std::string valueAsString = getValueOfParam<std::string>(paramName);
-	const std::vector<cv::string>& stringList = Settings::split(valueAsString, ' ');
-
-	if(stringList.size() != 3)
-	{
-		throw std::invalid_argument("Number of tokens must be 3");
-	}
-
-	int r = std::stoi(stringList.at(0));
-	int g = std::stoi(stringList.at(1));
-	int b = std::stoi(stringList.at(2));
-
-	return cv::Scalar(r,g,b);
-}
-
-std::vector<TrackerParam::Param> Settings::getDefaultParamsFromQSettings()
-{
-	QMutexLocker locker(&paramMutex);
-	QSettings settings(QString::fromUtf8(CONFIGPARAM::CONFIGURATION_FILE.c_str()), QSettings::IniFormat);
-	//TODO: Hier checken ob Datei vorhanden -> wenn nicht da neu anlegen, default params setzen
-
-	std::vector<TrackerParam::Param> defaultParams;
-
-	for (QString const& key : settings.allKeys())
-	{
-		defaultParams.emplace_back(key,settings.value(key).toString());
-	}
-	return defaultParams;
-}
-
-std::vector<std::string> Settings::split(const std::string &txt, char ch)
-{
-	std::vector<std::string> result;
-	std::size_t pos = txt.find( ch );
-	std::size_t initialPos = 0;
-
-	// Decompose statement
-	while( pos != std::string::npos ) {
-		result.push_back( txt.substr( initialPos, pos - initialPos ) );
-		initialPos = pos + 1;
-
-		pos = txt.find( ch, initialPos );
-	}
-
-	// Add the last one
-	result.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
-
-	return result;
-}
-
