@@ -85,6 +85,12 @@ signals:
 	*/
 	int requestFrameNumber();
 
+	/**
+	* send Signal to GUI to check in which play mode we are
+	* returns true if video is in paused, false otherwise
+	*/
+	bool isVideoPaused();
+
 	cv::Mat requestCurrentScreen();
 
 	void forceTracking();
