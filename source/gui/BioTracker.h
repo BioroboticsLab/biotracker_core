@@ -78,6 +78,9 @@ public slots:
 
 	void takeScreenshot();
 
+	//returns true if video is in paused, false otherwise
+	bool isVideoPaused();
+
 private:
 	Ui::BioTrackerClass ui;
 
