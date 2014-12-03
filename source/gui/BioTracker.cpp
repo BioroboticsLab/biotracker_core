@@ -500,6 +500,8 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
 	QObject::connect(tracker.get(), SIGNAL(requestFrameNumber()),
 		_trackingThread.get(), SLOT( getFrameNumber() ));
+	QObject::connect(tracker.get(), SIGNAL(isVideoPaused()),
+		this, SLOT( isVideoPaused() ));
 	
 	if(_tracker)
 	{
@@ -533,4 +535,9 @@ void BioTracker::switchPanZoomMode()
 {
 	_isPanZoomMode = !_isPanZoomMode;
 	ui.videoView->setPanZoomMode(_isPanZoomMode);
+}
+
+bool BioTracker::isVideoPaused()
+{
+	return _videoPaused;
 }

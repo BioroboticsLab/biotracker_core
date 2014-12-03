@@ -16,7 +16,9 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 				
 		_setP0			= false; //Set P0 --Left Click--
 		_setP1			= false; //Set P1 --Left Click--
-		_setP2			= false; //Set P2 --Left Click--		
+		_setP2			= false; //Set P2 --Left Click--
+		
+		_setOrient		= false; //to modify exclusively the tag orientation.
 }
 
 
@@ -54,13 +56,24 @@ void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
 	{		
 		//check for SHIFT modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{					
+		{
+			if (_activeTag) // The Tag is active and can now be modified
+			{				
+				//if clicked on one of the set points, the point is activated
+				if (selectPoint(cv::Point(e->x(), e->y())))
+					emit update();
+				if (_setP1)
+					_setOrient = true;
+			}
 		}
 		//check for CTRL modifier
 		else if(Qt::ControlModifier == QApplication::keyboardModifiers())	//a new tag is generated
 		{
 			if (_ready)
+			{
 				setTag(cv::Point(e->x(), e->y()));
+				_setP1 = true;
+			}			
 		}
 		//without modifier
 		else
@@ -110,7 +123,10 @@ void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
 	}
 	else if (_setP1) //The orientation of the tag is being modified
 	{	
-		setTheta(cv::Point(e->x(), e->y()));
+		if (_setOrient)
+			g.orientation(cv::Point(e->x(), e->y()));
+		else
+			setTheta(cv::Point(e->x(), e->y()));
 		emit update();
 	}	
 	else if (_setP2) //The space angle (theta) is being modified
@@ -131,6 +147,10 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 			_activeTag = true;
 			_ready = true;			
 			g = myNewGrid(orient[0], atan2(orient[1].x - orient[0].x, orient[1].y - orient[0].y) - M_PI / 2);
+			
+			//length of the vector is taked into consideration
+			setTheta(cv::Point(e->x(), e->y()));
+			_setP1 = false;			
 		}		
 		else if (_setP0)//the tag was translated
 		{
@@ -140,6 +160,7 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 		else if (_setP1) //orientation of the bee and the marker were modified
 		{
 			_setP1 = false;
+			_setOrient = false;
 			g.updateVectors();
 		}
 		else if (_setP2) //orientation of the marker was modified
@@ -247,8 +268,7 @@ void BeesBookTagMatcher::setTheta(cv::Point location)
 	double		angle;
 	//when P1 is being modified
 	if (_setP1)
-	{
-		//std::cout << "realCoord 1: x = " << g.realCoord[1].x << ", y = " << g.realCoord[1].y << "(Previous value)" << std::endl;
+	{		
 		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
 		if (prop > 1)
 			prop = 1;
@@ -262,15 +282,14 @@ void BeesBookTagMatcher::setTheta(cv::Point location)
 	}
 	//when P2 is being modified
 	else if (_setP2)
-	{
-		//std::cout << "realCoord 2: x = " << g.realCoord[2].x << ", y = " << g.realCoord[2].y << "(Previous value)" << std::endl;
+	{	
 		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
 		if (prop > 1)
 			prop = 1;
 		else if (prop < 0.5)
 			prop = 0.5;		
 		//P2 doesn't update alpha
-		angle = atan2(location.x - g.absPoints[0].x, location.y - g.absPoints[0].y) - M_PI / 2;
+		angle = atan2(location.x - g.centerGrid.x, location.y - g.centerGrid.y) - M_PI / 2;
 		g.realCoord[2] = g.polar2rect(prop*axisTag, angle);
 		//std::cout << "realCoord 2: x = " << g.realCoord[2].x << ", y = " << g.realCoord[2].y << "(New value)" << std::endl;
 	}
