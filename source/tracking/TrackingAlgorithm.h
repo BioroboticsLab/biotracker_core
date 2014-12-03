@@ -68,7 +68,6 @@ public slots:
 	virtual void mousePressEvent	( QMouseEvent * e );
 	virtual void mouseReleaseEvent	( QMouseEvent * e );
 	virtual void mouseWheelEvent	( QWheelEvent * e );
-
 	/**
 	* receive Signal to set current frame number
 	*/
@@ -95,7 +94,6 @@ signals:
 	* send signal to VideoView and update display
 	*/
 	void update();
-	
 
 	cv::Mat requestCurrentScreen();
 
@@ -105,6 +103,7 @@ protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
 	std::string _serializationPathName;
+
 	bool _isVideoPaused;
 	int _currentFrameNumber;
 };

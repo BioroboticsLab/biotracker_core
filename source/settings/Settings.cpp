@@ -10,10 +10,10 @@ Settings::Settings()
 		QMessageBox::warning(nullptr, "No configuration file",
 		                     QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));
 		_ptree = getDefaultParams();
-		boost::property_tree::write_ini(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
 	} else {
 		boost::property_tree::ptree pt;
-		boost::property_tree::read_ini(CONFIGPARAM::CONFIGURATION_FILE, pt);
+		boost::property_tree::read_json(CONFIGPARAM::CONFIGURATION_FILE, pt);
 		_ptree = pt;
 	}
 }
