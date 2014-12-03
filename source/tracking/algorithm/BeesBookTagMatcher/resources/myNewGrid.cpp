@@ -132,8 +132,8 @@ void myNewGrid::updateID(cv::Point newID)
 
 /////////function that determines coordinates for a point on an ellipse's contour
 //Paramters:
-//Center -- Point2f -- Xc = Center.x, Yc = Center.y
-//SemiAxes -- Size2f -- a = SemiAxes.width, b = SemiAxes.height
+//Center -- cv::Point2f -- Xc = Center.x, Yc = Center.y
+//SemiAxes -- cv::Size2f -- a = SemiAxes.width, b = SemiAxes.height
 //Phi -- double -- phi (angle between the X-axis and a) = Phi -- in degrees, CLOCKWISE
 //T -- double -- excentric anomally = T -- in degrees, CLOCKWISE
 cv::Point2f myNewGrid::ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T)
