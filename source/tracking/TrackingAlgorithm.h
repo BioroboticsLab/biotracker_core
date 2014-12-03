@@ -68,6 +68,21 @@ public slots:
 	virtual void mousePressEvent	( QMouseEvent * e );
 	virtual void mouseReleaseEvent	( QMouseEvent * e );
 	virtual void mouseWheelEvent	( QWheelEvent * e );
+	/**
+	* receive Signal to set current frame number
+	*/
+	void setCurrentFrameNumber(int frameNumber)
+	{
+		_currentFrameNumber = frameNumber;
+	}
+
+	/**
+	* receive Signal from GUI to set play mode 
+	*/
+	void setVideoPaused(bool isPause)
+	{
+		_isVideoPaused = isPause;
+	}
 	
 signals:
 	/**
@@ -80,17 +95,6 @@ signals:
 	*/
 	void update();
 
-	/**
-	* send Signal to Tracking Thread for current frame number
-	*/
-	int requestFrameNumber();
-
-	/**
-	* send Signal to GUI to check in which play mode we are
-	* returns true if video is in paused, false otherwise
-	*/
-	bool isVideoPaused();
-
 	cv::Mat requestCurrentScreen();
 
 	void forceTracking();
@@ -99,6 +103,9 @@ protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
 	std::string _serializationPathName;
+
+	bool _isVideoPaused;
+	int _currentFrameNumber;
 };
 
 #endif // !TrackingAlgorithm_H
