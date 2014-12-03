@@ -16,7 +16,7 @@ FramePreprocessor::~FramePreprocessor(void)
 }
 
 /**
- * This does the work. Preprocesses the image and returns the preprocessed Mat.
+ * This does the work. Preprocesses the image and returns the preprocessed cv::Mat.
  * image may be modified by this method.
  */
 cv::Mat FramePreprocessor::preProcess(cv::Mat image) {

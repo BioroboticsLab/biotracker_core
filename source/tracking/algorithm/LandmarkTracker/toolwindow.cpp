@@ -26,9 +26,9 @@ void ToolWindow::initToolWindow()
     getRGBValues(roiMat);
 }
 
-QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
+QPixmap ToolWindow::Mat2QPixmap(const cv::Mat &mat)
 {
-    Mat rgb;
+    cv::Mat rgb;
     QPixmap p;
 	
     cvtColor(mat, rgb, CV_BGR2RGB);
@@ -40,23 +40,23 @@ QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
 }
 
 //Ausgabe für Vector
-std::ostream &operator<<(std::ostream &os, const Vec3b &v)
+std::ostream &operator<<(std::ostream &os, const cv::Vec3b &v)
 {
 	return os<<"("<<static_cast<unsigned>(v.val[0])<<", "<<static_cast<unsigned>(v.val[1])<<", "<<static_cast<unsigned>(v.val[2])<<")";
 }
 
-void ToolWindow::getRGBValues(const Mat &mat)
+void ToolWindow::getRGBValues(const cv::Mat &mat)
 {
 
-    Mat image = mat;
+    cv::Mat image = mat;
 
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-			rgbMap[image.at<Vec3b>(i, j)]++;
+			rgbMap[image.at<cv::Vec3b>(i, j)]++;
         }
     }
 
-	std::cout<<"rgbMap Size: "<<rgbMap.size()<<std::endl;
+	std::cout<<"rgbMap cv::Size: "<<rgbMap.size()<<std::endl;
 	
 	/*for(const auto &v:rgbMap){
 		std::cout<<"Vector: "<<v.first<< "| "<<v.second<<std::endl;
