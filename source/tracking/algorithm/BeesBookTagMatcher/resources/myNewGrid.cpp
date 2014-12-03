@@ -238,8 +238,9 @@ void myNewGrid::updateParam()
 	updateAxes();
 	//the angles of the ellipse and the grid are calculated for displaying purposes
 	angleGrid = (phi-alpha-M_PI/2)*180/M_PI;
+	//std::cout << "angleGrid " << angleGrid << std::endl;
 	angleTag = -phi * 180 / M_PI;
-	
+	//std::cout << "angleTag " << angleTag << std::endl;
 	//std::cout << std::endl << "From updateParameters " << std::endl;
 
 	updatePoints();
