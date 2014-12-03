@@ -39,7 +39,7 @@ void ParticleParams::initParamsFrame()
 	_minScoreSlide         = new DoubleSpinBoxWithSlider(p, layout, "Minimum Score",            0.,  100., _minScore);
 	_maxBucketPartSlide    = new SpinBoxWithSlider(      p, layout, "Maximum Bucket Particles", 0 ,  100 , _maxParticlesPerBucket);
 	_bucketSizeSlide       = new SpinBoxWithSlider(      p, layout, "Bucket size",              0 , 1000 , _bucketSize);
-	_gaussianBlurSizeSlide = new SpinBoxWithSlider(      p, layout, "Gaussian Blur Size",       1 ,   21 , _gaussianBlurSize, 2);
+	_gaussianBlurSizeSlide = new SpinBoxWithSlider(      p, layout, "Gaussian Blur cv::Size",       1 ,   21 , _gaussianBlurSize, 2);
 	_wiggleDistanceSlide   = new DoubleSpinBoxWithSlider(p, layout, "Particle Wiggle Distance", 0.,   20., _particleWiggleDistance);
 	_numClustersSlide      = new SpinBoxWithSlider(      p, layout, "Number of Clusters",       0 ,   20 , _numClusters);
 
