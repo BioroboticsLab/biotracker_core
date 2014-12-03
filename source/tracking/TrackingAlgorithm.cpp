@@ -31,3 +31,4 @@ void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseWheelEvent		( QWheelEvent * )	{}
 std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()	{ return std::make_shared<QWidget>(); }
 std::shared_ptr<QWidget> TrackingAlgorithm::getParamsWidget()	{ return std::make_shared<QWidget>(); }
+

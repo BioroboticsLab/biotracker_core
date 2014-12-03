@@ -471,6 +471,10 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
         assert(_tracker);
         _tracker->loadObjects(std::move(storedObjects));
 
+		//init tracking Alg
+		_tracker->setCurrentFrameNumber(_currentFrame);
+		_tracker->setVideoPaused(_videoPaused);
+
         connectTrackingAlg(_tracker);
     }
 
@@ -498,10 +502,10 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		ui.videoView, SLOT( getCurrentScreen() ));
 	QObject::connect(tracker.get(), SIGNAL( forceTracking() ),
 		_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
-	QObject::connect(tracker.get(), SIGNAL(requestFrameNumber()),
-		_trackingThread.get(), SLOT( getFrameNumber() ));
-	QObject::connect(tracker.get(), SIGNAL(isVideoPaused()),
-		this, SLOT( isVideoPaused() ));
+	QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ),
+		tracker.get(), SLOT( setCurrentFrameNumber(int) ));
+	QObject::connect(this, SIGNAL( videoPause(bool) ),
+		tracker.get(), SLOT(setVideoPaused(bool)));
 	
 	if(_tracker)
 	{
