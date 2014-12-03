@@ -2,7 +2,7 @@
 
 namespace CONFIGPARAM
 {
-static const std::string CONFIGURATION_FILE = "./config.ini";
+static const std::string CONFIGURATION_FILE = "./config.json";
 }
 
 namespace TRACKERPARAM {
