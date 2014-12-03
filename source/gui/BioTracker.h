@@ -139,8 +139,6 @@ signals:
 
 	//change tracking algorithm
     void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
-
-
 };
 
 #endif // BioTracker_H
