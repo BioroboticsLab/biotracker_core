@@ -206,6 +206,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 	if(frameNumber >= 0 && frameNumber <= videoLength)
 	{
 		_frameNumber = frameNumber;		
+		if (_tracker) _tracker->setCurrentFrameNumber(frameNumber);
 		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
 		if(_pictureMode)
 		{
@@ -228,8 +229,10 @@ void TrackingThread::incrementFrameNumber()
 {
 	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
 	QMutexLocker locker(&frameNumberMutex);
-	if(_frameNumber < videoLength)
+	if(_frameNumber < videoLength) {
 		++_frameNumber;
+		_tracker->setCurrentFrameNumber(_frameNumber);
+	}
 }
 
 void TrackingThread::nextFrame()
@@ -275,9 +278,9 @@ void TrackingThread::doTracking()
     {
 		_tracker->track( _frameNumber, _frame);
     }
-    catch(std::exception&)
+	catch(const std::exception& err)
     {
-        emit notifyGUI("critical error in selected tracking algorithm!",MSGS::FAIL);
+		emit notifyGUI("critical error in selected tracking algorithm: " + std::string(err.what()), MSGS::FAIL);
     }
 }
 void TrackingThread::doTrackingAndUpdateScreen()
