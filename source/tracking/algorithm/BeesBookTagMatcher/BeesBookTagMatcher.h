@@ -1,6 +1,8 @@
 #ifndef BeesBookTagMatcher_H
 #define BeesBookTagMatcher_H
 
+#include <cstdint>
+
 #include <opencv2/opencv.hpp>
 
 #include <boost/optional.hpp>
@@ -15,12 +17,16 @@ private:
 	std::shared_ptr<Grid> _activeGrid;
 	boost::optional<ulong>     _activeFrameNumber;
 
-	bool _ready;     // Ready for a new tag --Ctrl + LCM--
-	bool _setTag;    // a new set of points is being configured
-	bool _setP0;     // Set P0 --Left Click and drag--
-	bool _setP1;     // Set P1 --Left Click and drag--
-	bool _setP2;     // Set P2 --Left Click and drag--
-	bool _setOrient; // to modify exclusively the tag orientation.
+	enum class State : uint8_t {
+		Ready = 0, // Ready for a new tag --Ctrl + LCM--
+		SetTag,    // a new set of points is being configured
+		SetP0,     // Set P0 --Left Click and drag--
+		SetP1,     // Set P1 --Left Click and drag--
+		SetP2,     // Set P2 --Left Click and drag--
+	};
+
+	State _currentState;
+	bool _setOnlyOrient; // to modify exclusively the tag orientation.
 
 	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
 
@@ -55,7 +61,9 @@ private:
 	void cancelTag();
 
 	// function that calculates the distance between two points
-	double dist(cv::Point p1, cv::Point p2);
+	double dist(cv::Point p1, cv::Point p2) const;
+
+	double getAlpha() const;
 
 public:
 	BeesBookTagMatcher(Settings &settings, std::string &serializationPathName, QWidget *parent);
