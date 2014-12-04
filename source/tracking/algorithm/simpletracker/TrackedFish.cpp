@@ -1,7 +1,7 @@
 #include "TrackedFish.h"
 
 #include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
 
 void TrackedFish::setNextPosition(cv::Point2f position) {
     _age_of_last_known_position = 1;

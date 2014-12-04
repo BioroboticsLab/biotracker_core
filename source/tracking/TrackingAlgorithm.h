@@ -9,7 +9,7 @@
 #include <QWidget>
 #include <QMouseEvent>
 
-#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
 #include <cereal/types/polymorphic.hpp>
 
 #include "source/settings/Messages.h"
