@@ -8,7 +8,13 @@
 #include "source/tracking/algorithm/algorithms.h"
 
 namespace {
-    auto _ = Algorithms::Registry::getInstance().register_tracker_type<BeesBookTagMatcher>("BeesBook Tag Matcher");
+auto _ = Algorithms::Registry::getInstance().register_tracker_type<
+		BeesBookTagMatcher>("BeesBook Tag Matcher");
+
+static const cv::Scalar COLOR_BLUE   = cv::Scalar(255, 0, 0);
+static const cv::Scalar COLOR_RED    = cv::Scalar(0, 0, 255);
+static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
+static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 }
 
 BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent )
@@ -43,26 +49,22 @@ void BeesBookTagMatcher::track		( ulong frameNumber, cv::Mat& )
 
 void BeesBookTagMatcher::paint		( cv::Mat& image )
 {
-	if (!_trackedObjects.empty())
-	{
+	if (!_trackedObjects.empty()) {
 		drawSetTags(image);
 	}
-	if (_setTag)
-	{
+	if (_setTag) {
 		drawOrientation(image, orient);
-	} else if(_activeGrid)
-	{		
+	} else if(_activeGrid) 	{
 		drawActiveTag(image);
-	}		
+	}
 }
-void BeesBookTagMatcher::reset		(){}
+void BeesBookTagMatcher::reset() {
+}
 
 //check if MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
-{
+void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	//check if LEFT button is clicked
-	if ( e->button() == Qt::LeftButton)
-	{		
+	if (e->button() == Qt::LeftButton) {
 		//check for SHIFT modifier
 		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
@@ -76,27 +78,24 @@ void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
 			}
 		}
 		//check for CTRL modifier
-		else if(Qt::ControlModifier == QApplication::keyboardModifiers())	//a new tag is generated
-		{
-			if (_ready)
-			{
+		else if (Qt::ControlModifier == QApplication::keyboardModifiers())//a new tag is generated
+				{
+			if (_ready) {
 				setTag(cv::Point(e->x(), e->y()));
 				_setP1 = true;
-			}			
+			}
 		}
 		//without modifier
-		else
-		{
-			if (_activeGrid) // The Tag is active and can now be modified
-			{
+		else {
+			if (_activeGrid) { // The Tag is active and can now be modified
 				//if clicked in one of the bit cells, its value is changed
 				const double distance = dist(_activeGrid->centerGrid, cv::Point(e->x(), e->y()));
 				if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
 					_activeGrid->updateID(cv::Point(e->x(), e->y()));
 				else
-					//if clicked on one of the set points, the point is activated
-					if (selectPoint(cv::Point(e->x(), e->y())))
-						emit update();
+				//if clicked on one of the set points, the point is activated
+				if (selectPoint(cv::Point(e->x(), e->y())))
+					emit update();
 				//otherwise checks if one of the other tags is selected
 				else
 					selectTag(cv::Point(e->x(), e->y()));
@@ -106,53 +105,44 @@ void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
 		}
 	}
 	//check if RIGHT button is clicked
-	if ( e->button() == Qt::RightButton)
-	{			
+	if (e->button() == Qt::RightButton) {
 		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{					
-		}			
+		if (Qt::ShiftModifier == QApplication::keyboardModifiers()) {
+		}
 		//check for CTRL modifier
-		if (Qt::ControlModifier == QApplication::keyboardModifiers())
-		{
+		if (Qt::ControlModifier == QApplication::keyboardModifiers()) {
 			cancelTag(cv::Point2f(e->x(), e->y())); //The Tag being currently configured is cancelled
 		}
-	}	
-	
+	}
+
 }
 //check if pointer MOVES
-void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
-{
+void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
 	if (_setTag) //Orientation of the tag is being set
 	{
-		orient[1] = cv::Point(e->x(), e->y());	
+		orient[1] = cv::Point(e->x(), e->y());
 		emit update();
-	}
-	else if (_setP0) //The tag is being translated
+	} else if (_setP0) //The tag is being translated
 	{			
 		_activeGrid->translation(cv::Point(e->x(), e->y()));
 		emit update();				
-	}
-	else if (_setP1) //The orientation of the tag is being modified
+	} else if (_setP1) //The orientation of the tag is being modified
 	{	
 		if (_setOrient)
 			_activeGrid->orientation(cv::Point(e->x(), e->y()));
 		else
 			setTheta(cv::Point(e->x(), e->y()));
 		emit update();
-	}	
-	else if (_setP2) //The space angle (theta) is being modified
-	{	
+	} else if (_setP2) //The space angle (theta) is being modified
+	{
 		setTheta(cv::Point(e->x(), e->y()));
 		emit update();
 	}
 }
 //check if MOUSE BUTTON IS RELEASED
-void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
-{
+void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 	// left button released
-	if (e->button() == Qt::LeftButton)
-	{	
+	if (e->button() == Qt::LeftButton) {
 		if (_setTag) //center and orientation of the tag were set.
 		{
 			_setTag = false;
@@ -162,9 +152,8 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 
 			//length of the vector is taked into consideration
 			setTheta(cv::Point(e->x(), e->y()));
-			_setP1 = false;			
-		}		
-		else if (_setP0)//the tag was translated
+			_setP1 = false;
+		} else if (_setP0) //the tag was translated
 		{
 			_setP0 = false;
 			_activeGrid->updateVectors();
@@ -183,8 +172,7 @@ void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
 		emit update();
 	}
 	// right button released
-	if (e->button() == Qt::RightButton)
-	{			
+	if (e->button() == Qt::RightButton) {
 	}
 }
 //check if WHEEL IS ACTIVE
@@ -193,7 +181,6 @@ void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * e)
 	if (_activeGrid) // The Grid is active for draging
 	{					
 			_activeGrid->scale = _activeGrid->scale + e->delta() / 96*0.05;		//scale variable is updated by 0.05
-			std::cout << "scale " << _activeGrid->scale << std::endl;
 			_activeGrid->updateAxes();
 			emit update();		
 	}	
@@ -217,7 +204,7 @@ void BeesBookTagMatcher::drawSetTags(cv::Mat& image)
 void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const std::vector<cv::Point>& orient)
 {
 	//std::cout << "DRAW ORIENTAION" << std::endl;
-	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);		//the orientation vector is printed in red
+	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);//the orientation vector is printed in red
 }
 //function that draws an active tag calling an instance of MyNewGrid
 void BeesBookTagMatcher::drawActiveTag(cv::Mat &image)
@@ -227,39 +214,39 @@ void BeesBookTagMatcher::drawActiveTag(cv::Mat &image)
 	_activeGrid->updatePoints();
 	for (int i = 0; i < 3; i++)
 	{
-		cv::circle(image, _activeGrid->absPoints[i], 1, cv::Scalar(0, 0, 255), 1); //the point is drawn in red
+		cv::circle(image, _activeGrid->absPoints[i], 1, COLOR_RED, 1); //the point is drawn in red
 	}
 	//active point in blue
+
 	if (_setP0)
-		cv::circle(image, _activeGrid->absPoints[0], 1, cv::Scalar(255, 0, 0), 1);
+		cv::circle(image, _activeGrid->absPoints[0], 1, COLOR_BLUE, 1);
 	else if (_setP1)
-		cv::circle(image, _activeGrid->absPoints[1], 1, cv::Scalar(255, 0, 0), 1);
+		cv::circle(image, _activeGrid->absPoints[1], 1, COLOR_BLUE, 1);
 	else if (_setP2)
-		cv::circle(image, _activeGrid->absPoints[2], 1, cv::Scalar(255, 0, 0), 1);
+		cv::circle(image, _activeGrid->absPoints[2], 1, COLOR_BLUE, 1);
 }
 
 //function that draws the tag while being rotated in space
 void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img)
 {
-	cv::ellipse(img, _activeGrid->absPoints[0], _activeGrid->axesTag, _activeGrid->angleTag, 0, 360, cv::Scalar(0, 255, 255), 1);
-	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0]+_activeGrid->realCoord[1], cv::Scalar(0, 0, 255), 1);	//the orientation vector is printed in red
-	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0]+_activeGrid->realCoord[2], cv::Scalar(0, 255, 0), 1);	//the redius vector is printed in green
+	cv::ellipse(img, _activeGrid->absPoints[0], _activeGrid->axesTag, _activeGrid->angleTag, 0, 360, COLOR_YELLOW, 1);
+	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0]+_activeGrid->realCoord[1], COLOR_RED, 1);	//the orientation vector is printed in red
+	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0]+_activeGrid->realCoord[2], COLOR_GREEN, 1);	//the redius vector is printed in green
 
 	for (int i = 0; i < 3; i++)
 	{
-		cv::circle(img, _activeGrid->absPoints[0]+_activeGrid->realCoord[i], 1, cv::Scalar(0, 0, 255), 1); //the point is drawn in red
+		cv::circle(img, _activeGrid->absPoints[0]+_activeGrid->realCoord[i], 1, COLOR_RED, 1); //the point is drawn in red
 	}
 	if (_setP1)
-		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[1], 1, cv::Scalar(255, 0, 0), 1);
+		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[1], 1, COLOR_BLUE, 1);
 	else if (_setP2)
-		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[2], 1, cv::Scalar(255, 0, 0), 1);
+		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[2], 1, COLOR_BLUE, 1);
 }
 
 //TAG CONFIGURATION FUNCTIONS
 
 //function called while setting the tag (it initializes orient vector)
-void BeesBookTagMatcher::setTag(cv::Point location)
-{
+void BeesBookTagMatcher::setTag(cv::Point location) {
 	//If there is an active Tag, this is pushed into the _Grids vector and a new Tag is generated
 	if (_activeGrid) {
 		TrackedObject object(_trackedObjects.size());
@@ -277,14 +264,12 @@ void BeesBookTagMatcher::setTag(cv::Point location)
 	return;
 }
 //function that allows P1 and P2 to be modified to calculate the tag's angle in space.
-void BeesBookTagMatcher::setTheta(cv::Point location)
-{
+void BeesBookTagMatcher::setTheta(cv::Point location) {
 	//std::cout << " --------------------------------------------------------------- " << std::endl;
-	double		prop;
-	double		angle;
+	double prop;
+	double angle;
 	//when P1 is being modified
-	if (_setP1)
-	{		
+	if (_setP1) {
 		prop = dist(_activeGrid->absPoints[0], location) / (_activeGrid->scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag
 		if (prop > 1)
 			prop = 1;
@@ -293,17 +278,14 @@ void BeesBookTagMatcher::setTheta(cv::Point location)
 		//P1 updates the orientation of the tag too.
 		_activeGrid->orientation(location);
 		_activeGrid->realCoord[1] = _activeGrid->polar2rect(prop*axisTag, _activeGrid->alpha);
-		//std::cout << "realCoord 1: x = " << _activeGrid->realCoord[1].x << ", y = " << _activeGrid->realCoord[1].y << "(New value)" << std::endl;
-		//std::cout << " test  --- " << _activeGrid->polar2rect(prop*axisTag, _activeGrid->alpha) << std::endl;
 	}
 	//when P2 is being modified
-	else if (_setP2)
-	{	
+	else if (_setP2) {
 		prop = dist(_activeGrid->absPoints[0], location) / (_activeGrid->scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag
 		if (prop > 1)
 			prop = 1;
 		else if (prop < 0.5)
-			prop = 0.5;		
+			prop = 0.5;
 		//P2 doesn't update alpha
 		angle = atan2(location.x - _activeGrid->centerGrid.x, location.y - _activeGrid->centerGrid.y) - M_PI / 2;
 		_activeGrid->realCoord[2] = _activeGrid->polar2rect(prop*axisTag, angle);
@@ -314,7 +296,6 @@ void BeesBookTagMatcher::setTheta(cv::Point location)
 	return;
 }
 
-
 //function that cancels the active tag and activates the previous one.
 void BeesBookTagMatcher::cancelTag(cv::Point2f location)
 {
@@ -322,13 +303,10 @@ void BeesBookTagMatcher::cancelTag(cv::Point2f location)
 	emit update();
 }
 
-
 //function that checks if one of the set Points is selected, returns true when one of the points is selected
-bool BeesBookTagMatcher::selectPoint(cv::Point location)
-{
+bool BeesBookTagMatcher::selectPoint(cv::Point location) {
 	bool answer = false;
-	for (int i = 0; i<3; i++)
-	{
+	for (int i = 0; i<3; i++) {
 		if (dist(location, _activeGrid->absPoints[i])<2) //check if the pointer is on one of the points
 		{
 			switch (i)
@@ -339,11 +317,11 @@ bool BeesBookTagMatcher::selectPoint(cv::Point location)
 				break;
 			case 1:
 				_setP1 = true;
-				answer = true;	
+				answer = true;
 				break;
 			case 2:
 				_setP2 = true;
-				answer = true;		
+				answer = true;
 				break;
 			default:
 				answer = false;
@@ -368,15 +346,6 @@ void BeesBookTagMatcher::selectTag(cv::Point location)
 		}
 
 	}
-}
-
-//AUXILIAR FUNCTION
-
-//function that calculates the distance between two points
-double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
-{	
-	diff = p1-p2;
-	return sqrt(diff.x*diff.x + diff.y*diff.y);
 }
 
 void BeesBookTagMatcher::storeCurrentActiveTag()
@@ -411,4 +380,14 @@ void BeesBookTagMatcher::unsetActive()
 	_setOrient = false;
 
 	emit update();
+}
+
+
+//AUXILIAR FUNCTION
+
+//function that calculates the distance between two points
+double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
+{	
+	diff = p1-p2;
+	return sqrt(diff.x*diff.x + diff.y*diff.y);
 }

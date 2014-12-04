@@ -130,9 +130,11 @@ void myNewGrid::updateAxes()
 //function that is called to set the binary ID
 void myNewGrid::updateID(cv::Point newID)
 {
+
+	cv::Point newIDRel = cv::Point(newID.x - (this->centerGrid.x - roiSize/2), newID.y - (this->centerGrid.y - roiSize/2));
 	for (int i = 0; i < 12; i++)
 	{
-		if (cv::pointPolygonTest(cellsContours[i], newID, 0) > 0) //check for every cell		
+		if (cv::pointPolygonTest(cellsContours[i], newIDRel, 0) > 0) //check for every cell
 			ID[i] = !ID[i]; //the current value of the cell is changed		
 	}	
 	return;
@@ -258,6 +260,13 @@ void myNewGrid::updateParam()
 //function that generates a vector of points for a specific cell from the grid
 std::vector<cv::Point> myNewGrid::renderGridCell(unsigned short cell)
 {
+	cv::Point2f center;
+
+	// if grid should be generated for drawing, the center is setted relative to the roi
+
+	center= cv::Point2f(roiSize/2,roiSize/2);
+
+
 	std::vector<cv::Point> globCont;
 	std::vector<cv::Point> globCont2;	
 
@@ -267,24 +276,24 @@ std::vector<cv::Point> myNewGrid::renderGridCell(unsigned short cell)
 		int arcStart = angleGrid+cell * 30;
 		int arcEnd = angleGrid+(cell + 1) * 30;
 		// outer arc
-		ellipse2Poly(centerGrid, cv::Size(axesGrid.width, axesGrid.height), angleTag, arcStart, arcEnd, 1, globCont);
+		ellipse2Poly(center, cv::Size(axesGrid.width, axesGrid.height), angleTag, arcStart, arcEnd, 1, globCont);
 		// inner arc
-		ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, arcStart, arcEnd, 1, globCont2);
+		ellipse2Poly(center, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, arcStart, arcEnd, 1, globCont2);
 		// join outer and inner arc
 		globCont.insert(globCont.end(), globCont2.rbegin(), globCont2.rend());	
 	}
 	// White semicircle
 	if (cell == 12)		
-		ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid+180, 1, globCont);
+		ellipse2Poly(center, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid+180, 1, globCont);
 	// Black semicircle
 	if (cell == 13)		
-		ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid-180, 1, globCont);
+		ellipse2Poly(center, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid-180, 1, globCont);
 	// Green diamater
 	if (cell == 14)
-	cv::ellipse2Poly(centerGrid, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid-180, 180, globCont);
+	cv::ellipse2Poly(center, cv::Size((IR/MR)*axesGrid.width,(IR/MR)*axesGrid.height), angleTag, angleGrid, angleGrid-180, 180, globCont);
 	// Outer perimeter
 	if (cell == 15)		
-		ellipse2Poly(centerGrid, axesTag, angleTag, 0, 360, 1, globCont);
+		ellipse2Poly(center, axesTag, angleTag, 0, 360, 1, globCont);
 
 	return globCont;
 }
@@ -294,6 +303,7 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 	// contour vector
 	std::vector<std::vector <cv::Point>> conts;	
 	cellsContours.clear();
+
 	//ites 0-11 bit cells
 	//ites 12 white semicircle
 	//ites 13 black semicircle
@@ -307,7 +317,7 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 		std::vector<cv::Point> subCont = renderGridCell(i);
 		conts.push_back(subCont);
 		//only the bit cells  and the tag perimter are stored in cellsContours
-		if (i<12 || i==15)			
+		if ((i<12 || i==15))
 			cellsContours.push_back(subCont);
 	}	
 	conts.push_back(std::vector<cv::Point>());	//empty vector to allow the first n vector to be printed VS-2012 error
@@ -316,32 +326,45 @@ std::vector<std::vector <cv::Point>> myNewGrid::renderFullTag()
 //function that draws a grid, active grids are printed in a different color.
 void myNewGrid::drawFullTag(cv::Mat &img, int active)
 {
+	int x = this->centerGrid.x - roiSize/2;
+	int y = this->centerGrid.y - roiSize/2;
+
+	//generate Mask for transparency
+		cv::Mat roi = img(cv::Rect(x,y, roiSize, roiSize));
+		cv::Mat mask;
+		roi.copyTo(mask);
+		double alpha = 0.3;
+
+
+		//grid is rendered with positions relative to the generated roi
 	std::vector<std::vector <cv::Point>> conts = renderFullTag();
+
 	//the twelve bit cells are drawn	
 	for (int i = 0; i<12; i++)
 	{
 		//each of the cells contour is colored according to its value
-		cv::drawContours(img, conts, i, cv::Scalar(ID[i] * 255, ID[i] * 255, ID[i] * 255), 1);
+		cv::drawContours(mask, conts, i, cv::Scalar(ID[i] * 255, ID[i] * 255, ID[i] * 255), 1);
 	}
 
 	//half white circle
-	cv::drawContours(img, conts, 12, cv::Scalar(255, 255, 255), 1);
+	cv::drawContours(mask, conts, 12, cv::Scalar(255, 255, 255), 1);
 	//half black circle
-	cv::drawContours(img, conts, 13, cv::Scalar(0, 0, 0), 1);
+	cv::drawContours(mask, conts, 13, cv::Scalar(0, 0, 0), 1);
 
 	//at the end the diameter is redrawn in green
-	cv::drawContours(img, conts, 14, cv::Scalar(0, 255, 0), 1);
+	cv::drawContours(mask, conts, 14, cv::Scalar(0, 255, 0), 1);
 
 	//an ellipse is drawn as the tag contour, color according to active parameter
 	if (active == 1) //the tag is active
-		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 255), 1);
+		cv::drawContours(mask, conts, 15, cv::Scalar(0, 255, 255), 1);
 	else if (active == 2) //the tag is already set
-		cv::drawContours(img, conts, 15, cv::Scalar(0, 255, 0), 1);
+		cv::drawContours(mask, conts, 15, cv::Scalar(0, 255, 0), 1);
 	else if (active == 3) //the tag hasn't been set yet
-		cv::drawContours(img, conts, 15, cv::Scalar(0, 0, 255), 1);
+		cv::drawContours(mask, conts, 15, cv::Scalar(0, 0, 255), 1);
+
+	cv::addWeighted(mask, alpha, roi, 1.0 - alpha , 0.0, roi);
 	return;
 }
-
 
 //function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
 cv::Point2f myNewGrid::polar2rect(double radius, double angle)
