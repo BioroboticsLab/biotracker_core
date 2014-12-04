@@ -1,12 +1,18 @@
 #include "myNewGrid.h"
-#include <QApplication>
 
-#include "cv.h"
+#include <iostream>
+#include <utility>
+
+#include <QApplication>
+#include <QPolygon>
+
+#include <opencv2/opencv.hpp>
+
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/archives/json.hpp>
+
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
-#include <iostream>
-#include <QPolygon>
-#include <utility>
 
 //default constructor
 //THIS IS CPP 11
@@ -15,7 +21,7 @@
 //{}
 //Tobias temporary fix:
 //void myNewGrid::init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id)
-void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
+void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId)
 {
 	scale		= Scale;						//new variable, is the scale of the tag referenced to axisTag (25 pixels)	
 	centerGrid	= CenterGrid;
@@ -29,6 +35,8 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
 	
 	axesGrid	= cv::Size2f (Scale*axisTag*(MR/OR),Scale*axisTag*(MR/OR)*cos(theta));
 	axesTag		= cv::Size2f (Scale*axisTag,Scale*axisTag*cos(theta));	
+
+	_objectId   = objectId;
 	
 	//The size of the vectors is set
 	absPoints.resize(3);
@@ -41,18 +49,18 @@ void myNewGrid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double 
 }
 //default constructor
 myNewGrid::myNewGrid()
-{	
-	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<bool>(12, 0));
+{
+	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<bool>(12, 0), 0);
 }
 //constructor with 1 parameter
-myNewGrid::myNewGrid(cv::Point2f CenterGrid, double Alpha)
+myNewGrid::myNewGrid(cv::Point2f CenterGrid, double Alpha, size_t objectId)
 {	
-	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<bool>(12, 0));
+	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<bool>(12, 0), objectId);
 }
 //constructor with 7 parameters
-myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id)
+myNewGrid::myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId)
 {
-	init(Scale, CenterGrid, Alpha, Theta, Phi, Id);
+	init(Scale, CenterGrid, Alpha, Theta, Phi, Id, objectId);
 }
 //destrucor
 myNewGrid::~myNewGrid(){}
@@ -343,3 +351,5 @@ cv::Point2f myNewGrid::polar2rect(double radius, double angle)
 	point.y = -radius * sin(angle);
 	return point;
 }
+
+CEREAL_REGISTER_TYPE(myNewGrid)

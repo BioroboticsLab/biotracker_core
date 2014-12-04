@@ -13,9 +13,14 @@
 #include <vector>
 #include <string>
 
+#include <cereal/cereal.hpp>
+#include <cereal/access.hpp>
+
 #include <math.h>
 #define _USE_MATH_DEFINES
 #include <bitset>
+
+#include <source/tracking/trackedObject/ObjectModel.h>
 
 // current tag design -- without inner border
 /** inner radius */
@@ -27,17 +32,37 @@
 
 #define axisTag 25
 
-class myNewGrid
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, cv::Point2f& point)
+{
+	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
+}
+
+template<class Archive>
+void serialize(Archive& archive, cv::Size2f& size)
+{
+	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
+}
+
+//template<class Archive>
+//void serialize(Archive& archive, cv::Scalar& scalar)
+//{
+//	archive(scalar.val);
+//}
+}
+
+class myNewGrid : public ObjectModel
 {
 public:
 	//initializer function
-	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);	
+	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId);
 	//default constructor
 	myNewGrid();
 	//constructor with 1 parameter
-	myNewGrid(cv::Point2f centerGrid, double Alpha);
+	myNewGrid(cv::Point2f centerGrid, double Alpha, size_t objectId);
 	//constructor with 7 parameters
-	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id);	
+	myNewGrid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId);
 	//destructor
 	~myNewGrid();
 
@@ -65,6 +90,8 @@ public:
 	std::vector<cv::Point2f>				absPoints;	//vector of points which are used by the user to define a new grid (absolute coordinates, relative to the image)	
 	std::vector<cv::Point2f>				relPoints;	//vector of points which are used by the user to define a new grid (coordinates relative to the center of the grid P0)	
 	std::vector<cv::Point2f>				realCoord;	//vector of points which are used by the user to define a new grid (relative and exact coordinates for computing purposes)
+
+	size_t                                  _objectId;
 	
 	//Object methods
 	//function that updates the set of 3 points that define a grid from parameters (for displaying pursoses).
@@ -106,6 +133,21 @@ public:
 
 	//function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
 	cv::Point2f polar2rect(double radius, double angle);
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar)
+	{
+		ar(CEREAL_NVP(centerGrid),
+		   CEREAL_NVP(axesGrid),
+		   CEREAL_NVP(axesTag),
+		   CEREAL_NVP(scale),
+		   CEREAL_NVP(alpha),
+		   CEREAL_NVP(theta),
+		   CEREAL_NVP(phi),
+		   CEREAL_NVP(ID));
+	}
 };
 
 #endif
