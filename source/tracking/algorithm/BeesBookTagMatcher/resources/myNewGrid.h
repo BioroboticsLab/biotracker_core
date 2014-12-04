@@ -30,6 +30,8 @@
 /** outer radius */
 #define OR 3
 
+#define roiSize 100
+
 #define axisTag 25
 
 namespace cereal {
@@ -124,7 +126,7 @@ public:
 	 * @ 14 diameter
 	 * @ 15 tag perimeter
 	 */
-	std::vector<cv::Point> renderGridCell(unsigned short cell);	
+	std::vector<cv::Point> renderGridCell(unsigned short cell);
 	
 	//function that renders all the necessary cells in a Tag calling renderGridCell
 	std::vector<std::vector <cv::Point>> renderFullTag();
