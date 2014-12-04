@@ -13,7 +13,7 @@
 #include "source/tracking/algorithm/algorithms.h"
 
 #include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
 BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
@@ -457,7 +457,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
             std::cout << "Trying to restore from: " << path << std::endl;
             {
                 std::ifstream is(path);
-                cereal::XMLInputArchive ar(is);
+				cereal::JSONInputArchive ar(is);
                 ar(storedObjects);
             }
         } else
