@@ -4,29 +4,21 @@
 #ifndef BeesBookTagMatcher_H
 #define BeesBookTagMatcher_H
 
-#include "cv.h"
+#include <opencv2/opencv.hpp>
+
+#include <boost/optional.hpp>
+
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/resources/myGrid.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/myNewGrid.h"
-#include <math.h>
-#define _USE_MATH_DEFINES
 
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 	private:
-
-		//////////////// TEST FLAGS!!!! ---------------------
-						
-		myNewGrid			g;				//active Grid
-		myNewGrid			gtemp;			//auxiliar instance for drwaing grids already in vector
-
-		std::vector<myNewGrid> _Grids;		//vector of set grids
+		std::shared_ptr<myNewGrid> _activeGrid;
+		boost::optional<ulong>     _activeFrameNumber;
 		
-		//------ NEW FLAGS
 		bool _ready;						//Ready for a new tag --Ctrl + LCM--
 		bool _setTag;						//a new set of points is being configured
-		
-		bool _activeTag;					//a new Tag has been set and can now be modified
 		
 		bool _setP0;						//Set P0 --Left Click and drag--
 		bool _setP1;						//Set P1 --Left Click and drag--
@@ -40,9 +32,9 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		cv::Point prevPosition;				//auxiliar variable
 
 		// FUNCTIONS		
-		void drawSetTags(cv::Mat image);										//function that draws the Tags set so far calling instances of MyNewGrid.
-		void drawOrientation(cv::Mat image, std::vector<cv::Point> orient);		//function that draws the orientation vector while being set.		
-		void drawActiveTag(cv::Mat image);										//function that draws an active tag calling an instance of MyNewGrid
+		void drawSetTags(cv::Mat &image);										//function that draws the Tags set so far calling instances of MyNewGrid.
+		void drawOrientation(cv::Mat& image, const std::vector<cv::Point>& orient);		//function that draws the orientation vector while being set.
+		void drawActiveTag(cv::Mat& image);										//function that draws an active tag calling an instance of MyNewGrid
 		////
 		void drawSettingTheta(cv::Mat &img);									//function that draws the tag while being rotated in space
 
@@ -53,6 +45,10 @@ class BeesBookTagMatcher : public TrackingAlgorithm
 		
 		bool selectPoint(cv::Point location);									//function that checks if one of the set Points is selected, returns true when one of the points is selected
 		void selectTag(cv::Point location);										//function that checks if one of the already set Tags is selected.
+
+		void storeCurrentActiveTag();
+		void unsetActive();
+
 		//auxiliar function
 		double dist(cv::Point p1, cv::Point p2);								//function that calculates the distance between two points
 		
