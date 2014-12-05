@@ -19,9 +19,9 @@ public:
 	//default constructor
 	Grid();
 	//constructor with 1 parameter
-	Grid(cv::Point2f centerGrid, double Alpha, size_t objectId);
+	Grid(const cv::Point2f& centerGrid, double Alpha, size_t objectId);
 	//constructor with 7 parameters
-	Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+	Grid(double Scale, const cv::Point2f& CenterGrid, double Alpha, double Theta,
 	     double Phi, std::vector<boost::tribool> Id, size_t objectId);
 
 	//destructor
@@ -63,16 +63,16 @@ public:
 	// function that updates the set of 3 points that define a grid from parameters (for arithmetic purposes).
 	void updateVectors();
 	// function that updates parameters when the tag is translated.
-	void translation(cv::Point newCenter);
+	void translation(const cv::Point& newCenter);
 	// function that updates parameters when the tag orientation is modified.
-	void orientation(cv::Point newP1);
+	void orientation(const cv::Point& newP1);
 	// function that updates the mayor axis and the minor axis using theta and scale as parameters.
 	void updateAxes();
 	// function that is called to set the binary ID
-	void updateID(cv::Point newID, bool indeterminate);
+	void updateID(const cv::Point& newID, bool indeterminate);
 
 	// function that determines coordinates for a point on an ellipse's contour (for arithmetic purposes).
-	cv::Point2f ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T);
+	cv::Point2f ellipsePoint(const cv::Point2f& Center, const cv::Size2f& SemiAxes, double Phi, double T) const;
 
 	// function that calculates the vector of parameters of the grid from points configuration.
 	void updateParam();
@@ -87,15 +87,15 @@ public:
 	 * @ 14 diameter
 	 * @ 15 tag perimeter
 	 */
-	std::vector<cv::Point> renderGridCell(unsigned short cell);
+	std::vector<cv::Point> renderGridCell(unsigned short cell) const;
 
 	// function that renders all the necessary cells in a Tag calling renderGridCell
-	std::vector < std::vector < cv::Point >> renderFullTag();
+	std::vector<std::vector<cv::Point>> renderFullTag();
 	// function that draws a grid, active grids are printed in a different color.
 	void drawFullTag(cv::Mat &img, int active);
 
 	// function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
-	cv::Point2f polar2rect(double radius, double angle);
+	cv::Point2f polar2rect(double radius, double angle) const;
 
 	cv::Scalar tribool2scalar(const boost::tribool& tribool) const;
 

@@ -30,7 +30,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 	storeCurrentActiveTag();
 }
 
-void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat&)
+void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 {
 	storeCurrentActiveTag();
 
@@ -206,7 +206,7 @@ void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
 //DRAWING FUNCTIONS
 
 //function that draws the set Tags so far.
-void BeesBookTagMatcher::drawSetTags(cv::Mat& image)
+void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 {
 	for (const TrackedObject& trackedObject : _trackedObjects) {
 		if (trackedObject.count(_currentFrameNumber)) {
@@ -217,13 +217,13 @@ void BeesBookTagMatcher::drawSetTags(cv::Mat& image)
 }
 
 //function that draws the orientation vector while being set.
-void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const std::vector<cv::Point>& orient)
+void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const std::vector<cv::Point>& orient) const
 {
 	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);        //the orientation vector is printed in red
 }
 
 //function that draws an active tag calling an instance of Grid
-void BeesBookTagMatcher::drawActiveTag(cv::Mat &image)
+void BeesBookTagMatcher::drawActiveTag(cv::Mat &image) const
 {
 	_activeGrid->drawFullTag(image,1);         //the grid is drawn as active
 	_activeGrid->updatePoints();
@@ -249,7 +249,7 @@ void BeesBookTagMatcher::drawActiveTag(cv::Mat &image)
 }
 
 //function that draws the tag while being rotated in space
-void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img)
+void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img) const
 {
 	cv::ellipse(img, _activeGrid->absPoints[0], _activeGrid->axesTag, _activeGrid->angleTag, 0, 360, COLOR_YELLOW, 1);
 	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0] + _activeGrid->realCoord[1], COLOR_RED, 1);          //the orientation vector is printed in red
@@ -274,7 +274,7 @@ void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img)
 //TAG CONFIGURATION FUNCTIONS
 
 //function called while setting the tag (it initializes orient vector)
-void BeesBookTagMatcher::setTag(cv::Point location) {
+void BeesBookTagMatcher::setTag(const cv::Point& location) {
 	//If there is an active Tag, this is pushed into the _Grids vector and a new Tag is generated
 	if (_activeGrid) {
 		TrackedObject object(_trackedObjects.size());
@@ -292,7 +292,7 @@ void BeesBookTagMatcher::setTag(cv::Point location) {
 }
 
 //function that allows P1 and P2 to be modified to calculate the tag's angle in space.
-void BeesBookTagMatcher::setTheta(cv::Point location) {
+void BeesBookTagMatcher::setTheta(const cv::Point &location) {
 	double prop;
 	double angle;
 
@@ -328,7 +328,7 @@ void BeesBookTagMatcher::setTheta(cv::Point location) {
 }
 
 //function that checks if one of the set Points is selected, returns true when one of the points is selected
-bool BeesBookTagMatcher::selectPoint(cv::Point location) {
+bool BeesBookTagMatcher::selectPoint(const cv::Point& location) {
 	for (int i = 0; i < 3; i++) {
 		if (dist(location, _activeGrid->absPoints[i]) < 2) //check if the pointer is on one of the points
 		{
@@ -350,7 +350,7 @@ bool BeesBookTagMatcher::selectPoint(cv::Point location) {
 }
 
 //function that checks if one of the already set Tags is selected.
-void BeesBookTagMatcher::selectTag(cv::Point location)
+void BeesBookTagMatcher::selectTag(const cv::Point& location)
 {
 	for (const TrackedObject& trackedObject : _trackedObjects) {
 		std::shared_ptr<Grid> grid = trackedObject.maybeGet<Grid>(_currentFrameNumber);
@@ -393,7 +393,7 @@ void BeesBookTagMatcher::cancelTag()
 //AUXILIAR FUNCTION
 
 //function that calculates the distance between two points
-double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2) const
+double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 {
 	const cv::Point diff = p1 - p2;
 	return sqrt(diff.x * diff.x + diff.y * diff.y);

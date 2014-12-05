@@ -34,28 +34,28 @@ private:
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
 	// function that draws the Tags set so far calling instances of Grid.
-	void drawSetTags(cv::Mat &image);
+	void drawSetTags(cv::Mat &image) const;
 
 	// function that draws the orientation vector while being set.
-	void drawOrientation(cv::Mat& image, const std::vector<cv::Point>& _orient);
+	void drawOrientation(cv::Mat& image, const std::vector<cv::Point>& _orient) const;
 
 	// function that draws an active tag calling an instance of Grid
-	void drawActiveTag(cv::Mat& image);
+	void drawActiveTag(cv::Mat& image) const;
 
 	// function that draws the tag while being rotated in space
-	void drawSettingTheta(cv::Mat &img);
+	void drawSettingTheta(cv::Mat &img) const;
 
 	// function called while setting the tag (it initializes orient vector)
-	void setTag(cv::Point location);
+	void setTag(const cv::Point& location);
 
 	// function that allows P1 and P2 to be modified to calculate the tag's angle in space.
-	void setTheta(cv::Point location);
+	void setTheta(const cv::Point& location);
 
 	// function that checks if one of the set Points is selected, returns true when one of the points is selected
-	bool selectPoint(cv::Point location);
+	bool selectPoint(const cv::Point& location);
 
 	// function that checks if one of the already set Tags is selected.
-	void selectTag(cv::Point location);
+	void selectTag(const cv::Point& location);
 
 	// store currently active tag in serialzation object list
 	void storeCurrentActiveTag();
@@ -64,7 +64,7 @@ private:
 	void cancelTag();
 
 	// function that calculates the distance between two points
-	double dist(cv::Point p1, cv::Point p2) const;
+	double dist(const cv::Point& p1, const cv::Point& p2) const;
 
 	double getAlpha() const;
 
@@ -72,15 +72,15 @@ public:
 	BeesBookTagMatcher(Settings &settings, std::string &serializationPathName, QWidget *parent);
 	~BeesBookTagMatcher();
 
-	void track(ulong frameNumber, cv::Mat & frame);
-	void paint(cv::Mat& image);
-	void reset();
+	void track(ulong frameNumber, cv::Mat& frame) override;
+	void paint(cv::Mat& image) override;
+	void reset() override;
 
 public slots:
-	void mouseMoveEvent(QMouseEvent * e);
-	void mousePressEvent(QMouseEvent * e);
-	void mouseReleaseEvent(QMouseEvent * e);
-	void mouseWheelEvent(QWheelEvent * e);
+	void mouseMoveEvent(QMouseEvent * e) override;
+	void mousePressEvent(QMouseEvent * e) override;
+	void mouseReleaseEvent(QMouseEvent * e) override;
+	void mouseWheelEvent(QWheelEvent * e) override;
 };
 
 #endif
