@@ -270,7 +270,7 @@ void BioTracker::setPlayfieldEnabled(bool enabled)
 	ui.button_stop->setEnabled(enabled);
 }
 
-void BioTracker::closeEvent(QCloseEvent *event)
+void BioTracker::closeEvent(QCloseEvent* /* event */)
 {
 	{
 		QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
