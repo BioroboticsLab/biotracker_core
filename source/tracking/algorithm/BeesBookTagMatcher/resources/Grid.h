@@ -1,13 +1,15 @@
 #ifndef Grid_H_
 #define Grid_H_
 
-#include <opencv2/opencv.hpp>
-//tools
 #include <string>
 #include <vector>
 
+#include <boost/logic/tribool.hpp>
+
 #include <cereal/access.hpp>
 #include <cereal/cereal.hpp>
+
+#include <opencv2/opencv.hpp>
 
 #include <source/tracking/trackedObject/ObjectModel.h>
 
@@ -23,19 +25,27 @@ void serialize(Archive& archive, cv::Size2f& size)
 {
 	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
 }
+
+template<class Archive>
+void serialize(Archive& archive, boost::logic::tribool& tribool)
+{
+	archive(CEREAL_NVP(tribool.value));
+}
 }
 
 class Grid : public ObjectModel
 {
 public:
 	//initializer function
-	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId);
+	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+	          double Phi, std::vector<boost::tribool> Id, size_t objectId);
 	//default constructor
 	Grid();
 	//constructor with 1 parameter
 	Grid(cv::Point2f centerGrid, double Alpha, size_t objectId);
 	//constructor with 7 parameters
-	Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId);
+	Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+	     double Phi, std::vector<boost::tribool> Id, size_t objectId);
 	//destructor
 	~Grid();
 
@@ -56,7 +66,7 @@ public:
 	double phi;             // this angle denotes the orientation of the ellipses (both ellipses
 							// should have the same phi parameter) (measured from the y-axis)
 
-	std::vector<bool> ID;
+	std::vector<boost::tribool> ID;
 
 	std::vector<std::vector<cv::Point>> cellsContours;
 
@@ -81,7 +91,7 @@ public:
 	// function that updates the mayor axis and the minor axis using theta and scale as parameters.
 	void updateAxes();
 	// function that is called to set the binary ID
-	void updateID(cv::Point newID);
+	void updateID(cv::Point newID, bool indeterminate);
 
 	// function that determines coordinates for a point on an ellipse's contour (for arithmetic purposes).
 	cv::Point2f ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T);
@@ -108,6 +118,8 @@ public:
 
 	// function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
 	cv::Point2f polar2rect(double radius, double angle);
+
+	cv::Scalar tribool2scalar(const boost::tribool& tribool) const;
 
 private:
 	friend class cereal::access;

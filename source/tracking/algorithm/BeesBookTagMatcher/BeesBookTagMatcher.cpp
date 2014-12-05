@@ -76,20 +76,25 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 			}
 		}
 		//check for CTRL modifier
-		else if (Qt::ControlModifier == QApplication::keyboardModifiers())    //a new tag is generated
+		else if (Qt::ControlModifier == QApplication::keyboardModifiers())
 		{
 			if (_currentState == State::Ready) {
+				//a new tag is generated
 				setTag(cv::Point(e->x(), e->y()));
 				_currentState = State::SetTag;
 			}
 		}
-		//without modifier
 		else {
-			if (_activeGrid) {                         // The Tag is active and can now be modified
+			// The Tag is active and can now be modified
+			if (_activeGrid) {
 				//if clicked in one of the bit cells, its value is changed
 				const double distance = dist(_activeGrid->centerGrid, cv::Point(e->x(), e->y()));
+				//check for CTRL+SHIFT modifier
+				const bool indeterminate =
+				    QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+				    QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
 				if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
-					_activeGrid->updateID(cv::Point(e->x(), e->y()));
+					_activeGrid->updateID(cv::Point(e->x(), e->y()), indeterminate);
 				else
 				//if clicked on one of the set points, the point is activated
 				if (selectPoint(cv::Point(e->x(), e->y())))
@@ -167,8 +172,6 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 			break;
 		//orientation of the marker was modified
 		case State::SetP2:
-			//TODO
-			//_setP2 = false;
 			_currentState = State::Ready;
 			_activeGrid->updateVectors();
 			break;
