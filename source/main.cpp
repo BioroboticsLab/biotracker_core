@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 		Settings settings;
 
 		app.setOrganizationName("Biorobotics Lab / FU Berlin");
-		app.setApplicationName("Bio Tracker");
+		app.setApplicationName("BioTracker");
 
 		BioTracker w(settings);
 		w.show();
