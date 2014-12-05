@@ -23,7 +23,7 @@ BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags
 {
 	ui.setupUi(this);
 	setPlayfieldEnabled(false);
-    init();
+	init();
 }
 
 BioTracker::~BioTracker()
@@ -66,6 +66,15 @@ void BioTracker::init(){
 	} else if (file_exist(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE))) {
 		const QStringList files(QString::fromStdString(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE)));
 		initPicture(std::move(files));
+	}
+
+	{
+		QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
+		if (file.open(QIODevice::ReadOnly)) restoreGeometry(file.readAll());
+	}
+	{
+		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
+		if (file.open(QIODevice::ReadOnly)) restoreState(file.readAll());
 	}
 }
 
@@ -260,6 +269,19 @@ void BioTracker::setPlayfieldEnabled(bool enabled)
 	ui.button_previousFrame->setEnabled(enabled);
 	ui.button_stop->setEnabled(enabled);
 }
+
+void BioTracker::closeEvent(QCloseEvent *event)
+{
+	{
+		QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
+		if (file.open(QIODevice::WriteOnly)) file.write(saveGeometry());
+	}
+	{
+		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
+		if (file.open(QIODevice::WriteOnly)) file.write(saveState());
+	}
+}
+
 void BioTracker::stepCaptureForward()
 {
 	//if video not yet loaded, load it now!

@@ -8,7 +8,7 @@
 #include <QtCore/QString>
 #include <QTemporaryFile>
 
-//Bio Tracker
+//BioTracker
 #include "source/tracking/algorithm/algorithms.h"
 
 #include "source/ui_BioTracker.h"
@@ -105,6 +105,7 @@ private:
 	void initPicture(QStringList filenames);
     void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
+	void closeEvent(QCloseEvent* event) override;
 
     std::shared_ptr<TrackingAlgorithm> _tracker;
     std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
