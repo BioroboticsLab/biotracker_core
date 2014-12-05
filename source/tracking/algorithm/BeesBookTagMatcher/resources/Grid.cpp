@@ -28,12 +28,12 @@ Grid::Grid()
 {}
 
 //constructor with 1 parameter
-Grid::Grid(cv::Point2f CenterGrid, double Alpha, size_t objectId)
+Grid::Grid(const cv::Point2f &CenterGrid, double Alpha, size_t objectId)
     : Grid(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<boost::tribool>(12, false), objectId)
 {}
 
 //constructor with 7 parameters
-Grid::Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+Grid::Grid(double Scale, const cv::Point2f &CenterGrid, double Alpha, double Theta,
            double Phi, std::vector<boost::tribool> Id, size_t objectId)
     : centerGrid(CenterGrid)
     , axesGrid(Scale * AXISTAG * (MR / OR),Scale * AXISTAG * (MR / OR) * cos(Theta))
@@ -91,7 +91,7 @@ void Grid::updateVectors()
 }
 
 //Method that updates the parameters when the tag is translated.
-void Grid::translation(cv::Point newCenter)
+void Grid::translation(const cv::Point &newCenter)
 {
 	centerGrid = newCenter;
 	updatePoints();
@@ -99,7 +99,7 @@ void Grid::translation(cv::Point newCenter)
 }
 
 //Method that updates parameters when the tag orientation is modified.
-void Grid::orientation(cv::Point newP1)
+void Grid::orientation(const cv::Point &newP1)
 {
 	alpha     = atan2(newP1.x - centerGrid.x, newP1.y - centerGrid.y) - M_PI / 2;
 	angleGrid = (phi - alpha - M_PI / 2) * 180 / M_PI;
@@ -120,7 +120,7 @@ void Grid::updateAxes()
 }
 
 //function that is called to set the binary ID
-void Grid::updateID(cv::Point newID, bool indeterminate)
+void Grid::updateID(const cv::Point &newID, bool indeterminate)
 {
 	cv::Point newIDRel = cv::Point(newID.x - (centerGrid.x - ROISIZE / 2), newID.y - (centerGrid.y - ROISIZE / 2));
 	for (int i = 0; i < 12; i++) {
@@ -139,7 +139,7 @@ void Grid::updateID(cv::Point newID, bool indeterminate)
 //SemiAxes -- cv::Size2f -- a = SemiAxes.width, b = SemiAxes.height
 //Phi -- double -- phi (angle between the X-axis and a) = Phi -- in degrees, CLOCKWISE
 //T -- double -- excentric anomally = T -- in degrees, CLOCKWISE
-cv::Point2f Grid::ellipsePoint(cv::Point2f Center, cv::Size2f SemiAxes, double Phi, double T)
+cv::Point2f Grid::ellipsePoint(const cv::Point2f &Center, const cv::Size2f &SemiAxes, double Phi, double T) const
 {
 	cv::Point2f ellPoint;
 	//Conversion to radians
@@ -251,7 +251,7 @@ void Grid::updateParam()
 }
 
 //function that generates a vector of points for a specific cell from the grid
-std::vector<cv::Point> Grid::renderGridCell(unsigned short cell)
+std::vector<cv::Point> Grid::renderGridCell(unsigned short cell) const
 {
 	cv::Point2f center;
 
@@ -358,7 +358,7 @@ void Grid::drawFullTag(cv::Mat &img, int active)
 }
 
 //function that obtains the cartesians coordinates from polar elements (for arithmetic purposes).
-cv::Point2f Grid::polar2rect(double radius, double angle)
+cv::Point2f Grid::polar2rect(double radius, double angle) const
 {
 	cv::Point2f point;
 	point.x = radius * cos(angle);
