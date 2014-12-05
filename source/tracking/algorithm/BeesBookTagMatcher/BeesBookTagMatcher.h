@@ -1,6 +1,7 @@
 #ifndef BeesBookTagMatcher_H
 #define BeesBookTagMatcher_H
 
+#include <chrono>
 #include <cstdint>
 
 #include <opencv2/opencv.hpp>
@@ -29,6 +30,8 @@ private:
 	bool _setOnlyOrient; // to modify exclusively the tag orientation.
 
 	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
+
+	std::chrono::system_clock::time_point _lastMouseEventTime;
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image);

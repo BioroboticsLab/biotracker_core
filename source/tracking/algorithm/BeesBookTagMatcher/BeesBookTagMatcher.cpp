@@ -22,6 +22,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 	: TrackingAlgorithm(settings, serializationPathName, parent)
 	, _currentState(State::Ready)
 	, _setOnlyOrient(false)
+    , _lastMouseEventTime(std::chrono::system_clock::now())
 {}
 
 BeesBookTagMatcher::~BeesBookTagMatcher()
@@ -108,31 +109,36 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 		}
 		//check for CTRL modifier
 		if (Qt::ControlModifier == QApplication::keyboardModifiers()) {
-			cancelTag();                         //The Tag being currently configured is cancelled
+			cancelTag(); //The Tag being currently configured is cancelled
+			emit update();
 		}
 	}
 }
 
 //check if pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
-	switch (_currentState) {
-	case State::SetTag:
-		_orient[1] = cv::Point(e->x(), e->y());
-		break;
-	case State::SetP0:
-		_activeGrid->translation(cv::Point(e->x(), e->y()));
-		break;
-	case State::SetP1:
-		if (_setOnlyOrient) _activeGrid->orientation(cv::Point(e->x(), e->y()));
-		else setTheta(cv::Point(e->x(), e->y()));
-		break;
-	case State::SetP2:
-		setTheta(cv::Point(e->x(), e->y()));
-		break;
-	default:
-		return;
+	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+		switch (_currentState) {
+		case State::SetTag:
+			_orient[1] = cv::Point(e->x(), e->y());
+			break;
+		case State::SetP0:
+			_activeGrid->translation(cv::Point(e->x(), e->y()));
+			break;
+		case State::SetP1:
+			if (_setOnlyOrient) _activeGrid->orientation(cv::Point(e->x(), e->y()));
+			else setTheta(cv::Point(e->x(), e->y()));
+			break;
+		case State::SetP2:
+			setTheta(cv::Point(e->x(), e->y()));
+			break;
+		default:
+			return;
+		}
+		emit update();
+		_lastMouseEventTime = std::chrono::system_clock::now();
 	}
-	emit update();
 }
 
 //check if MOUSE BUTTON IS RELEASED
@@ -177,13 +183,18 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 }
 
 //check if WHEEL IS ACTIVE
-void BeesBookTagMatcher::mouseWheelEvent        (QWheelEvent * e)
+void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
 {
-	if (_activeGrid)         // The Grid is active for draging
-	{
-		_activeGrid->scale = _activeGrid->scale + e->delta() / 96 * 0.05;                               //scale variable is updated by 0.05
-		_activeGrid->updateAxes();
-		emit update();
+	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+		if (_activeGrid)         // The Grid is active for draging
+		{
+			//scale variable is updated by 0.05
+			_activeGrid->scale = _activeGrid->scale + e->delta() / 96 * 0.05;
+			_activeGrid->updateAxes();
+			emit update();
+		}
+		_lastMouseEventTime = std::chrono::system_clock::now();
 	}
 }
 
@@ -374,8 +385,6 @@ void BeesBookTagMatcher::cancelTag()
 	_activeFrameNumber.reset();
 	_currentState  = State::Ready;
 	_setOnlyOrient = false;
-
-	emit update();
 }
 
 //AUXILIAR FUNCTION
