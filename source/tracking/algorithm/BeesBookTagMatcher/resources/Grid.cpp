@@ -23,30 +23,30 @@
 using namespace BeesBookTag;
 
 //default constructor
-//THIS IS CPP 11
-//Grid::Grid()
-//: Grid(cv::Point (0,0), cv::Size (axisTag*(MR/OR),axisTag*(MR/OR)), 0, cv::Point (0,0), cv::Size (axisTag,axisTag), 0, std::vector<bool> (12,0))
-//{}
-//Tobias temporary fix:
-//void Grid::init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id)
-void Grid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
-                double Phi, std::vector<boost::logic::tribool> Id, size_t objectId)
+Grid::Grid()
+    : Grid(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<boost::tribool>(12, false), 0)
+{}
+
+//constructor with 1 parameter
+Grid::Grid(cv::Point2f CenterGrid, double Alpha, size_t objectId)
+    : Grid(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<boost::tribool>(12, false), objectId)
+{}
+
+//constructor with 7 parameters
+Grid::Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+           double Phi, std::vector<boost::tribool> Id, size_t objectId)
+    : centerGrid(CenterGrid)
+    , axesGrid(Scale * AXISTAG * (MR / OR),Scale * AXISTAG * (MR / OR) * cos(Theta))
+    , axesTag(Scale * AXISTAG,Scale * AXISTAG * cos(Theta))
+    , angleGrid((Phi - Alpha - M_PI / 2) * 180 / M_PI)
+    , angleTag(-Phi * 180 / M_PI)
+    , scale(Scale)
+    , alpha(Alpha)
+    , theta(Theta)
+    , phi(Phi)
+    , ID(std::move(Id))
+	, objectId(objectId)
 {
-	scale      = Scale;          //new variable, is the scale of the tag referenced to axisTag (25 pixels)
-	centerGrid = CenterGrid;
-	alpha      = Alpha;          //new variable, is the orientation of the tag, measured counterclockwise from x-axis.
-	theta      = Theta;          //new variable, indicates how tilted is the grid.
-	phi        = Phi;            //new variable, is the orientation of the ellipse that represents the tag, measured counterclockwise from x-axis.
-	ID         = std::move(Id);
-
-	angleTag  = -phi * 180 / M_PI;                         //this angle denotes the orientation of the ellipses (both ellipses should have the same value) (measured clockwise from the x-axis)
-	angleGrid = (phi - alpha - M_PI / 2) * 180 / M_PI;     //the angle of the grid, is the angle where the bit cells start to be drawn, it is calculated from phi and alpha
-
-	axesGrid = cv::Size2f (Scale * AXISTAG * (MR / OR),Scale * AXISTAG * (MR / OR) * cos(theta));
-	axesTag  = cv::Size2f (Scale * AXISTAG,Scale * AXISTAG * cos(theta));
-
-	_objectId = objectId;
-
 	//The size of the vectors is set
 	absPoints.resize(3);
 	relPoints.resize(3);
@@ -55,25 +55,6 @@ void Grid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta
 	//The vectors are initialized
 	updatePoints();
 	updateVectors();
-}
-//default constructor
-Grid::Grid()
-{
-	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<boost::tribool>(12, false), 0);
-}
-//constructor with 1 parameter
-Grid::Grid(cv::Point2f CenterGrid, double Alpha, size_t objectId)
-{
-	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<boost::tribool>(12, false), objectId);
-}
-//constructor with 7 parameters
-Grid::Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
-           double Phi, std::vector<boost::tribool> Id, size_t objectId)
-{
-	init(Scale, CenterGrid, Alpha, Theta, Phi, Id, objectId);
-}
-//destrucor
-Grid::~Grid(){
 }
 
 //Method that update both of the points vectors.

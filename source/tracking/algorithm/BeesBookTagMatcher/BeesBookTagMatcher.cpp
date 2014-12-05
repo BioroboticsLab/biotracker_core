@@ -367,15 +367,15 @@ void BeesBookTagMatcher::storeCurrentActiveTag()
 {
 	// store last active grid
 	if (_activeGrid) {
-		if (_activeGrid->_objectId == _trackedObjects.size()) {
+		if (_activeGrid->objectId == _trackedObjects.size()) {
 			assert(_activeFrameNumber);
 			TrackedObject newObject(_trackedObjects.size());
 			newObject.add(_activeFrameNumber.get(), _activeGrid);
 			_trackedObjects.push_back(std::move(newObject));
 		} else {
 			assert(_activeFrameNumber);
-			assert(_activeGrid->_objectId < _trackedObjects.size());
-			_trackedObjects[_activeGrid->_objectId].add(_activeFrameNumber.get(), _activeGrid);
+			assert(_activeGrid->objectId < _trackedObjects.size());
+			_trackedObjects[_activeGrid->objectId].add(_activeFrameNumber.get(), _activeGrid);
 		}
 		// set tag as not active
 		cancelTag();
