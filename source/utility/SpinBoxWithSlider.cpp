@@ -81,6 +81,9 @@ SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, const QString &name, int m
 
 	m_spinbox.setSingleStep(m_step_size);
 
+	m_layout.setMargin(3);
+	m_layout.setSpacing(3);
+
 	m_layout.addWidget(&m_name);
 	m_layout.addWidget(&m_slider);
 	m_layout.addWidget(&m_spinbox);
