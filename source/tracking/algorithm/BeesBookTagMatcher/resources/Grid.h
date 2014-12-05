@@ -13,32 +13,9 @@
 
 #include <source/tracking/trackedObject/ObjectModel.h>
 
-namespace cereal {
-template<class Archive>
-void serialize(Archive& archive, cv::Point2f& point)
-{
-	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
-}
-
-template<class Archive>
-void serialize(Archive& archive, cv::Size2f& size)
-{
-	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
-}
-
-template<class Archive>
-void serialize(Archive& archive, boost::logic::tribool& tribool)
-{
-	archive(CEREAL_NVP(tribool.value));
-}
-}
-
 class Grid : public ObjectModel
 {
 public:
-	//initializer function
-	void init(double scale, cv::Point2f CenterGrid, double Alpha, double Theta,
-	          double Phi, std::vector<boost::tribool> Id, size_t objectId);
 	//default constructor
 	Grid();
 	//constructor with 1 parameter
@@ -46,8 +23,9 @@ public:
 	//constructor with 7 parameters
 	Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
 	     double Phi, std::vector<boost::tribool> Id, size_t objectId);
+
 	//destructor
-	~Grid();
+	~Grid() {}
 
 	//Object properties
 	cv::Point2f centerGrid; // center of the grid
@@ -77,7 +55,7 @@ public:
 	std::vector<cv::Point2f> realCoord; // vector of points which are used by the user to define a
 										// new grid (relative and exact coordinates for computing purposes)
 
-	size_t _objectId;
+	size_t objectId;
 
 	//Object methods
 	// function that updates the set of 3 points that define a grid from parameters (for displaying pursoses).
@@ -136,5 +114,25 @@ private:
 		  CEREAL_NVP(ID));
 	}
 };
+
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, cv::Point2f& point)
+{
+	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
+}
+
+template<class Archive>
+void serialize(Archive& archive, cv::Size2f& size)
+{
+	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
+}
+
+template<class Archive>
+void serialize(Archive& archive, boost::logic::tribool& tribool)
+{
+	archive(CEREAL_NVP(tribool.value));
+}
+}
 
 #endif
