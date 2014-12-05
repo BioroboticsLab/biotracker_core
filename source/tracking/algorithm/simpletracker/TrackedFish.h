@@ -10,13 +10,13 @@ namespace cereal {
 template<class Archive>
 void serialize(Archive& archive, cv::Point2f& point)
 {
-    archive(point.x, point.y);
+	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
 }
 
 template<class Archive>
 void serialize(Archive& archive, cv::Scalar& scalar)
 {
-    archive(scalar.val);
+	archive(CEREAL_NVP(scalar.val));
 }
 }
 
@@ -46,9 +46,9 @@ private:
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(_last_known_position,
-           _age_of_last_known_position,
-           _associated_color);
+		ar(CEREAL_NVP(_last_known_position),
+		   CEREAL_NVP(_age_of_last_known_position),
+		   CEREAL_NVP(_associated_color));
     }
 };
 
