@@ -15,8 +15,8 @@
 class BeesBookTagMatcher : public TrackingAlgorithm
 {
 private:
-	std::shared_ptr<Grid> _activeGrid;
-	boost::optional<ulong>     _activeFrameNumber;
+	std::shared_ptr<Grid>  _activeGrid;
+	boost::optional<ulong> _activeFrameNumber;
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--

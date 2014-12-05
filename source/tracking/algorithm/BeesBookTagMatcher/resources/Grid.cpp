@@ -9,10 +9,12 @@
 #include <QApplication>
 #include <QPolygon>
 
-#include <opencv2/opencv.hpp>
+#include <boost/logic/tribool_io.hpp>
 
 #include <cereal/archives/json.hpp>
 #include <cereal/types/polymorphic.hpp>
+
+#include <opencv2/opencv.hpp>
 
 #include "source/settings/Settings.h"
 #include "source/tracking/TrackingAlgorithm.h"
@@ -27,7 +29,8 @@ using namespace BeesBookTag;
 //{}
 //Tobias temporary fix:
 //void Grid::init(cv::Point2f CenterGrid, cv::Size2f AxesGrid, double Alpha, cv::Point2f CenterTag, cv::Size2f AxesTag, double Phi, std::vector<bool> Id)
-void Grid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId)
+void Grid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+                double Phi, std::vector<boost::logic::tribool> Id, size_t objectId)
 {
 	scale      = Scale;          //new variable, is the scale of the tag referenced to axisTag (25 pixels)
 	centerGrid = CenterGrid;
@@ -56,15 +59,16 @@ void Grid::init(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta
 //default constructor
 Grid::Grid()
 {
-	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<bool>(12, 0), 0);
+	init(1, cv::Point(100, 100), M_PI / 2, 0, M_PI / 2,  std::vector<boost::tribool>(12, false), 0);
 }
 //constructor with 1 parameter
 Grid::Grid(cv::Point2f CenterGrid, double Alpha, size_t objectId)
 {
-	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<bool>(12, 0), objectId);
+	init(1, CenterGrid, Alpha, 0, M_PI / 2, std::vector<boost::tribool>(12, false), objectId);
 }
 //constructor with 7 parameters
-Grid::Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta, double Phi, std::vector<bool> Id, size_t objectId)
+Grid::Grid(double Scale, cv::Point2f CenterGrid, double Alpha, double Theta,
+           double Phi, std::vector<boost::tribool> Id, size_t objectId)
 {
 	init(Scale, CenterGrid, Alpha, Theta, Phi, Id, objectId);
 }
@@ -135,13 +139,15 @@ void Grid::updateAxes()
 }
 
 //function that is called to set the binary ID
-void Grid::updateID(cv::Point newID)
+void Grid::updateID(cv::Point newID, bool indeterminate)
 {
-	cv::Point newIDRel = cv::Point(newID.x - (this->centerGrid.x - ROISIZE / 2), newID.y - (this->centerGrid.y - ROISIZE / 2));
-	for (int i = 0; i < 12; i++)
-	{
-		if (cv::pointPolygonTest(cellsContours[i], newIDRel, 0) > 0)                 //check for every cell
-			ID[i] = !ID[i];                         //the current value of the cell is changed
+	cv::Point newIDRel = cv::Point(newID.x - (centerGrid.x - ROISIZE / 2), newID.y - (centerGrid.y - ROISIZE / 2));
+	for (int i = 0; i < 12; i++) {
+		//check for every cell
+		if (cv::pointPolygonTest(cellsContours[i], newIDRel, 0) > 0) {
+			//the current value of the cell is changed
+			ID[i] = indeterminate ? boost::logic::indeterminate : !ID[i];
+		}
 	}
 	return;
 }
@@ -347,7 +353,7 @@ void Grid::drawFullTag(cv::Mat &img, int active)
 	for (int i = 0; i < 12; i++)
 	{
 		//each of the cells contour is colored according to its value
-		cv::drawContours(mask, conts, i, cv::Scalar(ID[i] * 255, ID[i] * 255, ID[i] * 255), 1);
+		cv::drawContours(mask, conts, i, tribool2scalar(ID[i]), 1);
 	}
 
 	//half white circle
@@ -377,6 +383,26 @@ cv::Point2f Grid::polar2rect(double radius, double angle)
 	point.x = radius * cos(angle);
 	point.y = -radius * sin(angle);
 	return point;
+}
+
+cv::Scalar Grid::tribool2scalar(const boost::logic::tribool &tribool) const
+{
+	int value;
+	switch (tribool.value) {
+	case boost::logic::tribool::value_t::true_value:
+		value = 255;
+		break;
+	case boost::logic::tribool::value_t::indeterminate_value:
+		value = 0.5 * 255;
+		break;
+	case boost::logic::tribool::value_t::false_value:
+		value = 0;
+		break;
+	default:
+		break;
+	}
+
+	return cv::Scalar(value, value, value);
 }
 
 CEREAL_REGISTER_TYPE(Grid)
