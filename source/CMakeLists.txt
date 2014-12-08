@@ -20,7 +20,7 @@ target_link_libraries(BioTracker
 set_target_properties(BioTracker PROPERTIES
     COTIRE_ADD_UNITY_BUILD FALSE
     COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/external")
-cotire(BioTracker)
+#cotire(BioTracker)
 
 # add files to source groups to preserve folder structure in visual studio
 # adapted from: http://goo.gl/Xde41i
