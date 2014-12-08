@@ -25,10 +25,10 @@ private:
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(_last_known_position,
-           _age_of_last_known_position,
-           _associated_color,
-           _score);
+		ar(CEREAL_NVP(_last_known_position),
+		   CEREAL_NVP(_age_of_last_known_position),
+		   CEREAL_NVP(_associated_color),
+		   CEREAL_NVP(_score));
     }
 };
 

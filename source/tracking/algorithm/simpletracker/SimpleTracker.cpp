@@ -120,7 +120,7 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
                 cv::Point2f distPoint = contour - currentPosition;
                 float distance = cv::sqrt((distPoint.x * distPoint.x) + (distPoint.y * distPoint.y));
                 if (distance < minDistance) {
-                    minDistance = distance;
+					minDistance = distance;
                     minDistanceContour = contour;
                 }
             }

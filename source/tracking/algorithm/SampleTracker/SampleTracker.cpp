@@ -33,22 +33,22 @@ void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
 	//dont do nothing if we ain't got an image
 	if(imgOriginal.empty())
 		return;
+	using namespace cv;
 
-	cv::Mat imgHSV;
+	Mat imgHSV;
 
-	cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+	cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 
 
-	cv::inRange(imgHSV, cv::Scalar(_lowH, _lowS, _lowV), cv::Scalar(_highH, _highS, _highV), _imgTracked); //Threshold the image
+	inRange(imgHSV, Scalar(_lowH, _lowS, _lowV), Scalar(_highH, _highS, _highV), _imgTracked); //Threshold the image
 
 	//morphological opening (remove small objects from the foreground)
-	cv::erode(_imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
-	cv::dilate( _imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
+	erode(_imgTracked, _imgTracked, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+	dilate( _imgTracked, _imgTracked, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
 
 	//morphological closing (fill small holes in the foreground)
 	cv::dilate( _imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
 	cv::erode(_imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
-
 }
 
 void SampleTracker::paint		( cv::Mat& image )
