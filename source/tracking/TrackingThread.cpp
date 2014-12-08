@@ -221,7 +221,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 			doTracking();
 		}
 		emit trackingSequenceDone(_frame);
-
+		emit newFrameNumber( _frameNumber );
 	}	
 }
 
@@ -231,7 +231,7 @@ void TrackingThread::incrementFrameNumber()
 	QMutexLocker locker(&frameNumberMutex);
 	if(_frameNumber < videoLength) {
 		++_frameNumber;
-		_tracker->setCurrentFrameNumber(_frameNumber);
+		emit newFrameNumber(_frameNumber);
 	}
 }
 
