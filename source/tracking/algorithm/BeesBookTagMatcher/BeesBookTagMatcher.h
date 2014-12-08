@@ -8,6 +8,9 @@
 
 #include <boost/optional.hpp>
 
+#define _USE_MATH_DEFINES
+#include <math.h> 
+
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
 
