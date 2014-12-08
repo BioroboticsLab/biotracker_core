@@ -10,6 +10,9 @@
 #include <cereal/access.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
+
+#include "types.hpp"
 
 class TrackedObject
 {
@@ -55,7 +58,6 @@ private:
 		ar(CEREAL_NVP(_id), CEREAL_NVP(_objectsByFrame));
     }
 };
-
 
 #endif // !TrackedObject_h
 

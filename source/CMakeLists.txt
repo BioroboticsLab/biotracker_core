@@ -1,5 +1,5 @@
 file(GLOB_RECURSE src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-file(GLOB_RECURSE hdr RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE hdr RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h *.hpp)
 file(GLOB_RECURSE ui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.ui)
 file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 
@@ -16,11 +16,6 @@ target_link_libraries(BioTracker
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
 )
-
-set_target_properties(BioTracker PROPERTIES
-    COTIRE_ADD_UNITY_BUILD FALSE
-    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/external")
-#cotire(BioTracker)
 
 # add files to source groups to preserve folder structure in visual studio
 # adapted from: http://goo.gl/Xde41i

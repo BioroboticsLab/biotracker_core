@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QPolygon>
 
-#include <boost/logic/tribool_io.hpp>
+#include "source/tracking/trackedObject/types.hpp"
 
 #include <cereal/archives/json.hpp>
 #include <cereal/types/polymorphic.hpp>

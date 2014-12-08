@@ -115,24 +115,4 @@ private:
 	}
 };
 
-namespace cereal {
-template<class Archive>
-void serialize(Archive& archive, cv::Point2f& point)
-{
-	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
-}
-
-template<class Archive>
-void serialize(Archive& archive, cv::Size2f& size)
-{
-	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
-}
-
-template<class Archive>
-void serialize(Archive& archive, boost::logic::tribool& tribool)
-{
-	archive(CEREAL_NVP(tribool.value));
-}
-}
-
 #endif
