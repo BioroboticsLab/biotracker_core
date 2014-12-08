@@ -16,10 +16,10 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-BioTracker::BioTracker(Settings &settings,QWidget *parent, Qt::WindowFlags flags) : 
-	QMainWindow(parent, flags),
-	_trackingThread(nullptr),
-	_settings(settings)
+BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flags) :
+QMainWindow(parent, flags),
+_trackingThread(nullptr),
+_settings(settings)
 {
 	ui.setupUi(this);
 	setPlayfieldEnabled(false);
@@ -124,6 +124,14 @@ void BioTracker::initConnects()
     QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread.get(), SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
     QObject::connect(_trackingThread.get(), SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
+
+	/**	 _______________________
+	*	|						|
+	*	| connect shortcut keys	|
+	*	|_______________________| */
+
+	QShortcut *shortcut = new QShortcut(QKeySequence("Z"), this);
+	QObject::connect(shortcut, SIGNAL(activated()), ui.button_panZoom, SLOT( click() ));
 
 }
 
@@ -528,7 +536,7 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		tracker.get(), SLOT( setCurrentFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( videoPause(bool) ),
 		tracker.get(), SLOT(setVideoPaused(bool)));
-	
+
 	if(_tracker)
 	{
 		try
