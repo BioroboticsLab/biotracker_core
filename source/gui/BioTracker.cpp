@@ -134,9 +134,22 @@ void BioTracker::initConnects()
 	*	|						|
 	*	| connect shortcut keys	|
 	*	|_______________________| */
-
-	QShortcut *shortcut = new QShortcut(QKeySequence("Z"), this);
-	QObject::connect(shortcut, SIGNAL(activated()), ui.button_panZoom, SLOT( click() ));
+	// Pan&Zoom
+	QShortcut *shortcutPan = new QShortcut(QKeySequence
+		(QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), this);
+	QObject::connect(shortcutPan, SIGNAL(activated()), ui.button_panZoom, SLOT(click()));
+	// Play*Pause
+	QShortcut *shortcutPlay = new QShortcut(QKeySequence
+		(QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), this);
+	QObject::connect(shortcutPlay, SIGNAL(activated()), ui.button_playPause, SLOT(click()));
+	// Next Frame
+	QShortcut *shortcutNext = new QShortcut(QKeySequence
+		(QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), this);
+	QObject::connect(shortcutNext, SIGNAL(activated()), ui.button_nextFrame, SLOT(click()));
+	// Previous Frame
+	QShortcut *shortcutPrev = new QShortcut(QKeySequence
+		(QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), this);
+	QObject::connect(shortcutPrev, SIGNAL(activated()), ui.button_previousFrame, SLOT(click()));
 
 }
 
