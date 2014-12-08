@@ -32,6 +32,12 @@ public slots:
 	void browseVideo();
 	// open file browser for picture in/out
 	void browsePicture();
+	// load previously stored tracking data
+	void loadTrackingData();
+	// store current tracking data
+	void storeTrackingData();
+	// exit application
+	void exit();
 	//checks current state (stopped,paused or playing)
 	//and then sends appropriate signal to tracking thread
 	void runCapture();

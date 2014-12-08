@@ -91,6 +91,11 @@ void BioTracker::initConnects()
 	//File -> Open Video
 	QObject::connect(ui.actionOpen_Video, SIGNAL(triggered()), this, SLOT(browseVideo()));
 	QObject::connect(ui.actionOpen_Picture, SIGNAL(triggered()), this, SLOT(browsePicture()));	
+	//File -> Load/Store tracking data
+	QObject::connect(ui.actionLoad_tracking_data, &QAction::triggered, this, &BioTracker::loadTrackingData);
+	QObject::connect(ui.actionSave_tracking_data, &QAction::triggered, this, &BioTracker::storeTrackingData);
+	//File -> Exit
+	QObject::connect(ui.actionQuit, &QAction::triggered, this, &BioTracker::exit);
 	//video playfield buttons
 	QObject::connect(ui.button_playPause, SIGNAL(clicked()), this, SLOT(runCapture()));
 	QObject::connect(ui.button_stop, SIGNAL(clicked()), this, SLOT(stopCapture()));
@@ -178,8 +183,30 @@ void BioTracker::browsePicture()
 		_settings.setParam(GUIPARAM::IS_SOURCE_VIDEO,"false");
 		setPlayfieldEnabled(true);
 		initPicture(filenames);
-	}	
+	}
 }
+
+void BioTracker::loadTrackingData()
+{
+	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
+	if (!filename.isEmpty()) {
+		// TODO
+	}
+}
+
+void BioTracker::storeTrackingData()
+{
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save tracking data"), "", tr("Data Files (*.tdat)"));
+	if (!filename.isEmpty()) {
+		// TODO
+	}
+}
+
+void BioTracker::exit()
+{
+	QApplication::exit();
+}
+
 void BioTracker::initPicture(QStringList filenames)
 {	
 	_videoStopped = false;
