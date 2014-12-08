@@ -1,4 +1,3 @@
-Debug/
 GeneratedFiles/
 CMakeLists.txt.user
 desktop.ini
@@ -14,6 +13,7 @@ desktop.ini
 *.vcxproj.filters
 *.vcxproj.vspscc
 
+/Debug
 /Release
 /build
 *.kate-swp
