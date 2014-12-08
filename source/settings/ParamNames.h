@@ -14,7 +14,11 @@ static const std::string TRACKING_ENABLED = "TRACKERPARAM.TRACKING_ENABLED";
 namespace GUIPARAM
 {
 // true if video is loaded, false if picture is loaded
-static const std::string IS_SOURCE_VIDEO = "GUIPARAM.IS_SOURCE_VIDEO";
+static const std::string IS_SOURCE_VIDEO	= "GUIPARAM.IS_SOURCE_VIDEO";
+static const std::string SHORTCUT_PLAY		= "GUIPARAM.SHORTCUT_PLAY";
+static const std::string SHORTCUT_NEXT		= "GUIPARAM.SHORTCUT_NEXT";
+static const std::string SHORTCUT_PREV		= "GUIPARAM.SHORTCUT_PREV";
+static const std::string SHORTCUT_ZOOM		= "GUIPARAM.SHORTCUT_ZOOM";
 }
 
 namespace PICTUREPARAM
