@@ -380,6 +380,8 @@ cv::Scalar Grid::tribool2scalar(const boost::logic::tribool &tribool) const
 		value = 0;
 		break;
 	default:
+		assert(false);
+		value = 0.;
 		break;
 	}
 
