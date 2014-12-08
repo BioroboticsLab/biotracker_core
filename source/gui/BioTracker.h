@@ -7,6 +7,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtCore/QString>
 #include <QTemporaryFile>
+#include <QShortcut>
 
 //BioTracker
 #include "source/tracking/algorithm/algorithms.h"
