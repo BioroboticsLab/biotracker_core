@@ -6,20 +6,6 @@
 #include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
 
-namespace cereal {
-template<class Archive>
-void serialize(Archive& archive, cv::Point2f& point)
-{
-	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
-}
-
-template<class Archive>
-void serialize(Archive& archive, cv::Scalar& scalar)
-{
-	archive(CEREAL_NVP(scalar.val));
-}
-}
-
 class TrackedFish :
     public ObjectModel
 {

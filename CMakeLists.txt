@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy (SET CMP0020 NEW)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-include(cotire)
-
 project(BioTracker)
 
 # project dependecies
