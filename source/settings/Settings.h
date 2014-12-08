@@ -41,6 +41,11 @@ public:
 		return _ptree.get<T>(paramName);
 	}
 
+	template <typename T>
+	boost::optional<T> maybeGetValueOfParam(const std::string &paramName) const {
+		return _ptree.get_optional<T>(paramName);
+	}
+
 	/**
 	 * Gets the parameter value provided by parameter name.
 	 * If the parameter is not set yet, set to default value and return it.
@@ -50,7 +55,7 @@ public:
 	 */
 	template <typename T>
 	T getValueOrDefault(const std::string& paramName, const T& defaultValue) {
-		boost::optional<T> value = _ptree.get_optional<T>(paramName);
+		boost::optional<T> value = maybeGetValueOfParam<T>(paramName);
 		if (value) {
 			return value.get();
 		} else {
