@@ -6,6 +6,7 @@
 #include <deque>
 #include <memory>
 
+#include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
@@ -23,7 +24,23 @@ public:
     size_t count(const size_t framenumber) const;
 
     std::shared_ptr<ObjectModel> get(const size_t framenumber) const;
-    std::shared_ptr<ObjectModel> top() const;
+
+	template<typename DerivedObjectModel>
+	std::shared_ptr<DerivedObjectModel> get(const size_t framenumber) const
+	{
+		std::shared_ptr<ObjectModel> object = get(framenumber);
+		return std::dynamic_pointer_cast<DerivedObjectModel>(object);
+	}
+
+	template<typename DerivedObjectModel>
+	std::shared_ptr<DerivedObjectModel> maybeGet(const size_t framenumber) const
+	{
+		auto it = _objectsByFrame.find(framenumber);
+		if (it == _objectsByFrame.end()) return std::shared_ptr<DerivedObjectModel>();
+		else return std::dynamic_pointer_cast<DerivedObjectModel>(it->second);
+	}
+
+	std::shared_ptr<ObjectModel> top() const;
 
     size_t id() const { return _id; }
 
@@ -35,7 +52,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(_id, _objectsByFrame);
+		ar(CEREAL_NVP(_id), CEREAL_NVP(_objectsByFrame));
     }
 };
 

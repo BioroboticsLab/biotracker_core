@@ -19,22 +19,23 @@
 QMutex trackMutex;
 
 VideoView::VideoView(QWidget *parent)
-	: QGLWidget(parent),
-	_tracker(nullptr)
-{
-	_zoomFactor = 0;
-	_panX = 0;
-	_panY = 0;
-	_isPanZoomMode = false;
-	_lastPannedTime = std::chrono::system_clock::now();
-	_lastZoomedTime = std::chrono::system_clock::now();
-	_lastZoomedPoint = QPoint(0, 0);
-}
+	: QGLWidget(parent)
+	, _tracker(nullptr)
+	, _isPanZoomMode(false)
+    , _currentWidth(0)
+    , _currentHeight(0)
+	, _zoomFactor(0)
+	, _panX(0)
+	, _panY(0)
+	, _lastPannedTime(std::chrono::system_clock::now())
+	, _lastZoomedTime(std::chrono::system_clock::now())
+	, _lastZoomedPoint(0, 0)
+{}
 
 void VideoView::showImage(cv::Mat img)
 {
 	_displayImage = img;
-	resizeGL(this->width(), this->height());
+	resizeGL(width(), height());
 
 
 	//Draw the scene

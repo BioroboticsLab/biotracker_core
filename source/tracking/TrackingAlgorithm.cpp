@@ -3,7 +3,7 @@
 #include <fstream>
 
 #include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializationPath, QWidget *parent)
@@ -16,7 +16,7 @@ TrackingAlgorithm::~TrackingAlgorithm()
 {
     std::cout << "Storing in " << _serializationPathName << std::endl;
     std::ofstream ostream(_serializationPathName, std::ios::binary);
-    cereal::XMLOutputArchive archive(ostream);
+	cereal::JSONOutputArchive archive(ostream);
     archive(_trackedObjects);
 }
 

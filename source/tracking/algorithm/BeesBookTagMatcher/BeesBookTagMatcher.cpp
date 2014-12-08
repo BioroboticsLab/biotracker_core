@@ -1,190 +1,204 @@
 #include "BeesBookTagMatcher.h"
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <QApplication>
 
+#include "Common.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 namespace {
-    auto _ = Algorithms::Registry::getInstance().register_tracker_type<BeesBookTagMatcher>("BeesBook Tag Matcher");
+auto _ = Algorithms::Registry::getInstance().register_tracker_type<
+    BeesBookTagMatcher>("BeesBook Tag Matcher");
+
+static const cv::Scalar COLOR_BLUE   = cv::Scalar(255, 0, 0);
+static const cv::Scalar COLOR_RED    = cv::Scalar(0, 0, 255);
+static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
+static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 }
 
-BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent )
-    : TrackingAlgorithm( settings, serializationPathName, parent )
-{	
-		_ready			= true;  //Ready for a new tag --Ctrl + LCM --
-		_setTag			= false; //State while the tag is being set, a red vector is drawn
-		_activeTag		= false; //if true, then a new Tag has been defined through the orientation vector and its parameter can now be modified
-				
-		_setP0			= false; //Set P0 --Left Click--
-		_setP1			= false; //Set P1 --Left Click--
-		_setP2			= false; //Set P2 --Left Click--
-		
-		_setOrient		= false; //to modify exclusively the tag orientation.
-}
+BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent)
+	: TrackingAlgorithm(settings, serializationPathName, parent)
+	, _currentState(State::Ready)
+	, _setOnlyOrient(false)
+    , _lastMouseEventTime(std::chrono::system_clock::now())
+{}
 
-
-BeesBookTagMatcher::~BeesBookTagMatcher(void)
+BeesBookTagMatcher::~BeesBookTagMatcher()
 {
+	storeCurrentActiveTag();
 }
 
-void BeesBookTagMatcher::track		( ulong, cv::Mat& ){}
-void BeesBookTagMatcher::paint		( cv::Mat& image )
-{	
-	if (_Grids.size() > 0)
-	{
+void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
+{
+	storeCurrentActiveTag();
+
+	// copy all tags from last frame
+	if (frameNumber > 0) {
+		for (TrackedObject& trackedObject : _trackedObjects) {
+			if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
+				std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
+				trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
+			}
+		}
+	}
+}
+
+void BeesBookTagMatcher::paint(cv::Mat& image)
+{
+	if (!_trackedObjects.empty()) {
 		drawSetTags(image);
 	}
-	if (_setTag)
-	{
-		drawOrientation(image, orient);
-	}	
-	/*else if (_setP1 || _setP2)
-	{
-		drawSettingTheta(image);
-	}*/
-	else if(_activeTag)
-	{		
+	if (_currentState == State::SetTag) {
+		drawOrientation(image, _orient);
+	} else if (_activeGrid)  {
 		drawActiveTag(image);
-	}		
+	}
 }
-void BeesBookTagMatcher::reset		(){}
+void BeesBookTagMatcher::reset() {
+}
 
 //check if MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::mousePressEvent	( QMouseEvent * e )
-{
+void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	//check if LEFT button is clicked
-	if ( e->button() == Qt::LeftButton)
-	{		
+	if (e->button() == Qt::LeftButton) {
 		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
+		if (Qt::ShiftModifier == QApplication::keyboardModifiers())
 		{
-			if (_activeTag) // The Tag is active and can now be modified
-			{				
+			if (_activeGrid)    // The Tag is active and can now be modified
+			{
 				//if clicked on one of the set points, the point is activated
 				if (selectPoint(cv::Point(e->x(), e->y())))
 					emit update();
-				if (_setP1)
-					_setOrient = true;
+				if (_currentState == State::SetP1)
+					_setOnlyOrient = true;
 			}
 		}
 		//check for CTRL modifier
-		else if(Qt::ControlModifier == QApplication::keyboardModifiers())	//a new tag is generated
+		else if (Qt::ControlModifier == QApplication::keyboardModifiers())
 		{
-			if (_ready)
-			{
+			if (_currentState == State::Ready) {
+				//a new tag is generated
 				setTag(cv::Point(e->x(), e->y()));
-				_setP1 = true;
-			}			
+				_currentState = State::SetTag;
+			}
 		}
-		//without modifier
-		else
-		{
-			if (_activeTag) // The Tag is active and can now be modified
-			{
+		else {
+			// The Tag is active and can now be modified
+			if (_activeGrid) {
 				//if clicked in one of the bit cells, its value is changed
-				if (dist(g.centerGrid, cv::Point(e->x(), e->y())) > 2 && dist(g.centerGrid, cv::Point(e->x(), e->y())) < g.axesGrid.height)
-					g.updateID(cv::Point(e->x(), e->y()));
+				const double distance = dist(_activeGrid->centerGrid, cv::Point(e->x(), e->y()));
+				//check for CTRL+SHIFT modifier
+				const bool indeterminate =
+				    QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+				    QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+				if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
+					_activeGrid->updateID(cv::Point(e->x(), e->y()), indeterminate);
 				else
-					//if clicked on one of the set points, the point is activated
-					if (selectPoint(cv::Point(e->x(), e->y())))
-						emit update();
+				//if clicked on one of the set points, the point is activated
+				if (selectPoint(cv::Point(e->x(), e->y())))
+					emit update();
 				//otherwise checks if one of the other tags is selected
-					else
-						selectTag(cv::Point(e->x(), e->y()));
+				else
+					selectTag(cv::Point(e->x(), e->y()));
+			} else {
+				selectTag(cv::Point(e->x(), e->y()));
 			}
 		}
 	}
 	//check if RIGHT button is clicked
-	if ( e->button() == Qt::RightButton)
-	{			
+	if (e->button() == Qt::RightButton) {
 		//check for SHIFT modifier
-		if(Qt::ShiftModifier == QApplication::keyboardModifiers())
-		{					
-		}			
-		//check for CTRL modifier
-		if (Qt::ControlModifier == QApplication::keyboardModifiers())
-		{
-			cancelTag(cv::Point2f(e->x(), e->y())); //The Tag being currently configured is cancelled
+		if (Qt::ShiftModifier == QApplication::keyboardModifiers()) {
 		}
-	}	
-	
+		//check for CTRL modifier
+		if (Qt::ControlModifier == QApplication::keyboardModifiers()) {
+			cancelTag(); //The Tag being currently configured is cancelled
+			emit update();
+		}
+	}
 }
+
 //check if pointer MOVES
-void BeesBookTagMatcher::mouseMoveEvent		( QMouseEvent * e )
-{
-	if (_setTag) //Orientation of the tag is being set
-	{
-		orient[1] = cv::Point(e->x(), e->y());	
-		emit update();
-	}
-	else if (_setP0) //The tag is being translated
-	{			
-		g.translation(cv::Point(e->x(), e->y()));
-		emit update();				
-	}
-	else if (_setP1) //The orientation of the tag is being modified
-	{	
-		if (_setOrient)
-			g.orientation(cv::Point(e->x(), e->y()));
-		else
+void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
+	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+		switch (_currentState) {
+		case State::SetTag:
+			_orient[1] = cv::Point(e->x(), e->y());
+			break;
+		case State::SetP0:
+			_activeGrid->translation(cv::Point(e->x(), e->y()));
+			break;
+		case State::SetP1:
+			if (_setOnlyOrient) _activeGrid->orientation(cv::Point(e->x(), e->y()));
+			else setTheta(cv::Point(e->x(), e->y()));
+			break;
+		case State::SetP2:
 			setTheta(cv::Point(e->x(), e->y()));
+			break;
+		default:
+			return;
+		}
 		emit update();
-	}	
-	else if (_setP2) //The space angle (theta) is being modified
-	{	
-		setTheta(cv::Point(e->x(), e->y()));
-		emit update();
+		_lastMouseEventTime = std::chrono::system_clock::now();
 	}
 }
+
 //check if MOUSE BUTTON IS RELEASED
-void BeesBookTagMatcher::mouseReleaseEvent	( QMouseEvent * e )
-{
+void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 	// left button released
-	if (e->button() == Qt::LeftButton)
-	{	
-		if (_setTag) //center and orientation of the tag were set.
-		{
-			_setTag = false;
-			_activeTag = true;
-			_ready = true;			
-			g = myNewGrid(orient[0], atan2(orient[1].x - orient[0].x, orient[1].y - orient[0].y) - M_PI / 2);
-			
+	if (e->button() == Qt::LeftButton) {
+		switch (_currentState) {
+		//center and orientation of the tag were set.
+		case State::SetTag:
+			_activeGrid        = std::make_shared<Grid>(_orient[0], getAlpha(), _trackedObjects.size());
+			_activeFrameNumber = _currentFrameNumber;
 			//length of the vector is taked into consideration
 			setTheta(cv::Point(e->x(), e->y()));
-			_setP1 = false;			
-		}		
-		else if (_setP0)//the tag was translated
-		{
-			_setP0 = false;
-			g.updateVectors();
-		}
-		else if (_setP1) //orientation of the bee and the marker were modified
-		{
-			_setP1 = false;
-			_setOrient = false;
-			g.updateVectors();
-		}
-		else if (_setP2) //orientation of the marker was modified
-		{
-			_setP2 = false;
-			g.updateVectors();
+			_currentState = State::Ready;
+			break;
+		//the tag was translated
+		case State::SetP0:
+			_currentState = State::Ready;
+			_activeGrid->updateVectors();
+			break;
+		//orientation of the bee and the marker were modified
+		case State::SetP1:
+			_currentState = State::Ready;
+			_setOnlyOrient = false;
+			_activeGrid->updateVectors();
+			break;
+		//orientation of the marker was modified
+		case State::SetP2:
+			_currentState = State::Ready;
+			_activeGrid->updateVectors();
+			break;
+		default:
+			break;
 		}
 		emit update();
 	}
 	// right button released
-	if (e->button() == Qt::RightButton)
-	{			
+	if (e->button() == Qt::RightButton) {
 	}
 }
+
 //check if WHEEL IS ACTIVE
-void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * e)
+void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
 {
-	if (_activeTag) // The Grid is active for draging
-	{					
-			g.scale = g.scale + e->delta() / 96*0.05;		//scale variable is updated by 0.05
-			std::cout << "scale " << g.scale << std::endl;
-			g.updateAxes();			
-			emit update();		
-	}	
+	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+		if (_activeGrid)         // The Grid is active for draging
+		{
+			//scale variable is updated by 0.05
+			_activeGrid->scale = _activeGrid->scale + e->delta() / 96 * 0.05;
+			_activeGrid->updateAxes();
+			emit update();
+		}
+		_lastMouseEventTime = std::chrono::system_clock::now();
+	}
 }
 
 //BeesBookTagMatcher private member functions
@@ -192,182 +206,200 @@ void BeesBookTagMatcher::mouseWheelEvent	( QWheelEvent * e)
 //DRAWING FUNCTIONS
 
 //function that draws the set Tags so far.
-void BeesBookTagMatcher::drawSetTags(cv::Mat image)
+void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 {
-    for (size_t i = 0; i < _Grids.size(); i++)
-	{
-		gtemp = myNewGrid(_Grids[i].scale, _Grids[i].centerGrid, _Grids[i].alpha, _Grids[i].theta, _Grids[i].phi, _Grids[i].ID);
-		gtemp.drawFullTag(image, 2); //the grids are drawn as set
-	}	
+	for (const TrackedObject& trackedObject : _trackedObjects) {
+		if (trackedObject.count(_currentFrameNumber)) {
+			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(_currentFrameNumber);
+			grid->drawFullTag(image, 2);
+		}
+	}
 }
+
 //function that draws the orientation vector while being set.
-void BeesBookTagMatcher::drawOrientation(cv::Mat image, std::vector<cv::Point> orient)
+void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const std::vector<cv::Point>& orient) const
 {
-	//std::cout << "DRAW ORIENTAION" << std::endl;
-	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);		//the orientation vector is printed in red
+	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);        //the orientation vector is printed in red
 }
-//function that draws an active tag calling an instance of MyNewGrid
-void BeesBookTagMatcher::drawActiveTag(cv::Mat image)
-{		
-	//std::cout<<"DRAW ACTIVE GRID"<<std::endl;	
-	g.drawFullTag(image,1); //the grid is drawn as active
-	g.updatePoints();
+
+//function that draws an active tag calling an instance of Grid
+void BeesBookTagMatcher::drawActiveTag(cv::Mat &image) const
+{
+	_activeGrid->drawFullTag(image,1);         //the grid is drawn as active
+	_activeGrid->updatePoints();
 	for (int i = 0; i < 3; i++)
 	{
-		cv::circle(image, g.absPoints[i], 1, cv::Scalar(0, 0, 255), 1); //the point is drawn in red					
+		cv::circle(image, _activeGrid->absPoints[i], 1, COLOR_RED, 1);                 //the point is drawn in red
 	}
 	//active point in blue
-	if (_setP0)
-		cv::circle(image, g.absPoints[0], 1, cv::Scalar(255, 0, 0), 1);
-	else if (_setP1)
-		cv::circle(image, g.absPoints[1], 1, cv::Scalar(255, 0, 0), 1);
-	else if (_setP2)
-		cv::circle(image, g.absPoints[2], 1, cv::Scalar(255, 0, 0), 1);
+
+	switch (_currentState) {
+	case State::SetP0:
+		cv::circle(image, _activeGrid->absPoints[0], 1, COLOR_BLUE, 1);
+		break;
+	case State::SetP1:
+		cv::circle(image, _activeGrid->absPoints[1], 1, COLOR_BLUE, 1);
+		break;
+	case State::SetP2:
+		cv::circle(image, _activeGrid->absPoints[2], 1, COLOR_BLUE, 1);
+		break;
+	default:
+		break;
+	}
 }
 
 //function that draws the tag while being rotated in space
-void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img)
+void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img) const
 {
-	cv::ellipse(img, g.absPoints[0], g.axesTag, g.angleTag, 0, 360, cv::Scalar(0, 255, 255), 1);
-	cv::line(img, g.absPoints[0], g.absPoints[0]+g.realCoord[1], cv::Scalar(0, 0, 255), 1);	//the orientation vector is printed in red
-	cv::line(img, g.absPoints[0], g.absPoints[0]+g.realCoord[2], cv::Scalar(0, 255, 0), 1);	//the redius vector is printed in green
+	cv::ellipse(img, _activeGrid->absPoints[0], _activeGrid->axesTag, _activeGrid->angleTag, 0, 360, COLOR_YELLOW, 1);
+	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0] + _activeGrid->realCoord[1], COLOR_RED, 1);          //the orientation vector is printed in red
+	cv::line(img, _activeGrid->absPoints[0], _activeGrid->absPoints[0] + _activeGrid->realCoord[2], COLOR_GREEN, 1);        //the redius vector is printed in green
 
 	for (int i = 0; i < 3; i++)
 	{
-		cv::circle(img, g.absPoints[0]+g.realCoord[i], 1, cv::Scalar(0, 0, 255), 1); //the point is drawn in red					
+		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[i], 1, COLOR_RED, 1);               //the point is drawn in red
 	}
-	if (_setP1)
-		cv::circle(img, g.absPoints[0] + g.realCoord[1], 1, cv::Scalar(255, 0, 0), 1);
-	else if (_setP2)
-		cv::circle(img, g.absPoints[0] + g.realCoord[2], 1, cv::Scalar(255, 0, 0), 1);
+	switch (_currentState) {
+	case State::SetP1:
+		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[1], 1, COLOR_BLUE, 1);
+		break;
+	case State::SetP2:
+		cv::circle(img, _activeGrid->absPoints[0] + _activeGrid->realCoord[2], 1, COLOR_BLUE, 1);
+		break;
+	default:
+		break;
+	}
 }
 
 //TAG CONFIGURATION FUNCTIONS
 
 //function called while setting the tag (it initializes orient vector)
-void BeesBookTagMatcher::setTag(cv::Point location)
-{
+void BeesBookTagMatcher::setTag(const cv::Point& location) {
 	//If there is an active Tag, this is pushed into the _Grids vector and a new Tag is generated
-	if (_activeTag)
-		_Grids.push_back(g);
+	if (_activeGrid) {
+		TrackedObject object(_trackedObjects.size());
+		object.add(_currentFrameNumber, _activeGrid);
+		_trackedObjects.push_back(object);
+	}
 
-	_ready = false;
-	_setTag = true;
+	_currentState = State::SetTag;
 
-	orient.clear();
-	orient.push_back(location);
-	orient.push_back(location);
-	emit update();	//the orientation vector is drawn.
+	_orient.clear();
+	_orient.push_back(location);
+	_orient.push_back(location);
+	emit update();          //the orientation vector is drawn.
 	return;
 }
+
 //function that allows P1 and P2 to be modified to calculate the tag's angle in space.
-void BeesBookTagMatcher::setTheta(cv::Point location)
-{
-	//std::cout << " --------------------------------------------------------------- " << std::endl;
-	double		prop;
-	double		angle;
-	//when P1 is being modified
-	if (_setP1)
-	{		
-		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
+void BeesBookTagMatcher::setTheta(const cv::Point &location) {
+	double prop;
+	double angle;
+
+	switch (_currentState) {
+	case State::SetP1:
+		//the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag
+		prop = dist(_activeGrid->absPoints[0], location) / (_activeGrid->scale * BeesBookTag::AXISTAG);
 		if (prop > 1)
 			prop = 1;
 		else if (prop < 0.5)
 			prop = 0.5;
 		//P1 updates the orientation of the tag too.
-		g.orientation(location);
-		g.realCoord[1] = g.polar2rect(prop*axisTag, g.alpha);
-		//std::cout << "realCoord 1: x = " << g.realCoord[1].x << ", y = " << g.realCoord[1].y << "(New value)" << std::endl;
-		//std::cout << " test  --- " << g.polar2rect(prop*axisTag, g.alpha) << std::endl;
-	}
-	//when P2 is being modified
-	else if (_setP2)
-	{	
-		prop = dist(g.absPoints[0], location) / (g.scale*axisTag); //the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag 
+		_activeGrid->orientation(location);
+		_activeGrid->realCoord[1] = _activeGrid->polar2rect(prop * BeesBookTag::AXISTAG, _activeGrid->alpha);
+		break;
+	case State::SetP2:
+		//the length of the vector is equal to the distance to the pointer, limited to axisTag and 0.5*axisTag
+		prop = dist(_activeGrid->absPoints[0], location) / (_activeGrid->scale * BeesBookTag::AXISTAG);
 		if (prop > 1)
 			prop = 1;
 		else if (prop < 0.5)
-			prop = 0.5;		
+			prop = 0.5;
 		//P2 doesn't update alpha
-		angle = atan2(location.x - g.centerGrid.x, location.y - g.centerGrid.y) - M_PI / 2;
-		g.realCoord[2] = g.polar2rect(prop*axisTag, angle);
-		//std::cout << "realCoord 2: x = " << g.realCoord[2].x << ", y = " << g.realCoord[2].y << "(New value)" << std::endl;
+		angle = atan2(location.x - _activeGrid->centerGrid.x, location.y - _activeGrid->centerGrid.y) - M_PI / 2;
+		_activeGrid->realCoord[2] = _activeGrid->polar2rect(prop * BeesBookTag::AXISTAG, angle);
+		break;
+	default:
+		break;
 	}
 	//updates parameters
-	g.updateParam();
+	_activeGrid->updateParam();
 	return;
 }
-
-
-//function that cancels the active tag and activates the previous one.
-void BeesBookTagMatcher::cancelTag(cv::Point2f location)
-{
-	if (_Grids.size() > 0)
-	{
-		g = myNewGrid(_Grids[_Grids.size() - 1].scale, _Grids[_Grids.size() - 1].centerGrid, _Grids[_Grids.size() - 1].alpha, _Grids[_Grids.size() - 1].theta, _Grids[_Grids.size() - 1].phi, _Grids[_Grids.size() - 1].ID); //previous Tag is loaded
-		_Grids.pop_back(); //last tag is set as active and removed from the vector
-	}
-	else //when there is just one tag, this is reset
-		g = myNewGrid(location, M_PI / 2);
-	emit update();
-	return;
-}
-
 
 //function that checks if one of the set Points is selected, returns true when one of the points is selected
-bool BeesBookTagMatcher::selectPoint(cv::Point location)
-{
-	bool answer = false;
-	for (int i = 0; i<3; i++)
-	{
-		if (dist(location, g.absPoints[i])<2) //check if the pointer is on one of the points
+bool BeesBookTagMatcher::selectPoint(const cv::Point& location) {
+	for (int i = 0; i < 3; i++) {
+		if (dist(location, _activeGrid->absPoints[i]) < 2) //check if the pointer is on one of the points
 		{
 			switch (i)
 			{
 			case 0:
-				_setP0 = true;
-				answer = true;
-				break;
+				_currentState = State::SetP0;
+				return true;
 			case 1:
-				_setP1 = true;
-				answer = true;	
-				break;
+				_currentState = State::SetP1;
+				return true;
 			case 2:
-				_setP2 = true;
-				answer = true;		
-				break;
-			default:
-				answer = false;
-				break;
+				_currentState = State::SetP2;
+				return true;
 			}
-			break;
 		}
 	}
-	return answer;
+	return false;
 }
+
 //function that checks if one of the already set Tags is selected.
-void BeesBookTagMatcher::selectTag(cv::Point location)
+void BeesBookTagMatcher::selectTag(const cv::Point& location)
 {
-	if (_Grids.size()>0)
-        for (size_t i = 0; i < _Grids.size(); i++)
-		{
-		//if (dist(location, _Grids[i].centerTag) < _Grids[i].axesTag.height)
-		if (dist(location, _Grids[i].centerGrid) < _Grids[i].axesTag.height)
-			{
-				_Grids.push_back(g); //active tag is pushed back in the vector of Grids
-				g = myNewGrid(_Grids[i].scale, _Grids[i].centerGrid, _Grids[i].alpha, _Grids[i].theta, _Grids[i].phi, _Grids[i].ID); //selected Tag is loaded
-				_Grids.erase(_Grids.begin()+i); //The selected tag is erased from the vector
-				emit update();
-			}			
-		}	
-	return;
+	for (const TrackedObject& trackedObject : _trackedObjects) {
+		std::shared_ptr<Grid> grid = trackedObject.maybeGet<Grid>(_currentFrameNumber);
+		if (grid && dist(location, grid->centerGrid) < grid->axesTag.height) {
+			storeCurrentActiveTag();
+			_activeGrid        = grid;
+			_activeFrameNumber = _currentFrameNumber;
+			emit update();
+		}
+	}
+}
+
+void BeesBookTagMatcher::storeCurrentActiveTag()
+{
+	// store last active grid
+	if (_activeGrid) {
+		if (_activeGrid->objectId == _trackedObjects.size()) {
+			assert(_activeFrameNumber);
+			TrackedObject newObject(_trackedObjects.size());
+			newObject.add(_activeFrameNumber.get(), _activeGrid);
+			_trackedObjects.push_back(std::move(newObject));
+		} else {
+			assert(_activeFrameNumber);
+			assert(_activeGrid->objectId < _trackedObjects.size());
+			_trackedObjects[_activeGrid->objectId].add(_activeFrameNumber.get(), _activeGrid);
+		}
+		// set tag as not active
+		cancelTag();
+	}
+}
+
+void BeesBookTagMatcher::cancelTag()
+{
+	_activeGrid.reset();
+	_activeFrameNumber.reset();
+	_currentState  = State::Ready;
+	_setOnlyOrient = false;
 }
 
 //AUXILIAR FUNCTION
 
 //function that calculates the distance between two points
-double BeesBookTagMatcher::dist(cv::Point p1, cv::Point p2)
-{	
-	diff = p1-p2;
-	return sqrt(diff.x*diff.x + diff.y*diff.y);	
+double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
+{
+	const cv::Point diff = p1 - p2;
+	return sqrt(diff.x * diff.x + diff.y * diff.y);
+}
+
+double BeesBookTagMatcher::getAlpha() const
+{
+	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - M_PI / 2;
 }
