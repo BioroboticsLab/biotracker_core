@@ -115,6 +115,7 @@ private:
 	void initPicture(QStringList filenames);
     void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
+
 	void closeEvent(QCloseEvent* event) override;
 
     std::shared_ptr<TrackingAlgorithm> _tracker;
