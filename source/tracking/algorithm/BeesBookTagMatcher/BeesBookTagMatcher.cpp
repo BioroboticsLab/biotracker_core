@@ -23,7 +23,12 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 	, _currentState(State::Ready)
 	, _setOnlyOrient(false)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
-{}
+	, _toolWidget(std::make_shared<QWidget>())
+	, _paramWidget(std::make_shared<QWidget>())
+{
+	_UiToolWidget.setupUi(_toolWidget.get());
+	setNumTags();
+}
 
 BeesBookTagMatcher::~BeesBookTagMatcher()
 {
@@ -31,7 +36,6 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 
 void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 {
-
 	_activeGrid.reset();
 	//// copy all tags from last frame
 	//if (frameNumber > 0) {
@@ -42,6 +46,7 @@ void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 	//		}
 	//	}
 	//}
+	setNumTags();
 }
 
 void BeesBookTagMatcher::paint(cv::Mat& image)
@@ -189,6 +194,8 @@ void BeesBookTagMatcher::handleMouseRelease(QMouseEvent * e) {
 			//length of the vector is taken into consideration
 			setTheta(cv::Point(e->x(), e->y()));
 			_currentState = State::Ready;
+
+			setNumTags();
 			break;
 		}
 		//the tag was translated
@@ -211,9 +218,6 @@ void BeesBookTagMatcher::handleMouseRelease(QMouseEvent * e) {
 			break;
 		}
 		emit update();
-	}
-	// right button released
-	if (e->button() == Qt::RightButton) {
 	}
 }
 
@@ -315,7 +319,6 @@ void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img) const
 //function called while setting the tag (it initializes orient vector)
 void BeesBookTagMatcher::setTag(const cv::Point& location) 
 {
-	// 
 	_currentState = State::SetTag;
 
 	// empty vector
@@ -329,7 +332,6 @@ void BeesBookTagMatcher::setTag(const cv::Point& location)
 	
 	//the orientation vector is drawn.
 	emit update();          
-	return;
 }
 
 //function that allows P1 and P2 to be modified to calculate the tag's angle in space.
@@ -473,6 +475,8 @@ void BeesBookTagMatcher::removeCurrentActiveTag()
 	
 		// reset active tag and frame and...
 		cancelTag();
+
+		setNumTags();
 	}
 }
 
@@ -488,6 +492,19 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 double BeesBookTagMatcher::getAlpha() const
 {
 	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - CV_PI / 2;
+}
+
+void BeesBookTagMatcher::setNumTags()
+{
+	size_t cnt = 0;
+	for (size_t i = 0; i < _trackedObjects.size(); i++)
+	{
+		if (_trackedObjects[i].maybeGet<Grid>(_currentFrameNumber)) {
+			++cnt;
+		}
+	}
+
+	_UiToolWidget.numTags->setText(QString::number(cnt));
 }
 
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const

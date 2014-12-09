@@ -3,16 +3,19 @@
 
 #include <chrono>
 #include <cstdint>
+#include <memory>
+
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include <opencv2/opencv.hpp>
 
 #include <boost/optional.hpp>
 
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
+
+#include "ui_BeesBookTagMatcherToolWidget.h"
 
 //Class used to generate ground truth data for BeesBook
 class BeesBookTagMatcher : public TrackingAlgorithm {
@@ -35,6 +38,11 @@ private:
 	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
+
+	Ui::TagMatcherToolWidget _UiToolWidget;
+
+	std::shared_ptr<QWidget> _toolWidget;
+	std::shared_ptr<QWidget> _paramWidget;
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image) const;
@@ -73,6 +81,8 @@ private:
 
 	double getAlpha() const;
 
+	void setNumTags();
+
 	std::set<Qt::Key> const& grabbedKeys() const override;
 
 	void handleMouseMove(QMouseEvent * e);
@@ -91,6 +101,9 @@ public:
 	void paint(cv::Mat& image) override;
 	void reset() override;
 	bool prepareSave() override;
+
+	std::shared_ptr<QWidget> getToolsWidget() override { return _toolWidget; }
+	std::shared_ptr<QWidget> getParamsWidget() override { return _paramWidget; }
 };
 
 #endif
