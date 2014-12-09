@@ -65,11 +65,6 @@ public:
 	std::vector<TrackedObject> const& getObjects() const;
 
 public slots:
-	//mouse click and move events
-	virtual void mouseMoveEvent		( QMouseEvent * e );
-	virtual void mousePressEvent	( QMouseEvent * e );
-	virtual void mouseReleaseEvent	( QMouseEvent * e );
-	virtual void mouseWheelEvent	( QWheelEvent * e );
 	/**
 	* receive Signal to set current frame number
 	*/

@@ -357,6 +357,22 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 	}
 }
 
+
+bool BioTracker::event(QEvent *event)
+{
+	const QEvent::Type etype = event->type();
+	if (etype == QEvent::KeyPress ||
+	    etype == QEvent::MouseButtonPress ||
+	    etype == QEvent::MouseButtonRelease ||
+	    etype == QEvent::MouseMove ||
+	    etype == QEvent::Wheel)
+	{
+		if (_tracker) QCoreApplication::sendEvent(_tracker.get(), event);
+		return true;
+	}
+	return false;
+}
+
 void BioTracker::stepCaptureForward()
 {
 	//if video not yet loaded, load it now!
@@ -582,15 +598,6 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 
 void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 {	
-	QObject::connect(ui.videoView,		SIGNAL ( pressEvent			(QMouseEvent*) ), 
-        tracker.get(), SLOT(mousePressEvent		(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), 
-        tracker.get(), SLOT(mouseReleaseEvent	(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( moveEvent			(QMouseEvent*) ), 
-        tracker.get(), SLOT(mouseMoveEvent		(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mouseWheelEvent	(QWheelEvent*) ), 
-        tracker.get(), SLOT(mouseWheelEvent		(QWheelEvent*) ));
-
     QObject::connect(tracker.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)),
 		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
     QObject::connect( tracker.get(), SIGNAL( update() ),

@@ -9,14 +9,14 @@
 #include <boost/optional.hpp>
 
 #define _USE_MATH_DEFINES
-#include <math.h> 
+#include <cmath>
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
 
 //Class used to generate ground truth data for BeesBook
-class BeesBookTagMatcher : public TrackingAlgorithm
-{
+class BeesBookTagMatcher : public TrackingAlgorithm {
+	Q_OBJECT
 private:
 	std::shared_ptr<Grid>  _activeGrid;
 	boost::optional<ulong> _activeFrameNumber;
@@ -73,6 +73,15 @@ private:
 
 	double getAlpha() const;
 
+	void handleMouseMove(QMouseEvent * e);
+	void handleMousePress(QMouseEvent * e);
+	void handleMouseRelease(QMouseEvent * e);
+	void handleMouseWheel(QWheelEvent * e);
+	void handleKeyPress(QKeyEvent * e);
+
+protected:
+	bool event(QEvent* event) override;
+
 public:
 	BeesBookTagMatcher(Settings &settings, std::string &serializationPathName, QWidget *parent);
 	~BeesBookTagMatcher();
@@ -81,12 +90,6 @@ public:
 	void paint(cv::Mat& image) override;
 	void reset() override;
 	bool prepareSave() override;
-
-public slots:
-	void mouseMoveEvent(QMouseEvent * e) override;
-	void mousePressEvent(QMouseEvent * e) override;
-	void mouseReleaseEvent(QMouseEvent * e) override;
-	void mouseWheelEvent(QWheelEvent * e) override;
 };
 
 #endif
