@@ -39,14 +39,20 @@ public:
 	std::shared_ptr<DerivedObjectModel> maybeGet(const size_t framenumber) const
 	{
 		auto it = _objectsByFrame.find(framenumber);
-		if (it == _objectsByFrame.end()) return std::shared_ptr<DerivedObjectModel>();
-		else return std::dynamic_pointer_cast<DerivedObjectModel>(it->second);
+
+		if (it == _objectsByFrame.end()) 
+			return std::shared_ptr<DerivedObjectModel>();
+		else 
+			return std::dynamic_pointer_cast<DerivedObjectModel>(it->second);
 	}
 
 	std::shared_ptr<ObjectModel> top() const;
 
 	size_t getId() const { return _id; }
 	void setId(size_t id) { _id = id; }
+
+	bool isEmpty() const { return _objectsByFrame.empty(); }
+	void erase(size_t framenumber) { _objectsByFrame.erase(framenumber); }
 
 private:
     size_t _id;
