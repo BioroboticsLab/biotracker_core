@@ -14,21 +14,39 @@ TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializat
 
 TrackingAlgorithm::~TrackingAlgorithm()
 {
-    std::cout << "Storing in " << _serializationPathName << std::endl;
-    std::ofstream ostream(_serializationPathName, std::ios::binary);
+ 	std::cout << "Storing in " << _serializationPathName << std::endl;
+	std::ofstream ostream(_serializationPathName, std::ios::binary);
 	cereal::JSONOutputArchive archive(ostream);
-    archive(_trackedObjects);
+	prepareSave();
+	archive(_trackedObjects);
 }
 
-void TrackingAlgorithm::track(ulong /* frameNumber */, cv::Mat &/*frame*/)
-{}
+void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects)
+{
+	_trackedObjects = std::move(objects);
+}
 
-void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects )
-{	_trackedObjects = std::move(objects);  }
+const std::vector<TrackedObject> &TrackingAlgorithm::getObjects() const
+{
+	return _trackedObjects;
+}
+
 void TrackingAlgorithm::mouseMoveEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mousePressEvent		( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * )	{}
 void TrackingAlgorithm::mouseWheelEvent		( QWheelEvent * )	{}
-std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()	{ return std::make_shared<QWidget>(); }
-std::shared_ptr<QWidget> TrackingAlgorithm::getParamsWidget()	{ return std::make_shared<QWidget>(); }
 
+std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()
+{
+	return std::make_shared<QWidget>();
+}
+
+std::shared_ptr<QWidget> TrackingAlgorithm::getParamsWidget()
+{
+	return std::make_shared<QWidget>();
+}
+
+bool TrackingAlgorithm::prepareSave()
+{
+	return true;
+}

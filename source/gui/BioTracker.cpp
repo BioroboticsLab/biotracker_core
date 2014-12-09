@@ -201,17 +201,44 @@ void BioTracker::browsePicture()
 
 void BioTracker::loadTrackingData()
 {
+	if (!_tracker) {
+		QMessageBox::warning(this, "Unable to load tracking data",
+		                     "No tracker selected.");
+		return;
+	}
+
+	//TODO: add sanity checks and meta information (video file name, tracker name...)
+	//to serialization data
 	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
 	if (!filename.isEmpty()) {
-		// TODO
+		std::ifstream is(filename.toStdString());
+		cereal::JSONInputArchive ar(is);
+		std::vector<TrackedObject> storedObjects;
+		ar(storedObjects);
+		_tracker->loadObjects(std::move(storedObjects));
 	}
 }
 
 void BioTracker::storeTrackingData()
 {
-	QString filename = QFileDialog::getSaveFileName(this, tr("Save tracking data"), "", tr("Data Files (*.tdat)"));
-	if (!filename.isEmpty()) {
-		// TODO
+	if (!_tracker) {
+		QMessageBox::warning(this, "Unable to store tracking data",
+		                     "No tracker selected.");
+		return;
+	}
+
+	QFileDialog dialog(this, tr("Save tracking data"));
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setDefaultSuffix("tdat");
+	dialog.setNameFilter(tr("Data Files (*.tdat)"));
+	if (dialog.exec()) {
+		const QStringList filenames = dialog.selectedFiles();
+		if (!filenames.empty() && _tracker->prepareSave()) {
+			const QString filename = filenames.first();
+			std::ofstream ostream(filename.toStdString(), std::ios::binary);
+			cereal::JSONOutputArchive archive(ostream);
+			archive(_tracker->getObjects());
+		}
 	}
 }
 
