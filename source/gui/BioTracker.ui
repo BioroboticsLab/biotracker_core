@@ -124,7 +124,11 @@
               <number>3</number>
              </property>
              <item>
-              <widget class="VideoView" name="videoView" native="true"/>
+              <widget class="VideoView" name="videoView" native="true">
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QSlider" name="sld_video">

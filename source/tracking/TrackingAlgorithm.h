@@ -59,17 +59,26 @@ public:
 	*/
 	virtual std::shared_ptr<QWidget> getParamsWidget();
 
+	/**
+	 * @brief grabbedKeys() has to return a set of all keys that the
+	 * algorithms needs access to. All KeyEvents with keys in the set will
+	 * be forwarded to the algorithm
+	 * @return const reference to the set of keys
+	 */
+	virtual std::set<Qt::Key> const& grabbedKeys() const;
+
+	/**
+	 * @brief prepareSave() is called once before the serialization of
+	 * _trackedObjects. It should store or discard all temporary values
+	 * that are related to tracked Objects.
+	 * @return
+	 */
 	virtual bool prepareSave();
 	
 	void loadObjects(std::vector<TrackedObject> &&objects);
 	std::vector<TrackedObject> const& getObjects() const;
 
 public slots:
-	//mouse click and move events
-	virtual void mouseMoveEvent		( QMouseEvent * e );
-	virtual void mousePressEvent	( QMouseEvent * e );
-	virtual void mouseReleaseEvent	( QMouseEvent * e );
-	virtual void mouseWheelEvent	( QWheelEvent * e );
 	/**
 	* receive Signal to set current frame number
 	*/

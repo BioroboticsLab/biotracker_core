@@ -28,7 +28,7 @@ _settings(settings)
 
 BioTracker::~BioTracker()
 {
-    _trackingThread->stop();
+	_trackingThread->stop();
 }
 
 //function to test file existence
@@ -38,7 +38,7 @@ inline bool file_exist(const std::string& name) {
 		return true;
 	} else {
 		return false;
-	}   
+	}
 }
 
 void BioTracker::init(){
@@ -46,11 +46,11 @@ void BioTracker::init(){
 	_videoStopped = true;
 	_currentFrame = 0;
 	_isPanZoomMode = false;
-    _trackingThread = std::make_unique<TrackingThread>(_settings);
+	_trackingThread = std::make_unique<TrackingThread>(_settings);
 	_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
-    _vboxParams = new QVBoxLayout(ui.groupBox_params);
-    _vboxTools = new QVBoxLayout(ui.groupBox_tools);
+	_vboxParams = new QVBoxLayout(ui.groupBox_params);
+	_vboxTools = new QVBoxLayout(ui.groupBox_tools);
 	//meta types
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
@@ -357,6 +357,32 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 	}
 }
 
+
+bool BioTracker::event(QEvent *event)
+{
+	if (!_tracker) return QMainWindow::event(event);
+
+	const QEvent::Type etype = event->type();
+	if (etype == QEvent::MouseButtonPress ||
+	    etype == QEvent::MouseButtonRelease ||
+	    etype == QEvent::MouseMove ||
+	    etype == QEvent::Wheel)
+	{
+		if (ui.videoView->rect().contains(ui.videoView->mapFromGlobal(QCursor::pos()))) {
+			QCoreApplication::sendEvent(_tracker.get(), event);
+			return true;
+		}
+	} else if (event->type() == QEvent::KeyPress) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+		const std::set<Qt::Key>& keys = _tracker->grabbedKeys();
+		if (keys.count(static_cast<Qt::Key>(keyEvent->key()))) {
+			QCoreApplication::sendEvent(_tracker.get(), event);
+			return true;
+		}
+	}
+	return QMainWindow::event(event);
+}
+
 void BioTracker::stepCaptureForward()
 {
 	//if video not yet loaded, load it now!
@@ -412,18 +438,14 @@ void BioTracker::updateFrameNumber(int frameNumber)
 		_videoPaused = true;
 		setPlayfieldPaused(true);
 		_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(0).toStdString());
-
 	}
 }
 
 void BioTracker::drawImage(cv::Mat image)
 {
-
-
 	if(image.data)
 	{	
 		ui.videoView->showImage(image);
-
 	}
 
 	// signals when the frame was drawn, and the FishTrackerThread can continue to work;
@@ -582,15 +604,6 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 
 void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 {	
-	QObject::connect(ui.videoView,		SIGNAL ( pressEvent			(QMouseEvent*) ), 
-        tracker.get(), SLOT(mousePressEvent		(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( releaseEvent		(QMouseEvent*) ), 
-        tracker.get(), SLOT(mouseReleaseEvent	(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( moveEvent			(QMouseEvent*) ), 
-        tracker.get(), SLOT(mouseMoveEvent		(QMouseEvent*) ));
-	QObject::connect(ui.videoView,		SIGNAL ( mouseWheelEvent	(QWheelEvent*) ), 
-        tracker.get(), SLOT(mouseWheelEvent		(QWheelEvent*) ));
-
     QObject::connect(tracker.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)),
 		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
     QObject::connect( tracker.get(), SIGNAL( update() ),

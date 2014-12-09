@@ -88,6 +88,9 @@ public slots:
 	//returns true if video is in paused, false otherwise
 	bool isVideoPaused();
 
+protected:
+	bool event(QEvent* event) override;
+
 private:
 	Ui::BioTrackerClass ui;
 

@@ -357,7 +357,7 @@ void BeesBookTagMatcher::setTheta(const cv::Point &location) {
 		else if (prop < 0.5)
 			prop = 0.5;
 		//P2 doesn't update alpha
-		angle = atan2(location.x - _activeGrid->centerGrid.x, location.y - _activeGrid->centerGrid.y) - M_PI / 2;
+		angle = atan2(location.x - _activeGrid->centerGrid.x, location.y - _activeGrid->centerGrid.y) - CV_PI / 2;
 		_activeGrid->realCoord[2] = _activeGrid->polar2rect(prop * BeesBookTag::AXISTAG, angle);
 		break;
 	default:
@@ -487,7 +487,7 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 
 double BeesBookTagMatcher::getAlpha() const
 {
-	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - M_PI / 2;
+	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - CV_PI / 2;
 }
 
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const

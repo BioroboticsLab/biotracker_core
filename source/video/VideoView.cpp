@@ -288,6 +288,13 @@ void VideoView::takeScreenshot(QString screenShotFilename)
 	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
+void VideoView::keyPressEvent(QKeyEvent *e)
+{
+	e->accept();
+	QKeyEvent event(e->type(), e->key(), e->modifiers(), e->text());
+	QCoreApplication::sendEvent(QApplication::activeWindow(), &event);
+}
+
 void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
 	if (_isPanZoomMode)
@@ -311,12 +318,11 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	}
 	else
 	{
-
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
 		const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit moveEvent ( modifiedEvent );		
-
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -338,10 +344,11 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	}
 	else
 	{
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit pressEvent ( modifiedEvent );
+		const QPointF localPos(p);
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -353,10 +360,11 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 		_isPanning = false;
 	}
 	else{
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit releaseEvent ( modifiedEvent );
+		const QPointF localPos(p);
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -398,9 +406,11 @@ void VideoView::wheelEvent( QWheelEvent * e )
 	}
 	else
 	{
-		const QPointF *localPos = new QPointF(picturePos);
-		QWheelEvent *modifiedEvent = new QWheelEvent(e->pos(),*localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
-		emit mouseWheelEvent( modifiedEvent );
+		e->accept();
+		QPoint p  = unprojectScreenPos(e->pos());
+		const QPointF localPos(p);
+		QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}	
 }
 
