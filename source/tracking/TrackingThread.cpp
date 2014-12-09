@@ -200,8 +200,8 @@ bool TrackingThread::isCaptureActive()
 
 void TrackingThread::setFrameNumber(int frameNumber)
 {
-	QMutexLocker frameLocker(&frameNumberMutex);	
-	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	const int videoLength = getFrameNumber();
+	QMutexLocker frameLocker(&frameNumberMutex);
 
 	if(frameNumber >= 0 && frameNumber <= videoLength)
 	{
@@ -227,7 +227,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 
 void TrackingThread::incrementFrameNumber()
 {
-	int videoLength = _capture.get(CV_CAP_PROP_FRAME_COUNT);
+	const int videoLength = getVideoLength();
 	QMutexLocker locker(&frameNumberMutex);
 	if(_frameNumber < videoLength) {
 		++_frameNumber;

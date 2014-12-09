@@ -372,7 +372,7 @@ bool BioTracker::event(QEvent *event)
 			QCoreApplication::sendEvent(_tracker.get(), event);
 			return true;
 		}
-	} else if (event->type() == QEvent::KeyPress) {
+	} else if (etype == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 		const std::set<Qt::Key>& keys = _tracker->grabbedKeys();
 		if (keys.count(static_cast<Qt::Key>(keyEvent->key()))) {
@@ -385,10 +385,16 @@ bool BioTracker::event(QEvent *event)
 
 void BioTracker::stepCaptureForward()
 {
-	//if video not yet loaded, load it now!
-	if(_videoStopped){
-		initCapture();
+	//if video/pictures not yet loaded, load it now!
+	if (_videoStopped) {
+		if (_settings.getValueOfParam<bool>(GUIPARAM::IS_SOURCE_VIDEO)) {
+			initCapture();
+		} else {
+			const QStringList files(QString::fromStdString(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE)));
+			initPicture(std::move(files));
+		}
 	}
+
 	_videoPaused = true;
 	emit grabNextFrame();
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
@@ -423,7 +429,7 @@ void BioTracker::stopCapture()
 	ui.sld_video->setDisabled(true);
 	_settings.setParam(CAPTUREPARAM::CAP_PAUSED_AT_FRAME,QString::number(_currentFrame).toStdString());
 	ui.cb_algorithms->setCurrentIndex(0);
-    trackingAlgChanged(Algorithms::NoTracking);
+	trackingAlgChanged(Algorithms::NoTracking);
 }
 
 void BioTracker::updateFrameNumber(int frameNumber)
