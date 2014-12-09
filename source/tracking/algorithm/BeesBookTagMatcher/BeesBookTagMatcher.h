@@ -66,6 +66,8 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	void removeCurrentActiveTag();
+
 	// function that calculates the distance between two points
 	double dist(const cv::Point& p1, const cv::Point& p2) const;
 
@@ -78,6 +80,7 @@ public:
 	void track(ulong frameNumber, cv::Mat& frame) override;
 	void paint(cv::Mat& image) override;
 	void reset() override;
+	bool prepareSave() override;
 
 public slots:
 	void mouseMoveEvent(QMouseEvent * e) override;

@@ -107,11 +107,17 @@ private:
 		ar(CEREAL_NVP(centerGrid),
 		  CEREAL_NVP(axesGrid),
 		  CEREAL_NVP(axesTag),
+		  CEREAL_NVP(angleGrid),
+		  CEREAL_NVP(angleTag),
 		  CEREAL_NVP(scale),
 		  CEREAL_NVP(alpha),
 		  CEREAL_NVP(theta),
 		  CEREAL_NVP(phi),
-		  CEREAL_NVP(ID));
+		  CEREAL_NVP(ID),
+		  CEREAL_NVP(absPoints),
+		  CEREAL_NVP(relPoints),
+		  CEREAL_NVP(realCoord),
+		  CEREAL_NVP(objectId));
 	}
 };
 

@@ -59,6 +59,12 @@ void BeesBookTagMatcher::paint(cv::Mat& image)
 void BeesBookTagMatcher::reset() {
 }
 
+bool BeesBookTagMatcher::prepareSave()
+{
+	storeCurrentActiveTag();
+	return true;
+}
+
 //check if MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	//check if LEFT button is clicked
@@ -109,12 +115,9 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	}
 	//check if RIGHT button is clicked
 	if (e->button() == Qt::RightButton) {
-		//check for SHIFT modifier
-		if (Qt::ShiftModifier == QApplication::keyboardModifiers()) {
-		}
 		//check for CTRL modifier
 		if (Qt::ControlModifier == QApplication::keyboardModifiers()) {
-			cancelTag(); //The Tag being currently configured is cancelled
+			removeCurrentActiveTag();
 			emit update();
 		}
 	}
@@ -388,6 +391,22 @@ void BeesBookTagMatcher::cancelTag()
 	_activeFrameNumber.reset();
 	_currentState  = State::Ready;
 	_setOnlyOrient = false;
+}
+
+void BeesBookTagMatcher::removeCurrentActiveTag()
+{
+	// if current grid has been stored in _trackedObjects
+	if (_activeGrid->objectId < _trackedObjects.size()) {
+		// delete from _trackedObjects
+		_trackedObjects.erase(_trackedObjects.begin() + _activeGrid->objectId);
+		// decrement all ids after current id by one
+		for (size_t idx = _activeGrid->objectId; idx < _trackedObjects.size(); ++idx) {
+			assert(_trackedObjects[idx].getId() == idx + 1);
+			_trackedObjects[idx].setId(idx);
+		}
+	}
+
+	cancelTag();
 }
 
 //AUXILIAR FUNCTION
