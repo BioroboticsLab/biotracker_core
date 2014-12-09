@@ -31,17 +31,17 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 
 void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 {
-	storeCurrentActiveTag();
 
-	// copy all tags from last frame
-	if (frameNumber > 0) {
-		for (TrackedObject& trackedObject : _trackedObjects) {
-			if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
-				std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
-				trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
-			}
-		}
-	}
+	_activeGrid.reset();
+	//// copy all tags from last frame
+	//if (frameNumber > 0) {
+	//	for (TrackedObject& trackedObject : _trackedObjects) {
+	//		if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
+	//			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
+	//			trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
+	//		}
+	//	}
+	//}
 }
 
 void BeesBookTagMatcher::paint(cv::Mat& image)
