@@ -57,7 +57,6 @@ public slots:
 	//switch pan&zoom mode
 	void switchPanZoomMode();
 
-
 	// SLOTS FOR TRACKING THREAD: 	
 	void updateFrameNumber(int frameNumber);	
 	void drawImage(cv::Mat image);

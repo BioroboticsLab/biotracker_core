@@ -22,7 +22,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 	: TrackingAlgorithm(settings, serializationPathName, parent)
 	, _currentState(State::Ready)
 	, _setOnlyOrient(false)
-    , _lastMouseEventTime(std::chrono::system_clock::now())
+	, _lastMouseEventTime(std::chrono::system_clock::now())
 {}
 
 BeesBookTagMatcher::~BeesBookTagMatcher()

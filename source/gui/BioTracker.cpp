@@ -461,7 +461,7 @@ void BioTracker::drawImage(cv::Mat image)
 
 void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 {
-    QString msgLine =  "<span style=\"color:blue\">";
+	QString msgLine =  "<span style=\"color:blue\">";
 	msgLine += QDateTime::currentDateTime().toString("hh:mm:ss");
 	msgLine += "</span>&nbsp;&nbsp;&nbsp;";
 	switch (mType)

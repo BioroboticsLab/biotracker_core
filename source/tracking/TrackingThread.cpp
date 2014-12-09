@@ -200,7 +200,7 @@ bool TrackingThread::isCaptureActive()
 
 void TrackingThread::setFrameNumber(int frameNumber)
 {
-	const int videoLength = getFrameNumber();
+	const int videoLength = getVideoLength();
 	QMutexLocker frameLocker(&frameNumberMutex);
 
 	if(frameNumber >= 0 && frameNumber <= videoLength)
