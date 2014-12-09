@@ -41,6 +41,12 @@ public:
 		return _ptree.get<T>(paramName);
 	}
 
+	/**
+	 * Gets either the parameter value provided by parameter name, if it
+	 * exists, or a empty boost::optional<T> otherwise.
+	 * @param: paramName, the parameter name,
+	 * @return: the value of the parameter wrapped in a boost::optional.
+	 */
 	template <typename T>
 	boost::optional<T> maybeGetValueOfParam(const std::string &paramName) const {
 		return _ptree.get_optional<T>(paramName);

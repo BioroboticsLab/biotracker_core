@@ -31,11 +31,6 @@ const std::vector<TrackedObject> &TrackingAlgorithm::getObjects() const
 	return _trackedObjects;
 }
 
-void TrackingAlgorithm::mouseMoveEvent		( QMouseEvent * )	{}
-void TrackingAlgorithm::mousePressEvent		( QMouseEvent * )	{}
-void TrackingAlgorithm::mouseReleaseEvent	( QMouseEvent * )	{}
-void TrackingAlgorithm::mouseWheelEvent		( QWheelEvent * )	{}
-
 std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()
 {
 	return std::make_shared<QWidget>();
@@ -44,6 +39,12 @@ std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget()
 std::shared_ptr<QWidget> TrackingAlgorithm::getParamsWidget()
 {
 	return std::make_shared<QWidget>();
+}
+
+const std::set<Qt::Key> &TrackingAlgorithm::grabbedKeys() const
+{
+	static const std::set<Qt::Key> keys;
+	return keys;
 }
 
 bool TrackingAlgorithm::prepareSave()
