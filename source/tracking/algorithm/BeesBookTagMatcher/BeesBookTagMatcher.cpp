@@ -66,7 +66,7 @@ bool BeesBookTagMatcher::prepareSave()
 }
 
 //check if MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
+void BeesBookTagMatcher::handleMousePress(QMouseEvent * e) {
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton) {
 		//check for SHIFT modifier
@@ -124,7 +124,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 }
 
 //check if pointer MOVES
-void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
+void BeesBookTagMatcher::handleMouseMove(QMouseEvent * e) {
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
 		switch (_currentState) {
@@ -150,7 +150,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
 }
 
 //check if MOUSE BUTTON IS RELEASED
-void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
+void BeesBookTagMatcher::handleMouseRelease(QMouseEvent * e) {
 	// left button released
 	if (e->button() == Qt::LeftButton) {
 		switch (_currentState) {
@@ -189,7 +189,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 }
 
 //check if WHEEL IS ACTIVE
-void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
+void BeesBookTagMatcher::handleMouseWheel(QWheelEvent * e)
 {
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
@@ -202,6 +202,11 @@ void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
 		}
 		_lastMouseEventTime = std::chrono::system_clock::now();
 	}
+}
+
+void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
+{
+	//TODO
 }
 
 //BeesBookTagMatcher private member functions
@@ -395,18 +400,20 @@ void BeesBookTagMatcher::cancelTag()
 
 void BeesBookTagMatcher::removeCurrentActiveTag()
 {
-	// if current grid has been stored in _trackedObjects
-	if (_activeGrid->objectId < _trackedObjects.size()) {
-		// delete from _trackedObjects
-		_trackedObjects.erase(_trackedObjects.begin() + _activeGrid->objectId);
-		// decrement all ids after current id by one
-		for (size_t idx = _activeGrid->objectId; idx < _trackedObjects.size(); ++idx) {
-			assert(_trackedObjects[idx].getId() == idx + 1);
-			_trackedObjects[idx].setId(idx);
+	if (_activeGrid) {
+		// if current grid has been stored in _trackedObjects
+		if (_activeGrid->objectId < _trackedObjects.size()) {
+			// delete from _trackedObjects
+			_trackedObjects.erase(_trackedObjects.begin() + _activeGrid->objectId);
+			// decrement all ids after current id by one
+			for (size_t idx = _activeGrid->objectId; idx < _trackedObjects.size(); ++idx) {
+				assert(_trackedObjects[idx].getId() == idx + 1);
+				_trackedObjects[idx].setId(idx);
+			}
 		}
-	}
 
-	cancelTag();
+		cancelTag();
+	}
 }
 
 //AUXILIAR FUNCTION
@@ -421,4 +428,34 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 double BeesBookTagMatcher::getAlpha() const
 {
 	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - M_PI / 2;
+}
+
+bool BeesBookTagMatcher::event(QEvent *event)
+{
+	const QEvent::Type etype = event->type();
+	switch (etype) {
+	case QEvent::KeyPress:
+		handleKeyPress(static_cast<QKeyEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseButtonPress:
+		handleMousePress(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseButtonRelease:
+		handleMouseRelease(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseMove:
+		handleMouseMove(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::Wheel:
+		handleMouseWheel(static_cast<QWheelEvent*>(event));
+		return true;
+		break;
+	default:
+		event->ignore();
+		return false;
+	}
 }
