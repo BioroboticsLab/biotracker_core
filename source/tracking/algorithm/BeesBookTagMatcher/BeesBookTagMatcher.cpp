@@ -27,7 +27,6 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &seriali
 
 BeesBookTagMatcher::~BeesBookTagMatcher()
 {
-	storeCurrentActiveTag();
 }
 
 void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
@@ -47,76 +46,94 @@ void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 
 void BeesBookTagMatcher::paint(cv::Mat& image)
 {
-	if (!_trackedObjects.empty()) {
+	if (!_trackedObjects.empty()) 
+	{
 		drawSetTags(image);
 	}
-	if (_currentState == State::SetTag) {
+	if (_currentState == State::SetTag) 
+	{
 		drawOrientation(image, _orient);
-	} else if (_activeGrid)  {
-		drawActiveTag(image);
-	}
+	} 
+	else 
+		if (_activeGrid)  
+		{
+			drawActiveTag(image);
+		}
 }
 void BeesBookTagMatcher::reset() {
 }
 
 bool BeesBookTagMatcher::prepareSave()
 {
-	storeCurrentActiveTag();
 	return true;
 }
 
 //check if MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	//check if LEFT button is clicked
-	if (e->button() == Qt::LeftButton) {
+	if (e->button() == Qt::LeftButton) 
+	{
 		//check for SHIFT modifier
-		if (Qt::ShiftModifier == QApplication::keyboardModifiers())
+		if ( Qt::ShiftModifier == QApplication::keyboardModifiers() )
 		{
-			if (_activeGrid)    // The Tag is active and can now be modified
+			if ( _activeGrid )    // The Tag is active and can now be modified
 			{
 				//if clicked on one of the set points, the point is activated
 				if (selectPoint(cv::Point(e->x(), e->y())))
+				{
 					emit update();
+				}
 				if (_currentState == State::SetP1)
+				{
 					_setOnlyOrient = true;
+				}
 			}
 		}
 		//check for CTRL modifier
-		else if (Qt::ControlModifier == QApplication::keyboardModifiers())
-		{
-			if (_currentState == State::Ready) {
-				//a new tag is generated
-				setTag(cv::Point(e->x(), e->y()));
-				_currentState = State::SetTag;
+		else 
+			if ( Qt::ControlModifier == QApplication::keyboardModifiers() )
+			{
+				if (_currentState == State::Ready) 
+				{
+					_activeGrid.reset();
+					//a new tag is generated
+					setTag(cv::Point(e->x(), e->y()));
+					_currentState = State::SetTag;
+				}
 			}
-		}
-		else {
-			// The Tag is active and can now be modified
-			if (_activeGrid) {
-				//if clicked in one of the bit cells, its value is changed
-				const double distance = dist(_activeGrid->centerGrid, cv::Point(e->x(), e->y()));
-				//check for CTRL+SHIFT modifier
-				const bool indeterminate =
-				    QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-				    QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
-				if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
-					_activeGrid->updateID(cv::Point(e->x(), e->y()), indeterminate);
-				else
-				//if clicked on one of the set points, the point is activated
-				if (selectPoint(cv::Point(e->x(), e->y())))
-					emit update();
-				//otherwise checks if one of the other tags is selected
-				else
+			else 
+			{
+				// The Tag is active and can now be modified
+				if (_activeGrid) 
+				{
+					//if clicked in one of the bit cells, its value is changed
+					const double distance = dist(_activeGrid->centerGrid, cv::Point(e->x(), e->y()));
+					//check for CTRL+SHIFT modifier
+					const bool indeterminate =
+						QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+						QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+					if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
+						_activeGrid->updateID(cv::Point(e->x(), e->y()), indeterminate);
+					else
+					//if clicked on one of the set points, the point is activated
+					if (selectPoint(cv::Point(e->x(), e->y())))
+						emit update();
+					//otherwise checks if one of the other tags is selected
+					else
+						selectTag(cv::Point(e->x(), e->y()));
+				} 
+				else 
+				{
 					selectTag(cv::Point(e->x(), e->y()));
-			} else {
-				selectTag(cv::Point(e->x(), e->y()));
+				}
 			}
-		}
 	}
 	//check if RIGHT button is clicked
-	if (e->button() == Qt::RightButton) {
+	if (e->button() == Qt::RightButton) 
+	{
 		//check for CTRL modifier
-		if (Qt::ControlModifier == QApplication::keyboardModifiers()) {
+		if (Qt::ControlModifier == QApplication::keyboardModifiers()) 
+		{
 			removeCurrentActiveTag();
 			emit update();
 		}
@@ -156,12 +173,24 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 		switch (_currentState) {
 		//center and orientation of the tag were set.
 		case State::SetTag:
-			_activeGrid        = std::make_shared<Grid>(_orient[0], getAlpha(), _trackedObjects.size());
+		{
+			// update active frame number and active grid
 			_activeFrameNumber = _currentFrameNumber;
-			//length of the vector is taked into consideration
+
+			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
+
+			// insert new trackedObject object into _trackedObjects ( check if empty "first")
+			_trackedObjects.emplace_back(newID);
+
+			// associate new (active) grid to frame number
+			_activeGrid = std::make_shared<Grid>(_orient[0], getAlpha(), newID);
+			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
+
+			//length of the vector is taken into consideration
 			setTheta(cv::Point(e->x(), e->y()));
 			_currentState = State::Ready;
 			break;
+		}
 		//the tag was translated
 		case State::SetP0:
 			_currentState = State::Ready;
@@ -211,10 +240,20 @@ void BeesBookTagMatcher::mouseWheelEvent(QWheelEvent * e)
 //function that draws the set Tags so far.
 void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 {
-	for (const TrackedObject& trackedObject : _trackedObjects) {
-		if (trackedObject.count(_currentFrameNumber)) {
+	// iterate over all stored object
+	for ( const TrackedObject& trackedObject : _trackedObjects ) 
+	{
+		// check: data for that frame exists
+		if ( trackedObject.count( _currentFrameNumber ) ) 
+		{
+			// get grid
 			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(_currentFrameNumber);
-			grid->drawFullTag(image, 2);
+			
+			// do not paint grid if it is active (will be drawn with different color later)
+			if (grid != _activeGrid)
+			{
+				grid->drawFullTag(image, 2);
+			}
 		}
 	}
 }
@@ -277,20 +316,22 @@ void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img) const
 //TAG CONFIGURATION FUNCTIONS
 
 //function called while setting the tag (it initializes orient vector)
-void BeesBookTagMatcher::setTag(const cv::Point& location) {
-	//If there is an active Tag, this is pushed into the _Grids vector and a new Tag is generated
-	if (_activeGrid) {
-		TrackedObject object(_trackedObjects.size());
-		object.add(_currentFrameNumber, _activeGrid);
-		_trackedObjects.push_back(object);
-	}
-
+void BeesBookTagMatcher::setTag(const cv::Point& location) 
+{
+	// 
 	_currentState = State::SetTag;
 
+	// empty vector
 	_orient.clear();
+
+	// first point of line
 	_orient.push_back(location);
-	_orient.push_back(location);
-	emit update();          //the orientation vector is drawn.
+
+	// second point of line (will be updated when mouse is moved)
+	_orient.push_back(location); 
+	
+	//the orientation vector is drawn.
+	emit update();          
 	return;
 }
 
@@ -355,34 +396,57 @@ bool BeesBookTagMatcher::selectPoint(const cv::Point& location) {
 //function that checks if one of the already set Tags is selected.
 void BeesBookTagMatcher::selectTag(const cv::Point& location)
 {
-	for (const TrackedObject& trackedObject : _trackedObjects) {
-		std::shared_ptr<Grid> grid = trackedObject.maybeGet<Grid>(_currentFrameNumber);
-		if (grid && dist(location, grid->centerGrid) < grid->axesTag.height) {
-			storeCurrentActiveTag();
+	// iterate over all stored objects
+	for (size_t i = 0; i < _trackedObjects.size(); i++) 
+	{
+		// get pointer to i-th object
+		std::shared_ptr<Grid> grid = _trackedObjects[i].maybeGet<Grid>(_currentFrameNumber);
+
+		// check if grid is valid
+		if (grid && dist(location, grid->centerGrid) < grid->axesTag.height) 
+		{
+			// assign the found grid to the activegrid pointer
 			_activeGrid        = grid;
 			_activeFrameNumber = _currentFrameNumber;
+
 			emit update();
+
+			return;
 		}
 	}
 }
 
 void BeesBookTagMatcher::storeCurrentActiveTag()
 {
-	// store last active grid
-	if (_activeGrid) {
-		if (_activeGrid->objectId == _trackedObjects.size()) {
-			assert(_activeFrameNumber);
-			TrackedObject newObject(_trackedObjects.size());
-			newObject.add(_activeFrameNumber.get(), _activeGrid);
-			_trackedObjects.push_back(std::move(newObject));
-		} else {
-			assert(_activeFrameNumber);
-			assert(_activeGrid->objectId < _trackedObjects.size());
-			_trackedObjects[_activeGrid->objectId].add(_activeFrameNumber.get(), _activeGrid);
-		}
-		// set tag as not active
-		cancelTag();
-	}
+	//// store last active grid
+	//// if some grid is active
+	//if (_activeGrid) 
+	//{
+	//	// break if no frame available
+	//	assert(_activeFrameNumber);
+
+	//	// if grid is not yet in _trackedObjects..?
+	//	if (_activeGrid->objectId == _trackedObjects.size()) 
+	//	{
+	//		
+	//		// create new object with next ID in line
+	//		TrackedObject newObject(_trackedObjects.size());
+	//		// associate active grid to frame number in new object
+	//		newObject.add(_activeFrameNumber.get(), _activeGrid);
+	//		// add to global vector
+	//		_trackedObjects.push_back(std::move(newObject));
+	//	} 
+	//	else 
+	//	{
+	//		// break if id of active grid is invalid
+	//		assert(_activeGrid->objectId < _trackedObjects.size());
+
+	//		// add frame number to grid mapping
+	//		_trackedObjects[_activeGrid->objectId].add(_activeFrameNumber.get(), _activeGrid);
+	//	}
+	//	// set tag as not active
+	//	cancelTag();
+	//}
 }
 
 void BeesBookTagMatcher::cancelTag()
@@ -394,19 +458,25 @@ void BeesBookTagMatcher::cancelTag()
 }
 
 void BeesBookTagMatcher::removeCurrentActiveTag()
-{
-	// if current grid has been stored in _trackedObjects
-	if (_activeGrid->objectId < _trackedObjects.size()) {
-		// delete from _trackedObjects
-		_trackedObjects.erase(_trackedObjects.begin() + _activeGrid->objectId);
-		// decrement all ids after current id by one
-		for (size_t idx = _activeGrid->objectId; idx < _trackedObjects.size(); ++idx) {
-			assert(_trackedObjects[idx].getId() == idx + 1);
-			_trackedObjects[idx].setId(idx);
-		}
-	}
+{	
+	if (_activeGrid)
+	{
+		auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(), [&](const TrackedObject & o){ return o.getId() == _activeGrid->objectId; }) ;
+		
+		assert( trackedObjectIterator != _trackedObjects.end() );
 
-	cancelTag();
+		trackedObjectIterator->erase(_currentFrameNumber);
+
+		// if map empty
+		if (trackedObjectIterator->isEmpty())
+		{
+			// delete from _trackedObjects
+			_trackedObjects.erase(trackedObjectIterator);
+		}
+	
+		// reset active tag and frame and...
+		cancelTag();
+	}
 }
 
 //AUXILIAR FUNCTION
