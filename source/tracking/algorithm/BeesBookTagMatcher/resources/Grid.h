@@ -44,7 +44,7 @@ public:
 	double phi;             // this angle denotes the orientation of the ellipses (both ellipses
 							// should have the same phi parameter) (measured from the y-axis)
 
-	std::vector<boost::tribool> ID;
+	std::vector<boost::tribool> ID; // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
 
 	std::vector<std::vector<cv::Point>> cellsContours;
 
