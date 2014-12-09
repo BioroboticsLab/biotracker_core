@@ -26,19 +26,18 @@ public:
 	virtual	~TrackingAlgorithm();
 
 	/**
-
 	* This function tracks the provided object list within the provided frame.
 	* @param: objectList
 	* @param: frame number
 	* @param: frame
 	*/
-	virtual void track		(ulong frameNumber, cv::Mat& frame);
+	virtual void track(ulong frameNumber, cv::Mat& frame) = 0;
 
 	/**
 	* paint will be called by "VideoViews" paintGL method
 	* so any picture manipulation stuff goes in here 
 	*/
-	virtual void paint		(cv::Mat& image ) = 0;
+	virtual void paint(cv::Mat& image ) = 0;
 
 	/**
 	* Resets the tracker. never called - yet
@@ -59,8 +58,11 @@ public:
 	* parameter fields needed 
 	*/
 	virtual std::shared_ptr<QWidget> getParamsWidget();
+
+	virtual bool prepareSave();
 	
 	void loadObjects(std::vector<TrackedObject> &&objects);
+	std::vector<TrackedObject> const& getObjects() const;
 
 public slots:
 	//mouse click and move events
