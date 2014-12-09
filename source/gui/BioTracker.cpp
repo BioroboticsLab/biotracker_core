@@ -360,23 +360,24 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 
 bool BioTracker::event(QEvent *event)
 {
+	if (!_tracker) return QMainWindow::event(event);
+
 	const QEvent::Type etype = event->type();
 	if (etype == QEvent::MouseButtonPress ||
 	    etype == QEvent::MouseButtonRelease ||
 	    etype == QEvent::MouseMove ||
 	    etype == QEvent::Wheel)
 	{
-		if (_tracker) QCoreApplication::sendEvent(_tracker.get(), event);
-		return true;
-	}
-	if (event->type() == QEvent::KeyPress) {
-		if (_tracker) {
-			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-			const std::set<Qt::Key>& keys = _tracker->grabbedKeys();
-			if (keys.count(static_cast<Qt::Key>(keyEvent->key()))) {
-				QCoreApplication::sendEvent(_tracker.get(), event);
-				return true;
-			}
+		if (ui.videoView->rect().contains(ui.videoView->mapFromGlobal(QCursor::pos()))) {
+			QCoreApplication::sendEvent(_tracker.get(), event);
+			return true;
+		}
+	} else if (event->type() == QEvent::KeyPress) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+		const std::set<Qt::Key>& keys = _tracker->grabbedKeys();
+		if (keys.count(static_cast<Qt::Key>(keyEvent->key()))) {
+			QCoreApplication::sendEvent(_tracker.get(), event);
+			return true;
 		}
 	}
 	return QMainWindow::event(event);
@@ -442,12 +443,9 @@ void BioTracker::updateFrameNumber(int frameNumber)
 
 void BioTracker::drawImage(cv::Mat image)
 {
-
-
 	if(image.data)
 	{	
 		ui.videoView->showImage(image);
-
 	}
 
 	// signals when the frame was drawn, and the FishTrackerThread can continue to work;
