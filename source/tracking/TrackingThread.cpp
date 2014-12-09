@@ -228,9 +228,13 @@ void TrackingThread::setFrameNumber(int frameNumber)
 void TrackingThread::incrementFrameNumber()
 {
 	const int videoLength = getVideoLength();
+
 	QMutexLocker locker(&frameNumberMutex);
-	if(_frameNumber < videoLength) {
+	
+	if ( _frameNumber < videoLength - 1 ) 
+	{
 		++_frameNumber;
+		
 		emit newFrameNumber(_frameNumber);
 	}
 }
