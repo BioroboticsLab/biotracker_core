@@ -73,10 +73,11 @@ private:
 
 	double getAlpha() const;
 
+	std::set<Qt::Key> const& grabbedKeys() const override;
+
 	void handleMouseMove(QMouseEvent * e);
 	void handleMousePress(QMouseEvent * e);
 	void handleMouseRelease(QMouseEvent * e);
-	void handleMouseWheel(QWheelEvent * e);
 	void handleKeyPress(QKeyEvent * e);
 
 protected:
