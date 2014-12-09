@@ -288,6 +288,13 @@ void VideoView::takeScreenshot(QString screenShotFilename)
 	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
+void VideoView::keyPressEvent(QKeyEvent *e)
+{
+	e->accept();
+	QKeyEvent event(e->type(), e->key(), e->modifiers(), e->text());
+	QCoreApplication::sendEvent(QApplication::activeWindow(), &event);
+}
+
 void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
 	if (_isPanZoomMode)

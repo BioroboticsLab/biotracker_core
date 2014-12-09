@@ -188,25 +188,17 @@ void BeesBookTagMatcher::handleMouseRelease(QMouseEvent * e) {
 	}
 }
 
-//check if WHEEL IS ACTIVE
-void BeesBookTagMatcher::handleMouseWheel(QWheelEvent * e)
+void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
 {
-	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
-	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
-		if (_activeGrid)         // The Grid is active for draging
-		{
+	if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Minus) {
+		if (_activeGrid) {
+			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
 			//scale variable is updated by 0.05
-			_activeGrid->scale = _activeGrid->scale + e->delta() / 96 * 0.05;
+			_activeGrid->scale = _activeGrid->scale + direction * 0.05;
 			_activeGrid->updateAxes();
 			emit update();
 		}
-		_lastMouseEventTime = std::chrono::system_clock::now();
 	}
-}
-
-void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
-{
-	//TODO
 }
 
 //BeesBookTagMatcher private member functions
@@ -430,6 +422,12 @@ double BeesBookTagMatcher::getAlpha() const
 	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - M_PI / 2;
 }
 
+const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
+{
+	static const std::set<Qt::Key> keys { Qt::Key_Plus, Qt::Key_Minus };
+	return keys;
+}
+
 bool BeesBookTagMatcher::event(QEvent *event)
 {
 	const QEvent::Type etype = event->type();
@@ -448,10 +446,6 @@ bool BeesBookTagMatcher::event(QEvent *event)
 		break;
 	case QEvent::MouseMove:
 		handleMouseMove(static_cast<QMouseEvent*>(event));
-		return true;
-		break;
-	case QEvent::Wheel:
-		handleMouseWheel(static_cast<QWheelEvent*>(event));
 		return true;
 		break;
 	default:
