@@ -247,18 +247,6 @@ void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
 		emit update();
 		setNumTags();
 	}
-
-
-	//// copy all tags from last frame
-	//if (frameNumber > 0) {
-	//	for (TrackedObject& trackedObject : _trackedObjects) {
-	//		if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
-	//			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
-	//			trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
-	//		}
-	//	}
-	//}
-
 }
 
 //BeesBookTagMatcher private member functions
@@ -440,39 +428,6 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 			return;
 		}
 	}
-}
-
-void BeesBookTagMatcher::storeCurrentActiveTag()
-{
-	//// store last active grid
-	//// if some grid is active
-	//if (_activeGrid) 
-	//{
-	//	// break if no frame available
-	//	assert(_activeFrameNumber);
-
-	//	// if grid is not yet in _trackedObjects..?
-	//	if (_activeGrid->objectId == _trackedObjects.size()) 
-	//	{
-	//		
-	//		// create new object with next ID in line
-	//		TrackedObject newObject(_trackedObjects.size());
-	//		// associate active grid to frame number in new object
-	//		newObject.add(_activeFrameNumber.get(), _activeGrid);
-	//		// add to global vector
-	//		_trackedObjects.push_back(std::move(newObject));
-	//	} 
-	//	else 
-	//	{
-	//		// break if id of active grid is invalid
-	//		assert(_activeGrid->objectId < _trackedObjects.size());
-
-	//		// add frame number to grid mapping
-	//		_trackedObjects[_activeGrid->objectId].add(_activeFrameNumber.get(), _activeGrid);
-	//	}
-	//	// set tag as not active
-	//	cancelTag();
-	//}
 }
 
 void BeesBookTagMatcher::cancelTag()
