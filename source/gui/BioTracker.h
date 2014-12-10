@@ -33,9 +33,9 @@ public slots:
 	// open file browser for picture in/out
 	void browsePicture();
 	// load previously stored tracking data
-	void loadTrackingData();
+	void loadTrackingDataTriggered(bool checked = false);
 	// store current tracking data
-	void storeTrackingData();
+	void storeTrackingDataTriggered(bool checked = false);
 	// exit application
 	void exit();
 	//checks current state (stopped,paused or playing)
@@ -92,9 +92,7 @@ protected:
 private:
 	Ui::BioTrackerClass ui;
 
-/*	Rectification _rectification;
-*/
-    std::unique_ptr<TrackingThread> _trackingThread;
+	std::unique_ptr<TrackingThread> _trackingThread;
 
 	Settings& _settings;
 	bool _videoPaused;
@@ -103,6 +101,7 @@ private:
 	int _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
+
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
 	void init();
@@ -111,20 +110,23 @@ private:
 	void initCapture();
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
-    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
+	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
+
+	void loadTrackingData(std::string const& filename);
+	void storeTrackingData(std::string const& filename);
 
 	void closeEvent(QCloseEvent* event) override;
 
-    std::shared_ptr<TrackingAlgorithm> _tracker;
-    std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
+	std::shared_ptr<TrackingAlgorithm> _tracker;
+	std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
-    std::shared_ptr<QWidget> _paramsWidget;
-    std::shared_ptr<QWidget> _toolsWidget;
-	
+	std::shared_ptr<QWidget> _paramsWidget;
+	std::shared_ptr<QWidget> _toolsWidget;
+
 signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
@@ -148,7 +150,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
+	void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 };
 
 #endif // BioTracker_H

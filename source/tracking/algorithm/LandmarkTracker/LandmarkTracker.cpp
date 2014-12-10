@@ -9,8 +9,8 @@ namespace {
     auto _ = Algorithms::Registry::getInstance().register_tracker_type<LandmarkTracker>("Landmark Tracker");
 }
 
-LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
-    : TrackingAlgorithm( settings, serializationPathName, parent )
+LandmarkTracker::LandmarkTracker(Settings & settings,  QWidget *parent)
+    : TrackingAlgorithm( settings, parent )
     , toolWindow(nullptr)
 {
 	_showSelectorRec = false;

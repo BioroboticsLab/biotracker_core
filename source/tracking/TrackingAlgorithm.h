@@ -11,21 +11,21 @@
 #include <QWidget>
 #include <QMouseEvent>
 
-#include <cereal/archives/json.hpp>
-#include <cereal/types/polymorphic.hpp>
-
 #include "source/settings/Messages.h"
 #include "source/tracking/trackedObject/TrackedObject.h"
 
 class Settings;
+namespace Algorithm {
+typedef uint8_t Type;
+}
 
 class TrackingAlgorithm : public QObject
 {
 	Q_OBJECT
 
 public:
-	TrackingAlgorithm(Settings& settings, std::string& serializationPath, QWidget *parent);
-	virtual	~TrackingAlgorithm();
+	TrackingAlgorithm(Settings& settings, QWidget *parent);
+	virtual	~TrackingAlgorithm() {}
 
 	/**
 	* This function tracks the provided object list within the provided frame.
@@ -82,6 +82,9 @@ public:
 	void loadObjects(std::vector<TrackedObject> &&objects);
 	std::vector<TrackedObject> const& getObjects();
 
+	boost::optional<Algorithm::Type> getType() const { return _type; }
+	void setType(Algorithm::Type type) { _type = type; }
+
 public slots:
 	/**
 	* receive Signal to set current frame number
@@ -125,7 +128,6 @@ signals:
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
-	std::string _serializationPathName;
 
 	bool event(QEvent* event) override;
 
@@ -172,6 +174,7 @@ protected:
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
 private:
+	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
 };
 

@@ -18,8 +18,8 @@ static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
 static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 }
 
-BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, std::string &serializationPathName, QWidget *parent)
-	: TrackingAlgorithm(settings, serializationPathName, parent)
+BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
+	: TrackingAlgorithm(settings, parent)
 	, _currentState(State::Ready)
 	, _setOnlyOrient(false)
 	, _lastMouseEventTime(std::chrono::system_clock::now())

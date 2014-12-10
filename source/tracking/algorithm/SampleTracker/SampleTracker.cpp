@@ -11,8 +11,8 @@ namespace {
     auto _ = Algorithms::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
 }
 
-SampleTracker::SampleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent)
-    : TrackingAlgorithm( settings, serializationPathName, parent)
+SampleTracker::SampleTracker(Settings & settings, QWidget *parent)
+    : TrackingAlgorithm(settings, parent)
     , _paramsFrame(std::make_shared<QFrame>())
     , _toolsFrame(std::make_shared<QFrame>())
     , _showSelectorRec(false)

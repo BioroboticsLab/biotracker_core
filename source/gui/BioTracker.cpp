@@ -92,8 +92,10 @@ void BioTracker::initConnects()
 	QObject::connect(ui.actionOpen_Video, SIGNAL(triggered()), this, SLOT(browseVideo()));
 	QObject::connect(ui.actionOpen_Picture, SIGNAL(triggered()), this, SLOT(browsePicture()));	
 	//File -> Load/Store tracking data
-	QObject::connect(ui.actionLoad_tracking_data, &QAction::triggered, this, &BioTracker::loadTrackingData);
-	QObject::connect(ui.actionSave_tracking_data, &QAction::triggered, this, &BioTracker::storeTrackingData);
+	QObject::connect(ui.actionLoad_tracking_data, &QAction::triggered,
+	                 this, &BioTracker::loadTrackingDataTriggered);
+	QObject::connect(ui.actionSave_tracking_data, &QAction::triggered,
+	                 this, &BioTracker::storeTrackingDataTriggered);
 	//File -> Exit
 	QObject::connect(ui.actionQuit, &QAction::triggered, this, &BioTracker::exit);
 	//video playfield buttons
@@ -199,7 +201,7 @@ void BioTracker::browsePicture()
 	}
 }
 
-void BioTracker::loadTrackingData()
+void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 {
 	if (!_tracker) {
 		QMessageBox::warning(this, "Unable to load tracking data",
@@ -211,15 +213,21 @@ void BioTracker::loadTrackingData()
 	//to serialization data
 	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
 	if (!filename.isEmpty()) {
-		std::ifstream is(filename.toStdString());
-		cereal::JSONInputArchive ar(is);
-		std::vector<TrackedObject> storedObjects;
-		ar(storedObjects);
-		_tracker->loadObjects(std::move(storedObjects));
+		loadTrackingData(filename.toStdString());
 	}
 }
 
-void BioTracker::storeTrackingData()
+void BioTracker::loadTrackingData(const std::string &filename)
+{
+	printGuiMessage("Restoring tracking data from " + filename, MSGS::NOTIFICATION);
+	std::ifstream is(filename);
+	cereal::JSONInputArchive ar(is);
+	std::vector<TrackedObject> storedObjects;
+	ar(storedObjects);
+	_tracker->loadObjects(std::move(storedObjects));
+}
+
+void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 {
 	if (!_tracker) {
 		QMessageBox::warning(this, "Unable to store tracking data",
@@ -234,12 +242,17 @@ void BioTracker::storeTrackingData()
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
 		if (!filenames.empty()) {
-			const QString filename = filenames.first();
-			std::ofstream ostream(filename.toStdString(), std::ios::binary);
-			cereal::JSONOutputArchive archive(ostream);
-			archive(_tracker->getObjects());
+			storeTrackingData(filenames.first().toStdString());
 		}
 	}
+}
+
+void BioTracker::storeTrackingData(const std::string &filename)
+{
+	printGuiMessage("Storing tracking data in " + filename, MSGS::NOTIFICATION);
+	std::ofstream ostream(filename, std::ios::binary);
+	cereal::JSONOutputArchive archive(ostream);
+	archive(_tracker->getObjects());
 }
 
 void BioTracker::exit()
@@ -560,51 +573,41 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 	//first remove ui containers of old algorithm
 	if(_tracker)
 	{
-        _vboxParams->removeWidget(_paramsWidget.get());
-        _vboxTools->removeWidget(_toolsWidget.get());
-        _paramsWidget.reset();
-        _toolsWidget.reset();
+		_vboxParams->removeWidget(_paramsWidget.get());
+		_vboxTools->removeWidget(_toolsWidget.get());
+		_paramsWidget.reset();
+		_toolsWidget.reset();
+
+		// store data in temporary file, create a new file if none exists so far
+		assert(_tracker->getType());
+		QTemporaryFile& tmpFile = _serializationTmpFileMap[_tracker->getType().get()];
+		if (!tmpFile.open()) printGuiMessage("Unable to create temporary file for serialization data!", MSGS::FAIL);
+		storeTrackingData(tmpFile.fileName().toStdString());
+
+		_tracker.reset();
 	}
 
-    if (trackingAlg == Algorithms::NoTracking)
-    {
-        _tracker.reset();
-    } else
-    {
-        // restore previous state
-        std::string path;
-        std::vector<TrackedObject> storedObjects;
-        if (_serializationTmpFileMap.count(trackingAlg))
-        {
-            auto& file = _serializationTmpFileMap.at(trackingAlg);
-            assert(file.open());
-            path = file.fileName().toStdString();
-            std::cout << "Trying to restore from: " << path << std::endl;
-            {
-                std::ifstream is(path);
-				cereal::JSONInputArchive ar(is);
-                ar(storedObjects);
-            }
-        } else
-        {
-            // create a new QTemporaryFile and return a reference
-            QTemporaryFile& tmpFile = _serializationTmpFileMap[trackingAlg];
-            if (tmpFile.open()) path = tmpFile.fileName().toStdString();
-            else assert(false);
-        }
-        _tracker = Algorithms::Registry::getInstance().make_new_tracker(trackingAlg, _settings, path, this);
-        assert(_tracker);
-        _tracker->loadObjects(std::move(storedObjects));
+	if (trackingAlg != Algorithms::NoTracking)
+	{
+		_tracker = Algorithms::Registry::getInstance().make_new_tracker(trackingAlg, _settings, this);
+		assert(_tracker);
+
+		// restore previous state
+		if (_serializationTmpFileMap.count(trackingAlg))
+		{
+			QTemporaryFile& file = _serializationTmpFileMap.at(trackingAlg);
+			if (!file.open()) printGuiMessage("Unable to load temporary file with serialization data!", MSGS::FAIL);
+			loadTrackingData(file.fileName().toStdString());
+		}
 
 		//init tracking Alg
 		_tracker->setCurrentFrameNumber(_currentFrame);
 		_tracker->setVideoPaused(_videoPaused);
+		connectTrackingAlg(_tracker);
+	}
 
-        connectTrackingAlg(_tracker);
-    }
-
-    ui.groupBox_params->repaint();
-    ui.groupBox_tools->repaint();
+	ui.groupBox_params->repaint();
+	ui.groupBox_tools->repaint();
 	emit changeTrackingAlg(_tracker);
 }
 

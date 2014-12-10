@@ -44,7 +44,7 @@ private:
 	QPushButton *_modeBut;
 
 public:
-    SampleTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
+    SampleTracker	( Settings & settings, QWidget *parent );
 
     void track ( ulong frameNumber, cv::Mat & frame ) override;
 	void paint ( cv::Mat& image ) override;

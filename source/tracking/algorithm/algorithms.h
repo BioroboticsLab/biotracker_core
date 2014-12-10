@@ -8,7 +8,7 @@
 #include "source/utility/singleton.h"
 
 namespace Algorithms {
-typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, std::string& serializationPath, QWidget *parent);
+typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, QWidget *parent);
 typedef uint8_t Type;
 
 static const Type NoTracking = 0;
@@ -40,7 +40,7 @@ public:
      * creates a new tracker-instance
      * @return new instance
      */
-    std::shared_ptr<TrackingAlgorithm> make_new_tracker(const Type name, Settings& settings, std::string& serializationPath, QWidget *parent) const;
+    std::shared_ptr<TrackingAlgorithm> make_new_tracker(const Type name, Settings& settings, QWidget *parent) const;
 
     map_string_t const& typeByString() const { return _typeByString; }
     map_type_t const& trackerByType() const { return _trackerByType; }
@@ -58,8 +58,8 @@ private:
 template<class TRACKER>
 bool Registry::register_tracker_type(std::string name) {
     struct local_function {
-        static std::shared_ptr<TrackingAlgorithm> f(Settings& settings, std::string& serializationPath, QWidget *parent) {
-            return std::make_shared<TRACKER>(settings, serializationPath, parent);
+        static std::shared_ptr<TrackingAlgorithm> f(Settings& settings, QWidget *parent) {
+            return std::make_shared<TRACKER>(settings, parent);
         }
     };
     return this->register_tracker_type(std::move(name), local_function::f);

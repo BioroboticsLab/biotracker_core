@@ -1,25 +1,10 @@
 #include "TrackingAlgorithm.h"
 
-#include <fstream>
-
-#include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/types/vector.hpp>
-
-TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializationPath, QWidget *parent)
-    : QObject(parent)
-    , _settings(settings)
-    , _serializationPathName(serializationPath)
+TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
+	: QObject(parent)
+	, _settings(settings)
 	, _currentZoomLevel(0.0f)
 {}
-
-TrackingAlgorithm::~TrackingAlgorithm()
-{
- 	std::cout << "Storing in " << _serializationPathName << std::endl;
-	std::ofstream ostream(_serializationPathName, std::ios::binary);
-	cereal::JSONOutputArchive archive(ostream);
-	archive(_trackedObjects);
-}
 
 void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects)
 {
