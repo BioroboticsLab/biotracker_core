@@ -16,15 +16,15 @@ GridParticleBuckets::~GridParticleBuckets(void)
 }
 
 bool GridParticleBuckets::putInBucket(const Particle &particle) {
-	std::vector<Particle>& candidate = getBucketForParticle(particle);
-	if (candidate.size() >= _max_per_bucket) {
+	std::size_t& candidate = getBucketForParticle(particle);
+	if (candidate >= _max_per_bucket) {
 		return false;
 	}
-	candidate.push_back(particle);
+	++candidate;
 	return true;
 }
 
-std::vector<Particle>& GridParticleBuckets::getBucketForParticle(const Particle& particle) {
+std::size_t& GridParticleBuckets::getBucketForParticle(const Particle& particle) {
 	float x = particle.getX();
 	float y = particle.getY();
 
