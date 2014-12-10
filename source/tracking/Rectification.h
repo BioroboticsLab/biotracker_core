@@ -29,31 +29,29 @@ public:
 
 	/**
 	 * Transform the provided pixel coordinates into world coordinates and return world coordinates.
-	 * @param: pixelCoords, a list of points.
-	 * @return: world coordinates in as a list.
+	 * @param point_px the provided pixel coordinates
+	 * @return world coordinates in as a list.
 	 */
 	cv::Point2f pxToCm(cv::Point point_px) const;
 	cv::Point2f pxToCm(QPoint point_px) const;
 
 	/**
 	 * Transform the provided pixel point into world coordinates and return world point.
-	 * @param: point, a pixel point, used opencv point
-	 * @return: world point.
+	 * @param point_cm a pixel point, used opencv point
+	 * @return world point.
 	 */
 	cv::Point2f cmToPx(cv::Point2f point_cm) const;
 
 	/**
 	 * Sets the tank coordinates.
-	 * @param: areaCoordinates, the coordinate list of the considered area.
-	 * @return: void.
+	 * @param areaCoordinates the coordinate list of the considered area.
 	 */
 	void setArea(std::vector<cv::Point> areaCoordinates) { _areaCoordinates = std::move(areaCoordinates); }
 
 	/**
 	 * Sets the real world dimension the tank.
-	 * @param: areaWidth_cm, width of the tank in cm,
-	 * @param: areaHeight_cm, height of the tank in cm,
-	 * @return: void.
+	 * @param areaWidth_cm width of the tank in cm,
+	 * @param areaHeight_cm height of the tank in cm,
 	 */
 	void setDimension(double areaWidth_cm, double areaHeight_cm) { _areaWidth_cm = areaWidth_cm; _areaHeight_cm = areaHeight_cm; }
 

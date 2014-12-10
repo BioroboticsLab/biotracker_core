@@ -51,13 +51,15 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-# gcc doesn't know about unused-private-field warning
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    # gcc doesn't know about unused-private-field warning
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
+    # use Wdocumentation
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
 endif()
 
-# clang doesnt know about unused-but-set-variable warning
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # clang doesnt know about unused-but-set-variable warning
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-but-set-variable")
 endif()
 

@@ -31,17 +31,14 @@ public:
     /**
      * @see register_tracker_type(std::string, new_tracker_function_t);
      * automagically creates f :)
-     * @param name : name of tracking alg
-     * @return
+     * @param name name of tracking alg
      */
     template<class TRACKER>
     bool register_tracker_type(std::string name);
 
     /**
      * creates a new tracker-instance
-     * @param name
-     * @param tracker_arg : forwarded to tracking algs constructor
-     * @return : new instance
+     * @return new instance
      */
     std::shared_ptr<TrackingAlgorithm> make_new_tracker(const Type name, Settings& settings, std::string& serializationPath, QWidget *parent) const;
 
@@ -51,10 +48,9 @@ public:
 private:
     /**
      * adds new tracker-type to this
-     * @param name : name of tracking alg
-     * @param f : function that creates a new instance
+     * @param name name of tracking alg
+     * @param f function that creates a new instance
      * @return dummy value
-     * @throws
      */
     bool register_tracker_type(std::string name, new_tracker_function_t f);
 };

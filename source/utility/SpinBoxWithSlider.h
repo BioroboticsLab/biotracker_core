@@ -30,6 +30,16 @@ protected:
 class SpinBoxWithSlider: public QWidget {
 	Q_OBJECT
 public:
+	/**
+	 * Integer Spinbox + Slider.
+	 * representable values: {min, min + step_size, min + 2 * step_size, ..., max - step_size, max}
+	 *     Default (step_size = 1): {min, min + 1, min + 2, ..., max - 1, max}
+	 *
+	 * @param min lower bound
+	 * @param max upper bound, max >= min && max == min + n * step_size; \f$n \in \mathbb{N}\f$
+	 * @param start_value min <= start_value <= max && start_value == min + n * step_size; \f$n \in \mathbb{N}\f$
+	 * @param step_size >= 1
+	 */
 	explicit SpinBoxWithSlider(QWidget *parent, const QString &name, int min, int max, int start_value, int step_size = 1);
 	explicit SpinBoxWithSlider(QWidget *parent, QFormLayout *layout, const QString &name, int min, int max, int start_value, int step_size = 1);
 
@@ -61,6 +71,11 @@ private:
 class DoubleSpinBoxWithSlider: public QWidget {
 	Q_OBJECT
 public:
+	/**
+	 * double Spinbox + Slider.
+	 *
+	 * @param precision : decimal places
+	 */
 	explicit DoubleSpinBoxWithSlider(QWidget *parent, const QString &name, double min, double max, double start_value, int precision = 1);
 	explicit DoubleSpinBoxWithSlider(QWidget *parent, QFormLayout *layout, const QString &name, double min, double max, double start_value, int precision = 1);
 
