@@ -212,7 +212,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 	}
 }
 
-void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
+void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 {
 	if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Minus) {
 		if (_activeGrid) {
@@ -502,7 +502,7 @@ bool BeesBookTagMatcher::event(QEvent *event)
 	const QEvent::Type etype = event->type();
 	switch (etype) {
 	case QEvent::KeyPress:
-		handleKeyPress(static_cast<QKeyEvent*>(event));
+		keyPressEvent(static_cast<QKeyEvent*>(event));
 		return true;
 		break;
 	case QEvent::MouseButtonPress:
