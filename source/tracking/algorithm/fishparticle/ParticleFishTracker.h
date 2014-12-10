@@ -21,7 +21,7 @@ class ParticleFishTracker :
 {
 	Q_OBJECT
 public:
-    explicit ParticleFishTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
+    ParticleFishTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame );
 	virtual void paint(cv::Mat& image);
@@ -71,6 +71,9 @@ private:
 	*/
 	float _sum_scores;
 
+	/**
+	* The parameters used by this algorithm.
+	*/
 	ParticleParams _params;
 
 	/**

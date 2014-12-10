@@ -2,20 +2,24 @@
 
 #include <opencv2/opencv.hpp>
 
-
-ParticleClusters::ParticleClusters(Settings& settings, ParticleParams& params)
-	: _settings(settings)
-	, _params(params)
+/**
+* Creates a new clustering object, can be reused for any number of detection
+* frames.
+*/
+ParticleClusters::ParticleClusters(ParticleParams& params)
+	: _params(params)
 	, _centers(),
 	_labels()
 {
 }
 
-
 ParticleClusters::~ParticleClusters(void)
 {
 }
 
+/**
+* Does the k-means clustering on the particles. Uses k=num_clusters.
+*/
 void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned num_clusters) {
 	// Prepare arguments for cv::kmeans.
 	cv::Mat_<float> data(static_cast<int>(particles.size()), 2);
@@ -38,6 +42,10 @@ void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned 
 	_labels = bestLabels;
 }
 
+/**
+* Assuming cluster() has been called, returns the index of the cluster center
+* (from the previous cluster() invocation) closest to particle.
+*/
 unsigned ParticleClusters::getClosestClusterIndex(const Particle& particle) {
 	unsigned min_distance_center = 0;
 	float min_distance = FLT_MAX;
@@ -52,14 +60,27 @@ unsigned ParticleClusters::getClosestClusterIndex(const Particle& particle) {
 	return min_distance_center;
 }
 
+/**
+* Returns a matrix containing all cluster center (x,y) coordinates (rows) from
+* the previous cluster() invocation.
+*/
 const cv::Mat ParticleClusters::centers() {
 	return _centers;
 }
 
+/**
+* Returns a matrix containing rows: (1) index of particle (2) index of that
+* particle's cluster center in centers(). Uses the data  from the previous
+* cluster() invocation.
+*/
 const cv::Mat ParticleClusters::labels() {
 	return _labels;
 }
 
+/**
+* Resets the state of this object, as if cluster() had never been called.
+*/
 void ParticleClusters::clear() {
-	// TODO delete all cluster data
+	_centers = cv::Mat();
+	_labels = cv::Mat();
 }
