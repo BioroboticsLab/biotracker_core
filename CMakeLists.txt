@@ -90,3 +90,4 @@ include_directories(
 )
 
 add_subdirectory(source)
+add_subdirectory(doc)
