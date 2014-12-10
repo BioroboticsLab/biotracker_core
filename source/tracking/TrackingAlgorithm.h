@@ -85,17 +85,19 @@ public slots:
 	* receive Signal to set current frame number
 	*/
 	void setCurrentFrameNumber(int frameNumber)
-	{
-		_currentFrameNumber = frameNumber;
-	}
+	{	_currentFrameNumber = frameNumber;	}
 
 	/**
 	* receive Signal from GUI to set play mode 
 	*/
 	void setVideoPaused(bool isPause)
-	{
-		_isVideoPaused = isPause;
-	}
+	{	_isVideoPaused = isPause;	}
+
+	/**
+	* receive current zoom level from VideoView
+	*/
+	void setZoomLevel(float zLevel)
+	{	_currentZoomLevel = zLevel;	}
 	
 signals:
 	/**
@@ -122,6 +124,7 @@ protected:
 
 	bool _isVideoPaused;
 	int _currentFrameNumber;
+	float _currentZoomLevel;
 
 	/**
 	* will receive QMouseEvent as soon 
@@ -150,7 +153,7 @@ protected:
 
 	/**
 	* will receive QKeyEvent as soon
-	* as any keyboard key is pressed in video view
+	* as any keyboard key from 'grabbedKeys()' is pressed in video view
 	*/
 	virtual void keyPressEvent		(QKeyEvent * e){}
 };

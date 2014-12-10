@@ -622,9 +622,12 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		tracker.get(), SLOT( setCurrentFrameNumber(int) ));
 	QObject::connect(this, SIGNAL( videoPause(bool) ),
 		tracker.get(), SLOT(setVideoPaused(bool)));
+	QObject::connect(ui.videoView, SIGNAL(reportZoomLevel(float)),
+		tracker.get(), SLOT(setZoomLevel(float)));
 
 	if(_tracker)
 	{
+		_tracker->setZoomLevel(ui.videoView->getCurrentZoomLevel());
 		try
 		{
 			_paramsWidget = _tracker->getParamsWidget();
