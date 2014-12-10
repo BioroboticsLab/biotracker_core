@@ -1,7 +1,7 @@
 #ifndef TrackedFish_H
 #define TrackedFish_H
 
-#include "source/tracking/trackedObject/TrackedObject.h"
+#include "source/tracking/serialization/TrackedObject.h"
 
 #include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
