@@ -127,32 +127,32 @@ protected:
 	* will receive QMouseEvent as soon 
 	* as mouse is getting moved in video view
 	*/
-	virtual void mouseMoveEvent		(QMouseEvent * e){}
+	virtual void mouseMoveEvent		(QMouseEvent * /* e */){}
 
 	/**
 	* will receive QMouseEvent as soon
 	* as any mouse button is pressed in video view
 	*/
-	virtual void mousePressEvent	(QMouseEvent * e){}
+	virtual void mousePressEvent	(QMouseEvent * /* e */){}
 
 	/**
 	* will receive QMouseEvent as soon
 	* as any mouse button is released in video view
 	*/
-	virtual void mouseReleaseEvent	(QMouseEvent * e){}
+	virtual void mouseReleaseEvent	(QMouseEvent * /* e */){}
 
 	/**
 	* will receive QMouseEvent as soon
 	* as mouse wheel is activated in video view
 	*/
-	virtual void mouseWheelEvent	(QWheelEvent * e){}
+	virtual void mouseWheelEvent	(QWheelEvent * /* e */){}
 
 
 	/**
 	* will receive QKeyEvent as soon
 	* as any keyboard key is pressed in video view
 	*/
-	virtual void keyPressEvent		(QKeyEvent * e){}
+	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 };
 
 #endif // !TrackingAlgorithm_H
