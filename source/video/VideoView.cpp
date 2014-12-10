@@ -255,8 +255,7 @@ void VideoView::resizeGL(int width, int height)
 	glMatrixMode(GL_MODELVIEW);	
 	if (sizeChanged)
 		fitToWindow();
-
-
+	emit reportZoomLevel(_zoomFactor);
 }
 
 
@@ -403,7 +402,7 @@ void VideoView::wheelEvent( QWheelEvent * e )
 				updateGL();
 				e->accept();
 			}
-		}
+		}		
 	}
 	else
 	{
