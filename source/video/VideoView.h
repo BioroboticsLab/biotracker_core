@@ -22,6 +22,8 @@ public:
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
 	using QGLWidget::moveEvent;
+	float getCurrentZoomLevel()
+	{	return _zoomFactor;	}
 
 protected:
 	void initializeGL(); 
@@ -65,8 +67,13 @@ public slots:
 
 signals:
 	/**
-	* send a message to the GUI.
+	* print a message in GUI's terminal.
 	*/
 	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+
+	/**
+	* notify TrackingAlgorithm about current zoom level
+	*/
+	void reportZoomLevel(float);
 };
 #endif // !VideoView_H
