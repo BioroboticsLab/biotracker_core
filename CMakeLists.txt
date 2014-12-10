@@ -5,6 +5,12 @@ cmake_policy (SET CMP0020 NEW)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 project(BioTracker)
 
+# add git hooks
+file(GLOB HOOK_SCRIPTS githooks/*)
+if (HOOK_SCRIPTS)
+	file(COPY ${HOOK_SCRIPTS} DESTINATION ${CMAKE_SOURCE_DIR}/.git/hooks) 
+endif (HOOK_SCRIPTS)
+
 # project dependecies
 find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
