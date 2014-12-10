@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QPolygon>
 
-#include "source/tracking/trackedObject/types.hpp"
+#include "source/tracking/serialization/types.hpp"
 
 #include <cereal/archives/json.hpp>
 #include <cereal/types/polymorphic.hpp>
