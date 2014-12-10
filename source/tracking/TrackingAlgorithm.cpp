@@ -17,17 +17,18 @@ TrackingAlgorithm::~TrackingAlgorithm()
  	std::cout << "Storing in " << _serializationPathName << std::endl;
 	std::ofstream ostream(_serializationPathName, std::ios::binary);
 	cereal::JSONOutputArchive archive(ostream);
-	prepareSave();
 	archive(_trackedObjects);
 }
 
 void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects)
 {
 	_trackedObjects = std::move(objects);
+	postLoad();
 }
 
-const std::vector<TrackedObject> &TrackingAlgorithm::getObjects() const
+const std::vector<TrackedObject> &TrackingAlgorithm::getObjects()
 {
+	prepareSave();
 	return _trackedObjects;
 }
 
@@ -45,11 +46,6 @@ const std::set<Qt::Key> &TrackingAlgorithm::grabbedKeys() const
 {
 	static const std::set<Qt::Key> keys;
 	return keys;
-}
-
-bool TrackingAlgorithm::prepareSave()
-{
-	return true;
 }
 
 bool TrackingAlgorithm::event(QEvent *event)
@@ -79,3 +75,9 @@ bool TrackingAlgorithm::event(QEvent *event)
 		return false;
 	}
 }
+
+void TrackingAlgorithm::prepareSave()
+{}
+
+void TrackingAlgorithm::postLoad()
+{}
