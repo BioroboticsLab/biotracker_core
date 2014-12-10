@@ -21,9 +21,9 @@ private:
 	const std::size_t _bucket_height;
 	const std::size_t _max_per_bucket;
 
-	std::vector<std::vector<std::vector<Particle>>> _buckets;
+	std::vector<std::vector<std::size_t>> _buckets;
 
-	std::vector<Particle>& getBucketForParticle(const Particle& particle);
+	std::size_t& getBucketForParticle(const Particle& particle);
 };
 
 #endif
