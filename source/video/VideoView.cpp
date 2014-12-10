@@ -135,11 +135,11 @@ void VideoView::paintGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
 	// check window resolution and scale image if window resolution is lower than image resolution
-	if (_screenPicRatio > 1)
+	if ((_screenPicRatio + _zoomFactor) > 1)
 	{	
 		QMutexLocker locker(&trackMutex);
-		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / _screenPicRatio),
-			static_cast<int>(imageCopy.rows / _screenPicRatio)), cv::INTER_AREA);//resize image
+		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / (_screenPicRatio + _zoomFactor)),
+			static_cast<int>(imageCopy.rows / (_screenPicRatio + _zoomFactor))), cv::INTER_AREA);//resize image
 	}	
 
 	/**
@@ -171,7 +171,7 @@ void VideoView::paintGL()
 
 	//if image was scaled down previously 
 	//we need to adjust coordinates relatively
-	if (_screenPicRatio > 1)
+	if ((_screenPicRatio + _zoomFactor) > 1)
 	{
 		c = (c*imageCopy.cols)/_displayImage.cols;
 		r = (r*imageCopy.rows)/_displayImage.rows;
