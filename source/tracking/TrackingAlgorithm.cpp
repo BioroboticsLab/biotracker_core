@@ -10,6 +10,7 @@ TrackingAlgorithm::TrackingAlgorithm(Settings &settings, std::string &serializat
     : QObject(parent)
     , _settings(settings)
     , _serializationPathName(serializationPath)
+	, _currentZoomLevel(0.0f)
 {}
 
 TrackingAlgorithm::~TrackingAlgorithm()
