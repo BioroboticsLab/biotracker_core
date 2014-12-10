@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include <opencv2/opencv.hpp>
 
 #include <QWidget>
@@ -98,6 +100,12 @@ public slots:
 	*/
 	void setZoomLevel(float zLevel)
 	{	_currentZoomLevel = zLevel;	}
+
+	/**
+	* receive current image from TrackingThread
+	*/
+	void setCurrentImage(cv::Mat img)
+	{	_currentImage = img;	}
 	
 signals:
 	/**
@@ -119,12 +127,18 @@ protected:
 	std::vector<TrackedObject> _trackedObjects;
 	std::string _serializationPathName;
 
-
 	bool event(QEvent* event) override;
 
 	bool _isVideoPaused;
 	int _currentFrameNumber;
 	float _currentZoomLevel;
+
+	/**
+	 * @return either a copy of the current frame image, wrapped in a
+	 * boost::optional, or a unintialized boost::optional, if there is no
+	 * frame yet
+	 */
+	boost::optional<cv::Mat> getCurrentImageCopy() const;
 
 	/**
 	* will receive QMouseEvent as soon 
@@ -156,6 +170,9 @@ protected:
 	* as any keyboard key from 'grabbedKeys()' is pressed in video view
 	*/
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
+
+private:
+	boost::optional<cv::Mat> _currentImage;
 };
 
 #endif // !TrackingAlgorithm_H

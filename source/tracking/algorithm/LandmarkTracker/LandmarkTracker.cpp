@@ -84,8 +84,11 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 		}
 	}
 
-	defineROI(emit requestCurrentScreen());
-	startTool();
+	boost::optional<cv::Mat> img = getCurrentImageCopy();
+	if (img) {
+		defineROI(img.get());
+		startTool();
+	}
 }
 
 void LandmarkTracker::defineROI	(cv::Mat image)
