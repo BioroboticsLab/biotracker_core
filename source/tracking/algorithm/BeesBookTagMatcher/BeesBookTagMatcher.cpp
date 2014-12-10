@@ -34,7 +34,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 {
 }
 
-void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
+void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 {
 	_activeGrid.reset();
 	setNumTags();

@@ -10,45 +10,35 @@
 class LandmarkTracker : public TrackingAlgorithm
 {
 private:
-		cv::Point _selectorRecStart;
-		cv::Point _selectorRecEnd;
-		bool _showSelectorRec;
-		
-		//KML
-		void drawRectangle(cv::Mat image);
-		cv::Rect box;
-		cv::Mat selectedRoi;
-		ToolWindow *toolWindow;
+	cv::Point _selectorRecStart;
+	cv::Point _selectorRecEnd;
+	bool _showSelectorRec;
 
+	//KML
+	void drawRectangle(cv::Mat image);
+	cv::Rect box;
+	cv::Mat selectedRoi;
+	ToolWindow *toolWindow;
 
+	void mouseMoveEvent		( QMouseEvent * e ) override;
+	void mousePressEvent	( QMouseEvent * e ) override;
+	void mouseReleaseEvent	( QMouseEvent * e ) override;
 
-	public:
-        LandmarkTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
-		~LandmarkTracker	( void );
-		
+public:
+	LandmarkTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
+	~LandmarkTracker	( void ) {}
 
+	void track			( ulong /* frameNumber */, cv::Mat & /* frame */ ) override {}
+	void paint			( cv::Mat& image ) override;
+	void reset			( ) override {}
 
+	//KML
+	void defineROI( cv::Mat image );
+	void startTool();
 
-		void track			(  ulong frameNumber, cv::Mat & frame );
-		void paint			( cv::Mat& image );
-		void reset			( );
+	cv::Mat getSelectedRoi();
 
-		//KML
-		void defineROI( cv::Mat image );
-		void startTool();
-
-		cv::Mat getSelectedRoi();
-
-		void setToolPtr();
-
-
-	public slots:
-		//mouse click and move events
-		void mouseMoveEvent		( QMouseEvent * e );
-		void mousePressEvent	( QMouseEvent * e );
-		void mouseReleaseEvent	( QMouseEvent * e );
-		void mouseWheelEvent	( QWheelEvent * e );
-		
+	void setToolPtr();
 };
 
 #endif
