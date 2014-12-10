@@ -79,6 +79,9 @@ void VideoView::fitToWindow()
 
 void VideoView::paintGL()
 {
+	// Create a black background for the parts of the widget with no image.
+	qglClearColor(Qt::black);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if(_displayImage.empty()) 
 	{
@@ -88,24 +91,20 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-        try
-        {
+		try
+		{
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
-        }
-        catch(std::exception& err)
-        {
-            std::stringstream ss;
-            ss << "critical error in selected tracking algorithm's paint method!";
-            ss << "\n" << err.what();
-            emit notifyGUI(ss.str() ,MSGS::FAIL);
-        }
+		}
+		catch(std::exception& err)
+		{
+			std::stringstream ss;
+			ss << "critical error in selected tracking algorithm's paint method!";
+			ss << "\n" << err.what();
+			emit notifyGUI(ss.str() ,MSGS::FAIL);
+		}
 
 	}
-
-	// Create a black background for the parts of the widget with no image.
-	qglClearColor(Qt::black); 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
 
@@ -209,6 +208,7 @@ void VideoView::initializeGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);	
 }
+
 void VideoView::resizeGL(int width, int height)
 {
 	// dont do anything if  width or height are 0 
