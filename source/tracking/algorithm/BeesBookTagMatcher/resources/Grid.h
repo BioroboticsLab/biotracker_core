@@ -11,7 +11,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <source/tracking/trackedObject/ObjectModel.h>
+#include <source/tracking/serialization/ObjectModel.h>
 
 class Grid : public ObjectModel
 {

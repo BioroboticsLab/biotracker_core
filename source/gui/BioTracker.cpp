@@ -7,10 +7,13 @@
 #include <string>
 #include <thread>
 
+#include <QCryptographicHash>
+
 #include "source/settings/Settings.h"
 #include "source/utility/stdext.h"
 #include "source/tracking/TrackingThread.h"
 #include "source/tracking/algorithm/algorithms.h"
+#include "source/tracking/serialization/SerializationData.h"
 
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
@@ -209,8 +212,6 @@ void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 		return;
 	}
 
-	//TODO: add sanity checks and meta information (video file name, tracker name...)
-	//to serialization data
 	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
 	if (!filename.isEmpty()) {
 		loadTrackingData(filename.toStdString());
@@ -219,12 +220,47 @@ void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 
 void BioTracker::loadTrackingData(const std::string &filename)
 {
+	assert(_tracker->getType());
+
 	printGuiMessage("Restoring tracking data from " + filename, MSGS::NOTIFICATION);
 	std::ifstream is(filename);
 	cereal::JSONInputArchive ar(is);
-	std::vector<TrackedObject> storedObjects;
-	ar(storedObjects);
-	_tracker->loadObjects(std::move(storedObjects));
+
+	Serialization::Data sdata;
+	ar(sdata);
+
+	const std::string trackerType =
+	        Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
+
+	if (sdata.getType() != trackerType) {
+		QMessageBox::warning(this, "Unable to load tracking data",
+		                     "Tracker type does not match.");
+		return;
+	}
+
+	const boost::optional<std::string> currentFile = getOpenFile();
+
+	if (!currentFile) {
+		QMessageBox::warning(this, "Unable to load tracking data",
+		                     "No file opened.");
+		return;
+	}
+
+	const boost::optional<std::string> hash = getFileHash(currentFile.get());
+
+	if (!hash) {
+		QMessageBox::warning(this, "Unable to load tracking data",
+		                     "Could not calculate file hash.");
+		return;
+	}
+
+	if (sdata.getFileSha1Hash() != hash.get()) {
+		QMessageBox::warning(this, "Unable to load tracking data",
+		                     "File hash does not match");
+		return;
+	}
+
+	_tracker->loadObjects(sdata.getTrackedObjects());
 }
 
 void BioTracker::storeTrackingDataTriggered(bool /* checked */)
@@ -249,10 +285,44 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 
 void BioTracker::storeTrackingData(const std::string &filename)
 {
+	assert(_tracker->getType());
 	printGuiMessage("Storing tracking data in " + filename, MSGS::NOTIFICATION);
+
+	const std::string trackerType =
+	        Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
+	const boost::optional<std::string> currentFile = getOpenFile();
+
+	if (!currentFile) {
+		QMessageBox::warning(this, "Unable to store tracking data",
+		                     "No file opened.");
+		return;
+	}
+
+	const boost::optional<std::string> hash = getFileHash(currentFile.get());
+
+	if (!hash) {
+		QMessageBox::warning(this, "Unable to store tracking data",
+		                     "Could not calculate file hash.");
+		return;
+	}
+
+	Serialization::Data sdata(trackerType, hash.get(), _tracker->getObjects());
+
 	std::ofstream ostream(filename, std::ios::binary);
 	cereal::JSONOutputArchive archive(ostream);
-	archive(_tracker->getObjects());
+	archive(sdata);
+}
+
+boost::optional<std::string> BioTracker::getOpenFile() const
+{
+	//TODO: check if file open
+	if (_settings.getValueOfParam<bool>(GUIPARAM::IS_SOURCE_VIDEO)) {
+		const QString file(QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
+		return file.toStdString();
+	} else {
+		const QStringList files(QString::fromStdString(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE)));
+		return files.first().toStdString();
+	}
 }
 
 void BioTracker::exit()
@@ -368,6 +438,19 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
 		if (file.open(QIODevice::WriteOnly)) file.write(saveState());
 	}
+}
+
+boost::optional<std::string> BioTracker::getFileHash(const std::string &filename) const
+{
+	QCryptographicHash sha1Generator(QCryptographicHash::Sha1);
+	QFile file(QString::fromStdString(filename));
+	if (file.open(QIODevice::ReadOnly)) {
+		// calculate hash from first 1024 byte of file
+		sha1Generator.addData(file.peek(1024));
+		return QString(sha1Generator.result().toHex()).toStdString();
+	}
+
+	return boost::optional<std::string>();
 }
 
 

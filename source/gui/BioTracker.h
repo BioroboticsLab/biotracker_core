@@ -118,6 +118,9 @@ private:
 
 	void closeEvent(QCloseEvent* event) override;
 
+	boost::optional<std::string> getFileHash(std::string const& filename) const;
+	boost::optional<std::string> getOpenFile() const;
+
 	std::shared_ptr<TrackingAlgorithm> _tracker;
 	std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
 

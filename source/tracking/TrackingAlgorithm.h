@@ -12,7 +12,7 @@
 #include <QMouseEvent>
 
 #include "source/settings/Messages.h"
-#include "source/tracking/trackedObject/TrackedObject.h"
+#include "source/tracking/serialization/TrackedObject.h"
 
 class Settings;
 namespace Algorithm {
