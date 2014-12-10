@@ -51,3 +51,31 @@ bool TrackingAlgorithm::prepareSave()
 {
 	return true;
 }
+
+bool TrackingAlgorithm::event(QEvent *event)
+{
+	const QEvent::Type etype = event->type();
+	switch (etype) {
+	case QEvent::KeyPress:
+		handleKeyPress(static_cast<QKeyEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseButtonPress:
+		mousePressEvent(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseButtonRelease:
+		mouseReleaseEvent(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::MouseMove:
+		mouseMoveEvent(static_cast<QMouseEvent*>(event));
+		return true;
+		break;
+	case QEvent::Wheel:
+		mouseWheelEvent(static_cast<QWheelEvent*>(event));
+	default:
+		event->ignore();
+		return false;
+	}
+}

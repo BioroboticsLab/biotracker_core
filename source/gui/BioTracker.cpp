@@ -130,7 +130,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
     QObject::connect(_trackingThread.get(), SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
 
-	/**	 _______________________
+	/*	 _______________________
 	*	|						|
 	*	| connect shortcut keys	|
 	*	|_______________________| */

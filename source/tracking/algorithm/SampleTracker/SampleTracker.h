@@ -55,11 +55,12 @@ public:
 public slots:
     void changeFilterColor();
     void switchMode();
-    //mouse click and move events
-    void mouseMoveEvent		( QMouseEvent * e );
-    void mousePressEvent	( QMouseEvent * e );
-    void mouseReleaseEvent	( QMouseEvent * e );
-    void mouseWheelEvent	( QWheelEvent * e );
+private:
+	//mouse click and move events
+	void mouseMoveEvent(QMouseEvent * e) override;
+	void mousePressEvent(QMouseEvent * e) override;
+	void mouseReleaseEvent(QMouseEvent * e) override;
+	void mouseWheelEvent(QWheelEvent * e) override;
 };
 
 #endif

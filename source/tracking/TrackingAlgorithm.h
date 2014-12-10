@@ -110,8 +110,18 @@ protected:
 	std::vector<TrackedObject> _trackedObjects;
 	std::string _serializationPathName;
 
+
+	bool event(QEvent* event) override;
+
 	bool _isVideoPaused;
 	int _currentFrameNumber;
+
+private:
+	virtual void mouseMoveEvent(QMouseEvent * e){}
+	virtual void mousePressEvent(QMouseEvent * e){}
+	virtual void mouseReleaseEvent(QMouseEvent * e){}
+	virtual void mouseWheelEvent(QWheelEvent * e){}
+	virtual void handleKeyPress(QKeyEvent * e){}
 };
 
 #endif // !TrackingAlgorithm_H
