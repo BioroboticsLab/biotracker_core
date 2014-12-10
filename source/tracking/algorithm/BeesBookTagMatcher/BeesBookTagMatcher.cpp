@@ -65,7 +65,7 @@ bool BeesBookTagMatcher::prepareSave()
 }
 
 //check if MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::handleMousePress(QMouseEvent * e) {
+void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton) 
 	{
@@ -137,7 +137,7 @@ void BeesBookTagMatcher::handleMousePress(QMouseEvent * e) {
 }
 
 //check if pointer MOVES
-void BeesBookTagMatcher::handleMouseMove(QMouseEvent * e) {
+void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
 		switch (_currentState) {
@@ -163,7 +163,7 @@ void BeesBookTagMatcher::handleMouseMove(QMouseEvent * e) {
 }
 
 //check if MOUSE BUTTON IS RELEASED
-void BeesBookTagMatcher::handleMouseRelease(QMouseEvent * e) {
+void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) {
 	// left button released
 	if (e->button() == Qt::LeftButton) {
 		switch (_currentState) {
@@ -551,15 +551,15 @@ bool BeesBookTagMatcher::event(QEvent *event)
 		return true;
 		break;
 	case QEvent::MouseButtonPress:
-		handleMousePress(static_cast<QMouseEvent*>(event));
+		mousePressEvent(static_cast<QMouseEvent*>(event));
 		return true;
 		break;
 	case QEvent::MouseButtonRelease:
-		handleMouseRelease(static_cast<QMouseEvent*>(event));
+		mouseReleaseEvent(static_cast<QMouseEvent*>(event));
 		return true;
 		break;
 	case QEvent::MouseMove:
-		handleMouseMove(static_cast<QMouseEvent*>(event));
+		mouseMoveEvent(static_cast<QMouseEvent*>(event));
 		return true;
 		break;
 	default:

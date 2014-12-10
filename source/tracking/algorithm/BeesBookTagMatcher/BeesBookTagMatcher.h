@@ -88,10 +88,10 @@ private:
 
 	std::set<Qt::Key> const& grabbedKeys() const override;
 
-	void handleMouseMove(QMouseEvent * e);
-	void handleMousePress(QMouseEvent * e);
-	void handleMouseRelease(QMouseEvent * e);
-	void handleKeyPress(QKeyEvent * e);
+	void mouseMoveEvent(QMouseEvent * e) override;
+	void mousePressEvent(QMouseEvent * e) override;
+	void mouseReleaseEvent(QMouseEvent * e) override;
+	void handleKeyPress(QKeyEvent * e) override;
 
 protected:
 	bool event(QEvent* event) override;
