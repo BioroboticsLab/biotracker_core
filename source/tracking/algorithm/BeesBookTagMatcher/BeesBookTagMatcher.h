@@ -71,9 +71,6 @@ private:
 	// function that checks if one of the already set Tags is selected.
 	void selectTag(const cv::Point& location);
 
-	// store currently active tag in serialzation object list
-	void storeCurrentActiveTag();
-
 	// set no tas as currently active
 	void cancelTag();
 
