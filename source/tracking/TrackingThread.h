@@ -186,7 +186,6 @@ signals:
 	*/
 	void invalidFile();
 
-
 	/**
 	* send a message to the GUI.
 	*/

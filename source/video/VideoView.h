@@ -38,10 +38,10 @@ protected:
 
 private:
 	GLuint _texture; 
-	QVector<QVector2D> _vertices; 
-	QVector<QVector2D> _texCoords;     
+	QVector<QVector2D> _vertices;
+	QVector<QVector2D> _texCoords;
 	cv::Mat _displayImage;
-    std::shared_ptr<TrackingAlgorithm> _tracker;
+	std::shared_ptr<TrackingAlgorithm> _tracker;
 	bool _isPanZoomMode;
 	int _currentWidth;
 	int _currentHeight;
@@ -62,7 +62,6 @@ private:
 public slots:
 	void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 	void setPanZoomMode (bool isPanZoom);
-	cv::Mat getCurrentScreen();
 	void fitToWindow();
 
 signals:

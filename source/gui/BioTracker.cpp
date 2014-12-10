@@ -610,23 +610,23 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 
 void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 {	
-    QObject::connect(tracker.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)),
-		this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
-    QObject::connect( tracker.get(), SIGNAL( update() ),
-		ui.videoView, SLOT( updateGL() ));
-    QObject::connect(tracker.get(),		SIGNAL ( requestCurrentScreen() ),
-		ui.videoView, SLOT( getCurrentScreen() ));
-	QObject::connect(tracker.get(), SIGNAL( forceTracking() ),
-		_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
-	QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ),
-		tracker.get(), SLOT( setCurrentFrameNumber(int) ));
-	QObject::connect(this, SIGNAL( videoPause(bool) ),
-		tracker.get(), SLOT(setVideoPaused(bool)));
-	QObject::connect(ui.videoView, SIGNAL(reportZoomLevel(float)),
-		tracker.get(), SLOT(setZoomLevel(float)));
-
 	if(_tracker)
 	{
+		QObject::connect(tracker.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)),
+			this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
+		QObject::connect( tracker.get(), SIGNAL( update() ),
+			ui.videoView, SLOT( updateGL() ));
+		QObject::connect(tracker.get(), SIGNAL( forceTracking() ),
+			_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
+		QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ),
+			tracker.get(), SLOT( setCurrentFrameNumber(int) ));
+		QObject::connect(this, SIGNAL( videoPause(bool) ),
+			tracker.get(), SLOT(setVideoPaused(bool)));
+		QObject::connect(ui.videoView, SIGNAL(reportZoomLevel(float)),
+			tracker.get(), SLOT(setZoomLevel(float)));
+		QObject::connect(_trackingThread.get(), &TrackingThread::trackingSequenceDone,
+						 _tracker.get(), &TrackingAlgorithm::setCurrentImage);
+
 		_tracker->setZoomLevel(ui.videoView->getCurrentZoomLevel());
 		try
 		{

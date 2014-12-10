@@ -77,6 +77,12 @@ bool TrackingAlgorithm::event(QEvent *event)
 	}
 }
 
+boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const
+{
+	if (_currentImage) return _currentImage.get().clone();
+	else return boost::optional<cv::Mat>();
+}
+
 void TrackingAlgorithm::prepareSave()
 {}
 
