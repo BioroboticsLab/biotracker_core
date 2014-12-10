@@ -59,9 +59,9 @@ void BeesBookTagMatcher::paint(cv::Mat& image)
 void BeesBookTagMatcher::reset() {
 }
 
-bool BeesBookTagMatcher::prepareSave()
+void BeesBookTagMatcher::postLoad()
 {
-	return true;
+	setNumTags();
 }
 
 //check if MOUSE BUTTON IS CLICKED

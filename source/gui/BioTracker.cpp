@@ -233,7 +233,7 @@ void BioTracker::storeTrackingData()
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
-		if (!filenames.empty() && _tracker->prepareSave()) {
+		if (!filenames.empty()) {
 			const QString filename = filenames.first();
 			std::ofstream ostream(filename.toStdString(), std::ios::binary);
 			cereal::JSONOutputArchive archive(ostream);

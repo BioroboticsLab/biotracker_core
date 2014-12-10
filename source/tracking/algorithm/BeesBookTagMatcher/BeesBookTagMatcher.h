@@ -103,7 +103,7 @@ public:
 	void track(ulong frameNumber, cv::Mat& frame) override;
 	void paint(cv::Mat& image) override;
 	void reset() override;
-	bool prepareSave() override;
+	void postLoad() override;
 
 	std::shared_ptr<QWidget> getToolsWidget() override { return _toolWidget; }
 	std::shared_ptr<QWidget> getParamsWidget() override { return _paramWidget; }
