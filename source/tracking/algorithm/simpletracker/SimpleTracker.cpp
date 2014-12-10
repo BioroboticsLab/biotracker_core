@@ -37,8 +37,8 @@ namespace {
     auto _ = Algorithms::Registry::getInstance().register_tracker_type<SimpleTracker>("Simple Tracker");
 }
 
-SimpleTracker::SimpleTracker(Settings & settings, std::string &serializationPathName, QWidget *parent)
-    : TrackingAlgorithm(settings, serializationPathName, parent)
+SimpleTracker::SimpleTracker(Settings & settings, QWidget *parent)
+    : TrackingAlgorithm(settings, parent)
     , _bg_subtractor(BgSub())
 {}
 

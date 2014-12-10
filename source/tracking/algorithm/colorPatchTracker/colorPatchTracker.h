@@ -10,7 +10,7 @@ private:
 	cv::Mat imgMask;
 public:
 	ColorPatchTracker();
-	ColorPatchTracker(Settings& settings, std::string& serializationPathName, QWidget *parent);
+	ColorPatchTracker(Settings& settings, QWidget *parent);
 	~ColorPatchTracker(void);
 	void track(ulong frameNumber, cv::Mat & frame) override;
 	void paint(cv::Mat& image) override;

@@ -25,7 +25,7 @@ private:
 	void mouseReleaseEvent	( QMouseEvent * e ) override;
 
 public:
-	LandmarkTracker	( Settings & settings, std::string& serializationPathName, QWidget *parent );
+	LandmarkTracker	( Settings & settings, QWidget *parent );
 	~LandmarkTracker	( void ) {}
 
 	void track			( ulong /* frameNumber */, cv::Mat & /* frame */ ) override {}

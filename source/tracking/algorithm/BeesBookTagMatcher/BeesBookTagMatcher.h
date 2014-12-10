@@ -91,7 +91,7 @@ protected:
 	bool event(QEvent* event) override;
 
 public:
-	BeesBookTagMatcher(Settings &settings, std::string &serializationPathName, QWidget *parent);
+	BeesBookTagMatcher(Settings &settings, QWidget *parent);
 	~BeesBookTagMatcher();
 
 	void track(ulong frameNumber, cv::Mat& frame) override;

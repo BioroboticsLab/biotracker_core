@@ -16,7 +16,7 @@ public:
 	static const int   CANDIDATE_SCORE_THRESHOLD;
 	static const int   MAX_NUMBER_OF_TRACKED_OBJECTS;
 
-	SimpleTracker(Settings & settings, std::string& serializationPathName, QWidget *parent);
+	SimpleTracker(Settings & settings, QWidget *parent);
 
 	void track (ulong frameNumber, cv::Mat& frame) override;
 	void reset () override;
