@@ -27,9 +27,6 @@ public:
 
 	/**
 	* This function tracks the provided object list within the provided frame.
-	* @param: objectList
-	* @param: frame number
-	* @param: frame
 	*/
 	virtual void track(ulong frameNumber, cv::Mat& frame) = 0;
 
@@ -41,7 +38,6 @@ public:
 
 	/**
 	* Resets the tracker. never called - yet
-	* @return: void.
 	*/
 	virtual void reset() = 0;
 
@@ -71,7 +67,6 @@ public:
 	 * @brief prepareSave() is called once before the serialization of
 	 * _trackedObjects. It should store or discard all temporary values
 	 * that are related to tracked Objects.
-	 * @return
 	 */
 	virtual bool prepareSave();
 	

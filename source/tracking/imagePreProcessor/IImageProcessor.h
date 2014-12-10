@@ -18,8 +18,8 @@ public:
 
 	/**
 	 * This method processed the image and detects the found object.
-	 * @param: image, the image to process,
-	 * @return: void.
+	 * @param image, the image to process,
+	 * @return void.
 	 */
 	virtual void process(cv::Mat image) = 0;
 

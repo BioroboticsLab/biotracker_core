@@ -65,14 +65,13 @@ public slots:
 
 	/**
 	 * Print proivided message to the GUI message area.
-	 * @param: message, the message to print.
-	 * @return: void.
+	 * @param message the message to print.
 	 */
 	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
 
 	/**
 	 * Sets the algorithm used for tracking
-	 * @param: trackingAlgId, the id of the algorithm.
+	 * @param trackingAlgId, the id of the algorithm.
 	 */
 	
 	//void setTrackingAlg(int trackingAlgId);
