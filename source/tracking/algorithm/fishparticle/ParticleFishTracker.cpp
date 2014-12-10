@@ -26,16 +26,16 @@ struct compareReverseParticleScorePredicate {
 /**
 * Constructs a new instance using the tracking and special particle tracker settings set in settings.
 */
-ParticleFishTracker::ParticleFishTracker(Settings& settings, QWidget *parent)
-    : TrackingAlgorithm(settings, parent)
+ParticleFishTracker::ParticleFishTracker(Settings& settings, std::string &serializationPathName, QWidget *parent)
+    : TrackingAlgorithm(settings, serializationPathName, parent)
     , _toolsWidget(std::make_shared<QFrame>())
     , _showOriginal(false)
     , _rng(123)
     , _max_score(0)
     , _min_score(0)
     , _params(parent, settings)
-	, _preprocessor(settings, _params)
-	, _clusters(settings, _params)
+	, _preprocessor(_params)
+	, _clusters(_params)
 {
     initToolsWidget();
 }
@@ -100,7 +100,6 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 * moved randomly (gaussian) in all dimensions.
 */
 void ParticleFishTracker::importanceResample() {
-	//TODO: get params for grid buckets
 	GridParticleBuckets buckets(_params.getMaxParticlesPerBucket(), _prepared_frame.rows, _prepared_frame.cols, _params.getBucketSize(), _params.getBucketSize());
 	// Make a copy and generate new particles.
 	size_t random_new_particles = 0;
