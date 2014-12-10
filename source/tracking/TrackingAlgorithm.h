@@ -68,10 +68,17 @@ public:
 	 * _trackedObjects. It should store or discard all temporary values
 	 * that are related to tracked Objects.
 	 */
-	virtual bool prepareSave();
+	virtual void prepareSave();
+
+	/**
+	 * @brief prepareSave() is called once after the tracked objects are
+	 * loaded from serialized data. It should do any postprocessing necessary.
+	 *  the serialization of
+	 */
+	virtual void postLoad();
 	
 	void loadObjects(std::vector<TrackedObject> &&objects);
-	std::vector<TrackedObject> const& getObjects() const;
+	std::vector<TrackedObject> const& getObjects();
 
 public slots:
 	/**
