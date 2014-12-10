@@ -46,7 +46,11 @@ private:
 	int _currentWidth;
 	int _currentHeight;
 
-	/* Modified by user input. Initially 1.0 */
+	/**
+	* Modified by user input. 
+	* Initially 0, geting negative if we zoom into the picture,
+	* getting positive if we zoom out
+	*/
 	float _zoomFactor;
 	/* ratio of window size to picture size */
 	float _screenPicRatio;

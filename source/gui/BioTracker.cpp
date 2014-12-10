@@ -643,6 +643,7 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 			emit printGuiMessage("cannot create UI elements for selected algorithm",MSGS::FAIL);
 		}
 	}
+	ui.videoView->update();
 }
 
 void BioTracker::takeScreenshot()
