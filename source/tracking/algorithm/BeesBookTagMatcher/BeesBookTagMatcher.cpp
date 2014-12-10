@@ -37,15 +37,6 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 void BeesBookTagMatcher::track(ulong frameNumber, cv::Mat &)
 {
 	_activeGrid.reset();
-	//// copy all tags from last frame
-	//if (frameNumber > 0) {
-	//	for (TrackedObject& trackedObject : _trackedObjects) {
-	//		if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
-	//			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
-	//			trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
-	//		}
-	//	}
-	//}
 	setNumTags();
 }
 
@@ -231,7 +222,43 @@ void BeesBookTagMatcher::handleKeyPress(QKeyEvent *e)
 			_activeGrid->updateAxes();
 			emit update();
 		}
+	} else if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) {
+		_idCopyBuffer.clear();
+		for (const TrackedObject& object : _trackedObjects) {
+			// store ids of all grids on current frame in copy buffer
+			if (object.count(_currentFrameNumber)) {
+				_idCopyBuffer.insert(object.getId());
+			}
+		}
+		_copyFromFrame = _currentFrameNumber;
+	} else if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) {
+		for (TrackedObject& object : _trackedObjects) {
+			// check if id of object is in copy buffer
+			if (_idCopyBuffer.count(object.getId())) {
+				// check if grid from copy-from framenumber still exists
+				const auto maybeGrid = object.maybeGet<Grid>(_copyFromFrame.get());
+				// and create a copy if a grid with the same id does not
+				// already exist on the current frame
+				if (maybeGrid && !object.maybeGet<Grid>(_currentFrameNumber)) {
+					object.add(_currentFrameNumber, std::make_shared<Grid>(*maybeGrid));
+				}
+			}
+		}
+		emit update();
+		setNumTags();
 	}
+
+
+	//// copy all tags from last frame
+	//if (frameNumber > 0) {
+	//	for (TrackedObject& trackedObject : _trackedObjects) {
+	//		if (!(trackedObject.count(frameNumber)) && trackedObject.count(frameNumber - 1)) {
+	//			std::shared_ptr<Grid> grid = trackedObject.get<Grid>(frameNumber - 1);
+	//			trackedObject.add(frameNumber, std::make_shared<Grid>(*grid));
+	//		}
+	//	}
+	//}
+
 }
 
 //BeesBookTagMatcher private member functions
@@ -460,7 +487,8 @@ void BeesBookTagMatcher::removeCurrentActiveTag()
 {	
 	if (_activeGrid)
 	{
-		auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(), [&](const TrackedObject & o){ return o.getId() == _activeGrid->objectId; }) ;
+		auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
+		                                          [&](const TrackedObject & o){ return o.getId() == _activeGrid->objectId; }) ;
 		
 		assert( trackedObjectIterator != _trackedObjects.end() );
 
@@ -509,7 +537,8 @@ void BeesBookTagMatcher::setNumTags()
 
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 {
-	static const std::set<Qt::Key> keys { Qt::Key_Plus, Qt::Key_Minus };
+	static const std::set<Qt::Key> keys { Qt::Key_Plus, Qt::Key_Minus,
+	                                      Qt::Key_C, Qt::Key_V };
 	return keys;
 }
 

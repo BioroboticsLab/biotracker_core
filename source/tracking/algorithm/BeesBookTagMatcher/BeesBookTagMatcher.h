@@ -44,6 +44,9 @@ private:
 	std::shared_ptr<QWidget> _toolWidget;
 	std::shared_ptr<QWidget> _paramWidget;
 
+	std::set<size_t> _idCopyBuffer;
+	boost::optional<size_t> _copyFromFrame;
+
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image) const;
 
