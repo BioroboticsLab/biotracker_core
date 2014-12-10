@@ -6,6 +6,7 @@ Registry::Registry()
 {
 	_typeByString.insert(std::make_pair("No Tracking", NoTracking));
 	_trackerByType.insert(std::make_pair(NoTracking, nullptr));
+	_stringByType.insert(std::make_pair(NoTracking, "No Tracking"));
 }
 
 bool Registry::register_tracker_type(std::string name, new_tracker_function_t f)
@@ -14,7 +15,8 @@ bool Registry::register_tracker_type(std::string name, new_tracker_function_t f)
 		throw std::invalid_argument("Tracker with same name already registered");
 	}
 	const Type type = getNextId();
-	_typeByString.emplace(std::move(name), type);
+	_typeByString.emplace(name, type);
+	_stringByType.emplace(type, name);
 	_trackerByType.emplace(type, f);
 
 	return true;

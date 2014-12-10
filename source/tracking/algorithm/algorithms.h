@@ -18,14 +18,16 @@ Type getNextId();
 class Registry : public Singleton<Registry> {
 
 public:
-    typedef std::map<const Type, new_tracker_function_t> map_type_t;
-    typedef std::map<const std::string, const Type> map_string_t;
+    typedef std::map<const Type, new_tracker_function_t> map_type_fun_t;
+    typedef std::map<const Type, const std::string> map_type_string_t;
+    typedef std::map<const std::string, const Type> map_string_type_t;
 
 private:
     friend class Singleton<Registry>;
 	Registry();
-	map_string_t _typeByString;
-	map_type_t _trackerByType;
+	map_string_type_t _typeByString;
+	map_type_string_t _stringByType;
+	map_type_fun_t _trackerByType;
 
 public:
     /**
@@ -42,8 +44,9 @@ public:
      */
     std::shared_ptr<TrackingAlgorithm> make_new_tracker(const Type name, Settings& settings, QWidget *parent) const;
 
-    map_string_t const& typeByString() const { return _typeByString; }
-    map_type_t const& trackerByType() const { return _trackerByType; }
+    map_string_type_t const& typeByString() const { return _typeByString; }
+    map_type_fun_t const& trackerByType() const { return _trackerByType; }
+    map_type_string_t const& stringByType() const { return _stringByType; }
 
 private:
     /**
