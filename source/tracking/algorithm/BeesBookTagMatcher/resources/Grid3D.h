@@ -35,6 +35,7 @@ public:
 	static const double BULGE_FACTOR;
 
 private:
+	bool _constructorPassed =false;
 
 	template<typename POINT>
 	struct coordinates_t {

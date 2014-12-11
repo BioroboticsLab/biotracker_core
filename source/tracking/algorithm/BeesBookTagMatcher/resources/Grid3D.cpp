@@ -17,6 +17,8 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pit
 	, _pitchAngle(pitchAngle)
 {
 	_rotationMatrix = calculateRotMatrix();
+	doPerspectiveProjection();
+	_constructorPassed = true;
 }
 
 Grid3D::~Grid3D() = default;
@@ -128,7 +130,7 @@ void Grid3D::doPerspectiveProjection()
 			const size_t index_rend  =  POINTS_PER_RING - index_begin;
 			const size_t index_end_elem  =  index_end < POINTS_PER_RING ? index_end + 1 : 0;
 
-			vec.insert(vec.end(), &rings_2d._middle_ring[index_begin], &rings_2d._middle_ring[index_end]);
+			vec.insert(vec.end(), rings_2d._middle_ring.cbegin() + index_begin, rings_2d._middle_ring.cbegin() + index_end);
 			vec.push_back(rings_2d._middle_ring[index_end_elem]);
 
 			vec.push_back(rings_2d._middle_ring[index_end_elem]);
