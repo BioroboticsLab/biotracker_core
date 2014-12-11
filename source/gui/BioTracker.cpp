@@ -440,17 +440,17 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 	}
 }
 
-boost::optional<std::string> BioTracker::getFileHash(const std::string &filename) const
+boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string &filename) const
 {
 	QCryptographicHash sha1Generator(QCryptographicHash::Sha1);
 	QFile file(QString::fromStdString(filename));
 	if (file.open(QIODevice::ReadOnly)) {
-		// calculate hash from first 1024 byte of file
-		sha1Generator.addData(file.peek(1024));
+		// calculate hash from first 4096 bytes of file
+		sha1Generator.addData(file.peek(4096));
 		return QString(sha1Generator.result().toHex()).toStdString();
 	}
 
-	return boost::optional<std::string>();
+	return boost::optional<filehash>();
 }
 
 
@@ -653,20 +653,35 @@ void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 {
-	//first remove ui containers of old algorithm
+	// calculate file hash of currently opened file
+	const boost::optional<std::string> openFile = getOpenFile();
+	boost::optional<filehash> filehash;
+	if (openFile) filehash = getFileHash(openFile.get());
+
 	if(_tracker)
 	{
+		// remove ui containers of old algorithm
 		_vboxParams->removeWidget(_paramsWidget.get());
 		_vboxTools->removeWidget(_toolsWidget.get());
 		_paramsWidget.reset();
 		_toolsWidget.reset();
 
-		// store data in temporary file, create a new file if none exists so far
-		assert(_tracker->getType());
-		QTemporaryFile& tmpFile = _serializationTmpFileMap[_tracker->getType().get()];
-		if (!tmpFile.open()) printGuiMessage("Unable to create temporary file for serialization data!", MSGS::FAIL);
-		storeTrackingData(tmpFile.fileName().toStdString());
-
+		if (filehash && (_tracker->getType().get() != Algorithms::NoTracking)) {
+			// map_type_hashtemp_t maps tracker type to a map that maps
+			// a file hash to a QTemporaryFile. We try to find a QTemporaryFile
+			// that has previously created that contains the serialization data
+			// of the current tracking algorithm and the currently opened file.
+			// If such a QTemporaryFile does not exist yet, we create it now.
+			map_hash_temp_t& hashTempMap = _serializationTmpFileMap[_tracker->getType().get()];
+			QTemporaryFile& tmpFile = hashTempMap[filehash.get()];
+			if (!tmpFile.open()) {
+				printGuiMessage("Unable to create temporary file for serialization data!", MSGS::FAIL);
+			} else {
+				// store the tracking data of the previously selected algorithm
+				// in the temporary file.
+				storeTrackingData(tmpFile.fileName().toStdString());
+			}
+		}
 		_tracker.reset();
 	}
 
@@ -675,18 +690,28 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		_tracker = Algorithms::Registry::getInstance().make_new_tracker(trackingAlg, _settings, this);
 		assert(_tracker);
 
-		// restore previous state
-		if (_serializationTmpFileMap.count(trackingAlg))
-		{
-			QTemporaryFile& file = _serializationTmpFileMap.at(trackingAlg);
-			if (!file.open()) printGuiMessage("Unable to load temporary file with serialization data!", MSGS::FAIL);
-			loadTrackingData(file.fileName().toStdString());
-		}
-
 		//init tracking Alg
 		_tracker->setCurrentFrameNumber(_currentFrame);
 		_tracker->setVideoPaused(_videoPaused);
 		connectTrackingAlg(_tracker);
+
+		// now, we try to find a temporary file that contains previously
+		// stored tracking data for the new tracking algorithm and the
+		// currently opened file.
+		if (filehash) {
+			const auto& hash_tmp_it = _serializationTmpFileMap.find(trackingAlg);
+			if (hash_tmp_it != _serializationTmpFileMap.end()) {
+				map_hash_temp_t& hashTempMap = (*hash_tmp_it).second;
+				// find the previously temporary file
+				const auto& tmpfile_it = hashTempMap.find(filehash.get());
+				if (tmpfile_it != hashTempMap.end()) {
+					QTemporaryFile& file = (*tmpfile_it).second;
+					// open file and restore tracking data
+					if (!file.open()) printGuiMessage("Unable to load temporary file with serialization data!", MSGS::FAIL);
+					loadTrackingData(file.fileName().toStdString());
+				}
+			}
+		}
 	}
 
 	ui.groupBox_params->repaint();

@@ -26,7 +26,7 @@ class BioTracker: public QMainWindow
 
 public:
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
-    ~BioTracker();
+	~BioTracker();
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -118,11 +118,16 @@ private:
 
 	void closeEvent(QCloseEvent* event) override;
 
-	boost::optional<std::string> getFileHash(std::string const& filename) const;
-	boost::optional<std::string> getOpenFile() const;
-
 	std::shared_ptr<TrackingAlgorithm> _tracker;
-	std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
+
+	typedef std::string filehash;
+	typedef std::map<filehash, QTemporaryFile> map_hash_temp_t;
+	typedef std::map<Algorithms::Type, map_hash_temp_t> map_type_hashtemp_t;
+
+	map_type_hashtemp_t _serializationTmpFileMap;
+
+	boost::optional<std::string> getOpenFile() const;
+	boost::optional<filehash> getFileHash(std::string const& filename) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
