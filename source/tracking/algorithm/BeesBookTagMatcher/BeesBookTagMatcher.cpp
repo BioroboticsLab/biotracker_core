@@ -45,6 +45,9 @@ void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 
 void BeesBookTagMatcher::paint(cv::Mat& image)
 {
+	// TESTCODE START
+	_testGrid3d.draw(image, 0);
+	// TESTCODE END
 	if (!_trackedObjects.empty()) 
 	{
 		drawSetTags(image);
@@ -275,9 +278,6 @@ void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 			}
 		}
 	}
-	// TESTCODE START
-	_testGrid3d.draw(image, 0);
-	// TESTCODE END
 }
 
 //function that draws the orientation vector while being set.
