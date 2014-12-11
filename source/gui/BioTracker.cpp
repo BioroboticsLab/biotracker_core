@@ -669,9 +669,10 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		if (filehash && (_tracker->getType().get() != Algorithms::NoTracking)) {
 			// map_type_hashtemp_t maps tracker type to a map that maps
 			// a file hash to a QTemporaryFile. We try to find a QTemporaryFile
-			// that has previously created that contains the serialization data
-			// of the current tracking algorithm and the currently opened file.
-			// If such a QTemporaryFile does not exist yet, we create it now.
+			// that has been previously created that contains the serialization
+			// data of the current tracking algorithm and the currently opened
+			// file. If such a QTemporaryFile does not exist yet, we create it
+			// now.
 			map_hash_temp_t& hashTempMap = _serializationTmpFileMap[_tracker->getType().get()];
 			QTemporaryFile& tmpFile = hashTempMap[filehash.get()];
 			if (!tmpFile.open()) {
@@ -690,7 +691,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		_tracker = Algorithms::Registry::getInstance().make_new_tracker(trackingAlg, _settings, this);
 		assert(_tracker);
 
-		//init tracking Alg
+		// init tracking Alg
 		_tracker->setCurrentFrameNumber(_currentFrame);
 		_tracker->setVideoPaused(_videoPaused);
 		connectTrackingAlg(_tracker);
