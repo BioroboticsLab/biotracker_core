@@ -93,7 +93,7 @@ public:
 	void doPerspectiveProjection();
 
 	// draws 2D projection of 3D-mesh on image
-	void draw(cv::Mat &img, int active);
+	void draw(cv::Mat &img, int active) const;
 
 };
 
