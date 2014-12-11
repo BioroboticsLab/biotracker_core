@@ -27,19 +27,6 @@ int SteppedSpinBox::valueFromText(const QString &text) const  {
 	return value;
 }
 
-
-/**
- * Integer Spinbox + Slider.
- * representable values: {min, min + step_size, min + 2 * step_size, ..., max - step_size, max}
- *     Default (step_size = 1): {min, min + 1, min + 2, ..., max - 1, max}
- *
- * @param parent
- * @param name
- * @param min : lower bound
- * @param max : upper bound, max >= min && max == min + n * step_size; n \in \setn
- * @param start_value : min <= start_value <= max && start_value == min + n * step_size; n \in \setn
- * @param step_size : >= 1
- */
 SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, const QString &name, int min, int max, int start_value, int step_size)
 	: QWidget(parent)
 	, m_step_size(step_size)
@@ -106,16 +93,6 @@ void SpinBoxWithSlider::SliderValueChanged(int value) {
 	emit valueChanged(this->value());
 }
 
-/**
- * double Spinbox + Slider.
- *
- * @param parent
- * @param name
- * @param min
- * @param max
- * @param start_value
- * @param precision : decimal places
- */
 DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent, const QString &name, double min, double max, double start_value, int precision)
 	: QWidget(parent)
 	, m_factor(pow(10, precision))

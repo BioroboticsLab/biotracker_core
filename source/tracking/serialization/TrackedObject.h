@@ -10,6 +10,9 @@
 #include <cereal/access.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
+
+#include "types.hpp"
 
 class TrackedObject
 {
@@ -36,13 +39,20 @@ public:
 	std::shared_ptr<DerivedObjectModel> maybeGet(const size_t framenumber) const
 	{
 		auto it = _objectsByFrame.find(framenumber);
-		if (it == _objectsByFrame.end()) return std::shared_ptr<DerivedObjectModel>();
-		else return std::dynamic_pointer_cast<DerivedObjectModel>(it->second);
+
+		if (it == _objectsByFrame.end()) 
+			return std::shared_ptr<DerivedObjectModel>();
+		else 
+			return std::dynamic_pointer_cast<DerivedObjectModel>(it->second);
 	}
 
 	std::shared_ptr<ObjectModel> top() const;
 
-    size_t id() const { return _id; }
+	size_t getId() const { return _id; }
+	void setId(size_t id) { _id = id; }
+
+	bool isEmpty() const { return _objectsByFrame.empty(); }
+	void erase(size_t framenumber) { _objectsByFrame.erase(framenumber); }
 
 private:
     size_t _id;
@@ -55,7 +65,6 @@ private:
 		ar(CEREAL_NVP(_id), CEREAL_NVP(_objectsByFrame));
     }
 };
-
 
 #endif // !TrackedObject_h
 

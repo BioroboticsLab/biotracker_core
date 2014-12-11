@@ -10,8 +10,8 @@ namespace CvHelper
 
 	/**
 	 * Convert degree to radian.
-	 * @param: deg, degree value,
-	 * @return: rad value.
+	 * @param deg, degree value,
+	 * @return rad value.
 	 */
 	inline float CvHelper::degToRad(float deg)
 	{
@@ -20,8 +20,8 @@ namespace CvHelper
 
 	/**
 	 * Convert radian to degree.
-	 * @param: rad, radian value,
-	 * @return: degree value.
+	 * @param rad, radian value,
+	 * @return degree value.
 	 */
 	float CvHelper::radToDeg(float rad)
 	{

@@ -22,11 +22,13 @@ VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
 	, _tracker(nullptr)
 	, _isPanZoomMode(false)
-    , _currentWidth(0)
-    , _currentHeight(0)
+	, _currentWidth(0)
+	, _currentHeight(0)
 	, _zoomFactor(0)
+	, _screenPicRatio(0)
 	, _panX(0)
 	, _panY(0)
+	, _isPanning(false)
 	, _lastPannedTime(std::chrono::system_clock::now())
 	, _lastZoomedTime(std::chrono::system_clock::now())
 	, _lastZoomedPoint(0, 0)
@@ -78,6 +80,9 @@ void VideoView::fitToWindow()
 
 void VideoView::paintGL()
 {
+	// Create a black background for the parts of the widget with no image.
+	qglClearColor(Qt::black);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if(_displayImage.empty()) 
 	{
@@ -87,24 +92,20 @@ void VideoView::paintGL()
 	cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
-        try
-        {
+		try
+		{
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy);
-        }
-        catch(std::exception& err)
-        {
-            std::stringstream ss;
-            ss << "critical error in selected tracking algorithm's paint method!";
-            ss << "\n" << err.what();
-            emit notifyGUI(ss.str() ,MSGS::FAIL);
-        }
+		}
+		catch(std::exception& err)
+		{
+			std::stringstream ss;
+			ss << "critical error in selected tracking algorithm's paint method!";
+			ss << "\n" << err.what();
+			emit notifyGUI(ss.str() ,MSGS::FAIL);
+		}
 
 	}
-
-	// Create a black background for the parts of the widget with no image.
-	qglClearColor(Qt::black); 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
 
@@ -134,11 +135,11 @@ void VideoView::paintGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
 	// check window resolution and scale image if window resolution is lower than image resolution
-	if (_zoomFactor > 1)
+	if ((_screenPicRatio + _zoomFactor) > 1)
 	{	
 		QMutexLocker locker(&trackMutex);
-		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / _zoomFactor),
-												  static_cast<int>(imageCopy.rows / _zoomFactor)), cv::INTER_AREA);//resize image
+		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / (_screenPicRatio + _zoomFactor)),
+			static_cast<int>(imageCopy.rows / (_screenPicRatio + _zoomFactor))), cv::INTER_AREA);//resize image
 	}	
 
 	/**
@@ -170,7 +171,7 @@ void VideoView::paintGL()
 
 	//if image was scaled down previously 
 	//we need to adjust coordinates relatively
-	if (_zoomFactor > 1)
+	if ((_screenPicRatio + _zoomFactor) > 1)
 	{
 		c = (c*imageCopy.cols)/_displayImage.cols;
 		r = (r*imageCopy.rows)/_displayImage.rows;
@@ -208,6 +209,7 @@ void VideoView::initializeGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);	
 }
+
 void VideoView::resizeGL(int width, int height)
 {
 	// dont do anything if  width or height are 0 
@@ -254,8 +256,7 @@ void VideoView::resizeGL(int width, int height)
 	glMatrixMode(GL_MODELVIEW);	
 	if (sizeChanged)
 		fitToWindow();
-
-
+	emit reportZoomLevel(_zoomFactor);
 }
 
 
@@ -288,6 +289,13 @@ void VideoView::takeScreenshot(QString screenShotFilename)
 	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
+void VideoView::keyPressEvent(QKeyEvent *e)
+{
+	e->accept();
+	QKeyEvent event(e->type(), e->key(), e->modifiers(), e->text());
+	QCoreApplication::sendEvent(QApplication::activeWindow(), &event);
+}
+
 void VideoView::mouseMoveEvent( QMouseEvent * e )
 {
 	if (_isPanZoomMode)
@@ -311,12 +319,11 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 	}
 	else
 	{
-
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
 		const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit moveEvent ( modifiedEvent );		
-
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -338,10 +345,11 @@ void VideoView::mousePressEvent( QMouseEvent * e )
 	}
 	else
 	{
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit pressEvent ( modifiedEvent );
+		const QPointF localPos(p);
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -353,10 +361,11 @@ void VideoView::mouseReleaseEvent( QMouseEvent * e )
 		_isPanning = false;
 	}
 	else{
+		e->accept();
 		QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent *modifiedEvent = new QMouseEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		emit releaseEvent ( modifiedEvent );
+		const QPointF localPos(p);
+		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}
 }
 
@@ -394,13 +403,15 @@ void VideoView::wheelEvent( QWheelEvent * e )
 				updateGL();
 				e->accept();
 			}
-		}
+		}		
 	}
 	else
 	{
-		const QPointF *localPos = new QPointF(picturePos);
-		QWheelEvent *modifiedEvent = new QWheelEvent(e->pos(),*localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
-		emit mouseWheelEvent( modifiedEvent );
+		e->accept();
+		QPoint p  = unprojectScreenPos(e->pos());
+		const QPointF localPos(p);
+		QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
+		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
 	}	
 }
 
@@ -411,8 +422,4 @@ void VideoView::setPanZoomMode(bool isPanZoom)
 		this->setCursor(Qt::OpenHandCursor);
 	else
 		this->setCursor(Qt::ArrowCursor);
-}
-cv::Mat VideoView::getCurrentScreen()
-{
-	return _displayImage.clone();
 }

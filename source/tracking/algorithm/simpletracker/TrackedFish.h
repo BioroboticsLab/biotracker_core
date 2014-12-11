@@ -1,24 +1,10 @@
 #ifndef TrackedFish_H
 #define TrackedFish_H
 
-#include "source/tracking/trackedObject/TrackedObject.h"
+#include "source/tracking/serialization/TrackedObject.h"
 
 #include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
-
-namespace cereal {
-template<class Archive>
-void serialize(Archive& archive, cv::Point2f& point)
-{
-	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
-}
-
-template<class Archive>
-void serialize(Archive& archive, cv::Scalar& scalar)
-{
-	archive(CEREAL_NVP(scalar.val));
-}
-}
 
 class TrackedFish :
     public ObjectModel
