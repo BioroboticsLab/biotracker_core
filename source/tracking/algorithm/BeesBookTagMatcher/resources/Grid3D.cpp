@@ -1,17 +1,60 @@
 #include "Grid3D.h"
 
+#include <cmath> // std::sin, std::cos
+
+const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_coordinates3D();
+
+const double Grid3D::INNER_RING_RADIUS  = 0.4;
+const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
+const double Grid3D::OUTER_RING_RADIUS  = 1.0;
+const double Grid3D::bulge_factor       = 0.7;
+
+Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
+
+	typedef coordinates3D_t::value_type value_type;
+	typedef coordinates3D_t::point_type point_type;
+
+	coordinates3D_t result;
+
+	// generate x,y coordiantes
+	for(size_t i = 0; i < POINTS_PER_RING; ++i)
+	{
+		const value_type angle = i * 2.0 * CV_PI / static_cast<double>(POINTS_PER_RING);
+		const point_type p(
+		  std::cos(angle),
+		  std::sin(angle),
+		  0.0
+		);
+		result._inner_ring[i]  = p * INNER_RING_RADIUS;
+		result._middle_ring[i] = p * MIDDLE_RING_RADIUS;
+		result._outer_ring[i]  = p * OUTER_RING_RADIUS;
+	}
+
+	// generate z coordinates
+	{
+		const value_type z_inner_ring  = std::cos(bulge_factor * INNER_RING_RADIUS);
+		const value_type z_middle_ring = std::cos(bulge_factor * MIDDLE_RING_RADIUS);
+		const value_type z_outer_ring  = std::cos(bulge_factor * OUTER_RING_RADIUS);
+		for(size_t i = 0; i < POINTS_PER_RING; ++i)
+		{
+			result._inner_ring[i].z  = z_inner_ring;
+			result._middle_ring[i].z = z_middle_ring;
+			result._outer_ring[i].z  = z_outer_ring;
+		}
+	}
+
+	return result;
+}
+
+
 
 Grid3D::Grid3D()
 {
-	coordinates3D.resize(3);
-	coordinates2D.resize(3);
-	initializeBaseCoordinates();
+
 }
 
 
-Grid3D::~Grid3D()
-{
-}
+Grid3D::~Grid3D() = default;
 
 void Grid3D::initializeBaseCoordinates()
 {
@@ -23,7 +66,7 @@ void Grid3D::initializeBaseCoordinates()
 	// fill angle array
 	for (size_t i = 0; i < N; i++)
 	{
-		a[i] = (double) i * 2.0 * CV_PI / (N - 1);
+		//a[i] = (double) i * 2.0 * CV_PI / (N - 1);
 	}
 
 	// the outer ring (the tag border)
@@ -59,9 +102,9 @@ void Grid3D::initializeBaseCoordinates()
 		Z[2*N +	i]	= cos(0.7 * sqrt(X2[i] * X2[i] + Y2[i] * Y2[i]));
 		*/
 
-		coordinates3D[0].push_back( cv::Point3f(X0[i], Y0[i], cos(0.7 * sqrt(X0[i] * X0[i] + Y0[i] * Y0[i]))) );
-		coordinates3D[1].push_back( cv::Point3f(X1[i], Y1[i], cos(0.7 * sqrt(X1[i] * X1[i] + Y1[i] * Y1[i]))) );
-		coordinates3D[2].push_back( cv::Point3f(X2[i], Y2[i], cos(0.7 * sqrt(X2[i] * X2[i] + Y2[i] * Y2[i]))) );
+//		coordinates3D[0].push_back( cv::Point3f(X0[i], Y0[i], cos(0.7 * sqrt(X0[i] * X0[i] + Y0[i] * Y0[i]))) );
+//		coordinates3D[1].push_back( cv::Point3f(X1[i], Y1[i], cos(0.7 * sqrt(X1[i] * X1[i] + Y1[i] * Y1[i]))) );
+//		coordinates3D[2].push_back( cv::Point3f(X2[i], Y2[i], cos(0.7 * sqrt(X2[i] * X2[i] + Y2[i] * Y2[i]))) );
 	}
 
 	// Schwerpunkt bestimmen, damit Tag um Mittelachse rotiert
@@ -75,7 +118,7 @@ void Grid3D::initializeBaseCoordinates()
 // updates the 2D contour vector coordinates2D
 void Grid3D::doPerspectiveProjection()
 {
-	for (size_t i = 0; i < coordinates3D[0].size(); i++)
+	//for (size_t i = 0; i < coordinates3D[0].size(); i++)
 	{
 		//coordinates2D[0] = coordinates3D[0].at(i)
 		//coordinates2D[1] = 
