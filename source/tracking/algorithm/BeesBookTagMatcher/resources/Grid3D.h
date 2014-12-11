@@ -48,8 +48,7 @@ private:
 
 	static coordinates3D_t generate_coordinates3D();
 
-
-
+	
 	/** Parameter Section
 		Each of the following parameters define the tag uniquely. 
 		The Grid3D class holds a set of 3D-points that make up a mesh of the bee tag. These points are
@@ -72,6 +71,9 @@ private:
 	std::vector<std::vector<cv::Point>>		_coordinates2D;	// 2D coordinates of mesh (after perspective projection)
 
 	cv::Mat _3d_to_2d_transformation;
+
+	cv::Mat _rotationMatrix;
+	cv::Mat calculateRotMatrix();
 
 
 public:
