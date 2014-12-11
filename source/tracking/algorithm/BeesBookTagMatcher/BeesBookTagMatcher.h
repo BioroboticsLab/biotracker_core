@@ -11,6 +11,7 @@
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
+#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid3D.h"
 
 #include "ui_BeesBookTagMatcherToolWidget.h"
 
@@ -20,6 +21,17 @@ class BeesBookTagMatcher : public TrackingAlgorithm {
 private:
 	std::shared_ptr<Grid>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
+
+
+	/**
+	* TEST CODE START
+	* ------------------------------------------
+	*/
+	Grid3D _testGrid3d;
+	/**
+	* ------------------------------------------
+	* TEST CODE END
+	*/
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--

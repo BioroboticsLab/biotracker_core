@@ -9,6 +9,18 @@ const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
 const double Grid3D::BULGE_FACTOR       = 0.7;
 
+Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle)
+	: _center(center)
+	, _radius(radius)
+	, _orientation(orientation)
+	, _pitchAxis(pitchAxis)
+	, _pitchAngle(pitchAngle)
+{
+	_rotationMatrix = calculateRotMatrix();
+}
+
+Grid3D::~Grid3D() = default;
+
 Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 
 	typedef coordinates3D_t::value_type value_type;
@@ -60,20 +72,6 @@ Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
 	}
 	return result;
 }
-
-Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle)
-	: _center(center)
-	, _radius(radius)
-	, _orientation(orientation)
-	, _pitchAxis(pitchAxis)
-	, _pitchAngle(pitchAngle)
-{
-	_rotationMatrix = calculateRotMatrix();
-}
-
-
-Grid3D::~Grid3D() = default;
-
 
 // updates the 2D contour vector coordinates2D
 void Grid3D::doPerspectiveProjection()
@@ -152,7 +150,7 @@ void Grid3D::doPerspectiveProjection()
 	
 }
 
-void Grid3D::draw(cv::Mat &img, int active)
+void Grid3D::draw(cv::Mat &img, int active) const
 {
 	//cv::drawContours(img, coordin)
 }

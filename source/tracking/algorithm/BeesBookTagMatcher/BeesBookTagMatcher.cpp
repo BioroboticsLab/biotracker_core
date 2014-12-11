@@ -24,7 +24,10 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _setOnlyOrient(false)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
-	, _paramWidget(std::make_shared<QWidget>())
+	, _paramWidget(std::make_shared<QWidget>())	
+	// TESTCODE START
+	, _testGrid3d(cv::Point2i(500,500), 30.0 , 0.0, 0.0, 0.0)
+	// TESTCODE END
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
@@ -272,6 +275,9 @@ void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 			}
 		}
 	}
+	// TESTCODE START
+	_testGrid3d.draw(image, 0);
+	// TESTCODE END
 }
 
 //function that draws the orientation vector while being set.
