@@ -2,34 +2,34 @@
 
 #include <cmath> // std::sin, std::cos
 
-const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_coordinates3D();
+const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_3D_base_coordinates();
 
 const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
 const double Grid3D::BULGE_FACTOR       = 0.7;
 
-Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle)
+Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
 	: _center(center)
 	, _radius(radius)
-	, _orientation(orientation)
-	, _pitchAxis(pitchAxis)
-	, _pitchAngle(pitchAngle)
+	, _angle_z(angle_z)
+	, _angle_y(angle_y)
+	, _angle_x(angle_x)
 {
 	_rotationMatrix = calculateRotMatrix();
-	doPerspectiveProjection();
+	prepare_visualization_data();
 }
 
 Grid3D::~Grid3D() = default;
 
-Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
+Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 
 	typedef coordinates3D_t::value_type value_type;
 	typedef coordinates3D_t::point_type point_type;
 
 	coordinates3D_t result;
 
-	// generate x,y coordiantes
+	// generate x,y coordinates
 	for(size_t i = 0; i < POINTS_PER_RING; ++i)
 	{
 		const value_type angle = i * 2.0 * CV_PI / static_cast<double>(POINTS_PER_RING);
@@ -56,29 +56,50 @@ Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 			result._inner_ring[i].z  = z_inner_ring  - mean;
 			result._middle_ring[i].z = z_middle_ring - mean;
 			result._outer_ring[i].z  = z_outer_ring  - mean;
+
+			result._inner_ring[i]	*= 1.0 / sqrt(1 + result._inner_ring[i].z * result._inner_ring[i].z);
+			result._middle_ring[i]	*= 1.0 / sqrt(1 + result._middle_ring[i].z * result._middle_ring[i].z);
+			result._outer_ring[i]	*= 1.0 / sqrt(1 + result._outer_ring[i].z * result._outer_ring[i].z);
 		}
 	}
 
 	return result;
 }
 
-Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
-
+// rotates and scales the base mesh according to given parameter set
+Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_project_to_2D() const 
+{
+	// output variable
 	coordinates2D_t result;
-	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) {
-		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) {
-			const cv::Point3d p = _rotationMatrix * _coordinates3D._rings[r][i] * _radius;
-			result._rings[r][i] = cv::Point2i(p.x, p.y) + _center;
+
+	// iterate over all rings
+	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) 
+	{
+		// iterate over all points in ring
+		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) 
+		{
+			// rotate and scale point (aka vector)
+			const cv::Point3d p = ( _rotationMatrix * _coordinates3D._rings[r][i] );
+
+			result._rings[r][i] = cv::Point2i(round(_radius* p.x / (p.z + 4)), round(_radius*p.y / (p.z + +4))) + _center;
 		}
 	}
 	return result;
 }
 
 // updates the 2D contour vector coordinates2D
-void Grid3D::doPerspectiveProjection()
+void Grid3D::prepare_visualization_data()
 {
-	const auto rings_2d = generate_coordinates2D();
+	// weird: if resize and reserve are called after rings_2d is generated, the values in the array are changed (to something weird)
+	_coordinates2D.resize(1);
+	_coordinates2D[INDEX_OUTER_WHITE_RING].reserve(POINTS_PER_RING);
 
+	const auto rings_2d = generate_3D_coordinates_from_parameters_and_project_to_2D();
+
+	_coordinates2D[INDEX_OUTER_WHITE_RING].insert(_coordinates2D[INDEX_OUTER_WHITE_RING].begin(), rings_2d._outer_ring.cbegin(), rings_2d._outer_ring.cend());
+	
+
+/*
 	_coordinates2D.resize(NUM_CELLS);
 
 	{
@@ -91,6 +112,8 @@ void Grid3D::doPerspectiveProjection()
 		vec.push_back(rings_2d._outer_ring[0]);
 		vec.push_back(rings_2d._middle_ring[0]);
 		vec.insert(vec.end(), rings_2d._middle_ring.crbegin(), rings_2d._middle_ring.crend());
+
+		
 	}
 	{
 		auto &vec = _coordinates2D[INDEX_INNER_WHITE_SEMICIRCLE];
@@ -136,7 +159,7 @@ void Grid3D::doPerspectiveProjection()
 			vec.insert(vec.end(), rings_2d._inner_ring.rbegin() + index_rbegin, rings_2d._inner_ring.rbegin() + index_rend);
 
 		}
-	}
+	}*/
 
 
 
@@ -183,13 +206,13 @@ cv::Matx<double, 3, 3> Grid3D::calculateRotMatrix() const
 	using std::sin;
 
 	// rotation angles:
-	double a = _orientation;	// angle to rotate around z axis
-	double b = _pitchAxis;		// angle to rotate around y axis
-	double c = _pitchAngle;		// angle to rotate around x axis
+	double a = _angle_z;	// angle to rotate around z axis
+	double b = _angle_y;		// angle to rotate around y axis
+	double c = _angle_x;		// angle to rotate around x axis
 	
 	cv::Matx<double, 3, 3> result(
 			cos(a)*cos(b),  cos(a)*sin(b)*sin(c) - sin(a)*cos(c),   cos(a)*sin(b)*cos(c) + sin(a)*sin(c),
-			sin(a)*cos(b),  sin(a)*sin(b)*sin(c) + cos(a)*cos(c),   sin(a)*sin(b)*cos(c) - cos(a)*sin(c)
+			sin(a)*cos(b),  sin(a)*sin(b)*sin(c) + cos(a)*cos(c),   sin(a)*sin(b)*cos(c) - cos(a)*sin(c),
 			- sin(b),       cos(b)*sin(c),                          cos(b)*cos(c)
 	);
 
