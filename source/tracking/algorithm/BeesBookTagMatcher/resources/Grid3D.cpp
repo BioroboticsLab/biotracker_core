@@ -54,7 +54,7 @@ Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
 	coordinates2D_t result;
 	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) {
 		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) {
-			const cv::Point3d p = _3d_to_2d_transformation * _coordinates3D._rings[r][i] * _radius;
+			const cv::Point3d p = _rotationMatrix * _coordinates3D._rings[r][i] * _radius;
 			result._rings[r][i] = cv::Point2i(p.x, p.y) + _center;
 		}
 	}
@@ -68,7 +68,7 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pit
 	, _pitchAxis(pitchAxis)
 	, _pitchAngle(pitchAngle)
 {
-
+	_rotationMatrix = calculateRotMatrix();
 }
 
 
@@ -86,9 +86,11 @@ void Grid3D::doPerspectiveProjection()
 		auto &vec = _coordinates2D[INDEX_OUTER_WHITE_RING];
 
 		vec.clear();
-		vec.reserve(2 * POINTS_PER_RING);
+		vec.reserve(2 * (POINTS_PER_RING + 1));
 
 		vec.insert(vec.end(), rings_2d._outer_ring.cbegin(), rings_2d._outer_ring.cend());
+		vec.push_back(rings_2d._outer_ring[0]);
+		vec.push_back(rings_2d._middle_ring[0]);
 		vec.insert(vec.end(), rings_2d._middle_ring.crbegin(), rings_2d._middle_ring.crend());
 	}
 	{
@@ -155,7 +157,7 @@ void Grid3D::draw(cv::Mat &img, int active)
 	//cv::drawContours(img, coordin)
 }
 
-cv::Mat Grid3D::calculateRotMatrix()
+cv::Matx<double, 3, 3> Grid3D::calculateRotMatrix() const
 {
 	using std::cos;
 	using std::sin;
@@ -165,11 +167,11 @@ cv::Mat Grid3D::calculateRotMatrix()
 	double b = _pitchAxis;		// angle to rotate around y axis
 	double c = _pitchAngle;		// angle to rotate around x axis
 	
-	// create rotation matrix
-	double rotationMatrixData[9] =
-	{	cos(a)*cos(b),	cos(a)*sin(b)*sin(c) - sin(a)*cos(c),	cos(a)*sin(b)*cos(c) + sin(a)*sin(c),
-		sin(a)*cos(b),	sin(a)*sin(b)*sin(c) + cos(a)*cos(c),	sin(a)*sin(b)*cos(c) - cos(a)*sin(c)
-		- sin(b),		cos(b)*sin(c),							cos(b)*cos(c)		};
+	cv::Matx<double, 3, 3> result(
+			cos(a)*cos(b),  cos(a)*sin(b)*sin(c) - sin(a)*cos(c),   cos(a)*sin(b)*cos(c) + sin(a)*sin(c),
+			sin(a)*cos(b),  sin(a)*sin(b)*sin(c) + cos(a)*cos(c),   sin(a)*sin(b)*cos(c) - cos(a)*sin(c)
+			- sin(b),       cos(b)*sin(c),                          cos(b)*cos(c)
+	);
 
-	return cv::Mat(3, 3, CV_64F, rotationMatrixData);
+	return result;
 }

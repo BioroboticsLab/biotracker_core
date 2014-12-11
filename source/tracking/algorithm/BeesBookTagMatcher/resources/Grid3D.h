@@ -78,13 +78,10 @@ private:
 
 	std::vector<std::vector<cv::Point>> _coordinates2D; // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
 
-	cv::Matx<double, 3, 3> _3d_to_2d_transformation;
-
-
 	static const coordinates3D_t _coordinates3D;
 
-	cv::Mat _rotationMatrix;
-	cv::Mat calculateRotMatrix();
+	cv::Matx<double, 3, 3> _rotationMatrix;
+	cv::Matx<double, 3, 3> calculateRotMatrix() const;
 
 
 
