@@ -315,14 +315,17 @@ void BioTracker::storeTrackingData(const std::string &filename)
 
 boost::optional<std::string> BioTracker::getOpenFile() const
 {
-	//TODO: check if file open
+	boost::optional<std::string> filename;
 	if (_settings.getValueOfParam<bool>(GUIPARAM::IS_SOURCE_VIDEO)) {
-		const QString file(QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
-		return file.toStdString();
+		filename = _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
 	} else {
-		const QStringList files(QString::fromStdString(_settings.getValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE)));
-		return files.first().toStdString();
+		filename = _settings.maybeGetValueOfParam<std::string>(PICTUREPARAM::PICTURE_FILE);
 	}
+
+	// CAP_VIDEO_FILE and PICTURE_FILE can be set, but empty. Therefore, we
+	// need to check if the parameter actually contains a file name.
+	if (filename && !filename.get().empty()) return filename;
+	else return boost::optional<std::string>();
 }
 
 void BioTracker::exit()
