@@ -80,7 +80,13 @@ private:
 
 	cv::Matx<double, 3, 3> _3d_to_2d_transformation;
 
+
 	static const coordinates3D_t _coordinates3D;
+
+	cv::Mat _rotationMatrix;
+	cv::Mat calculateRotMatrix();
+
+
 
 public:
 		explicit Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle);
