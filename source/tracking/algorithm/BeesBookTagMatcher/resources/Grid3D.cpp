@@ -18,7 +18,6 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pit
 {
 	_rotationMatrix = calculateRotMatrix();
 	doPerspectiveProjection();
-	_constructorPassed = true;
 }
 
 Grid3D::~Grid3D() = default;
@@ -133,8 +132,8 @@ void Grid3D::doPerspectiveProjection()
 			vec.insert(vec.end(), rings_2d._middle_ring.cbegin() + index_begin, rings_2d._middle_ring.cbegin() + index_end);
 			vec.push_back(rings_2d._middle_ring[index_end_elem]);
 
-			vec.push_back(rings_2d._middle_ring[index_end_elem]);
-			vec.insert(vec.end(), rings_2d._middle_ring.rbegin() + index_rbegin, rings_2d._middle_ring.rbegin() + index_rend);
+			vec.push_back(rings_2d._inner_ring[index_end_elem]);
+			vec.insert(vec.end(), rings_2d._inner_ring.rbegin() + index_rbegin, rings_2d._inner_ring.rbegin() + index_rend);
 
 		}
 	}
@@ -155,26 +154,26 @@ void Grid3D::doPerspectiveProjection()
 
 void Grid3D::draw(cv::Mat &img, int) const
 {
-	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(1, 1, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(255, 255, 255), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,  cv::Scalar(1, 1, 1), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(0, 0, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,  cv::Scalar(255, 255, 255), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,  cv::Scalar(  0,   0,   0), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  0, cv::Scalar(1, 0, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  1, cv::Scalar(0, 1, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  2, cv::Scalar(0, 0, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  0, cv::Scalar(255,   0,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  1, cv::Scalar(0,   255,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  2, cv::Scalar(0,     0, 255), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  3, cv::Scalar(1, 0, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  4, cv::Scalar(0, 1, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  5, cv::Scalar(0, 0, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  3, cv::Scalar(255,   0,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  4, cv::Scalar(0,   255,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  5, cv::Scalar(0,     0, 255), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  6, cv::Scalar(1, 1, 1), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  7, cv::Scalar(0, 0, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  8, cv::Scalar(1, 1, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  6, cv::Scalar(255, 255, 255), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  7, cv::Scalar(0,     0,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  8, cv::Scalar(255, 255, 255), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  9, cv::Scalar(0, 0, 0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 10, cv::Scalar(1, 1, 1), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 11, cv::Scalar(0, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  9, cv::Scalar(0,     0,   0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 10, cv::Scalar(255, 255, 255), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 11, cv::Scalar(0,     0,   0), CV_FILLED);
 
 }
 

@@ -23,15 +23,7 @@ private:
 	boost::optional<ulong>	_activeFrameNumber;
 
 
-	/**
-	* TEST CODE START
-	* ------------------------------------------
-	*/
-	Grid3D _testGrid3d;
-	/**
-	* ------------------------------------------
-	* TEST CODE END
-	*/
+
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--
@@ -55,6 +47,17 @@ private:
 
 	std::set<size_t> _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
+
+	/**
+	* TEST CODE START
+	* ------------------------------------------
+	*/
+	Grid3D _testGrid3d;
+	/**
+	* ------------------------------------------
+	* TEST CODE END
+	*/
+
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image) const;
