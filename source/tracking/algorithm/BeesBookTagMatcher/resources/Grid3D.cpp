@@ -7,7 +7,7 @@ const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_coordina
 const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
-const double Grid3D::bulge_factor       = 0.7;
+const double Grid3D::BULGE_FACTOR       = 0.7;
 
 Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 
@@ -32,23 +32,41 @@ Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 
 	// generate z coordinates
 	{
-		const value_type z_inner_ring  = std::cos(bulge_factor * INNER_RING_RADIUS);
-		const value_type z_middle_ring = std::cos(bulge_factor * MIDDLE_RING_RADIUS);
-		const value_type z_outer_ring  = std::cos(bulge_factor * OUTER_RING_RADIUS);
+		const value_type z_inner_ring  = std::cos(BULGE_FACTOR * INNER_RING_RADIUS);
+		const value_type z_middle_ring = std::cos(BULGE_FACTOR * MIDDLE_RING_RADIUS);
+		const value_type z_outer_ring  = std::cos(BULGE_FACTOR * OUTER_RING_RADIUS);
+
+		// Schwerpunkt bestimmen, damit Tag um Mittelachse rotiert
+		const value_type mean = (z_inner_ring + z_middle_ring + z_outer_ring) / 3.0;
 		for(size_t i = 0; i < POINTS_PER_RING; ++i)
 		{
-			result._inner_ring[i].z  = z_inner_ring;
-			result._middle_ring[i].z = z_middle_ring;
-			result._outer_ring[i].z  = z_outer_ring;
+			result._inner_ring[i].z  = z_inner_ring  - mean;
+			result._middle_ring[i].z = z_middle_ring - mean;
+			result._outer_ring[i].z  = z_outer_ring  - mean;
 		}
 	}
 
 	return result;
 }
 
+Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
 
+	coordinates2D_t result;
+	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) {
+		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) {
+			const cv::Point3d p = _3d_to_2d_transformation * _coordinates3D._rings[r][i] * _radius;
+			result._rings[r][i] = cv::Point2i(p.x, p.y) + _center;
+		}
+	}
+	return result;
+}
 
-Grid3D::Grid3D()
+Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle)
+	: _center(center)
+	, _radius(radius)
+	, _orientation(orientation)
+	, _pitchAxis(pitchAxis)
+	, _pitchAngle(pitchAngle)
 {
 
 }
@@ -56,68 +74,72 @@ Grid3D::Grid3D()
 
 Grid3D::~Grid3D() = default;
 
-void Grid3D::initializeBaseCoordinates()
-{
-	// number of points for rings --> N-1 segments
-	const short N = 25;
-
-	// 0 .. 2*pi in radians
-	std::valarray<double> a(N);
-	// fill angle array
-	for (size_t i = 0; i < N; i++)
-	{
-		//a[i] = (double) i * 2.0 * CV_PI / (N - 1);
-	}
-
-	// the outer ring (the tag border)
-	std::valarray<double> X0 = std::cos(a);
-	std::valarray<double> Y0 = std::sin(a);
-
-	// middle ring (the grid border)
-	std::valarray<double> X1 = 0.8 * X0;
-	std::valarray<double> Y1 = 0.8 * Y0;
-
-	// inner ring (the grid center circle)
-	std::valarray<double> X2 = 0.4 * X0;
-	std::valarray<double> Y2 = 0.4 * Y0;
-
-	std::valarray<double> X(3 * N);
-	std::valarray<double> Y(3 * N);
-	std::valarray<double> Z(3 * N);
-
-	// fill X and Y with the mesh parts
-	for (size_t i = 0; i < N; i++)
-	{
-		/*
-		X[		i]	= X0[i];
-		X[N	+	i]	= X1[i];
-		X[2*N + i]	= X2[i];
-
-		Y[		i]	= Y0[i];
-		Y[N +	i]	= Y1[i];
-		Y[2*N + i]	= Y2[i];
-
-		Z[		i]	= cos(0.7 * sqrt(X0[i] * X0[i] + Y0[i] * Y0[i]));
-		Z[N +	i]	= cos(0.7 * sqrt(X1[i] * X1[i] + Y1[i] * Y1[i]));
-		Z[2*N +	i]	= cos(0.7 * sqrt(X2[i] * X2[i] + Y2[i] * Y2[i]));
-		*/
-
-//		coordinates3D[0].push_back( cv::Point3f(X0[i], Y0[i], cos(0.7 * sqrt(X0[i] * X0[i] + Y0[i] * Y0[i]))) );
-//		coordinates3D[1].push_back( cv::Point3f(X1[i], Y1[i], cos(0.7 * sqrt(X1[i] * X1[i] + Y1[i] * Y1[i]))) );
-//		coordinates3D[2].push_back( cv::Point3f(X2[i], Y2[i], cos(0.7 * sqrt(X2[i] * X2[i] + Y2[i] * Y2[i]))) );
-	}
-
-	// Schwerpunkt bestimmen, damit Tag um Mittelachse rotiert
-	// subtract mean(Z) 
-
-	// scale to "right" size ( -> (x,y,z) * scale )
-	// scale is width of tag in pixels
-}
-
 
 // updates the 2D contour vector coordinates2D
 void Grid3D::doPerspectiveProjection()
 {
+	const auto rings_2d = generate_coordinates2D();
+
+	_coordinates2D.resize(NUM_CELLS);
+
+	{
+		auto &vec = _coordinates2D[INDEX_OUTER_WHITE_RING];
+
+		vec.clear();
+		vec.reserve(2 * POINTS_PER_RING);
+
+		vec.insert(vec.end(), rings_2d._outer_ring.cbegin(), rings_2d._outer_ring.cend());
+		vec.insert(vec.end(), rings_2d._middle_ring.crbegin(), rings_2d._middle_ring.crend());
+	}
+	{
+		auto &vec = _coordinates2D[INDEX_INNER_WHITE_SEMICIRCLE];
+
+		vec.clear();
+		vec.reserve(POINTS_PER_RING / 2 + 1);
+
+		const size_t index_270_deg_begin = POINTS_PER_RING * 3 / 4;
+		const size_t index_90_deg_end  = POINTS_PER_RING * 1 / 4 + 1;
+
+		vec.insert(vec.end(), rings_2d._inner_ring.cbegin() + index_270_deg_begin, rings_2d._inner_ring.cend());
+		vec.insert(vec.end(), rings_2d._inner_ring.cbegin(), rings_2d._inner_ring.cbegin() + index_90_deg_end);
+	}
+	{
+		auto &vec = _coordinates2D[INDEX_INNER_BLACK_SEMICIRCLE];
+
+		vec.clear();
+		vec.reserve(POINTS_PER_RING / 2 + 1);
+
+		const size_t index_90_deg_begin = POINTS_PER_RING * 1 / 4;
+		const size_t index_270_deg_end  = POINTS_PER_RING * 3 / 4 + 1;
+
+		vec.insert(vec.end(), rings_2d._inner_ring.cbegin() + index_90_deg_begin, rings_2d._inner_ring.cbegin() + index_270_deg_end);
+	}
+	{
+		for (size_t i = 0; i < NUM_MIDDLE_CELLS; ++i)
+		{
+			auto &vec = _coordinates2D[INDEX_MIDDLE_CELLS_BEGIN + i];
+
+			vec.clear();
+			vec.reserve(2 * (POINTS_PER_MIDDLE_CELL + 1));
+
+			const size_t index_begin = POINTS_PER_MIDDLE_CELL * i;
+			const size_t index_end  =  POINTS_PER_MIDDLE_CELL * (i + 1);
+			const size_t index_rbegin = POINTS_PER_RING - index_end;
+			const size_t index_rend  =  POINTS_PER_RING - index_begin;
+			const size_t index_end_elem  =  index_end < POINTS_PER_RING ? index_end + 1 : 0;
+
+			vec.insert(vec.end(), &rings_2d._middle_ring[index_begin], &rings_2d._middle_ring[index_end]);
+			vec.push_back(rings_2d._middle_ring[index_end_elem]);
+
+			vec.push_back(rings_2d._middle_ring[index_end_elem]);
+			vec.insert(vec.end(), rings_2d._middle_ring.rbegin() + index_rbegin, rings_2d._middle_ring.rbegin() + index_rend);
+
+		}
+	}
+
+
+
+
 	//for (size_t i = 0; i < coordinates3D[0].size(); i++)
 	{
 		//coordinates2D[0] = coordinates3D[0].at(i)
