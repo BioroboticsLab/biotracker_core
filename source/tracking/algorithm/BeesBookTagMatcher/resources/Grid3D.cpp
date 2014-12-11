@@ -154,3 +154,22 @@ void Grid3D::draw(cv::Mat &img, int active)
 {
 	//cv::drawContours(img, coordin)
 }
+
+cv::Mat Grid3D::calculateRotMatrix()
+{
+	using std::cos;
+	using std::sin;
+
+	// rotation angles:
+	double a = _orientation;	// angle to rotate around z axis
+	double b = _pitchAxis;		// angle to rotate around y axis
+	double c = _pitchAngle;		// angle to rotate around x axis
+	
+	// create rotation matrix
+	double rotationMatrixData[9] =
+	{	cos(a)*cos(b),	cos(a)*sin(b)*sin(c) - sin(a)*cos(c),	cos(a)*sin(b)*cos(c) + sin(a)*sin(c),
+		sin(a)*cos(b),	sin(a)*sin(b)*sin(c) + cos(a)*cos(c),	sin(a)*sin(b)*cos(c) - cos(a)*sin(c)
+		- sin(b),		cos(b)*sin(c),							cos(b)*cos(c)		};
+
+	return cv::Mat(3, 3, CV_64F, rotationMatrixData);
+}
