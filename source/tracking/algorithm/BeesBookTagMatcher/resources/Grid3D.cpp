@@ -152,9 +152,29 @@ void Grid3D::doPerspectiveProjection()
 	
 }
 
-void Grid3D::draw(cv::Mat &img, int active)
+void Grid3D::draw(cv::Mat &img, int)
 {
-	//cv::drawContours(img, coordin)
+	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(1, 1, 1), CV_FILLED);
+
+	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,  cv::Scalar(1, 1, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(0, 0, 1), CV_FILLED);
+
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  0, cv::Scalar(1, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  1, cv::Scalar(0, 1, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  2, cv::Scalar(0, 0, 1), CV_FILLED);
+
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  3, cv::Scalar(1, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  4, cv::Scalar(0, 1, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  5, cv::Scalar(0, 0, 1), CV_FILLED);
+
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  6, cv::Scalar(1, 1, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  7, cv::Scalar(0, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  8, cv::Scalar(1, 1, 1), CV_FILLED);
+
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  9, cv::Scalar(0, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 10, cv::Scalar(1, 1, 1), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 11, cv::Scalar(0, 0, 0), CV_FILLED);
+
 }
 
 cv::Matx<double, 3, 3> Grid3D::calculateRotMatrix() const
