@@ -3,9 +3,13 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy (SET CMP0020 NEW)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-include(cotire)
-
 project(BioTracker)
+
+# add git hooks
+file(GLOB HOOK_SCRIPTS githooks/*)
+if (HOOK_SCRIPTS)
+	file(COPY ${HOOK_SCRIPTS} DESTINATION ${CMAKE_SOURCE_DIR}/.git/hooks) 
+endif (HOOK_SCRIPTS)
 
 # project dependecies
 find_package(OpenCV REQUIRED)
@@ -29,9 +33,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
     # enable C++1y
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -fPIE")
     # enable all warnings
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Woverloaded-virtual -Wold-style-cast -Wnon-virtual-dtor -Wsign-promo")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Woverloaded-virtual -Wold-style-cast -Wnon-virtual-dtor -Wsign-promo -Wno-missing-braces")
     # warnings are errors
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-error=unused-variable -Wno-error=unused-parameter -Wno-error=missing-braces")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-error=unused-variable -Wno-error=unused-parameter")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # using Visual Studio C++
     # Force to always compile with W3 and treat warnings as errors
@@ -47,13 +51,15 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-# gcc doesn't know about unused-private-field warning
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    # gcc doesn't know about unused-private-field warning
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
+    # use Wdocumentation
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
 endif()
 
-# clang doesnt know about unused-but-set-variable warning
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # clang doesnt know about unused-but-set-variable warning
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-but-set-variable")
 endif()
 
@@ -84,3 +90,4 @@ include_directories(
 )
 
 add_subdirectory(source)
+add_subdirectory(doc)

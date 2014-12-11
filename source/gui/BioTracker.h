@@ -7,6 +7,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtCore/QString>
 #include <QTemporaryFile>
+#include <QShortcut>
 
 //BioTracker
 #include "source/tracking/algorithm/algorithms.h"
@@ -25,12 +26,18 @@ class BioTracker: public QMainWindow
 
 public:
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
-    ~BioTracker();
+	~BioTracker();
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
 	// open file browser for picture in/out
 	void browsePicture();
+	// load previously stored tracking data
+	void loadTrackingDataTriggered(bool checked = false);
+	// store current tracking data
+	void storeTrackingDataTriggered(bool checked = false);
+	// exit application
+	void exit();
 	//checks current state (stopped,paused or playing)
 	//and then sends appropriate signal to tracking thread
 	void runCapture();
@@ -50,7 +57,6 @@ public slots:
 	//switch pan&zoom mode
 	void switchPanZoomMode();
 
-
 	// SLOTS FOR TRACKING THREAD: 	
 	void updateFrameNumber(int frameNumber);	
 	void drawImage(cv::Mat image);
@@ -59,14 +65,13 @@ public slots:
 
 	/**
 	 * Print proivided message to the GUI message area.
-	 * @param: message, the message to print.
-	 * @return: void.
+	 * @param message the message to print.
 	 */
 	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
 
 	/**
 	 * Sets the algorithm used for tracking
-	 * @param: trackingAlgId, the id of the algorithm.
+	 * @param trackingAlgId, the id of the algorithm.
 	 */
 	
 	//void setTrackingAlg(int trackingAlgId);
@@ -81,12 +86,13 @@ public slots:
 	//returns true if video is in paused, false otherwise
 	bool isVideoPaused();
 
+protected:
+	bool event(QEvent* event) override;
+
 private:
 	Ui::BioTrackerClass ui;
 
-/*	Rectification _rectification;
-*/
-    std::unique_ptr<TrackingThread> _trackingThread;
+	std::unique_ptr<TrackingThread> _trackingThread;
 
 	Settings& _settings;
 	bool _videoPaused;
@@ -95,6 +101,7 @@ private:
 	int _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
+
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
 	void init();
@@ -103,19 +110,31 @@ private:
 	void initCapture();
 	void initAlgorithms();
 	void initPicture(QStringList filenames);
-    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
+	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
+
+	void loadTrackingData(std::string const& filename);
+	void storeTrackingData(std::string const& filename);
+
 	void closeEvent(QCloseEvent* event) override;
 
-    std::shared_ptr<TrackingAlgorithm> _tracker;
-    std::map<Algorithms::Type, QTemporaryFile> _serializationTmpFileMap;
+	std::shared_ptr<TrackingAlgorithm> _tracker;
+
+	typedef std::string filehash;
+	typedef std::map<filehash, QTemporaryFile> map_hash_temp_t;
+	typedef std::map<Algorithms::Type, map_hash_temp_t> map_type_hashtemp_t;
+
+	map_type_hashtemp_t _serializationTmpFileMap;
+
+	boost::optional<std::string> getOpenFile() const;
+	boost::optional<filehash> getFileHash(std::string const& filename) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
-    std::shared_ptr<QWidget> _paramsWidget;
-    std::shared_ptr<QWidget> _toolsWidget;
-	
+	std::shared_ptr<QWidget> _paramsWidget;
+	std::shared_ptr<QWidget> _toolsWidget;
+
 signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
@@ -139,7 +158,7 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
+	void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 };
 
 #endif // BioTracker_H

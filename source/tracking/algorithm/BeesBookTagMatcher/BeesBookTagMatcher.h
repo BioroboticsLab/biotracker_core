@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <memory>
 
 #include <opencv2/opencv.hpp>
 
@@ -11,12 +12,14 @@
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
 
+#include "ui_BeesBookTagMatcherToolWidget.h"
+
 //Class used to generate ground truth data for BeesBook
-class BeesBookTagMatcher : public TrackingAlgorithm
-{
+class BeesBookTagMatcher : public TrackingAlgorithm {
+	Q_OBJECT
 private:
-	std::shared_ptr<Grid>  _activeGrid;
-	boost::optional<ulong> _activeFrameNumber;
+	std::shared_ptr<Grid>	_activeGrid; // points to active grid (grid must be active to be altered)
+	boost::optional<ulong>	_activeFrameNumber;
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--
@@ -32,6 +35,14 @@ private:
 	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
+
+	Ui::TagMatcherToolWidget _UiToolWidget;
+
+	std::shared_ptr<QWidget> _toolWidget;
+	std::shared_ptr<QWidget> _paramWidget;
+
+	std::set<size_t> _idCopyBuffer;
+	boost::optional<size_t> _copyFromFrame;
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image) const;
@@ -57,30 +68,39 @@ private:
 	// function that checks if one of the already set Tags is selected.
 	void selectTag(const cv::Point& location);
 
-	// store currently active tag in serialzation object list
-	void storeCurrentActiveTag();
-
 	// set no tas as currently active
 	void cancelTag();
+
+	void removeCurrentActiveTag();
 
 	// function that calculates the distance between two points
 	double dist(const cv::Point& p1, const cv::Point& p2) const;
 
 	double getAlpha() const;
 
+	void setNumTags();
+
+	std::set<Qt::Key> const& grabbedKeys() const override;
+
+	void mouseMoveEvent		(QMouseEvent * e) override;
+	void mousePressEvent	(QMouseEvent * e) override;
+	void mouseReleaseEvent	(QMouseEvent * e) override;
+	void keyPressEvent		(QKeyEvent * e) override;
+
+protected:
+	bool event(QEvent* event) override;
+
 public:
-	BeesBookTagMatcher(Settings &settings, std::string &serializationPathName, QWidget *parent);
+	BeesBookTagMatcher(Settings &settings, QWidget *parent);
 	~BeesBookTagMatcher();
 
 	void track(ulong frameNumber, cv::Mat& frame) override;
 	void paint(cv::Mat& image) override;
 	void reset() override;
+	void postLoad() override;
 
-public slots:
-	void mouseMoveEvent(QMouseEvent * e) override;
-	void mousePressEvent(QMouseEvent * e) override;
-	void mouseReleaseEvent(QMouseEvent * e) override;
-	void mouseWheelEvent(QWheelEvent * e) override;
+	std::shared_ptr<QWidget> getToolsWidget() override { return _toolWidget; }
+	std::shared_ptr<QWidget> getParamsWidget() override { return _paramWidget; }
 };
 
 #endif

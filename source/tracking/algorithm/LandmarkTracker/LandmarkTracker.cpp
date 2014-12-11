@@ -9,26 +9,17 @@ namespace {
     auto _ = Algorithms::Registry::getInstance().register_tracker_type<LandmarkTracker>("Landmark Tracker");
 }
 
-LandmarkTracker::LandmarkTracker(Settings & settings, std::string &serializationPathName,  QWidget *parent)
-    : TrackingAlgorithm( settings, serializationPathName, parent )
+LandmarkTracker::LandmarkTracker(Settings & settings,  QWidget *parent)
+    : TrackingAlgorithm( settings, parent )
     , toolWindow(nullptr)
 {
 	_showSelectorRec = false;
 	_selectorRecStart = cv::Point();
 	_selectorRecEnd = cv::Point();
-	
 
 	//KML
 	std::cout<<"LANDMARK TRACKER"<<std::endl;
-
 }
-
-
-LandmarkTracker::~LandmarkTracker(void)
-{
-}
-
-void LandmarkTracker::track		( ulong /* frameNumber */, cv::Mat& /* frame */ ){}
 
 void LandmarkTracker::paint		( cv::Mat& image )
 {
@@ -38,9 +29,6 @@ void LandmarkTracker::paint		( cv::Mat& image )
 	}
 
 }
-
-
-void LandmarkTracker::reset		(){}
 
 //this will draw a basic rectangle onto the diplay image 
 void LandmarkTracker::drawRectangle(cv::Mat image)
@@ -63,6 +51,7 @@ void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 		emit update();
 	}
 }
+
 void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 {
 	//check if left button is clicked
@@ -95,14 +84,12 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 		}
 	}
 
-	defineROI(emit requestCurrentScreen());
-	startTool();
-
-
-
+	boost::optional<cv::Mat> img = getCurrentImageCopy();
+	if (img) {
+		defineROI(img.get());
+		startTool();
+	}
 }
-
-void LandmarkTracker::mouseWheelEvent ( QWheelEvent *) {}
 
 void LandmarkTracker::defineROI	(cv::Mat image)
 {
@@ -120,12 +107,10 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 		cv::Mat roi(image, box);
 		selectedRoi = roi.clone();
 	}
-
 }
 
 void LandmarkTracker::startTool()
 {
-
 	if(toolWindow == nullptr)
 	{
 		toolWindow =new ToolWindow(this);

@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>BioTracker</string>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -20,24 +26,39 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QWidget" name="widget_2" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0">
        <property name="spacing">
-        <number>5</number>
+        <number>3</number>
        </property>
        <property name="leftMargin">
-        <number>5</number>
+        <number>3</number>
        </property>
        <property name="topMargin">
-        <number>5</number>
+        <number>3</number>
        </property>
        <property name="rightMargin">
-        <number>5</number>
+        <number>3</number>
        </property>
        <property name="bottomMargin">
-        <number>5</number>
+        <number>3</number>
        </property>
        <item>
         <widget class="QWidget" name="videoAreaWidget" native="true">
@@ -49,19 +70,19 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>5</number>
+           <number>3</number>
           </property>
           <property name="leftMargin">
-           <number>5</number>
+           <number>3</number>
           </property>
           <property name="topMargin">
-           <number>5</number>
+           <number>3</number>
           </property>
           <property name="rightMargin">
-           <number>5</number>
+           <number>3</number>
           </property>
           <property name="bottomMargin">
-           <number>5</number>
+           <number>3</number>
           </property>
           <item>
            <widget class="QGroupBox" name="trackingArea">
@@ -88,22 +109,26 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <property name="spacing">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="leftMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="topMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="rightMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="bottomMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <item>
-              <widget class="VideoView" name="videoView" native="true"/>
+              <widget class="VideoView" name="videoView" native="true">
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QSlider" name="sld_video">
@@ -152,19 +177,19 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <property name="spacing">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="leftMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="topMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="rightMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <property name="bottomMargin">
-              <number>5</number>
+              <number>3</number>
              </property>
              <item>
               <widget class="QGroupBox" name="playback">
@@ -173,22 +198,25 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <property name="spacing">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="leftMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="topMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="rightMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <item>
                  <widget class="QPushButton" name="button_previousFrame">
+                  <property name="toolTip">
+                   <string>Previous Frame</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -209,6 +237,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_playPause">
+                  <property name="toolTip">
+                   <string>Play</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -229,6 +260,12 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_stop">
+                  <property name="toolTip">
+                   <string>Stop</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -249,6 +286,12 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_nextFrame">
+                  <property name="toolTip">
+                   <string>Next Frame</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -276,6 +319,12 @@
                     <italic>false</italic>
                     <bold>true</bold>
                    </font>
+                  </property>
+                  <property name="toolTip">
+                   <string>Screenshot</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
                   </property>
                   <property name="text">
                    <string/>
@@ -341,6 +390,9 @@
                     <bold>true</bold>
                    </font>
                   </property>
+                  <property name="toolTip">
+                   <string>Pan/Zoom Mode</string>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -369,19 +421,19 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout">
                 <property name="spacing">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="leftMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="topMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="rightMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>5</number>
+                 <number>3</number>
                 </property>
                 <item>
                  <widget class="QSplitter" name="splitter">
@@ -491,76 +543,6 @@
             </layout>
            </widget>
           </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_notification">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>300</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>150</height>
-             </size>
-            </property>
-            <property name="title">
-             <string> Notifications </string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <property name="leftMargin">
-              <number>5</number>
-             </property>
-             <property name="topMargin">
-              <number>5</number>
-             </property>
-             <property name="rightMargin">
-              <number>5</number>
-             </property>
-             <property name="bottomMargin">
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="QTextEdit" name="edit_notification">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContents</enum>
-               </property>
-               <property name="tabChangesFocus">
-                <bool>false</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -580,24 +562,50 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen_Video"/>
     <addaction name="actionOpen_Picture"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_tracking_data"/>
+    <addaction name="actionSave_tracking_data"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="dockWidgetAlgorithm">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>154</height>
+    </size>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Algorithm</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
+   <widget class="QWidget" name="dockWidgetAlgorithmContents">
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
       <horstretch>0</horstretch>
@@ -609,16 +617,16 @@
       <number>3</number>
      </property>
      <property name="leftMargin">
-      <number>3</number>
+      <number>8</number>
      </property>
      <property name="topMargin">
-      <number>3</number>
+      <number>8</number>
      </property>
      <property name="rightMargin">
-      <number>3</number>
+      <number>8</number>
      </property>
      <property name="bottomMargin">
-      <number>3</number>
+      <number>8</number>
      </property>
      <item>
       <widget class="QWidget" name="widget_alg" native="true">
@@ -630,112 +638,61 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="leftMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QGroupBox" name="groupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Choose algorithm:</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">
-            <number>5</number>
+            <number>3</number>
            </property>
            <property name="leftMargin">
-            <number>5</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
-            <number>5</number>
+            <number>3</number>
            </property>
            <property name="rightMargin">
-            <number>5</number>
+            <number>3</number>
            </property>
            <property name="bottomMargin">
-            <number>5</number>
+            <number>3</number>
            </property>
            <item>
             <widget class="QComboBox" name="cb_algorithms"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_9">
-             <property name="text">
-              <string>load tracking data</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_trackingDataOutput">
-          <property name="title">
-           <string>Tracking output path</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <property name="leftMargin">
-            <number>5</number>
-           </property>
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>5</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QLineEdit" name="edit_outputPath"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_outputSearch">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -752,7 +709,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>parameters</string>
+        <string>Parameters</string>
        </property>
       </widget>
      </item>
@@ -765,7 +722,68 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>tools</string>
+        <string>Tools</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetNotification">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Notifications</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetNotificationContents">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <property name="leftMargin">
+      <number>8</number>
+     </property>
+     <property name="topMargin">
+      <number>8</number>
+     </property>
+     <property name="rightMargin">
+      <number>8</number>
+     </property>
+     <property name="bottomMargin">
+      <number>8</number>
+     </property>
+     <item>
+      <widget class="QTextEdit" name="edit_notification">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+       <property name="tabChangesFocus">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -774,12 +792,27 @@
   </widget>
   <action name="actionOpen_Video">
    <property name="text">
-    <string>Open Video</string>
+    <string>Open &amp;Video...</string>
    </property>
   </action>
   <action name="actionOpen_Picture">
    <property name="text">
-    <string>Open Picture</string>
+    <string>Open &amp;Picture...</string>
+   </property>
+  </action>
+  <action name="actionLoad_tracking_data">
+   <property name="text">
+    <string>&amp;Load tracking data...</string>
+   </property>
+  </action>
+  <action name="actionSave_tracking_data">
+   <property name="text">
+    <string>&amp;Save tracking data...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>E&amp;xit</string>
    </property>
   </action>
  </widget>

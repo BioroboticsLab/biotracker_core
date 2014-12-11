@@ -22,7 +22,6 @@ public:
 	
 	/**
 	* Starts the video thread.
-	* @return: void.
 	*/
 	void startCapture();
 
@@ -33,20 +32,19 @@ public:
 
 	/**
 	* Reset
-	* @return void.
 	*/
 	void resetTracker();
 
 
 	/**
 	* Checks if thread can handle next frame.
-	* @return: true if it can, false otherwise.
+	* @return true if it can, false otherwise.
 	*/
 	bool isReadyForNextFrame();
 
 	/**
 	* Gets the length of the video.
-	* @return: the video length.
+	* @return the video length.
 	*/
 	int getVideoLength();
 
@@ -91,37 +89,31 @@ private:
 
 	std::shared_ptr<TrackingAlgorithm>  _tracker;
 
-
 	/**
 	 * Increments the current frame number by 1 frame.
-	 * @return: void.
 	 */
 	void incrementFrameNumber();
 	
-
-	
 	/**
 	* Checks if thread is in pause state.
-	* @return: true if paused, false otherwise.
+	* @return true if paused, false otherwise.
 	*/
 	bool isVideoPause();
 
 	/**
 	* Checks if the tracker is on.
-	* @return: true if tracker is on, false otherwise.
+	* @return true if tracker is on, false otherwise.
 	*/ 
 	bool isCaptureActive();
 
 	/**
 	* Set the capture in active or in-active state
-	* @param: enabled, if true capture will be activated, false otherwise
-	* @return: void.
+	* @param enabled if true capture will be activated, false otherwise
 	*/
-	void enableCapture(bool);
+	void enableCapture(bool enabled);
 
 	/**
 	* Initializes the reading capture.
-	* @return: void.
 	*/
 	void initCaptureForReadingVideoOrStream();
 
@@ -131,78 +123,75 @@ private:
 	*/
 	void doTracking();
 
-
 	/** 
 	* thread running method.
 	*/
 	void run();
 
-	public slots:
-		void enableHandlingNextFrame(bool nextFrame);
-		void enableVideoPause(bool videoPause);
-			/**
-		* Stops the video.
-		* @return: void.
-		*/
-		void stopCapture();
+public slots:
+	void enableHandlingNextFrame(bool nextFrame);
+	void enableVideoPause(bool videoPause);
 
-		/**
-		* Sets the current frame number.
-		* @param: frameNumber, specifies the current frame number.
-		*/
-		void setFrameNumber(int frameNumber);
+	/**
+	* Stops the video.
+	*/
+	void stopCapture();
 
-		/**
-		* Gets current frame number.
-		* @return: the current frame number.
-		*/
-		int getFrameNumber();
+	/**
+	* Sets the current frame number.
+	* @param frameNumber specifies the current frame number.
+	*/
+	void setFrameNumber(int frameNumber);
 
-		/**
-		* Moves one frame forward
-		*/
-		void nextFrame();
+	/**
+	* Gets current frame number.
+	* @return the current frame number.
+	*/
+	int getFrameNumber();
 
-		/**
-		* change framerate
-		*/
-		void setFps(double fps);
-		
-		/**
-		* enable maximum playback speed
-		*/
-		void setMaxSpeed (bool enabled);
+	/**
+	* Moves one frame forward
+	*/
+	void nextFrame();
 
-		void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+	/**
+	* change framerate
+	*/
+	void setFps(double fps);
 
-		void doTrackingAndUpdateScreen();
+	/**
+	* enable maximum playback speed
+	*/
+	void setMaxSpeed (bool enabled);
+
+	void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+
+	void doTrackingAndUpdateScreen();
+
 signals:
-		/**
-		* Signals when a tracking sequence is done.
-		* @param: image, send the image to draw,
-		* @return: void.
-		*/
-		void trackingSequenceDone(cv::Mat image);
+	/**
+	* Signals when a tracking sequence is done.
+	* @param image send the image to draw,
+	*/
+	void trackingSequenceDone(cv::Mat image);
 
-		/**
-		* emit current frame number.
-		* @param: frameNumber, the current frame number.
-		*/
-		void newFrameNumber(int frameNumber);
+	/**
+	* emit current frame number.
+	* @param frameNumber the current frame number.
+	*/
+	void newFrameNumber(int frameNumber);
 
-		/**
-		* singal to gui that video is paused
-		*/
-		void invalidFile();
-	
+	/**
+	* singal to gui that video is paused
+	*/
+	void invalidFile();
 
-		/**
-		* send a message to the GUI.
-		*/
-		void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
-		//send current fps to gui
-		void sendFps(double fps);
-
-};  
+	/**
+	* send a message to the GUI.
+	*/
+	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+	//send current fps to gui
+	void sendFps(double fps);
+};
 
 #endif // !TrackingThread_h

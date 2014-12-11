@@ -11,7 +11,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <source/tracking/trackedObject/ObjectModel.h>
+#include <source/tracking/serialization/ObjectModel.h>
 
 class Grid : public ObjectModel
 {
@@ -44,7 +44,7 @@ public:
 	double phi;             // this angle denotes the orientation of the ellipses (both ellipses
 							// should have the same phi parameter) (measured from the y-axis)
 
-	std::vector<boost::tribool> ID;
+	std::vector<boost::tribool> ID; // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
 
 	std::vector<std::vector<cv::Point>> cellsContours;
 
@@ -107,32 +107,18 @@ private:
 		ar(CEREAL_NVP(centerGrid),
 		  CEREAL_NVP(axesGrid),
 		  CEREAL_NVP(axesTag),
+		  CEREAL_NVP(angleGrid),
+		  CEREAL_NVP(angleTag),
 		  CEREAL_NVP(scale),
 		  CEREAL_NVP(alpha),
 		  CEREAL_NVP(theta),
 		  CEREAL_NVP(phi),
-		  CEREAL_NVP(ID));
+		  CEREAL_NVP(ID),
+		  CEREAL_NVP(absPoints),
+		  CEREAL_NVP(relPoints),
+		  CEREAL_NVP(realCoord),
+		  CEREAL_NVP(objectId));
 	}
 };
-
-namespace cereal {
-template<class Archive>
-void serialize(Archive& archive, cv::Point2f& point)
-{
-	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
-}
-
-template<class Archive>
-void serialize(Archive& archive, cv::Size2f& size)
-{
-	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));
-}
-
-template<class Archive>
-void serialize(Archive& archive, boost::logic::tribool& tribool)
-{
-	archive(CEREAL_NVP(tribool.value));
-}
-}
 
 #endif
