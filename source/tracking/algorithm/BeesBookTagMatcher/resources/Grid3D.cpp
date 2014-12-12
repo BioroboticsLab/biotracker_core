@@ -1,35 +1,34 @@
 #include "Grid3D.h"
 
-#include <cmath> // std::sin, std::cos
 #include "utility/CvHelper.h"
 
-const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_coordinates3D();
+const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_3D_base_coordinates();
 
 const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
 const double Grid3D::BULGE_FACTOR       = 0.7;
 
-Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle)
+Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
 	: _center(center)
 	, _radius(radius)
-	, _orientation(orientation)
-	, _pitchAxis(pitchAxis)
-	, _pitchAngle(pitchAngle)
+	, _angle_z(angle_z)
+	, _angle_y(angle_y)
+	, _angle_x(angle_x)
 {
-	doPerspectiveProjection();
+	prepare_visualization_data();
 }
 
 Grid3D::~Grid3D() = default;
 
-Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
+Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 
 	typedef coordinates3D_t::value_type value_type;
 	typedef coordinates3D_t::point_type point_type;
 
 	coordinates3D_t result;
 
-	// generate x,y coordiantes
+	// generate x,y coordinates
 	for(size_t i = 0; i < POINTS_PER_RING; ++i)
 	{
 		const value_type angle = i * 2.0 * CV_PI / static_cast<double>(POINTS_PER_RING);
@@ -56,29 +55,52 @@ Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 			result._inner_ring[i].z  = z_inner_ring  - mean;
 			result._middle_ring[i].z = z_middle_ring - mean;
 			result._outer_ring[i].z  = z_outer_ring  - mean;
+
+			result._inner_ring[i]	*= 1.0 / sqrt(1 + result._inner_ring[i].z * result._inner_ring[i].z);
+			result._middle_ring[i]	*= 1.0 / sqrt(1 + result._middle_ring[i].z * result._middle_ring[i].z);
+			result._outer_ring[i]	*= 1.0 / sqrt(1 + result._outer_ring[i].z * result._outer_ring[i].z);
 		}
 	}
 
 	return result;
 }
 
-Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
 
-	const auto rotationMatrix = CvHelper::rotationMatrix(_orientation, _pitchAxis, _pitchAngle);
-	coordinates2D_t result;
-	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) {
-		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) {
-			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i] * _radius;
-			result._rings[r][i] = cv::Point2i(p.x, p.y) + _center;
-		}
-	}
-	return result;
-}
-
-// updates the 2D contour vector coordinates2D
-void Grid3D::doPerspectiveProjection()
+/**
+ * rotates and scales the base mesh according to given parameter set
+ * @return
+ */
+Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_project_to_2D() const 
 {
-	const auto rings_2d = generate_coordinates2D();
+	// output variable
+	coordinates2D_t result;
+
+	const auto rotationMatrix = CvHelper::rotationMatrix(_angle_z, _angle_y, _angle_x);
+
+	// iterate over all rings
+	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) 
+	{
+		// iterate over all points in ring
+		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) 
+		{
+			// rotate and scale point (aka vector)
+			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i] * _radius;
+
+			//result._rings[r][i] = cv::Point2i(round(p.x / (p.z + 4)), round(p.y / (p.z + 4))) + _center;
+			result._rings[r][i] = cv::Point2i(round(p.x), round(p.y)) + _center;
+
+		}
+	}
+	return result;
+}
+
+
+/**
+ * updates the 2D contour vector coordinates2D
+ */
+void Grid3D::prepare_visualization_data()
+{
+	const auto rings_2d = generate_3D_coordinates_from_parameters_and_project_to_2D();
 
 	_coordinates2D.resize(NUM_CELLS);
 
@@ -135,7 +157,6 @@ void Grid3D::doPerspectiveProjection()
 
 			vec.push_back(rings_2d._inner_ring[index_end_elem]);
 			vec.insert(vec.end(), rings_2d._inner_ring.rbegin() + index_rbegin, rings_2d._inner_ring.rbegin() + index_rend);
-
 		}
 	}
 
@@ -160,6 +181,4 @@ void Grid3D::draw(cv::Mat &img, int) const
 		const cv::Scalar bgr(i & 1 ? 255 : 0,   i & 1 ? 255 : 0,   i & 1 ? 255 : 0);
 		cv::drawContours(img, _coordinates2D, i, bgr, CV_FILLED);
 	}
-
-
 }
