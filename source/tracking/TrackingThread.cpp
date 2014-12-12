@@ -19,29 +19,30 @@ QMutex readyForNexFrameMutex;
 QMutex trackerMutex;
 
 TrackingThread::TrackingThread(Settings &settings) :	
+    _pictureMode(false),
     _captureActive(false),
-	_readyForNextFrame(true),
-	_videoPause(false),
+    _readyForNextFrame(true),
+    _videoPause(false),
     _fps(30),
     _frameNumber(0),
     _maxSpeed(false),
     _settings(settings),
     _tracker(nullptr)
 {
-    _trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
+	_trackerActive =_settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED);
 }
 
 TrackingThread::~TrackingThread(void)
 {
 }
 
-
 void TrackingThread::startCapture()
 {
+	QMutexLocker locker(&readyForNexFrameMutex);
 	if(!isCaptureActive())
 	{
-        _capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
-		if (! _capture.isOpened())
+		_capture = cv::VideoCapture(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
+		if (!_capture.isOpened())
 		{
 			// could not open video
 			std::string errorMsg = "unable to open file " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
@@ -59,12 +60,12 @@ void TrackingThread::startCapture()
 	}
 }
 
-void TrackingThread::loadPictures(QStringList  filenames)
+void TrackingThread::loadPictures(std::vector<std::string>&& filenames)
 {
-	_pictureMode = true;
-	_pictureFiles = filenames;
+	_pictureMode  = true;
+	_pictureFiles = std::move(filenames);
+	_fps          = 1;
 	enableCapture(true);
-	_fps = 1;
 	QThread::start();	
 }
 
@@ -86,26 +87,25 @@ void TrackingThread::stopCapture()
 
 void TrackingThread::run()
 {	
-    std::chrono::system_clock::time_point t;
+	std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
 
 	while(isCaptureActive())
 	{			
 		// when pause event is started.
-        while(isVideoPause())
+		while(isVideoPause())
 		{
 			QMutexLocker locker(&videoPauseMutex);
 			firstLoop = true;
-            _pauseCond.wait(&videoPauseMutex, 100);
-            if (!isCaptureActive())
-                return;
+			_pauseCond.wait(&videoPauseMutex, 100);
+			if (!isCaptureActive()) return;
 		}
 
 		//if thread just started (or is unpaused) start clock here
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
 		if(firstLoop)
-            t = std::chrono::system_clock::now();
+			t = std::chrono::system_clock::now();
 		if(isReadyForNextFrame()){
 			// measure the capture start time			
 			if (!_capture.isOpened() && !_pictureMode)	{	break;	}
@@ -113,14 +113,20 @@ void TrackingThread::run()
 			if(_pictureMode)
 			{
 				incrementFrameNumber();
-				_frame = getPicture(_frameNumber);
+				{
+					QMutexLocker locker(&frameNumberMutex);
+					_frame = getPicture(_frameNumber);
+				}
 			}
 			else
 			{
-				// capture the frame
-				_capture >> _frame;
+				{
+					QMutexLocker locker(&frameNumberMutex);
+					// capture the frame
+					_capture >> _frame;
+				}
 				incrementFrameNumber();
-			}			
+			}
 
 			// exit if last frame is reached
 			if (_frame.empty())	{ break; }
@@ -134,24 +140,24 @@ void TrackingThread::run()
 			enableHandlingNextFrame(false);
 
 			std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
-            std::chrono::microseconds dur =
-                    std::chrono::duration_cast<std::chrono::microseconds>(
-                        std::chrono::system_clock::now() - t);
+			std::chrono::microseconds dur =
+					std::chrono::duration_cast<std::chrono::microseconds>(
+						std::chrono::system_clock::now() - t);
 			if(!_maxSpeed)
 			{
-                if (dur <= target_dur)
-                    target_dur -= dur;
-				else {	
-                    target_dur = std::chrono::microseconds(0);
+				if (dur <= target_dur)
+					target_dur -= dur;
+				else {
+					target_dur = std::chrono::microseconds(0);
 				}
 			}
 			else
-                target_dur = std::chrono::microseconds(0);
+				target_dur = std::chrono::microseconds(0);
 			// calculate the running fps.
-            _runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
+			_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
 			emit sendFps(_runningFps);
-            std::this_thread::sleep_for(target_dur);
-            t = std::chrono::system_clock::now();
+			std::this_thread::sleep_for(target_dur);
+			t = std::chrono::system_clock::now();
 			firstLoop = false;
 
 			if(isCaptureActive())
@@ -168,12 +174,12 @@ void TrackingThread::run()
 	_frameNumber = 0;
 }
 
-cv::Mat TrackingThread::getPicture(int index)
+cv::Mat TrackingThread::getPicture(size_t index)
 {
 	//check if index in range
-	if(index < _pictureFiles.length() && index >= 0)
+	if(index < _pictureFiles.size())
 	{
-		std::string filename = _pictureFiles.at(index).toStdString();
+		std::string filename = _pictureFiles.at(index);
 		return cv::imread(filename);
 	}
 	else
@@ -207,7 +213,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 	{
 		_frameNumber = frameNumber;		
 		if (_tracker) _tracker->setCurrentFrameNumber(frameNumber);
-		_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
+			_capture.set(CV_CAP_PROP_POS_FRAMES,_frameNumber);
 		if(_pictureMode)
 		{
 			_frame = getPicture(_frameNumber);
@@ -278,14 +284,14 @@ void TrackingThread::doTracking()
 	if (_frame.empty())
 		return;
 	QMutexLocker locker(&trackerMutex);
-    try
-    {
+	try
+	{
 		_tracker->track( _frameNumber, _frame);
-    }
+	}
 	catch(const std::exception& err)
-    {
+	{
 		emit notifyGUI("critical error in selected tracking algorithm: " + std::string(err.what()), MSGS::FAIL);
-    }
+	}
 }
 void TrackingThread::doTrackingAndUpdateScreen()
 {
@@ -331,7 +337,7 @@ int TrackingThread::getVideoLength()
 {
 	if(_pictureMode)
 	{
-		return _pictureFiles.length();
+		return _pictureFiles.size();
 	}
 	else
 	{
@@ -347,17 +353,17 @@ void TrackingThread::resetTracker()
 
 double TrackingThread::getFps()
 {
-    return _fps;
+	return _fps;
 }
 
 void TrackingThread::stop()
 {
-    {
-        QMutexLocker locker(&captureActiveMutex);
-        _captureActive = false;
-    }
-    QThread::wait();
-    return;
+	{
+		QMutexLocker locker(&captureActiveMutex);
+		_captureActive = false;
+	}
+	QThread::wait();
+	return;
 }
 
 void TrackingThread::setFps(double fps)

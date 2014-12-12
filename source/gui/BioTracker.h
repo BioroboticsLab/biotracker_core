@@ -10,6 +10,7 @@
 #include <QShortcut>
 
 //BioTracker
+#include "source/settings/ParamNames.h"
 #include "source/tracking/algorithm/algorithms.h"
 
 #include "source/ui_BioTracker.h"
@@ -52,13 +53,13 @@ public slots:
 	//change video playback speed
 	void changeFps(int fps);
 	//different tracking algorithm was selected
-    void trackingAlgChanged(Algorithms::Type trackingAlg);
-    void trackingAlgChanged(QString trackingAlgStr);
+	void trackingAlgChanged(Algorithms::Type trackingAlg);
+	void trackingAlgChanged(QString trackingAlgStr);
 	//switch pan&zoom mode
 	void switchPanZoomMode();
 
 	// SLOTS FOR TRACKING THREAD: 	
-	void updateFrameNumber(int frameNumber);	
+	void updateFrameNumber(int frameNumber);
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
 	void invalidFile();
@@ -83,33 +84,35 @@ public slots:
 
 	void takeScreenshot();
 
-	//returns true if video is in paused, false otherwise
-	bool isVideoPaused();
-
 protected:
 	bool event(QEvent* event) override;
 
 private:
 	Ui::BioTrackerClass ui;
 
+	Settings& _settings;
 	std::unique_ptr<TrackingThread> _trackingThread;
 
-	Settings& _settings;
-	bool _videoPaused;
-	bool _videoStopped;
+	enum class VideoMode : uint8_t {
+		Playing = 0,
+		Paused,
+		Stopped
+	};
+	VideoMode _videoMode;
+
+	GUIPARAM::MediaType _mediaType;
+
 	bool _isPanZoomMode;
-	int _currentFrame;
+	size_t _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
 
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
-	void init();
 	void initGui();	
 	void initConnects();
-	void initCapture();
-	void initAlgorithms();
-	void initPicture(QStringList filenames);
+	void initPlayback();
+	void initAlgorithmList();
 	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
 
