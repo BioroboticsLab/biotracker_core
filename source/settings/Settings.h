@@ -4,7 +4,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "source/settings/ParamNames.h"
+#include "EnumTranslator.h"
+#include "ParamNames.h"
 
 class Settings
 {
@@ -30,6 +31,16 @@ public:
 		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
 	}
 
+	template <typename T>
+	void setParamVector(std::string const& paramName, std::vector<T>&& paramVector) {
+		boost::property_tree::ptree subtree;
+		for (T const& value : paramVector) {
+			subtree.push_back(std::make_pair("", boost::property_tree::ptree(value)));
+		}
+		_ptree.put_child(paramName, subtree);
+		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+	}
+
 	/**
 	 * Gets the parameter value provided by parameter name.
 	 * @param paramName the parameter name,
@@ -38,6 +49,21 @@ public:
 	template <typename T>
 	T getValueOfParam(const std::string &paramName) const {
 		return _ptree.get<T>(paramName);
+	}
+
+	template <typename T>
+	std::vector<T> getVectorOfParam(const std::string &paramName) const {
+		std::vector<T> result;
+		for (auto& item : _ptree.get_child(paramName)) {
+			result.push_back(item.second.get_value<T>());
+		}
+//		auto& subtr
+//		auto it = _ptree.find(paramName);
+//		std::vector<T> result;
+//		for (auto& subtreeit : it->second) {
+//			result.push_back(subtreeit.second.get_value<T>());
+//		}
+		return result;
 	}
 
 	/**

@@ -28,7 +28,7 @@ public:
 	/**
 	* Loads in pictures instead of a video
 	*/
-	void loadPictures(QStringList filenames);
+	void loadPictures(std::vector<std::string>&& filenames);
 
 	/**
 	* Reset
@@ -81,9 +81,9 @@ private:
 	QWaitCondition _pauseCond;
 	
 	//contains filenames of all pictures that were selected by user
-	QStringList _pictureFiles;
+	std::vector<std::string> _pictureFiles;
 
-	cv::Mat getPicture(int index);
+	cv::Mat getPicture(size_t index);
 
 	Settings &_settings;
 

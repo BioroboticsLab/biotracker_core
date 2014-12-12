@@ -23,9 +23,6 @@ const boost::property_tree::ptree Settings::getDefaultParams()
 	boost::property_tree::ptree pt;
 
 	pt.put(TRACKERPARAM::TRACKING_ENABLED, false);
-	pt.put(CAPTUREPARAM::CAP_VIDEO_FILE, "");
-	pt.put(PICTUREPARAM::PICTURE_FILE, "");
-	pt.put(GUIPARAM::IS_SOURCE_VIDEO, true);
 
 	return pt;
 }
