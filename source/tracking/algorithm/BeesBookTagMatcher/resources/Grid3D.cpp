@@ -1,6 +1,7 @@
 #include "Grid3D.h"
 
 #include <cmath> // std::sin, std::cos
+#include "utility/CvHelper.h"
 
 const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_coordinates3D();
 
@@ -16,7 +17,6 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double orientation, double pit
 	, _pitchAxis(pitchAxis)
 	, _pitchAngle(pitchAngle)
 {
-	_rotationMatrix = calculateRotMatrix();
 	doPerspectiveProjection();
 }
 
@@ -64,10 +64,11 @@ Grid3D::coordinates3D_t Grid3D::generate_coordinates3D() {
 
 Grid3D::coordinates2D_t Grid3D::generate_coordinates2D() const {
 
+	const auto rotationMatrix = CvHelper::rotationMatrix(_orientation, _pitchAxis, _pitchAngle);
 	coordinates2D_t result;
 	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) {
 		for (size_t i = 0; i < _coordinates3D._rings[r].size(); ++i) {
-			const cv::Point3d p = _rotationMatrix * _coordinates3D._rings[r][i] * _radius;
+			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i] * _radius;
 			result._rings[r][i] = cv::Point2i(p.x, p.y) + _center;
 		}
 	}
@@ -138,17 +139,6 @@ void Grid3D::doPerspectiveProjection()
 		}
 	}
 
-
-
-
-	//for (size_t i = 0; i < coordinates3D[0].size(); i++)
-	{
-		//coordinates2D[0] = coordinates3D[0].at(i)
-		//coordinates2D[1] = 
-		//coordinates2D[2] = 
-
-	}
-	
 }
 
 
@@ -159,39 +149,17 @@ void Grid3D::draw(cv::Mat &img, int) const
 	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,  cv::Scalar(255, 255, 255), CV_FILLED);
 	cv::drawContours(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,  cv::Scalar(  0,   0,   0), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  0, cv::Scalar(255,   0,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  1, cv::Scalar(0,   255,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  2, cv::Scalar(0,     0, 255), CV_FILLED);
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  3, cv::Scalar(255,   0,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  4, cv::Scalar(0,   255,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  5, cv::Scalar(0,     0, 255), CV_FILLED);
+	size_t i = INDEX_MIDDLE_CELLS_BEGIN;
+	for(; i < (INDEX_MIDDLE_CELLS_BEGIN + INDEX_MIDDLE_CELLS_END) / 2; ++i) {
+		const cv::Scalar bgr(i % 3 == 0 ? 255 : 0,   i % 3 == 1 ? 255 : 0,   i % 3 == 2 ? 255 : 0);
+		cv::drawContours(img, _coordinates2D, i, bgr, CV_FILLED);
+	}
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  6, cv::Scalar(255, 255, 255), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  7, cv::Scalar(0,     0,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  8, cv::Scalar(255, 255, 255), CV_FILLED);
+	for(; i < INDEX_MIDDLE_CELLS_END; ++i) {
+		const cv::Scalar bgr(i & 1 ? 255 : 0,   i & 1 ? 255 : 0,   i & 1 ? 255 : 0);
+		cv::drawContours(img, _coordinates2D, i, bgr, CV_FILLED);
+	}
 
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN +  9, cv::Scalar(0,     0,   0), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 10, cv::Scalar(255, 255, 255), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_MIDDLE_CELLS_BEGIN + 11, cv::Scalar(0,     0,   0), CV_FILLED);
 
-}
-
-cv::Matx<double, 3, 3> Grid3D::calculateRotMatrix() const
-{
-	using std::cos;
-	using std::sin;
-
-	// rotation angles:
-	double a = _orientation;	// angle to rotate around z axis
-	double b = _pitchAxis;		// angle to rotate around y axis
-	double c = _pitchAngle;		// angle to rotate around x axis
-	
-	cv::Matx<double, 3, 3> result(
-			cos(a)*cos(b),  cos(a)*sin(b)*sin(c) - sin(a)*cos(c),   cos(a)*sin(b)*cos(c) + sin(a)*sin(c),
-			sin(a)*cos(b),  sin(a)*sin(b)*sin(c) + cos(a)*cos(c),   sin(a)*sin(b)*cos(c) - cos(a)*sin(c)
-			- sin(b),       cos(b)*sin(c),                          cos(b)*cos(c)
-	);
-
-	return result;
 }
