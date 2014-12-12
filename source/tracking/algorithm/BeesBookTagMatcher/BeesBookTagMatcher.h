@@ -19,7 +19,7 @@
 class BeesBookTagMatcher : public TrackingAlgorithm {
 	Q_OBJECT
 private:
-	std::shared_ptr<Grid>	_activeGrid; // points to active grid (grid must be active to be altered)
+	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
 
 

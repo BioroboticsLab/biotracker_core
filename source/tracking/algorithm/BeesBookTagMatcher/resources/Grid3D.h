@@ -14,20 +14,22 @@
 class Grid3D : public ObjectModel
 {
 public:
+	// number of cells around the center semicircles
+	static const size_t NUM_MIDDLE_CELLS = 12; 
 
-	static const size_t NUM_MIDDLE_CELLS = 12;
-
-	static const size_t INDEX_OUTER_WHITE_RING       = 0;
+	// indices in polygon vector
+	static const size_t INDEX_OUTER_WHITE_RING       = 0; 
 	static const size_t INDEX_INNER_WHITE_SEMICIRCLE = 1;
 	static const size_t INDEX_INNER_BLACK_SEMICIRCLE = 2;
 	static const size_t INDEX_MIDDLE_CELLS_BEGIN     = 3;
 	static const size_t INDEX_MIDDLE_CELLS_END       = INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS;
 
+	// total number of cells (non-coding and coding)
 	static const size_t NUM_CELLS = INDEX_MIDDLE_CELLS_END;
 
-
-	static const size_t POINTS_PER_MIDDLE_CELL = 4;
-	static const size_t POINTS_PER_LINE = 51;
+	//
+	static const size_t POINTS_PER_MIDDLE_CELL = 2;
+	static const size_t POINTS_PER_LINE = 3;
 	static_assert(POINTS_PER_LINE % 2 != 0, "POINTS_PER_LINE must be odd");
 	static const size_t POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL;
 
@@ -113,6 +115,13 @@ public:
 
 	void setZRotation(double angle);
 	double getZRotation() const { return _angle_z; }
+
+	void setCenter(cv::Point c);
+	cv::Point2i                 center();  // center point of the grid (within image borders - unit: px)
+	//double                      radius();  // radius of the tag (unit: px)
+	//double                      angle_z(); // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
+	//double                      angle_y(); // the rotation angle of the grid around y axis (rotates into z - space)
+	//double                      angle_x();
 
 };
 
