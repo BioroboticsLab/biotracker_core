@@ -58,9 +58,10 @@ private:
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
 
-	static coordinates3D_t generate_coordinates3D();
 
-	coordinates2D_t generate_coordinates2D() const;
+	static coordinates3D_t generate_3D_base_coordinates();
+
+	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D() const;
 
 
 
@@ -70,11 +71,11 @@ private:
 		transformed according to the given parameters and projected onto the camera plane to produce 2D coordinates
 		for displaying the tag.
 	*/
-	cv::Point2i                 _center;       // center point of the grid (within image borders - unit: px)
-	double                      _radius;       // radius of the tag (unit: px)
-	double                      _orientation;  // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	double                      _pitchAxis;          // the axis around which the tag is rotated in space
-	double                      _pitchAngle;        // the pitch angle of the grid (unit: rad. only positive, if pitched the other way, phi is rotated 180�)
+	cv::Point2i                 _center;  // center point of the grid (within image borders - unit: px)
+	double                      _radius;  // radius of the tag (unit: px)
+	double                      _angle_z; // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
+	double                      _angle_y; // the rotation angle of the grid around y axis (rotates into z - space)
+	double                      _angle_x; // the rotation angle of the grid around x axis (rotates into z - space)
 
 
 	std::array<boost::tribool, NUM_CELLS> _ID;           // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
@@ -84,11 +85,13 @@ private:
 	static const coordinates3D_t _coordinates3D;
 
 public:
-		explicit Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle);
+		explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
 		virtual ~Grid3D() override;
 
 	// updates the 2D contour vector coordinates2D
-	void doPerspectiveProjection();
+	void perspective_Projection();
+
+	void prepare_visualization_data();
 
 	// draws 2D projection of 3D-mesh on image
 	void draw(cv::Mat &img, int active) const;
