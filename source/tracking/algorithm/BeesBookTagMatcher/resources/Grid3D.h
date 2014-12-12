@@ -52,7 +52,9 @@ private:
 		container_type &_outer_ring;
 
 		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-
+		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		coordinates_t(const coordinates_t&) = delete;
+		coordinates_t& operator=(const coordinates_t&) = delete;
 	};
 
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
