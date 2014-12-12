@@ -9,7 +9,7 @@ const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_3D_base_
 const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
-const double Grid3D::BULGE_FACTOR       = -0.5;
+const double Grid3D::BULGE_FACTOR       = 0.7;
 
 Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
 	: _center(center)
@@ -48,30 +48,36 @@ Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
 	{
 		double y = (radiusInPoints - i) / radiusInPoints * INNER_RING_RADIUS;
-		double z = BULGE_FACTOR * std::cos(y);
+		double z = std::cos(BULGE_FACTOR * y);
 		result._inner_line[i] = cv::Point3d(0, y, z);
 	}
 
 	// generate z coordinates
 	{
-		const value_type z_inner_ring  = BULGE_FACTOR * std::cos(INNER_RING_RADIUS);
-		const value_type z_middle_ring = BULGE_FACTOR * std::cos(MIDDLE_RING_RADIUS);
-		const value_type z_outer_ring  = BULGE_FACTOR * std::cos(OUTER_RING_RADIUS);
+		const value_type z_inner_ring = std::cos(BULGE_FACTOR * INNER_RING_RADIUS);
+		const value_type z_middle_ring = std::cos(BULGE_FACTOR * MIDDLE_RING_RADIUS);
+		const value_type z_outer_ring = std::cos(BULGE_FACTOR * OUTER_RING_RADIUS);
 		const double z_line_mean = std::accumulate(result._inner_line.begin(), result._inner_line.end(), 0,
-			[](double res, cv::Point3d val) { return res += val.z; }) / static_cast<double>(POINTS_PER_LINE);
+			[](double res, cv::Point3d val) { return res += val.z; }) / static_cast<double>(POINTS_PER_LINE); //macht blödsinn 
 
 		// Schwerpunkt bestimmen, damit Tag um Mittelachse rotiert
-		const value_type mean = (z_inner_ring + z_middle_ring + z_outer_ring + z_line_mean) / 4.0;
+		const value_type mean = (z_inner_ring + z_middle_ring + z_outer_ring) / 3.0;
 		for(size_t i = 0; i < POINTS_PER_RING; ++i)
 		{
 			result._inner_ring[i].z  = z_inner_ring  - mean;
 			result._middle_ring[i].z = z_middle_ring - mean;
 			result._outer_ring[i].z  = z_outer_ring  - mean;
 
-			result._inner_ring[i]  *= 1.0 / sqrt(INNER_RING_RADIUS + result._inner_ring[i].z * result._inner_ring[i].z);
-			result._middle_ring[i] *= 1.0 / sqrt(MIDDLE_RING_RADIUS + result._middle_ring[i].z * result._middle_ring[i].z);
-			result._outer_ring[i]  *= 1.0 / sqrt(OUTER_RING_RADIUS + result._outer_ring[i].z * result._outer_ring[i].z);
+			//result._inner_ring[i]  *= 1.0 / sqrt(INNER_RING_RADIUS + result._inner_ring[i].z * result._inner_ring[i].z);
+			//result._middle_ring[i] *= 1.0 / sqrt(MIDDLE_RING_RADIUS + result._middle_ring[i].z * result._middle_ring[i].z);
+			//result._outer_ring[i]  *= 1.0 / sqrt(OUTER_RING_RADIUS + result._outer_ring[i].z * result._outer_ring[i].z);
 		}
+
+		for (size_t i = 0; i < POINTS_PER_LINE; ++i)
+		{
+			result._inner_line[i].z -= mean;
+		}
+
 	}
 
 	return result;
@@ -188,21 +194,21 @@ void Grid3D::prepare_visualization_data()
 
 void Grid3D::draw(cv::Mat &img, int) const
 {
-	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(255, 255, 255), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_OUTER_WHITE_RING,        cv::Scalar(255, 255, 255));
 
-	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255), CV_FILLED);
-	cv::drawContours(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(0, 0, 0), CV_FILLED);
+	cv::drawContours(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255));
+	cv::drawContours(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(0, 0, 0));
 
 
 	size_t i = INDEX_MIDDLE_CELLS_BEGIN;
-	for(; i < (INDEX_MIDDLE_CELLS_BEGIN + INDEX_MIDDLE_CELLS_END) / 2; ++i) {
+	/*for(; i < (INDEX_MIDDLE_CELLS_BEGIN + INDEX_MIDDLE_CELLS_END) / 2; ++i) {
 		const cv::Scalar bgr(i % 3 == 0 ? 255 : 0,   i % 3 == 1 ? 255 : 0,   i % 3 == 2 ? 255 : 0);
-		cv::drawContours(img, _coordinates2D, i, bgr, CV_FILLED);
-	}
+		cv::drawContours(img, _coordinates2D, i, bgr);
+	}*/
 
 	for(; i < INDEX_MIDDLE_CELLS_END; ++i) {
 		const cv::Scalar bgr(i & 1 ? 255 : 0,   i & 1 ? 255 : 0,   i & 1 ? 255 : 0);
-		cv::drawContours(img, _coordinates2D, i, bgr, CV_FILLED);
+		cv::drawContours(img, _coordinates2D, i, bgr);
 	}
 }
 
@@ -223,3 +229,35 @@ void Grid3D::setZRotation(double angle)
 	_angle_z = angle;
 	prepare_visualization_data();
 }
+
+
+void Grid3D::setCenter(cv::Point c)
+{
+	_center = c;
+}
+
+cv::Point2i Grid3D::center()
+{
+	return _center;
+}
+
+//
+//double Grid3D::radius()
+//{
+//	return _radius;
+//}
+//
+//
+//double Grid3D::angle_z()
+//{
+//	return _angle_z;
+//}
+//
+//double Grid3D::angle_y()
+//{
+//	return _angle_y;
+//}
+//double Grid3D::angle_x()
+//{
+//	return _angle_x;
+//}
