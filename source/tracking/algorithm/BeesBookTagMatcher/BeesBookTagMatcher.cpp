@@ -26,7 +26,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
 	// TESTCODE START
-	, _testGrid3d(cv::Point2i(500,500), 400.0 , 0.0, 0.78, 0.78)
+	, _testGrid3d(cv::Point2i(500,500), 250.0 , 0.0, 0.0, 0.0)
 	// TESTCODE END
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
@@ -252,6 +252,32 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 		}
 		emit update();
 		setNumTags();
+	}
+	else {
+		switch (e->key())
+		{
+		case Qt::Key_H:
+			_testGrid3d.setYRotation(_testGrid3d.getYRotation() + 0.05);
+			break;
+		case Qt::Key_G:
+			_testGrid3d.setYRotation(_testGrid3d.getYRotation() - 0.05);
+			break;
+		case Qt::Key_W:
+			_testGrid3d.setXRotation(_testGrid3d.getXRotation() - 0.05);
+			break;
+		case Qt::Key_S:
+			_testGrid3d.setXRotation(_testGrid3d.getXRotation() + 0.05);
+			break;
+		case Qt::Key_A:
+			_testGrid3d.setZRotation(_testGrid3d.getZRotation() - 0.05);
+			break;
+		case Qt::Key_D:
+			_testGrid3d.setZRotation(_testGrid3d.getZRotation() + 0.05);
+			break;
+		default:
+			return;
+		}
+		emit update();
 	}
 }
 
@@ -499,7 +525,10 @@ void BeesBookTagMatcher::setNumTags()
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 {
 	static const std::set<Qt::Key> keys { Qt::Key_Plus, Qt::Key_Minus,
-	                                      Qt::Key_C, Qt::Key_V };
+	                                      Qt::Key_C, Qt::Key_V,
+										  Qt::Key_W, Qt::Key_A,
+										  Qt::Key_S, Qt::Key_D,
+										  Qt::Key_G, Qt::Key_H };
 	return keys;
 }
 
