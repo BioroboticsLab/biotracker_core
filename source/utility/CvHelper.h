@@ -11,7 +11,7 @@ namespace CvHelper
 
 	/**
 	 * Convert degree to radian.
-	 * @param deg, degree value,
+	 * @param deg degree value,
 	 * @return rad value.
 	 */
 	inline float degToRad(float deg)
@@ -21,7 +21,7 @@ namespace CvHelper
 
 	/**
 	 * Convert radian to degree.
-	 * @param rad, radian value,
+	 * @param rad radian value,
 	 * @return degree value.
 	 */
 	inline float radToDeg(float rad)
@@ -36,8 +36,6 @@ namespace CvHelper
 	 *
 	 * @see: http://planning.cs.uiuc.edu/node102.html
 	 *
-	 * @param gamma_rad
-	 * @return
 	 */
 	inline cv::Matx<double, 3, 3> rotationMatrix_x(double gamma_rad) {
 		using std::cos;
@@ -63,8 +61,6 @@ namespace CvHelper
 	 *
 	 * @see: http://planning.cs.uiuc.edu/node102.html
 	 *
-	 * @param beta_rad
-	 * @return
 	 */
 	inline cv::Matx<double, 3, 3> rotationMatrix_y(double beta_rad) {
 		using std::cos;
@@ -90,8 +86,6 @@ namespace CvHelper
 	 *
 	 * @see: http://planning.cs.uiuc.edu/node102.html
 	 *
-	 * @param alpha_rad
-	 * @return
 	 */
 	inline cv::Matx<double, 3, 3> rotationMatrix_z(double alpha_rad) {
 		using std::cos;
@@ -119,10 +113,6 @@ namespace CvHelper
 	 *
 	 * @see: http://planning.cs.uiuc.edu/node102.html
 	 *
-	 * @param roll_rad
-	 * @param pitch_rad
-	 * @param yaw_rad
-	 * @return
 	 */
 	inline cv::Matx<double, 3, 3> rotationMatrix(double yaw_rad, double pitch_rad, double roll_rad)
 	{
