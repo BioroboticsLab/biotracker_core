@@ -27,6 +27,8 @@ public:
 
 
 	static const size_t POINTS_PER_MIDDLE_CELL = 4;
+	static const size_t POINTS_PER_LINE = 51;
+	static_assert(POINTS_PER_LINE % 2 != 0, "POINTS_PER_LINE must be odd");
 	static const size_t POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL;
 
 	static_assert(POINTS_PER_RING % 4 == 0 , "");
@@ -46,19 +48,24 @@ private:
 		typedef std::array<point_type, POINTS_PER_RING> container_type;
 
 		std::array<container_type, 3> _rings;
+		std::array<point_type, POINTS_PER_LINE> _inner_line;
 
 		container_type &_inner_ring;
 		container_type &_middle_ring;
 		container_type &_outer_ring;
 
 		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
 		coordinates_t(const coordinates_t&) = delete;
 		coordinates_t& operator=(const coordinates_t&) = delete;
 	};
 
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
+
+	std::array<double, NUM_CELLS> z_coordinates;
+
+
 
 
 	static coordinates3D_t generate_3D_base_coordinates();
@@ -97,6 +104,15 @@ public:
 
 	// draws 2D projection of 3D-mesh on image
 	void draw(cv::Mat &img, int active) const;
+
+	void setXRotation(double angle);
+	double getXRotation() const { return _angle_x; }
+
+	void setYRotation(double angle);
+	double getYRotation() const { return _angle_y; }
+
+	void setZRotation(double angle);
+	double getZRotation() const { return _angle_z; }
 
 };
 
