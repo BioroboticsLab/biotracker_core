@@ -21,7 +21,7 @@ public:
 	static const size_t INDEX_INNER_WHITE_SEMICIRCLE = 1;
 	static const size_t INDEX_INNER_BLACK_SEMICIRCLE = 2;
 	static const size_t INDEX_MIDDLE_CELLS_BEGIN     = 3;
-	static const size_t INDEX_MIDDLE_CELLS_END       = 3 + NUM_MIDDLE_CELLS;
+	static const size_t INDEX_MIDDLE_CELLS_END       = INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS;
 
 	static const size_t NUM_CELLS = INDEX_MIDDLE_CELLS_END;
 
@@ -29,13 +29,14 @@ public:
 	static const size_t POINTS_PER_MIDDLE_CELL = 4;
 	static const size_t POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL;
 
+	static_assert(POINTS_PER_RING % 4 == 0 , "");
+
 	static const double INNER_RING_RADIUS;
 	static const double MIDDLE_RING_RADIUS;
 	static const double OUTER_RING_RADIUS;
 	static const double BULGE_FACTOR;
 
 private:
-	bool _constructorPassed =false;
 
 	template<typename POINT>
 	struct coordinates_t {
@@ -53,8 +54,9 @@ private:
 		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
 
 	};
+
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
-	typedef coordinates_t<cv::Point2i>    coordinates2D_t;
+	typedef coordinates_t<cv::Point2i> coordinates2D_t;
 
 	static coordinates3D_t generate_coordinates3D();
 
@@ -80,11 +82,6 @@ private:
 	std::vector<std::vector<cv::Point>> _coordinates2D; // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
 
 	static const coordinates3D_t _coordinates3D;
-
-	cv::Matx<double, 3, 3> _rotationMatrix;
-	cv::Matx<double, 3, 3> calculateRotMatrix() const;
-
-
 
 public:
 		explicit Grid3D(cv::Point2i center, double radius, double orientation, double pitchAxis, double pitchAngle);
