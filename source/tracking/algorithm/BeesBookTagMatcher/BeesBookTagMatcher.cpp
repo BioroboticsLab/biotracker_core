@@ -26,7 +26,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
 	// TESTCODE START
-	, _testGrid3d(cv::Point2i(500,500), 50.0 , 0.0, 0.0, 0.0)
+	, _testGrid3d(cv::Point2i(500,500), 53.0 , 0.0, 0.0, 0.0)
 	// TESTCODE END
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
