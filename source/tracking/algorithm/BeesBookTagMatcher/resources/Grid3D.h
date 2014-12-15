@@ -68,7 +68,7 @@ private:
 	
 
 	static coordinates3D_t	generate_3D_base_coordinates();
-	coordinates2D_t			generate_3D_coordinates_from_parameters_and_project_to_2D() const;
+	coordinates2D_t			generate_3D_coordinates_from_parameters_and_project_to_2D();
 	void					prepare_visualization_data();
 
 
