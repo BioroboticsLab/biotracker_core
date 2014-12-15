@@ -43,8 +43,8 @@ public:
 private:
 
 	template<typename POINT>
-	struct coordinates_t {
-
+	struct coordinates_t 
+	{
 		typedef typename POINT::value_type              value_type;
 		typedef POINT                                   point_type;
 		typedef std::array<point_type, POINTS_PER_RING> container_type;
@@ -65,13 +65,9 @@ private:
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
 
-	std::array<double, NUM_CELLS> z_coordinates;
-
-
-
+	
 
 	static coordinates3D_t generate_3D_base_coordinates();
-
 	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D() const;
 
 
@@ -87,20 +83,15 @@ private:
 	double                      _angle_z; // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
 	double                      _angle_y; // the rotation angle of the grid around y axis (rotates into z - space)
 	double                      _angle_x; // the rotation angle of the grid around x axis (rotates into z - space)
+	std::array<boost::tribool, NUM_CELLS>	_ID;				// bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
+	std::vector<std::vector<cv::Point>>		_coordinates2D;		// 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
+	std::vector<cv::Point>					_interactionPoints;	// 2D coordinates of interaction points (center of grid, grid cell centers, etc)
+	static const coordinates3D_t			_coordinates3D;		// underlying 3D coordinates of grid mesh
 
-
-	std::array<boost::tribool, NUM_CELLS> _ID;           // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
-
-	std::vector<std::vector<cv::Point>> _coordinates2D; // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
-
-	static const coordinates3D_t _coordinates3D;
 
 public:
-		explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
-		virtual ~Grid3D() override;
-
-	// updates the 2D contour vector coordinates2D
-	void perspective_Projection();
+	explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
+	virtual ~Grid3D() override;
 
 	void prepare_visualization_data();
 
@@ -117,12 +108,7 @@ public:
 	double getZRotation() const { return _angle_z; }
 
 	void setCenter(cv::Point c);
-	cv::Point2i                 center();  // center point of the grid (within image borders - unit: px)
-	//double                      radius();  // radius of the tag (unit: px)
-	//double                      angle_z(); // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	//double                      angle_y(); // the rotation angle of the grid around y axis (rotates into z - space)
-	//double                      angle_x();
-
+	cv::Point2i center(); 
 };
 
 #endif

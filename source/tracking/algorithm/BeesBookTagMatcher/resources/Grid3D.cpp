@@ -129,6 +129,10 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 		result._inner_line[i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius)) + _center;
 	}
 
+	// compute interaction features
+	// grid center 
+	// center of grid cells
+	// head point, aka P1
 	return result;
 }
 
@@ -138,6 +142,7 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
  */
 void Grid3D::prepare_visualization_data()
 {
+	// apply rotations and scaling (the basic parameters)
 	const auto points_2d = generate_3D_coordinates_from_parameters_and_project_to_2D();
 
 	_coordinates2D.resize(NUM_CELLS);
