@@ -14,6 +14,13 @@
 class Grid3D : public ObjectModel
 {
 public:
+
+	/******************************************
+	 *                                        *
+	 *              constants                 *
+	 *                                        *
+	 ******************************************/
+
 	// number of cells around the center semicircles
 	static const size_t NUM_MIDDLE_CELLS = 12;
 
@@ -40,7 +47,39 @@ public:
 	static const double OUTER_RING_RADIUS;
 	static const double BULGE_FACTOR;
 
+
+	/******************************************
+	 *                                        *
+	 *            public function             *
+	 *                                        *
+	 ******************************************/
+
+	explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
+	virtual ~Grid3D() override;
+
+	/**
+	 * draws 2D projection of 3D-mesh on image
+	 */
+	void   draw(cv::Mat &img, int active) const;
+
+	void   setXRotation(double angle);
+	double getXRotation() const { return _angle_x; }
+
+	void   setYRotation(double angle);
+	double getYRotation() const { return _angle_y; }
+
+	void   setZRotation(double angle);
+	double getZRotation() const { return _angle_z; }
+
+	void   setCenter(cv::Point c);
+
 private:
+
+	/******************************************
+	 *                                        *
+	 *          types & typedefs              *
+	 *                                        *
+	 ******************************************/
 
 	template<typename POINT>
 	struct coordinates_t 
@@ -65,51 +104,39 @@ private:
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
 
-	
+	/******************************************
+	 *                                        *
+	 *          private functions             *
+	 *                                        *
+	 ******************************************/
 
-	static coordinates3D_t	generate_3D_base_coordinates();
-	coordinates2D_t			generate_3D_coordinates_from_parameters_and_project_to_2D();
-	void					prepare_visualization_data();
+	static coordinates3D_t generate_3D_base_coordinates();
 
+	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D();
+	void                   generate_2D_contours();
+	void                   draw(cv::Mat &img, cv::Point center, int) const;
+	void                   prepare_visualization_data();
 
+	/***************************************************************************
+	 * Parameter Section
+	 *
+	 * Each of the following parameters define the tag uniquely.
+	 * The Grid3D class holds a set of 3D-points that make up a mesh of the
+	 * bee tag. These points are transformed according to the given parameters
+	 * and projected onto the camera plane to produce 2D coordinates for
+	 * displaying the tag.
+	 ***************************************************************************/
 
-	/** Parameter Section
-		Each of the following parameters define the tag uniquely. 
-		The Grid3D class holds a set of 3D-points that make up a mesh of the bee tag. These points are
-		transformed according to the given parameters and projected onto the camera plane to produce 2D coordinates
-		for displaying the tag.
-	*/
-	cv::Point2i                 _center;  // center point of the grid (within image borders - unit: px)
-	double                      _radius;  // radius of the tag (unit: px)
-	double                      _angle_z; // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	double                      _angle_y; // the rotation angle of the grid around y axis (rotates into z - space)
-	double                      _angle_x; // the rotation angle of the grid around x axis (rotates into z - space)
-	std::array<boost::tribool, NUM_CELLS>	_ID;				// bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
-	std::vector<std::vector<cv::Point>>		_coordinates2D;		// 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
-	std::vector<cv::Point>					_interactionPoints;	// 2D coordinates of interaction points (center of grid, grid cell centers, etc)
-	static const coordinates3D_t			_coordinates3D;		// underlying 3D coordinates of grid mesh
+	cv::Point2i                           _center;             // center point of the grid (within image borders - unit: px)
+	double                                _radius;             // radius of the tag (unit: px)
+	double                                _angle_z;            // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
+	double                                _angle_y;            // the rotation angle of the grid around y axis (rotates into z - space)
+	double                                _angle_x;            // the rotation angle of the grid around x axis (rotates into z - space)
+	std::array<boost::tribool, NUM_CELLS> _ID;                 // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
+	std::vector<std::vector<cv::Point>>   _coordinates2D;      // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
+	std::vector<cv::Point>                _interactionPoints;  // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
+	static const coordinates3D_t          _coordinates3D;      // underlying 3D coordinates of grid mesh
 
-
-public:
-
-	explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
-	virtual ~Grid3D() override;
-
-	/**
-	 * draws 2D projection of 3D-mesh on image
-	 */
-	void	draw(cv::Mat &img, int active) const;
-
-	void   setXRotation(double angle);
-	double getXRotation() const { return _angle_x; }
-
-	void   setYRotation(double angle);
-	double getYRotation() const { return _angle_y; }
-
-	void   setZRotation(double angle);
-	double getZRotation() const { return _angle_z; }
-
-	void	setCenter(cv::Point c);
 };
 
 #endif
