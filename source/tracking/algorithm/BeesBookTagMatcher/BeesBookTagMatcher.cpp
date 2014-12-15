@@ -87,7 +87,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	// RMB without modifier: store click point temporarily, set rotation mode
 	if (_activeGrid)
 	{
-		size_t id = _activeGrid->getKeyPointIndex(p);
+					int id = _activeGrid->getKeyPointIndex(p);
 		const bool indeterminate =
 			QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
 			QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
