@@ -142,10 +142,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 	}
 
-	// compute interaction features
-	// grid center 
-	// center of grid cells
-	// head point, aka P1
+	_interactionPoints.push_back(result._outer_ring[0]);
+
 	return result;
 }
 
@@ -225,6 +223,8 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 
 	const cv::Scalar white(255, 255, 255);
 	const cv::Scalar black(0, 0, 0);
+	const cv::Scalar red(0, 0, 255);
+
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
@@ -291,4 +291,51 @@ void Grid3D::setZRotation(double angle)
 void Grid3D::setCenter(cv::Point c)
 {
 	_center = c;
+}
+
+int Grid3D::getKeyPointIndex(cv::Point p)
+{
+	for (size_t i = 0; i < _interactionPoints.size(); ++i)
+	{
+		if (CvHelper::vecLength<cv::Point>(_center + _interactionPoints[i] - p) < (_radius / 10) )
+			return i;
+	}
+	return -1;
+}
+
+void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
+{ 
+	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
+		_ID[cell_id] = true;
+
+	_ID[cell_id] = indeterminate ? boost::logic::indeterminate : !_ID[cell_id]; 
+}
+
+cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
+{
+	int value;
+	switch (tribool.value) {
+	case boost::logic::tribool::value_t::true_value:
+		value = 255;
+		break;
+	case boost::logic::tribool::value_t::indeterminate_value:
+		value = 0.5 * 255;
+		break;
+	case boost::logic::tribool::value_t::false_value:
+		value = 0;
+		break;
+	default:
+		assert(false);
+		value = 0.;
+		break;
+	}
+
+	return cv::Scalar(value, value, value);
+}
+
+void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
+{
+	cv::Point d = (p - _center);
+	_angle_z = atan2(d.y, d.x);
+	prepare_visualization_data();
 }

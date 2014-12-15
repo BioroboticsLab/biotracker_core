@@ -31,6 +31,7 @@ private:
 		SetP0,     // Set P0 --Left Click and drag--
 		SetP1,     // Set P1 --Left Click and drag--
 		SetP2,     // Set P2 --Left Click and drag--
+		SetBit,		//  Set single bits
 	};
 
 	State _currentState;
