@@ -99,8 +99,10 @@ Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 /**
  * rotates and scales the base mesh according to given parameter set
  */
-Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_project_to_2D() const 
+Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_project_to_2D() 
 {
+	_interactionPoints.clear();
+
 	// output variable
 	coordinates2D_t result;
 
@@ -116,16 +118,28 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
 			result._rings[r][i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
+
+			if (r == 1) // inner ring
+				if ( (i % POINTS_PER_MIDDLE_CELL) == POINTS_PER_MIDDLE_CELL / 2 )
+					_interactionPoints.push_back(0.5*(result._rings[r][i] + result._rings[r - 1][i]));
 		}
 	}
 
 	// iterate over points of inner ring
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
 	{
-		// rotate and scale point (aka vector)
-		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
+		// rotate point (aka vector)
+		const cv::Point3d	p = rotationMatrix * _coordinates3D._inner_line[i];
+		const cv::Point		p2(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
 
-		result._inner_line[i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
+		result._inner_line[i] = p2;
+
+		// if center point reached: save point to interaction-points-list
+		if (i == (size_t)POINTS_PER_LINE / 2)
+		{
+			_interactionPoints.push_back( p2 );
+		}
+
 	}
 
 	// compute interaction features
@@ -147,7 +161,6 @@ void Grid3D::prepare_visualization_data()
 	// outer ring
 	{
 		auto &vec = _coordinates2D[INDEX_OUTER_WHITE_RING];
-
 		vec.clear();
 
 		vec.insert(vec.end(), points_2d._outer_ring.cbegin(), points_2d._outer_ring.cend());
@@ -158,11 +171,10 @@ void Grid3D::prepare_visualization_data()
 	// inner ring: white half
 	{
 		auto &vec = _coordinates2D[INDEX_INNER_WHITE_SEMICIRCLE];
-
 		vec.clear();
 
-		const size_t index_270_deg_begin = POINTS_PER_RING * 3 / 4;
-		const size_t index_90_deg_end  = POINTS_PER_RING * 1 / 4 + 1;
+		const size_t index_270_deg_begin	= POINTS_PER_RING * 3 / 4;
+		const size_t index_90_deg_end		= POINTS_PER_RING * 1 / 4 + 1;
 
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin() + index_270_deg_begin, points_2d._inner_ring.cend());
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin(), points_2d._inner_ring.cbegin() + index_90_deg_end);
@@ -171,7 +183,6 @@ void Grid3D::prepare_visualization_data()
 	// black semicircle plus curved center line
 	{
 		auto &vec = _coordinates2D[INDEX_INNER_BLACK_SEMICIRCLE];
-
 		vec.clear();
 
 		const size_t index_90_deg_begin = POINTS_PER_RING * 1 / 4;
@@ -186,7 +197,6 @@ void Grid3D::prepare_visualization_data()
 		for (size_t i = 0; i < NUM_MIDDLE_CELLS; ++i)
 		{
 			auto &vec = _coordinates2D[INDEX_MIDDLE_CELLS_BEGIN + i];
-
 			vec.clear();
 
 			const size_t index_begin    = POINTS_PER_MIDDLE_CELL * i;
@@ -205,14 +215,19 @@ void Grid3D::prepare_visualization_data()
 
 void Grid3D::draw(cv::Mat &img, int) const
 {
-	const cv::Scalar color(255, 255, 255);
+	const cv::Scalar white(255, 255, 255);
+	const cv::Scalar black(0, 0, 0);
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
-		CvHelper::drawPolyline(img, _coordinates2D, i, color, false, _center);
+		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, _center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       cv::Scalar(255, 255, 255), false, _center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255), false, _center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(  0,   0,   0), false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			white, false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,	white, false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,	black, false, _center);
+
+	for (size_t i = 0; i < _interactionPoints.size(); ++i)
+		cv::circle(img, _interactionPoints[i] + _center, 1, white);
+
 }
 
 void Grid3D::setXRotation(double angle)
@@ -232,7 +247,6 @@ void Grid3D::setZRotation(double angle)
 	_angle_z = angle;
 	prepare_visualization_data();
 }
-
 
 void Grid3D::setCenter(cv::Point c)
 {
