@@ -15,7 +15,7 @@ class Grid3D : public ObjectModel
 {
 public:
 	// number of cells around the center semicircles
-	static const size_t NUM_MIDDLE_CELLS = 12; 
+	static const size_t NUM_MIDDLE_CELLS = 12;
 
 	// indices in polygon vector
 	static const size_t INDEX_OUTER_WHITE_RING       = 0; 
@@ -33,7 +33,7 @@ public:
 	static_assert(POINTS_PER_LINE % 2 != 0, "POINTS_PER_LINE must be odd");
 	static const size_t POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL;
 
-	static_assert(POINTS_PER_RING % 4 == 0 , "");
+	static_assert(POINTS_PER_RING % 4 == 0 , "POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL must be a multiple of 4");
 
 	static const double INNER_RING_RADIUS;
 	static const double MIDDLE_RING_RADIUS;
@@ -67,8 +67,9 @@ private:
 
 	
 
-	static coordinates3D_t generate_3D_base_coordinates();
-	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D() const;
+	static coordinates3D_t	generate_3D_base_coordinates();
+	coordinates2D_t			generate_3D_coordinates_from_parameters_and_project_to_2D() const;
+	void					prepare_visualization_data();
 
 
 
@@ -90,25 +91,25 @@ private:
 
 
 public:
+
 	explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
 	virtual ~Grid3D() override;
 
-	void prepare_visualization_data();
+	/**
+	 * draws 2D projection of 3D-mesh on image
+	 */
+	void	draw(cv::Mat &img, int active) const;
 
-	// draws 2D projection of 3D-mesh on image
-	void draw(cv::Mat &img, int active) const;
-
-	void setXRotation(double angle);
+	void   setXRotation(double angle);
 	double getXRotation() const { return _angle_x; }
 
-	void setYRotation(double angle);
+	void   setYRotation(double angle);
 	double getYRotation() const { return _angle_y; }
 
-	void setZRotation(double angle);
+	void   setZRotation(double angle);
 	double getZRotation() const { return _angle_z; }
 
-	void setCenter(cv::Point c);
-	cv::Point2i center(); 
+	void	setCenter(cv::Point c);
 };
 
 #endif

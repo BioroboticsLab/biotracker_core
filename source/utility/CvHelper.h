@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp> // CV_PI, cv::Matx
 #include <cmath>              // std::{sin,cos}
+#include <stdexcept>          // std::invalid_argument
 
 /**
  * Computer vision helper functions
@@ -133,10 +134,26 @@ namespace CvHelper
 		);
 	}
 
-	void drawContoursOpen(cv::Mat & img, std::vector<std::vector<cv::Point>> const & contour, size_t index_countour, cv::Scalar const & color)
+	/**
+	 *
+	 * @param img            Image
+	 * @param contours       All the input contours. Each contour is stored as a point vector.
+	 * @param index_countour Parameter indicating a contour to draw
+	 * @param color          Color of the contours
+	 * @param close          Parameter indicating if the last and first vertex of the contour should be connected
+	 * @param offset         Optional contour shift parameter.
+	 */
+	inline void drawPolyline(cv::Mat &img, std::vector<std::vector<cv::Point>> const &contours, size_t index_countour, cv::Scalar const & color, bool close = false, cv::Point offset = cv::Point())
 	{
-		for (size_t i = 1; i < contour[index_countour].size(); i++)
-			cv::line(img, contour[index_countour][i], contour[index_countour][i - 1], color);
+		if (contours.size() < 2) {
+			throw std::invalid_argument("a contour contains a least 2 points");
+		}
+		for (size_t i = 1; i < contours[index_countour].size(); i++) {
+			cv::line(img, offset + contours[index_countour][i - 1], offset + contours[index_countour][i], color);
+		}
+		if (close) {
+			cv::line(img, offset + contours[index_countour].back(), offset + contours[index_countour].front(), color);
+		}
 	}
 
 }

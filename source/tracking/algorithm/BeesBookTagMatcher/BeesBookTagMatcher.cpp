@@ -48,7 +48,6 @@ void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 void BeesBookTagMatcher::paint(cv::Mat& image)
 {
 	// TESTCODE START
-	_activeGrid->prepare_visualization_data();
 	_activeGrid->draw(image, 0);
 	// TESTCODE END
 	//if (!_trackedObjects.empty()) 
