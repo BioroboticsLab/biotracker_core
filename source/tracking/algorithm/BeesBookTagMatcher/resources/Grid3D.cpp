@@ -306,3 +306,10 @@ void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
 	_angle_z = atan2(d.y, d.x);
 	prepare_visualization_data();
 }
+
+void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
+{
+	_angle_x = angle_x;
+	_angle_y = angle_y;
+	prepare_visualization_data();
+}

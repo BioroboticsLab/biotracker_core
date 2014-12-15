@@ -7,6 +7,7 @@
 
 #include "Common.h"
 #include "source/tracking/algorithm/algorithms.h"
+#include "utility/CvHelper.h"
 
 namespace {
 auto _ = Algorithms::Registry::getInstance().register_tracker_type<
@@ -84,84 +85,113 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	// if no keypoint selected: compute P2 = _center - p; set space rotation
 	// LMB with CTRL: new tag
 	// RMB without modifier: store click point temporarily, set rotation mode
-
-
-	//check if LEFT button is clicked
-	if (e->button() == Qt::LeftButton) 
+	if (_activeGrid)
 	{
-		/*
-		//check for SHIFT modifier
-		if ( Qt::ShiftModifier == QApplication::keyboardModifiers() )
-		{
-			if ( _activeGrid )    // The Tag is active and can now be modified
-			{
-				//if clicked on one of the set points, the point is activated
-				if (selectPoint(cv::Point(e->x(), e->y())))
-				{
-					emit update();
-				}
-				if (_currentState == State::SetP1)
-				{
-					_setOnlyOrient = true;
-				}
-			}
-		}*/
-		
-		/*
-		//check for CTRL modifier
-		else 
-			if ( Qt::ControlModifier == QApplication::keyboardModifiers() )
-			{
-				if (_currentState == State::Ready) 
-				{
-					_activeGrid.reset();
-					// a new tag is generated
-					setTag(cv::Point(e->x(), e->y()));
-				}
-			}
-			else */
-			{
-				// The Tag is active and can now be modified
-				if (_activeGrid) 
-				{
-					size_t id = _activeGrid->getKeyPointIndex(p);
-					const bool indeterminate =
-						QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-						QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+		size_t id = _activeGrid->getKeyPointIndex(p);
+		const bool indeterminate =
+			QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+			QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
 
-					if ((id >= 0) && (id < 12)) // ToDo: use constants
-					{
-						// change state, so consequent mouse moves do not move the tag when toggling bits
-						_currentState = State::SetBit;
-
-						_activeGrid->toggleIdBit(id, indeterminate);
-						emit update();
-					}	
-					else 
-						if (id == 13) // P1, ToDo: use constants
-						{
-							_currentState = State::SetP1;
-							_orient.clear();
-							_orient.push_back(p);
-						}
-				} 
-				/*
-				else 
-				{
-					selectTag(cv::Point(e->x(), e->y()));
-				}*/
-			}
-	}
-	//check if RIGHT button is clicked
-	if (e->button() == Qt::RightButton) 
-	{
-		//check for CTRL modifier
-		if (Qt::ControlModifier == QApplication::keyboardModifiers()) 
+		if ((id >= 0) && (id < 12)) // ToDo: use constants
 		{
-			removeCurrentActiveTag();
-			emit update();
+			// change state, so consequent mouse moves do not move the tag when toggling bits
+			_currentState = State::SetBit;
+
+			_activeGrid->toggleIdBit(id, indeterminate);
+		}
+		else
+			switch (id)
+			{
+				case 12:
+				{
+					_currentState = State::SetP0;
+					break; 
+				}
+				case 13: // P1, ToDo: use constants
+				{
+					_currentState = State::SetP1;			
+					break;
+				}
+				default:
+				{
+					
+				}
+			}
+
+		if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+			!QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))
+		{
+			// vector orthogonal to rotation axis 
+			_tempPoint = p - _activeGrid->getCenter();
+
+			// distance to center
+			double d = CvHelper::vecLength(_tempPoint);
+			
+			// 90 degrees rotation. this is the rotation axis, normalized to length 1
+			_rotationAxis.x = -_tempPoint.y / d;
+			_rotationAxis.y = _tempPoint.x / d;
+
+			// set "rotation in space"-state
+			_currentState = State::SetP2;
 		}
 	}
+
+	emit update();
+
+	////check if LEFT button is clicked
+	//if (e->button() == Qt::LeftButton) 
+	//{
+	//	/*
+	//	//check for SHIFT modifier
+	//	if ( Qt::ShiftModifier == QApplication::keyboardModifiers() )
+	//	{
+	//		if ( _activeGrid )    // The Tag is active and can now be modified
+	//		{
+	//			//if clicked on one of the set points, the point is activated
+	//			if (selectPoint(cv::Point(e->x(), e->y())))
+	//			{
+	//				emit update();
+	//			}
+	//			if (_currentState == State::SetP1)
+	//			{
+	//				_setOnlyOrient = true;
+	//			}
+	//		}
+	//	}*/
+	//	
+	//	/*
+	//	//check for CTRL modifier
+	//	else 
+	//		if ( Qt::ControlModifier == QApplication::keyboardModifiers() )
+	//		{
+	//			if (_currentState == State::Ready) 
+	//			{
+	//				_activeGrid.reset();
+	//				// a new tag is generated
+	//				setTag(cv::Point(e->x(), e->y()));
+	//			}
+	//		}
+	//		else */
+	//		{
+	//			// The Tag is active and can now be modified
+	//			
+	//			/*
+	//			else 
+	//			{
+	//				selectTag(cv::Point(e->x(), e->y()));
+	//			}*/
+	//		}
+	//}
+	////check if RIGHT button is clicked
+	//if (e->button() == Qt::RightButton) 
+	//{
+	//	//check for CTRL modifier
+	//	if (Qt::ControlModifier == QApplication::keyboardModifiers()) 
+	//	{
+	//		removeCurrentActiveTag();
+	//		emit update();
+	//	}
+	//}
 }
 
 //check if pointer MOVES
@@ -176,16 +206,32 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 			// _orient[1] = cv::Point(e->x(), e->y());
 			break;
 		case State::SetP0:
+		{
 			_activeGrid->setCenter(p);
 			break;
+		}
 		case State::SetP1:
 		{
 			_activeGrid->zRotateTowardsPointInPlane(p);
 			break;
 		}		
 		case State::SetP2:
-			// setTheta(cv::Point(e->x(), e->y()));
+		{
+			// vector orthogonal to rotation axis 
+			cv::Point2f temp = p - _activeGrid->getCenter();
+
+			// distance to center
+			double d0 = CvHelper::vecLength(_tempPoint);
+			double d1 = CvHelper::vecLength(temp);
+						
+			// weight of rotation
+			float w = _tempPoint.dot(temp) / d0;
+			float q = 0.1 * (d0 - w);
+			
+			_activeGrid->xyRotateIntoPlane(q * _rotationAxis.y, q * _rotationAxis.x);
+						
 			break;
+		}
 		default:
 			return;
 		}

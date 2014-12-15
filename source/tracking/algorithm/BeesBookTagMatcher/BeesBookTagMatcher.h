@@ -37,6 +37,9 @@ private:
 	State _currentState;
 	bool _setOnlyOrient; // to modify exclusively the tag orientation.
 
+	cv::Point2f				_rotationAxis;
+	cv::Point2f				_tempPoint;
+
 	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;

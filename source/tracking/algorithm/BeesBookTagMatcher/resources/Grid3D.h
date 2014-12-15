@@ -109,8 +109,10 @@ public:
 	void	setZRotation(double angle);
 	double	getZRotation() const { return _angle_z; }
 	void	zRotateTowardsPointInPlane(cv::Point p);
+	void	xyRotateIntoPlane(float angle_y, float angle_x);
 
 	void	setCenter(cv::Point c);
+	cv::Point getCenter() const { return _center; }
 
 	int		getKeyPointIndex(cv::Point p);
 
