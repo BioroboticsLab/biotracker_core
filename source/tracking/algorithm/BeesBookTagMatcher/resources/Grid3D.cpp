@@ -241,7 +241,7 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 		cv::Scalar color = tribool2Color(_ID[i]);
 		cv::circle(img, _interactionPoints[i] + center, 1, color);
 	}
-	cv::circle(img, _interactionPoints.back() + _center, 1, red);
+	cv::circle(img, _interactionPoints.back() + _center, 1, cv::Scalar(0, 255, 0));
 
 }
 
@@ -265,7 +265,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 
 	this->draw(subimage_copy, subimage_center, 0);
 
-	cv::addWeighted(subimage, alpha, subimage_copy, 1.0 - alpha, 0.0, subimage);
+	cv::addWeighted(subimage_copy, alpha, subimage, 1.0 - alpha, 0.0, subimage);
 }
 
 void Grid3D::setXRotation(double angle)
