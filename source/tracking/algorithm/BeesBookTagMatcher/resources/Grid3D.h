@@ -15,7 +15,7 @@ class Grid3D : public ObjectModel
 {
 public:
 	// number of cells around the center semicircles
-	static const size_t NUM_MIDDLE_CELLS = 12; 
+	static const size_t NUM_MIDDLE_CELLS = 12;
 
 	// indices in polygon vector
 	static const size_t INDEX_OUTER_WHITE_RING       = 0; 
@@ -33,7 +33,7 @@ public:
 	static_assert(POINTS_PER_LINE % 2 != 0, "POINTS_PER_LINE must be odd");
 	static const size_t POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL;
 
-	static_assert(POINTS_PER_RING % 4 == 0 , "");
+	static_assert(POINTS_PER_RING % 4 == 0 , "POINTS_PER_RING = NUM_MIDDLE_CELLS * POINTS_PER_MIDDLE_CELL must be a multiple of 4");
 
 	static const double INNER_RING_RADIUS;
 	static const double MIDDLE_RING_RADIUS;
