@@ -129,13 +129,13 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
 	{
 		// rotate point (aka vector)
-		const cv::Point3d	p = rotationMatrix * _coordinates3D._inner_line[i];
-		const cv::Point		p2(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
+		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
+		const cv::Point   p2(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
 
 		result._inner_line[i] = p2;
 
 		// if center point reached: save point to interaction-points-list
-		if (i == (size_t)POINTS_PER_LINE / 2)
+		if (i == POINTS_PER_LINE / 2)
 		{
 			_interactionPoints.push_back( p2 );
 		}
@@ -149,8 +149,11 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 
 /**
- * updates the 2D contour vector coordinates2D
- */
+* performs all computations required to draw the tag 
+*
+* has to be called whenever a parameter of the grid is changed (except _center)
+* i.e. in the constructor and in most of the setters (except setCenter ...)
+*/
 void Grid3D::prepare_visualization_data()
 {
 	// apply rotations and scaling (the basic parameters)
@@ -171,8 +174,8 @@ void Grid3D::prepare_visualization_data()
 		auto &vec = _coordinates2D[INDEX_INNER_WHITE_SEMICIRCLE];
 		vec.clear();
 
-		const size_t index_270_deg_begin	= POINTS_PER_RING * 3 / 4;
-		const size_t index_90_deg_end		= POINTS_PER_RING * 1 / 4 + 1;
+		const size_t index_270_deg_begin = POINTS_PER_RING * 3 / 4;
+		const size_t index_90_deg_end    = POINTS_PER_RING * 1 / 4 + 1;
 
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin() + index_270_deg_begin, points_2d._inner_ring.cend());
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin(), points_2d._inner_ring.cbegin() + index_90_deg_end);
@@ -208,33 +211,59 @@ void Grid3D::prepare_visualization_data()
 		}
 	}
 
+
+
 }
 
 
-void Grid3D::draw(cv::Mat &img, int) const
-{
+/**
+ * draws the tag at position center in image dst
+ *
+ * @param img dst
+ * @param center center of the tag
+ */
+void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
+
 	const cv::Scalar white(255, 255, 255);
 	const cv::Scalar black(0, 0, 0);
 	const cv::Scalar red(0, 0, 255);
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
-		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, _center);
+		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			white, false, _center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,	white, false, _center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,	black, false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       white, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
 
-	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
+	for (size_t i = 0; i < _interactionPoints.size(); ++i)
 	{
-		cv::Scalar color = tribool2Color(_ID[i]);
-
-		cv::circle(img, _interactionPoints[i] + _center, 1, color);
+		cv::circle(img, _interactionPoints[i] + center, 1, white);
 	}
-	
-	cv::circle(img, _interactionPoints.back() + _center, 1, red);
-	
 
+}
+
+
+
+
+void Grid3D::draw(cv::Mat &img, int) const
+{
+	/**
+	 * blending factor: img * alpha + tag_pixel * (1 - alpha)
+	 */
+	const double alpha = 0.7;
+
+	const int       radius = static_cast<int>(std::ceil(_radius));
+	const cv::Size  subimage_size(2 * radius, 2 * radius);
+	const cv::Point subimage_center(radius, radius);
+	const cv::Point subimage_origin = _center - subimage_center;
+
+	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
+	cv::Mat subimage_copy = subimage.clone();
+
+	this->draw(subimage_copy, subimage_center, 0);
+
+	cv::addWeighted(subimage, alpha, subimage_copy, 1.0 - alpha, 0.0, subimage);
 }
 
 void Grid3D::setXRotation(double angle)
