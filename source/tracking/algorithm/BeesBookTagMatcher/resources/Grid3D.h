@@ -82,6 +82,8 @@ public:
 	void	toggleIdBit(size_t cell_id, bool indeterminate);
 	cv::Scalar tribool2Color(const boost::logic::tribool &tribool) const;
 
+	void	toggleTransparency();
+
 private:
 
 	/******************************************
@@ -145,6 +147,7 @@ private:
 	std::vector<std::vector<cv::Point>>   _coordinates2D;      // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
 	std::vector<cv::Point>                _interactionPoints;  // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
 	static const coordinates3D_t          _coordinates3D;      // underlying 3D coordinates of grid mesh
+	float                                 _transparency;       // weight in drawing mixture 
 
 };
 
