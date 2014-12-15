@@ -73,6 +73,7 @@ private:
 	static coordinates3D_t generate_3D_base_coordinates();
 
 	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D() const;
+	void prepare_visualization_data();
 
 
 
@@ -98,11 +99,6 @@ private:
 public:
 		explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
 		virtual ~Grid3D() override;
-
-	// updates the 2D contour vector coordinates2D
-	void perspective_Projection();
-
-	void prepare_visualization_data();
 
 	// draws 2D projection of 3D-mesh on image
 	void draw(cv::Mat &img, int active) const;
