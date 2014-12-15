@@ -9,7 +9,7 @@ const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_3D_base_
 const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
-const double Grid3D::BULGE_FACTOR       = 0.7;
+const double Grid3D::BULGE_FACTOR       = 0.4;
 
 Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
 	: _center(center)
@@ -18,6 +18,7 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y
 	, _angle_y(angle_y)
 	, _angle_x(angle_x)
 	, _coordinates2D(NUM_CELLS)
+	, _transparency(0.5)
 {
 	prepare_visualization_data();
 }
@@ -250,11 +251,6 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 
 void Grid3D::draw(cv::Mat &img, int) const
 {
-	/**
-	 * blending factor: img * alpha + tag_pixel * (1 - alpha)
-	 */
-	const double alpha = 0.5;
-
 	const int       radius = static_cast<int>(std::ceil(_radius));
 	const cv::Size  subimage_size(2 * radius, 2 * radius);
 	const cv::Point subimage_center(radius, radius);
@@ -265,7 +261,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 
 	this->draw(subimage_copy, subimage_center, 0);
 
-	cv::addWeighted(subimage_copy, alpha, subimage, 1.0 - alpha, 0.0, subimage);
+	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
 }
 
 void Grid3D::setXRotation(double angle)
@@ -343,4 +339,9 @@ void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
 	_angle_x = angle_x;
 	_angle_y = angle_y;
 	prepare_visualization_data();
+}
+
+void Grid3D::toggleTransparency()
+{
+	_transparency = abs(_transparency - 0.6);
 }

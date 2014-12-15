@@ -27,7 +27,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
 	// TESTCODE START
-	, _testGrid3d(cv::Point2i(500,500), 53.0 , 0.0, 0.0, 0.0)
+	, _testGrid3d(cv::Point2i(500,500), 51.0 , 0.0, 0.0, 0.0)
 	// TESTCODE END
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
@@ -118,7 +118,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 				}
 			}
 
-		if (ctrl && !shift)
+		if (e->button() == Qt::RightButton)
 		{
 			// vector orthogonal to rotation axis 
 			_tempPoint = p - _activeGrid->getCenter();
@@ -229,7 +229,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 			_rotationAxis.y = -sin(a) * x + cos(a) * y;		
 						
 			// weight of rotation
-			float w = 0.05*( d1 - d0 );
+			float w = 0.05*(d0 - d1);
 			
 			_activeGrid->xyRotateIntoPlane(w * _rotationAxis.y, w * _rotationAxis.x);
 						
@@ -299,64 +299,84 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 
 void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 {
-	if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Minus) {
-		if (_activeGrid) {
+	if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Minus) 
+	{
+		if (_activeGrid) 
+		{
 			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
 			//scale variable is updated by 0.05
 			/*_activeGrid->scale = _activeGrid->scale + direction * 0.05;
 			_activeGrid->updateAxes();*/
 			emit update();
 		}
-	} else if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) {
-		_idCopyBuffer.clear();
-		for (const TrackedObject& object : _trackedObjects) {
-			// store ids of all grids on current frame in copy buffer
-			if (object.count(_currentFrameNumber)) {
-				_idCopyBuffer.insert(object.getId());
-			}
-		}
-		_copyFromFrame = _currentFrameNumber;
-	} else if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) {
-		for (TrackedObject& object : _trackedObjects) {
-			// check if id of object is in copy buffer
-			if (_idCopyBuffer.count(object.getId())) {
-				// check if grid from copy-from framenumber still exists
-				const auto maybeGrid = object.maybeGet<Grid>(_copyFromFrame.get());
-				// and create a copy if a grid with the same id does not
-				// already exist on the current frame
-				if (maybeGrid && !object.maybeGet<Grid>(_currentFrameNumber)) {
-					object.add(_currentFrameNumber, std::make_shared<Grid>(*maybeGrid));
+	} 
+	else 
+		if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) 
+		{
+			_idCopyBuffer.clear();
+		
+			for (const TrackedObject& object : _trackedObjects) 
+			{
+				// store ids of all grids on current frame in copy buffer
+				if (object.count(_currentFrameNumber)) 
+				{
+					_idCopyBuffer.insert(object.getId());
 				}
 			}
+			_copyFromFrame = _currentFrameNumber;
 		}
-		emit update();
-		setNumTags();
-	}
-	else {
-		switch (e->key())
-		{
-		case Qt::Key_H:
-			_activeGrid->setYRotation(_activeGrid->getYRotation() + 0.05);
-			break;
-		case Qt::Key_G:
-			_activeGrid->setYRotation(_activeGrid->getYRotation() - 0.05);
-			break;
-		case Qt::Key_W:
-			_activeGrid->setXRotation(_activeGrid->getXRotation() - 0.05);
-			break;
-		case Qt::Key_S:
-			_activeGrid->setXRotation(_activeGrid->getXRotation() + 0.05);
-			break;
-		case Qt::Key_A:
-			_activeGrid->setZRotation(_activeGrid->getZRotation() - 0.05);
-			break;
-		case Qt::Key_D:
-			_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
-			break;
-		default:
-			return;
-		}
-		emit update();
+		else 
+			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) 
+			{
+				for (TrackedObject& object : _trackedObjects) 
+				{
+					// check if id of object is in copy buffer
+					if (_idCopyBuffer.count(object.getId())) 
+					{
+						// check if grid from copy-from framenumber still exists
+						const auto maybeGrid = object.maybeGet<Grid>(_copyFromFrame.get());
+						// and create a copy if a grid with the same id does not
+						// already exist on the current frame
+						if (maybeGrid && !object.maybeGet<Grid>(_currentFrameNumber)) 
+						{
+							object.add(_currentFrameNumber, std::make_shared<Grid>(*maybeGrid));
+						}
+					}
+				}
+
+				emit update();
+
+				setNumTags();
+			}
+			else 
+			{
+				switch (e->key())
+				{
+				case Qt::Key_H:
+					_activeGrid->setYRotation(_activeGrid->getYRotation() + 0.05);
+					break;
+				case Qt::Key_G:
+					_activeGrid->setYRotation(_activeGrid->getYRotation() - 0.05);
+					break;
+				case Qt::Key_W:
+					_activeGrid->setXRotation(_activeGrid->getXRotation() - 0.05);
+					break;
+				case Qt::Key_S:
+					_activeGrid->setXRotation(_activeGrid->getXRotation() + 0.05);
+					break;
+				case Qt::Key_A:
+					_activeGrid->setZRotation(_activeGrid->getZRotation() - 0.05);
+					break;
+				case Qt::Key_D:
+					_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
+					break;
+				case Qt::Key::Key_CapsLock:
+					_activeGrid->toggleTransparency();
+					break;
+				default:
+					return;
+				}
+			emit update();
 	}
 }
 
@@ -608,7 +628,7 @@ const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 	                                      Qt::Key_C, Qt::Key_V,
 										  Qt::Key_W, Qt::Key_A,
 										  Qt::Key_S, Qt::Key_D,
-										  Qt::Key_G, Qt::Key_H };
+										  Qt::Key_G, Qt::Key_H, Qt::Key_CapsLock };
 	return keys;
 }
 
