@@ -71,7 +71,14 @@ public:
 	void   setZRotation(double angle);
 	double getZRotation() const { return _angle_z; }
 
+	void   zRotateTowardsPointInPlane(cv::Point p);
+
 	void   setCenter(cv::Point c);
+
+	int    getKeyPointIndex(cv::Point p);
+
+	void   toggleIdBit(size_t cell_id, bool indeterminate);
+	cv::Scalar tribool2Color(const boost::logic::tribool &tribool) const;
 
 private:
 
@@ -103,6 +110,7 @@ private:
 
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
+
 
 	/******************************************
 	 *                                        *
