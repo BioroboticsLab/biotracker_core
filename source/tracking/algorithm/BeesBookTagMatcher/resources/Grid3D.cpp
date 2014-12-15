@@ -17,6 +17,7 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y
 	, _angle_z(angle_z)
 	, _angle_y(angle_y)
 	, _angle_x(angle_x)
+	, _coordinates2D(NUM_CELLS)
 {
 	prepare_visualization_data();
 }
@@ -114,7 +115,7 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			// rotate and scale point (aka vector)
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
-			result._rings[r][i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius)) + _center;
+			result._rings[r][i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
 		}
 	}
 
@@ -124,7 +125,7 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 		// rotate and scale point (aka vector)
 		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
 
-		result._inner_line[i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius)) + _center;
+		result._inner_line[i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
 	}
 
 	return result;
@@ -138,20 +139,14 @@ void Grid3D::prepare_visualization_data()
 {
 	const auto points_2d = generate_3D_coordinates_from_parameters_and_project_to_2D();
 
-	_coordinates2D.resize(NUM_CELLS);
-
 	// outer ring
 	{
 		auto &vec = _coordinates2D[INDEX_OUTER_WHITE_RING];
 
 		vec.clear();
-		vec.reserve( POINTS_PER_RING );
-		/*vec.reserve(2 * (POINTS_PER_RING + 1));*/
 
 		vec.insert(vec.end(), points_2d._outer_ring.cbegin(), points_2d._outer_ring.cend());
-	/*	vec.push_back(points_2d._outer_ring[0]);
-		vec.push_back(points_2d._middle_ring[0]);
-		vec.insert(vec.end(), points_2d._middle_ring.crbegin(), points_2d._middle_ring.crend());*/
+		vec.push_back(points_2d._outer_ring[0]); // add first point to close circle
 	}
 
 
@@ -160,17 +155,12 @@ void Grid3D::prepare_visualization_data()
 		auto &vec = _coordinates2D[INDEX_INNER_WHITE_SEMICIRCLE];
 
 		vec.clear();
-		/*vec.reserve(POINTS_PER_RING / 2 + 1 + POINTS_PER_LINE);*/
-		vec.reserve(POINTS_PER_RING);
 
 		const size_t index_270_deg_begin = POINTS_PER_RING * 3 / 4;
 		const size_t index_90_deg_end  = POINTS_PER_RING * 1 / 4 + 1;
 
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin() + index_270_deg_begin, points_2d._inner_ring.cend());
 		vec.insert(vec.end(), points_2d._inner_ring.cbegin(), points_2d._inner_ring.cbegin() + index_90_deg_end);
-		/*vec.insert(vec.end(), points_2d._inner_line.cbegin(), points_2d._inner_line.cend());*/
-
-		// ToDO: the center line is still being drawn: because it's in the vector or because the params are wrong in the drawing function?
 	}
 
 	// black semicircle plus curved center line
@@ -178,7 +168,6 @@ void Grid3D::prepare_visualization_data()
 		auto &vec = _coordinates2D[INDEX_INNER_BLACK_SEMICIRCLE];
 
 		vec.clear();
-		vec.reserve(POINTS_PER_RING / 2 + 1 + POINTS_PER_LINE);
 
 		const size_t index_90_deg_begin = POINTS_PER_RING * 1 / 4;
 		const size_t index_270_deg_end  = POINTS_PER_RING * 3 / 4 + 1;
@@ -187,26 +176,22 @@ void Grid3D::prepare_visualization_data()
 		vec.insert(vec.end(), points_2d._inner_line.crbegin(), points_2d._inner_line.crend());
 	}
 
+	// cells
 	{
 		for (size_t i = 0; i < NUM_MIDDLE_CELLS; ++i)
 		{
 			auto &vec = _coordinates2D[INDEX_MIDDLE_CELLS_BEGIN + i];
 
 			vec.clear();
-			vec.reserve(2 * (POINTS_PER_MIDDLE_CELL + 1));
 
-			const size_t index_begin	= POINTS_PER_MIDDLE_CELL * i;
-			const size_t index_end		= POINTS_PER_MIDDLE_CELL * (i + 1);
-			const size_t index_rbegin	= POINTS_PER_RING - index_end;
-			const size_t index_rend		= POINTS_PER_RING - index_begin;
-			const size_t index_end_elem	= index_end < POINTS_PER_RING ? index_end : 0;
+			const size_t index_begin    = POINTS_PER_MIDDLE_CELL * i;
+			const size_t index_end      = POINTS_PER_MIDDLE_CELL * (i + 1);
+			const size_t index_end_elem = index_end < POINTS_PER_RING ? index_end : 0;
 
 			vec.insert(vec.end(), points_2d._middle_ring.cbegin() + index_begin, points_2d._middle_ring.cbegin() + index_end);
-			
+
 			vec.push_back(points_2d._middle_ring[index_end_elem]);
 			vec.push_back(points_2d._inner_ring[index_end_elem]);
-
-			//vec.insert(vec.end(), points_2d._inner_ring.rbegin() + index_rbegin, points_2d._inner_ring.rbegin() + index_rend);*/
 		}
 	}
 
@@ -215,17 +200,14 @@ void Grid3D::prepare_visualization_data()
 
 void Grid3D::draw(cv::Mat &img, int) const
 {
-
-
 	const cv::Scalar color(255, 255, 255);
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
-		CvHelper::drawPolyline(img, _coordinates2D, i, color, false);
+		CvHelper::drawPolyline(img, _coordinates2D, i, color, false, _center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       cv::Scalar(255, 255, 255), true);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255), false);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(  0,   0,   0), false);
-
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       cv::Scalar(255, 255, 255), false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255), false, _center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(  0,   0,   0), false, _center);
 }
 
 void Grid3D::setXRotation(double angle)
@@ -251,29 +233,3 @@ void Grid3D::setCenter(cv::Point c)
 {
 	_center = c;
 }
-
-cv::Point2i Grid3D::center()
-{
-	return _center;
-}
-
-//
-//double Grid3D::radius()
-//{
-//	return _radius;
-//}
-//
-//
-//double Grid3D::angle_z()
-//{
-//	return _angle_z;
-//}
-//
-//double Grid3D::angle_y()
-//{
-//	return _angle_y;
-//}
-//double Grid3D::angle_x()
-//{
-//	return _angle_x;
-//}

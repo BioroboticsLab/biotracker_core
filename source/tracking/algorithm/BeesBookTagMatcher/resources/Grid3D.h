@@ -100,25 +100,21 @@ public:
 		explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
 		virtual ~Grid3D() override;
 
-	// draws 2D projection of 3D-mesh on image
+	/**
+	 * draws 2D projection of 3D-mesh on image
+	 */
 	void draw(cv::Mat &img, int active) const;
 
-	void setXRotation(double angle);
+	void   setXRotation(double angle);
 	double getXRotation() const { return _angle_x; }
 
-	void setYRotation(double angle);
+	void   setYRotation(double angle);
 	double getYRotation() const { return _angle_y; }
 
-	void setZRotation(double angle);
+	void   setZRotation(double angle);
 	double getZRotation() const { return _angle_z; }
 
 	void setCenter(cv::Point c);
-	cv::Point2i                 center();  // center point of the grid (within image borders - unit: px)
-	//double                      radius();  // radius of the tag (unit: px)
-	//double                      angle_z(); // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	//double                      angle_y(); // the rotation angle of the grid around y axis (rotates into z - space)
-	//double                      angle_x();
-
 };
 
 #endif
