@@ -142,10 +142,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 	}
 
-	// compute interaction features
-	// grid center 
-	// center of grid cells
-	// head point, aka P1
+	_interactionPoints.push_back(result._outer_ring[0]);
+
 	return result;
 }
 
@@ -217,6 +215,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 {
 	const cv::Scalar white(255, 255, 255);
 	const cv::Scalar black(0, 0, 0);
+	const cv::Scalar red(0, 0, 255);
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
@@ -226,12 +225,15 @@ void Grid3D::draw(cv::Mat &img, int) const
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE,	white, false, _center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,	black, false, _center);
 
-	for (size_t i = 0; i < _interactionPoints.size(); ++i)
+	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
 	{
 		cv::Scalar color = tribool2Color(_ID[i]);
 
 		cv::circle(img, _interactionPoints[i] + _center, 1, color);
 	}
+	
+	cv::circle(img, _interactionPoints.back() + _center, 1, red);
+	
 
 }
 
@@ -296,4 +298,11 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 	}
 
 	return cv::Scalar(value, value, value);
+}
+
+void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
+{
+	cv::Point d = (p - _center);
+	_angle_z = atan2(d.y, d.x);
+	prepare_visualization_data();
 }
