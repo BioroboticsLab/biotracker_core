@@ -225,15 +225,17 @@ void Grid3D::prepare_visualization_data()
  */
 void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 
-	const cv::Scalar white(255, 255, 255);
-	const cv::Scalar black(0, 0, 0);
-	const cv::Scalar red(0, 0, 255);
+	 const cv::Scalar white(255, 255, 255);
+	 const cv::Scalar black(0, 0, 0);
+	 const cv::Scalar red(0, 0, 255);
+	 const cv::Scalar yellow(0, 255, 255);
+
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       white, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			yellow, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
 
@@ -242,7 +244,7 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 		cv::Scalar color = tribool2Color(_ID[i]);
 		cv::circle(img, _interactionPoints[i] + center, 1, color);
 	}
-	cv::circle(img, _interactionPoints.back() + _center, 1, cv::Scalar(0, 255, 0));
+	cv::circle(img, _interactionPoints.back() + center, 1, red);
 
 }
 
@@ -258,10 +260,16 @@ void Grid3D::draw(cv::Mat &img, int) const
 
 	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
 	cv::Mat subimage_copy = subimage.clone();
+	
+	cv::Mat test(subimage_size, CV_8UC3);
+	
+	cv::Mat roi = img(cv::Rect(subimage_origin.x, subimage_origin.y, 2 * radius, 2 * radius));
+	cv::Mat mask;
+	roi.copyTo(mask);
 
-	this->draw(subimage_copy, subimage_center, 0);
+	this->draw(mask, subimage_center, 0);
 
-	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+	cv::addWeighted(mask, _transparency, roi, 1.0 - _transparency, 0.0, roi);
 }
 
 void Grid3D::setXRotation(double angle)
