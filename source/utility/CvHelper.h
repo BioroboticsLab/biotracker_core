@@ -133,7 +133,7 @@ namespace CvHelper
 		);
 	}
 
-	void drawContoursOpen(cv::Mat img, std::vector<std::vector<cv::Point>> contour, size_t index_countour, cv::Scalar color)
+	void drawContoursOpen(cv::Mat & img, std::vector<std::vector<cv::Point>> const & contour, size_t index_countour, cv::Scalar const & color)
 	{
 		for (size_t i = 1; i < contour[index_countour].size(); i++)
 			cv::line(img, contour[index_countour][i], contour[index_countour][i - 1], color);
