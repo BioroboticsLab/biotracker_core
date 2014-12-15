@@ -78,7 +78,9 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 {
 	// position of mouse cursor 
 	cv::Point p(e->x(), e->y());
-
+	bool ctrl	= QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+	bool shift	= QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+	
 	// left mouse button down:
 	// select tag among all visible tags
 	// if there is a selected tag: select keypoint
@@ -87,10 +89,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	// RMB without modifier: store click point temporarily, set rotation mode
 	if (_activeGrid)
 	{
-					int id = _activeGrid->getKeyPointIndex(p);
-		const bool indeterminate =
-			QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-			QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+		int id = _activeGrid->getKeyPointIndex(p);
+		const bool indeterminate = ctrl && shift;
 
 		if ((id >= 0) && (id < 12)) // ToDo: use constants
 		{
@@ -118,18 +118,10 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 				}
 			}
 
-		if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-			!QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))
+		if (ctrl && !shift)
 		{
 			// vector orthogonal to rotation axis 
 			_tempPoint = p - _activeGrid->getCenter();
-
-			// distance to center
-			double d = CvHelper::vecLength(_tempPoint);
-			
-			// 90 degrees rotation. this is the rotation axis, normalized to length 1
-			_rotationAxis.x = -_tempPoint.y / d;
-			_rotationAxis.y = _tempPoint.x / d;
 
 			// set "rotation in space"-state
 			_currentState = State::SetP2;
@@ -217,18 +209,29 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 		}		
 		case State::SetP2:
 		{
+
 			// vector orthogonal to rotation axis 
 			cv::Point2f temp = p - _activeGrid->getCenter();
 
 			// distance to center
-			double d0 = CvHelper::vecLength(_tempPoint);
-			double d1 = CvHelper::vecLength(temp);
+			float d0 = CvHelper::vecLength(_tempPoint);
+			float d1 = CvHelper::vecLength(temp);
+
+			// the rotation axis in image reference frame (unit vector)
+			float x = -temp.y / d1;
+			float y =  temp.x / d1;
+
+			// z - angle of grid
+			double a = _activeGrid->getZRotation();
+
+			// the rotation axis in grid reference frame (ToDo: rotate in space?)
+			_rotationAxis.x = cos(a) * x + sin(a) * y;
+			_rotationAxis.y = -sin(a) * x + cos(a) * y;		
 						
 			// weight of rotation
-			float w = _tempPoint.dot(temp) / d0;
-			float q = 0.1 * (d0 - w);
+			float w = 0.05*( d1 - d0 );
 			
-			_activeGrid->xyRotateIntoPlane(q * _rotationAxis.y, q * _rotationAxis.x);
+			_activeGrid->xyRotateIntoPlane(w * _rotationAxis.y, w * _rotationAxis.x);
 						
 			break;
 		}
