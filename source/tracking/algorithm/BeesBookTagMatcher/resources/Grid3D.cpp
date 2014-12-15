@@ -23,11 +23,10 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y
 
 Grid3D::~Grid3D() = default;
 
-/** precompute set of 3D points which will be transformed according to grid parameters
-* @return 
-*
-*/
 
+/**
+ * precompute set of 3D points which will be transformed according to grid parameters
+ */
 Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 
 	typedef coordinates3D_t::value_type value_type;
@@ -58,9 +57,9 @@ Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
 	{
 		// distance of the point to center (sign is irrelevant in next line, so save the "abs()")
-		double y = (radiusInPoints - i) / radiusInPoints * INNER_RING_RADIUS;
+		const double y = (radiusInPoints - i) / radiusInPoints * INNER_RING_RADIUS;
 		// the farther away, the deeper (away from the camera)
-		double z = - std::cos(BULGE_FACTOR * y);
+		const double z = - std::cos(BULGE_FACTOR * y);
 		// save new coordinate
 		result._inner_line[i] = cv::Point3d(0, y, z);
 	}
@@ -68,11 +67,11 @@ Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 	// generate z coordinates for the three rings
 	{
 		// all points on each ring have the same radius, thus should have the same z-value
-		const value_type z_inner_ring	= - std::cos(BULGE_FACTOR * INNER_RING_RADIUS);
-		const value_type z_middle_ring	= - std::cos(BULGE_FACTOR * MIDDLE_RING_RADIUS);
-		const value_type z_outer_ring	= - std::cos(BULGE_FACTOR * OUTER_RING_RADIUS);
-		
-		// @Tobi: macht blödsinn, deswegen aus der Mittelwertberechnung entfernt
+		const value_type z_inner_ring  = - std::cos(BULGE_FACTOR * INNER_RING_RADIUS);
+		const value_type z_middle_ring = - std::cos(BULGE_FACTOR * MIDDLE_RING_RADIUS);
+		const value_type z_outer_ring  = - std::cos(BULGE_FACTOR * OUTER_RING_RADIUS);
+
+		// @Tobi: macht blï¿½dsinn, deswegen aus der Mittelwertberechnung entfernt
 		//const double z_line_mean		= std::accumulate(result._inner_line.begin(), result._inner_line.end(), 0,
 		//	[](double res, cv::Point3d val) { return res += val.z; }) / static_cast<double>(POINTS_PER_LINE); 
 
@@ -98,7 +97,6 @@ Grid3D::coordinates3D_t Grid3D::generate_3D_base_coordinates() {
 
 /**
  * rotates and scales the base mesh according to given parameter set
- * @return
  */
 Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_project_to_2D() const 
 {
@@ -218,23 +216,16 @@ void Grid3D::prepare_visualization_data()
 void Grid3D::draw(cv::Mat &img, int) const
 {
 
-	size_t i = INDEX_MIDDLE_CELLS_BEGIN;
+
 	const cv::Scalar color(255, 255, 255);
-	for (; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
+	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
-		CvHelper::drawContoursOpen(img, _coordinates2D, i, color);
+		CvHelper::drawPolyline(img, _coordinates2D, i, color, false);
 	}
-	CvHelper::drawContoursOpen(img, _coordinates2D, INDEX_OUTER_WHITE_RING, cv::Scalar(255, 255, 255));
-	CvHelper::drawContoursOpen(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255));
-	CvHelper::drawContoursOpen(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(0, 0, 0));
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       cv::Scalar(255, 255, 255), true);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, cv::Scalar(255, 255, 255), false);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, cv::Scalar(  0,   0,   0), false);
 
-
-	
-
-	/*for(; i < INDEX_MIDDLE_CELLS_END; ++i) {
-		const cv::Scalar bgr(i & 1 ? 255 : 0,   i & 1 ? 255 : 0,   i & 1 ? 255 : 0);
-		cv::drawContours(img, _coordinates2D, i, bgr);
-	}*/
 }
 
 void Grid3D::setXRotation(double angle)
