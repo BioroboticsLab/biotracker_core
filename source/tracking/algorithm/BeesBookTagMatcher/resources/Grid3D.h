@@ -108,6 +108,7 @@ public:
 
 	void	setZRotation(double angle);
 	double	getZRotation() const { return _angle_z; }
+	void	zRotateTowardsPointInPlane(cv::Point p);
 
 	void	setCenter(cv::Point c);
 
