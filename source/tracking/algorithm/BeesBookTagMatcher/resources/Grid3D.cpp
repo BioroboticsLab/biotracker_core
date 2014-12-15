@@ -236,10 +236,12 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
 
-	for (size_t i = 0; i < _interactionPoints.size(); ++i)
+	for (size_t i = 0; i < std::min( _interactionPoints.size(), NUM_CELLS); ++i)
 	{
-		cv::circle(img, _interactionPoints[i] + center, 1, white);
+		cv::Scalar color = tribool2Color(_ID[i]);
+		cv::circle(img, _interactionPoints[i] + center, 1, color);
 	}
+	cv::circle(img, _interactionPoints.back() + _center, 1, red);
 
 }
 
@@ -251,7 +253,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 	/**
 	 * blending factor: img * alpha + tag_pixel * (1 - alpha)
 	 */
-	const double alpha = 0.7;
+	const double alpha = 0.5;
 
 	const int       radius = static_cast<int>(std::ceil(_radius));
 	const cv::Size  subimage_size(2 * radius, 2 * radius);
