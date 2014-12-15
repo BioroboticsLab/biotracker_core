@@ -84,7 +84,7 @@ private:
 	double                      _angle_z; // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
 	double                      _angle_y; // the rotation angle of the grid around y axis (rotates into z - space)
 	double                      _angle_x; // the rotation angle of the grid around x axis (rotates into z - space)
-	std::array<boost::tribool, NUM_CELLS>	_ID;				// bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
+	std::array<boost::tribool, NUM_CELLS>	_ID;			// bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
 	std::vector<std::vector<cv::Point>>		_coordinates2D;		// 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
 	std::vector<cv::Point>					_interactionPoints;	// 2D coordinates of interaction points (center of grid, grid cell centers, etc)
 	static const coordinates3D_t			_coordinates3D;		// underlying 3D coordinates of grid mesh
@@ -100,16 +100,21 @@ public:
 	 */
 	void	draw(cv::Mat &img, int active) const;
 
-	void   setXRotation(double angle);
-	double getXRotation() const { return _angle_x; }
+	void	setXRotation(double angle);
+	double	getXRotation() const { return _angle_x; }
 
-	void   setYRotation(double angle);
-	double getYRotation() const { return _angle_y; }
+	void	setYRotation(double angle);
+	double	getYRotation() const { return _angle_y; }
 
-	void   setZRotation(double angle);
-	double getZRotation() const { return _angle_z; }
+	void	setZRotation(double angle);
+	double	getZRotation() const { return _angle_z; }
 
 	void	setCenter(cv::Point c);
+
+	int		getKeyPointIndex(cv::Point p);
+
+	void	toggleIdBit(size_t cell_id, bool indeterminate);
+	cv::Scalar tribool2Color(const boost::logic::tribool &tribool) const;
 };
 
 #endif

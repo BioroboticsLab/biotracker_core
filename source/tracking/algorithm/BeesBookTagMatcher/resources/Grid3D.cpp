@@ -217,6 +217,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 {
 	const cv::Scalar white(255, 255, 255);
 	const cv::Scalar black(0, 0, 0);
+
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, _center);
@@ -226,7 +227,11 @@ void Grid3D::draw(cv::Mat &img, int) const
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE,	black, false, _center);
 
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
-		cv::circle(img, _interactionPoints[i] + _center, 1, white);
+	{
+		cv::Scalar color = tribool2Color(_ID[i]);
+
+		cv::circle(img, _interactionPoints[i] + _center, 1, color);
+	}
 
 }
 
@@ -251,4 +256,44 @@ void Grid3D::setZRotation(double angle)
 void Grid3D::setCenter(cv::Point c)
 {
 	_center = c;
+}
+
+int Grid3D::getKeyPointIndex(cv::Point p)
+{
+	for (size_t i = 0; i < _interactionPoints.size(); ++i)
+	{
+		if (CvHelper::vecLength<cv::Point>(_center + _interactionPoints[i] - p) < (_radius / 10) )
+			return i;
+	}
+	return -1;
+}
+
+void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
+{ 
+	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
+		_ID[cell_id] = true;
+
+	_ID[cell_id] = indeterminate ? boost::logic::indeterminate : !_ID[cell_id]; 
+}
+
+cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
+{
+	int value;
+	switch (tribool.value) {
+	case boost::logic::tribool::value_t::true_value:
+		value = 255;
+		break;
+	case boost::logic::tribool::value_t::indeterminate_value:
+		value = 0.5 * 255;
+		break;
+	case boost::logic::tribool::value_t::false_value:
+		value = 0;
+		break;
+	default:
+		assert(false);
+		value = 0.;
+		break;
+	}
+
+	return cv::Scalar(value, value, value);
 }

@@ -74,6 +74,9 @@ void BeesBookTagMatcher::postLoad()
 
 //check if MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
+
+	cv::Point p(e->x(), e->y());
+
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton) 
 	{
@@ -100,9 +103,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 				if (_currentState == State::Ready) 
 				{
 					_activeGrid.reset();
-					//a new tag is generated
+					// a new tag is generated
 					setTag(cv::Point(e->x(), e->y()));
-					_currentState = State::SetTag;
 				}
 			}
 			else 
@@ -110,21 +112,19 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 				// The Tag is active and can now be modified
 				if (_activeGrid) 
 				{
-					////if clicked in one of the bit cells, its value is changed
-					//const double distance = dist(_activeGrid->center(), cv::Point(e->x(), e->y()));
-					////check for CTRL+SHIFT modifier
-					//const bool indeterminate =
-					//	QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-					//	QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
-					//if ((distance > 2) && (distance < _activeGrid->axesGrid.height))
-					//	_activeGrid->updateID(cv::Point(e->x(), e->y()), indeterminate);
-					//else
-					////if clicked on one of the set points, the point is activated
-					//if (selectPoint(cv::Point(e->x(), e->y())))
-					//	emit update();
-					////otherwise checks if one of the other tags is selected
-					//else
-					//	selectTag(cv::Point(e->x(), e->y()));
+					size_t id = _activeGrid->getKeyPointIndex(p);
+					const bool indeterminate =
+						QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
+						QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+
+					if ((id >= 0) && (id < 12)) // ToDo: use constants
+					{
+						// change state, so consequent mouse moves do not move the tag when toggling bits
+						_currentState = State::SetBit;
+
+						_activeGrid->toggleIdBit(id, indeterminate);
+						emit update();
+					}						
 				} 
 				else 
 				{
@@ -145,12 +145,14 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) {
 }
 
 //check if pointer MOVES
-void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
+void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) 
+{
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
-		switch (_currentState) {
+		switch (_currentState) 
+		{
 		case State::SetTag:
-			_orient[1] = cv::Point(e->x(), e->y());
+			// _orient[1] = cv::Point(e->x(), e->y());
 			break;
 		case State::SetP0:
 			_activeGrid->setCenter(cv::Point(e->x(), e->y()));
@@ -160,7 +162,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
 			else setTheta(cv::Point(e->x(), e->y()));*/
 			break;
 		case State::SetP2:
-			setTheta(cv::Point(e->x(), e->y()));
+			// setTheta(cv::Point(e->x(), e->y()));
 			break;
 		default:
 			return;
@@ -173,6 +175,9 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) {
 //check if MOUSE BUTTON IS RELEASED
 void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) 
 {
+	if (_currentState == State::SetBit)
+		_currentState = State::SetP0;
+
 	//// left button released
 	//if (e->button() == Qt::LeftButton) {
 	//	switch (_currentState) {
