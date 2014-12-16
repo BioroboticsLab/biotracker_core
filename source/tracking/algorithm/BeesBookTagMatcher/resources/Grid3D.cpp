@@ -2,6 +2,13 @@
 
 #include <numeric>
 
+#include <source/tracking/serialization/types.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/array.hpp>
+
+#include <cereal/archives/json.hpp>
+#include <cereal/types/polymorphic.hpp>
+
 #include "utility/CvHelper.h"
 
 const Grid3D::coordinates3D_t Grid3D::_coordinates3D = Grid3D::generate_3D_base_coordinates();
@@ -10,6 +17,10 @@ const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
 const double Grid3D::BULGE_FACTOR       = 0.4;
+
+Grid3D::Grid3D()
+	: Grid3D(cv::Point2i(0, 0), 0., 0., 0., 0.)
+{}
 
 Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
 	: _center(center)
@@ -24,7 +35,6 @@ Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y
 }
 
 Grid3D::~Grid3D() = default;
-
 
 /**
  * precompute set of 3D points which will be transformed according to grid parameters
@@ -352,3 +362,5 @@ void Grid3D::toggleTransparency()
 // we use NUM_CELLS in a call to std::min, which requires a reference to it.
 // Therefore, we need to actually define NUM_CELLS.
 const size_t Grid3D::NUM_CELLS;
+
+CEREAL_REGISTER_TYPE(Grid3D)
