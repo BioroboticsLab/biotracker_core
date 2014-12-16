@@ -155,10 +155,11 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
             }
             else // RMB + !ctrl
             {
+                // if close to tag: rotate in space
                 if (dist(mousePosition, _activeGrid->getCenter()) < 2 * _activeGrid->getPixelRadius())
                 {
                     // vector orthogonal to rotation axis
-                    _tempPoint = mousePosition - _activeGrid->getCenter();
+                   _tempPoint = mousePosition - _activeGrid->getCenter();
                     // set "rotation in space"-state
                     _currentState = State::SetP2;
                 }
@@ -198,11 +199,16 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 		}		
 		case State::SetP2:  // tag is rotated in space
 		{
+            // distance moved since first click or last move event
+            float d = cv::norm(_tempPoint) - cv::norm(mousePosition - _activeGrid->getCenter());
+            
+            // vector orthogonal to rotation axis
+            _tempPoint = mousePosition - _activeGrid->getCenter();
+
 			// vector orthogonal to rotation axis 
             const cv::Point2f temp  = mousePosition - _activeGrid->getCenter();
 
 			// distance to center
-			const float d0          = cv::norm(_tempPoint);
 			const float d1          = cv::norm(temp);
 
 			// the rotation axis in image reference frame (unit vector)
@@ -217,10 +223,10 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 			_rotationAxis.y         = -sin(a) * x + cos(a) * y;		
 						
 			// weight of rotation
-			const float w           = 0.05*(d0 - d1);
+			const float w = 0.05*d;
 			
             // apply rotation
-			_activeGrid->xyRotateIntoPlane(w * _rotationAxis.y, w * _rotationAxis.x);
+            _activeGrid->xyRotateIntoPlane(w * _rotationAxis.y + _activeGrid->getYRotation(), w * _rotationAxis.x + _activeGrid->getXRotation());
 						
 			break;
 		}
