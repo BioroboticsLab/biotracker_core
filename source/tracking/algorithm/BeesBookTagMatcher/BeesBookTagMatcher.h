@@ -20,6 +20,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm {
 private:
 	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
+	boost::optional<size_t> _activeGridObjectId;
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--
