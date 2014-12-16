@@ -364,4 +364,10 @@ void Grid3D::toggleTransparency()
 	_transparency = std::abs(_transparency - 0.6);
 }
 
+void Grid3D::setWorldRadius(const double radius)
+{
+	_radius = radius;
+	prepare_visualization_data();
+}
+
 CEREAL_REGISTER_TYPE(Grid3D)
