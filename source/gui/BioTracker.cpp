@@ -259,15 +259,15 @@ void BioTracker::loadTrackingData(const std::string &filename)
 		return;
 	}
 
-	const boost::optional<std::string> currentFile = getOpenFile();
+	const boost::optional<std::vector<std::string>> currentFiles = getOpenFiles();
 
-	if (!currentFile) {
+	if (!currentFiles) {
 		QMessageBox::warning(this, "Unable to load tracking data",
 		                     "No file opened.");
 		return;
 	}
 
-	const boost::optional<std::string> hash = getFileHash(currentFile.get());
+	const boost::optional<std::string> hash = getFileHash(currentFiles.get().front(), currentFiles.get().size());
 
 	if (!hash) {
 		QMessageBox::warning(this, "Unable to load tracking data",
@@ -312,15 +312,15 @@ void BioTracker::storeTrackingData(const std::string &filename)
 
 	const std::string trackerType =
 	        Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
-	const boost::optional<std::string> currentFile = getOpenFile();
+	const boost::optional<std::vector<std::string>> currentFiles = getOpenFiles();
 
-	if (!currentFile) {
+	if (!currentFiles) {
 		QMessageBox::warning(this, "Unable to store tracking data",
 		                     "No file opened.");
 		return;
 	}
 
-	const boost::optional<std::string> hash = getFileHash(currentFile.get());
+	const boost::optional<std::string> hash = getFileHash(currentFiles.get().front(), currentFiles.get().size());
 
 	if (!hash) {
 		QMessageBox::warning(this, "Unable to store tracking data",
@@ -335,26 +335,27 @@ void BioTracker::storeTrackingData(const std::string &filename)
 	archive(sdata);
 }
 
-boost::optional<std::string> BioTracker::getOpenFile() const
+boost::optional<std::vector<std::string>> BioTracker::getOpenFiles() const
 {
-	boost::optional<std::string> filename;
+	boost::optional<std::vector<std::string>> filename;
 	switch (_mediaType) {
 	case MediaType::Images:
-		filename = _settings.getVectorOfParam<std::string>(PICTUREPARAM::PICTURE_FILES).front();
+		filename = _settings.getVectorOfParam<std::string>(PICTUREPARAM::PICTURE_FILES);
 		break;
 	case MediaType::Video:
-		filename = _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE);
+		filename = std::vector<std::string>();
+		filename.get().push_back(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
 		break;
 	default:
-		return boost::optional<std::string>();
+		return boost::optional<std::vector<std::string>>();
 		break;
 	}
 
 	// cap_video_file and picture_file can be set, but empty. therefore, we
 	// need to check if the parameter actually contains a file name.
 	if (filename && !filename.get().empty()) return filename;
-	else return boost::optional<std::string>();
-	return boost::optional<std::string>();
+	else return boost::optional<std::vector<std::string>>();
+	return boost::optional<std::vector<std::string>>();
 }
 
 void BioTracker::exit()
@@ -425,13 +426,14 @@ void BioTracker::closeEvent(QCloseEvent* /* event */)
 	}
 }
 
-boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string &filename) const
+boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string &filename, const size_t numFiles) const
 {
 	QCryptographicHash sha1Generator(QCryptographicHash::Sha1);
 	QFile file(QString::fromStdString(filename));
 	if (file.open(QIODevice::ReadOnly)) {
 		// calculate hash from first 4096 bytes of file
 		sha1Generator.addData(file.peek(4096));
+		sha1Generator.addData(QByteArray::fromStdString(std::to_string(numFiles)));
 		return QString(sha1Generator.result().toHex()).toStdString();
 	}
 
@@ -628,9 +630,9 @@ void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 {
 	// calculate file hash of currently opened file
-	const boost::optional<std::string> openFile = getOpenFile();
+	const boost::optional<std::vector<std::string>> openFiles = getOpenFiles();
 	boost::optional<filehash> filehash;
-	if (openFile) filehash = getFileHash(openFile.get());
+	if (openFiles) filehash = getFileHash(openFiles.get().front(), openFiles.get().size());
 
 	if(_tracker)
 	{

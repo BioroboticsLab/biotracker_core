@@ -129,8 +129,8 @@ private:
 
 	map_type_hashtemp_t _serializationTmpFileMap;
 
-	boost::optional<std::string> getOpenFile() const;
-	boost::optional<filehash> getFileHash(std::string const& filename) const;
+	boost::optional<std::vector<std::string> > getOpenFiles() const;
+	boost::optional<filehash> getFileHash(std::string const& filename, const size_t numFiles) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
