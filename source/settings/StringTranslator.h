@@ -7,7 +7,7 @@
 
 #include "ParamNames.h"
 
-namespace EnumTranslator {
+namespace StringTranslator {
 
 template<typename external_type>
 struct BiMapContainer {
@@ -16,8 +16,11 @@ struct BiMapContainer {
 	static const bm_type value;
 };
 
+// enables conversion from/to an arbitrary type and an std::string by using
+// a boost::bimap. Requires a template specialization of BiMapContainer with
+// external_type.
 template <typename external_type>
-struct EnumTranslator
+struct StringTranslator
 {
 	typedef std::string internal_type;
 	typename BiMapContainer<external_type>::bm_type bm_type;
@@ -40,10 +43,13 @@ struct EnumTranslator
 namespace boost {
 namespace property_tree {
 
+// template specialization for EnumTranslator for GUIPARAM::MediaType
+// this allows boost::property_tree to store a string representation of
+// MediaType in the settings file
 template<>
 struct translator_between<std::string, GUIPARAM::MediaType>
 {
-	typedef EnumTranslator::EnumTranslator<GUIPARAM::MediaType> type;
+	typedef StringTranslator::StringTranslator<GUIPARAM::MediaType> type;
 };
 
 }
