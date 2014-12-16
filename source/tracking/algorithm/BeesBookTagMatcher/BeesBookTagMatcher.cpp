@@ -47,11 +47,13 @@ void BeesBookTagMatcher::paint(cv::Mat& image)
 	{
 		drawSetTags(image);
 	}
-	if (_currentState == State::SetTag)
+	
+    if (_currentState == State::SetTag)
 	{
 		drawOrientation(image, _orient);
 	}
-	else if (_activeGrid)
+	
+    if (_activeGrid)
 	{
 		drawActiveTag(image);
 	}
@@ -64,7 +66,7 @@ void BeesBookTagMatcher::postLoad()
 	setNumTags();
 }
 
-//check if MOUSE BUTTON IS CLICKED
+// called when MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) 
 {
 	// position of mouse cursor 
@@ -137,120 +139,138 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 			}
 		}
 	} 
+    // RMB
     else if (e->button() == Qt::RightButton)
 	{
-		if (ctrlModifier)
+        // RMB + Ctrl : delete active tag
+		if (ctrlModifier) 
 		{
 			removeCurrentActiveTag();
-		} else if (_activeGrid)
+		} 
+        // RMB + active grid : rotate in space
+        else if (_activeGrid) 
 		{
-			if (e->button() == Qt::RightButton)
-			{
-				// vector orthogonal to rotation axis
-				_tempPoint = mousePosition - _activeGrid->getCenter();
+		    // vector orthogonal to rotation axis
+			_tempPoint = mousePosition - _activeGrid->getCenter();
 
-				// set "rotation in space"-state
-				_currentState = State::SetP2;
-			}
+			// set "rotation in space"-state
+			_currentState = State::SetP2;
 		}
 	}
 
 	emit update();
 }
 
-//check if pointer MOVES
+// called when mouse pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) 
 {
-	const cv::Point p(e->x(), e->y());
+    const cv::Point mousePosition(e->x(), e->y());
+
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
-	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
+	
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) 
+    {
 		switch (_currentState) 
 		{
-		case State::SetTag:
-			_orient.to = p;
-			break;
-		case State::SetP0:
+        case State::SetTag: // new tag is being drawn : update tip of orientation vector
+        {
+            _orient.to = mousePosition;
+            break;
+        }
+		case State::SetP0:  // tag is being moved around
 		{
-			_activeGrid->setCenter(p);
+            _activeGrid->setCenter(mousePosition);
 			break;
 		}
-		case State::SetP1:
+		case State::SetP1: // tag is rotated in x/y-plane
 		{
-			_activeGrid->zRotateTowardsPointInPlane(p);
+            _activeGrid->zRotateTowardsPointInPlane(mousePosition);
 			break;
 		}		
-		case State::SetP2:
+		case State::SetP2:  // tag is rotated in space
 		{
 			// vector orthogonal to rotation axis 
-			const cv::Point2f temp = p - _activeGrid->getCenter();
+            const cv::Point2f temp  = mousePosition - _activeGrid->getCenter();
 
 			// distance to center
-			const float d0 = cv::norm(_tempPoint);
-			const float d1 = cv::norm(temp);
+			const float d0          = cv::norm(_tempPoint);
+			const float d1          = cv::norm(temp);
 
 			// the rotation axis in image reference frame (unit vector)
-			const float x = -temp.y / d1;
-			const float y =  temp.x / d1;
+			const float x           = -temp.y / d1;
+			const float y           =  temp.x / d1;
 
 			// z - angle of grid
-			const double a = _activeGrid->getZRotation();
+			const double a          = _activeGrid->getZRotation();
 
 			// the rotation axis in grid reference frame (ToDo: rotate in space?)
-			_rotationAxis.x = cos(a) * x + sin(a) * y;
-			_rotationAxis.y = -sin(a) * x + cos(a) * y;		
+			_rotationAxis.x         = cos(a) * x + sin(a) * y;
+			_rotationAxis.y         = -sin(a) * x + cos(a) * y;		
 						
 			// weight of rotation
-			const float w = 0.05*(d0 - d1);
+			const float w           = 0.05*(d0 - d1);
 			
+            // apply rotation
 			_activeGrid->xyRotateIntoPlane(w * _rotationAxis.y, w * _rotationAxis.x);
 						
 			break;
 		}
-		default:
+		default: // other states (like State::SetBit or ::Ready) 
 			return;
 		}
+
 		emit update();
-		_lastMouseEventTime = std::chrono::system_clock::now();
+		
+        _lastMouseEventTime = std::chrono::system_clock::now();
 	}
 }
 
-//check if MOUSE BUTTON IS RELEASED
+// called when MOUSE BUTTON IS RELEASED
 void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) 
 {
+    bool dataChanged = false;
+
 	// left button released
-	if (e->button() == Qt::LeftButton) {
-		switch (_currentState) {
-		//center and orientation of the tag were set.
+	if (e->button() == Qt::LeftButton) 
+    {
+		switch (_currentState) 
+        {
+		// a new tag was created
 		case State::SetTag:
 		{
 			// update active frame number and active grid
 			_activeFrameNumber = _currentFrameNumber;
 
+            // generate object id
 			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
 
 			// insert new trackedObject object into _trackedObjects ( check if empty "first")
 			_trackedObjects.emplace_back(newID);
 
-			// associate new (active) grid to frame number
+			// make pointer to the new tag
 			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
+            
+            // associate new (active) grid to frame number
+            _trackedObjects.back().add(_currentFrameNumber, _activeGrid);
 
-			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
-
-			//length of the vector is taken into consideration
-			setTheta(cv::Point(e->x(), e->y()));
-			_currentState = State::Ready;
-
+            // update GUI display 
 			setNumTags();
+
+            // data has changed, thus emit update in end of function
+            dataChanged = true;
+
 			break;
 		}
-		case State::SetBit:
-			_currentState = State::SetP0;
+        default:
 			break;
-		default:
-			break;
-		}
-		emit update();
+		}      
 	}
+
+    // switch to ready-state when mouse is released
+    _currentState = State::Ready;
+
+    if (dataChanged)
+        emit update();
 }
 
 void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
