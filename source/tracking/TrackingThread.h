@@ -9,7 +9,7 @@
 #include <QThread>
 
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/utility/ThreadSafetyAnalysis.h"
+#include "source/utility/MutexWrapper.h"
 
 class Settings;
 
