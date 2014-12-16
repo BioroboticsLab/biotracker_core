@@ -155,10 +155,13 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
             }
             else // RMB + !ctrl
             {
-                // vector orthogonal to rotation axis
-                _tempPoint = mousePosition - _activeGrid->getCenter();
-                // set "rotation in space"-state
-                _currentState = State::SetP2;
+                if (dist(mousePosition, _activeGrid->getCenter()) < 2 * _activeGrid->getPixelRadius())
+                {
+                    // vector orthogonal to rotation axis
+                    _tempPoint = mousePosition - _activeGrid->getCenter();
+                    // set "rotation in space"-state
+                    _currentState = State::SetP2;
+                }
             }
         }
     }
