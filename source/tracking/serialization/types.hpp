@@ -14,6 +14,12 @@ void serialize(Archive& archive, cv::Point2f& point)
 }
 
 template<class Archive>
+void serialize(Archive& archive, cv::Point& point)
+{
+	archive(CEREAL_NVP(point.x), CEREAL_NVP(point.y));
+}
+
+template<class Archive>
 void serialize(Archive& archive, cv::Size2f& size)
 {
 	archive(CEREAL_NVP(size.width), CEREAL_NVP(size.height));

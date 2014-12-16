@@ -299,6 +299,7 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 
 	QFileDialog dialog(this, tr("Save tracking data"));
 	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	dialog.setDefaultSuffix("tdat");
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
 	if (dialog.exec()) {
