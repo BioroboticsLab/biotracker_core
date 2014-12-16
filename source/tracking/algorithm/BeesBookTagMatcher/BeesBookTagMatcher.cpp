@@ -52,8 +52,6 @@ void BeesBookTagMatcher::paint(cv::Mat& image)
 		drawOrientation(image, _orient);
 	}
 }
-void BeesBookTagMatcher::reset() {
-}
 
 void BeesBookTagMatcher::postLoad()
 {
@@ -377,6 +375,17 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 			const bool isActive = grid == _activeGrid;
 
 			grid->draw(image, isActive);
+
+			// ToDo: use constants here
+			if (_currentZoomLevel > -4) {
+				// draw rectangle around grid when zoom level is low
+				const cv::Point center = grid->getCenter();
+				const double radius    = grid->getPixelRadius() * 1.5;
+				const cv::Point tl(center.x - radius, center.y - radius);
+				const cv::Point br(center.x + radius, center.y + radius);
+				const double thickness = 4 + _currentZoomLevel;
+				cv::rectangle(image, tl, br, COLOR_YELLOW, thickness, CV_AA);
+			}
 		}
 	}
 }
