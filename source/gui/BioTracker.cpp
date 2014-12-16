@@ -104,20 +104,20 @@ void BioTracker::initConnects()
 	QObject::connect(ui.videoView, SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
 
 	//tracking thread signals
-    QObject::connect(_trackingThread.get(), SIGNAL(notifyGUI(std::string, MSGS::MTYPE)), this, SLOT(printGuiMessage(std::string, MSGS::MTYPE)));
-    QObject::connect(this, SIGNAL(videoPause(bool)), _trackingThread.get(), SLOT(enableVideoPause(bool)));
-    QObject::connect(this, SIGNAL(videoStop()), _trackingThread.get(), SLOT(stopCapture()));
-    QObject::connect(_trackingThread.get(), SIGNAL( trackingSequenceDone(cv::Mat) ), this, SLOT( drawImage(cv::Mat) ));
-    QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ), this, SLOT( updateFrameNumber(int) ));
-    QObject::connect(_trackingThread.get(), SIGNAL( sendFps(double) ), this, SLOT( showFps(double) ));
-    QObject::connect(this, SIGNAL( nextFrameReady(bool) ), _trackingThread.get(), SLOT( enableHandlingNextFrame(bool) ));
-    QObject::connect(this, SIGNAL( changeFrame(int) ), _trackingThread.get(), SLOT( setFrameNumber(int) ));
-    QObject::connect(this, SIGNAL( grabNextFrame()), _trackingThread.get(), SLOT( nextFrame() ));
-    QObject::connect(this, SIGNAL( fpsChange(double)), _trackingThread.get(), SLOT( setFps(double) ));
-    QObject::connect(this, SIGNAL ( enableMaxSpeed(bool)), _trackingThread.get(), SLOT(setMaxSpeed(bool) ));
-    QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), _trackingThread.get(), SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
-	QObject::connect(this, SIGNAL ( changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>) ), ui.videoView, SLOT(setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>) ));
-    QObject::connect(_trackingThread.get(), SIGNAL ( invalidFile() ), this, SLOT( invalidFile() ));
+	QObject::connect(_trackingThread.get(), &TrackingThread::notifyGUI, this, &BioTracker::printGuiMessage);
+	QObject::connect(this, &BioTracker::videoPause, _trackingThread.get(), &TrackingThread::enableVideoPause);
+	QObject::connect(this, &BioTracker::videoStop, _trackingThread.get(), &TrackingThread::stopCapture);
+	QObject::connect(_trackingThread.get(), &TrackingThread::trackingSequenceDone, this, &BioTracker::drawImage);
+	QObject::connect(_trackingThread.get(), &TrackingThread::newFrameNumber, this, &BioTracker::updateFrameNumber);
+	QObject::connect(_trackingThread.get(), &TrackingThread::sendFps, this, &BioTracker::showFps);
+	QObject::connect(this, &BioTracker::nextFrameReady, _trackingThread.get(), &TrackingThread::enableHandlingNextFrame);
+	QObject::connect(this, &BioTracker::changeFrame, _trackingThread.get(), &TrackingThread::setFrameNumber);
+	QObject::connect(this, &BioTracker::grabNextFrame, _trackingThread.get(), &TrackingThread::nextFrame);
+	QObject::connect(this, &BioTracker::fpsChange, _trackingThread.get(), &TrackingThread::setFps);
+	QObject::connect(this, &BioTracker::enableMaxSpeed, _trackingThread.get(), &TrackingThread::setMaxSpeed);
+	QObject::connect(this, &BioTracker::changeTrackingAlg, _trackingThread.get(), &TrackingThread::setTrackingAlgorithm);
+	QObject::connect(this, &BioTracker::changeTrackingAlg, ui.videoView, &VideoView::setTrackingAlgorithm);
+	QObject::connect(_trackingThread.get(), &TrackingThread::invalidFile, this, &BioTracker::invalidFile);
 
 	/*	 _______________________
 	*	|						|
@@ -151,7 +151,7 @@ void BioTracker::initPlayback()
 		_trackingThread->loadPictures(_settings.getVectorOfParam<std::string>(PICTUREPARAM::PICTURE_FILES));
 		break;
 	case MediaType::Video:
-		_trackingThread->startCapture();
+		_trackingThread->loadVideo(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
 		break;
 	default:
 		assert(false);
@@ -497,12 +497,13 @@ void BioTracker::pauseCapture()
 
 void BioTracker::stopCapture()
 {	
+	updateFrameNumber(0);
+	_trackingThread->setFrameNumber(0);
+
 	_videoMode = VideoMode::Stopped;
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 	emit videoStop();
 	setPlayfieldPaused(true);
-	updateFrameNumber(0);
-	emit changeFrame(0);
 	ui.sld_video->setDisabled(true);
 	ui.cb_algorithms->setCurrentIndex(0);
 	trackingAlgChanged(Algorithms::NoTracking);
