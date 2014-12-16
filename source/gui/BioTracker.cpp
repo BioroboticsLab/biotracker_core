@@ -173,10 +173,11 @@ void BioTracker::initPlayback()
 	ui.fps_label->setText(QString::fromStdString(ss.str()));
 
 	setPlayfieldPaused(true);
-	ui.videoView->fitToWindow();
 
-	emit videoPause(true);
-	emit changeFrame(_currentFrame);
+	_trackingThread->enableVideoPause(true);
+	_trackingThread->setFrameNumber(_currentFrame);
+
+	ui.videoView->fitToWindow();
 }
 
 void BioTracker::initAlgorithmList()

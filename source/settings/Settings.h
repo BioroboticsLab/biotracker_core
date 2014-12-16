@@ -4,7 +4,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "EnumTranslator.h"
+#include "StringTranslator.h"
 #include "ParamNames.h"
 
 class Settings
@@ -31,6 +31,11 @@ public:
 		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
 	}
 
+	/**
+	 * Sets the vector of values of a parameter.
+	 * @param paramName name of the parameter,
+	 * @param paramVector vector of values of the parameter,
+	 */
 	template <typename T>
 	void setParamVector(std::string const& paramName, std::vector<T>&& paramVector) {
 		boost::property_tree::ptree subtree;
@@ -51,6 +56,11 @@ public:
 		return _ptree.get<T>(paramName);
 	}
 
+	/**
+	 * Gets the vector of values provided by parameter name.
+	 * @param paramName the parameter name,
+	 * @return the vector of values of the parameter with the specified type.
+	 */
 	template <typename T>
 	std::vector<T> getVectorOfParam(const std::string &paramName) const {
 		std::vector<T> result;
