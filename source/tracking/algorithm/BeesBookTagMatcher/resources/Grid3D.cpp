@@ -260,16 +260,10 @@ void Grid3D::draw(cv::Mat &img, int) const
 
 	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
 	cv::Mat subimage_copy = subimage.clone();
-	
-	cv::Mat test(subimage_size, CV_8UC3);
-	
-	cv::Mat roi = img(cv::Rect(subimage_origin.x, subimage_origin.y, 2 * radius, 2 * radius));
-	cv::Mat mask;
-	roi.copyTo(mask);
 
-	this->draw(mask, subimage_center, 0);
+	this->draw(subimage_copy, subimage_center, 0);
 
-	cv::addWeighted(mask, _transparency, roi, 1.0 - _transparency, 0.0, roi);
+	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
 }
 
 void Grid3D::setXRotation(double angle)
@@ -295,11 +289,11 @@ void Grid3D::setCenter(cv::Point c)
 	_center = c;
 }
 
-int Grid3D::getKeyPointIndex(cv::Point p)
+int Grid3D::getKeyPointIndex(cv::Point p) const
 {
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
 	{
-		if (CvHelper::vecLength<cv::Point>(_center + _interactionPoints[i] - p) < (_radius / 10) )
+		if (cv::norm(_center + _interactionPoints[i] - p) < (_radius / 10) )
 			return i;
 	}
 	return -1;
