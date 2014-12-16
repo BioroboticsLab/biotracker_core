@@ -32,7 +32,6 @@ private:
 	};
 
 	State               _currentState;  // current state of user interaction
-	bool                _setOnlyOrient; // to modify exclusively the tag orientation.
 
 	cv::Point2f         _rotationAxis;  // unit vector that defines the tag's rotation in space
 	cv::Point2f			_tempPoint;     // temporary point for spatial rotation in user interaction
@@ -85,6 +84,7 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	void resetActiveGrid();
 	void removeCurrentActiveTag();
 
 	// function that calculates the distance between two points
