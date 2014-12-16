@@ -68,6 +68,8 @@ void BeesBookTagMatcher::postLoad()
 // called when MOUSE BUTTON IS CLICKED
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 {
+    bool dataChanged = false;
+
     // position of mouse cursor 
     const cv::Point mousePosition(e->x(), e->y());
 
@@ -91,6 +93,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
             resetActiveGrid();
             // initialize new orientation vector, ie start drawing a line
             setTag(mousePosition);
+            // data has changed: update!
+            dataChanged = true;
         }
         else // other LMB
         {
@@ -110,6 +114,9 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 
                     // toggle bit or set indeterminate, resp.
                     _activeGrid->toggleIdBit(id, indeterminate);
+
+                    // data has changed: update!
+                    dataChanged = true;
                 }
                 else // another keypoint was clicked
                 {
@@ -143,11 +150,16 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
     {
         if (_activeGrid) //
         {
-            if (ctrlModifier && dist(mousePosition, _activeGrid->getCenter()) < _activeGrid->getPixelRadius())
+            if (ctrlModifier) 
             {
-                removeCurrentActiveTag();
+                if (dist(mousePosition, _activeGrid->getCenter()) < _activeGrid->getPixelRadius())
+                {
+                    removeCurrentActiveTag();
+                    // data has changed: update!
+                    dataChanged = true;
+                }
             }
-            else
+            else // RMB + !ctrl
             {
                 // vector orthogonal to rotation axis
                 _tempPoint = mousePosition - _activeGrid->getCenter();
@@ -155,9 +167,10 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
                 _currentState = State::SetP2;
             }
         }
-
-        emit update();
     }
+
+    if (dataChanged)
+        emit update();
 }
 
 // called when mouse pointer MOVES
