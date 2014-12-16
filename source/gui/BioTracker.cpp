@@ -183,14 +183,8 @@ void BioTracker::initPlayback()
 void BioTracker::initAlgorithmList()
 {
 	// add NoTracker first
-	for (auto& algByStr : Algorithms::Registry::getInstance().typeByString())
-	{
-		if (algByStr.second == Algorithms::NoTracking)
-		{
-			ui.cb_algorithms->addItem(QString::fromStdString(algByStr.first));
-			break;
-		}
-	}
+	ui.cb_algorithms->addItem(QString::fromStdString(
+	    Algorithms::Registry::getInstance().stringByType().at(Algorithms::NoTracking)));
 
 	// add Trackers
 	for (auto& algByStr : Algorithms::Registry::getInstance().typeByString())
@@ -558,7 +552,7 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 
 void BioTracker::changeCurrentFramebySlider()
 {	
-	int value = ui.sld_video->value();	
+	const int value = ui.sld_video->value();
 	emit changeFrame(value);
 	updateFrameNumber(value);
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
@@ -569,15 +563,13 @@ void BioTracker::changeCurrentFramebySlider(int SliderAction)
 	int fNum = _currentFrame;
 	switch(SliderAction)
 	{
-		//SliderPageStepAdd
-	case 3:
+	case QSlider::SliderPageStepAdd:
 		fNum += ui.sld_video->pageStep();
 		if (fNum > ui.sld_video->maximum())
 			fNum = ui.sld_video->maximum();
 		changeCurrentFramebySlider();
 		break;
-		//SliderPageStepSub
-	case 4:
+	case QSlider::SliderPageStepSub:
 		fNum -= ui.sld_video->pageStep();
 		if(fNum < 0 )
 			fNum = 0;
@@ -590,7 +582,7 @@ void BioTracker::changeCurrentFramebySlider(int SliderAction)
 }
 void BioTracker::changeCurrentFramebyEdit()
 {	
-	QString valueStr = ui.frame_num_edit->text();
+	const QString valueStr = ui.frame_num_edit->text();
 	//check if string is a number by using regular expression
 	QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
 	if(re.exactMatch(valueStr))
@@ -630,7 +622,7 @@ void BioTracker::changeFps(int fps)
 
 void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 {
-    trackingAlgChanged(Algorithms::Registry::getInstance().typeByString().at(trackingAlgStr.toStdString()));
+	trackingAlgChanged(Algorithms::Registry::getInstance().typeByString().at(trackingAlgStr.toStdString()));
 }
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
@@ -725,9 +717,9 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		try
 		{
 			_paramsWidget = _tracker->getParamsWidget();
-            _vboxParams->addWidget(_paramsWidget.get());
+			_vboxParams->addWidget(_paramsWidget.get());
 			_toolsWidget = _tracker->getToolsWidget();
-            _vboxTools->addWidget(_toolsWidget.get());
+			_vboxTools->addWidget(_toolsWidget.get());
 		}
 		catch(std::exception&)
 		{
