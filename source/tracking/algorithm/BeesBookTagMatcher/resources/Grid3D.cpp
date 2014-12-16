@@ -223,19 +223,20 @@ void Grid3D::prepare_visualization_data()
  * @param img dst
  * @param center center of the tag
  */
-void Grid3D::draw(cv::Mat &img, cv::Point center) const {
+void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) const {
 
-	 const cv::Scalar white(255, 255, 255);
-	 const cv::Scalar black(0, 0, 0);
-	 const cv::Scalar red(0, 0, 255);
-	 const cv::Scalar yellow(0, 255, 255);
+	static const cv::Scalar white(255, 255, 255);
+	static const cv::Scalar black(0, 0, 0);
+	static const cv::Scalar red(0, 0, 255);
+	static const cv::Scalar yellow(0, 255, 255);
 
+	const cv::Scalar outerColor = isActive ? yellow : white;
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			yellow, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			outerColor, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
 
@@ -251,7 +252,7 @@ void Grid3D::draw(cv::Mat &img, cv::Point center) const {
 
 
 
-void Grid3D::draw(cv::Mat &img) const
+void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
 	const int       radius = static_cast<int>(std::ceil(_radius));
 	const cv::Size  subimage_size(2 * radius, 2 * radius);
@@ -261,7 +262,7 @@ void Grid3D::draw(cv::Mat &img) const
 	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
 	cv::Mat subimage_copy = subimage.clone();
 
-	draw(subimage_copy, subimage_center);
+	draw(subimage_copy, subimage_center, isActive);
 
 	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
 }

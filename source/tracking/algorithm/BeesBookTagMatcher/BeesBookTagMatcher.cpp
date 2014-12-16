@@ -345,7 +345,7 @@ void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 			// do not paint grid if it is active (will be drawn with different color later)
 			if (grid != _activeGrid)
 			{
-				grid->draw(image);
+				grid->draw(image, false);
 			}
 		}
 	}
@@ -362,7 +362,7 @@ void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const Orientation &orie
 void BeesBookTagMatcher::drawActiveTag(cv::Mat &image) const
 {
 	// ToDo: different color for active tag?
-	_activeGrid->draw(image);         //the grid is drawn as active
+	_activeGrid->draw(image, true);         //the grid is drawn as active
 	//_activeGrid->updatePoints();
 	//for (int i = 0; i < 3; i++)
 	//{

@@ -58,7 +58,7 @@ public:
 	/**
 	 * draws 2D projection of 3D-mesh on image
 	 */
-	void	draw(cv::Mat &img) const;
+	void	draw(cv::Mat &img, const bool isActive) const;
 
 	void	setXRotation(double angle);
 	double	getXRotation() const { return _angle_x; }
@@ -124,7 +124,7 @@ private:
 
 	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D();
 	void                   prepare_visualization_data();
-	void                   draw(cv::Mat &img, cv::Point center) const;
+	void                   draw(cv::Mat &img, const cv::Point& center, const bool isActive) const;
 
 	/***************************************************************************
 	 * Parameter Section
