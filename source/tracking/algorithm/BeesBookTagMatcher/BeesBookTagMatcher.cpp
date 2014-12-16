@@ -211,25 +211,25 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 		{
 
 			// vector orthogonal to rotation axis 
-			cv::Point2f temp = p - _activeGrid->getCenter();
+			const cv::Point2f temp = p - _activeGrid->getCenter();
 
 			// distance to center
-			float d0 = CvHelper::vecLength(_tempPoint);
-			float d1 = CvHelper::vecLength(temp);
+			const float d0 = cv::norm(_tempPoint);
+			const float d1 = cv::norm(temp);
 
 			// the rotation axis in image reference frame (unit vector)
-			float x = -temp.y / d1;
-			float y =  temp.x / d1;
+			const float x = -temp.y / d1;
+			const float y =  temp.x / d1;
 
 			// z - angle of grid
-			double a = _activeGrid->getZRotation();
+			const double a = _activeGrid->getZRotation();
 
 			// the rotation axis in grid reference frame (ToDo: rotate in space?)
 			_rotationAxis.x = cos(a) * x + sin(a) * y;
 			_rotationAxis.y = -sin(a) * x + cos(a) * y;		
 						
 			// weight of rotation
-			float w = 0.05*(d0 - d1);
+			const float w = 0.05*(d0 - d1);
 			
 			_activeGrid->xyRotateIntoPlane(w * _rotationAxis.y, w * _rotationAxis.x);
 						
