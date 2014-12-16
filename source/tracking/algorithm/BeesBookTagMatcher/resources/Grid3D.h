@@ -75,9 +75,9 @@ public:
 	void	xyRotateIntoPlane(float angle_y, float angle_x);
 
 	void	setCenter(cv::Point c);
-	cv::Point getCenter(){ return _center; }
+	cv::Point getCenter() const { return _center; }
 
-	int		getKeyPointIndex(cv::Point p);
+	int		getKeyPointIndex(cv::Point p) const;
 
 	void	toggleIdBit(size_t cell_id, bool indeterminate);
 	cv::Scalar tribool2Color(const boost::logic::tribool &tribool) const;
