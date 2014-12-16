@@ -223,7 +223,7 @@ void Grid3D::prepare_visualization_data()
  * @param img dst
  * @param center center of the tag
  */
-void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
+void Grid3D::draw(cv::Mat &img, cv::Point center) const {
 
 	 const cv::Scalar white(255, 255, 255);
 	 const cv::Scalar black(0, 0, 0);
@@ -251,7 +251,7 @@ void Grid3D::draw(cv::Mat &img, cv::Point center, int) const {
 
 
 
-void Grid3D::draw(cv::Mat &img, int) const
+void Grid3D::draw(cv::Mat &img) const
 {
 	const int       radius = static_cast<int>(std::ceil(_radius));
 	const cv::Size  subimage_size(2 * radius, 2 * radius);
@@ -261,7 +261,7 @@ void Grid3D::draw(cv::Mat &img, int) const
 	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
 	cv::Mat subimage_copy = subimage.clone();
 
-	this->draw(subimage_copy, subimage_center, 0);
+	draw(subimage_copy, subimage_center);
 
 	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
 }
