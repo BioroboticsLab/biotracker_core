@@ -150,17 +150,27 @@ private:
 	// ToDo: don't store things that can be recalculated easily
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar)
+	void save(Archive& ar) const
 	{
 		ar(CEREAL_NVP(_center),
 		   CEREAL_NVP(_radius),
 		   CEREAL_NVP(_angle_z),
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
-		   CEREAL_NVP(_ID),
-		   CEREAL_NVP(_coordinates2D),
-		   CEREAL_NVP(_interactionPoints),
-		   CEREAL_NVP(_transparency));
+		   CEREAL_NVP(_ID));
+	}
+
+	template<class Archive>
+	void load(Archive& ar)
+	{
+		ar(CEREAL_NVP(_center),
+		   CEREAL_NVP(_radius),
+		   CEREAL_NVP(_angle_z),
+		   CEREAL_NVP(_angle_y),
+		   CEREAL_NVP(_angle_x),
+		   CEREAL_NVP(_ID));
+
+		prepare_visualization_data();
 	}
 };
 
