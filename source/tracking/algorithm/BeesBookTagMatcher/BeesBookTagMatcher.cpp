@@ -264,7 +264,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 			_trackedObjects.emplace_back(newID);
 
 			// make pointer to the new tag
-			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
+            _activeGrid = std::make_shared<Grid3D>(_orient.from, GRID_RADIUS_PIXELS, _orient.alpha(), 0., 0.);
             
             // associate new (active) grid to frame number
             _trackedObjects.back().add(_currentFrameNumber, _activeGrid);
@@ -610,12 +610,6 @@ void BeesBookTagMatcher::setNumTags()
 	}
 
 	_UiToolWidget.numTags->setText(QString::number(cnt));
-}
-
-double BeesBookTagMatcher::getRadiusFromFocalLength() const
-{
-	// ToDo: calculate radius based on focal length
-	return 52.;
 }
 
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
