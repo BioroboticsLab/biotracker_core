@@ -45,7 +45,7 @@ private:
 	} Orientation;
 
 	// auxiliar variable for drawing a line while setting the Tag
-	Orientation         _orient;
+	Orientation _orient;
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
@@ -84,6 +84,7 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	//
 	void resetActiveGrid();
 	void removeCurrentActiveTag();
 
