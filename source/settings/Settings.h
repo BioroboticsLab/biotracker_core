@@ -57,12 +57,6 @@ public:
 		for (auto& item : _ptree.get_child(paramName)) {
 			result.push_back(item.second.get_value<T>());
 		}
-//		auto& subtr
-//		auto it = _ptree.find(paramName);
-//		std::vector<T> result;
-//		for (auto& subtreeit : it->second) {
-//			result.push_back(subtreeit.second.get_value<T>());
-//		}
 		return result;
 	}
 

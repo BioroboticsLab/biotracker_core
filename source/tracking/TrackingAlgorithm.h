@@ -12,6 +12,7 @@
 #include <QMouseEvent>
 
 #include "source/settings/Messages.h"
+#include "source/settings/ParamNames.h"
 #include "source/tracking/serialization/TrackedObject.h"
 
 class Settings;
