@@ -345,5 +345,9 @@ void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
 
 void Grid3D::toggleTransparency()
 {
-	_transparency = abs(_transparency - 0.6);
+	_transparency = std::abs(_transparency - 0.6);
 }
+
+// we use NUM_CELLS in a call to std::min, which requires a reference to it.
+// Therefore, we need to actually define NUM_CELLS.
+const size_t Grid3D::NUM_CELLS;

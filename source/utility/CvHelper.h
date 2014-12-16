@@ -138,7 +138,7 @@ namespace CvHelper
 	 *
 	 * @param img            Image
 	 * @param contours       All the input contours. Each contour is stored as a point vector.
-	 * @param index_countour Parameter indicating a contour to draw
+	 * @param index_contour  Parameter indicating a contour to draw
 	 * @param color          Color of the contours
 	 * @param close          Parameter indicating if the last and first vertex of the contour should be connected
 	 * @param offset         Optional contour shift parameter.
