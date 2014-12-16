@@ -10,7 +10,7 @@
 #include <boost/optional.hpp>
 
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
+#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid3D.h"
 
 #include "ui_BeesBookTagMatcherToolWidget.h"
 
@@ -18,21 +18,37 @@
 class BeesBookTagMatcher : public TrackingAlgorithm {
 	Q_OBJECT
 private:
-	std::shared_ptr<Grid>	_activeGrid; // points to active grid (grid must be active to be altered)
+
+	static const size_t GRID_RADIUS_PIXELS;
+
+	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
+	boost::optional<size_t> _activeGridObjectId;
 
 	enum class State : uint8_t {
-		Ready = 0, // Ready for a new tag --Ctrl + LCM--
-		SetTag,    // a new set of points is being configured
-		SetP0,     // Set P0 --Left Click and drag--
-		SetP1,     // Set P1 --Left Click and drag--
-		SetP2,     // Set P2 --Left Click and drag--
+		Ready = 0,  // Ready for a new tag --Ctrl + LCM--
+		SetTag,     // A new tag is being drawn
+		SetP0,      // Set P0 --Left Click and drag--
+		SetP1,      // Set P1 --Left Click and drag--
+		SetP2,      // Set P2 --Left Click and drag--
+		SetBit,	    // Set single bits
 	};
 
-	State _currentState;
-	bool _setOnlyOrient; // to modify exclusively the tag orientation.
+	State _currentState;  // current state of user interaction
 
-	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
+	cv::Point2f _rotationAxis;  // unit vector that defines the tag's rotation in space
+	cv::Point2f _tempPoint;     // temporary point for spatial rotation in user interaction
+
+	typedef struct {
+		cv::Point from;
+		cv::Point to;
+
+		double norm() const { return cv::norm(to - from); }
+		double alpha() const { return atan2(to.y - from.y, to.x - from.x); }
+	} Orientation;
+
+	// auxiliar variable for drawing a line while setting the Tag
+	Orientation _orient;
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
@@ -41,14 +57,14 @@ private:
 	std::shared_ptr<QWidget> _toolWidget;
 	std::shared_ptr<QWidget> _paramWidget;
 
-	std::set<size_t> _idCopyBuffer;
+	std::set<size_t>        _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
 
 	// function that draws the Tags set so far calling instances of Grid.
-	void drawSetTags(cv::Mat &image) const;
+	void drawTags(cv::Mat &image) const;
 
 	// function that draws the orientation vector while being set.
-	void drawOrientation(cv::Mat& image, const std::vector<cv::Point>& _orient) const;
+	void drawOrientation(cv::Mat& image, const Orientation& orient) const;
 
 	// function that draws an active tag calling an instance of Grid
 	void drawActiveTag(cv::Mat& image) const;
@@ -71,21 +87,22 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	// reset shared_ptr to current active grid and auxilary variables for active grid
+	void resetActiveGrid();
+
+	// remove active grid from current frame
 	void removeCurrentActiveTag();
 
 	// function that calculates the distance between two points
 	double dist(const cv::Point& p1, const cv::Point& p2) const;
 
-	double getAlpha() const;
-
+	// calculate number of tags on current frame
 	void setNumTags();
 
-	std::set<Qt::Key> const& grabbedKeys() const override;
-
-	void mouseMoveEvent		(QMouseEvent * e) override;
-	void mousePressEvent	(QMouseEvent * e) override;
-	void mouseReleaseEvent	(QMouseEvent * e) override;
-	void keyPressEvent		(QKeyEvent * e) override;
+	void mouseMoveEvent    (QMouseEvent * e) override;
+	void mousePressEvent   (QMouseEvent * e) override;
+	void mouseReleaseEvent (QMouseEvent * e) override;
+	void keyPressEvent     (QKeyEvent * e) override;
 
 protected:
 	bool event(QEvent* event) override;
@@ -96,11 +113,14 @@ public:
 
 	void track(ulong frameNumber, cv::Mat& frame) override;
 	void paint(cv::Mat& image) override;
-	void reset() override;
+	void reset() override {}
 	void postLoad() override;
 
 	std::shared_ptr<QWidget> getToolsWidget() override { return _toolWidget; }
 	std::shared_ptr<QWidget> getParamsWidget() override { return _paramWidget; }
+
+	// return keys that are handled by the tracker
+	std::set<Qt::Key> const& grabbedKeys() const override;
 };
 
 #endif
