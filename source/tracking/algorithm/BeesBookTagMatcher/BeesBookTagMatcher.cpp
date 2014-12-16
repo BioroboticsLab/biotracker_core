@@ -83,9 +83,9 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton)
 	{
+
         // LMB +  Ctrl
-		if (ctrlModifier)
-		{
+		if (ctrlModifier & !shiftModifier)		{
             // reset pointer
 			_activeGrid.reset();
             // initialize new orientation vector, ie start drawing a line
@@ -232,7 +232,6 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 			_trackedObjects.emplace_back(newID);
 
 			// associate new (active) grid to frame number
-			// ToDo: fix angle
 			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
 
 			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
