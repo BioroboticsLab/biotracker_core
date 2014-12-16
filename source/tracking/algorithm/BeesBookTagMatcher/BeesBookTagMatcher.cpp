@@ -22,7 +22,6 @@ static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	: TrackingAlgorithm(settings, parent)
 	, _currentState(State::Ready)
-	, _setOnlyOrient(false)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
@@ -37,7 +36,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 
 void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 {
-	_activeGrid.reset();
+	resetActiveGrid();
 	setNumTags();
 }
 
@@ -87,7 +86,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
         // LMB +  Ctrl
 		if (ctrlModifier & !shiftModifier)		{
             // reset pointer
-			_activeGrid.reset();
+			resetActiveGrid();
             // initialize new orientation vector, ie start drawing a line
             setTag(mousePosition);
 		}
@@ -139,12 +138,12 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	} 
     else if (e->button() == Qt::RightButton)
 	{
-		if (ctrlModifier)
+		if (_activeGrid)
 		{
-			removeCurrentActiveTag();
-		} else if (_activeGrid)
-		{
-			if (e->button() == Qt::RightButton)
+			if (ctrlModifier && dist(mousePosition, _activeGrid->getCenter()) < _activeGrid->getPixelRadius())
+			{
+				removeCurrentActiveTag();
+			} else
 			{
 				// vector orthogonal to rotation axis
 				_tempPoint = mousePosition - _activeGrid->getCenter();
@@ -237,8 +236,6 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 
 			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
 
-			//length of the vector is taken into consideration
-			setTheta(cv::Point(e->x(), e->y()));
 			_currentState = State::Ready;
 
 			setNumTags();
@@ -520,36 +517,39 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 
 void BeesBookTagMatcher::cancelTag()
 {
+	resetActiveGrid();
+	_currentState  = State::Ready;
+}
+
+void BeesBookTagMatcher::resetActiveGrid()
+{
 	_activeGrid.reset();
 	_activeFrameNumber.reset();
 	_activeGridObjectId.reset();
-	_currentState  = State::Ready;
-	_setOnlyOrient = false;
 }
 
 void BeesBookTagMatcher::removeCurrentActiveTag()
-{	
-	if (_activeGrid)
+{
+	assert(_activeGrid);
+
+	auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
+											  [&](const TrackedObject & o){ return o.getId() == _activeGridObjectId.get(); }) ;
+
+	assert(trackedObjectIterator != _trackedObjects.end());
+
+	trackedObjectIterator->erase(_currentFrameNumber);
+
+	// if map empty
+	if (trackedObjectIterator->isEmpty())
 	{
-		auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
-		                                          [&](const TrackedObject & o){ return o.getId() == _activeGridObjectId.get(); }) ;
-
-		assert( trackedObjectIterator != _trackedObjects.end() );
-
-		trackedObjectIterator->erase(_currentFrameNumber);
-
-		// if map empty
-		if (trackedObjectIterator->isEmpty())
-		{
-			// delete from _trackedObjects
-			_trackedObjects.erase(trackedObjectIterator);
-		}
-
-		// reset active tag and frame and...
-		cancelTag();
-
-		setNumTags();
+		// delete from _trackedObjects
+		_trackedObjects.erase(trackedObjectIterator);
 	}
+
+	// reset active tag and frame and...
+	cancelTag();
+
+	setNumTags();
 }
 
 //AUXILIAR FUNCTION
@@ -576,7 +576,7 @@ void BeesBookTagMatcher::setNumTags()
 
 double BeesBookTagMatcher::getRadiusFromFocalLength() const
 {
-	// ToDo
+	// ToDo: calculate radius based on focal length
 	return 52.;
 }
 
