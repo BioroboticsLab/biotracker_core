@@ -22,30 +22,30 @@ private:
 	boost::optional<ulong>	_activeFrameNumber;
 
 	enum class State : uint8_t {
-		Ready = 0, // Ready for a new tag --Ctrl + LCM--
-		SetTag,    // a new set of points is being configured
-		SetP0,     // Set P0 --Left Click and drag--
-		SetP1,     // Set P1 --Left Click and drag--
-		SetP2,     // Set P2 --Left Click and drag--
-		SetBit,		//  Set single bits
+		Ready = 0,  // Ready for a new tag --Ctrl + LCM--
+		SetTag,     // A new tag is being drawn
+        SetP0,      // Set P0 --Left Click and drag--
+		SetP1,      // Set P1 --Left Click and drag--
+		SetP2,      // Set P2 --Left Click and drag--
+		SetBit,	    // Set single bits
 	};
 
-	State _currentState;
-	bool _setOnlyOrient; // to modify exclusively the tag orientation.
+	State               _currentState;  // current state of user interaction
+	bool                _setOnlyOrient; // to modify exclusively the tag orientation.
 
-	cv::Point2f				_rotationAxis;
-	cv::Point2f				_tempPoint;
+	cv::Point2f         _rotationAxis;  // unit vector that defines the tag's rotation in space
+	cv::Point2f			_tempPoint;     // temporary point for spatial rotation in user interaction
 
 	typedef struct {
 		cv::Point from;
 		cv::Point to;
 
 		double norm() const { return cv::norm(to - from); }
-		double alpha() const { return atan2(to.x - from.x, to.y - from.y) - CV_PI / 2; }
+        double alpha() const { return atan2(to.y - from.y, to.x - from.x); }
 	} Orientation;
 
-	// auxiliar variable for drawing the orientation while setting the Tag
-	Orientation _orient;
+	// auxiliar variable for drawing a line while setting the Tag
+	Orientation         _orient;
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
@@ -54,7 +54,7 @@ private:
 	std::shared_ptr<QWidget> _toolWidget;
 	std::shared_ptr<QWidget> _paramWidget;
 
-	std::set<size_t> _idCopyBuffer;
+	std::set<size_t>        _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
 
 	// function that draws the Tags set so far calling instances of Grid.
