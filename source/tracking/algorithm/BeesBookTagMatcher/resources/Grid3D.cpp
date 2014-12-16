@@ -17,6 +17,7 @@ const double Grid3D::INNER_RING_RADIUS  = 0.4;
 const double Grid3D::MIDDLE_RING_RADIUS = 0.8;
 const double Grid3D::OUTER_RING_RADIUS  = 1.0;
 const double Grid3D::BULGE_FACTOR       = 0.4;
+const double Grid3D::FOCAL_LENGTH       = 2.0;
 
 Grid3D::Grid3D()
 	: Grid3D(cv::Point2i(0, 0), 0., 0., 0., 0.)
@@ -128,7 +129,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			// rotate and scale point (aka vector)
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
-			result._rings[r][i] = cv::Point2i(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
+            // project onto image plane
+            result._rings[r][i] = cv::Point2i(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
 
 			if (r == 1) // inner ring
 				if ( (i % POINTS_PER_MIDDLE_CELL) == POINTS_PER_MIDDLE_CELL / 2 )
@@ -141,7 +143,9 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 	{
 		// rotate point (aka vector)
 		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
-		const cv::Point   p2(round((p.x / (p.z + 2.0))  * _radius), round((p.y / (p.z + 2.0)) * _radius));
+        
+        // project onto image plane
+        const cv::Point   p2(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
 
 		result._inner_line[i] = p2;
 
@@ -153,6 +157,7 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 	}
 
+    // the last interaction point is P1
 	_interactionPoints.push_back(result._outer_ring[0]);
 
 	return result;
