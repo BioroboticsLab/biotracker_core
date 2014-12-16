@@ -250,7 +250,7 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
 
-	for (size_t i = 0; i < std::min( _interactionPoints.size(), NUM_CELLS); ++i)
+	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
 	{
 		cv::Scalar color = tribool2Color(_ID[i]);
 		cv::circle(img, _interactionPoints[i] + center, 1, color);
@@ -359,8 +359,4 @@ void Grid3D::toggleTransparency()
 	_transparency = std::abs(_transparency - 0.6);
 }
 
-// we use NUM_CELLS in a call to std::min, which requires a reference to it.
-// Therefore, we need to actually define NUM_CELLS.
-const size_t Grid3D::NUM_CELLS;
 
-CEREAL_REGISTER_TYPE(Grid3D)
