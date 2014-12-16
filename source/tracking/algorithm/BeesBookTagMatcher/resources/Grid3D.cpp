@@ -31,6 +31,7 @@ Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angl
 	, _angle_x(angle_x)
 	, _coordinates2D(NUM_CELLS)
 	, _transparency(0.5)
+    , _bitsTouched(false)
 {
 	prepare_visualization_data();
 }
@@ -317,6 +318,8 @@ int Grid3D::getKeyPointIndex(cv::Point p) const
 
 void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
 { 
+    _bitsTouched = true;
+
 	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
 		_ID[cell_id] = true;
 
