@@ -290,9 +290,8 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 		if (_activeGrid) 
 		{
 			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
-			//scale variable is updated by 0.05
-			/*_activeGrid->scale = _activeGrid->scale + direction * 0.05;
-			_activeGrid->updateAxes();*/
+			const double radius = _activeGrid->getWorldRadius();
+			_activeGrid->setWorldRadius(radius + direction * 0.01 * radius);
 			emit update();
 		}
 	} 

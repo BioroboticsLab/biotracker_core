@@ -43,7 +43,7 @@ public:
 	static const double OUTER_RING_RADIUS;
 	static const double BULGE_FACTOR;
 
-    // focal lenght
+    // focal length
     static const double FOCAL_LENGTH;
 
     /******************************************
@@ -85,6 +85,9 @@ public:
 	void	toggleTransparency();
 
 	double	getPixelRadius() const { return _radius / FOCAL_LENGTH; }
+
+	double	getWorldRadius() const { return _radius; }
+	void	setWorldRadius(const double radius);
 
 private:
 	/******************************************
