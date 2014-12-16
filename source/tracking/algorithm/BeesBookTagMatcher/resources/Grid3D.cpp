@@ -364,4 +364,4 @@ void Grid3D::toggleTransparency()
 	_transparency = std::abs(_transparency - 0.6);
 }
 
-
+CEREAL_REGISTER_TYPE(Grid3D)
