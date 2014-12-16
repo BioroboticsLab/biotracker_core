@@ -99,9 +99,6 @@ private:
 	// calculate number of tags on current frame
 	void setNumTags();
 
-	// return keys that are handled by the tracker
-	std::set<Qt::Key> const& grabbedKeys() const override;
-
 	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
 	void mouseReleaseEvent (QMouseEvent * e) override;
@@ -121,6 +118,9 @@ public:
 
 	std::shared_ptr<QWidget> getToolsWidget() override { return _toolWidget; }
 	std::shared_ptr<QWidget> getParamsWidget() override { return _paramWidget; }
+
+	// return keys that are handled by the tracker
+	std::set<Qt::Key> const& grabbedKeys() const override;
 };
 
 #endif
