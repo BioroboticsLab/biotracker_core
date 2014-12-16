@@ -156,9 +156,4 @@ namespace CvHelper
 		}
 	}
 
-	template<typename POINT>
-	inline double vecLength(POINT const & v)
-	{	
-		return sqrt(v.x * v.x + v.y * v.y);
-	}
 }
