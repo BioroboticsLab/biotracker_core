@@ -218,8 +218,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 			_trackedObjects.emplace_back(newID);
 
 			// associate new (active) grid to frame number
-			// ToDo: fix angle
-			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
+			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), -_orient.alpha(), 0., 0.);
 
 			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
 
@@ -547,6 +546,7 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 
 void BeesBookTagMatcher::setNumTags()
 {
+	std::cout << _currentFrameNumber << std::endl;
 	size_t cnt = 0;
 	for (size_t i = 0; i < _trackedObjects.size(); i++)
 	{

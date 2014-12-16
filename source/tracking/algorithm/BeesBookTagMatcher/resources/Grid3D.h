@@ -6,9 +6,6 @@
 #include <opencv2/opencv.hpp>      // cv::Mat, cv::Point3_
 #include <boost/logic/tribool.hpp> // boost::tribool
 
-#include <cereal/access.hpp>
-#include <cereal/cereal.hpp>
-
 #include <source/tracking/serialization/ObjectModel.h>
 
 class Grid3D : public ObjectModel
@@ -52,6 +49,8 @@ public:
 	 *                                        *
 	 ******************************************/
 
+	//default constructor, required for serialization
+	explicit Grid3D();
 	explicit Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x);
 	virtual ~Grid3D() override;
 
@@ -146,8 +145,23 @@ private:
 	std::vector<std::vector<cv::Point>>   _coordinates2D;      // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
 	std::vector<cv::Point>                _interactionPoints;  // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
 	static const coordinates3D_t          _coordinates3D;      // underlying 3D coordinates of grid mesh
-	float                                 _transparency;       // weight in drawing mixture 
+	float                                 _transparency;       // weight in drawing mixture
 
+	// ToDo: don't store things that can be recalculated easily
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar)
+	{
+		ar(CEREAL_NVP(_center),
+		   CEREAL_NVP(_radius),
+		   CEREAL_NVP(_angle_z),
+		   CEREAL_NVP(_angle_y),
+		   CEREAL_NVP(_angle_x),
+		   CEREAL_NVP(_ID),
+		   CEREAL_NVP(_coordinates2D),
+		   CEREAL_NVP(_interactionPoints),
+		   CEREAL_NVP(_transparency));
+	}
 };
 
 #endif
