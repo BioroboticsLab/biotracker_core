@@ -14,7 +14,6 @@
 class Grid3D : public ObjectModel
 {
 public:
-
 	/******************************************
 	 *                                        *
 	 *              constants                 *
@@ -47,7 +46,6 @@ public:
 	static const double OUTER_RING_RADIUS;
 	static const double BULGE_FACTOR;
 
-
 	/******************************************
 	 *                                        *
 	 *            public function             *
@@ -60,7 +58,7 @@ public:
 	/**
 	 * draws 2D projection of 3D-mesh on image
 	 */
-	void	draw(cv::Mat &img, int active) const;
+	void	draw(cv::Mat &img) const;
 
 	void	setXRotation(double angle);
 	double	getXRotation() const { return _angle_x; }
@@ -84,8 +82,9 @@ public:
 
 	void	toggleTransparency();
 
-private:
+	double	getPixelRadius() const { return _radius; }
 
+private:
 	/******************************************
 	 *                                        *
 	 *          types & typedefs              *
@@ -115,7 +114,6 @@ private:
 	typedef coordinates_t<cv::Point3d> coordinates3D_t;
 	typedef coordinates_t<cv::Point2i> coordinates2D_t;
 
-
 	/******************************************
 	 *                                        *
 	 *          private functions             *
@@ -126,7 +124,7 @@ private:
 
 	coordinates2D_t        generate_3D_coordinates_from_parameters_and_project_to_2D();
 	void                   prepare_visualization_data();
-	void                   draw(cv::Mat &img, cv::Point center, int) const;
+	void                   draw(cv::Mat &img, cv::Point center) const;
 
 	/***************************************************************************
 	 * Parameter Section
@@ -136,6 +134,7 @@ private:
 	 * bee tag. These points are transformed according to the given parameters
 	 * and projected onto the camera plane to produce 2D coordinates for
 	 * displaying the tag.
+	 *
 	 ***************************************************************************/
 
 	cv::Point2i                           _center;             // center point of the grid (within image borders - unit: px)

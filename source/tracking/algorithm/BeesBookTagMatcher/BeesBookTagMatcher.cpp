@@ -26,14 +26,9 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
-	// TESTCODE START
-	, _testGrid3d(cv::Point2i(500,500), 51.0 , 0.0, 0.0, 0.0)
-	// TESTCODE END
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
-	_activeGrid		= std::make_shared<Grid3D>(_testGrid3d);
-	_currentState	= State::SetP0;
 }
 
 BeesBookTagMatcher::~BeesBookTagMatcher()
@@ -48,22 +43,18 @@ void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 
 void BeesBookTagMatcher::paint(cv::Mat& image)
 {
-	// TESTCODE START
-	_activeGrid->draw(image, 0);
-	// TESTCODE END
-	//if (!_trackedObjects.empty()) 
-	//{
-	//	drawSetTags(image);
-	//}
-	//if (_currentState == State::SetTag) 
-	//{
-	//	drawOrientation(image, _orient);
-	//} 
-	//else 
-	//	if (_activeGrid)  
-	//	{
-	//		drawActiveTag(image);
-	//	}
+	if (!_trackedObjects.empty())
+	{
+		drawSetTags(image);
+	}
+	if (_currentState == State::SetTag)
+	{
+		drawOrientation(image, _orient);
+	}
+	else if (_activeGrid)
+	{
+		drawActiveTag(image);
+	}
 }
 void BeesBookTagMatcher::reset() {
 }
@@ -77,9 +68,9 @@ void BeesBookTagMatcher::postLoad()
 void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) 
 {
 	// position of mouse cursor 
-	cv::Point p(e->x(), e->y());
-	bool ctrl	= QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
-	bool shift	= QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+	const cv::Point mousePosition(e->x(), e->y());
+	const bool ctrlModifier  = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+	const bool shiftModifier = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
 	
 	// left mouse button down:
 	// select tag among all visible tags
@@ -87,115 +78,85 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	// if no keypoint selected: compute P2 = _center - p; set space rotation
 	// LMB with CTRL: new tag
 	// RMB without modifier: store click point temporarily, set rotation mode
-	if (_activeGrid)
+	//check if LEFT button is clicked
+	if (e->button() == Qt::LeftButton)
 	{
-		int id = _activeGrid->getKeyPointIndex(p);
-		const bool indeterminate = ctrl && shift;
-
-		if ((id >= 0) && (id < 12)) // ToDo: use constants
+		if (ctrlModifier)
 		{
-			// change state, so consequent mouse moves do not move the tag when toggling bits
-			_currentState = State::SetBit;
-
-			_activeGrid->toggleIdBit(id, indeterminate);
+			if (_currentState == State::Ready)
+			{
+				_activeGrid.reset();
+				setTag(cv::Point(e->x(), e->y()));
+			}
 		}
 		else
-			switch (id)
-			{
-				case 12:
-				{
-					_currentState = State::SetP0;
-					break; 
-				}
-				case 13: // P1, ToDo: use constants
-				{
-					_currentState = State::SetP1;			
-					break;
-				}
-				default:
-				{
-					
-				}
-			}
-
-		if (e->button() == Qt::RightButton)
 		{
-			// vector orthogonal to rotation axis 
-			_tempPoint = p - _activeGrid->getCenter();
+			if (_activeGrid)
+			{
+				int id = _activeGrid->getKeyPointIndex(mousePosition);
+				const bool indeterminate = ctrlModifier && shiftModifier;
 
-			// set "rotation in space"-state
-			_currentState = State::SetP2;
+				if ((id >= 0) && (id < 12)) // ToDo: use constants
+				{
+					// change state, so consequent mouse moves do not move the tag when toggling bits
+					_currentState = State::SetBit;
+
+					_activeGrid->toggleIdBit(id, indeterminate);
+				} else {
+					switch (id)
+					{
+						case 12:
+						{
+							_currentState = State::SetP0;
+							break;
+						}
+						case 13: // P1, ToDo: use constants
+						{
+							_currentState = State::SetP1;
+							break;
+						}
+						default:
+						{
+							selectTag(mousePosition);
+						}
+					}
+				}
+			} else
+			{
+				selectTag(mousePosition);
+			}
+		}
+	} else if (e->button() == Qt::RightButton)
+	{
+		if (ctrlModifier)
+		{
+			removeCurrentActiveTag();
+		} else if (_activeGrid)
+		{
+			if (e->button() == Qt::RightButton)
+			{
+				// vector orthogonal to rotation axis
+				_tempPoint = mousePosition - _activeGrid->getCenter();
+
+				// set "rotation in space"-state
+				_currentState = State::SetP2;
+			}
 		}
 	}
 
 	emit update();
-
-	////check if LEFT button is clicked
-	//if (e->button() == Qt::LeftButton) 
-	//{
-	//	/*
-	//	//check for SHIFT modifier
-	//	if ( Qt::ShiftModifier == QApplication::keyboardModifiers() )
-	//	{
-	//		if ( _activeGrid )    // The Tag is active and can now be modified
-	//		{
-	//			//if clicked on one of the set points, the point is activated
-	//			if (selectPoint(cv::Point(e->x(), e->y())))
-	//			{
-	//				emit update();
-	//			}
-	//			if (_currentState == State::SetP1)
-	//			{
-	//				_setOnlyOrient = true;
-	//			}
-	//		}
-	//	}*/
-	//	
-	//	/*
-	//	//check for CTRL modifier
-	//	else 
-	//		if ( Qt::ControlModifier == QApplication::keyboardModifiers() )
-	//		{
-	//			if (_currentState == State::Ready) 
-	//			{
-	//				_activeGrid.reset();
-	//				// a new tag is generated
-	//				setTag(cv::Point(e->x(), e->y()));
-	//			}
-	//		}
-	//		else */
-	//		{
-	//			// The Tag is active and can now be modified
-	//			
-	//			/*
-	//			else 
-	//			{
-	//				selectTag(cv::Point(e->x(), e->y()));
-	//			}*/
-	//		}
-	//}
-	////check if RIGHT button is clicked
-	//if (e->button() == Qt::RightButton) 
-	//{
-	//	//check for CTRL modifier
-	//	if (Qt::ControlModifier == QApplication::keyboardModifiers()) 
-	//	{
-	//		removeCurrentActiveTag();
-	//		emit update();
-	//	}
-	//}
 }
 
 //check if pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) 
 {
-	cv::Point p(e->x(), e->y());
+	const cv::Point p(e->x(), e->y());
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
 		switch (_currentState) 
 		{
 		case State::SetTag:
-			// _orient[1] = cv::Point(e->x(), e->y());
+			_orient.to = p;
 			break;
 		case State::SetP0:
 		{
@@ -209,7 +170,6 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 		}		
 		case State::SetP2:
 		{
-
 			// vector orthogonal to rotation axis 
 			const cv::Point2f temp = p - _activeGrid->getCenter();
 
@@ -246,55 +206,41 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 //check if MOUSE BUTTON IS RELEASED
 void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e) 
 {
-	//if (_currentState == State::SetBit)
-		_currentState = State::SetP0;
+	// left button released
+	if (e->button() == Qt::LeftButton) {
+		switch (_currentState) {
+		//center and orientation of the tag were set.
+		case State::SetTag:
+		{
+			// update active frame number and active grid
+			_activeFrameNumber = _currentFrameNumber;
 
-	//// left button released
-	//if (e->button() == Qt::LeftButton) {
-	//	switch (_currentState) {
-	//	//center and orientation of the tag were set.
-	//	case State::SetTag:
-	//	{
-	//		// update active frame number and active grid
-	//		_activeFrameNumber = _currentFrameNumber;
+			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
 
-	//		const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
+			// insert new trackedObject object into _trackedObjects ( check if empty "first")
+			_trackedObjects.emplace_back(newID);
 
-	//		// insert new trackedObject object into _trackedObjects ( check if empty "first")
-	//		_trackedObjects.emplace_back(newID);
+			// associate new (active) grid to frame number
+			// ToDo: fix angle
+			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
 
-	//		// associate new (active) grid to frame number
-	//		_activeGrid = std::make_shared<Grid>(_orient[0], getAlpha(), newID);
-	//		_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
+			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
 
-	//		//length of the vector is taken into consideration
-	//		setTheta(cv::Point(e->x(), e->y()));
-	//		_currentState = State::Ready;
+			//length of the vector is taken into consideration
+			setTheta(cv::Point(e->x(), e->y()));
+			_currentState = State::Ready;
 
-	//		setNumTags();
-	//		break;
-	//	}
-	//	//the tag was translated
-	//	case State::SetP0:
-	//		_currentState = State::Ready;
-	//		/*_activeGrid->updateVectors();*/
-	//		break;
-	//	//orientation of the bee and the marker were modified
-	//	case State::SetP1:
-	//		_currentState = State::Ready;
-	//		_setOnlyOrient = false;
-	//		/*_activeGrid->updateVectors();*/
-	//		break;
-	//	//orientation of the marker was modified
-	//	case State::SetP2:
-	//		_currentState = State::Ready;
-	//		/*_activeGrid->updateVectors();*/
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//	emit update();
-	//}
+			setNumTags();
+			break;
+		}
+		case State::SetBit:
+			_currentState = State::SetP0;
+			break;
+		default:
+			break;
+		}
+		emit update();
+	}
 }
 
 void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
@@ -334,12 +280,12 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 					if (_idCopyBuffer.count(object.getId())) 
 					{
 						// check if grid from copy-from framenumber still exists
-						const auto maybeGrid = object.maybeGet<Grid>(_copyFromFrame.get());
+						const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
 						// and create a copy if a grid with the same id does not
 						// already exist on the current frame
-						if (maybeGrid && !object.maybeGet<Grid>(_currentFrameNumber)) 
+						if (maybeGrid && !object.maybeGet<Grid3D>(_currentFrameNumber))
 						{
-							object.add(_currentFrameNumber, std::make_shared<Grid>(*maybeGrid));
+							object.add(_currentFrameNumber, std::make_shared<Grid3D>(*maybeGrid));
 						}
 					}
 				}
@@ -387,34 +333,36 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 //function that draws the set Tags so far.
 void BeesBookTagMatcher::drawSetTags(cv::Mat& image) const
 {
-	//// iterate over all stored object
-	//for ( const TrackedObject& trackedObject : _trackedObjects ) 
-	//{
-	//	// check: data for that frame exists
-	//	if ( trackedObject.count( _currentFrameNumber ) ) 
-	//	{
-	//		// get grid
-	//		std::shared_ptr<Grid> grid = trackedObject.get<Grid>(_currentFrameNumber);
-	//		
-	//		// do not paint grid if it is active (will be drawn with different color later)
-	//		if (grid != _activeGrid)
-	//		{
-	//			grid->drawFullTag(image, 2);
-	//		}
-	//	}
-	//}
+	// iterate over all stored object
+	for ( const TrackedObject& trackedObject : _trackedObjects )
+	{
+		// check: data for that frame exists
+		if ( trackedObject.count( _currentFrameNumber ) )
+		{
+			// get grid
+			std::shared_ptr<Grid3D> grid = trackedObject.get<Grid3D>(_currentFrameNumber);
+
+			// do not paint grid if it is active (will be drawn with different color later)
+			if (grid != _activeGrid)
+			{
+				grid->draw(image);
+			}
+		}
+	}
 }
 
 //function that draws the orientation vector while being set.
-void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const std::vector<cv::Point>& orient) const
+void BeesBookTagMatcher::drawOrientation(cv::Mat &image, const Orientation &orient) const
 {
-	cv::line(image, orient[0], orient[1], cv::Scalar(0, 0, 255), 1);        //the orientation vector is printed in red
+	//the orientation vector is printed in red
+	cv::line(image, orient.from, orient.to, cv::Scalar(0, 0, 255), 1);
 }
 
-//function that draws an active tag calling an instance of Grid
+//function that draws an active tag calling an instance of Grid3D
 void BeesBookTagMatcher::drawActiveTag(cv::Mat &image) const
 {
-	_activeGrid->draw(image,1);         //the grid is drawn as active
+	// ToDo: different color for active tag?
+	_activeGrid->draw(image);         //the grid is drawn as active
 	//_activeGrid->updatePoints();
 	//for (int i = 0; i < 3; i++)
 	//{
@@ -467,17 +415,13 @@ void BeesBookTagMatcher::setTag(const cv::Point& location)
 {
 	_currentState = State::SetTag;
 
-	// empty vector
-	_orient.clear();
-
 	// first point of line
-	_orient.push_back(location);
-
+	_orient.from = location;
 	// second point of line (will be updated when mouse is moved)
-	_orient.push_back(location); 
-	
+	_orient.to   = location;
+
 	//the orientation vector is drawn.
-	emit update();          
+	emit update();
 }
 
 //function that allows P1 and P2 to be modified to calculate the tag's angle in space.
@@ -542,24 +486,24 @@ bool BeesBookTagMatcher::selectPoint(const cv::Point& location) {
 //function that checks if one of the already set Tags is selected.
 void BeesBookTagMatcher::selectTag(const cv::Point& location)
 {
-	//// iterate over all stored objects
-	//for (size_t i = 0; i < _trackedObjects.size(); i++) 
-	//{
-	//	// get pointer to i-th object
-	//	std::shared_ptr<Grid> grid = _trackedObjects[i].maybeGet<Grid>(_currentFrameNumber);
+	// iterate over all stored objects
+	for (size_t i = 0; i < _trackedObjects.size(); i++)
+	{
+		// get pointer to i-th object
+		std::shared_ptr<Grid3D> grid = _trackedObjects[i].maybeGet<Grid3D>(_currentFrameNumber);
 
-	//	// check if grid is valid
-	//	if (grid && dist(location, grid->centerGrid) < grid->axesTag.height) 
-	//	{
-	//		// assign the found grid to the activegrid pointer
-	//		_activeGrid        = grid;
-	//		_activeFrameNumber = _currentFrameNumber;
+		// check if grid is valid
+		if (grid && dist(location, grid->getCenter()) < grid->getPixelRadius())
+		{
+			// assign the found grid to the activegrid pointer
+			_activeGrid        = grid;
+			_activeFrameNumber = _currentFrameNumber;
 
-	//		emit update();
+			emit update();
 
-	//		return;
-	//	}
-	//}
+			return;
+		}
+	}
 }
 
 void BeesBookTagMatcher::cancelTag()
@@ -604,22 +548,23 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 	return sqrt(diff.x * diff.x + diff.y * diff.y);
 }
 
-double BeesBookTagMatcher::getAlpha() const
-{
-	return atan2(_orient[1].x - _orient[0].x, _orient[1].y - _orient[0].y) - CV_PI / 2;
-}
-
 void BeesBookTagMatcher::setNumTags()
 {
 	size_t cnt = 0;
 	for (size_t i = 0; i < _trackedObjects.size(); i++)
 	{
-		if (_trackedObjects[i].maybeGet<Grid>(_currentFrameNumber)) {
+		if (_trackedObjects[i].maybeGet<Grid3D>(_currentFrameNumber)) {
 			++cnt;
 		}
 	}
 
 	_UiToolWidget.numTags->setText(QString::number(cnt));
+}
+
+double BeesBookTagMatcher::getRadiusFromFocalLength() const
+{
+	// ToDo
+	return 52.;
 }
 
 const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const

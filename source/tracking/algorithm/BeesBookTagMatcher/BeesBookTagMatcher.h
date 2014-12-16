@@ -10,7 +10,6 @@
 #include <boost/optional.hpp>
 
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid.h"
 #include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid3D.h"
 
 #include "ui_BeesBookTagMatcherToolWidget.h"
@@ -21,9 +20,6 @@ class BeesBookTagMatcher : public TrackingAlgorithm {
 private:
 	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
-
-
-
 
 	enum class State : uint8_t {
 		Ready = 0, // Ready for a new tag --Ctrl + LCM--
@@ -40,7 +36,16 @@ private:
 	cv::Point2f				_rotationAxis;
 	cv::Point2f				_tempPoint;
 
-	std::vector<cv::Point> _orient; // auxiliar variable for drawing the orientation while setting the Tag
+	typedef struct {
+		cv::Point from;
+		cv::Point to;
+
+		double norm() const { return cv::norm(to - from); }
+		double alpha() const { return atan2(to.x - from.x, to.y - from.y) - CV_PI / 2; }
+	} Orientation;
+
+	// auxiliar variable for drawing the orientation while setting the Tag
+	Orientation _orient;
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
@@ -52,22 +57,11 @@ private:
 	std::set<size_t> _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
 
-	/**
-	* TEST CODE START
-	* ------------------------------------------
-	*/
-	Grid3D _testGrid3d;
-	/**
-	* ------------------------------------------
-	* TEST CODE END
-	*/
-
-
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawSetTags(cv::Mat &image) const;
 
 	// function that draws the orientation vector while being set.
-	void drawOrientation(cv::Mat& image, const std::vector<cv::Point>& _orient) const;
+	void drawOrientation(cv::Mat& image, const Orientation& orient) const;
 
 	// function that draws an active tag calling an instance of Grid
 	void drawActiveTag(cv::Mat& image) const;
@@ -98,6 +92,8 @@ private:
 	double getAlpha() const;
 
 	void setNumTags();
+
+	double getRadiusFromFocalLength() const;
 
 	std::set<Qt::Key> const& grabbedKeys() const override;
 
