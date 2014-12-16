@@ -83,11 +83,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	{
 		if (ctrlModifier)
 		{
-			if (_currentState == State::Ready)
-			{
-				_activeGrid.reset();
-				setTag(cv::Point(e->x(), e->y()));
-			}
+			_activeGrid.reset();
+			setTag(cv::Point(e->x(), e->y()));
 		}
 		else
 		{
