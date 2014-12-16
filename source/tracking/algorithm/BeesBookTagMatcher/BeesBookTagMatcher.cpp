@@ -22,7 +22,6 @@ static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	: TrackingAlgorithm(settings, parent)
 	, _currentState(State::Ready)
-	, _setOnlyOrient(false)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
@@ -37,7 +36,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 
 void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 {
-	_activeGrid.reset();
+	resetActiveGrid();
 	setNumTags();
 }
 
@@ -67,98 +66,98 @@ void BeesBookTagMatcher::postLoad()
 }
 
 // called when MOUSE BUTTON IS CLICKED
-void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e) 
+void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 {
-	// position of mouse cursor 
-	const cv::Point mousePosition(e->x(), e->y());
+    // position of mouse cursor 
+    const cv::Point mousePosition(e->x(), e->y());
 
     // keyboard modifiers
-	const bool ctrlModifier  = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
-	const bool shiftModifier = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
-	
-	// left mouse button down:
-	// select tag among all visible tags
-	// if there is a selected tag: select keypoint
-	// if no keypoint selected: compute P2 = _center - p; set space rotation
-	// LMB with CTRL: new tag
-	// RMB without modifier: store click point temporarily, set rotation mode
-	//check if LEFT button is clicked
-	if (e->button() == Qt::LeftButton)
-	{
+    const bool ctrlModifier = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+    const bool shiftModifier = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+
+    // left mouse button down:
+    // select tag among all visible tags
+    // if there is a selected tag: select keypoint
+    // if no keypoint selected: compute P2 = _center - p; set space rotation
+    // LMB with CTRL: new tag
+    // RMB without modifier: store click point temporarily, set rotation mode
+    //check if LEFT button is clicked
+    if (e->button() == Qt::LeftButton)
+    {
 
         // LMB +  Ctrl
-		if (ctrlModifier & !shiftModifier)		{
+        if (ctrlModifier & !shiftModifier)		{
             // reset pointer
-			_activeGrid.reset();
+            resetActiveGrid();
             // initialize new orientation vector, ie start drawing a line
             setTag(mousePosition);
-		}
-		else // other LMB
-		{
-			if (_activeGrid)
-			{
+        }
+        else // other LMB
+        {
+            if (_activeGrid)
+            {
                 // find id of keypoint clicked with the mouse
-				int id = _activeGrid->getKeyPointIndex(mousePosition);
-                
+                int id = _activeGrid->getKeyPointIndex(mousePosition);
+
                 // CTRL + Shift --> set bit to indeterminate
-				const bool indeterminate = ctrlModifier && shiftModifier;
+                const bool indeterminate = ctrlModifier && shiftModifier;
 
                 // one of the twelve cells is clicked
-				if ((id >= 0) && (id < 12)) // ToDo: use constants
-				{
-					// change state, so consequent mouse moves do not move the tag when toggling bits
-					_currentState = State::SetBit;
+                if ((id >= 0) && (id < 12)) // ToDo: use constants
+                {
+                    // change state, so consequent mouse moves do not move the tag when toggling bits
+                    _currentState = State::SetBit;
 
                     // toggle bit or set indeterminate, resp.
-					_activeGrid->toggleIdBit(id, indeterminate);
-				} 
+                    _activeGrid->toggleIdBit(id, indeterminate);
+                }
                 else // another keypoint was clicked
                 {
-					switch (id) 
-					{
-						case 12: // center point
-						{
-							_currentState = State::SetP0;
-							break;
-						}
-						case 13: // P1 (the one to rotate in x/y-plane), ToDo: use constants
-						{
-							_currentState = State::SetP1;
-							break;
-						}
-						default: // no keypoint: select another tag
-						{
-							selectTag(mousePosition);
-						}
-					}
-				}
-			} 
+                    switch (id)
+                    {
+                    case 12: // center point
+                    {
+                        _currentState = State::SetP0;
+                        break;
+                    }
+                    case 13: // P1 (the one to rotate in x/y-plane), ToDo: use constants
+                    {
+                        _currentState = State::SetP1;
+                        break;
+                    }
+                    default: // no keypoint: select another tag
+                    {
+                        selectTag(mousePosition);
+                    }
+                    }
+                }
+            }
             else // LMB and no active grid
-			{
-				selectTag(mousePosition);
-			}
-		}
-	} 
+            {
+                selectTag(mousePosition);
+            }
+        }
+    }
     // RMB
     else if (e->button() == Qt::RightButton)
-	{
-        // RMB + Ctrl : delete active tag
-		if (ctrlModifier) 
-		{
-			removeCurrentActiveTag();
-		} 
-        // RMB + active grid : rotate in space
-        else if (_activeGrid) 
-		{
-		    // vector orthogonal to rotation axis
-			_tempPoint = mousePosition - _activeGrid->getCenter();
+    {
+        if (_activeGrid) //
+        {
+            if (ctrlModifier && dist(mousePosition, _activeGrid->getCenter()) < _activeGrid->getPixelRadius())
+            {
+                removeCurrentActiveTag();
+            }
+            else
+            {
+                // vector orthogonal to rotation axis
+                _tempPoint = mousePosition - _activeGrid->getCenter();
+                // set "rotation in space"-state
+                _currentState = State::SetP2;
+            }
+        }
 
-			// set "rotation in space"-state
-			_currentState = State::SetP2;
-		}
-	}
-
-	emit update();
+        emit update();
+    }
 }
 
 // called when mouse pointer MOVES
@@ -243,6 +242,10 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 
             // generate object id
 			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
+
+			// update active frame number, objectId and grid
+			_activeFrameNumber = _currentFrameNumber;
+			_activeGridObjectId = newID;
 
 			// insert new trackedObject object into _trackedObjects ( check if empty "first")
 			_trackedObjects.emplace_back(newID);
@@ -528,6 +531,7 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 			// assign the found grid to the activegrid pointer
 			_activeGrid        = grid;
 			_activeFrameNumber = _currentFrameNumber;
+			_activeGridObjectId = _trackedObjects[i].getId();
 
 			emit update();
 
@@ -538,35 +542,39 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 
 void BeesBookTagMatcher::cancelTag()
 {
+	resetActiveGrid();
+	_currentState  = State::Ready;
+}
+
+void BeesBookTagMatcher::resetActiveGrid()
+{
 	_activeGrid.reset();
 	_activeFrameNumber.reset();
-	_currentState  = State::Ready;
-	_setOnlyOrient = false;
+	_activeGridObjectId.reset();
 }
 
 void BeesBookTagMatcher::removeCurrentActiveTag()
-{	
-	//if (_activeGrid)
-	//{
-	//	auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
-	//	                                          [&](const TrackedObject & o){ return o.getId() == _activeGrid->objectId; }) ;
-	//	
-	//	assert( trackedObjectIterator != _trackedObjects.end() );
+{
+	assert(_activeGrid);
 
-	//	trackedObjectIterator->erase(_currentFrameNumber);
+	auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
+											  [&](const TrackedObject & o){ return o.getId() == _activeGridObjectId.get(); }) ;
 
-	//	// if map empty
-	//	if (trackedObjectIterator->isEmpty())
-	//	{
-	//		// delete from _trackedObjects
-	//		_trackedObjects.erase(trackedObjectIterator);
-	//	}
-	//
-	//	// reset active tag and frame and...
-	//	cancelTag();
+	assert(trackedObjectIterator != _trackedObjects.end());
 
-	//	setNumTags();
-	//}
+	trackedObjectIterator->erase(_currentFrameNumber);
+
+	// if map empty
+	if (trackedObjectIterator->isEmpty())
+	{
+		// delete from _trackedObjects
+		_trackedObjects.erase(trackedObjectIterator);
+	}
+
+	// reset active tag and frame and...
+	cancelTag();
+
+	setNumTags();
 }
 
 //AUXILIAR FUNCTION
@@ -593,7 +601,7 @@ void BeesBookTagMatcher::setNumTags()
 
 double BeesBookTagMatcher::getRadiusFromFocalLength() const
 {
-	// ToDo
+	// ToDo: calculate radius based on focal length
 	return 52.;
 }
 

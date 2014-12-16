@@ -20,6 +20,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm {
 private:
 	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
+	boost::optional<size_t> _activeGridObjectId;
 
 	enum class State : uint8_t {
 		Ready = 0,  // Ready for a new tag --Ctrl + LCM--
@@ -31,7 +32,6 @@ private:
 	};
 
 	State               _currentState;  // current state of user interaction
-	bool                _setOnlyOrient; // to modify exclusively the tag orientation.
 
 	cv::Point2f         _rotationAxis;  // unit vector that defines the tag's rotation in space
 	cv::Point2f			_tempPoint;     // temporary point for spatial rotation in user interaction
@@ -84,6 +84,7 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	void resetActiveGrid();
 	void removeCurrentActiveTag();
 
 	// function that calculates the distance between two points
