@@ -69,6 +69,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 {
 	// position of mouse cursor 
 	const cv::Point mousePosition(e->x(), e->y());
+
+    // keyboard modifiers
 	const bool ctrlModifier  = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
 	const bool shiftModifier = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
 	
@@ -81,49 +83,61 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton)
 	{
-		if (ctrlModifier & !shiftModifier)
-		{
+
+        // LMB +  Ctrl
+		if (ctrlModifier & !shiftModifier)		{
+            // reset pointer
 			_activeGrid.reset();
-			setTag(cv::Point(e->x(), e->y()));
+            // initialize new orientation vector, ie start drawing a line
+            setTag(mousePosition);
 		}
-		else
+		else // other LMB
 		{
 			if (_activeGrid)
 			{
+                // find id of keypoint clicked with the mouse
 				int id = _activeGrid->getKeyPointIndex(mousePosition);
+                
+                // CTRL + Shift --> set bit to indeterminate
 				const bool indeterminate = ctrlModifier && shiftModifier;
 
+                // one of the twelve cells is clicked
 				if ((id >= 0) && (id < 12)) // ToDo: use constants
 				{
 					// change state, so consequent mouse moves do not move the tag when toggling bits
 					_currentState = State::SetBit;
 
+                    // toggle bit or set indeterminate, resp.
 					_activeGrid->toggleIdBit(id, indeterminate);
-				} else {
-					switch (id)
+				} 
+                else // another keypoint was clicked
+                {
+					switch (id) 
 					{
-						case 12:
+						case 12: // center point
 						{
 							_currentState = State::SetP0;
 							break;
 						}
-						case 13: // P1, ToDo: use constants
+						case 13: // P1 (the one to rotate in x/y-plane), ToDo: use constants
 						{
 							_currentState = State::SetP1;
 							break;
 						}
-						default:
+						default: // no keypoint: select another tag
 						{
 							selectTag(mousePosition);
 						}
 					}
 				}
-			} else
+			} 
+            else // LMB and no active grid
 			{
 				selectTag(mousePosition);
 			}
 		}
-	} else if (e->button() == Qt::RightButton)
+	} 
+    else if (e->button() == Qt::RightButton)
 	{
 		if (ctrlModifier)
 		{
@@ -219,7 +233,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 			_trackedObjects.emplace_back(newID);
 
 			// associate new (active) grid to frame number
-			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), -_orient.alpha(), 0., 0.);
+			_activeGrid = std::make_shared<Grid3D>(_orient.from, getRadiusFromFocalLength(), _orient.alpha(), 0., 0.);
 
 			_trackedObjects.back().add(_currentFrameNumber, _activeGrid);
 
@@ -407,10 +421,10 @@ void BeesBookTagMatcher::drawSettingTheta(cv::Mat &img) const
 
 //TAG CONFIGURATION FUNCTIONS
 
-//function called while setting the tag (it initializes orient vector)
+//function called once when creating a new tag (it initializes orient vector)
 void BeesBookTagMatcher::setTag(const cv::Point& location) 
 {
-	_currentState = State::SetTag;
+    _currentState = State::SetTag;
 
 	// first point of line
 	_orient.from = location;
