@@ -23,9 +23,9 @@ Grid3D::Grid3D()
 	: Grid3D(cv::Point2i(0, 0), 0., 0., 0., 0.)
 {}
 
-Grid3D::Grid3D(cv::Point2i center, double radius, double angle_z, double angle_y, double angle_x)
+Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angle_y, double angle_x)
 	: _center(center)
-	, _radius(radius)
+    , _radius(radius_px * FOCAL_LENGTH)
 	, _angle_z(angle_z)
 	, _angle_y(angle_y)
 	, _angle_x(angle_x)

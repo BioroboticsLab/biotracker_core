@@ -18,6 +18,9 @@
 class BeesBookTagMatcher : public TrackingAlgorithm {
 	Q_OBJECT
 private:
+
+    const static int GRID_RADIUS_PIXELS = 26;
+
 	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
 	boost::optional<size_t> _activeGridObjectId;
@@ -93,8 +96,6 @@ private:
 	double getAlpha() const;
 
 	void setNumTags();
-
-	double getRadiusFromFocalLength() const;
 
 	std::set<Qt::Key> const& grabbedKeys() const override;
 
