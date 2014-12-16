@@ -81,7 +81,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 	//check if LEFT button is clicked
 	if (e->button() == Qt::LeftButton)
 	{
-		if (ctrlModifier)
+		if (ctrlModifier & !shiftModifier)
 		{
 			_activeGrid.reset();
 			setTag(cv::Point(e->x(), e->y()));
