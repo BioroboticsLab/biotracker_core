@@ -209,10 +209,11 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 		//center and orientation of the tag were set.
 		case State::SetTag:
 		{
-			// update active frame number and active grid
-			_activeFrameNumber = _currentFrameNumber;
-
 			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
+
+			// update active frame number, objectId and grid
+			_activeFrameNumber = _currentFrameNumber;
+			_activeGridObjectId = newID;
 
 			// insert new trackedObject object into _trackedObjects ( check if empty "first")
 			_trackedObjects.emplace_back(newID);
@@ -494,6 +495,7 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 			// assign the found grid to the activegrid pointer
 			_activeGrid        = grid;
 			_activeFrameNumber = _currentFrameNumber;
+			_activeGridObjectId = _trackedObjects[i].getId();
 
 			emit update();
 
@@ -506,33 +508,34 @@ void BeesBookTagMatcher::cancelTag()
 {
 	_activeGrid.reset();
 	_activeFrameNumber.reset();
+	_activeGridObjectId.reset();
 	_currentState  = State::Ready;
 	_setOnlyOrient = false;
 }
 
 void BeesBookTagMatcher::removeCurrentActiveTag()
 {	
-	//if (_activeGrid)
-	//{
-	//	auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
-	//	                                          [&](const TrackedObject & o){ return o.getId() == _activeGrid->objectId; }) ;
-	//	
-	//	assert( trackedObjectIterator != _trackedObjects.end() );
+	if (_activeGrid)
+	{
+		auto trackedObjectIterator = std::find_if(_trackedObjects.begin(), _trackedObjects.end(),
+		                                          [&](const TrackedObject & o){ return o.getId() == _activeGridObjectId.get(); }) ;
 
-	//	trackedObjectIterator->erase(_currentFrameNumber);
+		assert( trackedObjectIterator != _trackedObjects.end() );
 
-	//	// if map empty
-	//	if (trackedObjectIterator->isEmpty())
-	//	{
-	//		// delete from _trackedObjects
-	//		_trackedObjects.erase(trackedObjectIterator);
-	//	}
-	//
-	//	// reset active tag and frame and...
-	//	cancelTag();
+		trackedObjectIterator->erase(_currentFrameNumber);
 
-	//	setNumTags();
-	//}
+		// if map empty
+		if (trackedObjectIterator->isEmpty())
+		{
+			// delete from _trackedObjects
+			_trackedObjects.erase(trackedObjectIterator);
+		}
+
+		// reset active tag and frame and...
+		cancelTag();
+
+		setNumTags();
+	}
 }
 
 //AUXILIAR FUNCTION
