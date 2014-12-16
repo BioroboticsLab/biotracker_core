@@ -546,7 +546,6 @@ double BeesBookTagMatcher::dist(const cv::Point &p1, const cv::Point &p2) const
 
 void BeesBookTagMatcher::setNumTags()
 {
-	std::cout << _currentFrameNumber << std::endl;
 	size_t cnt = 0;
 	for (size_t i = 0; i < _trackedObjects.size(); i++)
 	{
