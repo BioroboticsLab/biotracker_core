@@ -19,6 +19,8 @@ static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
 static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
 }
 
+const size_t BeesBookTagMatcher::GRID_RADIUS_PIXELS = 26;
+
 BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	: TrackingAlgorithm(settings, parent)
 	, _currentState(State::Ready)

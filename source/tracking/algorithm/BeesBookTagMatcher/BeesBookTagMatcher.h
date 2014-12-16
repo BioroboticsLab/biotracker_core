@@ -19,7 +19,7 @@ class BeesBookTagMatcher : public TrackingAlgorithm {
 	Q_OBJECT
 private:
 
-    const static int GRID_RADIUS_PIXELS = 26;
+	static const size_t GRID_RADIUS_PIXELS;
 
 	std::shared_ptr<Grid3D>	_activeGrid; // points to active grid (grid must be active to be altered)
 	boost::optional<ulong>	_activeFrameNumber;
@@ -48,7 +48,7 @@ private:
 	} Orientation;
 
 	// auxiliar variable for drawing a line while setting the Tag
-	Orientation         _orient;
+	Orientation _orient;
 
 	std::chrono::system_clock::time_point _lastMouseEventTime;
 
@@ -87,22 +87,25 @@ private:
 	// set no tas as currently active
 	void cancelTag();
 
+	// reset shared_ptr to current active grid and auxilary variables for active grid
 	void resetActiveGrid();
+
+	// remove active grid from current frame
 	void removeCurrentActiveTag();
 
 	// function that calculates the distance between two points
 	double dist(const cv::Point& p1, const cv::Point& p2) const;
 
-	double getAlpha() const;
-
+	// calculate number of tags on current frame
 	void setNumTags();
 
+	// return keys that are handled by the tracker
 	std::set<Qt::Key> const& grabbedKeys() const override;
 
-	void mouseMoveEvent		(QMouseEvent * e) override;
-	void mousePressEvent	(QMouseEvent * e) override;
-	void mouseReleaseEvent	(QMouseEvent * e) override;
-	void keyPressEvent		(QKeyEvent * e) override;
+	void mouseMoveEvent    (QMouseEvent * e) override;
+	void mousePressEvent   (QMouseEvent * e) override;
+	void mouseReleaseEvent (QMouseEvent * e) override;
+	void keyPressEvent     (QKeyEvent * e) override;
 
 protected:
 	bool event(QEvent* event) override;
