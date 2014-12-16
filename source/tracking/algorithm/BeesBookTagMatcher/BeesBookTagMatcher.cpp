@@ -393,7 +393,7 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 				const cv::Point tl(center.x - radius, center.y - radius);
 				const cv::Point br(center.x + radius, center.y + radius);
 				const double thickness = 4 + _currentZoomLevel;
-				cv::rectangle(image, tl, br, COLOR_YELLOW, thickness, CV_AA);
+				cv::rectangle(image, tl, br, grid->hasBeenBitToggled() ? COLOR_GREEN : COLOR_YELLOW, thickness, CV_AA);
 			}
 		}
 	}
