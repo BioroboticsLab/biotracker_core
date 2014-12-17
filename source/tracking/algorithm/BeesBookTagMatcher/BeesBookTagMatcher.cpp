@@ -55,6 +55,9 @@ void BeesBookTagMatcher::paint(cv::Mat& image)
 	}
 }
 
+/**
+    called after loading serialization data, see TrackingAlgorithm.h for declaration
+*/
 void BeesBookTagMatcher::postLoad()
 {
 	setNumTags();
@@ -68,29 +71,29 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
     // position of mouse cursor 
     cv::Point mousePosition(e->x(), e->y());
 
+    // restrict mouse pointer to live inside image borders only
     if (!mousePosition.inside(cv::Rect( _imgRect)) )
         forcePointIntoBorders(mousePosition, _imgRect);
 
     // keyboard modifiers
-    const bool ctrlModifier = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
-    const bool shiftModifier = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+    const bool ctrlModifier     = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+    const bool shiftModifier    = QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
 
-    // left mouse button down:
-    // select tag among all visible tags
-    // if there is a selected tag: select keypoint
-    // if no keypoint selected: compute P2 = _center - p; set space rotation
-    // LMB with CTRL: new tag
-    // RMB without modifier: store click point temporarily, set rotation mode
     if (e->button() == Qt::LeftButton)
     {
 
         // LMB +  Ctrl
-        if (ctrlModifier & !shiftModifier)		{
+        if (ctrlModifier & !shiftModifier)		
+        {
             // reset pointer
             resetActiveGrid();
-            // initialize new orientation vector, ie start drawing a line
+
+            // force mouse pointer to be inside valid boundaries
             forcePointIntoBorders(mousePosition, _validRect);
+            
+            // initialize new orientation vector, ie start drawing a line
             setTag(mousePosition);
+            
             // data has changed: update!
             dataChanged = true;
         }
@@ -146,13 +149,15 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
     // RMB
     else if (e->button() == Qt::RightButton)
     {
-        if (_activeGrid) //
+        if (_activeGrid)
         {
             if (ctrlModifier) 
             {
+                // if mouse cursor roughly inside tag
                 if (dist(mousePosition, _activeGrid->getCenter()) < _activeGrid->getPixelRadius())
                 {
                     removeCurrentActiveTag();
+                    
                     // data has changed: update!
                     dataChanged = true;
                 }
@@ -163,7 +168,8 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
                 if (dist(mousePosition, _activeGrid->getCenter()) < 2 * _activeGrid->getPixelRadius())
                 {
                     // vector orthogonal to rotation axis
-                   _tempPoint = mousePosition - _activeGrid->getCenter();
+                    _tempPoint = mousePosition - _activeGrid->getCenter();
+                   
                     // set "rotation in space"-state
                     _currentState = State::SetP2;
                 }
@@ -180,11 +186,14 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 {
     cv::Point mousePosition(e->x(), e->y());
 
+    // position of mouse cursor
     if (!mousePosition.inside(cv::Rect(_imgRect)))
         forcePointIntoBorders(mousePosition, _imgRect);
 
+    // get current time
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	
+    // slow down update rate to 1000 Hz max
     if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) 
     {
 		switch (_currentState) 
@@ -194,13 +203,13 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
             _orient.to = mousePosition;
             break;
         }
-		case State::SetP0:  // tag is being moved around
+		case State::SetP0:  // tag is being moved 
 		{
             forcePointIntoBorders(mousePosition, _validRect);
             _activeGrid->setCenter(mousePosition);
 			break;
 		}
-		case State::SetP1: // tag is rotated in x/y-plane
+		case State::SetP1: // tag is rotated in grid-plane
 		{
             _activeGrid->zRotateTowardsPointInPlane(mousePosition);
 			break;
@@ -216,6 +225,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 			// distance of mouse cursor to center
             const float d1          = cv::norm(_tempPoint);
 
+            // skip this situation (avoid division by zero)
             if (d1 == 0)
                 break;
 
@@ -258,7 +268,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
     {
 		switch (_currentState) 
         {
-		// a new tag was created
+		// a new tag is being created
 		case State::SetTag:
 		{
 			// update active frame number and active grid
@@ -554,7 +564,7 @@ bool BeesBookTagMatcher::event(QEvent *event)
 	}
 }
 
-void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect const& borders)
+void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect const & borders)
 {
     if (point.x < borders.x)
         point.x = borders.x;
