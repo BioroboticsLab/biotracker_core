@@ -44,6 +44,7 @@ private:
 	bool _isPanZoomMode;
 	int _currentWidth;
 	int _currentHeight;
+	void createTexture();
 
 	/**
 	* Modified by user input. 
