@@ -89,6 +89,13 @@ public:
 	double	getWorldRadius() const { return _radius; }
 	void	setWorldRadius(const double radius);
 
+    bool    hasBeenBitToggled() const { return _bitsTouched; }
+
+	bool    isSettable() const { return _isSettable; }
+	void    setSettable(const bool settable) { _isSettable = settable; }
+
+	std::array<boost::tribool, NUM_CELLS>const& getIdArray() const { return _ID; }
+
 private:
 	/******************************************
 	 *                                        *
@@ -110,9 +117,15 @@ private:
 		container_type &_middle_ring;
 		container_type &_outer_ring;
 
+        // default constructor with member initialization
 		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-		coordinates_t(const coordinates_t&) = delete;
+		
+        // move constructor, && : r-value reference 
+        coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		
+        // delete copy constructor and assignment operator
+        // -> make struct non-copyable
+        coordinates_t(const coordinates_t&) = delete;
 		coordinates_t& operator=(const coordinates_t&) = delete;
 	};
 
@@ -142,18 +155,21 @@ private:
 	 *
 	 ***************************************************************************/
 
-	cv::Point2i                           _center;             // center point of the grid (within image borders - unit: px)
-	double                                _radius;             // radius of the tag (unit: px)
-	double                                _angle_z;            // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	double                                _angle_y;            // the rotation angle of the grid around y axis (rotates into z - space)
-	double                                _angle_x;            // the rotation angle of the grid around x axis (rotates into z - space)
-	std::array<boost::tribool, NUM_CELLS> _ID;                 // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
-	std::vector<std::vector<cv::Point>>   _coordinates2D;      // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
-	std::vector<cv::Point>                _interactionPoints;  // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
-	static const coordinates3D_t          _coordinates3D;      // underlying 3D coordinates of grid mesh
-	float                                 _transparency;       // weight in drawing mixture
+	cv::Point2i                             _center;            // center point of the grid (within image borders - unit: px)
+	double                                  _radius;            // radius of the tag (unit: px)
+	double                                  _angle_z;           // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
+	double                                  _angle_y;           // the rotation angle of the grid around y axis (rotates into z - space)
+	double                                  _angle_x;           // the rotation angle of the grid around x axis (rotates into z - space)
+	std::array<boost::tribool, NUM_CELLS>   _ID;                // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
+	std::vector<std::vector<cv::Point>>     _coordinates2D;     // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
+	std::vector<cv::Point>                  _interactionPoints; // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
+	static const coordinates3D_t            _coordinates3D;     // underlying 3D coordinates of grid mesh
+	float                                   _transparency;      // weight in drawing mixture
+	bool                                    _bitsTouched;       // if at least one bit was set, this is true
+	bool                                    _isSettable;        // if tag can be recognized by a human
 
-	// ToDo: don't store things that can be recalculated easily
+
+    // generate serialization functions
 	friend class cereal::access;
 	template <class Archive>
 	void save(Archive& ar) const
@@ -163,7 +179,9 @@ private:
 		   CEREAL_NVP(_angle_z),
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
-		   CEREAL_NVP(_ID));
+		   CEREAL_NVP(_ID),
+		   CEREAL_NVP(_bitsTouched),
+		   CEREAL_NVP(_isSettable));
 	}
 
 	template<class Archive>
@@ -174,7 +192,9 @@ private:
 		   CEREAL_NVP(_angle_z),
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
-		   CEREAL_NVP(_ID));
+		   CEREAL_NVP(_ID),
+		   CEREAL_NVP(_bitsTouched),
+		   CEREAL_NVP(_isSettable));
 
 		prepare_visualization_data();
 	}
