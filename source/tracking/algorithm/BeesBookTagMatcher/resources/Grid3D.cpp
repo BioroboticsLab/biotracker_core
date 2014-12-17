@@ -350,6 +350,8 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 
 void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
 {
+    // still seems to flutter when heavily rotated ... hmmm ..
+
 	// vector of grid center to mouse pointer
     cv::Point d_p = (p - _center);
     
@@ -358,9 +360,15 @@ void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
     d_a = (d_a > CV_PI)     ? d_a - CV_PI: d_a;
     d_a = (d_a < -CV_PI)    ? d_a + CV_PI: d_a;
 
-    // rotation axis
+    // current rotation axis
+    cv::Point2f axis0(_angle_x, _angle_y);
+
+    // new rotation axis
     cv::Point2f axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
     
+    if (axis0.dot(axis) < 0)
+        axis = -axis;
+
     _angle_x = axis.x;
     _angle_y = axis.y;
     _angle_z = atan2(d_p.y, d_p.x);
