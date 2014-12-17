@@ -145,6 +145,7 @@ void BioTracker::initPlayback()
 {
 	_currentFrame = _settings.getValueOrDefault<size_t>(GUIPARAM::PAUSED_AT_FRAME, 0);
 	updateFrameNumber(_currentFrame);
+	_trackingThread->enableVideoPause(true);
 
 	switch (_mediaType) {
 	case MediaType::Images:
@@ -174,7 +175,6 @@ void BioTracker::initPlayback()
 
 	setPlayfieldPaused(true);
 
-	_trackingThread->enableVideoPause(true);
 	_trackingThread->setFrameNumber(_currentFrame);
 
 	ui.videoView->fitToWindow();
@@ -392,9 +392,7 @@ void BioTracker::runCapture()
 		emit videoPause(false);
 		break;
 	case VideoMode::Playing:
-		_videoMode = VideoMode::Paused;
-		setPlayfieldPaused(true);
-		emit videoPause(true);
+		pauseCapture();
 		break;
 	}
 }
@@ -486,22 +484,22 @@ void BioTracker::stepCaptureBackward()
 void BioTracker::pauseCapture()
 {
 	_videoMode = VideoMode::Paused;
-	emit videoPause(true);
+	_trackingThread->enableVideoPause(true);
 	setPlayfieldPaused(true);
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 }
 
-
 void BioTracker::stopCapture()
 {	
+	_trackingThread->stopCapture();
+
 	if (_mediaType != MediaType::NoMedia) {
 		updateFrameNumber(0);
 		_trackingThread->setFrameNumber(0);
 	}
-
 	_videoMode = VideoMode::Stopped;
+
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
-	emit videoStop();
 	setPlayfieldPaused(true);
 	ui.sld_video->setDisabled(true);
 	ui.cb_algorithms->setCurrentIndex(0);
@@ -510,16 +508,18 @@ void BioTracker::stopCapture()
 
 void BioTracker::updateFrameNumber(int frameNumber)
 {
-	_currentFrame = frameNumber;
+	if (_videoMode != VideoMode::Stopped) {
+		_currentFrame = frameNumber;
 
-	ui.sld_video->setValue(_currentFrame);
-	ui.frame_num_edit->setText(QString::number(_currentFrame));
-
-	if(frameNumber == ui.sld_video->maximum()) {
-		emit videoPause(true);
-		_videoMode = VideoMode::Paused;
-		setPlayfieldPaused(true);
-		_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(0).toStdString());
+		ui.sld_video->setValue(_currentFrame);
+		ui.frame_num_edit->setText(QString::number(_currentFrame));
+		// check if we reached the end of video
+		if (frameNumber == ui.sld_video->maximum()) {
+			pauseCapture();
+		}
+		else if (_videoMode == VideoMode::Paused) {
+			_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
+		}
 	}
 }
 
