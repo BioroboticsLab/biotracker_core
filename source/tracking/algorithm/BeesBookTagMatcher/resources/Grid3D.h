@@ -91,6 +91,9 @@ public:
 
     bool    hasBeenBitToggled() const { return _bitsTouched; }
 
+	bool    isSettable() const { return _isSettable; }
+	void    setSettable(const bool settable) { _isSettable = settable; }
+
 private:
 	/******************************************
 	 *                                        *
@@ -155,6 +158,7 @@ private:
 	static const coordinates3D_t            _coordinates3D;     // underlying 3D coordinates of grid mesh
 	float                                   _transparency;      // weight in drawing mixture
 	bool                                    _bitsTouched;       // if at least one bit was set, this is true
+	bool                                    _isSettable;        // if tag can be recognized by a human
 
 	// ToDo: don't store things that can be recalculated easily
 	friend class cereal::access;
@@ -167,7 +171,8 @@ private:
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
 		   CEREAL_NVP(_ID),
-		   CEREAL_NVP(_bitsTouched));
+		   CEREAL_NVP(_bitsTouched),
+		   CEREAL_NVP(_isSettable));
 	}
 
 	template<class Archive>
@@ -179,7 +184,8 @@ private:
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
 		   CEREAL_NVP(_ID),
-		   CEREAL_NVP(_bitsTouched));
+		   CEREAL_NVP(_bitsTouched),
+		   CEREAL_NVP(_isSettable));
 
 		prepare_visualization_data();
 	}

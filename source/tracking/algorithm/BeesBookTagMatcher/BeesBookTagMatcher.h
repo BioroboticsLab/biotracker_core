@@ -101,9 +101,9 @@ private:
 	// calculate number of tags on current frame
 	void setNumTags();
 
-    void forcePointIntoBorders(cv::Point & point, cv::Rect & const borders);    
+	void forcePointIntoBorders(cv::Point & point, cv::Rect const& borders);
 
-    void mouseMoveEvent    (QMouseEvent * e) override;
+	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
 	void mouseReleaseEvent (QMouseEvent * e) override;
 	void keyPressEvent     (QKeyEvent * e) override;

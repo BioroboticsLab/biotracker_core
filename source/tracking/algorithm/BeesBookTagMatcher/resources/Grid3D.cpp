@@ -31,7 +31,8 @@ Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angl
 	, _angle_x(angle_x)
 	, _coordinates2D(NUM_CELLS)
 	, _transparency(0.5)
-    , _bitsTouched(false)
+	, _bitsTouched(false)
+	, _isSettable(true)
 {
 	prepare_visualization_data();
 }
