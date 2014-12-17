@@ -94,6 +94,8 @@ public:
 	bool    isSettable() const { return _isSettable; }
 	void    setSettable(const bool settable) { _isSettable = settable; }
 
+	std::array<boost::tribool, NUM_CELLS>const& getIdArray() const { return _ID; }
+
 private:
 	/******************************************
 	 *                                        *
