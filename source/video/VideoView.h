@@ -21,9 +21,8 @@ public:
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
-	using QGLWidget::moveEvent;
-	float getCurrentZoomLevel()
-	{	return _zoomFactor;	}
+
+	float getCurrentZoomLevel() const { return _zoomFactor; }
 
 protected:
 	void initializeGL(); 

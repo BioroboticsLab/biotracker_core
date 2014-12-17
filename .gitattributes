@@ -1,8 +1,8 @@
-* text=auto
+#* text=auto
 
-*.c text
-*.cpp text
-*.h text
-*.hpp text
-*.txt text
-*.ini text
+#*.c text
+#*.cpp text
+#*.h text
+#*.hpp text
+#*.txt text
+#*.ini text
