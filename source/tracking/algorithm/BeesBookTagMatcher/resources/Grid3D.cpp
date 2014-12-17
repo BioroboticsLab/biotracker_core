@@ -246,15 +246,15 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	static const cv::Scalar red(0, 0, 255);
 	static const cv::Scalar yellow(0, 255, 255);
 
-	const cv::Scalar outerColor = isActive ? yellow : white;
+	const cv::Scalar &outerColor = isActive ? yellow : white;
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			outerColor, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       outerColor, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white,      false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black,      false, center);
 
 	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
 	{
@@ -265,22 +265,24 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 
 }
 
-
-
-
 void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
-	const int       radius = static_cast<int>(std::ceil(_radius));
-	const cv::Size  subimage_size(2 * radius, 2 * radius);
-	const cv::Point subimage_center(radius, radius);
-	const cv::Point subimage_origin = _center - subimage_center;
+	const int radius = static_cast<int>(std::ceil(this->getPixelRadius()));
+	const cv::Point subimage_origin( std::max(       0, _center.x - radius), std::max(       0, _center.y - radius) );
+	const cv::Point subimage_end   ( std::min(img.cols, _center.x + radius), std::min(img.rows, _center.y + radius) );
 
-	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
-	cv::Mat subimage_copy = subimage.clone();
+	// draw only if subimage has a valid size (i.e. width & height > 0)
+	if (subimage_origin.x < subimage_end.x && subimage_origin.y < subimage_end.y)
+	{
+		const cv::Point subimage_center( std::min(radius, _center.x), std::min(radius, _center.y) );
 
-	draw(subimage_copy, subimage_center, isActive);
+		cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_end) );
+		cv::Mat subimage_copy = subimage.clone();
 
-	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+		draw(subimage_copy, subimage_center, isActive);
+
+		cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+	}
 }
 
 void Grid3D::setXRotation(double angle)

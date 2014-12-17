@@ -431,7 +431,7 @@ boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string 
 	if (file.open(QIODevice::ReadOnly)) {
 		// calculate hash from first 4096 bytes of file
 		sha1Generator.addData(file.peek(4096));
-		sha1Generator.addData(QByteArray::number(numFiles));
+		sha1Generator.addData(QByteArray::number(static_cast<qulonglong>(numFiles)));
 		return QString(sha1Generator.result().toHex()).toStdString();
 	}
 
