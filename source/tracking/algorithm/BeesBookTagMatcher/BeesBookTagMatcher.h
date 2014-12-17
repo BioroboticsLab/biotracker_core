@@ -103,6 +103,8 @@ private:
 
 	void forcePointIntoBorders(cv::Point & point, cv::Rect const& borders);
 
+	void updateValidRect();
+
 	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
 	void mouseReleaseEvent (QMouseEvent * e) override;

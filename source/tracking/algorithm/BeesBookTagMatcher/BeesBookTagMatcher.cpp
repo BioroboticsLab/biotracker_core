@@ -28,12 +28,6 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
 {
-    _imgRect = cv::Rect(cv::Point(0, 0), cv::Size(420, 315));
-    _validRect = cv::Rect(  _imgRect.x + 2*GRID_RADIUS_PIXELS,
-        _imgRect.y + 2 * GRID_RADIUS_PIXELS,
-        _imgRect.width - 4 * GRID_RADIUS_PIXELS,
-        _imgRect.height - 4 * GRID_RADIUS_PIXELS);
-
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
 }
@@ -44,7 +38,7 @@ BeesBookTagMatcher::~BeesBookTagMatcher()
 void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & img/* frame */)
 {
     _imgRect = cv::Rect( cv::Point(0,0), img.size() );
-
+    updateValidRect();
 	resetActiveGrid();
 	setNumTags();
 }
@@ -315,6 +309,7 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
 			const double radius = _activeGrid->getWorldRadius();
 			_activeGrid->setWorldRadius(radius + direction * 0.01 * radius);
+            updateValidRect();
 			emit update();
 		}
 	} 
@@ -568,4 +563,19 @@ void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect const
         point.y = borders.y;
     else if (point.y >= ( borders.y + borders.height) )
         point.y = ( borders.y + borders.height - 1 );
+}
+
+void BeesBookTagMatcher::updateValidRect()
+{
+    double r = GRID_RADIUS_PIXELS;
+    
+    if (_activeGrid)
+    {
+        r = _activeGrid->getPixelRadius();
+    }
+
+    _validRect = cv::Rect(  _imgRect.x + r,
+                            _imgRect.y + r,
+                            _imgRect.width - 2 * r,
+                            _imgRect.height - 2 * r);
 }
