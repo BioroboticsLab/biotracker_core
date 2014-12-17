@@ -246,15 +246,15 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	static const cv::Scalar red(0, 0, 255);
 	static const cv::Scalar yellow(0, 255, 255);
 
-	const cv::Scalar outerColor = isActive ? yellow : white;
+	const cv::Scalar &outerColor = isActive ? yellow : white;
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			outerColor, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       outerColor, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white,      false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black,      false, center);
 
 	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
 	{
