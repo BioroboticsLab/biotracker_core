@@ -22,7 +22,7 @@ public:
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
 
-	float getCurrentZoomLevel() const { return _zoomFactor; }
+	float getCurrentZoomLevel() const { return _screenPicRatio + _zoomFactor; }
 
 protected:
 	void initializeGL(); 

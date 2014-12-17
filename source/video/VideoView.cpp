@@ -39,7 +39,6 @@ void VideoView::showImage(cv::Mat img)
 	_displayImage = img;
 	resizeGL(width(), height());
 
-
 	//Draw the scene
 	updateGL();
 }
@@ -74,7 +73,9 @@ void VideoView::fitToWindow()
 		float bottom = top + height;
 		glOrtho(left, right, bottom, top, 0.0, 1.0);
 		glMatrixMode(GL_MODELVIEW);
-		//resizeGL(width, height);
+
+		emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+
 		//Draw the scene
 		updateGL();
 	}
@@ -258,7 +259,7 @@ void VideoView::resizeGL(int width, int height)
 	glMatrixMode(GL_MODELVIEW);	
 	if (sizeChanged)
 		fitToWindow();
-	emit reportZoomLevel(_zoomFactor);
+	emit reportZoomLevel(_screenPicRatio + _zoomFactor);
 }
 
 

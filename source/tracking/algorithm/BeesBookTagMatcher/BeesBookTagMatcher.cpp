@@ -385,16 +385,20 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 
 			grid->draw(image, isActive);
 
-			// ToDo: use constants here
-			if (_currentZoomLevel > -4) {
-				// draw rectangle around grid when zoom level is low
-				const cv::Point center = grid->getCenter();
-				const double radius    = grid->getPixelRadius() * 1.5;
-				const cv::Point tl(center.x - radius, center.y - radius);
-				const cv::Point br(center.x + radius, center.y + radius);
-				const double thickness = 4 + _currentZoomLevel;
-				cv::rectangle(image, tl, br, COLOR_YELLOW, thickness, CV_AA);
-			}
+			// calculate actual pixel size of grid based on current zoom level
+			double displayTagSize = grid->getPixelRadius() / _currentZoomLevel;
+			displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
+			// thickness of rectangle of grid is based on actual pixel size
+			// of the grid. if the radius is 50px or more, the rectangle has
+			// a thickness of 1px.
+			const double thickness = 1. / (displayTagSize / 50.);
+
+			// draw rectangle around grid
+			const cv::Point center = grid->getCenter();
+			const double radius    = grid->getPixelRadius() * 1.5;
+			const cv::Point tl(center.x - radius, center.y - radius);
+			const cv::Point br(center.x + radius, center.y + radius);
+			cv::rectangle(image, tl, br, COLOR_YELLOW, thickness, CV_AA);
 		}
 	}
 }
