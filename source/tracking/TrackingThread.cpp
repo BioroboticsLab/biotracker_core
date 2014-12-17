@@ -376,8 +376,11 @@ void TrackingThread::setFps(double fps)
 }
 void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
-	MutexLocker lock(_trackerMutex);
-	_tracker = trackingAlgorithm;
+	{
+		MutexLocker lock(_trackerMutex);
+		_tracker = trackingAlgorithm;
+	}
+	doTrackingAndUpdateScreen();
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()
