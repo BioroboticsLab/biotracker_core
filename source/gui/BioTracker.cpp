@@ -494,8 +494,10 @@ void BioTracker::pauseCapture()
 
 void BioTracker::stopCapture()
 {	
-	updateFrameNumber(0);
-	_trackingThread->setFrameNumber(0);
+	if (_mediaType != MediaType::NoMedia) {
+		updateFrameNumber(0);
+		_trackingThread->setFrameNumber(0);
+	}
 
 	_videoMode = VideoMode::Stopped;
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
