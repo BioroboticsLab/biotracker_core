@@ -126,7 +126,7 @@ void VideoView::paintGL()
 		// Don't bother painting an image if we have none.
 		return; 
 	}
-	cv::Mat imageCopy = _displayImage.clone();
+	//cv::Mat imageCopy = _displayImage.clone();
 	if(_tracker)
 	{
 		try
