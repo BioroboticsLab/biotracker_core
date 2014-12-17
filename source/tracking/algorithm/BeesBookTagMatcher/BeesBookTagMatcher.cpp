@@ -376,6 +376,8 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 				case Qt::Key_D:
 					_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
 					break;
+				case Qt::Key_U:
+					_activeGrid->setSettable(!_activeGrid->isSettable());
 				case Qt::Key::Key_CapsLock:
 					_activeGrid->toggleTransparency();
 					break;
@@ -409,7 +411,8 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 				const cv::Point tl(center.x - radius, center.y - radius);
 				const cv::Point br(center.x + radius, center.y + radius);
 				const double thickness = 4 + _currentZoomLevel;
-				cv::rectangle(image, tl, br, grid->hasBeenBitToggled() ? COLOR_GREEN : COLOR_YELLOW, thickness, CV_AA);
+				const cv::Scalar color = grid->isSettable() ? (grid->hasBeenBitToggled() ? COLOR_GREEN : COLOR_YELLOW) : COLOR_RED;
+				cv::rectangle(image, tl, br, color, thickness, CV_AA);
 			}
 		}
 	}
@@ -524,7 +527,7 @@ const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 	                                      Qt::Key_W, Qt::Key_A,
 	                                      Qt::Key_S, Qt::Key_D,
 	                                      Qt::Key_G, Qt::Key_H,
-	                                      Qt::Key_CapsLock };
+										  Qt::Key_U, Qt::Key_CapsLock };
 	return keys;
 }
 
@@ -554,7 +557,7 @@ bool BeesBookTagMatcher::event(QEvent *event)
 	}
 }
 
-void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect & const borders)
+void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect const& borders)
 {
     if (point.x < borders.x)
         point.x = borders.x;
