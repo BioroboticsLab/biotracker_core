@@ -266,6 +266,9 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 
 }
 
+/**
+* draw grid on image. this function implements the transparency feature. 
+*/
 void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
 	const int radius = static_cast<int>(std::ceil(_radius));
@@ -309,6 +312,9 @@ void Grid3D::setCenter(cv::Point c)
 	_center = c;
 }
 
+/**
+* interate over keypoints and return the first close enough to point
+*/
 int Grid3D::getKeyPointIndex(cv::Point p) const
 {
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
@@ -323,6 +329,7 @@ void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
 { 
     _bitsTouched = true;
 
+    // if set to indeterminate, switch it to true, because we want to flip the bit in the next line
 	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
 		_ID[cell_id] = true;
 
@@ -369,16 +376,16 @@ void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
     // new rotation axis
     cv::Point2f axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
     
+    // if rotation axis is rotated to far, flip it back. 
+    // otherwise the tag is pitched into the other direction
     if (axis0.dot(axis) < 0)
         axis = -axis;
 
+    // update rotation parameters
     _angle_x = axis.x;
     _angle_y = axis.y;
     _angle_z = atan2(d_p.y, d_p.x);
 
-
-    /*cv::Point d = (p - _center);
-    _angle_z = atan2(d.y, d.x);*/
     prepare_visualization_data();
 }
 
