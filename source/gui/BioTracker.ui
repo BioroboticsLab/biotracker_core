@@ -132,6 +132,9 @@
              </item>
              <item>
               <widget class="QSlider" name="sld_video">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="autoFillBackground">
                 <bool>false</bool>
                </property>
@@ -214,6 +217,9 @@
                 </property>
                 <item>
                  <widget class="QPushButton" name="button_previousFrame">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="toolTip">
                    <string>Previous Frame</string>
                   </property>
@@ -237,6 +243,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_playPause">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="toolTip">
                    <string>Play</string>
                   </property>
@@ -260,6 +269,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_stop">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="toolTip">
                    <string>Stop</string>
                   </property>
@@ -286,6 +298,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_nextFrame">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="toolTip">
                    <string>Next Frame</string>
                   </property>
@@ -312,6 +327,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="button_screenshot">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>16</pointsize>
@@ -350,6 +368,9 @@
                 </item>
                 <item>
                  <widget class="QLineEdit" name="frame_num_edit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
