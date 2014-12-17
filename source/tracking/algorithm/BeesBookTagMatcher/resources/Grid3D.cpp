@@ -350,9 +350,25 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 
 void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
 {
-	cv::Point d = (p - _center);
-	_angle_z = atan2(d.y, d.x);
-	prepare_visualization_data();
+	// vector of grid center to mouse pointer
+    cv::Point d_p = (p - _center);
+    
+    // angular bisection of current orientation
+    double d_a = fmod( _angle_z - atan2(d_p.y, d_p.x), 2*CV_PI );
+    d_a = (d_a > CV_PI)     ? d_a - CV_PI: d_a;
+    d_a = (d_a < -CV_PI)    ? d_a + CV_PI: d_a;
+
+    // rotation axis
+    cv::Point2f axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
+    
+    _angle_x = axis.x;
+    _angle_y = axis.y;
+    _angle_z = atan2(d_p.y, d_p.x);
+
+
+    /*cv::Point d = (p - _center);
+    _angle_z = atan2(d.y, d.x);*/
+    prepare_visualization_data();
 }
 
 void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
