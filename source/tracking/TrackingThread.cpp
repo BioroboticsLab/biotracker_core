@@ -10,18 +10,18 @@
 
 using GUIPARAM::MediaType;
 
-TrackingThread::TrackingThread(Settings &settings) :	
-    _captureActive(false),
-    _readyForNextFrame(true),
-    _frameNumber(0),
-    _videoPause(false),
-    _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
-    _fps(30),
-    _runningFps(0),
-    _maxSpeed(false),
-    _mediaType(MediaType::NoMedia),
-    _settings(settings),
-    _tracker(nullptr)
+TrackingThread::TrackingThread(Settings &settings) :
+_captureActive(false),
+_readyForNextFrame(true),
+_frameNumber(0),
+_videoPause(false),
+_trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
+_fps(30),
+_runningFps(0),
+_maxSpeed(false),
+_mediaType(MediaType::NoMedia),
+_settings(settings),
+_tracker(nullptr)
 {}
 
 TrackingThread::~TrackingThread(void)
@@ -30,7 +30,7 @@ TrackingThread::~TrackingThread(void)
 void TrackingThread::loadVideo(const std::string &filename)
 {
 	MutexLocker lock(_readyForNexFrameMutex);
-	if(!isCaptureActive())
+	if (!isCaptureActive())
 	{
 		_capture = cv::VideoCapture(filename);
 		if (!_capture.isOpened())
@@ -44,7 +44,7 @@ void TrackingThread::loadVideo(const std::string &filename)
 		enableCapture(true);
 		_mediaType = MediaType::Video;
 		_fps = _capture.get(CV_CAP_PROP_FPS);
-		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) + 
+		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
 			" (#frames: " + QString::number(getVideoLength()).toStdString() + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		QThread::start();
@@ -53,34 +53,34 @@ void TrackingThread::loadVideo(const std::string &filename)
 
 void TrackingThread::loadPictures(const std::vector<std::string> &&filenames)
 {
-	_mediaType    = MediaType::Images;
+	_mediaType = MediaType::Images;
 	_pictureFiles = std::move(filenames);
-	_fps          = 1;
+	_fps = 1;
 	enableCapture(true);
-	QThread::start();	
+	QThread::start();
 }
 
 void TrackingThread::stopCapture()
-{	
+{
 	enableHandlingNextFrame(false);
 	enableCapture(false);
-	if(!this->wait(3000)) //Wait until thread actually has terminated (max. 3 sec)
+	if (!this->wait(3000)) //Wait until thread actually has terminated (max. 3 sec)
 	{
-		emit notifyGUI("Thread deadlock detected! Terminating now!",MSGS::FAIL);
+		emit notifyGUI("Thread deadlock detected! Terminating now!", MSGS::FAIL);
 		terminate(); //Thread didn't exit in time, probably deadlocked, terminate it!
 		wait(); //Note: We have to wait again here!
 	}
 }
 
 void TrackingThread::run()
-{	
+{
 	std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
 
-	while(isCaptureActive())
-	{			
+	while (isCaptureActive())
+	{
 		// when pause event is started.
-		while(isVideoPause())
+		while (isVideoPause())
 		{
 			firstLoop = true;
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -90,13 +90,13 @@ void TrackingThread::run()
 		//if thread just started (or is unpaused) start clock here
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
-		if(firstLoop)
+		if (firstLoop)
 			t = std::chrono::system_clock::now();
-		if(isReadyForNextFrame()){
-			// measure the capture start time
-			if ((_mediaType == MediaType::Video) && !_capture.isOpened()) { break; }
 
-			// load next frame
+		// measure the capture start time
+		if ((_mediaType == MediaType::Video) && !_capture.isOpened()) { break; }
+
+		// load next frame
 			{
 				MutexLocker lock(_frameNumberMutex);
 				switch (_mediaType) {
@@ -111,47 +111,48 @@ void TrackingThread::run()
 					break;
 				}
 			}
-			incrementFrameNumber();
+		incrementFrameNumber();
 
-			// exit if last frame is reached
-			if (_frame.empty())	{ break; }
+		// exit if last frame is reached
+		if (_frame.empty())	{ break; }
 
-			//TODO: if a tracking algorithm is selected
-			//send frame to tracking algorithm
-			doTracking();
-
-			// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
-			enableHandlingNextFrame(false);
-
-			std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
-			std::chrono::microseconds dur =
-					std::chrono::duration_cast<std::chrono::microseconds>(
-						std::chrono::system_clock::now() - t);
-			if(!_maxSpeed)
-			{
-				if (dur <= target_dur)
-					target_dur -= dur;
-				else {
-					target_dur = std::chrono::microseconds(0);
-				}
-			}
-			else
+		//TODO: if a tracking algorithm is selected
+		//send frame to tracking algorithm
+		doTracking();
+		std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
+		std::chrono::microseconds dur =
+			std::chrono::duration_cast<std::chrono::microseconds>(
+			std::chrono::system_clock::now() - t);
+		if (!_maxSpeed)
+		{
+			if (dur <= target_dur)
+				target_dur -= dur;
+			else {
 				target_dur = std::chrono::microseconds(0);
-			// calculate the running fps.
-			_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
-			emit sendFps(_runningFps);
-			std::this_thread::sleep_for(target_dur);
-			t = std::chrono::system_clock::now();
-			firstLoop = false;
-
-			if(isCaptureActive())
-			{
-				// lets GUI draw the frame.
-				emit trackingSequenceDone(_frame.clone());
-				emit newFrameNumber(getFrameNumber());
 			}
-
 		}
+		else
+			target_dur = std::chrono::microseconds(0);
+		// calculate the running fps.
+		_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
+		emit sendFps(_runningFps);
+		std::this_thread::sleep_for(target_dur);
+		t = std::chrono::system_clock::now();
+		firstLoop = false;
+
+		if (isCaptureActive())
+		{
+			// lets GUI draw the frame.
+			if (isReadyForNextFrame())
+			{
+				// lock for handling the frame: when GUI is ready, next frame can be handled.
+				enableHandlingNextFrame(false);
+				emit trackingSequenceDone(_frame.clone());
+			}
+			emit newFrameNumber(getFrameNumber());
+		}
+
+
 	}
 	{
 		MutexLocker lock(_frameNumberMutex);
@@ -162,7 +163,7 @@ void TrackingThread::run()
 cv::Mat TrackingThread::getPicture(size_t index)
 {
 	//check if index in range
-	if(index < _pictureFiles.size())
+	if (index < _pictureFiles.size())
 	{
 		std::string filename = _pictureFiles.at(index);
 		return cv::imread(filename);
@@ -177,9 +178,9 @@ cv::Mat TrackingThread::getPicture(size_t index)
 }
 
 void TrackingThread::enableCapture(bool enabled)
-{	
+{
 	MutexLocker lock(_captureActiveMutex);
-	_captureActive = enabled;	
+	_captureActive = enabled;
 }
 
 bool TrackingThread::isCaptureActive()
@@ -194,7 +195,7 @@ void TrackingThread::setFrameNumber(int frameNumber)
 
 	{
 		MutexLocker frameLocker(_frameNumberMutex);
-		if(frameNumber >= 0 && frameNumber <= videoLength)
+		if (frameNumber >= 0 && frameNumber <= videoLength)
 		{
 			_frameNumber = frameNumber;
 
@@ -234,11 +235,11 @@ void TrackingThread::incrementFrameNumber()
 	const int videoLength = getVideoLength();
 
 	MutexLocker lock(_frameNumberMutex);
-	
-	if ( _frameNumber < videoLength - 1 ) 
+
+	if (_frameNumber < videoLength - 1)
 	{
 		++_frameNumber;
-		
+
 		emit newFrameNumber(_frameNumber);
 	}
 }
@@ -257,7 +258,7 @@ void TrackingThread::nextFrame()
 		default:
 			assert(false);
 			break;
-	}
+		}
 
 	}
 	incrementFrameNumber();
@@ -265,7 +266,7 @@ void TrackingThread::nextFrame()
 	// only works if last frame not yet reached
 	//TODO: need to check memory violation thing here!
 	if (!_frame.empty())
-	{	
+	{
 		//TODO: if a tracking algorithm is selected
 		//send frame to tracking algorithm
 		// NOTE: this is just for testing!
@@ -293,7 +294,7 @@ void TrackingThread::doTracking()
 	{
 		_tracker->track(_frameNumber, _frame);
 	}
-	catch(const std::exception& err)
+	catch (const std::exception& err)
 	{
 		emit notifyGUI("critical error in selected tracking algorithm: " + std::string(err.what()), MSGS::FAIL);
 	}
@@ -375,8 +376,11 @@ void TrackingThread::setFps(double fps)
 }
 void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
-	MutexLocker lock(_trackerMutex);
-	_tracker = trackingAlgorithm;		
+	{
+		MutexLocker lock(_trackerMutex);
+		_tracker = trackingAlgorithm;
+	}
+	doTrackingAndUpdateScreen();
 }
 
 void TrackingThread::initCaptureForReadingVideoOrStream()
