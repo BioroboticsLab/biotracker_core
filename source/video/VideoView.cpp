@@ -46,36 +46,38 @@ void VideoView::showImage(cv::Mat img)
 
 void VideoView::fitToWindow()
 {
-	_zoomFactor = 0;
-	float width = static_cast<float>(this->width());
-	float height = static_cast<float>(this->height());
-	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
-	float windowRatio = static_cast<float>(width) / height;
-	if(windowRatio < imgRatio) 
-	{
-		_panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
-		_panX = 0;
-	} else 
-	{		
-		_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);	
-		_panY = 0;
+	if (!_displayImage.empty()) {
+		_zoomFactor = 0;
+		float width = static_cast<float>(this->width());
+		float height = static_cast<float>(this->height());
+		float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+		float windowRatio = static_cast<float>(width) / height;
+		if(windowRatio < imgRatio)
+		{
+			_panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
+			_panX = 0;
+		} else
+		{
+			_panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);
+			_panY = 0;
+		}
+		glViewport(0,0,this->width(), this->height());
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		width = width * (_screenPicRatio + _zoomFactor);
+		height = height *(_screenPicRatio + _zoomFactor);
+
+		float left = _panX;
+		float top	 = _panY;
+		float right = left + width;
+		float bottom = top + height;
+		glOrtho(left, right, bottom, top, 0.0, 1.0);
+		glMatrixMode(GL_MODELVIEW);
+		//resizeGL(width, height);
+		//Draw the scene
+		updateGL();
 	}
-	glViewport(0,0,this->width(), this->height());
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	width = width * (_screenPicRatio + _zoomFactor);
-	height = height *(_screenPicRatio + _zoomFactor);
-
-	float left = _panX;
-	float top	 = _panY;
-	float right = left + width;
-	float bottom = top + height;
-	glOrtho(left, right, bottom, top, 0.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);	
-	//resizeGL(width, height);
-	//Draw the scene
-	updateGL();
 }
 
 void VideoView::paintGL()
