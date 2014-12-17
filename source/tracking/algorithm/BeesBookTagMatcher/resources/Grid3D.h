@@ -117,9 +117,15 @@ private:
 		container_type &_middle_ring;
 		container_type &_outer_ring;
 
+        // default constructor with member initialization
 		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
-		coordinates_t(const coordinates_t&) = delete;
+		
+        // move constructor, && : r-value reference 
+        coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		
+        // delete copy constructor and assignment operator
+        // -> make struct non-copyable
+        coordinates_t(const coordinates_t&) = delete;
 		coordinates_t& operator=(const coordinates_t&) = delete;
 	};
 
@@ -162,7 +168,8 @@ private:
 	bool                                    _bitsTouched;       // if at least one bit was set, this is true
 	bool                                    _isSettable;        // if tag can be recognized by a human
 
-	// ToDo: don't store things that can be recalculated easily
+
+    // generate serialization functions
 	friend class cereal::access;
 	template <class Archive>
 	void save(Archive& ar) const
