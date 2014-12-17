@@ -101,7 +101,7 @@ private:
 	// calculate number of tags on current frame
 	void setNumTags();
 
-	void forcePointIntoBorders(cv::Point & point, cv::Rect const& borders);
+	void forcePointIntoBorders(cv::Point & point, cv::Rect const & borders);
 
 	void updateValidRect();
 
