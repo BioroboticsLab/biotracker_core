@@ -28,6 +28,12 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())	
 {
+    _imgRect = cv::Rect(cv::Point(0, 0), cv::Size(420, 315));
+    _validRect = cv::Rect(  _imgRect.x + 2*GRID_RADIUS_PIXELS,
+        _imgRect.y + 2 * GRID_RADIUS_PIXELS,
+        _imgRect.width - 4 * GRID_RADIUS_PIXELS,
+        _imgRect.height - 4 * GRID_RADIUS_PIXELS);
+
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
 }
@@ -35,8 +41,10 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 BeesBookTagMatcher::~BeesBookTagMatcher()
 {}
 
-void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & /* frame */)
+void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & img/* frame */)
 {
+    _imgRect = cv::Rect( cv::Point(0,0), img.size() );
+
 	resetActiveGrid();
 	setNumTags();
 }
@@ -64,7 +72,10 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
     bool dataChanged = false;
 
     // position of mouse cursor 
-    const cv::Point mousePosition(e->x(), e->y());
+    cv::Point mousePosition(e->x(), e->y());
+
+    if (!mousePosition.inside(cv::Rect( _imgRect)) )
+        forcePointIntoBorders(mousePosition, _imgRect);
 
     // keyboard modifiers
     const bool ctrlModifier = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
@@ -84,6 +95,7 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
             // reset pointer
             resetActiveGrid();
             // initialize new orientation vector, ie start drawing a line
+            forcePointIntoBorders(mousePosition, _validRect);
             setTag(mousePosition);
             // data has changed: update!
             dataChanged = true;
@@ -172,7 +184,10 @@ void BeesBookTagMatcher::mousePressEvent(QMouseEvent * e)
 // called when mouse pointer MOVES
 void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e) 
 {
-    const cv::Point mousePosition(e->x(), e->y());
+    cv::Point mousePosition(e->x(), e->y());
+
+    if (!mousePosition.inside(cv::Rect(_imgRect)))
+        forcePointIntoBorders(mousePosition, _imgRect);
 
 	const auto elapsed = std::chrono::system_clock::now() - _lastMouseEventTime;
 	
@@ -187,6 +202,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
         }
 		case State::SetP0:  // tag is being moved around
 		{
+            forcePointIntoBorders(mousePosition, _validRect);
             _activeGrid->setCenter(mousePosition);
 			break;
 		}
@@ -536,4 +552,17 @@ bool BeesBookTagMatcher::event(QEvent *event)
 		event->ignore();
 		return false;
 	}
+}
+
+void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect & const borders)
+{
+    if (point.x < borders.x)
+        point.x = borders.x;
+    else if (point.x >= ( borders.x + borders.width) )
+        point.x = (borders.x + borders.width - 1);
+
+    if (point.y < borders.y)
+        point.y = borders.y;
+    else if (point.y >= ( borders.y + borders.height) )
+        point.y = ( borders.y + borders.height - 1 );
 }
