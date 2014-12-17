@@ -267,7 +267,7 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 
 void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
-	const int radius = static_cast<int>(std::ceil(_radius));
+	const int radius = static_cast<int>(std::ceil(this->getPixelRadius()));
 	const cv::Point subimage_origin( std::max(       0, _center.x - radius), std::max(       0, _center.y - radius) );
 	const cv::Point subimage_end   ( std::min(img.cols, _center.x + radius), std::min(img.rows, _center.y + radius) );
 
