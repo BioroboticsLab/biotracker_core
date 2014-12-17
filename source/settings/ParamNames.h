@@ -13,18 +13,25 @@ static const std::string TRACKING_ENABLED = "TRACKERPARAM.TRACKING_ENABLED";
 
 namespace GUIPARAM
 {
-// true if video is loaded, false if picture is loaded
-static const std::string IS_SOURCE_VIDEO	= "GUIPARAM.IS_SOURCE_VIDEO";
+enum class MediaType : uint8_t {
+	NoMedia = 0,
+	Video,
+	Images
+};
+
+static const std::string MEDIA_TYPE			= "GUIPARAM.MEDIA_TYPE";
 static const std::string SHORTCUT_PLAY		= "GUIPARAM.SHORTCUT_PLAY";
 static const std::string SHORTCUT_NEXT		= "GUIPARAM.SHORTCUT_NEXT";
 static const std::string SHORTCUT_PREV		= "GUIPARAM.SHORTCUT_PREV";
 static const std::string SHORTCUT_ZOOM		= "GUIPARAM.SHORTCUT_ZOOM";
+
+static const std::string PAUSED_AT_FRAME	= "GUIPARAM.PAUSED_AT_FRAME";
 }
 
 namespace PICTUREPARAM
 {
 //path to picture
-static const std::string PICTURE_FILE = "PICTUREPARAM.PICTURE_FILE";
+static const std::string PICTURE_FILES = "PICTUREPARAM.PICTURE_FILES";
 }
 
 namespace CAPTUREPARAM
@@ -32,7 +39,6 @@ namespace CAPTUREPARAM
 // Video path
 static const std::string CAP_VIDEO_FILE      = "CAPTUREPARAM.CAP_VIDEO_FILE";
 static const std::string CAP_SCREENSHOT_PATH = "CAPTUREPARAM.CAP_SCREENSHOT_PATH";
-static const std::string CAP_PAUSED_AT_FRAME = "CAPTUREPARAM.CAP_PAUSED_AT_FRAME";
 
 // Video paths
 static const std::string ENABLE_RECORD_RAW        = "CAPTUREPARAM.ENABLE_RECORD_RAW";

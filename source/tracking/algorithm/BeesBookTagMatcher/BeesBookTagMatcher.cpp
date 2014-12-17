@@ -203,15 +203,15 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
             // vector orthogonal to rotation axis
             _tempPoint = mousePosition - _activeGrid->getCenter();
 
-			// vector orthogonal to rotation axis 
-            const cv::Point2f temp  = mousePosition - _activeGrid->getCenter();
+			// distance of mouse cursor to center
+            const float d1          = cv::norm(_tempPoint);
 
-			// distance to center
-			const float d1          = cv::norm(temp);
+            if (d1 == 0)
+                break;
 
 			// the rotation axis in image reference frame (unit vector)
-			const float x           = -temp.y / d1;
-			const float y           =  temp.x / d1;
+            const float x           = -_tempPoint.y / d1;
+            const float y           = _tempPoint.x  / d1;
 
 			// z - angle of grid
 			const double a          = _activeGrid->getZRotation();

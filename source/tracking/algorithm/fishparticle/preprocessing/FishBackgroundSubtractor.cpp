@@ -4,7 +4,7 @@
 * Performs the necessary application of settings to the underlying background
 * subtractor.
 */
-FishBackgroundSubtractor::FishBackgroundSubtractor(Settings& settings) : _settings(settings)
+FishBackgroundSubtractor::FishBackgroundSubtractor(ParticleParams& params) : _params(params)
 {
 	nShadowDetection = 0;
 }

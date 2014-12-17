@@ -154,7 +154,7 @@ private:
 	std::vector<cv::Point>                  _interactionPoints; // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
 	static const coordinates3D_t            _coordinates3D;     // underlying 3D coordinates of grid mesh
 	float                                   _transparency;      // weight in drawing mixture
-    bool                                    _bitsTouched;       // if at least one bit was set, this is true 
+	bool                                    _bitsTouched;       // if at least one bit was set, this is true
 
 	// ToDo: don't store things that can be recalculated easily
 	friend class cereal::access;
@@ -166,7 +166,8 @@ private:
 		   CEREAL_NVP(_angle_z),
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
-		   CEREAL_NVP(_ID));
+		   CEREAL_NVP(_ID),
+		   CEREAL_NVP(_bitsTouched));
 	}
 
 	template<class Archive>
@@ -177,7 +178,8 @@ private:
 		   CEREAL_NVP(_angle_z),
 		   CEREAL_NVP(_angle_y),
 		   CEREAL_NVP(_angle_x),
-		   CEREAL_NVP(_ID));
+		   CEREAL_NVP(_ID),
+		   CEREAL_NVP(_bitsTouched));
 
 		prepare_visualization_data();
 	}
