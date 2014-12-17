@@ -31,6 +31,8 @@ Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angl
 	, _angle_x(angle_x)
 	, _coordinates2D(NUM_CELLS)
 	, _transparency(0.5)
+	, _bitsTouched(false)
+	, _isSettable(true)
 {
 	prepare_visualization_data();
 }
@@ -245,15 +247,15 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	static const cv::Scalar red(0, 0, 255);
 	static const cv::Scalar yellow(0, 255, 255);
 
-	const cv::Scalar outerColor = isActive ? yellow : white;
+	const cv::Scalar &outerColor = isActive ? yellow : white;
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			outerColor, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       outerColor, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white,      false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black,      false, center);
 
 	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
 	{
@@ -264,22 +266,27 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 
 }
 
-
-
-
+/**
+* draw grid on image. this function implements the transparency feature. 
+*/
 void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
-	const int       radius = static_cast<int>(std::ceil(_radius));
-	const cv::Size  subimage_size(2 * radius, 2 * radius);
-	const cv::Point subimage_center(radius, radius);
-	const cv::Point subimage_origin = _center - subimage_center;
+	const int radius = static_cast<int>(std::ceil(_radius));
+	const cv::Point subimage_origin( std::max(       0, _center.x - radius), std::max(       0, _center.y - radius) );
+	const cv::Point subimage_end   ( std::min(img.cols, _center.x + radius), std::min(img.rows, _center.y + radius) );
 
-	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
-	cv::Mat subimage_copy = subimage.clone();
+	// draw only if subimage has a valid size (i.e. width & height > 0)
+	if (subimage_origin.x < subimage_end.x && subimage_origin.y < subimage_end.y)
+	{
+		const cv::Point subimage_center( std::min(radius, _center.x), std::min(radius, _center.y) );
 
-	draw(subimage_copy, subimage_center, isActive);
+		cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_end) );
+		cv::Mat subimage_copy = subimage.clone();
 
-	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+		draw(subimage_copy, subimage_center, isActive);
+
+		cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+	}
 }
 
 void Grid3D::setXRotation(double angle)
@@ -305,6 +312,9 @@ void Grid3D::setCenter(cv::Point c)
 	_center = c;
 }
 
+/**
+* interate over keypoints and return the first close enough to point
+*/
 int Grid3D::getKeyPointIndex(cv::Point p) const
 {
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
@@ -317,6 +327,9 @@ int Grid3D::getKeyPointIndex(cv::Point p) const
 
 void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
 { 
+    _bitsTouched = true;
+
+    // if set to indeterminate, switch it to true, because we want to flip the bit in the next line
 	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
 		_ID[cell_id] = true;
 
@@ -347,9 +360,33 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 
 void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
 {
-	cv::Point d = (p - _center);
-	_angle_z = atan2(d.y, d.x);
-	prepare_visualization_data();
+    // still seems to flutter when heavily rotated ... hmmm ..
+
+	// vector of grid center to mouse pointer
+    cv::Point d_p = (p - _center);
+    
+    // angular bisection of current orientation
+    double d_a = fmod( _angle_z - atan2(d_p.y, d_p.x), 2*CV_PI );
+    d_a = (d_a > CV_PI)     ? d_a - CV_PI: d_a;
+    d_a = (d_a < -CV_PI)    ? d_a + CV_PI: d_a;
+
+    // current rotation axis
+    cv::Point2f axis0(_angle_x, _angle_y);
+
+    // new rotation axis
+    cv::Point2f axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
+    
+    // if rotation axis is rotated to far, flip it back. 
+    // otherwise the tag is pitched into the other direction
+    if (axis0.dot(axis) < 0)
+        axis = -axis;
+
+    // update rotation parameters
+    _angle_x = axis.x;
+    _angle_y = axis.y;
+    _angle_z = atan2(d_p.y, d_p.x);
+
+    prepare_visualization_data();
 }
 
 void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)

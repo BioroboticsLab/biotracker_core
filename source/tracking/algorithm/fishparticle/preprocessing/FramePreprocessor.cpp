@@ -4,10 +4,9 @@
 /**
  * Constructs a new instance using the preprocessor settings set in settings.
  */
-FramePreprocessor::FramePreprocessor(Settings& settings, ParticleParams& params)
-	: _settings(settings)
-	, _params(params)
-	, _background_subtractor(settings)
+FramePreprocessor::FramePreprocessor(ParticleParams& params)
+	: _params(params)
+	, _background_subtractor(params)
 {
 }
 

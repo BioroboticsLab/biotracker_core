@@ -59,6 +59,8 @@ private:
 
 	std::set<size_t>        _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
+    cv::Rect                _imgRect;       // stores image dimensions
+    cv::Rect                _validRect;     // holds a rect that defines valid positions for tags (changes size when tags are resized)
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawTags(cv::Mat &image) const;
@@ -98,6 +100,10 @@ private:
 
 	// calculate number of tags on current frame
 	void setNumTags();
+
+	void forcePointIntoBorders(cv::Point & point, cv::Rect const & borders);
+
+	void updateValidRect();
 
 	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
