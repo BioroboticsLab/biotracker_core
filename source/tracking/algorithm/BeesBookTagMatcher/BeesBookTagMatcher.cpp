@@ -262,13 +262,13 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 		case State::SetTag:
 		{
 			// update active frame number and active grid
-			_activeFrameNumber = _currentFrameNumber;
+			_activeFrameNumber = getCurrentFrameNumber();
 
             // generate object id
 			const size_t newID = _trackedObjects.empty() ? 0 : _trackedObjects.back().getId() + 1;
 
 			// update active frame number, objectId and grid
-			_activeFrameNumber = _currentFrameNumber;
+			_activeFrameNumber = getCurrentFrameNumber();
 			_activeGridObjectId = newID;
 
 			// insert new trackedObject object into _trackedObjects ( check if empty "first")
@@ -278,7 +278,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
             _activeGrid = std::make_shared<Grid3D>(_orient.from, GRID_RADIUS_PIXELS, _orient.alpha(), 0., 0.);
             
             // associate new (active) grid to frame number
-            _trackedObjects.back().add(_currentFrameNumber, _activeGrid);
+            _trackedObjects.back().add(getCurrentFrameNumber(), _activeGrid);
 
             // update GUI display 
 			setNumTags();
@@ -321,12 +321,12 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			for (const TrackedObject& object : _trackedObjects) 
 			{
 				// store ids of all grids on current frame in copy buffer
-				if (object.count(_currentFrameNumber)) 
+				if (object.count(getCurrentFrameNumber()))
 				{
 					_idCopyBuffer.insert(object.getId());
 				}
 			}
-			_copyFromFrame = _currentFrameNumber;
+			_copyFromFrame = getCurrentFrameNumber();
 		}
 		else 
 			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) 
@@ -340,9 +340,9 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 						const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
 						// and create a copy if a grid with the same id does not
 						// already exist on the current frame
-						if (maybeGrid && !object.maybeGet<Grid3D>(_currentFrameNumber))
+						if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
 						{
-							object.add(_currentFrameNumber, std::make_shared<Grid3D>(*maybeGrid));
+							object.add(getCurrentFrameNumber(), std::make_shared<Grid3D>(*maybeGrid));
 						}
 					}
 				}
@@ -392,22 +392,22 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 	for ( const TrackedObject& trackedObject : _trackedObjects )
 	{
 		// check: data for that frame exists
-		if ( trackedObject.count( _currentFrameNumber ) )
+		if ( trackedObject.count( getCurrentFrameNumber() ) )
 		{
 			// get grid
-			const std::shared_ptr<Grid3D> grid = trackedObject.get<Grid3D>(_currentFrameNumber);
+			const std::shared_ptr<Grid3D> grid = trackedObject.get<Grid3D>(getCurrentFrameNumber());
 			const bool isActive = grid == _activeGrid;
 
 			grid->draw(image, isActive);
 
 			// ToDo: use constants here
-			if (_currentZoomLevel > -4) {
+			if (getCurrentZoomLevel() > -4) {
 				// draw rectangle around grid when zoom level is low
 				const cv::Point center = grid->getCenter();
 				const double radius    = grid->getPixelRadius() * 1.5;
 				const cv::Point tl(center.x - radius, center.y - radius);
 				const cv::Point br(center.x + radius, center.y + radius);
-				const double thickness = 4 + _currentZoomLevel;
+				const double thickness = 4 + getCurrentZoomLevel();
 				const cv::Scalar color = grid->isSettable() ? (grid->hasBeenBitToggled() ? COLOR_GREEN : COLOR_YELLOW) : COLOR_RED;
 				cv::rectangle(image, tl, br, color, thickness, CV_AA);
 			}
@@ -443,14 +443,14 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 	for (size_t i = 0; i < _trackedObjects.size(); i++)
 	{
 		// get pointer to i-th object
-		std::shared_ptr<Grid3D> grid = _trackedObjects[i].maybeGet<Grid3D>(_currentFrameNumber);
+		std::shared_ptr<Grid3D> grid = _trackedObjects[i].maybeGet<Grid3D>(getCurrentFrameNumber());
 
 		// check if grid is valid
 		if (grid && dist(location, grid->getCenter()) < grid->getPixelRadius())
 		{
 			// assign the found grid to the activegrid pointer
 			_activeGrid        = grid;
-			_activeFrameNumber = _currentFrameNumber;
+			_activeFrameNumber = getCurrentFrameNumber();
 			_activeGridObjectId = _trackedObjects[i].getId();
 
 			emit update();
@@ -482,7 +482,7 @@ void BeesBookTagMatcher::removeCurrentActiveTag()
 
 	assert(trackedObjectIterator != _trackedObjects.end());
 
-	trackedObjectIterator->erase(_currentFrameNumber);
+	trackedObjectIterator->erase(getCurrentFrameNumber());
 
 	// if map empty
 	if (trackedObjectIterator->isEmpty())
@@ -509,7 +509,7 @@ void BeesBookTagMatcher::setNumTags()
 	size_t cnt = 0;
 	for (size_t i = 0; i < _trackedObjects.size(); i++)
 	{
-		if (_trackedObjects[i].maybeGet<Grid3D>(_currentFrameNumber)) {
+		if (_trackedObjects[i].maybeGet<Grid3D>(getCurrentFrameNumber())) {
 			++cnt;
 		}
 	}
