@@ -145,7 +145,7 @@ void BioTracker::initConnects()
 void BioTracker::initPlayback()
 {
 	_currentFrame = _settings.getValueOrDefault<size_t>(GUIPARAM::PAUSED_AT_FRAME, 0);
-	updateFrameNumber(_currentFrame);
+	updateFrameNumber(static_cast<int>(_currentFrame));
 	_trackingThread->enableVideoPause(true);
 
 	switch (_mediaType) {
@@ -176,7 +176,7 @@ void BioTracker::initPlayback()
 
 	setPlayfieldPaused(true);
 
-	_trackingThread->setFrameNumber(_currentFrame);
+	_trackingThread->setFrameNumber(static_cast<int>(_currentFrame));
 
 	ui.videoView->fitToWindow();
 }
@@ -487,8 +487,8 @@ void BioTracker::stepCaptureBackward()
 {
 	if(_currentFrame > 0)
 	{
-		updateFrameNumber(_currentFrame-1);
-		emit changeFrame(_currentFrame);		
+		updateFrameNumber(static_cast<int>(_currentFrame-1));
+		emit changeFrame(static_cast<int>(_currentFrame));		
 		_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 	}
 }
@@ -523,7 +523,7 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	if (_videoMode != VideoMode::Stopped) {
 		_currentFrame = frameNumber;
 
-		ui.sld_video->setValue(_currentFrame);
+		ui.sld_video->setValue(static_cast<int>(_currentFrame));
 		ui.frame_num_edit->setText(QString::number(_currentFrame));
 		// check if we reached the end of video
 		if (frameNumber == ui.sld_video->maximum()) {
@@ -577,7 +577,7 @@ void BioTracker::changeCurrentFramebySlider()
 }
 void BioTracker::changeCurrentFramebySlider(int SliderAction)
 {
-	int fNum = _currentFrame;
+	int fNum = static_cast<int>(_currentFrame);
 	switch(SliderAction)
 	{
 	case QSlider::SliderPageStepAdd:
@@ -683,7 +683,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		assert(_tracker);
 
 		// init tracking Alg
-		_tracker->setCurrentFrameNumber(_currentFrame);
+		_tracker->setCurrentFrameNumber(static_cast<int>(_currentFrame));
 		_tracker->setVideoPaused(_videoMode == VideoMode::Paused);
 		connectTrackingAlg(_tracker);
 

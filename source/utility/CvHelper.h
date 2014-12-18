@@ -17,7 +17,7 @@ namespace CvHelper
 	 */
 	inline float degToRad(float deg)
 	{
-		return deg * CV_PI / 180.0;
+		return deg * static_cast<float>(CV_PI) / 180.0f;
 	}
 
 	/**
@@ -27,7 +27,7 @@ namespace CvHelper
 	 */
 	inline float radToDeg(float rad)
 	{
-		return rad * 180.0 / CV_PI;
+		return rad * 180.0f / static_cast<float>(CV_PI);
 	}
 
 
