@@ -13,7 +13,7 @@ namespace {
 auto _ = Algorithms::Registry::getInstance().register_tracker_type<
     BeesBookTagMatcher>("BeesBook Tag Matcher");
 
-static const cv::Scalar COLOR_BLUE   = cv::Scalar(255, 0, 0);
+//static const cv::Scalar COLOR_BLUE   = cv::Scalar(255, 0, 0);
 static const cv::Scalar COLOR_RED    = cv::Scalar(0, 0, 255);
 static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
 static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
