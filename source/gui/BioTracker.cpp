@@ -558,6 +558,7 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 		break;
 	case MSGS::MTYPE::FAIL:
 		msgLine += "<span style=\"color:red\"><b> Error: </b></span>";
+		break;
 	default:
 		msgLine += " ";
 		break;
