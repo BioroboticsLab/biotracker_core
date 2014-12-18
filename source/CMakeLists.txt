@@ -17,6 +17,26 @@ target_link_libraries(BioTracker
     ${OpenCV_LIBS}
 )
 
+# automatic copy of required dlls to install prefix for windows
+if(WIN32)
+	set(APPS "\${CMAKE_INSTALL_PREFIX}/BioTracker.exe")
+	install(TARGETS BioTracker
+		BUNDLE DESTINATION . COMPONENT Runtime
+		RUNTIME DESTINATION . COMPONENT Runtime)
+
+	set(PLUGINS "")
+	file(TO_CMAKE_PATH ${OpenCV_DIR} OpenCV_DIR)
+	set(LIBRARY_DIRS "${OpenCV_DIR} ${Qt5Core_DIR} ${Qt5Gui_DIR} ${Qt5OpenGL_DIR} ${Qt5Widgets_DIR}")
+	install(CODE "
+	  include(BundleUtilities)
+	  fixup_bundle(\"${APPS}\" \"\${PLUGINS}\" \"${LIBRARY_DIRS}\")
+	  " COMPONENT Runtime)
+	install(FILES
+	  ${Qt5Core_DIR}/../../../plugins/platforms/qwindows.dll
+	  DESTINATION "${CMAKE_INSTALL_PREFIX}/platforms"
+	)
+endif()
+
 # add files to source groups to preserve folder structure in visual studio
 # adapted from: http://goo.gl/Xde41i
 
