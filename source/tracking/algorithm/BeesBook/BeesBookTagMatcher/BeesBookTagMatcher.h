@@ -10,7 +10,7 @@
 #include <boost/optional.hpp>
 
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid3D.h"
+#include "source/tracking/algorithm/BeesBook/BeesBookTagMatcher/resources/Grid3D.h"
 
 #include "ui_BeesBookTagMatcherToolWidget.h"
 
