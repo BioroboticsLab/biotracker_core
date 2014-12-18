@@ -20,6 +20,7 @@ QMutex trackMutex;
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
+	, _texture(0) // init to suppress warning
 	, _tracker(nullptr)
 	, _isPanZoomMode(false)
 	, _currentWidth(0)
