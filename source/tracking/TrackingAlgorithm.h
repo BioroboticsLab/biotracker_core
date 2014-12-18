@@ -12,6 +12,7 @@
 #include <QMouseEvent>
 
 #include "source/settings/Messages.h"
+#include "source/settings/ParamNames.h"
 #include "source/tracking/serialization/TrackedObject.h"
 
 class Settings;
@@ -25,7 +26,7 @@ class TrackingAlgorithm : public QObject
 
 public:
 	TrackingAlgorithm(Settings& settings, QWidget *parent);
-	virtual	~TrackingAlgorithm() {}
+	virtual	~TrackingAlgorithm() override = default;
 
 	/**
 	* This function tracks the provided object list within the provided frame.
@@ -85,6 +86,12 @@ public:
 	boost::optional<Algorithm::Type> getType() const { return _type; }
 	void setType(Algorithm::Type type) { _type = type; }
 
+	int getCurrentFrameNumber() const
+	{	return _currentFrameNumber;	}
+
+	float getCurrentZoomLevel() const
+	{	return _currentZoomLevel;	}
+
 public slots:
 	/**
 	* receive Signal to set current frame number
@@ -131,10 +138,6 @@ protected:
 
 	bool event(QEvent* event) override;
 
-	bool _isVideoPaused;
-	int _currentFrameNumber;
-	float _currentZoomLevel;
-
 	/**
 	 * @return either a copy of the current frame image, wrapped in a
 	 * boost::optional, or a unintialized boost::optional, if there is no
@@ -174,6 +177,9 @@ protected:
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
 private:
+	bool _isVideoPaused;
+	int _currentFrameNumber;
+	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
 };

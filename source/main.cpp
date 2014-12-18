@@ -10,6 +10,11 @@ int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 
+	//meta types
+	qRegisterMetaType<cv::Mat>("cv::Mat");
+	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
+	qRegisterMetaType<std::string>("std::string");
+
 	if (SystemCompatibilityCheck::checkOpenGLSupport()) {
 		Settings settings;
 
