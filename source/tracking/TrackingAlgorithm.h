@@ -26,7 +26,7 @@ class TrackingAlgorithm : public QObject
 
 public:
 	TrackingAlgorithm(Settings& settings, QWidget *parent);
-	virtual	~TrackingAlgorithm() override = default;
+	virtual ~TrackingAlgorithm() override = default;
 
 	/**
 	* This function tracks the provided object list within the provided frame.
