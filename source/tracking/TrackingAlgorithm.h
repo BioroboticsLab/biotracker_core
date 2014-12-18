@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <set>
 
 #include <boost/optional.hpp>
 
