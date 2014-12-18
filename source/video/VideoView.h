@@ -44,7 +44,7 @@ private:
 	bool _isPanZoomMode;
 	int _currentWidth;
 	int _currentHeight;
-	void createTexture(cv::Mat &image);
+	void createTexture(cv::Mat image);
 
 	/**
 	* Modified by user input. 

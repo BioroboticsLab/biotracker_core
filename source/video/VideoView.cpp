@@ -81,7 +81,7 @@ void VideoView::fitToWindow()
 	}
 }
 
-void VideoView::createTexture(cv::Mat &image)
+void VideoView::createTexture(cv::Mat image)
 {
 	glLoadIdentity();
 
