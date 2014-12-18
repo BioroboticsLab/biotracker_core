@@ -83,7 +83,12 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		}
 
 		// (3) Clustering
-		_clusters.cluster(_current_particles, _params.getNumberOfClusters());
+		// - Only use particles with high enough score
+		std::vector<Particle> particles_high_scores;
+		const float score_cutoff = _min_score + ((_max_score - _min_score) * .1);
+		std::copy_if(_current_particles.begin(), _current_particles.end(), std::back_inserter(particles_high_scores),
+			[score_cutoff](const Particle& p) { return p.getScore() >= score_cutoff; });
+		_clusters.cluster(particles_high_scores, _params.getNumberOfClusters());
 
 		// (4) Store results in history
 		// TODO
