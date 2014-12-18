@@ -5,6 +5,8 @@ cmake_policy (SET CMP0020 NEW)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 project(BioTracker)
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH})
+
 # add git hooks
 file(GLOB HOOK_SCRIPTS githooks/*)
 if (HOOK_SCRIPTS)

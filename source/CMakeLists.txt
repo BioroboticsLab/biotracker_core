@@ -35,6 +35,16 @@ if(WIN32)
 	  ${Qt5Core_DIR}/../../../plugins/platforms/qwindows.dll
 	  DESTINATION "${CMAKE_INSTALL_PREFIX}/platforms"
 	)
+	
+	include(GetGitRevisionDescription)
+	get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+	string(SUBSTRING ${GIT_SHA1} 0 7 GIT_SHA1)
+	string(TIMESTAMP timestamp "%Y%m%d")
+	
+	set(CPACK_PACKAGE_FILE_NAME "BioTracker-${timestamp}-${GIT_SHA1}")
+	set(CPACK_GENERATOR "ZIP")
+	
+	include(CPACK)
 endif()
 
 # add files to source groups to preserve folder structure in visual studio
