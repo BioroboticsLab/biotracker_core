@@ -7,7 +7,13 @@ TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
 	, _currentZoomLevel(0.0f)
 {}
 
-void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects)
+void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)
+{
+	_trackedObjects = objects;
+	postLoad();
+}
+
+void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &&objects)
 {
 	_trackedObjects = std::move(objects);
 	postLoad();

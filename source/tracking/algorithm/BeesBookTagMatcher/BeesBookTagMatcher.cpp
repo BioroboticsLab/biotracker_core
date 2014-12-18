@@ -17,6 +17,7 @@ static const cv::Scalar COLOR_BLUE   = cv::Scalar(255, 0, 0);
 static const cv::Scalar COLOR_RED    = cv::Scalar(0, 0, 255);
 static const cv::Scalar COLOR_GREEN  = cv::Scalar(0, 255, 0);
 static const cv::Scalar COLOR_YELLOW = cv::Scalar(0, 255, 255);
+static const cv::Scalar COLOR_ORANGE = cv::Scalar(0, 102, 255);
 }
 
 const size_t BeesBookTagMatcher::GRID_RADIUS_PIXELS = 26;
@@ -352,7 +353,12 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 						// already exist on the current frame
 						if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
 						{
-							object.add(getCurrentFrameNumber(), std::make_shared<Grid3D>(*maybeGrid));
+							// set toogled state to indeterminate if the grid has been set before
+							const auto newGrid = std::make_shared<Grid3D>(*maybeGrid);
+							if (newGrid->hasBeenBitToggled().value == boost::logic::tribool::value_t::true_value) {
+								newGrid->setBeenBitToggled(boost::logic::tribool::value_t::indeterminate_value);
+							}
+							object.add(getCurrentFrameNumber(), newGrid);
 						}
 					}
 				}
@@ -410,21 +416,24 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 
 			grid->draw(image, isActive);
 
-			// calculate actual pixel size of grid based on current zoom level
-			double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
-			displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
-			// thickness of rectangle of grid is based on actual pixel size
-			// of the grid. if the radius is 50px or more, the rectangle has
-			// a thickness of 1px.
-			const double thickness = 1. / (displayTagSize / 50.);
+			if (grid->getTransparency() >= 0.5) {
+				// calculate actual pixel size of grid based on current zoom level
+				double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
+				displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
+				// thickness of rectangle of grid is based on actual pixel size
+				// of the grid. if the radius is 50px or more, the rectangle has
+				// a thickness of 1px.
+				const double thickness = 1. / (displayTagSize / 50.);
 
-			// draw rectangle around grid
-			const cv::Point center = grid->getCenter();
-			const double radius    = grid->getPixelRadius() * 1.5;
-			const cv::Point tl(center.x - radius, center.y - radius);
-			const cv::Point br(center.x + radius, center.y + radius);
-			const cv::Scalar color = grid->isSettable() ? (grid->hasBeenBitToggled() ? COLOR_GREEN : COLOR_YELLOW) : COLOR_RED;
-			cv::rectangle(image, tl, br, color, thickness, CV_AA);
+				// draw rectangle around grid
+				const cv::Point center = grid->getCenter();
+				const double radius    = grid->getPixelRadius() * 1.5;
+				const cv::Point tl(center.x - radius, center.y - radius);
+				const cv::Point br(center.x + radius, center.y + radius);
+				const cv::Scalar color = getGridColor(grid);
+				cv::rectangle(image, tl, br, color, thickness, CV_AA);
+			}
+
 		}
 	}
 }
@@ -463,9 +472,13 @@ void BeesBookTagMatcher::selectTag(const cv::Point& location)
 		if (grid && dist(location, grid->getCenter()) < grid->getPixelRadius())
 		{
 			// assign the found grid to the activegrid pointer
-			_activeGrid        = grid;
-			_activeFrameNumber = getCurrentFrameNumber();
+			_activeGrid         = grid;
+			_activeFrameNumber  = getCurrentFrameNumber();
 			_activeGridObjectId = _trackedObjects[i].getId();
+
+			// if tag state is set to indeterminate, set it to true again
+			if (_activeGrid->hasBeenBitToggled().value == boost::logic::tribool::indeterminate_value)
+				_activeGrid->setBeenBitToggled(boost::logic::tribool::true_value);
 
 			emit update();
 
@@ -593,5 +606,24 @@ void BeesBookTagMatcher::updateValidRect()
     _validRect = cv::Rect(  _imgRect.x + r,
                             _imgRect.y + r,
                             _imgRect.width - 2 * r,
-                            _imgRect.height - 2 * r);
+							_imgRect.height - 2 * r);
+}
+
+cv::Scalar BeesBookTagMatcher::getGridColor(const std::shared_ptr<Grid3D> &grid) const
+{
+	if (grid->isSettable()) {
+		switch (grid->hasBeenBitToggled().value) {
+		case boost::logic::tribool::value_t::true_value:
+			return COLOR_GREEN;
+		case boost::logic::tribool::value_t::false_value:
+			return COLOR_YELLOW;
+		case boost::logic::tribool::value_t::indeterminate_value:
+			return COLOR_ORANGE;
+		default:
+			assert(false);
+			return COLOR_RED;
+		}
+	} else {
+		return COLOR_RED;
+	}
 }
