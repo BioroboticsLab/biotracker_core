@@ -259,7 +259,7 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white,      false, center);
 	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black,      false, center);
 
-	for (size_t i = 0; i < _interactionPoints.size() - 2; ++i)
+	for (size_t i = 0; i < NUM_MIDDLE_CELLS; ++i)
 	{
 		cv::Scalar color = tribool2Color(_ID[i]);
 		cv::circle(img, _interactionPoints[i] + center, 1, color);
