@@ -43,8 +43,10 @@ public:
 	static const double OUTER_RING_RADIUS;
 	static const double BULGE_FACTOR;
 
-    // focal length
-    static const double FOCAL_LENGTH;
+	// focal length
+	static const double FOCAL_LENGTH;
+
+	typedef std::array<boost::tribool, NUM_MIDDLE_CELLS> idarray_t;
 
     /******************************************
 	 *                                        *
@@ -95,7 +97,7 @@ public:
 	bool    isSettable() const { return _isSettable; }
 	void    setSettable(const bool settable) { _isSettable = settable; }
 
-	std::array<boost::tribool, NUM_CELLS>const& getIdArray() const { return _ID; }
+	idarray_t const& getIdArray() const { return _ID; }
 
 	float getTransparency() const { return _transparency; }
 
@@ -158,18 +160,19 @@ private:
 	 *
 	 ***************************************************************************/
 
-	cv::Point2i                             _center;            // center point of the grid (within image borders - unit: px)
-	double                                  _radius;            // radius of the tag (unit: px)
-	double                                  _angle_z;           // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
-	double                                  _angle_y;           // the rotation angle of the grid around y axis (rotates into z - space)
-	double                                  _angle_x;           // the rotation angle of the grid around x axis (rotates into z - space)
-	std::array<boost::tribool, NUM_CELLS>   _ID;                // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
-	std::vector<std::vector<cv::Point>>     _coordinates2D;     // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
-	std::vector<cv::Point>                  _interactionPoints; // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
-	static const coordinates3D_t            _coordinates3D;     // underlying 3D coordinates of grid mesh
-	float                                   _transparency;      // weight in drawing mixture
-	boost::tribool                          _bitsTouched;       // if at least one bit was set, this is true, after copy & paste indeterminate
-	bool                                    _isSettable;        // if tag can be recognized by a human
+
+	cv::Point2i                         _center;            // center point of the grid (within image borders - unit: px)
+	double                              _radius;            // radius of the tag (unit: px)
+	double                              _angle_z;           // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
+	double                              _angle_y;           // the rotation angle of the grid around y axis (rotates into z - space)
+	double                              _angle_x;           // the rotation angle of the grid around x axis (rotates into z - space)
+	idarray_t                           _ID;                // bit pattern of tag (false and true for black and white, indeterminate for unrecognizable)
+	std::vector<std::vector<cv::Point>> _coordinates2D;     // 2D coordinates of mesh (after perspective projection) (see opencv function drawContours)
+	std::vector<cv::Point>              _interactionPoints; // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
+	static const coordinates3D_t        _coordinates3D;     // underlying 3D coordinates of grid mesh
+	float                               _transparency;      // weight in drawing mixture
+	boost::tribool                      _bitsTouched;       // if at least one bit was set, this is true, after copy & paste indeterminate
+	bool                                _isSettable;        // if tag can be recognized by a human
 
 
     // generate serialization functions
