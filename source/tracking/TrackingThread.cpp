@@ -338,14 +338,11 @@ int TrackingThread::getVideoLength()
 	switch (_mediaType) {
 	case MediaType::Images:
 		return _pictureFiles.size();
-		break;
 	case MediaType::Video:
 		return _capture.get(CV_CAP_PROP_FRAME_COUNT);
-		break;
 	default:
 		assert(false);
 		return -1;
-		break;
 	}
 }
 
