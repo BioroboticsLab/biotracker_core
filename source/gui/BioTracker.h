@@ -131,6 +131,7 @@ private:
 
 	boost::optional<std::vector<std::string> > getOpenFiles() const;
 	boost::optional<filehash> getFileHash(std::string const& filename, const size_t numFiles) const;
+	std::vector<std::string> getFilenamesFromPaths(std::vector<std::string> const& paths) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;

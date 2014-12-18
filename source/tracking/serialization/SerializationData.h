@@ -17,21 +17,34 @@ public:
 	Data() {}
 
 	Data(const std::string& type,
-	     const std::string& fileSha1Hash,
-	     const std::vector<TrackedObject> trackedObjects)
-	    : _trackerType(type)
-	    , _fileSha1Hash(fileSha1Hash)
-	    , _trackedObjects(trackedObjects)
+		 const std::string& fileSha1Hash,
+		 const std::vector<std::string>& filenames,
+		 const std::vector<TrackedObject>& trackedObjects)
+		: _trackerType(type)
+		, _fileSha1Hash(fileSha1Hash)
+		, _filenames(filenames)
+		, _trackedObjects(trackedObjects)
+	{}
+
+	Data(const std::string& type,
+		 const std::string& fileSha1Hash,
+		 const std::vector<std::string>&& filenames,
+		 const std::vector<TrackedObject>&& trackedObjects)
+		: _trackerType(type)
+		, _fileSha1Hash(fileSha1Hash)
+		, _filenames(std::move(filenames))
+		, _trackedObjects(std::move(trackedObjects))
 	{}
 
 	std::string const& getType() const { return _trackerType; }
 	std::string const& getFileSha1Hash() const { return _fileSha1Hash; }
-	// TODO: avoid copy here
-	std::vector<TrackedObject> getTrackedObjects() const { return _trackedObjects; }
+	std::vector<std::string> const& getFilenames() const { return _filenames; }
+	std::vector<TrackedObject> const& getTrackedObjects() const { return _trackedObjects; }
 
 private:
 	const std::string _trackerType;
 	const std::string _fileSha1Hash;
+	const std::vector<std::string> _filenames;
 	const std::vector<TrackedObject> _trackedObjects;
 
 	friend class cereal::access;
@@ -40,6 +53,7 @@ private:
 	{
 		ar(CEREAL_NVP(_trackerType),
 		   CEREAL_NVP(_fileSha1Hash),
+		   CEREAL_NVP(_filenames),
 		   CEREAL_NVP(_trackedObjects));
 	}
 };
