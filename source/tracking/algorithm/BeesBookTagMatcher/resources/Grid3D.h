@@ -89,7 +89,8 @@ public:
 	double	getWorldRadius() const { return _radius; }
 	void	setWorldRadius(const double radius);
 
-    bool    hasBeenBitToggled() const { return _bitsTouched; }
+	boost::tribool hasBeenBitToggled() const { return _bitsTouched; }
+	void setBeenBitToggled(const boost::logic::tribool::value_t toggled) { _bitsTouched.value = toggled; }
 
 	bool    isSettable() const { return _isSettable; }
 	void    setSettable(const bool settable) { _isSettable = settable; }
@@ -165,7 +166,7 @@ private:
 	std::vector<cv::Point>                  _interactionPoints; // 2D coordinates of interaction points (center of grid, grid cell centers, etc)
 	static const coordinates3D_t            _coordinates3D;     // underlying 3D coordinates of grid mesh
 	float                                   _transparency;      // weight in drawing mixture
-	bool                                    _bitsTouched;       // if at least one bit was set, this is true
+	boost::tribool                          _bitsTouched;       // if at least one bit was set, this is true, after copy & paste indeterminate
 	bool                                    _isSettable;        // if tag can be recognized by a human
 
 
