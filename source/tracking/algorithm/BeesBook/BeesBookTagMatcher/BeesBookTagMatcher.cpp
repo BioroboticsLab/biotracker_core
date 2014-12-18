@@ -286,7 +286,7 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 			_trackedObjects.emplace_back(newID);
 
 			// make pointer to the new tag
-            _activeGrid = std::make_shared<Grid3D>(_orient.from, GRID_RADIUS_PIXELS, _orient.alpha(), 0., 0.);
+            _activeGrid = std::make_shared<Grid3D>(_orient.from, static_cast<double>(GRID_RADIUS_PIXELS), _orient.alpha(), 0., 0.);
             
             // associate new (active) grid to frame number
             _trackedObjects.back().add(getCurrentFrameNumber(), _activeGrid);

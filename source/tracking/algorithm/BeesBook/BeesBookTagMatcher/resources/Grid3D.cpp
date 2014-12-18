@@ -322,7 +322,7 @@ int Grid3D::getKeyPointIndex(cv::Point p) const
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
 	{
 		if (cv::norm(_center + _interactionPoints[i] - p) < (_radius / 10) )
-			return i;
+			return static_cast<int>(i);
 	}
 	return -1;
 }
@@ -373,10 +373,10 @@ void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
     d_a = (d_a < -CV_PI)    ? d_a + CV_PI: d_a;
 
     // current rotation axis
-    cv::Point2f axis0(_angle_x, _angle_y);
+    cv::Point2d axis0(_angle_x, _angle_y);
 
     // new rotation axis
-    cv::Point2f axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
+    cv::Point2d axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
     
     // if rotation axis is rotated to far, flip it back. 
     // otherwise the tag is pitched into the other direction
@@ -400,7 +400,7 @@ void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
 
 void Grid3D::toggleTransparency()
 {
-	_transparency = std::abs(_transparency - 0.6);
+	_transparency = std::abs(_transparency - 0.6f);
 }
 
 void Grid3D::setWorldRadius(const double radius)
