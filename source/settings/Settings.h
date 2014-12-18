@@ -4,6 +4,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include "../utility/stringTools.h" // (un)escape_non_ascii
 #include "StringTranslator.h"
 #include "ParamNames.h"
 
@@ -13,12 +14,12 @@ public:
 	/**
 	 * The default constructor.
 	 */
-	Settings();
+	explicit Settings();
 
 	/**
 	 * destructor.
 	 */
-	~Settings() {}
+	~Settings() = default;
 
 	/**
 	 * Sets the parameter.
@@ -27,7 +28,7 @@ public:
 	 */
 	template <typename T>
 	void setParam(std::string const& paramName, T&& paramValue) {
-		_ptree.put(paramName, std::forward<T>(paramValue));
+		_ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
 		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
 	}
 
@@ -39,8 +40,8 @@ public:
 	template <typename T>
 	void setParamVector(std::string const& paramName, std::vector<T>&& paramVector) {
 		boost::property_tree::ptree subtree;
-		for (T const& value : paramVector) {
-			subtree.push_back(std::make_pair("", boost::property_tree::ptree(value)));
+		for (T & value : paramVector) {
+			subtree.push_back(std::make_pair("", boost::property_tree::ptree(preprocess_value(std::move(value)))));
 		}
 		_ptree.put_child(paramName, subtree);
 		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
@@ -53,7 +54,7 @@ public:
 	 */
 	template <typename T>
 	T getValueOfParam(const std::string &paramName) const {
-		return _ptree.get<T>(paramName);
+		return postprocess_value(_ptree.get<T>(paramName));
 	}
 
 	/**
@@ -65,7 +66,7 @@ public:
 	std::vector<T> getVectorOfParam(const std::string &paramName) const {
 		std::vector<T> result;
 		for (auto& item : _ptree.get_child(paramName)) {
-			result.push_back(item.second.get_value<T>());
+			result.push_back( postprocess_value(item.second.get_value<T>()) );
 		}
 		return result;
 	}
@@ -103,4 +104,53 @@ private:
 	boost::property_tree::ptree _ptree;
 
 	static const boost::property_tree::ptree getDefaultParams();
+
+	/**
+	 * preprocesses paramValue before it's stored in the boost config tree
+	 *
+	 * default implementation: forward value
+	 *
+	 */
+	template<typename T>
+	static T preprocess_value(T&& paramValue) {
+		return std::forward<T>(paramValue);
+	}
+
+	/**
+	 * postprocesses paramValue after it's extracted from the boost config tree
+	 *
+	 * default implementation: forward value
+	 *
+	 */
+	template<typename T>
+	static T postprocess_value(T&& paramValue) {
+		return std::forward<T>(paramValue);
+	}
+
 };
+
+/**
+ * std::string specialisation as a workaround for a bug in boost's config tree
+ *
+ * this function escapes every non-ASCII character
+ *
+ * (the tree correctly escapes non-ASCII characters and stores them
+ *  as "\u00XX" where XX is the character's hex value, but it can't read these
+ *  values correctly)
+ *
+ */
+template<>
+inline std::string Settings::preprocess_value(std::string&& paramValue) {
+	return escape_non_ascii(paramValue);
+}
+
+/**
+ * std::string specialisation as a workaround for a bug in boost's config tree
+ *
+ * (the tree converts escaped non-ASCII characters ("\u00XX") to "\xFF")
+ *
+ */
+template<>
+inline std::string Settings::postprocess_value(std::string&& paramValue) {
+	return unescape_non_ascii(paramValue);
+}
