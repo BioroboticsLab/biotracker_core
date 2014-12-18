@@ -107,8 +107,8 @@ DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent, const QString 
 	m_spinbox.setSingleStep(1.0 / m_factor);
 
 	m_slider.setOrientation(Qt::Horizontal);
-	m_slider.setRange(m_factor * min, m_factor * max);
-	m_slider.setValue(m_factor * start_value);
+	m_slider.setRange(static_cast<int>(m_factor * min), static_cast<int>(m_factor * max));
+	m_slider.setValue(static_cast<int>(m_factor * start_value));
 
 
 	QObject::connect(&m_spinbox, SIGNAL(valueChanged(double)),
@@ -130,7 +130,7 @@ DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent, QFormLayout *l
 }
 
 void DoubleSpinBoxWithSlider::SpinBoxValueChanged(double val) {
-	m_slider.setValue(val * m_factor);
+	m_slider.setValue(static_cast<int>(val * m_factor));
 	emit valueChanged(this->value());
 }
 

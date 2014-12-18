@@ -167,7 +167,7 @@ void BioTracker::initPlayback()
 
 	ui.frame_num_edit->setValidator(new QIntValidator(0, _trackingThread->getVideoLength()-1, this));
 	ui.frame_num_edit->setEnabled(true);
-	ui.sld_speed->setValue(_trackingThread->getFps());
+	ui.sld_speed->setValue(static_cast<int>(_trackingThread->getFps()));
 
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();

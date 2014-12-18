@@ -132,7 +132,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
             // project onto image plane
-            result._rings[r][i] = cv::Point2i(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
+			result._rings[r][i] = cv::Point2i(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
+											  static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
 			if (r == 1) // inner ring
 				if ( (i % POINTS_PER_MIDDLE_CELL) == POINTS_PER_MIDDLE_CELL / 2 )
@@ -147,7 +148,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
         
         // project onto image plane
-        const cv::Point   p2(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
+		const cv::Point   p2(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
+							 static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
 		result._inner_line[i] = p2;
 
@@ -344,14 +346,14 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 		value = 255;
 		break;
 	case boost::logic::tribool::value_t::indeterminate_value:
-		value = 0.5 * 255;
+		value = static_cast<int>(0.5 * 255);
 		break;
 	case boost::logic::tribool::value_t::false_value:
 		value = 0;
 		break;
 	default:
 		assert(false);
-		value = 0.;
+		value = 0;
 		break;
 	}
 

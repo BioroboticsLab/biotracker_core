@@ -193,11 +193,11 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
 		for (const Particle& p : _current_particles) {
 			if (_min_score >= _max_score) {
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 255, 0), -1);
+				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 255, 0), -1);
 			} else {
 				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 220;
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
+				unsigned scaled_score = static_cast<unsigned>((p.getScore() - _min_score)	/ (_max_score - _min_score) * 220.f);
+				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
 			}
 		}
 

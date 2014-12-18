@@ -423,11 +423,11 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 				// thickness of rectangle of grid is based on actual pixel size
 				// of the grid. if the radius is 50px or more, the rectangle has
 				// a thickness of 1px.
-				const double thickness = 1. / (displayTagSize / 50.);
+				const int thickness = static_cast<int>(1. / (displayTagSize / 50.));
 
 				// draw rectangle around grid
 				const cv::Point center = grid->getCenter();
-				const double radius    = grid->getPixelRadius() * 1.5;
+				const int radius       = static_cast<int>(grid->getPixelRadius() * 1.5);
 				const cv::Point tl(center.x - radius, center.y - radius);
 				const cv::Point br(center.x + radius, center.y + radius);
 				const cv::Scalar color = getGridColor(grid);
@@ -603,10 +603,10 @@ void BeesBookTagMatcher::updateValidRect()
         r = _activeGrid->getPixelRadius();
     }
 
-    _validRect = cv::Rect(  _imgRect.x + r,
-                            _imgRect.y + r,
-                            _imgRect.width - 2 * r,
-							_imgRect.height - 2 * r);
+	_validRect = cv::Rect(static_cast<int>(_imgRect.x + r),
+						  static_cast<int>(_imgRect.y + r),
+						  static_cast<int>(_imgRect.width - 2 * r),
+						  static_cast<int>(_imgRect.height - 2 * r));
 }
 
 cv::Scalar BeesBookTagMatcher::getGridColor(const std::shared_ptr<Grid3D> &grid) const
