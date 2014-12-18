@@ -37,8 +37,8 @@ VideoView::VideoView(QWidget *parent)
 void VideoView::showImage(cv::Mat img)
 {
 	_displayImage = img;
-	createTexture();
-	resizeGL(width(), height());
+	createTexture(_displayImage);
+	resizeGL(this->width(), this->height());
 
 
 	//Draw the scene
@@ -81,14 +81,14 @@ void VideoView::fitToWindow()
 	}
 }
 
-void VideoView::createTexture()
+void VideoView::createTexture(cv::Mat &image)
 {
 	glLoadIdentity();
 
-	int corner1[2] = { _displayImage.cols, 0 };
+	int corner1[2] = { image.cols, 0 };
 	int corner2[2] = { 0, 0 };
-	int corner3[2] = { 0, _displayImage.rows };
-	int corner4[2] = { _displayImage.cols, _displayImage.rows };
+	int corner3[2] = { 0, image.rows };
+	int corner4[2] = { image.cols, image.rows };
 	_vertices.clear();
 	_vertices.append(QVector2D(static_cast<float>(corner1[0]), static_cast<float>(corner1[1])));
 	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
@@ -112,7 +112,10 @@ void VideoView::createTexture()
 
 
 	// create Texture 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _displayImage.cols, _displayImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, _displayImage.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+
+	// free memory                
+	//glDeleteTextures(1, &_texture);
 }
 
 void VideoView::paintGL()
@@ -126,13 +129,19 @@ void VideoView::paintGL()
 		// Don't bother painting an image if we have none.
 		return; 
 	}
-	//cv::Mat imageCopy = _displayImage.clone();
-	if(_tracker)
+	
+	// if tracking algorithm is selected and zoom/pan is not active:
+	if(_tracker && !_isPanZoomMode)
 	{
 		try
 		{
+			// create copy of curent image and send it for further drawing to tracking algorithm
+			cv::Mat imageCopy = _displayImage.clone();
 			QMutexLocker locker(&trackMutex);
-			//_tracker->paint(imageCopy);
+			_tracker->paint(imageCopy);
+			// create new texture with processed image copy
+			createTexture(imageCopy);
+			imageCopy.release();
 		}
 		catch(std::exception& err)
 		{
