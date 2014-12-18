@@ -416,21 +416,24 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 
 			grid->draw(image, isActive);
 
-			// calculate actual pixel size of grid based on current zoom level
-			double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
-			displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
-			// thickness of rectangle of grid is based on actual pixel size
-			// of the grid. if the radius is 50px or more, the rectangle has
-			// a thickness of 1px.
-			const double thickness = 1. / (displayTagSize / 50.);
+			if (grid->getTransparency() >= 0.5) {
+				// calculate actual pixel size of grid based on current zoom level
+				double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
+				displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
+				// thickness of rectangle of grid is based on actual pixel size
+				// of the grid. if the radius is 50px or more, the rectangle has
+				// a thickness of 1px.
+				const double thickness = 1. / (displayTagSize / 50.);
 
-			// draw rectangle around grid
-			const cv::Point center = grid->getCenter();
-			const double radius    = grid->getPixelRadius() * 1.5;
-			const cv::Point tl(center.x - radius, center.y - radius);
-			const cv::Point br(center.x + radius, center.y + radius);
-			const cv::Scalar color = getGridColor(grid);
-			cv::rectangle(image, tl, br, color, thickness, CV_AA);
+				// draw rectangle around grid
+				const cv::Point center = grid->getCenter();
+				const double radius    = grid->getPixelRadius() * 1.5;
+				const cv::Point tl(center.x - radius, center.y - radius);
+				const cv::Point br(center.x + radius, center.y + radius);
+				const cv::Scalar color = getGridColor(grid);
+				cv::rectangle(image, tl, br, color, thickness, CV_AA);
+			}
+
 		}
 	}
 }

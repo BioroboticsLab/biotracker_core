@@ -97,6 +97,8 @@ public:
 
 	std::array<boost::tribool, NUM_CELLS>const& getIdArray() const { return _ID; }
 
+	float getTransparency() const { return _transparency; }
+
 private:
 	/******************************************
 	 *                                        *
