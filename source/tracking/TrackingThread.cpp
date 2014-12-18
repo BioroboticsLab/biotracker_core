@@ -339,7 +339,7 @@ int TrackingThread::getVideoLength()
 	case MediaType::Images:
 		return _pictureFiles.size();
 	case MediaType::Video:
-		return _capture.get(CV_CAP_PROP_FRAME_COUNT);
+		return static_cast<int>(_capture.get(CV_CAP_PROP_FRAME_COUNT));
 	default:
 		assert(false);
 		return -1;
