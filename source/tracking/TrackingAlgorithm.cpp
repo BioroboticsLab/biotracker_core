@@ -48,21 +48,18 @@ bool TrackingAlgorithm::event(QEvent *event)
 	case QEvent::KeyPress:
 		keyPressEvent(static_cast<QKeyEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonPress:
 		mousePressEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonRelease:
 		mouseReleaseEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseMove:
 		mouseMoveEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::Wheel:
 		mouseWheelEvent(static_cast<QWheelEvent*>(event));
+		return true;
 	default:
 		event->ignore();
 		return false;
