@@ -105,6 +105,8 @@ private:
 
 	void updateValidRect();
 
+	cv::Scalar getGridColor(std::shared_ptr<Grid3D> const& grid) const;
+
 	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
 	void mouseReleaseEvent (QMouseEvent * e) override;

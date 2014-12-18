@@ -27,7 +27,7 @@ void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned 
 		data[i][0] = particles[i].getX();
 		data[i][1] = particles[i].getY();
 	}
-	int k = std::min(num_clusters, particles.size());
+	int k = std::min<size_t>(num_clusters, particles.size());
 	cv::Mat bestLabels;
 	cv::TermCriteria criteria(cv::TermCriteria::EPS, 0, _params.getClusteringEpsilon());
 	int attempts = 1;
