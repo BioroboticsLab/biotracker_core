@@ -8,6 +8,7 @@
 #include <thread>
 
 #include <QCryptographicHash>
+#include <QFileInfo>
 
 #include "source/settings/Settings.h"
 #include "source/utility/stdext.h"
@@ -328,11 +329,11 @@ void BioTracker::storeTrackingData(const std::string &filename)
 		return;
 	}
 
-	Serialization::Data sdata(trackerType, hash.get(), _tracker->getObjects());
+	Serialization::Data sdata(trackerType, hash.get(), getFilenamesFromPaths(currentFiles.get()), _tracker->getObjects());
 
 	std::ofstream ostream(filename, std::ios::binary);
 	cereal::JSONOutputArchive archive(ostream);
-	archive(sdata);
+	archive(std::move(sdata));
 }
 
 boost::optional<std::vector<std::string>> BioTracker::getOpenFiles() const
@@ -436,6 +437,17 @@ boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string 
 	}
 
 	return boost::optional<filehash>();
+}
+
+std::vector<std::string> BioTracker::getFilenamesFromPaths(const std::vector<std::string> &paths) const
+{
+	std::vector<std::string> filenames;
+	filenames.reserve(paths.size());
+	for (std::string const& path : paths) {
+		const QFileInfo fi(QString::fromStdString(path));
+		filenames.push_back(fi.baseName().toStdString());
+	}
+	return filenames;
 }
 
 
