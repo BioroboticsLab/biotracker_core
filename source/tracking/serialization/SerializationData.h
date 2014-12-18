@@ -14,24 +14,14 @@ namespace Serialization {
 class Data {
 public:
 	// default ctor required for serialization
-	Data() {}
+	explicit Data() {}
 
-	Data(const std::string& type,
-		 const std::string& fileSha1Hash,
-		 const std::vector<std::string>& filenames,
-		 const std::vector<TrackedObject>& trackedObjects)
-		: _trackerType(type)
-		, _fileSha1Hash(fileSha1Hash)
-		, _filenames(filenames)
-		, _trackedObjects(trackedObjects)
-	{}
-
-	Data(const std::string& type,
-		 const std::string& fileSha1Hash,
-		 const std::vector<std::string>&& filenames,
-		 const std::vector<TrackedObject>&& trackedObjects)
-		: _trackerType(type)
-		, _fileSha1Hash(fileSha1Hash)
+	explicit Data(std::string type,
+	              std::string fileSha1Hash,
+	              std::vector<std::string> filenames,
+	              std::vector<TrackedObject> trackedObjects)
+		: _trackerType(std::move(type))
+		, _fileSha1Hash(std::move(fileSha1Hash))
 		, _filenames(std::move(filenames))
 		, _trackedObjects(std::move(trackedObjects))
 	{}
