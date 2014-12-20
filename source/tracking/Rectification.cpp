@@ -4,7 +4,7 @@
 Rectification::Rectification(void)
 {}
 
-Rectification::Rectification(double areaHeight_cm, double areaWidth_cm,
+Rectification::Rectification(float areaHeight_cm, float areaWidth_cm,
 		std::vector<cv::Point> areaCoordinates, int camCaptureWidth_px,
 		int camCaptureHeight_px) :
 	_areaCoordinates(std::move(areaCoordinates)),
@@ -28,11 +28,11 @@ Rectification::Rectification(double areaHeight_cm, double areaWidth_cm,
 
 cv::Point2f Rectification::pxToCm(cv::Point point_px) const
 {
-	cv::Mat_<double> v = (cv::Mat_<double>(3,1) << point_px.x, point_px.y, 1);
+	cv::Mat_<float> v = (cv::Mat_<float>(3,1) << point_px.x, point_px.y, 1);
 	cv::gemm(_H, v, 1, 0, 0, _q);
-	double* qx = _q.ptr<double>(0);
-	double* qy = _q.ptr<double>(1);
-	double* qz = _q.ptr<double>(2);
+	float* qx = _q.ptr<float>(0);
+	float* qy = _q.ptr<float>(1);
+	float* qz = _q.ptr<float>(2);
 
 	return cv::Point2f((*qx / *qz), (*qy / *qz));
 }
@@ -44,11 +44,11 @@ cv::Point2f Rectification::pxToCm(QPoint point_px) const
 
 cv::Point2f Rectification::cmToPx(cv::Point2f point_cm) const
 {
-	cv::Mat_<double> v = (cv::Mat_<double>(3, 1) << point_cm.x, point_cm.y, 1);
+	cv::Mat_<float> v = (cv::Mat_<float>(3, 1) << point_cm.x, point_cm.y, 1);
 	cv::gemm(_H_inv, v, 1, 0, 0, _q);
-	double *qx = _q.ptr<double>(0);
-	double *qy = _q.ptr<double>(1);
-	double *qz = _q.ptr<double>(2);
+	float *qx = _q.ptr<float>(0);
+	float *qy = _q.ptr<float>(1);
+	float *qz = _q.ptr<float>(2);
 
 	return cv::Point2f((*qx / *qz), (*qy / *qz));
 }

@@ -51,7 +51,7 @@ unsigned ParticleClusters::getClosestClusterIndex(const Particle& particle) {
 	float min_distance = FLT_MAX;
 	for (int i = 0; i < _centers.rows; i++) {
 		Particle center_particle(_centers.at<int>(i, 0), _centers.at<int>(i, 1), 0, 0);
-		float distance = center_particle.dist(particle);
+		float distance = static_cast<float>(center_particle.dist(particle));
 		if (distance < min_distance) {
 			min_distance = distance;
 			min_distance_center = i;

@@ -145,7 +145,7 @@ void GLWidget::mouseReleaseEvent  (QMouseEvent * /* e */)
 
 void GLWidget::wheelEvent(QWheelEvent *e)
 {
-    zoomFactor += 0.1 * e->delta();
+    zoomFactor += 0.1f * e->delta();
     updateGL();
 }
 
@@ -161,7 +161,7 @@ void GLWidget::drawCube (float red, float green, float blue)
 {
 
      glBegin(GL_QUADS);
-         glColor3f(red/25.5,green/25.5,blue/25.5);
+         glColor3f(red/25.5f,green/25.5f,blue/25.5f);
         //Front Face
            glVertex3f(red, green,  blue+0.1f);
            glVertex3f(red, green+0.1f,  blue+0.1f);

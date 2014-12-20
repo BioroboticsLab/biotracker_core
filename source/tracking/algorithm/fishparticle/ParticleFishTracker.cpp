@@ -85,7 +85,7 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		// (3) Clustering
 		// - Only use particles with high enough score
 		std::vector<Particle> particles_high_scores;
-		const float score_cutoff = _min_score + ((_max_score - _min_score) * .1);
+		const float score_cutoff = _min_score + ((_max_score - _min_score) * .1f);
 		std::copy_if(_current_particles.begin(), _current_particles.end(), std::back_inserter(particles_high_scores),
 			[score_cutoff](const Particle& p) { return p.getScore() >= score_cutoff; });
 		_clusters.cluster(particles_high_scores, _params.getNumberOfClusters());
@@ -139,13 +139,13 @@ void ParticleFishTracker::importanceResample() {
 void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
 	float wiggle_distance;
 	if (_max_score != _min_score) {
-		wiggle_distance = _params.getParticleWiggleDistance() 
-			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+		wiggle_distance = static_cast<float>(_params.getParticleWiggleDistance()
+			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score)));
 	} else {
-		wiggle_distance = _params.getParticleWiggleDistance();
+		wiggle_distance = static_cast<float>(_params.getParticleWiggleDistance());
 	}
-	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
-	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
+	to_wiggle.setX(to_wiggle.getX() + static_cast<float>(_rng.gaussian(wiggle_distance)));
+	to_wiggle.setY(to_wiggle.getY() + static_cast<float>(_rng.gaussian(wiggle_distance)));
 	cutParticleCoords(to_wiggle);
 }
 

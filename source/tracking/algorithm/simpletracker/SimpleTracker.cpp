@@ -91,7 +91,7 @@ void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
         float minDistance = MAX_TRACK_DISTANCE + 1;
         for (const cv::Point2f& contour : contourCenters) {
             cv::Point distPoint = contour - currentPosition;
-            float distance = cv::sqrt((distPoint.x * distPoint.x) + (distPoint.y * distPoint.y));
+            float distance = static_cast<float>(cv::sqrt((distPoint.x * distPoint.x) + (distPoint.y * distPoint.y)));
             if (distance < minDistance) {
                 minDistance = distance;
                 minDistanceContour = contour;
