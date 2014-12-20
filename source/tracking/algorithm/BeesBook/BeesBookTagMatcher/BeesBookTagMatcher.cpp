@@ -27,7 +27,8 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _currentState(State::Ready)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
-	, _paramWidget(std::make_shared<QWidget>())	
+	, _paramWidget(std::make_shared<QWidget>())
+    , _visualizeFrames(true)
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
@@ -392,6 +393,9 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 					_activeGrid->setSettable(!_activeGrid->isSettable());
 					_activeGrid->toggleTransparency();
 					break;
+				case Qt::Key_F:
+					_visualizeFrames = !_visualizeFrames;
+					break;
 				case Qt::Key::Key_CapsLock:
 					_activeGrid->toggleTransparency();
 					break;
@@ -417,7 +421,7 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 
 			grid->draw(image, isActive);
 
-			if (grid->getTransparency() >= 0.5) {
+			if ((grid->getTransparency() >= 0.5) && _visualizeFrames) {
 				// calculate actual pixel size of grid based on current zoom level
 				double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
 				displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
@@ -552,7 +556,8 @@ const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 	                                      Qt::Key_W, Qt::Key_A,
 	                                      Qt::Key_S, Qt::Key_D,
 	                                      Qt::Key_G, Qt::Key_H,
-										  Qt::Key_U, Qt::Key_CapsLock };
+										  Qt::Key_U, Qt::Key_F,
+		        						  Qt::Key_CapsLock };
 	return keys;
 }
 
