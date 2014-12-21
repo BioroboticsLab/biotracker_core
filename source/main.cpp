@@ -1,3 +1,5 @@
+#include <clocale>
+
 #include <QtWidgets/QApplication>
 
 #include "source/gui/BioTracker.h"
@@ -10,7 +12,11 @@ int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 
-	//meta types
+	// workaround for cereal issue 144
+	// see: https://github.com/USCiLab/cereal/issues/144
+	std::setlocale(LC_NUMERIC, "C");
+
+	// meta types
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
