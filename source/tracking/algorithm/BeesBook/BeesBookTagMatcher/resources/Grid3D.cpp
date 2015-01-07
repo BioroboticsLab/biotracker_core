@@ -154,8 +154,6 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 		}
 	}
 
-	std::cout << minx;
-
 	_boundingBox = cv::Rect(minx, miny, maxx - minx, maxy - miny);
 
 	// iterate over points of inner ring

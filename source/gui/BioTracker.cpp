@@ -272,14 +272,15 @@ void BioTracker::loadTrackingData(const std::string &filename)
 
 	if (!hash) {
 		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "Could not calculate file hash.");
+							 "Could not calculate file hash.");
 		return;
 	}
 
 	if (sdata.getFileSha1Hash() != hash.get()) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "File hash does not match");
-		return;
+		auto buttonClicked = QMessageBox::warning(this, "Unable to load tracking data",
+												  "File hash does not match", QMessageBox::Ok | QMessageBox::Ignore);
+		if (buttonClicked == QMessageBox::Ok)
+			return;
 	}
 
 	_tracker->loadObjects(sdata.getTrackedObjects());
