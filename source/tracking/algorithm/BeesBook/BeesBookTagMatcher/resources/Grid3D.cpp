@@ -139,7 +139,7 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 											 static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
 			// determine outer points of bounding box
-			if (r == MIDDLE_RING) {
+			if (r == OUTER_RING) {
 				minx = std::min(minx, projectedPoint.x);
 				miny = std::min(miny, projectedPoint.y);
 				maxx = std::max(maxx, projectedPoint.x);

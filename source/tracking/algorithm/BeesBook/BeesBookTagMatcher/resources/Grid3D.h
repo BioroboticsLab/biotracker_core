@@ -103,6 +103,8 @@ public:
 
 	cv::Rect getBoundingBox() const;
 
+	std::vector<cv::Point> const& getOuterRingPoints() const { return _coordinates2D[OUTER_RING]; }
+
 private:
 	/******************************************
 	 *                                        *
