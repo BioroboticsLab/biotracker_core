@@ -101,12 +101,20 @@ public:
 
 	float getTransparency() const { return _transparency; }
 
+	cv::Rect getBoundingBox() const;
+
 private:
 	/******************************************
 	 *                                        *
 	 *          types & typedefs              *
 	 *                                        *
 	 ******************************************/
+
+	enum RingIndex {
+		INNER_RING = 0,
+		MIDDLE_RING,
+		OUTER_RING
+	};
 
 	template<typename POINT>
 	struct coordinates_t 
@@ -123,10 +131,10 @@ private:
 		container_type &_outer_ring;
 
         // default constructor with member initialization
-		coordinates_t() : _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		coordinates_t() : _inner_ring(_rings[INNER_RING]), _middle_ring(_rings[MIDDLE_RING]), _outer_ring(_rings[OUTER_RING]) {}
 		
         // move constructor, && : r-value reference 
-        coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[0]), _middle_ring(_rings[1]), _outer_ring(_rings[2]) {}
+		coordinates_t(coordinates_t &&rhs) : _rings(std::move(rhs._rings)), _inner_line(std::move(rhs._inner_line)), _inner_ring(_rings[INNER_RING]), _middle_ring(_rings[MIDDLE_RING]), _outer_ring(_rings[OUTER_RING]) {}
 		
         // delete copy constructor and assignment operator
         // -> make struct non-copyable
@@ -160,7 +168,6 @@ private:
 	 *
 	 ***************************************************************************/
 
-
 	cv::Point2i                         _center;            // center point of the grid (within image borders - unit: px)
 	double                              _radius;            // radius of the tag (unit: px)
 	double                              _angle_z;           // the angle of the grid (unit: rad. points towards the head of the bee, positive is counter-clock)
@@ -173,9 +180,10 @@ private:
 	float                               _transparency;      // weight in drawing mixture
 	boost::tribool                      _bitsTouched;       // if at least one bit was set, this is true, after copy & paste indeterminate
 	bool                                _isSettable;        // if tag can be recognized by a human
+	cv::Rect                            _boundingBox;       // bounding box of the projected 2d points
 
 
-    // generate serialization functions
+	// generate serialization functions
 	friend class cereal::access;
 	template <class Archive>
 	void save(Archive& ar) const
