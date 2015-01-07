@@ -122,6 +122,9 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 	const auto rotationMatrix = CvHelper::rotationMatrix(_angle_z, _angle_y, _angle_x);
 
+	int minx = INT_MAX, miny = INT_MAX;
+	int maxx = INT_MIN, maxy = INT_MIN;
+
 	// iterate over all rings
 	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) 
 	{
@@ -131,15 +134,29 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			// rotate and scale point (aka vector)
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
-            // project onto image plane
-			result._rings[r][i] = cv::Point2i(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
-											  static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
+			// project onto image plane
+			const cv::Point2i projectedPoint(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
+											 static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
-			if (r == 1) // inner ring
+			// determine outer points of bounding box
+			if (r == MIDDLE_RING) {
+				minx = std::min(minx, projectedPoint.x);
+				miny = std::min(miny, projectedPoint.y);
+				maxx = std::max(maxx, projectedPoint.x);
+				maxy = std::max(maxy, projectedPoint.y);
+			}
+
+			result._rings[r][i] = std::move(projectedPoint);
+
+			if (r == MIDDLE_RING)
 				if ( (i % POINTS_PER_MIDDLE_CELL) == POINTS_PER_MIDDLE_CELL / 2 )
 					_interactionPoints.push_back(0.5*(result._rings[r][i] + result._rings[r - 1][i]));
 		}
 	}
+
+	std::cout << minx;
+
+	_boundingBox = cv::Rect(minx, miny, maxx - minx, maxy - miny);
 
 	// iterate over points of inner ring
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
@@ -230,9 +247,6 @@ void Grid3D::prepare_visualization_data()
 			vec.push_back(points_2d._inner_ring[index_end_elem]);
 		}
 	}
-
-
-
 }
 
 
@@ -407,6 +421,12 @@ void Grid3D::setWorldRadius(const double radius)
 {
 	_radius = radius;
 	prepare_visualization_data();
+}
+
+cv::Rect Grid3D::getBoundingBox() const
+{
+	return cv::Rect(_boundingBox.x + _center.x, _boundingBox.y + _center.y,
+					_boundingBox.width, _boundingBox.height);
 }
 
 CEREAL_REGISTER_TYPE(Grid3D)
