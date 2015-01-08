@@ -119,6 +119,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, &BioTracker::changeTrackingAlg, _trackingThread.get(), &TrackingThread::setTrackingAlgorithm);
 	QObject::connect(this, &BioTracker::changeTrackingAlg, ui.videoView, &VideoView::setTrackingAlgorithm);
 	QObject::connect(_trackingThread.get(), &TrackingThread::invalidFile, this, &BioTracker::invalidFile);
+	QObject::connect(_trackingThread.get(), &TrackingThread::fileNameChange, this, &BioTracker::displayFileName);
 
 	/*	 _______________________
 	*	|						|
@@ -299,6 +300,10 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	dialog.setDefaultSuffix("tdat");
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
+	// set displayed file as default filename:
+	QString filename = ui.lbl_filename->text();
+	if ( filename.lastIndexOf(".") > 0)
+		dialog.selectFile(filename.left(filename.lastIndexOf(".")));
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
 		if (!filenames.empty()) {
@@ -763,4 +768,9 @@ void BioTracker::switchPanZoomMode()
 {
 	_isPanZoomMode = !_isPanZoomMode;
 	ui.videoView->setPanZoomMode(_isPanZoomMode);
+}
+
+void BioTracker::displayFileName(QString& filename)
+{
+	ui.lbl_filename->setText(filename);
 }
