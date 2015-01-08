@@ -193,8 +193,14 @@ signals:
 	* send a message to the GUI.
 	*/
 	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+	
 	//send current fps to gui
 	void sendFps(double fps);
+	
+	/**
+	* display current file name in GUI
+	*/
+	void fileNameChange(QString& filename);
 };
 
 #endif // !TrackingThread_h
