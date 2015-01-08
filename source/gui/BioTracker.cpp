@@ -229,12 +229,6 @@ void BioTracker::browsePicture()
 
 void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 {
-	if (!_tracker) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "No tracker selected.");
-		return;
-	}
-
 	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
 	if (!filename.isEmpty()) {
 		loadTrackingData(filename.toStdString());
@@ -243,8 +237,6 @@ void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 
 void BioTracker::loadTrackingData(const std::string &filename)
 {
-	assert(_tracker->getType());
-
 	printGuiMessage("Restoring tracking data from " + filename, MSGS::NOTIFICATION);
 	std::ifstream is(filename);
 	cereal::JSONInputArchive ar(is);
@@ -252,13 +244,29 @@ void BioTracker::loadTrackingData(const std::string &filename)
 	Serialization::Data sdata;
 	ar(sdata);
 
-	const std::string trackerType =
-	        Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
+	if (_tracker) {
+		assert(_tracker->getType());
+		const std::string trackerType =
+				Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
 
-	if (sdata.getType() != trackerType) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "Tracker type does not match.");
-		return;
+		if (sdata.getType() != trackerType) {
+			QMessageBox::warning(this, "Unable to load tracking data",
+								 "Tracker type does not match.");
+			return;
+		}
+	} else {
+		// try to automatically select the required tracking algorithm
+		const auto& typeByString = Algorithms::Registry::getInstance().typeByString();
+		const auto it = typeByString.find(sdata.getType());
+		if (it != typeByString.end()) {
+			const int index = ui.cb_algorithms->findText(QString::fromStdString(sdata.getType()));
+			assert (index != -1);
+			ui.cb_algorithms->setCurrentIndex(index);
+		} else {
+			QMessageBox::warning(this, "Unable to load tracking data",
+								 "Unknown tracker type.");
+			return;
+		}
 	}
 
 	const boost::optional<std::vector<std::string>> currentFiles = getOpenFiles();
