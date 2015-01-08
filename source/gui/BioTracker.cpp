@@ -20,6 +20,8 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
+#include <QStatusBar>
+
 using GUIPARAM::MediaType;
 
 BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flags)
@@ -309,9 +311,8 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 	dialog.setDefaultSuffix("tdat");
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
 	// set displayed file as default filename:
-	QString filename = ui.lbl_filename->text();
-	if ( filename.lastIndexOf(".") > 0)
-		dialog.selectFile(filename.left(filename.lastIndexOf(".")));
+	if (_filename.lastIndexOf(".") > 0)
+		dialog.selectFile(_filename.left(_filename.lastIndexOf(".")));
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
 		if (!filenames.empty()) {
@@ -780,5 +781,7 @@ void BioTracker::switchPanZoomMode()
 
 void BioTracker::displayFileName(QString filename)
 {
-	ui.lbl_filename->setText(filename);
+	_filename = filename.right(filename.lastIndexOf("/")+1);
+	statusBar()->showMessage(_filename);
+	setWindowTitle(_filename);
 }
