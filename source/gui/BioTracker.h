@@ -63,7 +63,7 @@ public slots:
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
 	void invalidFile();
-	void displayFileName(QString& filename);
+	void displayFileName(QString filename);
 
 	/**
 	 * Print proivided message to the GUI message area.
