@@ -389,16 +389,9 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>file name:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QLabel" name="lbl_filename">
                   <property name="text">
-                   <string>-</string>
+                   <string>no file loaded</string>
                   </property>
                  </widget>
                 </item>

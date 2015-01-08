@@ -300,6 +300,10 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	dialog.setDefaultSuffix("tdat");
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
+	// set displayed file as default filename:
+	QString filename = ui.lbl_filename->text();
+	if ( filename.lastIndexOf(".") > 0)
+		dialog.selectFile(filename.left(filename.lastIndexOf(".")));
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
 		if (!filenames.empty()) {
