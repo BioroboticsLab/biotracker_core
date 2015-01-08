@@ -391,7 +391,6 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 					break;
 				case Qt::Key_U:
 					_activeGrid->setSettable(!_activeGrid->isSettable());
-					_activeGrid->toggleTransparency();
 					break;
 				case Qt::Key_F:
 					_visualizeFrames = !_visualizeFrames;
