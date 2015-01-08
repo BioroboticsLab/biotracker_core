@@ -119,6 +119,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, &BioTracker::changeTrackingAlg, _trackingThread.get(), &TrackingThread::setTrackingAlgorithm);
 	QObject::connect(this, &BioTracker::changeTrackingAlg, ui.videoView, &VideoView::setTrackingAlgorithm);
 	QObject::connect(_trackingThread.get(), &TrackingThread::invalidFile, this, &BioTracker::invalidFile);
+	QObject::connect(_trackingThread.get(), &TrackingThread::fileNameChange, this, &BioTracker::displayFileName);
 
 	/*	 _______________________
 	*	|						|
@@ -763,4 +764,9 @@ void BioTracker::switchPanZoomMode()
 {
 	_isPanZoomMode = !_isPanZoomMode;
 	ui.videoView->setPanZoomMode(_isPanZoomMode);
+}
+
+void BioTracker::displayFileName(QString& filename)
+{
+	ui.lbl_filename->setText(filename);
 }
