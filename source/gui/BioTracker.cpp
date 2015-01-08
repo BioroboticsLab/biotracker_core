@@ -770,7 +770,7 @@ void BioTracker::switchPanZoomMode()
 	ui.videoView->setPanZoomMode(_isPanZoomMode);
 }
 
-void BioTracker::displayFileName(QString& filename)
+void BioTracker::displayFileName(QString filename)
 {
 	ui.lbl_filename->setText(filename);
 }

@@ -200,7 +200,7 @@ signals:
 	/**
 	* display current file name in GUI
 	*/
-	void fileNameChange(QString& filename);
+	void fileNameChange(QString filename);
 };
 
 #endif // !TrackingThread_h
