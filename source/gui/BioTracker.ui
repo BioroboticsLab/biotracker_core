@@ -389,6 +389,13 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QLabel" name="lbl_filename">
+                  <property name="text">
+                   <string>no file loaded</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="horizontalSpacer">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -578,7 +585,7 @@
      <x>0</x>
      <y>0</y>
      <width>982</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
