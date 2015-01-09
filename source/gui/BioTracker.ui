@@ -420,14 +420,14 @@
                 <item>
                  <widget class="QComboBox" name="comboBoxSelectedView">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>0</width>
+                    <width>100</width>
                     <height>0</height>
                    </size>
                   </property>

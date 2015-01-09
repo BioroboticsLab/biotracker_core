@@ -439,15 +439,23 @@ void BioTracker::setPlayfieldEnabled(bool enabled)
 	ui.button_stop->setEnabled(enabled);
 }
 
-void BioTracker::closeEvent(QCloseEvent* /* event */)
+void BioTracker::closeEvent(QCloseEvent* event)
 {
-	{
-		QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
-		if (file.open(QIODevice::WriteOnly)) file.write(saveGeometry());
-	}
-	{
-		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
-		if (file.open(QIODevice::WriteOnly)) file.write(saveState());
+	const auto dialog = QMessageBox::warning(this, "Exit",
+		"Do you really want to close the application?",
+		QMessageBox::Yes | QMessageBox::No);
+	if( dialog == QMessageBox::Yes) {
+		{
+			QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
+			if (file.open(QIODevice::WriteOnly)) file.write(saveGeometry());
+		}
+		{
+			QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
+			if (file.open(QIODevice::WriteOnly)) file.write(saveState());
+		}
+		QMainWindow::closeEvent(event);
+	} else {
+	  event->ignore();
 	}
 }
 
