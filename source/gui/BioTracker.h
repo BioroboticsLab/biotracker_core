@@ -107,6 +107,7 @@ private:
 	size_t _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
+	QString _filename;
 
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
