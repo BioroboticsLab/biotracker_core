@@ -327,6 +327,7 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 		}
 	} 
 	else 
+	{
 		if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) 
 		{
 			_idCopyBuffer.clear();
@@ -342,6 +343,7 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			_copyFromFrame = getCurrentFrameNumber();
 		}
 		else 
+		{
 			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) 
 			{
 				for (TrackedObject& object : _trackedObjects) 
@@ -369,39 +371,42 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			}
 			else 
 			{
-				switch (e->key())
-				{
-				case Qt::Key_H:
-					_activeGrid->setYRotation(_activeGrid->getYRotation() + 0.05);
-					break;
-				case Qt::Key_G:
-					_activeGrid->setYRotation(_activeGrid->getYRotation() - 0.05);
-					break;
-				case Qt::Key_W:
-					_activeGrid->setXRotation(_activeGrid->getXRotation() - 0.05);
-					break;
-				case Qt::Key_S:
-					_activeGrid->setXRotation(_activeGrid->getXRotation() + 0.05);
-					break;
-				case Qt::Key_A:
-					_activeGrid->setZRotation(_activeGrid->getZRotation() - 0.05);
-					break;
-				case Qt::Key_D:
-					_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
-					break;
-				case Qt::Key_U:
-					_activeGrid->setSettable(!_activeGrid->isSettable());
-					break;
-				case Qt::Key_F:
+				if (e->key() == Qt::Key_F) {
 					_visualizeFrames = !_visualizeFrames;
-					break;
-				case Qt::Key::Key_CapsLock:
-					_activeGrid->toggleTransparency();
-					break;
-				default:
-					return;
+				} else if (_activeGrid) {
+					switch (e->key())
+					{
+					case Qt::Key_H:
+						_activeGrid->setYRotation(_activeGrid->getYRotation() + 0.05);
+						break;
+					case Qt::Key_G:
+						_activeGrid->setYRotation(_activeGrid->getYRotation() - 0.05);
+						break;
+					case Qt::Key_W:
+						_activeGrid->setXRotation(_activeGrid->getXRotation() - 0.05);
+						break;
+					case Qt::Key_S:
+						_activeGrid->setXRotation(_activeGrid->getXRotation() + 0.05);
+						break;
+					case Qt::Key_A:
+						_activeGrid->setZRotation(_activeGrid->getZRotation() - 0.05);
+						break;
+					case Qt::Key_D:
+						_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
+						break;
+					case Qt::Key_U:
+						_activeGrid->setSettable(!_activeGrid->isSettable());
+						break;
+					case Qt::Key::Key_CapsLock:
+						_activeGrid->toggleTransparency();
+						break;
+					default:
+						return;
+					}
 				}
 			emit update();
+			}
+		}
 	}
 }
 
