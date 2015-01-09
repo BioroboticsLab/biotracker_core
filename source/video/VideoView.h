@@ -10,8 +10,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "source/settings/Messages.h"
-
-class TrackingAlgorithm;
+#include "source/tracking/TrackingAlgorithm.h"
 
 class VideoView : public QGLWidget
 {
@@ -62,10 +61,14 @@ private:
 	std::chrono::system_clock::time_point _lastZoomedTime;
 	QPoint _lastZoomedPoint;
 
+	TrackingAlgorithm::View _selectedView;
+
 public slots:
 	void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 	void setPanZoomMode (bool isPanZoom);
 	void fitToWindow();
+
+	void changeSelectedView(const TrackingAlgorithm::View &selectedView);
 
 signals:
 	/**

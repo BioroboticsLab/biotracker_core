@@ -33,6 +33,7 @@ VideoView::VideoView(QWidget *parent)
 	, _lastPannedTime(std::chrono::system_clock::now())
 	, _lastZoomedTime(std::chrono::system_clock::now())
 	, _lastZoomedPoint(0, 0)
+	, _selectedView(TrackingAlgorithm::OriginalView)
 {}
 
 void VideoView::showImage(cv::Mat img)
@@ -82,6 +83,12 @@ void VideoView::fitToWindow()
 	}
 }
 
+void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
+{
+	_selectedView = selectedView;
+	updateGL();
+}
+
 void VideoView::paintGL()
 {
 	// Create a black background for the parts of the widget with no image.
@@ -99,7 +106,7 @@ void VideoView::paintGL()
 		try
 		{
 			QMutexLocker locker(&trackMutex);
-			_tracker->paint(imageCopy);
+			_tracker->paint(imageCopy, _selectedView);
 		}
 		catch(std::exception& err)
 		{

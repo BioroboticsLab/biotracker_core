@@ -29,6 +29,12 @@ public:
 	TrackingAlgorithm(Settings& settings, QWidget *parent);
 	virtual ~TrackingAlgorithm() override = default;
 
+	struct View {
+		std::string name;
+	};
+
+	static const View OriginalView;
+
 	/**
 	* This function tracks the provided object list within the provided frame.
 	*/
@@ -38,7 +44,7 @@ public:
 	* paint will be called by "VideoViews" paintGL method
 	* so any picture manipulation stuff goes in here 
 	*/
-	virtual void paint(cv::Mat& image ) = 0;
+	virtual void paint(cv::Mat& image, View const& view = OriginalView) = 0;
 
 	/**
 	* Resets the tracker. never called - yet
@@ -133,6 +139,8 @@ signals:
 	cv::Mat requestCurrentScreen();
 
 	void forceTracking();
+
+	void registerViews(const std::vector<View> views);
 
 protected:
 	Settings & _settings;

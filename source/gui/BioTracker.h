@@ -65,6 +65,9 @@ public slots:
 	void invalidFile();
 	void displayFileName(QString filename);
 
+	void resetViews();
+	void setViews(std::vector<TrackingAlgorithm::View> views);
+
 	/**
 	 * Print proivided message to the GUI message area.
 	 * @param message the message to print.
@@ -84,6 +87,8 @@ public slots:
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();
+
+	void viewIndexChanged(int index);
 
 protected:
 	bool event(QEvent* event) override;
@@ -141,6 +146,8 @@ private:
 	std::shared_ptr<QWidget> _paramsWidget;
 	std::shared_ptr<QWidget> _toolsWidget;
 
+	std::vector<TrackingAlgorithm::View> _availableViews;
+
 signals:
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
@@ -165,6 +172,8 @@ signals:
 
 	//change tracking algorithm
 	void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
+
+	void changeSelectedView(TrackingAlgorithm::View const& view);
 };
 
 #endif // BioTracker_H
