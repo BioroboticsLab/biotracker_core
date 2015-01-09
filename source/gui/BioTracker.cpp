@@ -48,6 +48,15 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
 		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
 		if (file.open(QIODevice::ReadOnly)) restoreState(file.readAll());
 	}
+	{
+		const auto tracker = _settings.maybeGetValueOfParam<std::string>(TRACKERPARAM::SELECTED_TRACKER);
+		if (tracker) {
+			const int index = ui.cb_algorithms->findText(QString::fromStdString(tracker.get()));
+			if (index != -1) {
+				ui.cb_algorithms->setCurrentIndex(index);
+			}
+		}
+	}
 }
 
 BioTracker::~BioTracker()
@@ -725,6 +734,8 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 			}
 		}
 	}
+
+	_settings.setParam(TRACKERPARAM::SELECTED_TRACKER, Algorithms::Registry::getInstance().stringByType().at(trackingAlg));
 
 	ui.groupBox_params->repaint();
 	ui.groupBox_tools->repaint();
