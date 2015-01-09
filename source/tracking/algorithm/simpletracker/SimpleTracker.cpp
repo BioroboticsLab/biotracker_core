@@ -179,7 +179,7 @@ void SimpleTracker::reset() {
     _fish_candidates.clear();
 }
 
-void SimpleTracker::paint (cv::Mat &image)
+void SimpleTracker::paint (cv::Mat &image, const View&)
 {
     {
         QMutexLocker locker(&lastFrameLock);

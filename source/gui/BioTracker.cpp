@@ -97,6 +97,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
 	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
 	QObject::connect(ui.button_panZoom, SIGNAL(  clicked() ), this, SLOT(switchPanZoomMode()));
+	QObject::connect(ui.comboBoxSelectedView, SIGNAL(currentIndexChanged(int)), this, SLOT(viewIndexChanged(int)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -122,6 +123,7 @@ void BioTracker::initConnects()
 	QObject::connect(this, &BioTracker::changeTrackingAlg, ui.videoView, &VideoView::setTrackingAlgorithm);
 	QObject::connect(_trackingThread.get(), &TrackingThread::invalidFile, this, &BioTracker::invalidFile);
 	QObject::connect(_trackingThread.get(), &TrackingThread::fileNameChange, this, &BioTracker::displayFileName);
+	QObject::connect(this, &BioTracker::changeSelectedView, ui.videoView, &VideoView::changeSelectedView);
 
 	/*	 _______________________
 	*	|						|
@@ -659,6 +661,9 @@ void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 {
+	// remove views from previous tracker
+	resetViews();
+
 	// calculate file hash of currently opened file
 	const boost::optional<std::vector<std::string>> openFiles = getOpenFiles();
 	boost::optional<filehash> filehash;
@@ -744,6 +749,8 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 			tracker.get(), SLOT(setZoomLevel(float)));
 		QObject::connect(_trackingThread.get(), &TrackingThread::trackingSequenceDone,
 						 _tracker.get(), &TrackingAlgorithm::setCurrentImage);
+		QObject::connect(tracker.get(), &TrackingAlgorithm::registerViews,
+						 this, &BioTracker::setViews);
 
 		_tracker->setZoomLevel(ui.videoView->getCurrentZoomLevel());
 		try
@@ -773,6 +780,15 @@ void BioTracker::takeScreenshot()
 	ui.videoView->takeScreenshot(filepath);
 }
 
+void BioTracker::viewIndexChanged(int index)
+{
+	if (index == 0) {
+		emit changeSelectedView(TrackingAlgorithm::OriginalView);
+	} else {
+		emit changeSelectedView(_availableViews.at(index - 1));
+	}
+}
+
 void BioTracker::switchPanZoomMode()
 {
 	_isPanZoomMode = !_isPanZoomMode;
@@ -784,4 +800,22 @@ void BioTracker::displayFileName(QString filename)
 	_filename = filename.right(filename.lastIndexOf("/")+1);
 	statusBar()->showMessage(_filename);
 	setWindowTitle("BioTracker [" + _filename + "]");
+}
+
+void BioTracker::resetViews()
+{
+	ui.comboBoxSelectedView->setCurrentIndex(0);
+	for (int index = ui.comboBoxSelectedView->count() - 1; index > 0; --index) {
+		ui.comboBoxSelectedView->removeItem(index);
+	}
+}
+
+void BioTracker::setViews(std::vector<TrackingAlgorithm::View> views)
+{
+	resetViews();
+	for (TrackingAlgorithm::View const& view : views) {
+		ui.comboBoxSelectedView->addItem(QString::fromStdString(view.name));
+	}
+
+	_availableViews = std::move(views);
 }

@@ -78,3 +78,5 @@ void TrackingAlgorithm::prepareSave()
 
 void TrackingAlgorithm::postLoad()
 {}
+
+const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};
