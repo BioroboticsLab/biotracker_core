@@ -797,7 +797,7 @@ void BioTracker::switchPanZoomMode()
 
 void BioTracker::displayFileName(QString filename)
 {
-	_filename = filename.right(filename.lastIndexOf("/")+1);
+	_filename = QFileInfo(filename).fileName();
 	statusBar()->showMessage(_filename);
 	setWindowTitle("BioTracker [" + _filename + "]");
 }
