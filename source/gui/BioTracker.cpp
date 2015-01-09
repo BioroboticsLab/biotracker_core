@@ -783,5 +783,5 @@ void BioTracker::displayFileName(QString filename)
 {
 	_filename = filename.right(filename.lastIndexOf("/")+1);
 	statusBar()->showMessage(_filename);
-	setWindowTitle(_filename);
+	setWindowTitle("BioTracker [" + _filename + "]");
 }
