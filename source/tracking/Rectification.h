@@ -16,7 +16,7 @@ public:
 	 */
 	Rectification(void);
 
-	Rectification(double areaHeight_cm, double areaWidth_cm,
+	Rectification(float areaHeight_cm, float areaWidth_cm,
 		std::vector<cv::Point> areaCoordinates, int camCaptureWidth_px,
 		int camCaptureHeight_px);
 
@@ -53,7 +53,7 @@ public:
 	 * @param areaWidth_cm width of the tank in cm,
 	 * @param areaHeight_cm height of the tank in cm,
 	 */
-	void setDimension(double areaWidth_cm, double areaHeight_cm) { _areaWidth_cm = areaWidth_cm; _areaHeight_cm = areaHeight_cm; }
+	void setDimension(float areaWidth_cm, float areaHeight_cm) { _areaWidth_cm = areaWidth_cm; _areaHeight_cm = areaHeight_cm; }
 
 	std::vector<cv::Point> area() const { return _areaCoordinates; }
 
@@ -66,14 +66,14 @@ private:
 	std::vector<cv::Point> _areaCoordinates;
 	std::vector<cv::Point2f> _rectifiedAreaCoordinates;
 
-	cv::Mat_<double> _H;
-	cv::Mat_<double> _H_inv;
-	mutable cv::Mat_<double> _q;	
+	cv::Mat_<float> _H;
+	cv::Mat_<float> _H_inv;
+	mutable cv::Mat_<float> _q;
 
 	int _camCaptureWidth_px;
 	int _camCaptureHeight_px;
 
-	double _areaWidth_cm;
-	double _areaHeight_cm;
+	float _areaWidth_cm;
+	float _areaHeight_cm;
 	
 };

@@ -63,6 +63,10 @@ public slots:
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
 	void invalidFile();
+	void displayFileName(QString filename);
+
+	void resetViews();
+	void setViews(std::vector<TrackingAlgorithm::View> views);
 
 	/**
 	 * Print proivided message to the GUI message area.
@@ -83,6 +87,8 @@ public slots:
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();
+
+	void viewIndexChanged(int index);
 
 protected:
 	bool event(QEvent* event) override;
@@ -107,6 +113,7 @@ private:
 	size_t _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
+	QString _filename;
 
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
@@ -132,12 +139,15 @@ private:
 
 	boost::optional<std::vector<std::string> > getOpenFiles() const;
 	boost::optional<filehash> getFileHash(std::string const& filename, const size_t numFiles) const;
+	std::vector<std::string> getFilenamesFromPaths(std::vector<std::string> const& paths) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
 	std::shared_ptr<QWidget> _paramsWidget;
 	std::shared_ptr<QWidget> _toolsWidget;
+
+	std::vector<TrackingAlgorithm::View> _availableViews;
 
 signals:
 	// tell tracking thread to grab next frame
@@ -163,6 +173,8 @@ signals:
 
 	//change tracking algorithm
 	void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
+
+	void changeSelectedView(TrackingAlgorithm::View const& view);
 };
 
 #endif // BioTracker_H

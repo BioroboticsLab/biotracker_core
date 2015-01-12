@@ -3,11 +3,18 @@
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
 	: QObject(parent)
 	, _settings(settings)
+	, _isVideoPaused(true) // <-- value is never read, init to suppress warning
 	, _currentFrameNumber(0)
 	, _currentZoomLevel(0.0f)
 {}
 
-void TrackingAlgorithm::loadObjects(std::vector<TrackedObject>&& objects)
+void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)
+{
+	_trackedObjects = objects;
+	postLoad();
+}
+
+void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &&objects)
 {
 	_trackedObjects = std::move(objects);
 	postLoad();
@@ -42,21 +49,18 @@ bool TrackingAlgorithm::event(QEvent *event)
 	case QEvent::KeyPress:
 		keyPressEvent(static_cast<QKeyEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonPress:
 		mousePressEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonRelease:
 		mouseReleaseEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseMove:
 		mouseMoveEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::Wheel:
 		mouseWheelEvent(static_cast<QWheelEvent*>(event));
+		return true;
 	default:
 		event->ignore();
 		return false;
@@ -74,3 +78,5 @@ void TrackingAlgorithm::prepareSave()
 
 void TrackingAlgorithm::postLoad()
 {}
+
+const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};

@@ -19,7 +19,7 @@ ParticleBrightnessObserver::~ParticleBrightnessObserver(void)
 * its position.
 */
 void ParticleBrightnessObserver::score(Particle& particle) {
-	uchar pixel = _image.at<uchar>(particle.getY(), particle.getX());
+	uchar pixel = _image.at<uchar>(static_cast<int>(particle.getY()), static_cast<int>(particle.getX()));
 	
 	particle.setScore(std::max(pixel, static_cast<uchar>(_params.getMinScore())));
 }

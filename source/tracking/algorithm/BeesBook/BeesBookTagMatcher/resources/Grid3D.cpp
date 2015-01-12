@@ -31,6 +31,8 @@ Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angl
 	, _angle_x(angle_x)
 	, _coordinates2D(NUM_CELLS)
 	, _transparency(0.5)
+	, _bitsTouched(false)
+	, _isSettable(true)
 {
 	prepare_visualization_data();
 }
@@ -120,6 +122,9 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 
 	const auto rotationMatrix = CvHelper::rotationMatrix(_angle_z, _angle_y, _angle_x);
 
+	int minx = INT_MAX, miny = INT_MAX;
+	int maxx = INT_MIN, maxy = INT_MIN;
+
 	// iterate over all rings
 	for (size_t r = 0; r < _coordinates3D._rings.size(); ++r) 
 	{
@@ -129,14 +134,27 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 			// rotate and scale point (aka vector)
 			const cv::Point3d p = rotationMatrix * _coordinates3D._rings[r][i];
 
-            // project onto image plane
-            result._rings[r][i] = cv::Point2i(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
+			// project onto image plane
+			const cv::Point2i projectedPoint(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
+											 static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
-			if (r == 1) // inner ring
+			// determine outer points of bounding box
+			if (r == OUTER_RING) {
+				minx = std::min(minx, projectedPoint.x);
+				miny = std::min(miny, projectedPoint.y);
+				maxx = std::max(maxx, projectedPoint.x);
+				maxy = std::max(maxy, projectedPoint.y);
+			}
+
+			result._rings[r][i] = std::move(projectedPoint);
+
+			if (r == MIDDLE_RING)
 				if ( (i % POINTS_PER_MIDDLE_CELL) == POINTS_PER_MIDDLE_CELL / 2 )
 					_interactionPoints.push_back(0.5*(result._rings[r][i] + result._rings[r - 1][i]));
 		}
 	}
+
+	_boundingBox = cv::Rect(minx, miny, maxx - minx, maxy - miny);
 
 	// iterate over points of inner ring
 	for (size_t i = 0; i < POINTS_PER_LINE; ++i)
@@ -145,7 +163,8 @@ Grid3D::coordinates2D_t Grid3D::generate_3D_coordinates_from_parameters_and_proj
 		const cv::Point3d p = rotationMatrix * _coordinates3D._inner_line[i];
         
         // project onto image plane
-        const cv::Point   p2(round((p.x / (p.z + FOCAL_LENGTH))  * _radius), round((p.y / (p.z + FOCAL_LENGTH)) * _radius));
+		const cv::Point   p2(static_cast<int>(round((p.x / (p.z + FOCAL_LENGTH))  * _radius)),
+							 static_cast<int>(round((p.y / (p.z + FOCAL_LENGTH)) * _radius)));
 
 		result._inner_line[i] = p2;
 
@@ -226,9 +245,6 @@ void Grid3D::prepare_visualization_data()
 			vec.push_back(points_2d._inner_ring[index_end_elem]);
 		}
 	}
-
-
-
 }
 
 
@@ -245,17 +261,17 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 	static const cv::Scalar red(0, 0, 255);
 	static const cv::Scalar yellow(0, 255, 255);
 
-	const cv::Scalar outerColor = isActive ? yellow : white;
+	const cv::Scalar &outerColor = isActive ? yellow : white;
 
 	for (size_t i = INDEX_MIDDLE_CELLS_BEGIN; i < INDEX_MIDDLE_CELLS_BEGIN + NUM_MIDDLE_CELLS; ++i)
 	{
 		CvHelper::drawPolyline(img, _coordinates2D, i, white, false, center);
 	}
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,			outerColor, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white, false, center);
-	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_OUTER_WHITE_RING,       outerColor, false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_WHITE_SEMICIRCLE, white,      false, center);
+	CvHelper::drawPolyline(img, _coordinates2D, INDEX_INNER_BLACK_SEMICIRCLE, black,      false, center);
 
-	for (size_t i = 0; i < _interactionPoints.size() - 1; ++i)
+	for (size_t i = 0; i < NUM_MIDDLE_CELLS; ++i)
 	{
 		cv::Scalar color = tribool2Color(_ID[i]);
 		cv::circle(img, _interactionPoints[i] + center, 1, color);
@@ -264,22 +280,27 @@ void Grid3D::draw(cv::Mat &img, const cv::Point &center, const bool isActive) co
 
 }
 
-
-
-
+/**
+* draw grid on image. this function implements the transparency feature. 
+*/
 void Grid3D::draw(cv::Mat &img, const bool isActive) const
 {
-	const int       radius = static_cast<int>(std::ceil(_radius));
-	const cv::Size  subimage_size(2 * radius, 2 * radius);
-	const cv::Point subimage_center(radius, radius);
-	const cv::Point subimage_origin = _center - subimage_center;
+	const int radius = static_cast<int>(std::ceil(_radius));
+	const cv::Point subimage_origin( std::max(       0, _center.x - radius), std::max(       0, _center.y - radius) );
+	const cv::Point subimage_end   ( std::min(img.cols, _center.x + radius), std::min(img.rows, _center.y + radius) );
 
-	cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_size) );
-	cv::Mat subimage_copy = subimage.clone();
+	// draw only if subimage has a valid size (i.e. width & height > 0)
+	if (subimage_origin.x < subimage_end.x && subimage_origin.y < subimage_end.y)
+	{
+		const cv::Point subimage_center( std::min(radius, _center.x), std::min(radius, _center.y) );
 
-	draw(subimage_copy, subimage_center, isActive);
+		cv::Mat subimage      = img( cv::Rect(subimage_origin, subimage_end) );
+		cv::Mat subimage_copy = subimage.clone();
 
-	cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+		draw(subimage_copy, subimage_center, isActive);
+
+		cv::addWeighted(subimage_copy, _transparency, subimage, 1.0 - _transparency, 0.0, subimage);
+	}
 }
 
 void Grid3D::setXRotation(double angle)
@@ -305,18 +326,24 @@ void Grid3D::setCenter(cv::Point c)
 	_center = c;
 }
 
+/**
+* interate over keypoints and return the first close enough to point
+*/
 int Grid3D::getKeyPointIndex(cv::Point p) const
 {
 	for (size_t i = 0; i < _interactionPoints.size(); ++i)
 	{
 		if (cv::norm(_center + _interactionPoints[i] - p) < (_radius / 10) )
-			return i;
+			return static_cast<int>(i);
 	}
 	return -1;
 }
 
 void Grid3D::toggleIdBit(size_t cell_id, bool indeterminate)
 { 
+    _bitsTouched = true;
+
+    // if set to indeterminate, switch it to true, because we want to flip the bit in the next line
 	if (_ID[cell_id].value == boost::logic::tribool::value_t::indeterminate_value)
 		_ID[cell_id] = true;
 
@@ -331,14 +358,14 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 		value = 255;
 		break;
 	case boost::logic::tribool::value_t::indeterminate_value:
-		value = 0.5 * 255;
+		value = static_cast<int>(0.5 * 255);
 		break;
 	case boost::logic::tribool::value_t::false_value:
 		value = 0;
 		break;
 	default:
 		assert(false);
-		value = 0.;
+		value = 0;
 		break;
 	}
 
@@ -347,9 +374,33 @@ cv::Scalar Grid3D::tribool2Color(const boost::logic::tribool &tribool) const
 
 void Grid3D::zRotateTowardsPointInPlane(cv::Point p)
 {
-	cv::Point d = (p - _center);
-	_angle_z = atan2(d.y, d.x);
-	prepare_visualization_data();
+    // still seems to flutter when heavily rotated ... hmmm ..
+
+	// vector of grid center to mouse pointer
+    cv::Point d_p = (p - _center);
+    
+    // angular bisection of current orientation
+    double d_a = fmod( _angle_z - atan2(d_p.y, d_p.x), 2*CV_PI );
+    d_a = (d_a > CV_PI)     ? d_a - CV_PI: d_a;
+    d_a = (d_a < -CV_PI)    ? d_a + CV_PI: d_a;
+
+    // current rotation axis
+    cv::Point2d axis0(_angle_x, _angle_y);
+
+    // new rotation axis
+    cv::Point2d axis(cos(-d_a) * _angle_x + sin(-d_a) * _angle_y, -sin(-d_a) * _angle_x + cos(-d_a) * _angle_y);
+    
+    // if rotation axis is rotated to far, flip it back. 
+    // otherwise the tag is pitched into the other direction
+    if (axis0.dot(axis) < 0)
+        axis = -axis;
+
+    // update rotation parameters
+    _angle_x = axis.x;
+    _angle_y = axis.y;
+    _angle_z = atan2(d_p.y, d_p.x);
+
+    prepare_visualization_data();
 }
 
 void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
@@ -361,13 +412,19 @@ void Grid3D::xyRotateIntoPlane(float angle_y, float angle_x)
 
 void Grid3D::toggleTransparency()
 {
-	_transparency = std::abs(_transparency - 0.6);
+	_transparency = std::abs(_transparency - 0.6f);
 }
 
 void Grid3D::setWorldRadius(const double radius)
 {
 	_radius = radius;
 	prepare_visualization_data();
+}
+
+cv::Rect Grid3D::getBoundingBox() const
+{
+	return cv::Rect(_boundingBox.x + _center.x, _boundingBox.y + _center.y,
+					_boundingBox.width, _boundingBox.height);
 }
 
 CEREAL_REGISTER_TYPE(Grid3D)

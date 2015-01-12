@@ -51,7 +51,7 @@ void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
 	cv::erode(_imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
 }
 
-void SampleTracker::paint		( cv::Mat& image )
+void SampleTracker::paint		(cv::Mat& image , const View&)
 {
 	if(!_imgTracked.empty() && !_showOriginal)
 		//since gui is expecting a BGR image we have to convert our grayscale image

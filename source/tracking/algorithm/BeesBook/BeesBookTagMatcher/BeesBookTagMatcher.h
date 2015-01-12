@@ -10,7 +10,7 @@
 #include <boost/optional.hpp>
 
 #include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/resources/Grid3D.h"
+#include "source/tracking/algorithm/BeesBook/BeesBookTagMatcher/resources/Grid3D.h"
 
 #include "ui_BeesBookTagMatcherToolWidget.h"
 
@@ -59,6 +59,10 @@ private:
 
 	std::set<size_t>        _idCopyBuffer;
 	boost::optional<size_t> _copyFromFrame;
+    cv::Rect                _imgRect;          // stores image dimensions
+    cv::Rect                _validRect;        // holds a rect that defines valid positions for tags (changes size when tags are resized)
+
+	bool                    _visualizeFrames;  // whether to display frames around the tags
 
 	// function that draws the Tags set so far calling instances of Grid.
 	void drawTags(cv::Mat &image) const;
@@ -99,6 +103,12 @@ private:
 	// calculate number of tags on current frame
 	void setNumTags();
 
+	void forcePointIntoBorders(cv::Point & point, cv::Rect const & borders);
+
+	void updateValidRect();
+
+	cv::Scalar getGridColor(std::shared_ptr<Grid3D> const& grid) const;
+
 	void mouseMoveEvent    (QMouseEvent * e) override;
 	void mousePressEvent   (QMouseEvent * e) override;
 	void mouseReleaseEvent (QMouseEvent * e) override;
@@ -112,7 +122,7 @@ public:
 	~BeesBookTagMatcher();
 
 	void track(ulong frameNumber, cv::Mat& frame) override;
-	void paint(cv::Mat& image) override;
+	void paint(cv::Mat& image, View const& view = OriginalView) override;
 	void reset() override {}
 	void postLoad() override;
 

@@ -9,6 +9,8 @@ static const std::string STATE_FILE         = "./state.cfg";
 
 namespace TRACKERPARAM {
 static const std::string TRACKING_ENABLED = "TRACKERPARAM.TRACKING_ENABLED";
+
+static const std::string SELECTED_TRACKER = "TRACKERPARAM.SELECTED_TRACKER";
 }
 
 namespace GUIPARAM

@@ -8,6 +8,7 @@
 #include <thread>
 
 #include <QCryptographicHash>
+#include <QFileInfo>
 
 #include "source/settings/Settings.h"
 #include "source/utility/stdext.h"
@@ -18,6 +19,8 @@
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
+
+#include <QStatusBar>
 
 using GUIPARAM::MediaType;
 
@@ -44,6 +47,15 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
 	{
 		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
 		if (file.open(QIODevice::ReadOnly)) restoreState(file.readAll());
+	}
+	{
+		const auto tracker = _settings.maybeGetValueOfParam<std::string>(TRACKERPARAM::SELECTED_TRACKER);
+		if (tracker) {
+			const int index = ui.cb_algorithms->findText(QString::fromStdString(tracker.get()));
+			if (index != -1) {
+				ui.cb_algorithms->setCurrentIndex(index);
+			}
+		}
 	}
 }
 
@@ -94,6 +106,7 @@ void BioTracker::initConnects()
 	QObject::connect(ui.button_screenshot, SIGNAL( clicked() ), this, SLOT( takeScreenshot()));
 	QObject::connect(ui.cb_algorithms, SIGNAL( currentIndexChanged ( QString) ), this, SLOT(trackingAlgChanged(QString)));
 	QObject::connect(ui.button_panZoom, SIGNAL(  clicked() ), this, SLOT(switchPanZoomMode()));
+	QObject::connect(ui.comboBoxSelectedView, SIGNAL(currentIndexChanged(int)), this, SLOT(viewIndexChanged(int)));
 
 	//slider
 	QObject::connect(ui.sld_video, SIGNAL(sliderPressed()),this, SLOT(pauseCapture()));
@@ -118,6 +131,8 @@ void BioTracker::initConnects()
 	QObject::connect(this, &BioTracker::changeTrackingAlg, _trackingThread.get(), &TrackingThread::setTrackingAlgorithm);
 	QObject::connect(this, &BioTracker::changeTrackingAlg, ui.videoView, &VideoView::setTrackingAlgorithm);
 	QObject::connect(_trackingThread.get(), &TrackingThread::invalidFile, this, &BioTracker::invalidFile);
+	QObject::connect(_trackingThread.get(), &TrackingThread::fileNameChange, this, &BioTracker::displayFileName);
+	QObject::connect(this, &BioTracker::changeSelectedView, ui.videoView, &VideoView::changeSelectedView);
 
 	/*	 _______________________
 	*	|						|
@@ -143,7 +158,8 @@ void BioTracker::initConnects()
 
 void BioTracker::initPlayback()
 {
-	_currentFrame = _settings.getValueOrDefault<size_t>(GUIPARAM::PAUSED_AT_FRAME, 0);	
+	_currentFrame = _settings.getValueOrDefault<size_t>(GUIPARAM::PAUSED_AT_FRAME, 0);
+	updateFrameNumber(static_cast<int>(_currentFrame));
 	_trackingThread->enableVideoPause(true);
 
 	switch (_mediaType) {
@@ -165,9 +181,9 @@ void BioTracker::initPlayback()
 
 	ui.frame_num_edit->setValidator(new QIntValidator(0, _trackingThread->getVideoLength()-1, this));
 	ui.frame_num_edit->setEnabled(true);
-	ui.sld_speed->setValue(_trackingThread->getFps());
+	ui.sld_speed->setValue(static_cast<int>(_trackingThread->getFps()));
 
-	updateFrameNumber(_currentFrame);
+	updateFrameNumber(static_cast<int> (_currentFrame));
 
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
@@ -176,7 +192,7 @@ void BioTracker::initPlayback()
 
 	setPlayfieldPaused(true);
 
-	_trackingThread->setFrameNumber(_currentFrame);
+	_trackingThread->setFrameNumber(static_cast<int>(_currentFrame));
 
 	ui.videoView->fitToWindow();
 
@@ -230,12 +246,6 @@ void BioTracker::browsePicture()
 
 void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 {
-	if (!_tracker) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "No tracker selected.");
-		return;
-	}
-
 	QString filename = QFileDialog::getOpenFileName(this, tr("Load tracking data"), "", tr("Data Files (*.tdat)"));
 	if (!filename.isEmpty()) {
 		loadTrackingData(filename.toStdString());
@@ -244,8 +254,6 @@ void BioTracker::loadTrackingDataTriggered(bool /* checked */)
 
 void BioTracker::loadTrackingData(const std::string &filename)
 {
-	assert(_tracker->getType());
-
 	printGuiMessage("Restoring tracking data from " + filename, MSGS::NOTIFICATION);
 	std::ifstream is(filename);
 	cereal::JSONInputArchive ar(is);
@@ -253,13 +261,29 @@ void BioTracker::loadTrackingData(const std::string &filename)
 	Serialization::Data sdata;
 	ar(sdata);
 
-	const std::string trackerType =
-	        Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
+	if (_tracker) {
+		assert(_tracker->getType());
+		const std::string trackerType =
+				Algorithms::Registry::getInstance().stringByType().at(_tracker->getType().get());
 
-	if (sdata.getType() != trackerType) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "Tracker type does not match.");
-		return;
+		if (sdata.getType() != trackerType) {
+			QMessageBox::warning(this, "Unable to load tracking data",
+								 "Tracker type does not match.");
+			return;
+		}
+	} else {
+		// try to automatically select the required tracking algorithm
+		const auto& typeByString = Algorithms::Registry::getInstance().typeByString();
+		const auto it = typeByString.find(sdata.getType());
+		if (it != typeByString.end()) {
+			const int index = ui.cb_algorithms->findText(QString::fromStdString(sdata.getType()));
+			assert (index != -1);
+			ui.cb_algorithms->setCurrentIndex(index);
+		} else {
+			QMessageBox::warning(this, "Unable to load tracking data",
+								 "Unknown tracker type.");
+			return;
+		}
 	}
 
 	const boost::optional<std::vector<std::string>> currentFiles = getOpenFiles();
@@ -274,14 +298,15 @@ void BioTracker::loadTrackingData(const std::string &filename)
 
 	if (!hash) {
 		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "Could not calculate file hash.");
+							 "Could not calculate file hash.");
 		return;
 	}
 
 	if (sdata.getFileSha1Hash() != hash.get()) {
-		QMessageBox::warning(this, "Unable to load tracking data",
-		                     "File hash does not match");
-		return;
+		auto buttonClicked = QMessageBox::warning(this, "Unable to load tracking data",
+												  "File hash does not match", QMessageBox::Ok | QMessageBox::Ignore);
+		if (buttonClicked == QMessageBox::Ok)
+			return;
 	}
 
 	_tracker->loadObjects(sdata.getTrackedObjects());
@@ -300,6 +325,9 @@ void BioTracker::storeTrackingDataTriggered(bool /* checked */)
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	dialog.setDefaultSuffix("tdat");
 	dialog.setNameFilter(tr("Data Files (*.tdat)"));
+	// set displayed file as default filename:
+	if (_filename.lastIndexOf(".") > 0)
+		dialog.selectFile(_filename.left(_filename.lastIndexOf(".")));
 	if (dialog.exec()) {
 		const QStringList filenames = dialog.selectedFiles();
 		if (!filenames.empty()) {
@@ -331,11 +359,11 @@ void BioTracker::storeTrackingData(const std::string &filename)
 		return;
 	}
 
-	Serialization::Data sdata(trackerType, hash.get(), _tracker->getObjects());
+	Serialization::Data sdata(trackerType, hash.get(), getFilenamesFromPaths(currentFiles.get()), _tracker->getObjects());
 
 	std::ofstream ostream(filename, std::ios::binary);
 	cereal::JSONOutputArchive archive(ostream);
-	archive(sdata);
+	archive(std::move(sdata));
 }
 
 boost::optional<std::vector<std::string>> BioTracker::getOpenFiles() const
@@ -415,15 +443,23 @@ void BioTracker::setPlayfieldEnabled(bool enabled)
 	ui.button_stop->setEnabled(enabled);
 }
 
-void BioTracker::closeEvent(QCloseEvent* /* event */)
+void BioTracker::closeEvent(QCloseEvent* event)
 {
-	{
-		QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
-		if (file.open(QIODevice::WriteOnly)) file.write(saveGeometry());
-	}
-	{
-		QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
-		if (file.open(QIODevice::WriteOnly)) file.write(saveState());
+	const auto dialog = QMessageBox::warning(this, "Exit",
+		"Do you really want to close the application?",
+		QMessageBox::Yes | QMessageBox::No);
+	if( dialog == QMessageBox::Yes) {
+		{
+			QFile file(QString::fromStdString(CONFIGPARAM::GEOMETRY_FILE));
+			if (file.open(QIODevice::WriteOnly)) file.write(saveGeometry());
+		}
+		{
+			QFile file(QString::fromStdString(CONFIGPARAM::STATE_FILE));
+			if (file.open(QIODevice::WriteOnly)) file.write(saveState());
+		}
+		QMainWindow::closeEvent(event);
+	} else {
+	  event->ignore();
 	}
 }
 
@@ -434,11 +470,22 @@ boost::optional<BioTracker::filehash> BioTracker::getFileHash(const std::string 
 	if (file.open(QIODevice::ReadOnly)) {
 		// calculate hash from first 4096 bytes of file
 		sha1Generator.addData(file.peek(4096));
-		sha1Generator.addData(QByteArray::number(numFiles));
+		sha1Generator.addData(QByteArray::number(static_cast<qulonglong>(numFiles)));
 		return QString(sha1Generator.result().toHex()).toStdString();
 	}
 
 	return boost::optional<filehash>();
+}
+
+std::vector<std::string> BioTracker::getFilenamesFromPaths(const std::vector<std::string> &paths) const
+{
+	std::vector<std::string> filenames;
+	filenames.reserve(paths.size());
+	for (std::string const& path : paths) {
+		const QFileInfo fi(QString::fromStdString(path));
+		filenames.push_back(fi.baseName().toStdString());
+	}
+	return filenames;
 }
 
 
@@ -478,8 +525,8 @@ void BioTracker::stepCaptureBackward()
 {
 	if(_currentFrame > 0)
 	{
-		updateFrameNumber(_currentFrame-1);
-		emit changeFrame(_currentFrame);		
+		updateFrameNumber(static_cast<int>(_currentFrame-1));
+		emit changeFrame(static_cast<int>(_currentFrame));		
 		_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 	}
 }
@@ -514,7 +561,7 @@ void BioTracker::updateFrameNumber(int frameNumber)
 	if (_videoMode != VideoMode::Stopped) {
 		_currentFrame = frameNumber;
 
-		ui.sld_video->setValue(_currentFrame);
+		ui.sld_video->setValue(static_cast<int>(_currentFrame));
 		ui.frame_num_edit->setText(QString::number(_currentFrame));
 		// check if we reached the end of video
 		if (frameNumber == ui.sld_video->maximum()) {
@@ -549,6 +596,7 @@ void BioTracker::printGuiMessage(std::string message, MSGS::MTYPE mType)
 		break;
 	case MSGS::MTYPE::FAIL:
 		msgLine += "<span style=\"color:red\"><b> Error: </b></span>";
+		break;
 	default:
 		msgLine += " ";
 		break;
@@ -567,7 +615,7 @@ void BioTracker::changeCurrentFramebySlider()
 }
 void BioTracker::changeCurrentFramebySlider(int SliderAction)
 {
-	int fNum = _currentFrame;
+	int fNum = static_cast<int>(_currentFrame);
 	switch(SliderAction)
 	{
 	case QSlider::SliderPageStepAdd:
@@ -634,6 +682,9 @@ void BioTracker::trackingAlgChanged(QString trackingAlgStr)
 
 void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 {
+	// remove views from previous tracker
+	resetViews();
+
 	// calculate file hash of currently opened file
 	const boost::optional<std::vector<std::string>> openFiles = getOpenFiles();
 	boost::optional<filehash> filehash;
@@ -673,7 +724,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		assert(_tracker);
 
 		// init tracking Alg
-		_tracker->setCurrentFrameNumber(_currentFrame);
+		_tracker->setCurrentFrameNumber(static_cast<int>(_currentFrame));
 		_tracker->setVideoPaused(_videoMode == VideoMode::Paused);
 		connectTrackingAlg(_tracker);
 
@@ -695,6 +746,8 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 			}
 		}
 	}
+
+	_settings.setParam(TRACKERPARAM::SELECTED_TRACKER, Algorithms::Registry::getInstance().stringByType().at(trackingAlg));
 
 	ui.groupBox_params->repaint();
 	ui.groupBox_tools->repaint();
@@ -719,6 +772,8 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 			tracker.get(), SLOT(setZoomLevel(float)));
 		QObject::connect(_trackingThread.get(), &TrackingThread::trackingSequenceDone,
 						 _tracker.get(), &TrackingAlgorithm::setCurrentImage);
+		QObject::connect(tracker.get(), &TrackingAlgorithm::registerViews,
+						 this, &BioTracker::setViews);
 
 		_tracker->setZoomLevel(ui.videoView->getCurrentZoomLevel());
 		try
@@ -748,8 +803,42 @@ void BioTracker::takeScreenshot()
 	ui.videoView->takeScreenshot(filepath);
 }
 
+void BioTracker::viewIndexChanged(int index)
+{
+	if (index == 0) {
+		emit changeSelectedView(TrackingAlgorithm::OriginalView);
+	} else {
+		emit changeSelectedView(_availableViews.at(index - 1));
+	}
+}
+
 void BioTracker::switchPanZoomMode()
 {
 	_isPanZoomMode = !_isPanZoomMode;
 	ui.videoView->setPanZoomMode(_isPanZoomMode);
+}
+
+void BioTracker::displayFileName(QString filename)
+{
+	_filename = QFileInfo(filename).fileName();
+	statusBar()->showMessage(_filename);
+	setWindowTitle("BioTracker [" + _filename + "]");
+}
+
+void BioTracker::resetViews()
+{
+	ui.comboBoxSelectedView->setCurrentIndex(0);
+	for (int index = ui.comboBoxSelectedView->count() - 1; index > 0; --index) {
+		ui.comboBoxSelectedView->removeItem(index);
+	}
+}
+
+void BioTracker::setViews(std::vector<TrackingAlgorithm::View> views)
+{
+	resetViews();
+	for (TrackingAlgorithm::View const& view : views) {
+		ui.comboBoxSelectedView->addItem(QString::fromStdString(view.name));
+	}
+
+	_availableViews = std::move(views);
 }

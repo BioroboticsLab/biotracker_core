@@ -21,7 +21,7 @@ LandmarkTracker::LandmarkTracker(Settings & settings,  QWidget *parent)
 	std::cout<<"LANDMARK TRACKER"<<std::endl;
 }
 
-void LandmarkTracker::paint		( cv::Mat& image )
+void LandmarkTracker::paint		(cv::Mat& image , const View&)
 {
 	if(_showSelectorRec)
 	{
