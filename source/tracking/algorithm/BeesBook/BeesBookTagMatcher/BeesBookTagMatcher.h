@@ -114,6 +114,17 @@ private:
 	void mouseReleaseEvent (QMouseEvent * e) override;
 	void keyPressEvent     (QKeyEvent * e) override;
 
+	/**
+	 * store ids of all grids on current frame in copy buffer
+	 */
+	void copyTrackedObjects();
+
+	/**
+	 * copies grids from copy buffer into current frame
+	 * TODO: update description
+	 */
+	void pasteTrackedObjects();
+
 protected:
 	bool event(QEvent* event) override;
 
