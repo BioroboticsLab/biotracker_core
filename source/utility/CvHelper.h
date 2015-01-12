@@ -156,4 +156,20 @@ namespace CvHelper
 		}
 	}
 
+	struct cv_point_compare_less_x
+	{
+		template<typename CV_POINT>
+		bool operator()(const CV_POINT &lhs, const CV_POINT &rhs) const {
+			return lhs.x < rhs.x;
+		}
+	};
+
+	struct cv_point_compare_less_y
+	{
+		template<typename CV_POINT>
+		bool operator()(const CV_POINT &lhs, const CV_POINT &rhs) const {
+			return lhs.y < rhs.y;
+		}
+	};
+
 }
