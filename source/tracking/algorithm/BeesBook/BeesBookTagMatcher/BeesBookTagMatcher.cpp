@@ -322,7 +322,7 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
 			const double radius = _activeGrid->getWorldRadius();
 			_activeGrid->setWorldRadius(radius + direction * 0.01 * radius);
-            updateValidRect();
+			updateValidRect();
 			emit update();
 		}
 	} 
@@ -330,44 +330,13 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 	{
 		if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) 
 		{
-			_idCopyBuffer.clear();
-		
-			for (const TrackedObject& object : _trackedObjects) 
-			{
-				// store ids of all grids on current frame in copy buffer
-				if (object.count(getCurrentFrameNumber()))
-				{
-					_idCopyBuffer.insert(object.getId());
-				}
-			}
-			_copyFromFrame = getCurrentFrameNumber();
+			this->copyTrackedObjects();
 		}
 		else 
 		{
-			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) 
+			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier))
 			{
-				for (TrackedObject& object : _trackedObjects) 
-				{
-					// check if id of object is in copy buffer
-					if (_idCopyBuffer.count(object.getId())) 
-					{
-						// check if grid from copy-from framenumber still exists
-						const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
-						// and create a copy if a grid with the same id does not
-						// already exist on the current frame
-						if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
-						{
-							// set toogled state to indeterminate if the grid has been set before
-							const auto newGrid = std::make_shared<Grid3D>(*maybeGrid);
-							if (newGrid->hasBeenBitToggled().value == boost::logic::tribool::value_t::true_value) {
-								newGrid->setBeenBitToggled(boost::logic::tribool::value_t::indeterminate_value);
-							}
-							object.add(getCurrentFrameNumber(), newGrid);
-						}
-					}
-				}
-				emit update();
-				setNumTags();
+				this->pasteTrackedObjects();
 			}
 			else 
 			{
@@ -409,6 +378,50 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 		}
 	}
 }
+
+void BeesBookTagMatcher::copyTrackedObjects() {
+	_idCopyBuffer.clear();
+
+	for (const TrackedObject& object : _trackedObjects)
+	{
+		// store ids of all grids on current frame in copy buffer
+		if (object.count(getCurrentFrameNumber()))
+		{
+			_idCopyBuffer.insert(object.getId());
+		}
+	}
+	_copyFromFrame = getCurrentFrameNumber();
+}
+
+
+void BeesBookTagMatcher::pasteTrackedObjects() {
+	if (_copyFromFrame)
+	{
+		for (TrackedObject& object : _trackedObjects)
+		{
+			// check if id of object is in copy buffer
+			if (_idCopyBuffer.count(object.getId()))
+			{
+				// check if grid from copy-from framenumber still exists
+				const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
+				// and create a copy if a grid with the same id does not
+				// already exist on the current frame
+				if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
+				{
+					// set toogled state to indeterminate if the grid has been set before
+					const auto newGrid = std::make_shared<Grid3D>(*maybeGrid);
+					if (newGrid->hasBeenBitToggled().value == boost::logic::tribool::value_t::true_value) {
+						newGrid->setBeenBitToggled(boost::logic::tribool::value_t::indeterminate_value);
+					}
+					object.add(getCurrentFrameNumber(), newGrid);
+				}
+			}
+		}
+		emit update();
+		setNumTags();
+	}
+}
+
 
 //function that draws the set Tags so far.
 void BeesBookTagMatcher::drawTags(cv::Mat& image) const
@@ -560,8 +573,12 @@ const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 	                                      Qt::Key_W, Qt::Key_A,
 	                                      Qt::Key_S, Qt::Key_D,
 	                                      Qt::Key_G, Qt::Key_H,
-										  Qt::Key_U, Qt::Key_F,
-		        						  Qt::Key_CapsLock };
+	                                      Qt::Key_U, Qt::Key_F,
+	                                      Qt::Key_CapsLock,
+	                                      Qt::Key_0, Qt::Key_1, Qt::Key_2, Qt::Key_3,
+	                                      Qt::Key_4, Qt::Key_5, Qt::Key_6, Qt::Key_7,
+	                                      Qt::Key_8, Qt::Key_9
+	                                    };
 	return keys;
 }
 
