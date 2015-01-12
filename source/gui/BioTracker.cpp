@@ -425,7 +425,10 @@ void BioTracker::runCapture()
 	case VideoMode::Playing:
 		pauseCapture();
 		break;
+	default:
+		break;
 	}
+
 }
 
 void BioTracker::invalidFile()
