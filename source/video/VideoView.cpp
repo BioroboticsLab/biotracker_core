@@ -39,7 +39,8 @@ VideoView::VideoView(QWidget *parent)
 void VideoView::showImage(cv::Mat img)
 {
 	_displayImage = img;
-	resizeGL(width(), height());
+	createTexture(_displayImage);
+	resizeGL(this->width(), this->height());
 
 	//Draw the scene
 	updateGL();
@@ -89,6 +90,39 @@ void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
 	updateGL();
 }
 
+void VideoView::createTexture(cv::Mat image)
+{
+	// free memory                
+	glDeleteTextures(1, &_texture);
+	glLoadIdentity();
+	int corner1[2] = { image.cols, 0 };
+	int corner2[2] = { 0, 0 };
+	int corner3[2] = { 0, image.rows };
+	int corner4[2] = { image.cols, image.rows };
+	_vertices.clear();
+	_vertices.append(QVector2D(static_cast<float>(corner1[0]), static_cast<float>(corner1[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner3[0]), static_cast<float>(corner3[1])));
+	_vertices.append(QVector2D(static_cast<float>(corner4[0]), static_cast<float>(corner4[1])));
+	glVertexPointer(2, GL_FLOAT, 0, _vertices.constData());
+	glTexCoordPointer(2, GL_FLOAT, 0, _texCoords.constData());
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	
+	// Non-mipmap way of mapping the texture (fast and clean):		// Allocate the texture
+	glGenTextures(1, &_texture);
+	// Select the texture.
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	// If texture area is larger then the image, upscale using no interpolation.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// If texture area is smaller than the image, downsample using no interpolation.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	
+	// create Texture 
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+}
+
 void VideoView::paintGL()
 {
 	// Create a black background for the parts of the widget with no image.
@@ -100,13 +134,19 @@ void VideoView::paintGL()
 		// Don't bother painting an image if we have none.
 		return; 
 	}
-	cv::Mat imageCopy = _displayImage.clone();
-	if(_tracker)
+	
+	// if tracking algorithm is selected and zoom/pan is not active:
+	if(_tracker && !_isPanZoomMode)
 	{
 		try
 		{
+			// create copy of curent image and send it for further drawing to tracking algorithm
+			cv::Mat imageCopy = _displayImage.clone();
 			QMutexLocker locker(&trackMutex);
 			_tracker->paint(imageCopy, _selectedView);
+			// create new texture with processed image copy
+			createTexture(imageCopy);
+			imageCopy.release();
 		}
 		catch(std::exception& err)
 		{
@@ -117,95 +157,9 @@ void VideoView::paintGL()
 		}
 
 	}
-
-	glLoadIdentity();
-
-	int corner1[2] = {_displayImage.cols,0};
-	int corner2[2] = {0,0};
-	int corner3[2] = {0,_displayImage.rows};
-	int corner4[2] = {_displayImage.cols,_displayImage.rows};
-	_vertices.clear();
-	_vertices.append(QVector2D(static_cast<float>(corner1[0]), static_cast<float>(corner1[1])));
-	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
-	_vertices.append(QVector2D(static_cast<float>(corner3[0]), static_cast<float>(corner3[1])));
-	_vertices.append(QVector2D(static_cast<float>(corner4[0]), static_cast<float>(corner4[1])));
-
-	glVertexPointer(2, GL_FLOAT, 0, _vertices.constData());
-	glTexCoordPointer(2, GL_FLOAT, 0, _texCoords.constData());
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	// Non-mipmap way of mapping the texture (fast and clean):
-	// Allocate the texture
-	glGenTextures(1, &_texture);
-	// Select the texture.
-	glBindTexture(GL_TEXTURE_2D, _texture); 
-	// If texture area is larger then the image, upscale using no interpolation.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// If texture area is smaller than the image, downsample using no interpolation.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-
-	// check window resolution and scale image if window resolution is lower than image resolution
-	if ((_screenPicRatio + _zoomFactor) > 1)
-	{	
-		QMutexLocker locker(&trackMutex);
-		cv::resize(imageCopy, imageCopy, cv::Size(static_cast<int>(imageCopy.cols / (_screenPicRatio + _zoomFactor)),
-			static_cast<int>(imageCopy.rows / (_screenPicRatio + _zoomFactor))), cv::INTER_AREA);//resize image
-	}	
-
-	/**
-	* FOR PERFORMANCE LOAD JUST THE VISIBLE PARTS OF THE PICTURE INTO GRAPHICS MEMORY
-	*/
-	// create Texture Atlas
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageCopy.cols, imageCopy.rows, 0, GL_BGR, GL_UNSIGNED_BYTE,0);// imageCopy.data);
-
-	//check which part of the picture is on screen
-	//by unprojecting lower right and upper left corner
-	QPoint lowerRight = unprojectScreenPos(QPoint(this->width(),this->height()));
-	QPoint upperLeft = unprojectScreenPos(QPoint(0,0));
-   
-	//if image was dragged out abort painting
-	if (upperLeft.x() > _displayImage.cols || upperLeft.y() > _displayImage.rows || lowerRight.x() < 0 || lowerRight.y() < 0)
-		return;
-	//otherwise set variables indicating which part of picture is visible
-	int c=0,r=0;
-	int width=_displayImage.cols;
-	int height=_displayImage.rows;
-	if(upperLeft.x() > 0 )
-		c=upperLeft.x();
-	if(upperLeft.y() > 0 )
-		r=upperLeft.y();
-	if(lowerRight.x() < width-1)
-		width=lowerRight.x()+1;
-	if(lowerRight.y() < height-1)
-		height=lowerRight.y()+1;
-
-	//if image was scaled down previously 
-	//we need to adjust coordinates relatively
-	if ((_screenPicRatio + _zoomFactor) > 1)
-	{
-		c = (c*imageCopy.cols)/_displayImage.cols;
-		r = (r*imageCopy.rows)/_displayImage.rows;
-		width = (width*imageCopy.cols)/_displayImage.cols;
-		height = (height*imageCopy.rows)/_displayImage.rows;
-	}
-
-
-
-	//to avoid artifacts when using 'glTexSubImage2d' with opencv MAT data,
-	//set pixel storage mode to byte alignment
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1 );
-	//and define number of pixels in a row
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, static_cast<int>(imageCopy.step)/imageCopy.channels());
-	cv::Mat tile = imageCopy(cv::Range(r, height),
-		cv::Range(c, width));
-	glTexSubImage2D(GL_TEXTURE_2D, 0, c, r, tile.cols, tile.rows, GL_BGR, GL_UNSIGNED_BYTE, tile.ptr());
-
 	// Draw it!
 	glDrawArrays(GL_POLYGON, 0, 4);
-	// free memory		
-	imageCopy.release();
-	glDeleteTextures(1, &_texture);
+
 }
 
 void VideoView::initializeGL()
