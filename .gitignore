@@ -12,6 +12,8 @@ desktop.ini
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.vspscc
+# ignore editor ~ files
+*~
 
 /Debug
 /Release
