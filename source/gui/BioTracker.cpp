@@ -28,7 +28,7 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
     : QMainWindow(parent, flags)
     , _settings(settings)
     , _trackingThread(std::make_unique<TrackingThread>(_settings))
-    , _videoMode(VideoMode::Stopped)
+    , _videoMode(VideoMode::Init)
     , _mediaType(_settings.getValueOrDefault<MediaType>(GUIPARAM::MEDIA_TYPE, MediaType::NoMedia))
     , _isPanZoomMode(false)
     , _currentFrame(0)
@@ -183,6 +183,8 @@ void BioTracker::initPlayback()
 	ui.frame_num_edit->setEnabled(true);
 	ui.sld_speed->setValue(static_cast<int>(_trackingThread->getFps()));
 
+	updateFrameNumber(static_cast<int> (_currentFrame));
+
 	std::stringstream ss;
 	double fps = _trackingThread->getFps();
 	ss << std::setprecision(5) << fps;
@@ -193,6 +195,8 @@ void BioTracker::initPlayback()
 	_trackingThread->setFrameNumber(static_cast<int>(_currentFrame));
 
 	ui.videoView->fitToWindow();
+
+	_videoMode = VideoMode::Stopped;
 }
 
 void BioTracker::initAlgorithmList()

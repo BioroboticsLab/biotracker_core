@@ -102,7 +102,8 @@ private:
 	enum class VideoMode : uint8_t {
 		Playing = 0,
 		Paused,
-		Stopped
+		Stopped,
+		Init
 	};
 	VideoMode _videoMode;
 
