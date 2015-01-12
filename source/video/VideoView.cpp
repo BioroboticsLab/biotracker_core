@@ -20,6 +20,7 @@ QMutex trackMutex;
 
 VideoView::VideoView(QWidget *parent)
 	: QGLWidget(parent)
+	, _texture(0) // init to suppress warning
 	, _tracker(nullptr)
 	, _isPanZoomMode(false)
 	, _currentWidth(0)
@@ -32,6 +33,7 @@ VideoView::VideoView(QWidget *parent)
 	, _lastPannedTime(std::chrono::system_clock::now())
 	, _lastZoomedTime(std::chrono::system_clock::now())
 	, _lastZoomedPoint(0, 0)
+	, _selectedView(TrackingAlgorithm::OriginalView)
 {}
 
 void VideoView::showImage(cv::Mat img)
@@ -39,7 +41,6 @@ void VideoView::showImage(cv::Mat img)
 	_displayImage = img;
 	createTexture(_displayImage);
 	resizeGL(this->width(), this->height());
-
 
 	//Draw the scene
 	updateGL();
@@ -75,16 +76,25 @@ void VideoView::fitToWindow()
 		float bottom = top + height;
 		glOrtho(left, right, bottom, top, 0.0, 1.0);
 		glMatrixMode(GL_MODELVIEW);
-		//resizeGL(width, height);
+
+		emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+
 		//Draw the scene
 		updateGL();
 	}
 }
 
+void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
+{
+	_selectedView = selectedView;
+	updateGL();
+}
+
 void VideoView::createTexture(cv::Mat image)
 {
+	// free memory                
+	glDeleteTextures(1, &_texture);
 	glLoadIdentity();
-
 	int corner1[2] = { image.cols, 0 };
 	int corner2[2] = { 0, 0 };
 	int corner3[2] = { 0, image.rows };
@@ -94,14 +104,12 @@ void VideoView::createTexture(cv::Mat image)
 	_vertices.append(QVector2D(static_cast<float>(corner2[0]), static_cast<float>(corner2[1])));
 	_vertices.append(QVector2D(static_cast<float>(corner3[0]), static_cast<float>(corner3[1])));
 	_vertices.append(QVector2D(static_cast<float>(corner4[0]), static_cast<float>(corner4[1])));
-
 	glVertexPointer(2, GL_FLOAT, 0, _vertices.constData());
 	glTexCoordPointer(2, GL_FLOAT, 0, _texCoords.constData());
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	// Non-mipmap way of mapping the texture (fast and clean):
-	// Allocate the texture
+	
+	// Non-mipmap way of mapping the texture (fast and clean):		// Allocate the texture
 	glGenTextures(1, &_texture);
 	// Select the texture.
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -109,13 +117,10 @@ void VideoView::createTexture(cv::Mat image)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	// If texture area is smaller than the image, downsample using no interpolation.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-
+	
 	// create Texture 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
 
-	// free memory                
-	//glDeleteTextures(1, &_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
 }
 
 void VideoView::paintGL()
@@ -138,7 +143,7 @@ void VideoView::paintGL()
 			// create copy of curent image and send it for further drawing to tracking algorithm
 			cv::Mat imageCopy = _displayImage.clone();
 			QMutexLocker locker(&trackMutex);
-			_tracker->paint(imageCopy);
+			_tracker->paint(imageCopy, _selectedView);
 			// create new texture with processed image copy
 			createTexture(imageCopy);
 			imageCopy.release();
@@ -216,7 +221,7 @@ void VideoView::resizeGL(int width, int height)
 	glMatrixMode(GL_MODELVIEW);	
 	if (sizeChanged)
 		fitToWindow();
-	emit reportZoomLevel(_zoomFactor);
+	emit reportZoomLevel(_screenPicRatio + _zoomFactor);
 }
 
 

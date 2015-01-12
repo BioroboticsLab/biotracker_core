@@ -27,7 +27,7 @@ void ParticleClusters::cluster(const std::vector<Particle>& particles, unsigned 
 		data[i][0] = particles[i].getX();
 		data[i][1] = particles[i].getY();
 	}
-	int k = num_clusters;
+	int k = static_cast<int>(std::min<size_t>(num_clusters, particles.size()));
 	cv::Mat bestLabels;
 	cv::TermCriteria criteria(cv::TermCriteria::EPS, 0, _params.getClusteringEpsilon());
 	int attempts = 1;
@@ -50,8 +50,8 @@ unsigned ParticleClusters::getClosestClusterIndex(const Particle& particle) {
 	unsigned min_distance_center = 0;
 	float min_distance = FLT_MAX;
 	for (int i = 0; i < _centers.rows; i++) {
-		Particle center_particle(_centers.at<float>(i, 0), _centers.at<float>(i, 1), 0, 0);
-		float distance = center_particle.dist(particle);
+		Particle center_particle(_centers.at<int>(i, 0), _centers.at<int>(i, 1), 0, 0);
+		float distance = static_cast<float>(center_particle.dist(particle));
 		if (distance < min_distance) {
 			min_distance = distance;
 			min_distance_center = i;

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <set>
 
 #include <boost/optional.hpp>
 
@@ -26,7 +27,13 @@ class TrackingAlgorithm : public QObject
 
 public:
 	TrackingAlgorithm(Settings& settings, QWidget *parent);
-	virtual	~TrackingAlgorithm() {}
+	virtual ~TrackingAlgorithm() override = default;
+
+	struct View {
+		std::string name;
+	};
+
+	static const View OriginalView;
 
 	/**
 	* This function tracks the provided object list within the provided frame.
@@ -37,7 +44,7 @@ public:
 	* paint will be called by "VideoViews" paintGL method
 	* so any picture manipulation stuff goes in here 
 	*/
-	virtual void paint(cv::Mat& image ) = 0;
+	virtual void paint(cv::Mat& image, View const& view = OriginalView) = 0;
 
 	/**
 	* Resets the tracker. never called - yet
@@ -80,11 +87,18 @@ public:
 	 */
 	virtual void postLoad();
 	
-	void loadObjects(std::vector<TrackedObject> &&objects);
+	void loadObjects(std::vector<TrackedObject> const& objects);
+	void loadObjects(std::vector<TrackedObject> const&& objects);
 	std::vector<TrackedObject> const& getObjects();
 
 	boost::optional<Algorithm::Type> getType() const { return _type; }
 	void setType(Algorithm::Type type) { _type = type; }
+
+	int getCurrentFrameNumber() const
+	{	return _currentFrameNumber;	}
+
+	float getCurrentZoomLevel() const
+	{	return _currentZoomLevel;	}
 
 public slots:
 	/**
@@ -126,15 +140,13 @@ signals:
 
 	void forceTracking();
 
+	void registerViews(const std::vector<View> views);
+
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
 
 	bool event(QEvent* event) override;
-
-	bool _isVideoPaused;
-	int _currentFrameNumber;
-	float _currentZoomLevel;
 
 	/**
 	 * @return either a copy of the current frame image, wrapped in a
@@ -175,6 +187,9 @@ protected:
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
 private:
+	bool _isVideoPaused;
+	int _currentFrameNumber;
+	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
 };

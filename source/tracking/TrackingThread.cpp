@@ -47,6 +47,7 @@ void TrackingThread::loadVideo(const std::string &filename)
 		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
 			" (#frames: " + QString::number(getVideoLength()).toStdString() + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+		emit fileNameChange(QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
 		QThread::start();
 	}
 }
@@ -166,12 +167,15 @@ cv::Mat TrackingThread::getPicture(size_t index)
 	if (index < _pictureFiles.size())
 	{
 		std::string filename = _pictureFiles.at(index);
+		emit fileNameChange(QString::fromStdString(filename));
 		return cv::imread(filename);
 	}
 	else
 	{
 		//return empty Picture if index out of range
 		cv::Mat emptyPic;
+		//QString filename = "-";
+		//emit fileNameChange(filename);
 		return emptyPic;
 	}
 
@@ -337,15 +341,12 @@ int TrackingThread::getVideoLength()
 {
 	switch (_mediaType) {
 	case MediaType::Images:
-		return _pictureFiles.size();
-		break;
+		return static_cast<int>(_pictureFiles.size());
 	case MediaType::Video:
-		return _capture.get(CV_CAP_PROP_FRAME_COUNT);
-		break;
+		return static_cast<int>(_capture.get(CV_CAP_PROP_FRAME_COUNT));
 	default:
 		assert(false);
 		return -1;
-		break;
 	}
 }
 

@@ -83,7 +83,12 @@ void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
 		}
 
 		// (3) Clustering
-		_clusters.cluster(_current_particles, _params.getNumberOfClusters());
+		// - Only use particles with high enough score
+		std::vector<Particle> particles_high_scores;
+		const float score_cutoff = _min_score + ((_max_score - _min_score) * .1f);
+		std::copy_if(_current_particles.begin(), _current_particles.end(), std::back_inserter(particles_high_scores),
+			[score_cutoff](const Particle& p) { return p.getScore() >= score_cutoff; });
+		_clusters.cluster(particles_high_scores, _params.getNumberOfClusters());
 
 		// (4) Store results in history
 		// TODO
@@ -134,13 +139,13 @@ void ParticleFishTracker::importanceResample() {
 void ParticleFishTracker::wiggleParticle(Particle& to_wiggle) {
 	float wiggle_distance;
 	if (_max_score != _min_score) {
-		wiggle_distance = _params.getParticleWiggleDistance() 
-			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score));
+		wiggle_distance = static_cast<float>(_params.getParticleWiggleDistance()
+			* ((_max_score - to_wiggle.getScore()) / (_max_score - _min_score)));
 	} else {
-		wiggle_distance = _params.getParticleWiggleDistance();
+		wiggle_distance = static_cast<float>(_params.getParticleWiggleDistance());
 	}
-	to_wiggle.setX(to_wiggle.getX() + _rng.gaussian(wiggle_distance));
-	to_wiggle.setY(to_wiggle.getY() + _rng.gaussian(wiggle_distance));
+	to_wiggle.setX(to_wiggle.getX() + static_cast<float>(_rng.gaussian(wiggle_distance)));
+	to_wiggle.setY(to_wiggle.getY() + static_cast<float>(_rng.gaussian(wiggle_distance)));
 	cutParticleCoords(to_wiggle);
 }
 
@@ -180,7 +185,7 @@ void ParticleFishTracker::seedParticles(size_t num_particles, int min_x, int min
 /**
 * Draws the result of the tracking for the current frame.
 */
-void ParticleFishTracker::paint(cv::Mat& image) {
+void ParticleFishTracker::paint(cv::Mat& image, const View&) {
 	//dont paint if we want to see original image
 	if(_showOriginal)
 		return;
@@ -188,11 +193,11 @@ void ParticleFishTracker::paint(cv::Mat& image) {
 		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
 		for (const Particle& p : _current_particles) {
 			if (_min_score >= _max_score) {
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 255, 0), -1);
+				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 255, 0), -1);
 			} else {
 				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = (p.getScore() - _min_score)	/ (_max_score - _min_score) * 220;
-				cv::circle(image, cv::Point(p.getX(), p.getY()), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
+				unsigned scaled_score = static_cast<unsigned>((p.getScore() - _min_score)	/ (_max_score - _min_score) * 220.f);
+				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
 			}
 		}
 
