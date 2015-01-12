@@ -500,6 +500,11 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 				const cv::Point br(center.x + radius, center.y + radius);
 				const cv::Scalar color = getGridColor(grid);
 				cv::rectangle(image, tl, br, color, thickness, CV_AA);
+
+				// draw tracked object id
+				const cv::Point bl(center.x + radius, center.y - radius);
+				const auto id_str = std::to_string(trackedObject.getId());
+				cv::putText(image, id_str, bl, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, color);
 			}
 
 		}
