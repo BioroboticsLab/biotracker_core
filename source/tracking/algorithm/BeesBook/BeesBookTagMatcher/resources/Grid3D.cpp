@@ -326,6 +326,13 @@ void Grid3D::setCenter(cv::Point c)
 	_center = c;
 }
 
+void Grid3D::setTransparency(float transparency) {
+	if (transparency < 0.0 || transparency > 1.0) {
+		throw std::invalid_argument("transparency not in range[0.0, 1.0]");
+	}
+	_transparency = transparency;
+}
+
 /**
 * interate over keypoints and return the first close enough to point
 */
