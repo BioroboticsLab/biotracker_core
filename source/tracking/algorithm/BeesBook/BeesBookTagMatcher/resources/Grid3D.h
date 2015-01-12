@@ -101,6 +101,8 @@ public:
 
 	float getTransparency() const { return _transparency; }
 
+	void  setTransparency(float transparency);
+
 	cv::Rect getBoundingBox() const;
 
 	std::vector<cv::Point> const& getOuterRingPoints() const { return _coordinates2D[OUTER_RING]; }
