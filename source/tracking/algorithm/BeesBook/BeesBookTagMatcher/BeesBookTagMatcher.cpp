@@ -28,7 +28,7 @@ BeesBookTagMatcher::BeesBookTagMatcher(Settings & settings, QWidget *parent)
 	, _lastMouseEventTime(std::chrono::system_clock::now())
 	, _toolWidget(std::make_shared<QWidget>())
 	, _paramWidget(std::make_shared<QWidget>())
-    , _visualizeFrames(true)
+	, _visualizeFrames(true)
 {
 	_UiToolWidget.setupUi(_toolWidget.get());
 	setNumTags();
@@ -315,100 +315,160 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 
 void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 {
-	if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Minus) 
+	// general key events
+	// -------------------
+
+	// toggle frames around tags
+	if (e->key() == Qt::Key_F)
 	{
-		if (_activeGrid) 
-		{
-			const float direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
-			const double radius = _activeGrid->getWorldRadius();
-			_activeGrid->setWorldRadius(radius + direction * 0.01 * radius);
-            updateValidRect();
-			emit update();
-		}
-	} 
-	else 
+		_visualizeFrames = !_visualizeFrames;
+	}
+
+	// CTRL + C
+	else if (e->modifiers().testFlag(Qt::ControlModifier) && e->key() == Qt::Key_C)
 	{
-		if (e->key() == Qt::Key_C && e->modifiers().testFlag(Qt::ControlModifier)) 
+		this->copyTrackedObjects();
+	}
+
+	// CTRL + V
+	else if (e->modifiers().testFlag(Qt::ControlModifier) && e->key() == Qt::Key_V)
+	{
+		this->pasteTrackedObjects();
+	}
+
+	// modify active grid events
+	// --------------------------
+	else if (_activeGrid) {
+
+		static const double rotateIncrement = 0.05;
+
+		switch (e->key()) {
+
+			// change radius
+			case Qt::Key_Plus:
+			case Qt::Key_Minus: {
+				const double direction = e->key() == Qt::Key_Plus ? 1.f : -1.f;
+				const double radius = _activeGrid->getWorldRadius();
+				_activeGrid->setWorldRadius(radius + direction * 0.01 * radius);
+				updateValidRect();
+				break;
+			}
+
+			// toggle transparency
+			case Qt::Key::Key_CapsLock:
+				_activeGrid->toggleTransparency();
+				break;
+
+			// rotate
+			case Qt::Key_H:
+				_activeGrid->setYRotation(_activeGrid->getYRotation() + rotateIncrement);
+				break;
+			case Qt::Key_G:
+				_activeGrid->setYRotation(_activeGrid->getYRotation() - rotateIncrement);
+				break;
+			case Qt::Key_W:
+				_activeGrid->setXRotation(_activeGrid->getXRotation() - rotateIncrement);
+				break;
+			case Qt::Key_S:
+				_activeGrid->setXRotation(_activeGrid->getXRotation() + rotateIncrement);
+				break;
+			case Qt::Key_A:
+				_activeGrid->setZRotation(_activeGrid->getZRotation() - rotateIncrement);
+				break;
+			case Qt::Key_D:
+				_activeGrid->setZRotation(_activeGrid->getZRotation() + rotateIncrement);
+				break;
+			case Qt::Key_U:
+				_activeGrid->setSettable(!_activeGrid->isSettable());
+				break;
+
+			// change transsparency:
+			// 0 -->  0% transparent
+			// 1 --> 10% transparent
+			// ...
+			// 9 --> 90% transparent
+			case Qt::Key_0:
+				_activeGrid->setTransparency(1.0f - 0.0f);
+				break;
+			case Qt::Key_1:
+				_activeGrid->setTransparency(1.0f - 0.1f);
+				break;
+			case Qt::Key_2:
+				_activeGrid->setTransparency(1.0f - 0.2f);
+				break;
+			case Qt::Key_3:
+				_activeGrid->setTransparency(1.0f - 0.3f);
+				break;
+			case Qt::Key_4:
+				_activeGrid->setTransparency(1.0f - 0.4f);
+				break;
+			case Qt::Key_5:
+				_activeGrid->setTransparency(1.0f - 0.5f);
+				break;
+			case Qt::Key_6:
+				_activeGrid->setTransparency(1.0f - 0.6f);
+				break;
+			case Qt::Key_7:
+				_activeGrid->setTransparency(1.0f - 0.7f);
+				break;
+			case Qt::Key_8:
+				_activeGrid->setTransparency(1.0f - 0.8f);
+				break;
+			case Qt::Key_9:
+				_activeGrid->setTransparency(1.0f - 0.9f);
+				break;
+
+			default:
+				break;
+		} // END: switch (e->key())
+	} // END: _activeGrid
+
+	// TODO: skip "emit update()" if event doesn't alter image (i.e. ctrl + 0)
+	emit update();
+}
+
+void BeesBookTagMatcher::copyTrackedObjects() {
+	_idCopyBuffer.clear();
+
+	for (const TrackedObject& object : _trackedObjects)
+	{
+		// store ids of all grids on current frame in copy buffer
+		if (object.count(getCurrentFrameNumber()))
 		{
-			_idCopyBuffer.clear();
-		
-			for (const TrackedObject& object : _trackedObjects) 
-			{
-				// store ids of all grids on current frame in copy buffer
-				if (object.count(getCurrentFrameNumber()))
-				{
-					_idCopyBuffer.insert(object.getId());
-				}
-			}
-			_copyFromFrame = getCurrentFrameNumber();
-		}
-		else 
-		{
-			if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier) && _copyFromFrame) 
-			{
-				for (TrackedObject& object : _trackedObjects) 
-				{
-					// check if id of object is in copy buffer
-					if (_idCopyBuffer.count(object.getId())) 
-					{
-						// check if grid from copy-from framenumber still exists
-						const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
-						// and create a copy if a grid with the same id does not
-						// already exist on the current frame
-						if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
-						{
-							// set toogled state to indeterminate if the grid has been set before
-							const auto newGrid = std::make_shared<Grid3D>(*maybeGrid);
-							if (newGrid->hasBeenBitToggled().value == boost::logic::tribool::value_t::true_value) {
-								newGrid->setBeenBitToggled(boost::logic::tribool::value_t::indeterminate_value);
-							}
-							object.add(getCurrentFrameNumber(), newGrid);
-						}
-					}
-				}
-				emit update();
-				setNumTags();
-			}
-			else 
-			{
-				if (e->key() == Qt::Key_F) {
-					_visualizeFrames = !_visualizeFrames;
-				} else if (_activeGrid) {
-					switch (e->key())
-					{
-					case Qt::Key_H:
-						_activeGrid->setYRotation(_activeGrid->getYRotation() + 0.05);
-						break;
-					case Qt::Key_G:
-						_activeGrid->setYRotation(_activeGrid->getYRotation() - 0.05);
-						break;
-					case Qt::Key_W:
-						_activeGrid->setXRotation(_activeGrid->getXRotation() - 0.05);
-						break;
-					case Qt::Key_S:
-						_activeGrid->setXRotation(_activeGrid->getXRotation() + 0.05);
-						break;
-					case Qt::Key_A:
-						_activeGrid->setZRotation(_activeGrid->getZRotation() - 0.05);
-						break;
-					case Qt::Key_D:
-						_activeGrid->setZRotation(_activeGrid->getZRotation() + 0.05);
-						break;
-					case Qt::Key_U:
-						_activeGrid->setSettable(!_activeGrid->isSettable());
-						break;
-					case Qt::Key::Key_CapsLock:
-						_activeGrid->toggleTransparency();
-						break;
-					default:
-						return;
-					}
-				}
-			emit update();
-			}
+			_idCopyBuffer.insert(object.getId());
 		}
 	}
+	_copyFromFrame = getCurrentFrameNumber();
 }
+
+
+void BeesBookTagMatcher::pasteTrackedObjects() {
+	if (_copyFromFrame)
+	{
+		for (TrackedObject& object : _trackedObjects)
+		{
+			// check if id of object is in copy buffer
+			if (_idCopyBuffer.count(object.getId()))
+			{
+				// check if grid from copy-from framenumber still exists
+				const auto maybeGrid = object.maybeGet<Grid3D>(_copyFromFrame.get());
+				// and create a copy if a grid with the same id does not
+				// already exist on the current frame
+				if (maybeGrid && !object.maybeGet<Grid3D>(getCurrentFrameNumber()))
+				{
+					// set toogled state to indeterminate if the grid has been set before
+					const auto newGrid = std::make_shared<Grid3D>(*maybeGrid);
+					if (newGrid->hasBeenBitToggled().value == boost::logic::tribool::value_t::true_value) {
+						newGrid->setBeenBitToggled(boost::logic::tribool::value_t::indeterminate_value);
+					}
+					object.add(getCurrentFrameNumber(), newGrid);
+				}
+			}
+		}
+		setNumTags();
+	}
+}
+
 
 //function that draws the set Tags so far.
 void BeesBookTagMatcher::drawTags(cv::Mat& image) const
@@ -425,10 +485,9 @@ void BeesBookTagMatcher::drawTags(cv::Mat& image) const
 
 			grid->draw(image, isActive);
 
-			if ((grid->getTransparency() >= 0.5) && _visualizeFrames) {
+			if (_visualizeFrames) {
 				// calculate actual pixel size of grid based on current zoom level
-				double displayTagSize = grid->getPixelRadius() / getCurrentZoomLevel();
-				displayTagSize = displayTagSize > 50. ? 50 : displayTagSize;
+				const double displayTagSize = std::min(grid->getPixelRadius() / getCurrentZoomLevel(), 50.);
 				// thickness of rectangle of grid is based on actual pixel size
 				// of the grid. if the radius is 50px or more, the rectangle has
 				// a thickness of 1px.
@@ -560,8 +619,12 @@ const std::set<Qt::Key> &BeesBookTagMatcher::grabbedKeys() const
 	                                      Qt::Key_W, Qt::Key_A,
 	                                      Qt::Key_S, Qt::Key_D,
 	                                      Qt::Key_G, Qt::Key_H,
-										  Qt::Key_U, Qt::Key_F,
-		        						  Qt::Key_CapsLock };
+	                                      Qt::Key_U, Qt::Key_F,
+	                                      Qt::Key_CapsLock,
+	                                      Qt::Key_0, Qt::Key_1, Qt::Key_2, Qt::Key_3,
+	                                      Qt::Key_4, Qt::Key_5, Qt::Key_6, Qt::Key_7,
+	                                      Qt::Key_8, Qt::Key_9
+	                                    };
 	return keys;
 }
 
