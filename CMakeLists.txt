@@ -28,7 +28,7 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # using Clang or GCC
-    # minimal optimization and debug symbols for debug builds
+    # minimal optimmization and debug symbols for debug builds
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
     # enable optimization for release builds
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DQT_NO_DEBUG")
@@ -56,7 +56,7 @@ endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     # gcc doesn't know about unused-private-field warning
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field -Wno-error=inconsistent-missing-override")
     # use Wdocumentation
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
     # enable thread safety analysis
