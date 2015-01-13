@@ -6,11 +6,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
-#include "ui_toolwindow.h"
+
+#include "source/ui_toolwindow.h"
 
 class LandmarkTracker;
 
-using namespace cv;
 
 namespace Ui {
 class ToolWindow;
@@ -28,19 +28,17 @@ public slots:
 
 public:
 	explicit ToolWindow(LandmarkTracker *parentTracker, QWidget *parent = nullptr);
-    ~ToolWindow();
 
     void initToolWindow();
-	
 
-    Vec3b values;
-    Mat roiMat;
+    cv::Vec3b values;
+    cv::Mat roiMat;
 
 	int rgbValue_max;
 
 	struct Vec3bCompare
 	{
-		bool operator()(const Vec3b& lhs, const Vec3b& rhs) const{
+		bool operator()(const cv::Vec3b& lhs, const cv::Vec3b& rhs) const{
 			//return lhs.val[0]<rhs.val[0] && lhs.val[1]<rhs.val[1] && lhs.val[2]<rhs.val[2];
 			for(size_t i = 0; i <3; ++i){
 				if(lhs.val[i] < rhs.val[i]) return true;
@@ -50,7 +48,7 @@ public:
 		}
 	};
 	
-	typedef std::map<const Vec3b, size_t, Vec3bCompare> map_t;
+	typedef std::map<const cv::Vec3b, size_t, Vec3bCompare> map_t;
 
 	const map_t &getRGBMap() const
 	{
@@ -59,19 +57,17 @@ public:
 
 
 private:
-    Ui::ToolWindow *ui;
+    Ui::ToolWindow ui;
 
 	LandmarkTracker *tracker;
 
-    QPixmap Mat2QPixmap(const Mat& mat);
-    
-	void getRGBValues(const Mat &mat);
-
-	void calcHistogram(const Mat &mat);
+    QPixmap Mat2QPixmap(const cv::Mat& mat);
+    void getRGBValues(const cv::Mat &mat);
+	void calcHistogram(const cv::Mat &mat);
    
 	map_t rgbMap;
 
-	Mat roi;
+	cv::Mat roi;
 };
 
 #endif // TOOLWINDOW_H

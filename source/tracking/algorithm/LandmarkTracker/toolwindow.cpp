@@ -7,19 +7,12 @@ ToolWindow::ToolWindow(LandmarkTracker *parentTracker, QWidget *parent) :
 	QDialog(parent), tracker(parentTracker),rgbValue_max(1),
     ui(new Ui::ToolWindow)
 {
+    ui.setupUi(this);
 
-	ui->setupUi(this);
-
-	QObject::connect(ui->pushButton, SIGNAL(  clicked() ), this, SLOT(emitClose()));
+    QObject::connect(ui.pushButton, SIGNAL(  clicked() ), this, SLOT(emitClose()));
 	setWindowFlags(Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint);
     
 	//std::cout<<"DOING STUFF HERE!!!!"<<std::endl;
-   
-}
-
-ToolWindow::~ToolWindow()
-{
-    //delete ui;
 }
 
 void ToolWindow::initToolWindow()
@@ -32,18 +25,18 @@ void ToolWindow::initToolWindow()
 	//roiMat = imread("C:\\Users\\adam\\Downloads\\APM_2_5_MOTORS_QUAD_enc.jpg");
 
 	std::cout<<"First ROI loaded..."<<std::endl;
-	ui->roiOne->setPixmap(Mat2QPixmap(roiMat).scaled(ui->roiOne->size(),Qt::KeepAspectRatio, Qt::FastTransformation));
+    ui.roiOne->setPixmap(Mat2QPixmap(roiMat).scaled(ui.roiOne->size(),Qt::KeepAspectRatio, Qt::FastTransformation));
  
     getRGBValues(roiMat);
 }
 
-QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
+QPixmap ToolWindow::Mat2QPixmap(const cv::Mat &mat)
 {
-    Mat rgb;
+    cv::Mat rgb;
     QPixmap p;
 	
 	cvtColor(mat, rgb, CV_BGR2RGB);
-	QImage dest((const uchar*) rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
+    p.convertFromImage(QImage(static_cast<const unsigned char*>(rgb.data), rgb.cols, rgb.rows, QImage::Format_RGB888));
 	dest.bits();
 	p.convertFromImage(dest);
 
@@ -51,19 +44,19 @@ QPixmap ToolWindow::Mat2QPixmap(const Mat &mat)
 }
 
 //Ausgabe für Vector
-std::ostream &operator<<(std::ostream &os, const Vec3b &v)
+std::ostream &operator<<(std::ostream &os, const cv::Vec3b &v)
 {
 	return os<<"("<<static_cast<unsigned>(v.val[0])<<", "<<static_cast<unsigned>(v.val[1])<<", "<<static_cast<unsigned>(v.val[2])<<")";
 }
 
-void ToolWindow::getRGBValues(const Mat &mat)
+void ToolWindow::getRGBValues(const cv::Mat &mat)
 {
 
-    Mat image = mat;
+    cv::Mat image = mat;
 
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-			rgbMap[image.at<Vec3b>(i, j)]++;
+			rgbMap[image.at<cv::Vec3b>(i, j)]++;
 			if(rgbMap[image.at<Vec3b>(i, j)] > rgbValue_max){
 				rgbValue_max = rgbMap[image.at<Vec3b>(i, j)];
 			}

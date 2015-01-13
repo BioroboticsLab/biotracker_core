@@ -1,42 +1,25 @@
 #ifndef BioTracker_H
 #define BioTracker_H
 
-#include <time.h>
 #include <memory>
-
-// Open CV
-#include <cv.h>
 
 // QT 
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QFileDialog>
-#include <QtCore/QSettings>
-#include <QtGui/QCloseEvent>
 #include <QtCore/QString>
-#include <QDir>
-#include <QTemporaryDir>
+#include <QTemporaryFile>
+#include <QShortcut>
 
-//Bio Tracker
-#include "source/settings/Messages.h"
-#include "source/settings/Settings.h"
-#include "source/tracking/TrackingThread.h"
-#include "source/video/VideoView.h"
-#include "source/tracking/TrackingAlgorithm.h"
-#include "source/tracking/algorithm/simpletracker/SimpleTracker.h"
-#include "source/tracking/algorithm/BeesBookTagMatcher/BeesBookTagMatcher.h"
-#include "source/tracking/algorithm/colorPatchTracker/colorPatchTracker.h"
-#include "source/tracking/algorithm/fishparticle/ParticleFishTracker.h"
-#include "source/tracking/algorithm/SampleTracker/SampleTracker.h"
-#include "source/tracking/algorithm/LandmarkTracker/LandmarkTracker.h"
+//BioTracker
+#include "source/settings/ParamNames.h"
+#include "source/tracking/algorithm/algorithms.h"
 
-#include "ui_BioTracker.h"
+#include "source/ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
-	class TrackingThread;
-	class VideoView;
-	class TrackingAlgorithm;
-
+class TrackingThread;
+class VideoView;
+class TrackingAlgorithm;
+class Settings;
 
 class BioTracker: public QMainWindow
 {
@@ -44,11 +27,18 @@ class BioTracker: public QMainWindow
 
 public:
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
+	~BioTracker();
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
 	// open file browser for picture in/out
 	void browsePicture();
+	// load previously stored tracking data
+	void loadTrackingDataTriggered(bool checked = false);
+	// store current tracking data
+	void storeTrackingDataTriggered(bool checked = false);
+	// exit application
+	void exit();
 	//checks current state (stopped,paused or playing)
 	//and then sends appropriate signal to tracking thread
 	void runCapture();
@@ -63,31 +53,33 @@ public slots:
 	//change video playback speed
 	void changeFps(int fps);
 	//different tracking algorithm was selected
-	void trackingAlgChanged(QString trackingAlg);
+	void trackingAlgChanged(Algorithms::Type trackingAlg);
+	void trackingAlgChanged(QString trackingAlgStr);
 	//switch pan&zoom mode
 	void switchPanZoomMode();
 
-
 	// SLOTS FOR TRACKING THREAD: 	
-	void updateFrameNumber(int frameNumber);	
+	void updateFrameNumber(int frameNumber);
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
 	void invalidFile();
+	void displayFileName(QString filename);
+
+	void resetViews();
+	void setViews(std::vector<TrackingAlgorithm::View> views);
 
 	/**
 	 * Print proivided message to the GUI message area.
-	 * @param: message, the message to print.
-	 * @return: void.
+	 * @param message the message to print.
 	 */
 	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
 
 	/**
 	 * Sets the algorithm used for tracking
-	 * @param: trackingAlgId, the id of the algorithm.
+	 * @param trackingAlgId, the id of the algorithm.
 	 */
 	
 	//void setTrackingAlg(int trackingAlgId);
-
 
 	//void changeCurrentFrame();
 	void changeCurrentFramebySlider();
@@ -95,47 +87,77 @@ public slots:
 	void changeCurrentFramebyEdit();
 
 	void takeScreenshot();
-	
 
+	void viewIndexChanged(int index);
+
+protected:
+	bool event(QEvent* event) override;
+	void showEvent(QShowEvent *ev) override;
 
 private:
 	Ui::BioTrackerClass ui;
 
-/*	Rectification _rectification;
-*/
-	TrackingThread* _trackingThread;	
-
 	Settings& _settings;
-	bool _videoPaused;
-	bool _videoStopped;
+	std::unique_ptr<TrackingThread> _trackingThread;
+
+	enum class VideoMode : uint8_t {
+		Playing = 0,
+		Paused,
+		Stopped,
+		Init
+	};
+	VideoMode _videoMode;
+
+	GUIPARAM::MediaType _mediaType;
+
 	bool _isPanZoomMode;
-	int _currentFrame;
+	size_t _currentFrame;
 	QIcon _iconPause;
 	QIcon _iconPlay;
+	QString _filename;
+
 	//disable or enable buttons for video navigating
 	void setPlayfieldPaused(bool enabled);
-	void init();
 	void initGui();	
 	void initConnects();
-	void initCapture();
-	void initAlgorithms();
-	void initPicture(QStringList filenames);
-    void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
+	void initPlayback();
+	void initAlgorithmList();
+	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
 	void setPlayfieldEnabled(bool enabled);
 
-    std::shared_ptr<TrackingAlgorithm> _tracker;
+	void loadTrackingData(std::string const& filename);
+	void storeTrackingData(std::string const& filename);
+
+	void closeEvent(QCloseEvent* event) override;
+
+	std::shared_ptr<TrackingAlgorithm> _tracker;
+
+	typedef std::string filehash;
+	typedef std::map<filehash, QTemporaryFile> map_hash_temp_t;
+	typedef std::map<Algorithms::Type, map_hash_temp_t> map_type_hashtemp_t;
+
+	map_type_hashtemp_t _serializationTmpFileMap;
+
+	boost::optional<std::vector<std::string> > getOpenFiles() const;
+	boost::optional<filehash> getFileHash(std::string const& filename, const size_t numFiles) const;
+	std::vector<std::string> getFilenamesFromPaths(std::vector<std::string> const& paths) const;
 
 	//Containers to put in chosen algorithm specific ui stuff
 	QVBoxLayout *_vboxParams;
 	QVBoxLayout *_vboxTools;
-	QWidget *_paramsWidget;
-	QWidget *_toolsWidget;
+	std::shared_ptr<QWidget> _paramsWidget;
+	std::shared_ptr<QWidget> _toolsWidget;
+
+	std::vector<TrackingAlgorithm::View> _availableViews;
+
+private slots:
+	void startUp();
 
 
-
-
-	
 signals:
+	//signal when main window is initialized after start up
+	void window_loaded();
+
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
 
@@ -158,8 +180,9 @@ signals:
 	void enableMaxSpeed (bool enabled);
 
 	//change tracking algorithm
-    void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
+	void changeTrackingAlg(std::shared_ptr<TrackingAlgorithm>);
 
+	void changeSelectedView(TrackingAlgorithm::View const& view);
 };
 
 #endif // BioTracker_H

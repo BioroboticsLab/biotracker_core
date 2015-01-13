@@ -1,9 +1,12 @@
 #include "FramePreprocessor.h"
 
+
 /**
  * Constructs a new instance using the preprocessor settings set in settings.
  */
-FramePreprocessor::FramePreprocessor(Settings& settings) : _settings(settings), _background_subtractor(settings)
+FramePreprocessor::FramePreprocessor(ParticleParams& params)
+	: _params(params)
+	, _background_subtractor(params)
 {
 }
 
@@ -12,14 +15,14 @@ FramePreprocessor::~FramePreprocessor(void)
 }
 
 /**
- * This does the work. Preprocesses the image and returns the preprocessed Mat.
+ * This does the work. Preprocesses the image and returns the preprocessed cv::Mat.
  * image may be modified by this method.
  */
 cv::Mat FramePreprocessor::preProcess(cv::Mat image) {
 	image = backgroundSubtract(image);
 	/*cv::erode(image, image, cv::Mat());
 	cv::dilate(image, image, cv::Mat());*/
-	cv::GaussianBlur(image, image, cv::Size(7, 7), 0);
+	cv::GaussianBlur(image, image, cv::Size(_params.getGaussianBlurSize(), _params.getGaussianBlurSize()), 0);
 	return image;
 }
 

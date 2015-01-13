@@ -5,23 +5,27 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-SampleTracker::SampleTracker( Settings & settings, QWidget *parent ) : TrackingAlgorithm( settings, parent )
-{
-	_showSelectorRec = false;
-	_showOriginal = false;
-	initUI();
-	_lowH = 0;
-	_highH= 255;
-	_lowS = 0; 
-	_highS = 255;
-	_lowV = 0;
-	_highV = 255;
+#include "source/tracking/algorithm/algorithms.h"
 
+namespace {
+    auto _ = Algorithms::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
 }
 
-
-SampleTracker::~SampleTracker(void)
+SampleTracker::SampleTracker(Settings & settings, QWidget *parent)
+    : TrackingAlgorithm(settings, parent)
+    , _paramsFrame(std::make_shared<QFrame>())
+    , _toolsFrame(std::make_shared<QFrame>())
+    , _showSelectorRec(false)
+    , _showOriginal(false)
+    , _lowH(0)
+    , _highH(255)
+    , _lowS(0)
+    , _highS(255)
+    , _lowV(0)
+    , _highV(255)
 {
+    initParamsFrame();
+    initToolsFrame();
 }
 
 void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
@@ -43,12 +47,11 @@ void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
 	dilate( _imgTracked, _imgTracked, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
 
 	//morphological closing (fill small holes in the foreground)
-	dilate( _imgTracked, _imgTracked, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
-	erode(_imgTracked, _imgTracked, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
-
+	cv::dilate( _imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
+	cv::erode(_imgTracked, _imgTracked, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)) );
 }
 
-void SampleTracker::paint		( cv::Mat& image )
+void SampleTracker::paint		(cv::Mat& image , const View&)
 {
 	if(!_imgTracked.empty() && !_showOriginal)
 		//since gui is expecting a BGR image we have to convert our grayscale image
@@ -154,55 +157,60 @@ void SampleTracker::mouseReleaseEvent	( QMouseEvent * e )
 
 void SampleTracker::mouseWheelEvent ( QWheelEvent *) {}
 
-QWidget* SampleTracker::getParamsWidget	()
+std::shared_ptr<QWidget> SampleTracker::getParamsWidget()
 {
-	QFrame *paramsFrame = new QFrame(_parent);
-	QFormLayout *layout = new QFormLayout;
-	initUI();
-	layout->addRow("H-low",  _lowHEdit);
-	layout->addRow("H-high", _highHEdit);
-	layout->addRow("S-low",  _lowSEdit);
-	layout->addRow("S-high", _highSEdit);
-	layout->addRow("V-low",  _lowVEdit);
-	layout->addRow("V-high", _highVEdit);
-	paramsFrame->setLayout(layout);
-	return paramsFrame;
+    return _paramsFrame;
 }
 
-QWidget* SampleTracker::getToolsWidget	()
+std::shared_ptr<QWidget> SampleTracker::getToolsWidget()
 {
-	QFrame *toolsFrame = new QFrame(_parent);
-	QFormLayout *layout = new QFormLayout;	
-	layout->addRow(_colorBut);
-	layout->addRow(_modeBut);
-	toolsFrame->setLayout(layout);
-	return toolsFrame;
+    return _toolsFrame;
 }
 
-void SampleTracker::initUI()
+void SampleTracker::initToolsFrame()
 {
-	_lowHEdit  = new QLineEdit(_parent);
-	_highHEdit = new QLineEdit(_parent);
-	_lowSEdit  = new QLineEdit(_parent);
-	_highSEdit = new QLineEdit(_parent);
-	_lowVEdit  = new QLineEdit(_parent);
-	_highVEdit = new QLineEdit(_parent);
+    QFormLayout *layout = new QFormLayout(_toolsFrame.get());
+    layout->addRow(_colorBut);
+    layout->addRow(_modeBut);
+    _toolsFrame->setLayout(layout);
+}
 
-	_colorBut = new QPushButton("change color!", _parent);
-	_modeBut = new QPushButton("show Original!", _parent);
-	_lowHEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	_highHEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	_lowSEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	_highSEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	_lowVEdit->setValidator( new QIntValidator(0, 255, _parent) );
-	_highVEdit->setValidator( new QIntValidator(0, 255, _parent) );
 
-	_lowH = 0;		_lowHEdit->setText("0");
-	_highH= 255;	_highHEdit->setText("255");
-	_lowS = 0;		_lowSEdit->setText("0");
-	_highS = 255;	_highSEdit->setText("255");
-	_lowV = 0;		_lowVEdit->setText("0");
-	_highV = 255;	_highVEdit->setText("255");
+void SampleTracker::initParamsFrame()
+{
+    _lowHEdit  = new QLineEdit(_paramsFrame.get());
+    _highHEdit = new QLineEdit(_paramsFrame.get());
+    _lowSEdit  = new QLineEdit(_paramsFrame.get());
+    _highSEdit = new QLineEdit(_paramsFrame.get());
+    _lowVEdit  = new QLineEdit(_paramsFrame.get());
+    _highVEdit = new QLineEdit(_paramsFrame.get());
+
+    _colorBut = new QPushButton("change color!", _paramsFrame.get());
+    _modeBut = new QPushButton("show Original!", _paramsFrame.get());
+
+    _lowHEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+    _highHEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+    _lowSEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+    _highSEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+    _lowVEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+    _highVEdit->setValidator( new QIntValidator(0, 255, _paramsFrame.get()) );
+
+    _lowHEdit->setText(QString::number(_lowH));
+    _highHEdit->setText(QString::number(_highH));
+    _lowSEdit->setText(QString::number(_lowS));
+    _highSEdit->setText(QString::number(_highS));
+    _lowVEdit->setText(QString::number(_lowV));
+    _highVEdit->setText(QString::number(_highV));
+
+    QFormLayout *layout = new QFormLayout(_paramsFrame.get());
+    layout->addRow("H-low",  _lowHEdit);
+    layout->addRow("H-high", _highHEdit);
+    layout->addRow("S-low",  _lowSEdit);
+    layout->addRow("S-high", _highSEdit);
+    layout->addRow("V-low",  _lowVEdit);
+    layout->addRow("V-high", _highVEdit);
+    _paramsFrame->setLayout(layout);
+
 	QObject::connect(this->_colorBut, SIGNAL(clicked()), this, SLOT(changeFilterColor()));
 	QObject::connect(this->_modeBut, SIGNAL(clicked()), this, SLOT(switchMode()));
 }
