@@ -1,16 +1,30 @@
 #include "glwidget.h"
-#include <gl/gl.h>
-#include <gl/glu.h>
 #include <iostream>
 #include "toolwindow.h"
 
-GLWidget::GLWidget(QWidget *parent) :
-	QGLWidget(parent),parent_tw(static_cast<ToolWindow*>(parent)),zoomFactor(-90),rotX(0.5),rotY(50),rotZ(0)
+// OS X puts the headers in a different location in the include path than
+// Windows and Linux, so we need to distinguish between OS X and the other
+// systems.
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+#endif
+
+GLWidget::GLWidget(QWidget *parent)
+    : QGLWidget(parent)
+    , rotX(0.5)
+    , rotY(50)
+    , rotZ(0)
+    , zoomFactor(-90)
+    , parent_tw(static_cast<ToolWindow*>(parent))
 {}
 
 void GLWidget::initializeGL()
 {
-    glClearColor(0.2, 0.2, 0.2, 1);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 
     glShadeModel(GL_SMOOTH);
     glClearDepth(10.0);
@@ -42,7 +56,7 @@ void GLWidget::resizeGL(int w, int h)
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45, (float)w/h, 0.01, 500);
+    gluPerspective(45, static_cast<float>(w)/h, 0.01, 500);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //gluLookAt(0,0,5, 0,0,0, 0,1,0);
@@ -105,8 +119,8 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-   GLfloat dx = (GLfloat) (e->x() - lastPos.x()) / width();
-   GLfloat dy = (GLfloat) (e->y() - lastPos.y()) / height();
+   GLfloat dx = static_cast<GLfloat>(e->x() - lastPos.x()) / width();
+   GLfloat dy = static_cast<GLfloat>(e->y() - lastPos.y()) / height();
 
    if (e->buttons() & Qt::LeftButton) {
     rotX += 180 * dy;
@@ -122,7 +136,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
    lastPos = e->pos();
 }
 
-void GLWidget::mouseReleaseEvent  (QMouseEvent * e)
+void GLWidget::mouseReleaseEvent  (QMouseEvent * /* e */)
 {
     std::cout<<"X: " <<rotX<<std::endl;
     std::cout<<"Y: " <<rotY<<std::endl;
@@ -131,7 +145,7 @@ void GLWidget::mouseReleaseEvent  (QMouseEvent * e)
 
 void GLWidget::wheelEvent(QWheelEvent *e)
 {
-    zoomFactor += 0.1 * e->delta();
+    zoomFactor += 0.1f * e->delta();
     updateGL();
 }
 
@@ -149,7 +163,7 @@ void GLWidget::drawCube (float red, float green, float blue, float f)
 	
 	
      glBegin(GL_QUADS);
-         glColor3f(red/25.5,green/25.5,blue/25.5);
+         glColor3f(red/25.5f,green/25.5f,blue/25.5f);
 
 			//Front Face
 			std::cout<<"FRONT FACE: "<<std::endl;

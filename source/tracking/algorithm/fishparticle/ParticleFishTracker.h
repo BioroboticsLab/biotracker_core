@@ -5,29 +5,44 @@
 #include "preprocessing/FramePreprocessor.h"
 #include "particlefilter/Particle.h"
 #include "particlefilter/ParticleClusters.h"
+#include "particlefilter/particleParams.h"
+
+//QT Stuff
+#include <QGroupBox>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QPushButton>
 
 /**
- * Implements a particle filtering algorithm to track multiple fish in a tank.
- */
+* Implements a particle filtering algorithm to track multiple fish in a tank.
+*/
 class ParticleFishTracker :
 	public TrackingAlgorithm
 {
+	Q_OBJECT
 public:
-	explicit ParticleFishTracker(Settings& settings, QWidget *parent);
+    ParticleFishTracker(Settings& settings, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame );
-	virtual void paint(cv::Mat& image);
+	virtual void paint(cv::Mat& image, View const& view = OriginalView);
 	virtual void reset();
+    std::shared_ptr<QWidget> getToolsWidget	() override;
+    std::shared_ptr<QWidget> getParamsWidget() override;
+
+    public slots:
+		void switchMode();
 
 private:
-	/**
-	 * Used to preprocess the image (mainly background subtraction).
-	 */
-	FramePreprocessor _preprocessor;
+    std::shared_ptr<QWidget> _toolsWidget;
+
+	// indicating which image shall be viewed: original or tracked image
+	bool _showOriginal;
+	// corresponding switching button
+    QPushButton *_modeBut;
 
 	/**
-	 * The frame to be drawn the next time the GUI requests one.
-	 */
+	* The frame to be drawn the next time the GUI requests one.
+	*/
 	cv::Mat _prepared_frame;
 
 	/**
@@ -56,9 +71,19 @@ private:
 	*/
 	float _sum_scores;
 
+	/**
+	* The parameters used by this algorithm.
+	*/
+	ParticleParams _params;
+
+	/**
+	* Used to preprocess the image (mainly background subtraction).
+	*/
+	FramePreprocessor _preprocessor;
+
 	ParticleClusters _clusters;
 
-	void seedParticles(unsigned num_particles, int min_x, int min_y, int max_x, int max_y);
+	void seedParticles(size_t num_particles, int min_x, int min_y, int max_x, int max_y);
 
 	void importanceResample();
 
@@ -66,12 +91,8 @@ private:
 
 	void cutParticleCoords(Particle& to_cut);
 
-	public slots:
-	//mouse click and move events
-	void mouseMoveEvent		( QMouseEvent * e );
-	void mousePressEvent	( QMouseEvent * e );
-	void mouseReleaseEvent	( QMouseEvent * e );
-	void mouseWheelEvent	( QWheelEvent * e );
+    void initToolsWidget();
+
 };
 
 

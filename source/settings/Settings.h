@@ -1,109 +1,156 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <regex>
+#include <boost/lexical_cast.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 
-#include <cv.h>
-
-#include <QtCore/QSettings>
-#include <QtCore/QString>
-
-#include "source/settings/ParamNames.h"
-#include "source/settings/Param.h"
+#include "../utility/stringTools.h" // (un)escape_non_ascii
+#include "StringTranslator.h"
+#include "ParamNames.h"
 
 class Settings
 {
 public:
 	/**
-	 * The standard constructor.
+	 * The default constructor.
 	 */
-	Settings(void);
+	explicit Settings();
 
 	/**
-	 * The constructor with provided parameters.
-	 * @param params, parameter property.
+	 * destructor.
 	 */
-	Settings(std::vector<TrackerParam::Param> params);
-
-	/**
-	 * The standard destructor.
-	 */
-	~Settings(void);
+	~Settings() = default;
 
 	/**
 	 * Sets the parameter.
-	 * @param: param, the parameter to set,
-	 * @return: void.
+	 * @param paramName name of the parameter,
+	 * @param paramValue value of the parameter,
 	 */
-    void setParam(TrackerParam::Param param);
+	template <typename T>
+	void setParam(std::string const& paramName, T&& paramValue) {
+		_ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
+		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+	}
 
 	/**
-	 * Sets the parameter.
-	 * @param: paramName, name of the parameter,
-	 * @param: paramValue, value of the parameter,
-	 * @return: void.
+	 * Sets the vector of values of a parameter.
+	 * @param paramName name of the parameter,
+	 * @param paramVector vector of values of the parameter,
 	 */
-	void setParam(std::string paramName, std::string paramValue);
+	template <typename T>
+	void setParamVector(std::string const& paramName, std::vector<T>&& paramVector) {
+		boost::property_tree::ptree subtree;
+		for (T & value : paramVector) {
+			subtree.push_back(std::make_pair("", boost::property_tree::ptree(preprocess_value(std::move(value)))));
+		}
+		_ptree.put_child(paramName, subtree);
+		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+	}
 
 	/**
-	 * Sets the parameters.
-	 * @param: params, the parameter list to set,
-	 * @return: void.
+	 * Gets the parameter value provided by parameter name.
+	 * @param paramName the parameter name,
+	 * @return the value of the parameter as the specified type.
 	 */
-	void setParams(std::vector<TrackerParam::Param> params);
+	template <typename T>
+	T getValueOfParam(const std::string &paramName) const {
+		return postprocess_value(_ptree.get<T>(paramName));
+	}
 
 	/**
-	 * Sets a parameter within a parameter vector
-	 * @param: params, the parameter vector,
-	 * @param: paramName, the parameter name to set,
-	 * @param: paramValue, the parameter value to set,
-	 * @return: void.
+	 * Gets the vector of values provided by parameter name.
+	 * @param paramName the parameter name,
+	 * @return the vector of values of the parameter with the specified type.
 	 */
-	void setParam(std::vector<TrackerParam::Param> &params, std::string paramName, std::string paramValue);
+	template <typename T>
+	std::vector<T> getVectorOfParam(const std::string &paramName) const {
+		std::vector<T> result;
+		for (auto& item : _ptree.get_child(paramName)) {
+			result.push_back( postprocess_value(item.second.get_value<T>()) );
+		}
+		return result;
+	}
 
 	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: param, the parameter to set.
-	 * @return: void.
+	 * Gets either the parameter value provided by parameter name, if it
+	 * exists, or a empty boost::optional<T> otherwise.
+	 * @param paramName the parameter name,
+	 * @return the value of the parameter wrapped in a boost::optional.
 	 */
-	void setQSettingsParam(TrackerParam::Param param);
+	template <typename T>
+	boost::optional<T> maybeGetValueOfParam(const std::string &paramName) const {
+		return _ptree.get_optional<T>(paramName);
+	}
 
 	/**
-	 * Sets the parameter for the config.ini file.
-	 * @param: paramName, the parameter name.
-	 * @param: paramValue, the parameter value.
-	 * @return: void.
+	 * Gets the parameter value provided by parameter name.
+	 * If the parameter is not set yet, set to default value and return it.
+	 * @param paramName the parameter name,
+	 * @param defaultValue the default parameter value,
+	 * @return the value of the parameter as the specified type.
 	 */
-	void setQSettingsParam(std::string paramName, std::string paramValue);
+	template <typename T>
+	T getValueOrDefault(const std::string& paramName, const T& defaultValue) {
+		boost::optional<T> value = maybeGetValueOfParam<T>(paramName);
+		if (value) {
+			return value.get();
+		} else {
+			setParam(paramName, defaultValue);
+			return defaultValue;
+		}
+	}
 
-	/**
-	 * Sets the parameters for the config.ini file (use QSettings class).
-	 * @param: params, the parameter list to set,
-	 * @return: void.
-	 */
-	void setQSettingsParams(std::vector<TrackerParam::Param> params);
-
-	/**
-	 * Gets the parameters.
-	 * @return: a vector containing all tracking parameters.
-	 */
-	std::vector<TrackerParam::Param> getParams() const;
-
-	/**
-	 * Gets the parameter value provided by parameter name. 
-	 * @param: paramName, the parameter name,
-	 * @return: the value of the parameter as the specified type.
-	 */
-    template <typename T> T getValueOfParam(std::string paramName) const;
-
-	/** 
-	 * Initialize the tracker with default parameters, from the config.ini file.
-	 * @return a vector contains track parameters.
-	 */
-	static std::vector<TrackerParam::Param> getDefaultParamsFromQSettings();
-	
 private:
-	std::vector<TrackerParam::Param> _params;
-	static std::vector<std::string> split(const std::string &txt, char ch);
+	boost::property_tree::ptree _ptree;
+
+	static const boost::property_tree::ptree getDefaultParams();
+
+	/**
+	 * preprocesses paramValue before it's stored in the boost config tree
+	 *
+	 * default implementation: forward value
+	 *
+	 */
+	template<typename T>
+	static T preprocess_value(T&& paramValue) {
+		return std::forward<T>(paramValue);
+	}
+
+	/**
+	 * postprocesses paramValue after it's extracted from the boost config tree
+	 *
+	 * default implementation: forward value
+	 *
+	 */
+	template<typename T>
+	static T postprocess_value(T&& paramValue) {
+		return std::forward<T>(paramValue);
+	}
+
 };
+
+/**
+ * std::string specialisation as a workaround for a bug in boost's config tree
+ *
+ * this function escapes every non-ASCII character
+ *
+ * (the tree correctly escapes non-ASCII characters and stores them
+ *  as "\u00XX" where XX is the character's hex value, but it can't read these
+ *  values correctly)
+ *
+ */
+template<>
+inline std::string Settings::preprocess_value(std::string&& paramValue) {
+	return escape_non_ascii(paramValue);
+}
+
+/**
+ * std::string specialisation as a workaround for a bug in boost's config tree
+ *
+ * (the tree converts escaped non-ASCII characters ("\u00XX") to "\xFF")
+ *
+ */
+template<>
+inline std::string Settings::postprocess_value(std::string&& paramValue) {
+	return unescape_non_ascii(paramValue);
+}

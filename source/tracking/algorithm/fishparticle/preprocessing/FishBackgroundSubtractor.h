@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "source/settings/Settings.h"
+#include "tracking/algorithm/fishparticle/particlefilter/particleParams.h"
 
 /**
 * Doing the background subtraction, a configured cv::BackgroundSubtractorMOG2.
@@ -13,7 +13,7 @@ class FishBackgroundSubtractor :
 	public cv::BackgroundSubtractorMOG2
 {
 public:
-	explicit FishBackgroundSubtractor(Settings& settings);
+	explicit FishBackgroundSubtractor(ParticleParams& params);
 	~FishBackgroundSubtractor(void);
 	void reset();
 
@@ -21,7 +21,7 @@ private:
 	/**
 	* The settings containing properties concerning this background subtractor.
 	*/
-	Settings& _settings;
+	ParticleParams& _params;
 };
 
 #endif

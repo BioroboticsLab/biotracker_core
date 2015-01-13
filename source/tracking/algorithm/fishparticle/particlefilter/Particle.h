@@ -13,27 +13,25 @@ public:
 
 	/**
 	 * Sets the x position of the particle.
-	 * @param: x, the x position.
-	 * @return: void.
+	 * @param x the x position.
 	 */
 	void setX(float x) { _x = x; }
 
 	/**
 	 * Gets the x position of the particle.
-	 * @return: the x position.
+	 * @return the x position.
 	 */
 	float getX() const { return _x; }
 
 	/**
 	 * Sets the y position of the particle.
-	 * @param: y, the y position.
-	 * @return: void.
+	 * @param y the y position.
 	 */
 	void setY(float y) { _y = y; }
 
 	/**
 	 * Gets the y position of the particle.
-	 * @return: the y position.
+	 * @return the y position.
 	 */
 	float getY() const { return _y; }
 
