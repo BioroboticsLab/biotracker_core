@@ -40,6 +40,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="histoButton">
+       <property name="text">
+        <string>Calc Histo.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>Quit</string>

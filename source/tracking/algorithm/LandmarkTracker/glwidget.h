@@ -17,7 +17,7 @@ public:
     void resizeGL(int w, int h);
 
     void drawingAxes();
-    void drawCube (float red, float green, float blue);
+    void drawCube (float red, float green, float blue, float f = 25.5/2);
 	void drawingCubes();
 
 

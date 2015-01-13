@@ -50,7 +50,7 @@ void GLWidget::resizeGL(int w, int h)
 
 void GLWidget::drawingAxes()
 {
-    int lines=256;
+    int lines=256/2;
 
 	//std::cout<<"DRAWING AXES"<<std::endl;
 	
@@ -139,44 +139,101 @@ void GLWidget::drawingCubes()
 {
 	for(const auto &p:parent_tw->getRGBMap())
 	{
-		drawCube(float (p.first.val[2])/10, float (p.first.val[1])/10, float (p.first.val[0])/10);
+		drawCube(float (p.first.val[2])/10, float (p.first.val[1])/10, float (p.first.val[0])/10, 25.5/2);
+		std::cout<<"Color printed: "<<(int)p.first.val[2]<<", "<< (int)p.first.val[1]<<", "<<(int)p.first.val[0]<<std::endl;
 	}
 }
 
-void GLWidget::drawCube (float red, float green, float blue)
+void GLWidget::drawCube (float red, float green, float blue, float f)
 {
-
+	
+	
      glBegin(GL_QUADS);
          glColor3f(red/25.5,green/25.5,blue/25.5);
-        //Front Face
-           glVertex3f(red, green,  blue+0.1f);
-           glVertex3f(red, green+0.1f,  blue+0.1f);
-           glVertex3f(red+0.1f, green+0.1f ,  blue+0.1f );
-           glVertex3f(red+0.1f, green,  blue+0.1f );
+
+			//Front Face
+			std::cout<<"FRONT FACE: "<<std::endl;
+            std::cout<<red<<", "<< green<<", "<<blue+f<<std::endl;
+			std::cout<<red<<", "<< green+f<<", "<<blue+f<<std::endl;
+		    std::cout<<red+f<<", "<< green<<", "<<blue+f<<std::endl;
+            std::cout<<red+f<<", "<< green+f<<", "<<blue<<std::endl;
+			
+			glVertex3f(red, green,  blue+f);
+			glVertex3f(red, green+f,  blue+f);
+			glVertex3f(red+f, green+f ,  blue+f );
+			glVertex3f(red+f, green,  blue+f );
+			
+
              // Back Face
            glVertex3f(red, green,  blue);
-           glVertex3f(red, green+0.1f ,  blue);
-           glVertex3f(red+0.1f , green+0.1f ,  blue);
-           glVertex3f(red+0.1f , green,  blue);
-             // Top Face
-           glVertex3f(red, green+0.1f ,  blue);
-           glVertex3f(red, green+0.1f ,  blue+0.1f );
-           glVertex3f(red+0.1f , green+0.1f ,  blue);
-           glVertex3f(red+0.1f , green+0.1f ,  blue+0.1f );
+           glVertex3f(red, green+f ,  blue);
+           glVertex3f(red+f , green+f ,  blue);
+           glVertex3f(red+f , green,  blue);
+		   
+			// Top Face
+           glVertex3f(red, green+f ,  blue);
+           glVertex3f(red, green+f ,  blue+f );
+		   glVertex3f(red+f , green+f ,  blue+f );
+		   glVertex3f(red+f , green+f ,  blue);
              // Bottom Face
            glVertex3f(red, green,  blue);
-           glVertex3f(red, green,  blue+0.1f );
-           glVertex3f(red+0.1f , green,  blue);;
-           glVertex3f(red+0.1f , green,  blue+0.1f );
+           glVertex3f(red, green,  blue+f );
+           glVertex3f(red+f , green,  blue+f );
+		   glVertex3f(red+f , green,  blue);
+		   
              // Right face
-           glVertex3f(red+0.1f , green+0.1f ,  blue+0.1f );
-           glVertex3f(red+0.1f , green+0.1f ,  blue);
-           glVertex3f(red+0.1f , green,  blue+0.1f );
-           glVertex3f(red+0.1f , green,  blue);
+           glVertex3f(red+f , green+f ,  blue+f );
+           glVertex3f(red+f , green+f ,  blue);
+		   glVertex3f(red+f , green,  blue);
+           glVertex3f(red+f , green,  blue+f );
+           
              // Left Face
-           glVertex3f(red, green+0.1f ,  blue+0.1f );
-           glVertex3f(red, green+0.1f ,  blue);
-           glVertex3f(red, green,  blue+0.1f );
+           glVertex3f(red, green+f ,  blue+f );
+           glVertex3f(red, green+f ,  blue);
            glVertex3f(red, green,  blue);
+		   glVertex3f(red, green,  blue+f );
+		   
     glEnd();
+
+	 /*glBegin(GL_QUADS);
+         glColor3f(red/25.5,green/25.5,blue/25.5);
+
+			//Front Face
+			std::cout<<"FRONT FACE: "<<std::endl;
+            std::cout<<red<<", "<< green<<", "<<blue+f<<std::endl;
+			std::cout<<red<<", "<< green+f<<", "<<blue+f<<std::endl;
+		    std::cout<<red+f<<", "<< green<<", "<<blue+f<<std::endl;
+            std::cout<<red+f<<", "<< green+f<<", "<<blue<<std::endl;
+
+			glVertex3f(red, green,  blue+f);
+			glVertex3f(red, green+f,  blue+f);
+			glVertex3f(red+f, green,  blue+f );
+			glVertex3f(red+f, green+f ,  blue+f );
+
+             // Back Face
+           glVertex3f(red, green,  blue);
+           glVertex3f(red, green+f ,  blue);
+           glVertex3f(red+f , green+f ,  blue);
+           glVertex3f(red+f , green,  blue);
+             // Top Face
+           glVertex3f(red, green+f ,  blue);
+           glVertex3f(red, green+f ,  blue+f );
+           glVertex3f(red+f , green+f ,  blue);
+           glVertex3f(red+f , green+f ,  blue+f );
+             // Bottom Face
+           glVertex3f(red, green,  blue);
+           glVertex3f(red, green,  blue+f );
+           glVertex3f(red+f , green,  blue);;
+           glVertex3f(red+f , green,  blue+f );
+             // Right face
+           glVertex3f(red+f , green+f ,  blue+f );
+           glVertex3f(red+f , green+f ,  blue);
+           glVertex3f(red+f , green,  blue+f );
+           glVertex3f(red+f , green,  blue);
+             // Left Face
+           glVertex3f(red, green+f ,  blue+f );
+           glVertex3f(red, green+f ,  blue);
+           glVertex3f(red, green,  blue+f );
+           glVertex3f(red, green,  blue);
+    glEnd();*/
 }

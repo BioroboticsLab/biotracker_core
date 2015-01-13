@@ -24,6 +24,7 @@ class ToolWindow : public QDialog
 public slots:
 		
 	void emitClose();
+	void on_histoButton_clicked();
 
 public:
 	explicit ToolWindow(LandmarkTracker *parentTracker, QWidget *parent = nullptr);
@@ -34,6 +35,8 @@ public:
 
     Vec3b values;
     Mat roiMat;
+
+	int rgbValue_max;
 
 	struct Vec3bCompare
 	{
@@ -61,7 +64,10 @@ private:
 	LandmarkTracker *tracker;
 
     QPixmap Mat2QPixmap(const Mat& mat);
-    void getRGBValues(const Mat &mat);
+    
+	void getRGBValues(const Mat &mat);
+
+	void calcHistogram(const Mat &mat);
    
 	map_t rgbMap;
 
