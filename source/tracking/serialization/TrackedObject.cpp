@@ -35,5 +35,11 @@ std::shared_ptr<ObjectModel> TrackedObject::get(const size_t framenumber) const
 std::shared_ptr<ObjectModel> TrackedObject::top() const
 {
     assert(!_objectsByFrame.empty());
-    return _objectsByFrame.rbegin()->second;
+	return _objectsByFrame.rbegin()->second;
+}
+
+boost::optional<size_t> TrackedObject::getLastFrameNumber() const
+{
+	if (_objectsByFrame.empty()) return boost::optional<size_t>();
+	else return _objectsByFrame.rbegin()->first;
 }
