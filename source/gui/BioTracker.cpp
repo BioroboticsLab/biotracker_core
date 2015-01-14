@@ -822,6 +822,7 @@ void BioTracker::takeScreenshot()
 
 void BioTracker::viewIndexChanged(int index)
 {
+	if (_isPanZoomMode) ui.button_panZoom->click();
 	if (index == 0) {
 		emit changeSelectedView(TrackingAlgorithm::OriginalView);
 	} else {
