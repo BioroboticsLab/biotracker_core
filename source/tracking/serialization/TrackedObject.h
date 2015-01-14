@@ -6,6 +6,8 @@
 #include <deque>
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
 #include <cereal/types/memory.hpp>
@@ -53,6 +55,7 @@ public:
 
 	bool isEmpty() const { return _objectsByFrame.empty(); }
 	void erase(size_t framenumber) { _objectsByFrame.erase(framenumber); }
+	boost::optional<size_t> getLastFrameNumber() const;
 
 private:
     size_t _id;
