@@ -214,6 +214,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
 		case State::SetP1: // tag is rotated in grid-plane
 		{
             _activeGrid->zRotateTowardsPointInPlane(mousePosition);
+            this->updateValidRect();
 			break;
 		}		
 		case State::SetP2:  // tag is rotated in space
@@ -248,7 +249,7 @@ void BeesBookTagMatcher::mouseMoveEvent(QMouseEvent * e)
             // apply rotation
             _activeGrid->xyRotateIntoPlane(w * _rotationAxis.y + static_cast<float>(_activeGrid->getYRotation()),
 			                               w * _rotationAxis.x + static_cast<float>(_activeGrid->getXRotation()));
-						
+            this->updateValidRect();
 			break;
 		}
 		default: // other states (like State::SetBit or ::Ready) 
@@ -295,6 +296,8 @@ void BeesBookTagMatcher::mouseReleaseEvent(QMouseEvent * e)
 
             // update GUI display 
 			setNumTags();
+
+			this->updateValidRect();
 
             // data has changed, thus emit update in end of function
             dataChanged = true;
@@ -362,21 +365,27 @@ void BeesBookTagMatcher::keyPressEvent(QKeyEvent *e)
 			// rotate
 			case Qt::Key_H:
 				_activeGrid->setYRotation(_activeGrid->getYRotation() + rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_G:
 				_activeGrid->setYRotation(_activeGrid->getYRotation() - rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_W:
 				_activeGrid->setXRotation(_activeGrid->getXRotation() - rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_S:
 				_activeGrid->setXRotation(_activeGrid->getXRotation() + rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_A:
 				_activeGrid->setZRotation(_activeGrid->getZRotation() - rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_D:
 				_activeGrid->setZRotation(_activeGrid->getZRotation() + rotateIncrement);
+				this->updateValidRect();
 				break;
 			case Qt::Key_U:
 				_activeGrid->setSettable(!_activeGrid->isSettable());
@@ -674,17 +683,17 @@ void BeesBookTagMatcher::forcePointIntoBorders(cv::Point & point, cv::Rect const
 
 void BeesBookTagMatcher::updateValidRect()
 {
-    double r = GRID_RADIUS_PIXELS;
-    
-    if (_activeGrid)
-    {
-        r = _activeGrid->getPixelRadius();
-    }
-
-	_validRect = cv::Rect(static_cast<int>(_imgRect.x + r),
-						  static_cast<int>(_imgRect.y + r),
-						  static_cast<int>(_imgRect.width - 2 * r),
-						  static_cast<int>(_imgRect.height - 2 * r));
+	if (_activeGrid)
+	{
+		const auto box = _activeGrid->getOriginBoundingBox();
+		_validRect = cv::Rect(cv::Point2i(0, 0) - box.tl(), cv::Point2i(_imgRect.width, _imgRect.height) - box.br());
+	}
+	else {
+		_validRect = cv::Rect(_imgRect.x + GRID_RADIUS_PIXELS,
+		                      _imgRect.y + GRID_RADIUS_PIXELS,
+		                      _imgRect.width - 2 * GRID_RADIUS_PIXELS,
+		                      _imgRect.height - 2 * GRID_RADIUS_PIXELS);
+	}
 }
 
 cv::Scalar BeesBookTagMatcher::getGridColor(const std::shared_ptr<Grid3D> &grid) const

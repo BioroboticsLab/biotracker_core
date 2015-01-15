@@ -92,6 +92,7 @@ public slots:
 
 protected:
 	bool event(QEvent* event) override;
+	void showEvent(QShowEvent *ev) override;
 
 private:
 	Ui::BioTrackerClass ui;
@@ -149,7 +150,14 @@ private:
 
 	std::vector<TrackingAlgorithm::View> _availableViews;
 
+private slots:
+	void startUp();
+
+
 signals:
+	//signal when main window is initialized after start up
+	void window_loaded();
+
 	// tell tracking thread to grab next frame
 	void nextFrameReady(bool);
 

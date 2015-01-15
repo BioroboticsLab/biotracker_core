@@ -103,7 +103,18 @@ public:
 
 	void  setTransparency(float transparency);
 
+
+	/**
+	 * Axis-aligned minimum bounding box of the grid
+	 */
 	cv::Rect getBoundingBox() const;
+
+	/**
+	 * Axis-aligned minimum bounding box of the grid centered at (0, 0)
+	 */
+	cv::Rect getOriginBoundingBox() const {
+		return _boundingBox;
+	}
 
 	std::vector<cv::Point> const& getOuterRingPoints() const { return _coordinates2D[OUTER_RING]; }
 

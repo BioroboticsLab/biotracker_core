@@ -21,6 +21,8 @@
 #include <cereal/types/vector.hpp>
 
 #include <QStatusBar>
+#include <thread>
+#include <chrono>
 
 using GUIPARAM::MediaType;
 
@@ -37,7 +39,15 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
 
 	initGui();
 	initConnects();
+}
 
+BioTracker::~BioTracker()
+{
+	_trackingThread->stop();
+}
+
+void BioTracker::startUp()
+{
 	if (_mediaType != MediaType::NoMedia) initPlayback();
 
 	{
@@ -57,11 +67,6 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
 			}
 		}
 	}
-}
-
-BioTracker::~BioTracker()
-{
-	_trackingThread->stop();
 }
 
 //function to test file existence
@@ -85,8 +90,17 @@ void BioTracker::initGui()
 	initAlgorithmList();
 }
 
+void BioTracker::showEvent(QShowEvent *ev)
+{
+	QMainWindow::showEvent(ev);
+	emit window_loaded();
+}
+
 void BioTracker::initConnects()
 {
+	//Start Up
+	QObject::connect(this, SIGNAL(window_loaded()), this, SLOT(startUp()), Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+
 	//File -> Open Video
 	QObject::connect(ui.actionOpen_Video, SIGNAL(triggered()), this, SLOT(browseVideo()));
 	QObject::connect(ui.actionOpen_Picture, SIGNAL(triggered()), this, SLOT(browsePicture()));	
@@ -808,6 +822,7 @@ void BioTracker::takeScreenshot()
 
 void BioTracker::viewIndexChanged(int index)
 {
+	if (_isPanZoomMode) ui.button_panZoom->click();
 	if (index == 0) {
 		emit changeSelectedView(TrackingAlgorithm::OriginalView);
 	} else {

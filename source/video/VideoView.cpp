@@ -86,6 +86,7 @@ void VideoView::fitToWindow()
 
 void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
 {
+	std::cout << selectedView.name << std::endl << std::endl;
 	_selectedView = selectedView;
 	updateGL();
 }
