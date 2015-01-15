@@ -25,7 +25,7 @@ Grid3D::Grid3D()
 
 Grid3D::Grid3D(cv::Point2i center, double radius_px, double angle_z, double angle_y, double angle_x)
 	: _center(center)
-    , _radius(radius_px * FOCAL_LENGTH)
+	, _radius(radius_px * FOCAL_LENGTH)
 	, _angle_z(angle_z)
 	, _angle_y(angle_y)
 	, _angle_x(angle_x)
@@ -430,8 +430,8 @@ void Grid3D::setWorldRadius(const double radius)
 
 cv::Rect Grid3D::getBoundingBox() const
 {
-	return cv::Rect(_boundingBox.x + _center.x, _boundingBox.y + _center.y,
-					_boundingBox.width, _boundingBox.height);
+	return cv::Rect(_boundingBox.tl() + _center,
+					_boundingBox.size());
 }
 
 CEREAL_REGISTER_TYPE(Grid3D)

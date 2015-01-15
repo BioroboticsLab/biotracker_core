@@ -1,5 +1,6 @@
 #include "Rectification.h"
 #include <algorithm> // std::max_element, std::min_element, std::min, std::max
+#include "utility/CvHelper.h" // cv_point_compare_less_{x, y}
 
 Rectification::Rectification(void)
 {}
@@ -60,29 +61,12 @@ bool Rectification::inArea(cv::Point2f point_cm) const
 		&& point_cm.y < _areaHeight_cm);
 }
 
-
-namespace {
-  
-  struct cvPoint_less_x {
-    bool operator()(const cv::Point &lhs, const cv::Point &rhs) const {
-      return lhs.x < rhs.x;
-    }
-  };
-  
-  struct cvPoint_less_y {
-    bool operator()(const cv::Point &lhs, const cv::Point &rhs) const {
-      return lhs.y < rhs.y;
-    }
-  };
-  
-}
-
 int Rectification::minXPx() const
 {
 	if (_areaCoordinates.empty()) {
 		return _camCaptureWidth_px;
 	}
-	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_x());
+	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), CvHelper::cv_point_compare_less_x{});
 	return std::min(_camCaptureWidth_px, it->x);
 }
 
@@ -91,7 +75,7 @@ int Rectification::maxXPx() const
 	if (_areaCoordinates.empty()) {
 	  return -1;
 	}
-	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_x());
+	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), CvHelper::cv_point_compare_less_x{});
 	return it->x;
 }
 
@@ -100,7 +84,7 @@ int Rectification::minYPx() const
 	if (_areaCoordinates.empty()) {
 		return _camCaptureHeight_px;
 	}
-	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_y());
+	const auto &it = std::min_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), CvHelper::cv_point_compare_less_y{});
 	return std::min(_camCaptureHeight_px, it->y);
 }
 
@@ -109,6 +93,6 @@ int Rectification::maxYPx() const
 	if (_areaCoordinates.empty()) {
 	  return -1;
 	}
-	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), cvPoint_less_y());
+	const auto &it = std::max_element(_areaCoordinates.cbegin(), _areaCoordinates.cend(), CvHelper::cv_point_compare_less_y{});
 	return it->y;
 }
