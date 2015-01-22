@@ -14,7 +14,6 @@ TrackingThread::TrackingThread(Settings &settings) :
 _captureActive(false),
 _readyForNextFrame(true),
 _frameNumber(0),
-_videoPause(false),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
 _fps(30),
 _runningFps(0),
