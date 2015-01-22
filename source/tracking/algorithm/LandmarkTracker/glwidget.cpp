@@ -24,6 +24,8 @@ GLWidget::GLWidget(QWidget *parent)
 
 void GLWidget::initializeGL()
 {
+	makeCurrent();
+
     glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 
     glShadeModel(GL_SMOOTH);
@@ -35,6 +37,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+	makeCurrent();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -53,6 +56,8 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL(int w, int h)
 {
+	makeCurrent();
+
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -64,6 +69,8 @@ void GLWidget::resizeGL(int w, int h)
 
 void GLWidget::drawingAxes()
 {
+	makeCurrent();
+
     int lines=256;
 
 	//std::cout<<"DRAWING AXES"<<std::endl;
@@ -159,6 +166,7 @@ void GLWidget::drawingCubes()
 
 void GLWidget::drawCube (float red, float green, float blue)
 {
+	makeCurrent();
 
      glBegin(GL_QUADS);
          glColor3f(red/25.5f,green/25.5f,blue/25.5f);
