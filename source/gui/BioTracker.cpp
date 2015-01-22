@@ -210,7 +210,7 @@ void BioTracker::initPlayback()
 
 	ui.videoView->fitToWindow();
 
-	_videoMode = VideoMode::Stopped;
+    setVideoMode(VideoMode::Stopped);
 }
 
 void BioTracker::initAlgorithmList()
@@ -426,12 +426,12 @@ void BioTracker::runCapture()
 	switch (_videoMode) {
 	case VideoMode::Stopped:
 		initPlayback();
-		_videoMode = VideoMode::Playing;
+        setVideoMode ( VideoMode::Playing );
 		setPlayfieldPaused(false);
 		emit videoPause(false);
 		break;
 	case VideoMode::Paused:
-		_videoMode = VideoMode::Playing;
+        setVideoMode ( VideoMode::Playing );
 		setPlayfieldPaused(false);
 		emit videoPause(false);
 		break;
@@ -447,7 +447,7 @@ void BioTracker::runCapture()
 void BioTracker::invalidFile()
 {
 	setPlayfieldEnabled(false);
-	_videoMode = VideoMode::Stopped;
+    setVideoMode ( VideoMode::Stopped );
 }
 
 void BioTracker::setPlayfieldEnabled(bool enabled)
@@ -532,7 +532,7 @@ bool BioTracker::event(QEvent *event)
 
 void BioTracker::stepCaptureForward()
 {
-	_videoMode = VideoMode::Paused;
+    setVideoMode ( VideoMode::Paused) ;
 	emit grabNextFrame();
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 }
@@ -549,7 +549,7 @@ void BioTracker::stepCaptureBackward()
 
 void BioTracker::pauseCapture()
 {
-	_videoMode = VideoMode::Paused;
+    setVideoMode ( VideoMode::Paused );
 	_trackingThread->enableVideoPause(true);
 	setPlayfieldPaused(true);
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
@@ -563,7 +563,7 @@ void BioTracker::stopCapture()
 		updateFrameNumber(0);
 		_trackingThread->setFrameNumber(0);
 	}
-	_videoMode = VideoMode::Stopped;
+    setVideoMode( VideoMode::Stopped );
 
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 	setPlayfieldPaused(true);
@@ -741,7 +741,6 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 
 		// init tracking Alg
 		_tracker->setCurrentFrameNumber(static_cast<int>(_currentFrame));
-		_tracker->setVideoPaused(_videoMode == VideoMode::Paused);
 		connectTrackingAlg(_tracker);
 
 		// now we try to find a temporary file that contains previously
@@ -782,8 +781,6 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 			_trackingThread.get(), SLOT( doTrackingAndUpdateScreen() ));
 		QObject::connect(_trackingThread.get(), SIGNAL( newFrameNumber(int) ),
 			tracker.get(), SLOT( setCurrentFrameNumber(int) ));
-		QObject::connect(this, SIGNAL( videoPause(bool) ),
-			tracker.get(), SLOT(setVideoPaused(bool)));
 		QObject::connect(ui.videoView, SIGNAL(reportZoomLevel(float)),
 			tracker.get(), SLOT(setZoomLevel(float)));
 		QObject::connect(_trackingThread.get(), &TrackingThread::trackingSequenceDone,
@@ -858,4 +855,8 @@ void BioTracker::setViews(std::vector<TrackingAlgorithm::View> views)
 	}
 
 	_availableViews = std::move(views);
+}
+void BioTracker::setVideoMode(VideoMode vidMode)
+{
+    _videoMode = vidMode;
 }
