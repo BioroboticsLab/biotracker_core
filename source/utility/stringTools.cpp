@@ -5,6 +5,7 @@
  *      Author: tobias
  */
 
+#include <climits>
 #include <string>    // std::string
 #include <stdexcept> // std::invalid_argument
 
@@ -13,7 +14,7 @@ std::string escape_non_ascii(const std::string &s) {
 	std::string result;
 	for(const auto c : s) {
 		// MSB is set --> not a valid ASCII character --> escape
-		if (c & 0x80) {
+		if (c & (1 << (CHAR_BIT - 1))) {
 			static const char hex_map [] = "0123456789abcdef";
 			const unsigned char uc = static_cast<unsigned char>(c);
 			result += "\\x";
@@ -52,7 +53,7 @@ std::string unescape_non_ascii(const std::string &s) {
 
 	std::string result;
 	for(auto it = s.cbegin(); it != s.cend(); ++it) {
-		if (*it & 0x80) {
+		if (*it & (1 << (CHAR_BIT - 1))) {
 			throw std::invalid_argument("string contains a non-ASCII character");
 		}
 		// begin of escape sequence
