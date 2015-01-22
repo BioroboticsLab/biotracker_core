@@ -108,12 +108,6 @@ public slots:
 	{	_currentFrameNumber = frameNumber;	}
 
 	/**
-	* receive Signal from GUI to set play mode 
-	*/
-	void setVideoPaused(bool isPause)
-	{	_isVideoPaused = isPause;	}
-
-	/**
 	* receive current zoom level from VideoView
 	*/
 	void setZoomLevel(float zLevel)
@@ -185,9 +179,10 @@ protected:
 	* as any keyboard key from 'grabbedKeys()' is pressed in video view
 	*/
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
+protected:
+
 
 private:
-	bool _isVideoPaused;
 	int _currentFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;

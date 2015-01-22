@@ -107,6 +107,7 @@ private:
 		Init
 	};
 	VideoMode _videoMode;
+    void setVideoMode(VideoMode vidMode);
 
 	GUIPARAM::MediaType _mediaType;
 
@@ -123,7 +124,7 @@ private:
 	void initPlayback();
 	void initAlgorithmList();
 	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
-	void setPlayfieldEnabled(bool enabled);
+    void setPlayfieldEnabled(bool enabled);
 
 	void loadTrackingData(std::string const& filename);
 	void storeTrackingData(std::string const& filename);
