@@ -14,7 +14,7 @@ void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)
 	postLoad();
 }
 
-void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &&objects)
+void TrackingAlgorithm::loadObjects(std::vector<TrackedObject> &&objects)
 {
 	_trackedObjects = std::move(objects);
 	postLoad();

@@ -88,7 +88,7 @@ public:
 	virtual void postLoad();
 	
 	void loadObjects(std::vector<TrackedObject> const& objects);
-	void loadObjects(std::vector<TrackedObject> const&& objects);
+	void loadObjects(std::vector<TrackedObject>&& objects);
 	std::vector<TrackedObject> const& getObjects();
 
 	boost::optional<Algorithm::Type> getType() const { return _type; }
