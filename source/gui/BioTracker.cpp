@@ -393,13 +393,12 @@ boost::optional<std::vector<std::string>> BioTracker::getOpenFiles() const
 		break;
 	default:
 		return boost::optional<std::vector<std::string>>();
-		break;
 	}
 
 	// cap_video_file and picture_file can be set, but empty. therefore, we
 	// need to check if the parameter actually contains a file name.
 	if (filename && !filename.get().empty()) return filename;
-	else return boost::optional<std::vector<std::string>>();
+
 	return boost::optional<std::vector<std::string>>();
 }
 
