@@ -3,7 +3,6 @@
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
 	: QObject(parent)
 	, _settings(settings)
-	, _isVideoPaused(true) // <-- value is never read, init to suppress warning
 	, _currentFrameNumber(0)
 	, _currentZoomLevel(0.0f)
 {}
