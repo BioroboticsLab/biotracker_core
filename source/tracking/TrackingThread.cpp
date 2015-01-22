@@ -250,6 +250,12 @@ void TrackingThread::incrementFrameNumber()
 
 		emit newFrameNumber(_frameNumber);
 	}
+    {
+        MutexLocker lock(_trackerMutex);
+        if (_tracker) {
+            _tracker->setCurrentFrameNumber(_frameNumber);
+        }
+    }
 }
 
 void TrackingThread::nextFrame()
