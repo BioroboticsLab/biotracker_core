@@ -649,19 +649,15 @@ bool BeesBookTagMatcher::event(QEvent *event)
 	case QEvent::KeyPress:
 		keyPressEvent(static_cast<QKeyEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonPress:
 		mousePressEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseButtonRelease:
 		mouseReleaseEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	case QEvent::MouseMove:
 		mouseMoveEvent(static_cast<QMouseEvent*>(event));
 		return true;
-		break;
 	default:
 		event->ignore();
 		return false;
