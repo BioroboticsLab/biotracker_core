@@ -118,6 +118,15 @@ public slots:
 	*/
 	void setCurrentImage(cv::Mat img)
 	{	_currentImage = img;	}
+
+    /**
+    * receive current video mode from gui
+    */
+    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode)
+    {
+        _videoMode = videoMode;
+    }
+
 	
 signals:
 	/**
@@ -139,6 +148,11 @@ signals:
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
+
+    GUIPARAM::VideoMode getVideoMode()
+    {
+        return _videoMode;
+    }
 
 	bool event(QEvent* event) override;
 
@@ -179,14 +193,14 @@ protected:
 	* as any keyboard key from 'grabbedKeys()' is pressed in video view
 	*/
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
-protected:
 
 
-private:
+private:    
 	int _currentFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
+    GUIPARAM::VideoMode _videoMode;
 };
 
 #endif // !TrackingAlgorithm_H

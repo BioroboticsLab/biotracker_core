@@ -25,9 +25,12 @@ class BioTracker: public QMainWindow
 {
 	Q_OBJECT
 
-public:
+
+public:    
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
 	~BioTracker();
+
+
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -99,15 +102,8 @@ private:
 
 	Settings& _settings;
 	std::unique_ptr<TrackingThread> _trackingThread;
-
-	enum class VideoMode : uint8_t {
-		Playing = 0,
-		Paused,
-		Stopped,
-		Init
-	};
-	VideoMode _videoMode;
-    void setVideoMode(VideoMode vidMode);
+    GUIPARAM::VideoMode _videoMode;
+    void setVideoMode(GUIPARAM::VideoMode vidMode);
 
 	GUIPARAM::MediaType _mediaType;
 
