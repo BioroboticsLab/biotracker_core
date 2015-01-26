@@ -5,6 +5,7 @@ TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
 	, _settings(settings)
 	, _currentFrameNumber(0)
 	, _currentZoomLevel(0.0f)
+    , _videoMode(GUIPARAM::VideoMode::Init)
 {}
 
 void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)

@@ -30,7 +30,7 @@ BioTracker::BioTracker(Settings &settings, QWidget *parent, Qt::WindowFlags flag
     : QMainWindow(parent, flags)
     , _settings(settings)
     , _trackingThread(std::make_unique<TrackingThread>(_settings))
-    , _videoMode(VideoMode::Init)
+    , _videoMode(GUIPARAM::VideoMode::Init)
     , _mediaType(_settings.getValueOrDefault<MediaType>(GUIPARAM::MEDIA_TYPE, MediaType::NoMedia))
     , _isPanZoomMode(false)
     , _currentFrame(0)
@@ -210,7 +210,7 @@ void BioTracker::initPlayback()
 
 	ui.videoView->fitToWindow();
 
-    setVideoMode(VideoMode::Stopped);
+    setVideoMode(GUIPARAM::VideoMode::Stopped);
 }
 
 void BioTracker::initAlgorithmList()
@@ -424,18 +424,18 @@ void BioTracker::setPlayfieldPaused(bool enabled){
 void BioTracker::runCapture()
 {	
 	switch (_videoMode) {
-	case VideoMode::Stopped:
+    case GUIPARAM::VideoMode::Stopped:
 		initPlayback();
-        setVideoMode ( VideoMode::Playing );
+        setVideoMode ( GUIPARAM::VideoMode::Playing );
 		setPlayfieldPaused(false);
 		emit videoPause(false);
 		break;
-	case VideoMode::Paused:
-        setVideoMode ( VideoMode::Playing );
+    case GUIPARAM::VideoMode::Paused:
+        setVideoMode ( GUIPARAM::VideoMode::Playing );
 		setPlayfieldPaused(false);
 		emit videoPause(false);
 		break;
-	case VideoMode::Playing:
+    case GUIPARAM::VideoMode::Playing:
 		pauseCapture();
 		break;
 	default:
@@ -447,7 +447,7 @@ void BioTracker::runCapture()
 void BioTracker::invalidFile()
 {
 	setPlayfieldEnabled(false);
-    setVideoMode ( VideoMode::Stopped );
+    setVideoMode ( GUIPARAM::VideoMode::Stopped );
 }
 
 void BioTracker::setPlayfieldEnabled(bool enabled)
@@ -532,7 +532,7 @@ bool BioTracker::event(QEvent *event)
 
 void BioTracker::stepCaptureForward()
 {
-    setVideoMode ( VideoMode::Paused) ;
+    setVideoMode ( GUIPARAM::VideoMode::Paused) ;
 	emit grabNextFrame();
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 }
@@ -549,7 +549,7 @@ void BioTracker::stepCaptureBackward()
 
 void BioTracker::pauseCapture()
 {
-    setVideoMode ( VideoMode::Paused );
+    setVideoMode ( GUIPARAM::VideoMode::Paused );
 	_trackingThread->enableVideoPause(true);
 	setPlayfieldPaused(true);
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
@@ -563,7 +563,7 @@ void BioTracker::stopCapture()
 		updateFrameNumber(0);
 		_trackingThread->setFrameNumber(0);
 	}
-    setVideoMode( VideoMode::Stopped );
+    setVideoMode( GUIPARAM::VideoMode::Stopped );
 
 	_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 	setPlayfieldPaused(true);
@@ -574,7 +574,7 @@ void BioTracker::stopCapture()
 
 void BioTracker::updateFrameNumber(int frameNumber)
 {
-	if (_videoMode != VideoMode::Stopped) {
+    if (_videoMode != GUIPARAM::VideoMode::Stopped) {
 		_currentFrame = frameNumber;
 
 		ui.sld_video->setValue(static_cast<int>(_currentFrame));
@@ -583,7 +583,7 @@ void BioTracker::updateFrameNumber(int frameNumber)
 		if (frameNumber == ui.sld_video->maximum()) {
 			pauseCapture();
 		}
-		else if (_videoMode == VideoMode::Paused) {
+        else if (_videoMode == GUIPARAM::VideoMode::Paused) {
 			_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());
 		}
 	}
@@ -742,6 +742,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 		// init tracking Alg
 		_tracker->setCurrentFrameNumber(static_cast<int>(_currentFrame));
 		connectTrackingAlg(_tracker);
+         _tracker->setCurrentVideoMode(_videoMode);
 
 		// now we try to find a temporary file that contains previously
 		// stored tracking data for the new tracking algorithm and the
@@ -856,7 +857,9 @@ void BioTracker::setViews(std::vector<TrackingAlgorithm::View> views)
 
 	_availableViews = std::move(views);
 }
-void BioTracker::setVideoMode(VideoMode vidMode)
+void BioTracker::setVideoMode(GUIPARAM::VideoMode vidMode)
 {
     _videoMode = vidMode;
+    if(_tracker)
+        _tracker.get()->setCurrentVideoMode(vidMode);
 }
