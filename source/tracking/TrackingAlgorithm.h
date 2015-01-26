@@ -195,7 +195,7 @@ protected:
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
 
-private:    
+private:
 	int _currentFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
