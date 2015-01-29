@@ -21,6 +21,14 @@ enum class MediaType : uint8_t {
 	Images
 };
 
+enum class VideoMode : uint8_t {
+    Playing = 0,
+    Paused,
+    Stopped,
+    Init
+};
+
+
 static const std::string MEDIA_TYPE			= "GUIPARAM.MEDIA_TYPE";
 static const std::string SHORTCUT_PLAY		= "GUIPARAM.SHORTCUT_PLAY";
 static const std::string SHORTCUT_NEXT		= "GUIPARAM.SHORTCUT_NEXT";
