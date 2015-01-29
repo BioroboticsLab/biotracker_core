@@ -48,6 +48,8 @@ void VideoView::showImage(cv::Mat img)
 
 void VideoView::fitToWindow()
 {
+	makeCurrent();
+
 	if (!_displayImage.empty()) {
 		_zoomFactor = 0;
 		float width = static_cast<float>(this->width());
@@ -92,6 +94,8 @@ void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
 
 void VideoView::createTexture(cv::Mat image)
 {
+	makeCurrent();
+
 	// free memory                
 	glDeleteTextures(1, &_texture);
 	glLoadIdentity();
@@ -125,6 +129,8 @@ void VideoView::createTexture(cv::Mat image)
 
 void VideoView::paintGL()
 {
+	makeCurrent();
+
 	// Create a black background for the parts of the widget with no image.
 	qglClearColor(Qt::black);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,6 +170,8 @@ void VideoView::paintGL()
 
 void VideoView::initializeGL()
 {
+	makeCurrent();
+
 	// OpenCV's coordinate system originates in the upper left corner.
 	// OpenGL originates in the lower left. Thus the image has to be flipped vertically		
 	for (int j = 0; j < 4; ++j) {
@@ -177,6 +185,8 @@ void VideoView::initializeGL()
 
 void VideoView::resizeGL(int width, int height)
 {
+	makeCurrent();
+
 	// dont do anything if  width or height are 0 
 	// or there is no image to display
 	if (width <= 0 || height <= 0)
@@ -227,6 +237,8 @@ void VideoView::resizeGL(int width, int height)
 
 QPoint VideoView::unprojectScreenPos(QPoint position)
 {
+	makeCurrent();
+
 	//variables required to map window coordinates to picture coordinates 
 	GLint viewport[4];
 	GLdouble modelview[16];

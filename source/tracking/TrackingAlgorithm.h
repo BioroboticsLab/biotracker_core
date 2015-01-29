@@ -108,12 +108,6 @@ public slots:
 	{	_currentFrameNumber = frameNumber;	}
 
 	/**
-	* receive Signal from GUI to set play mode 
-	*/
-	void setVideoPaused(bool isPause)
-	{	_isVideoPaused = isPause;	}
-
-	/**
 	* receive current zoom level from VideoView
 	*/
 	void setZoomLevel(float zLevel)
@@ -124,6 +118,15 @@ public slots:
 	*/
 	void setCurrentImage(cv::Mat img)
 	{	_currentImage = img;	}
+
+    /**
+    * receive current video mode from gui
+    */
+    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode)
+    {
+        _videoMode = videoMode;
+    }
+
 	
 signals:
 	/**
@@ -145,6 +148,11 @@ signals:
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
+
+    GUIPARAM::VideoMode getVideoMode()
+    {
+        return _videoMode;
+    }
 
 	bool event(QEvent* event) override;
 
@@ -186,12 +194,13 @@ protected:
 	*/
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
+
 private:
-	bool _isVideoPaused;
 	int _currentFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
+    GUIPARAM::VideoMode _videoMode;
 };
 
 #endif // !TrackingAlgorithm_H
