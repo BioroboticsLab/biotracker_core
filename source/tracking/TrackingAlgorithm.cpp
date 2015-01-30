@@ -73,10 +73,4 @@ boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const
 	else return boost::optional<cv::Mat>();
 }
 
-void TrackingAlgorithm::prepareSave()
-{}
-
-void TrackingAlgorithm::postLoad()
-{}
-
 const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};

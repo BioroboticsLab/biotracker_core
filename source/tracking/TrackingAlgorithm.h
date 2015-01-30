@@ -78,15 +78,21 @@ public:
 	 * _trackedObjects. It should store or discard all temporary values
 	 * that are related to tracked Objects.
 	 */
-	virtual void prepareSave();
+	virtual void prepareSave() {}
 
 	/**
-	 * @brief prepareSave() is called once after the tracked objects are
-	 * loaded from serialized data. It should do any postprocessing necessary.
-	 *  the serialization of
+	 * @brief postLoad() is called once after the tracked objects are
+	 * loaded from serialized data. It should do any postprocessing required.
 	 */
-	virtual void postLoad();
-	
+	virtual void postLoad() {}
+
+	/**
+	 * @brief postConnect() is called once after the tracking algorithm has
+	 * been initialized and the signals have been connected. It can be used
+	 * to emit signals that only need to be emitted during object initialization.
+	 */
+	virtual void postConnect() {}
+
 	void loadObjects(std::vector<TrackedObject> const& objects);
 	void loadObjects(std::vector<TrackedObject>&& objects);
 	std::vector<TrackedObject> const& getObjects();
