@@ -789,6 +789,8 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 		QObject::connect(tracker.get(), &TrackingAlgorithm::registerViews,
 						 this, &BioTracker::setViews);
 
+		_tracker->postConnect();
+
 		_tracker->setZoomLevel(ui.videoView->getCurrentZoomLevel());
 		try
 		{
