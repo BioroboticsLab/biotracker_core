@@ -158,7 +158,7 @@ signals:
 
     /**
      * seek in framesequence
-     * @param framenumber
+     * @param framenumber where you want to jump to
      */
     void jumpToFrame(int framenumber);
 
