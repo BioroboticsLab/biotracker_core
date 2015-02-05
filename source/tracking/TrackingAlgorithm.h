@@ -151,6 +151,17 @@ signals:
 
 	void registerViews(const std::vector<View> views);
 
+    /**
+     * start/pause playback
+     */
+    void pausePlayback(bool paused);
+
+    /**
+     * seek in framesequence
+     * @param framenumber
+     */
+    void jumpToFrame(int framenumber);
+
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
