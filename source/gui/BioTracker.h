@@ -88,6 +88,7 @@ public slots:
 	void changeCurrentFramebySlider();
 	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
+    void changeCurrentFramebySignal(int frameNumber);
 
 	void takeScreenshot();
 

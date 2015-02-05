@@ -665,6 +665,12 @@ void BioTracker::changeCurrentFramebyEdit()
 		updateFrameNumber(value);
 	}	
 }
+void BioTracker::changeCurrentFramebySignal(int frameNumber)
+{
+    if(_trackingThread->isReadyForNextFrame())
+        emit changeFrame(frameNumber);
+    updateFrameNumber(frameNumber);
+}
 
 void BioTracker::showFps(double fps)
 {
@@ -788,6 +794,10 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 						 _tracker.get(), &TrackingAlgorithm::setCurrentImage);
 		QObject::connect(tracker.get(), &TrackingAlgorithm::registerViews,
 						 this, &BioTracker::setViews);
+        QObject::connect(tracker.get(), &TrackingAlgorithm::pausePlayback,
+                         this, &BioTracker::videoPause);
+        QObject::connect(tracker.get(), &TrackingAlgorithm::jumpToFrame,
+                         this, &BioTracker::changeCurrentFramebySignal);
 
 		_tracker->postConnect();
 
