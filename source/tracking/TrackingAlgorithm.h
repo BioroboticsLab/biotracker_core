@@ -103,6 +103,9 @@ public:
 	int getCurrentFrameNumber() const
 	{	return _currentFrameNumber;	}
 
+    int getMaxFrameNumber() const
+    {	return _maxFrameNumber;	}
+
 	float getCurrentZoomLevel() const
 	{	return _currentZoomLevel;	}
 
@@ -112,6 +115,12 @@ public slots:
 	*/
 	void setCurrentFrameNumber(int frameNumber)
 	{	_currentFrameNumber = frameNumber;	}
+
+    /**
+    * receive Signal to set maximum frame number
+    */
+    void setmaxFrameNumber(int maxFrameNumber)
+    {	_maxFrameNumber = maxFrameNumber;	}
 
 	/**
 	* receive current zoom level from VideoView
@@ -214,6 +223,7 @@ protected:
 
 private:
 	int _currentFrameNumber;
+    int _maxFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;

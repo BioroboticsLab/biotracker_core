@@ -747,6 +747,7 @@ void BioTracker::trackingAlgChanged(Algorithms::Type trackingAlg)
 
 		// init tracking Alg
 		_tracker->setCurrentFrameNumber(static_cast<int>(_currentFrame));
+        _tracker->setmaxFrameNumber(_trackingThread->getVideoLength()-1);
 		connectTrackingAlg(_tracker);
          _tracker->setCurrentVideoMode(_videoMode);
 
