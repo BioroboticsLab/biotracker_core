@@ -6,10 +6,12 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
-
+#include "LandmarkTracker.h"
 #include "source/ui_toolwindow.h"
+#include "glwidget.h"
 
 class LandmarkTracker;
+class GLWidget;
 
 
 namespace Ui {
@@ -30,11 +32,13 @@ public:
 	explicit ToolWindow(LandmarkTracker *parentTracker, QWidget *parent = nullptr);
 
     void initToolWindow();
+	void updateToolWindow();
 
     cv::Vec3b values;
     cv::Mat roiMat;
 
-	int rgbValue_max;
+	size_t rgbValue_max;
+	size_t rgbMap_size;
 
 	struct Vec3bCompare
 	{
@@ -57,17 +61,21 @@ public:
 
 
 private:
-    Ui::ToolWindow ui;
+	
+	Ui::ToolWindow ui;
+	//Ui::ToolWindow _UiToolWidget;
 
 	LandmarkTracker *tracker;
+	GLWidget *cube;
 
     QPixmap Mat2QPixmap(const cv::Mat& mat);
-    void getRGBValues(const cv::Mat &mat);
+    //void getRGBValues(const cv::Mat &mat);
 	void calcHistogram(const cv::Mat &mat);
    
 	map_t rgbMap;
 
 	cv::Mat roi;
+
 };
 
 #endif // TOOLWINDOW_H
