@@ -56,44 +56,6 @@ QPixmap ToolWindow::Mat2QPixmap(const cv::Mat &mat)
     return p;
 }
 
-/*
-//Ausgabe für Vector
-std::ostream &operator<<(std::ostream &os, const cv::Vec3b &v)
-{
-	return os<<"("<<static_cast<unsigned>(v.val[0])<<", "<<static_cast<unsigned>(v.val[1])<<", "<<static_cast<unsigned>(v.val[2])<<")";
-}
-*/
-/*
-void ToolWindow::getRGBValues(const cv::Mat &mat)
-{
-
-    cv::Mat image = mat;
-
-    for (int i = 0; i < image.rows; i++) {
-        for (int j = 0; j < image.cols; j++) {
-			rgbMap[image.at<cv::Vec3b>(i, j)]++;
-			if(rgbMap[image.at<cv::Vec3b>(i, j)] > rgbValue_max){
-				rgbValue_max = rgbMap[image.at<cv::Vec3b>(i, j)];
-			}
-        }
-    }
-
-	rgbMap_size = rgbMap.size();
-
-	std::cout<<"rgbMap Size: "<<rgbMap_size<<"| Max: "<<rgbValue_max<<std::endl;
-	
-	//Alle Einträge in der rgbMap - RGB Wert und Häufigkeit (sollte bei großen Bilder auskommentiert werden!)
-	
-	/*
-	for(const auto &v:rgbMap){
-		std::cout<<"Vector: "<<v.first<< "| Anzahl:"<<v.second<<std::endl;
-	}
-   
-	std::cout <<"RGB VALUES COMPUTED!"<<std::endl;
-	
-
-}
-*/
 
 void ToolWindow::calcHistogram(const cv::Mat &mat)
 {
