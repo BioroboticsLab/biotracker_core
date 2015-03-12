@@ -18,8 +18,9 @@ class LandmarkTracker : public TrackingAlgorithm
 
 private:
 	
-	//boost::optional<size_t>	_frameNr;
-	//boost::optional<size_t> _rectId;
+	std::shared_ptr<GLWidget> _glwidget;
+	std::shared_ptr<QFrame> _roiFrame;
+	
 	size_t	_frameNr;
 	size_t _rectId;
 	
@@ -28,6 +29,8 @@ private:
 	cv::Point _selectorRecStart;
 	cv::Point _selectorRecEnd;
 	bool _showSelectorRec;
+	bool _mouseMoved;
+	bool _cubeIsRoi;
 
 	cv::Point _mouseStart;
 	cv::Point _mouseStop;
@@ -41,6 +44,8 @@ private:
 	void drawRectangle(cv::Mat image);
 	void setRectangle(cv::Mat image, cv::Scalar color);
 
+	bool _lockRect;
+	bool _movedRect;
 	void lockRect();
 	void unlockRect();
 	
@@ -49,8 +54,6 @@ private:
 	cv::Mat sampledRoi;
 
 	boost::optional<cv::Mat> img;
-	bool _lockRect;
-
 	QPixmap _pixmap;
 
 	QPixmap mat2QPixmap(const cv::Mat& mat);
@@ -62,14 +65,12 @@ private:
 
 	virtual std::set<Qt::Key> const& grabbedKeys() const override;
 
-	bool _movedRect;
-
-	bool _mouseMoved;
-	bool _cubeIsRoi;
+	void forcePointIntoBorders(cv::Point & point, cv::Rect const & borders);
 
 	
-	std::shared_ptr<GLWidget> _glwidget;
-	std::shared_ptr<QFrame> _roiFrame;
+
+	
+
 
 	std::shared_ptr<RectObject>	_rectObject;
 
@@ -113,8 +114,8 @@ public:
 
 public slots:
 	
-	void setCubeRoi();
-	void setCubeSampledRoi();
+	void setLabelRoi();
+	void setLabelSampledRoi();
 
 };
 
