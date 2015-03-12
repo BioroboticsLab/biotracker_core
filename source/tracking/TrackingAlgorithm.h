@@ -78,17 +78,23 @@ public:
 	 * _trackedObjects. It should store or discard all temporary values
 	 * that are related to tracked Objects.
 	 */
-	virtual void prepareSave();
+	virtual void prepareSave() {}
 
 	/**
-	 * @brief prepareSave() is called once after the tracked objects are
-	 * loaded from serialized data. It should do any postprocessing necessary.
-	 *  the serialization of
+	 * @brief postLoad() is called once after the tracked objects are
+	 * loaded from serialized data. It should do any postprocessing required.
 	 */
-	virtual void postLoad();
-	
+	virtual void postLoad() {}
+
+	/**
+	 * @brief postConnect() is called once after the tracking algorithm has
+	 * been initialized and the signals have been connected. It can be used
+	 * to emit signals that only need to be emitted during object initialization.
+	 */
+	virtual void postConnect() {}
+
 	void loadObjects(std::vector<TrackedObject> const& objects);
-	void loadObjects(std::vector<TrackedObject> const&& objects);
+	void loadObjects(std::vector<TrackedObject>&& objects);
 	std::vector<TrackedObject> const& getObjects();
 
 	boost::optional<Algorithm::Type> getType() const { return _type; }
@@ -96,6 +102,9 @@ public:
 
 	int getCurrentFrameNumber() const
 	{	return _currentFrameNumber;	}
+
+    int getMaxFrameNumber() const
+    {	return _maxFrameNumber;	}
 
 	float getCurrentZoomLevel() const
 	{	return _currentZoomLevel;	}
@@ -107,11 +116,11 @@ public slots:
 	void setCurrentFrameNumber(int frameNumber)
 	{	_currentFrameNumber = frameNumber;	}
 
-	/**
-	* receive Signal from GUI to set play mode 
-	*/
-	void setVideoPaused(bool isPause)
-	{	_isVideoPaused = isPause;	}
+    /**
+    * receive Signal to set maximum frame number
+    */
+    void setmaxFrameNumber(int maxFrameNumber)
+    {	_maxFrameNumber = maxFrameNumber;	}
 
 	/**
 	* receive current zoom level from VideoView
@@ -124,6 +133,15 @@ public slots:
 	*/
 	void setCurrentImage(cv::Mat img)
 	{	_currentImage = img;	}
+
+    /**
+    * receive current video mode from gui
+    */
+    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode)
+    {
+        _videoMode = videoMode;
+    }
+
 	
 signals:
 	/**
@@ -142,9 +160,25 @@ signals:
 
 	void registerViews(const std::vector<View> views);
 
+    /**
+     * start/pause playback
+     */
+    void pausePlayback(bool paused);
+
+    /**
+     * seek in framesequence
+     * @param framenumber where you want to jump to
+     */
+    void jumpToFrame(int framenumber);
+
 protected:
 	Settings & _settings;
 	std::vector<TrackedObject> _trackedObjects;
+
+    GUIPARAM::VideoMode getVideoMode()
+    {
+        return _videoMode;
+    }
 
 	bool event(QEvent* event) override;
 
@@ -186,12 +220,14 @@ protected:
 	*/
 	virtual void keyPressEvent		(QKeyEvent * /* e */){}
 
+
 private:
-	bool _isVideoPaused;
 	int _currentFrameNumber;
+    int _maxFrameNumber;
 	float _currentZoomLevel;
 	boost::optional<Algorithm::Type> _type;
 	boost::optional<cv::Mat> _currentImage;
+    GUIPARAM::VideoMode _videoMode;
 };
 
 #endif // !TrackingAlgorithm_H

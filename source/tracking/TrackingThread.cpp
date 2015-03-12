@@ -14,7 +14,6 @@ TrackingThread::TrackingThread(Settings &settings) :
 _captureActive(false),
 _readyForNextFrame(true),
 _frameNumber(0),
-_videoPause(false),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
 _fps(30),
 _runningFps(0),
@@ -106,7 +105,9 @@ void TrackingThread::run()
 					break;
 				case MediaType::Video:
 					_capture >> _frame;
-					break;
+                    break;
+                 case MediaType::NoMedia:
+                    break;
 				default:
 					assert(false);
 					break;
@@ -210,7 +211,9 @@ void TrackingThread::setFrameNumber(int frameNumber)
 			case MediaType::Video:
 				_capture.set(CV_CAP_PROP_POS_FRAMES, _frameNumber);
 				_capture >> _frame;
-				break;
+                break;
+            case MediaType::NoMedia:
+                break;
 			default:
 				assert(false);
 				break;
@@ -246,6 +249,12 @@ void TrackingThread::incrementFrameNumber()
 
 		emit newFrameNumber(_frameNumber);
 	}
+    {
+        MutexLocker lock(_trackerMutex);
+        if (_tracker) {
+            _tracker->setCurrentFrameNumber(_frameNumber);
+        }
+    }
 }
 
 void TrackingThread::nextFrame()
@@ -258,7 +267,9 @@ void TrackingThread::nextFrame()
 			break;
 		case MediaType::Video:
 			_capture >> _frame;
-			break;
+            break;
+        case MediaType::NoMedia:
+            break;
 		default:
 			assert(false);
 			break;
@@ -343,7 +354,9 @@ int TrackingThread::getVideoLength()
 	case MediaType::Images:
 		return static_cast<int>(_pictureFiles.size());
 	case MediaType::Video:
-		return static_cast<int>(_capture.get(CV_CAP_PROP_FRAME_COUNT));
+        return static_cast<int>(_capture.get(CV_CAP_PROP_FRAME_COUNT));
+    case MediaType::NoMedia:
+        return -1;
 	default:
 		assert(false);
 		return -1;
