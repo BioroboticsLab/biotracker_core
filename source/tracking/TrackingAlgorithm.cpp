@@ -3,9 +3,9 @@
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
 	: QObject(parent)
 	, _settings(settings)
-	, _isVideoPaused(true) // <-- value is never read, init to suppress warning
 	, _currentFrameNumber(0)
 	, _currentZoomLevel(0.0f)
+    , _videoMode(GUIPARAM::VideoMode::Init)
 {}
 
 void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)
@@ -14,7 +14,7 @@ void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects)
 	postLoad();
 }
 
-void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &&objects)
+void TrackingAlgorithm::loadObjects(std::vector<TrackedObject> &&objects)
 {
 	_trackedObjects = std::move(objects);
 	postLoad();
@@ -72,11 +72,5 @@ boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const
 	if (_currentImage) return _currentImage.get().clone();
 	else return boost::optional<cv::Mat>();
 }
-
-void TrackingAlgorithm::prepareSave()
-{}
-
-void TrackingAlgorithm::postLoad()
-{}
 
 const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};
