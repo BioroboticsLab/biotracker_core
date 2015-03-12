@@ -318,12 +318,12 @@ void GLWidget::drawingAxes()
 
 float GLWidget::calc_f(float pixel_size)
 {
-	return ceilf(cbrt(pixel_size));
+	return static_cast<float>(ceil(cbrt(pixel_size)));
 }
 
 float GLWidget::cube_size(float div_factor, int pixel_count)
 {
-	float cube_size_value = (((pixel_count * 100) / (rgbValue_max))*(25.5/div_factor)) / 100;
+	float cube_size_value = (((pixel_count * 100) / (rgbValue_max))*(25.5f/div_factor)) / 100;
 	
 	/*
 	std::cout << "DIV FACTOR: " << div_factor << std::endl;
