@@ -337,7 +337,7 @@ void LandmarkTracker::initParamsWidget()
 	layout->setWidget(1, QFormLayout::FieldRole, _sampledRoiButton);
 	
 	_roiFrame->setLayout(layout);
-};
+}
 
 void LandmarkTracker::updateParamsWidget()
 {
