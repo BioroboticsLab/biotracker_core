@@ -28,8 +28,8 @@ LandmarkTracker::LandmarkTracker(Settings & settings, QWidget *parent)
 	initParamsWidget();
 
 	//Buttons in Params & Tool-Widget
-	QObject::connect(this->_roiButton, SIGNAL(clicked()), this, SLOT(setCubeRoi()));
-	QObject::connect(this->_sampledRoiButton, SIGNAL(clicked()), this, SLOT(setCubeSampledRoi()));
+	QObject::connect(this->_roiButton, SIGNAL(clicked()), this, SLOT(setLabelRoi()));
+	QObject::connect(this->_sampledRoiButton, SIGNAL(clicked()), this, SLOT(setLabelSampledRoi()));
 
 	if (_trackedObjects.empty())
 	{
@@ -44,15 +44,13 @@ LandmarkTracker::LandmarkTracker(Settings & settings, QWidget *parent)
 
 void LandmarkTracker::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 {
-	
 	setRect();
-	std::cout << "Current Frame: " << getCurrentFrameNumber() << std::endl;
-	
 }
 
 
 void LandmarkTracker::paint	(cv::Mat& image , const View&)
 {
+	
 	if(_showSelectorRec)
 	{
 		drawRectangle(image);
@@ -102,42 +100,40 @@ std::string LandmarkTracker::rectInfo()
 
 void LandmarkTracker::postLoad()
 {
+	_showSelectorRec = true;
+	std::cout << "Loaded TrackingsObjects..." << std::endl;
 	setRect();
 }
 
 void LandmarkTracker::setRect()
 {
-
-		{
-
 		auto rectPtr = _trackedObjects[0].maybeGet<RectObject>(getCurrentFrameNumber());
 		
 		if (rectPtr != nullptr){
 			lockRect();
 			_selectorRecStart = rectPtr->getRectStart();
 			_selectorRecEnd = rectPtr->getRectEnd();
+
+			img = getCurrentImageCopy();
+			defineROI(img.get());
 		}
 		else{
-			std::cout << "No RectObejct at frame "<< getCurrentFrameNumber() << std::endl;
 			unlockRect();
-			//_selectorRecStart.x = _selectorRecStart.y = _selectorRecEnd.x = _selectorRecEnd.y = 0;
+			_glwidget->clearPixelCubes();
 		}
 		
 		emit update();
-	}
+
 }
 
 void LandmarkTracker::addRect2TrackedObj()
 {
 	_frameNr = getCurrentFrameNumber();
 	
-	std::cout << "_frameNr: " << _frameNr << std::endl;
-
 	_rectObject = std::make_shared<RectObject>(_frameNr, _selectorRecStart, _selectorRecEnd);
 	_trackedObjects.front().add(getCurrentFrameNumber(), _rectObject);
 
 	emit update();
-
 }
 
 void LandmarkTracker::lockRect()
@@ -177,6 +173,8 @@ void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 
 	_mouseMoved = true;
 
+	cv::Point mousePosition(e->x(), e->y());
+
 	if (_leftMouseHold)
 	{
 		_selectorRecEnd.x = e->x();
@@ -188,6 +186,10 @@ void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 
 	if (_rightMouseHold /*&& ctrlModifier*/ && !_lockRect)
 	{
+		// position of mouse cursor
+		if (!mousePosition.inside(cv::Rect(_rectangle)))
+			forcePointIntoBorders(mousePosition, _rectangle);
+
 		if (cv::Rect(_selectorRecStart, _selectorRecEnd).contains(cv::Point(e->x(),e->y())))
 		{
 			_mouseStop.x = e->x();
@@ -208,6 +210,13 @@ void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 
 void LandmarkTracker::mousePressEvent		( QMouseEvent * e )
 {
+	// position of mouse cursor 
+	cv::Point mousePosition(e->x(), e->y());
+
+	// restrict mouse pointer to live inside image borders only
+	if (!mousePosition.inside(cv::Rect(_rectangle)))
+		forcePointIntoBorders(mousePosition, _rectangle);
+
 	//check if left button is clicked
 	if ( e->button() == Qt::LeftButton)
 	{
@@ -239,14 +248,14 @@ void LandmarkTracker::mouseReleaseEvent	( QMouseEvent * e )
 				+ " to " +  QString::number(_selectorRecEnd.x).toStdString() + ":"+ QString::number(_selectorRecEnd.y).toStdString();
 			emit notifyGUI(note,MSGS::NOTIFICATION);
 		
+		_rectangle = cv::Rect(_selectorRecStart, _selectorRecEnd);
 		img = getCurrentImageCopy();
 		if (img && _mouseMoved) {
-
-			defineROI(img.get());
-			startTool();
-			//updateParamsWidget();
-			
 			_mouseMoved = false;
+			defineROI(img.get());
+			//updateParamsWidget();
+		
+			
 		}
 	}
 }
@@ -258,7 +267,6 @@ void LandmarkTracker::keyPressEvent(QKeyEvent *e)
 	case Qt::Key_M:
 		if (!_lockRect){
 			lockRect();
-			std::cout << "Set RectObject!" << std::endl;
 			addRect2TrackedObj();
 		}
 		break;
@@ -364,8 +372,24 @@ void LandmarkTracker::defineROI	(cv::Mat image)
 		cv::Mat roi(image, box);
 		selectedRoi = roi.clone();
 		_glwidget->roiMat = selectedRoi;
+		startTool();
 		//samplingROI(); //start Sampling (Quantization - kmeans)
 	}	
+}
+
+void LandmarkTracker::forcePointIntoBorders(cv::Point & point, cv::Rect const & borders)
+{
+	std::cout << "Force into borders..." << std::endl;
+
+	if (point.x < borders.x)
+		point.x = borders.x;
+	else if (point.x >= (borders.x + borders.width))
+		point.x = (borders.x + borders.width - 1);
+
+	if (point.y < borders.y)
+		point.y = borders.y;
+	else if (point.y >= (borders.y + borders.height))
+		point.y = (borders.y + borders.height - 1);
 }
 
 void LandmarkTracker::startTool()
@@ -382,7 +406,7 @@ cv::Mat LandmarkTracker::getSelectedRoi() //unbenutzt bis jetzt
 	return selectedRoi;
 }
 
-void LandmarkTracker::setCubeRoi()
+void LandmarkTracker::setLabelRoi()
 {
 	if (!_cubeIsRoi)
 	{
@@ -392,7 +416,7 @@ void LandmarkTracker::setCubeRoi()
 	}
 }
 
-void LandmarkTracker::setCubeSampledRoi()
+void LandmarkTracker::setLabelSampledRoi()
 {
 	if (_cubeIsRoi)
 	{
@@ -402,7 +426,7 @@ void LandmarkTracker::setCubeSampledRoi()
 	}
 }
 
-
+/*
 void LandmarkTracker::samplingROI()
 {
 #pragma warning ( disable : 4267 )
@@ -459,3 +483,4 @@ void LandmarkTracker::samplingROI()
 	//updateParamsWidget();
 
 }
+*/

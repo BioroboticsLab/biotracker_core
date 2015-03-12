@@ -23,7 +23,7 @@ public:
     void paintGL();
     void resizeGL(int w, int h);
 
-	void updateCubes();
+	void updatePixelCubes();
 
     void drawingAxes();
     void drawCube (float red, float green, float blue, float f = 25.5/2);
@@ -37,9 +37,11 @@ public:
 	//VON TOOLWINDOW ÜBERNOMMEN
 
 	void getRoiCalcMap();
+	void clearPixelCubes();
 
 	cv::Vec3b values;
 	cv::Mat roiMat;
+	cv::Mat roiDummy;
 
 	size_t rgbValue_max;
 	size_t rgbMap_size;
@@ -85,7 +87,7 @@ private:
 
 	QSize viewport_size;
 
-	void updateCube();
+	void updateRGBCube();
 
 	/******************************/
 	//VON TOOLWINDOW ÜBERNOMMEN
@@ -94,7 +96,7 @@ private:
 
 	void computeRgbMap(const cv::Mat &mat);
 	void calcHistogram(const cv::Mat &mat);
-
+	
 	map_t rgbMap;
 
 	cv::Mat roi;

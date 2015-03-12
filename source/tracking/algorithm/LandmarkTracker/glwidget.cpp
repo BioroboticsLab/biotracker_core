@@ -65,7 +65,7 @@ void GLWidget::paintGL()
     glRotatef(rotY, 0.0, 1.0, 0.0);
     glRotatef(rotZ, 0.0, 0.0, 1.0);
 
-	updateCube(); //Drawing outter cube and/or cubes
+	updateRGBCube(); //Drawing outter cube and/or cubes
 }
 
 void GLWidget::resizeGL(int w, int h)
@@ -155,9 +155,16 @@ std::ostream &operator<<(std::ostream &os, const cv::Vec3b &v)
 	return os << "(" << static_cast<unsigned>(v.val[0]) << ", " << static_cast<unsigned>(v.val[1]) << ", " << static_cast<unsigned>(v.val[2]) << ")";
 }
 
+void GLWidget::clearPixelCubes()
+{
+	rgbMap.clear();
+	updateRGBCube();
+	updateGL();
+}
 
 void GLWidget::computeRgbMap(const cv::Mat &mat)
 {
+	
 	rgbMap.clear();
 	rgbValue_max = 0;
 	
@@ -435,7 +442,7 @@ void GLWidget::drawCube (float red, float green, float blue, float f)
 	glEnd();
 }
 
-void GLWidget::updateCube()
+void GLWidget::updateRGBCube()
 {
 	drawingAxes();	//Zeichnen des äußeren Cubes
 	if (roiMat.size > 0)
