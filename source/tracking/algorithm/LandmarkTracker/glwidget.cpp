@@ -5,6 +5,7 @@
 #include "LandmarkTracker.h"
 
 
+
 // OS X puts the headers in a different location in the include path than
 // Windows and Linux, so we need to distinguish between OS X and the other
 // systems.
@@ -17,9 +18,6 @@
 #endif
 
 
-
-
-
 //OpenGL init
 
 GLWidget::GLWidget(QWidget *parent)
@@ -27,15 +25,22 @@ GLWidget::GLWidget(QWidget *parent)
     , rotX(0.5)
     , rotY(50)
     , rotZ(0)
-	, moveUpDown(-10)
+	, moveUpDown(-13)
 	, moveLeftRight(-15)
-    , zoomFactor(-90)
+    , zoomFactor(-60)
     //, parent_tw(static_cast<ToolWindow*>(parent)) //ToolWindow nicht mehr gebraucht
 {}
 
 void GLWidget::initializeGL()
 {
+	makeCurrent();
+
+	std::cout << "INIT GL..." << std::endl;
+
     glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glShadeModel(GL_SMOOTH);
     glClearDepth(10.0);
@@ -46,6 +51,9 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+	
+	makeCurrent();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
@@ -62,6 +70,8 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL(int w, int h)
 {
+	makeCurrent();
+
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -72,9 +82,6 @@ void GLWidget::resizeGL(int w, int h)
 
 	viewport_size = this -> size();
 }
-
-
-
 
 
 //Mouse & keyboard events
@@ -105,9 +112,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
 
 void GLWidget::mouseReleaseEvent(QMouseEvent * )
 {
-	std::cout << "X: " << rotX << std::endl;
-	std::cout << "Y: " << rotY << std::endl;
-	std::cout << "Z: " << rotZ << std::endl;
+	//std::cout << "X: " << rotX << std::endl;
+	//std::cout << "Y: " << rotY << std::endl;
+	//std::cout << "Z: " << rotZ << std::endl;
 }
 
 void GLWidget::wheelEvent(QWheelEvent *e)
@@ -183,24 +190,50 @@ void GLWidget::computeRgbMap(const cv::Mat &mat)
 
 void GLWidget::drawingAxes()
 {
+	makeCurrent();
+
 	//int lines = 256 / calc_f(rgbMap_size);  // ein Cube - teilen durch x -> mehr cubes
 	int lines = 256;
-	//std::cout<<"DRAWING AXES"<<std::endl;
 	
+	glShadeModel(GL_SMOOTH);
     glBegin(GL_LINES);
 
         /******draw red-axis********/
-        glColor3f(1.0f, 0.0f, 0.0f);
-            for(int y = 0; y<257; y++){
-                if(y%lines==0){
-                    for(int x = 0; x<257; x++){
-                        if(x%lines==0){
-                             glVertex3f(0.0f, float(x)/10.0f, float(y)/10.0f);
-                             glVertex3f(25.6f, float(x)/10.0f, float(y)/10.0f);
-                        }
-                    }
-                }
-            }
+	//glColor3f(1.0f, 0.0f, 0.0f);
+		for(int y = 0; y<257; y++){
+			if(y%lines==0){
+				for(int x = 0; x<257; x++){
+					if(x%lines==0){
+						if (y == 0){
+							if (x == 0){
+								colorStart = vec3f{ { 0.0f, 0.0f, 0.0f } }; //black
+								colorEnd = vec3f{ { 255.0f, 0.0f, 0.0f } }; //red
+							}
+							else{
+								colorStart = vec3f{ { 0.0f, 255.0f, 0.0f } }; //green
+								colorEnd = vec3f{ { 255.0f, 255.0f, 0.0f } }; //yellow
+							}
+						}
+						else{
+							if (x == 0){
+								colorStart = vec3f{ { 0.0f, 0.0f, 255.0f } }; //blue
+								colorEnd = vec3f{ { 255.0f, 0.0f, 255.0f } }; //pink
+							}
+							else{
+								colorStart = vec3f{ { 0.0f, 255.0f, 255.0f } }; //blue-green
+								colorEnd = vec3f{ { 255.0f, 255.0f, 255.0f } }; //white
+							}
+						}
+						glColor3fv(colorStart.data());
+						glVertex3f(0.0f, float(x) / 10.0f, float(y) / 10.0f);
+						glColor3fv(colorEnd.data());
+						glVertex3f(25.6f, float(x) / 10.0f, float(y) / 10.0f);
+					}
+				}
+			}
+		}
+
+
 
         /******draw green-axis********/
         glColor3f(0.0f, 1.0f, 0.0f);
@@ -208,8 +241,30 @@ void GLWidget::drawingAxes()
                 if(w%lines==0){
                     for(int u = 0; u<257; u++){
                         if(u%lines==0){
-                            glVertex3f(float(w)/10.0f, 0.0f, float(u)/10.0f);
-                            glVertex3f(float(w)/10.0f, 25.6f, float(u)/10.0f);
+							if (w == 0){
+								if (u == 0){
+									colorStart = vec3f{ { 0.0f, 0.0f, 0.0f } }; //black
+									colorEnd = vec3f{ { 0.0f, 255.0f, 0.0f } }; //green
+								}
+								else{
+									colorStart = vec3f{ { 0.0f, 0.0f, 255.0f } }; //blue
+									colorEnd = vec3f{ { 0.0f, 255.0f, 255.0f } }; //blue-green
+								}
+							}
+							else{
+								if (u == 0){
+									colorStart = vec3f{ { 255.0f, 0.0f, 0.0f } }; //red
+									colorEnd = vec3f{ { 255.0f, 255.0f, 0.0f } }; //red-green (yellow)
+								}
+								else{
+									colorStart = vec3f{ { 255.0f, 0.0f, 255.0f } }; //red-blue
+									colorEnd = vec3f{ { 255.0f, 255.0f, 255.0f } }; //white
+								}
+							}
+							glColor3fv(colorStart.data());
+							glVertex3f(float(w)/10.0f, 0.0f, float(u)/10.0f);
+							glColor3fv(colorEnd.data());
+							glVertex3f(float(w)/10.0f, 25.6f, float(u)/10.0f);
                         }
                     }
                 }
@@ -221,7 +276,29 @@ void GLWidget::drawingAxes()
                 if(v%lines==0){
                     for(int z = 0; z<257; z++){
                         if(z%lines==0){
+							if (v == 0){
+								if (z == 0){
+									colorStart = vec3f{ { 0.0f, 0.0f, 0.0f } }; //black
+									colorEnd = vec3f{ { 0.0f, 0.0f, 255.0f } }; //blue
+								}
+								else{
+									colorStart = vec3f{ { 0.0f, 255.0f, 0.0f } }; //green
+									colorEnd = vec3f{ { 0.0f, 255.0f, 255.0f } }; //blue-green
+								}
+							}
+							else{
+								if (z == 0){
+									colorStart = vec3f{ { 255.0f, 0.0f, 0.0f } }; //red
+									colorEnd = vec3f{ { 255.0f, 0.0f, 255.0f } }; //red-blue
+								}
+								else{
+									colorStart = vec3f{ { 255.0f, 255.0f, 0.0f } }; //red-green
+									colorEnd = vec3f{ { 255.0f, 255.0f, 255.0f } }; //white
+								}
+							}
+							glColor3fv(colorStart.data());
                             glVertex3f(float(v)/10.0f, float(z)/10.0f, 0.0f);
+							glColor3fv(colorEnd.data());
                             glVertex3f(float(v)/10.0f, float(z)/10.0f, 25.6f);
                         }
                     }
@@ -252,6 +329,7 @@ float GLWidget::cube_size(float div_factor, int pixel_count)
 
 void GLWidget::drawingCubes()
 {
+	
 	for (const auto &p : getRGBMap())
 	{
 		drawCube(float(p.first.val[2]) / 10, float(p.first.val[1]) / 10, float(p.first.val[0]) / 10, cube_size(calc_f(rgbMap_size), static_cast<int>(p.second)));
@@ -269,12 +347,13 @@ void GLWidget::drawingCubes()
 
 void GLWidget::drawCube (float red, float green, float blue, float f)
 {
+	makeCurrent();
 	//std::cout << "Draw Cube: " << red << ", " << green << ", " << blue << " | " << " f: " << f << std::endl;
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-     glBegin(GL_QUADS);
-         glColor3f(red/25.5f,green/25.5f,blue/25.5f);
+	//FILLED CUBE
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glBegin(GL_QUADS);
+		glColor4f(red/25.5f,green/25.5f,blue/25.5f, 1.0f);
 
 			// Front Face
 			glVertex3f(red, green,  blue+f);
@@ -282,7 +361,6 @@ void GLWidget::drawCube (float red, float green, float blue, float f)
 			glVertex3f(red+f, green+f ,  blue+f );
 			glVertex3f(red+f, green,  blue+f );
 			
-
            // Back Face
            glVertex3f(red, green,  blue);
            glVertex3f(red, green+f ,  blue);
@@ -312,7 +390,49 @@ void GLWidget::drawCube (float red, float green, float blue, float f)
            glVertex3f(red, green,  blue);
 		   glVertex3f(red, green,  blue+f );
 		   
-    glEnd();	 
+    glEnd();	
+
+	//WIREFRAME AROUND CUBE
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glBegin(GL_QUADS);
+		glColor4f(red / 25.5f, green / 25.5f, blue / 25.5f, 0.7f);
+
+			// Front Face
+			glVertex3f(red, green, blue + f);
+			glVertex3f(red, green + f, blue + f);
+			glVertex3f(red + f, green + f, blue + f);
+			glVertex3f(red + f, green, blue + f);
+
+			// Back Face
+			glVertex3f(red, green, blue);
+			glVertex3f(red, green + f, blue);
+			glVertex3f(red + f, green + f, blue);
+			glVertex3f(red + f, green, blue);
+
+			// Top Face
+			glVertex3f(red, green + f, blue);
+			glVertex3f(red, green + f, blue + f);
+			glVertex3f(red + f, green + f, blue + f);
+			glVertex3f(red + f, green + f, blue);
+			// Bottom Face
+			glVertex3f(red, green, blue);
+			glVertex3f(red, green, blue + f);
+			glVertex3f(red + f, green, blue + f);
+			glVertex3f(red + f, green, blue);
+
+			// Right face
+			glVertex3f(red + f, green + f, blue + f);
+			glVertex3f(red + f, green + f, blue);
+			glVertex3f(red + f, green, blue);
+			glVertex3f(red + f, green, blue + f);
+
+			// Left Face
+			glVertex3f(red, green + f, blue + f);
+			glVertex3f(red, green + f, blue);
+			glVertex3f(red, green, blue);
+			glVertex3f(red, green, blue + f);
+
+	glEnd();
 }
 
 void GLWidget::updateCube()
@@ -321,9 +441,8 @@ void GLWidget::updateCube()
 	if (roiMat.size > 0)
 	{
 		drawingCubes(); //Zeichnen der Pixel als Cubes
-	}	
+	}
 }
-
 
 /*********************************************************************************/
 
@@ -331,18 +450,10 @@ void GLWidget::getRoiCalcMap()
 {
 	std::cout << "ROI loaded..." << std::endl;
 
-	/**** selected in GUI ****/
-
-	//roiMat = tracker->getSelectedRoi();
-	//imshow("roiMat", roiMat); //show ROI in new window
-
 	/**** hardcoded picture ****/
 	//roiMat = cv::imread("C:\\Users\\adam\\Downloads\\RGB_9PIXEL_3SAME.bmp");
 	//roiMat = cv::imread("C:\\Users\\adam\\Downloads\\RGB_3PIXEL.bmp");
 	//roiMat = cv::imread("C:\\Users\\adam\\Downloads\\APM_2_5_MOTORS_QUAD_enc.jpg");
-
-	//Set to Qlable in old ToolWindow
-	//ui.roiOne->setPixmap(Mat2QPixmap(roiMat).scaled(ui.roiOne->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
 
 	computeRgbMap(roiMat);
 	updateGL();

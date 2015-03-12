@@ -8,7 +8,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <map>
-#include "LandmarkTracker.h"
+#include <array>
 
 class LandmarkTracker;
 
@@ -37,7 +37,6 @@ public:
 	//VON TOOLWINDOW ÜBERNOMMEN
 
 	void getRoiCalcMap();
-	void info();
 
 	cv::Vec3b values;
 	cv::Mat roiMat;
@@ -59,6 +58,14 @@ public:
 
 	typedef std::map<const cv::Vec3b, size_t, Vec3bCompare> map_t;
 
+	using vec3f = std::array < GLfloat, 3 > ;
+
+	vec3f colorStart;
+	vec3f colorEnd;
+	
+
+	
+
 	const map_t &getRGBMap() const
 	{
 		return rgbMap;
@@ -77,8 +84,6 @@ private:
 	GLfloat zoomFactor;
 
 	QSize viewport_size;
-
-	//const ToolWindow * const parent_tw; //ToolWindow unnötig
 
 	void updateCube();
 
