@@ -10,24 +10,31 @@
 #include <opencv2/opencv.hpp>
 
 #include "source/settings/Messages.h"
+#include "source/video/TextureObject.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
 class VideoView : public QGLWidget
 {
 	Q_OBJECT
 public:
-	VideoView(QWidget *parent = nullptr);	
+    VideoView(QWidget *parent = nullptr);
+    ~VideoView();
 	void showImage(cv::Mat img);
 	void updateDisplay();
 	void takeScreenshot(QString screenShotFilename);
-
 	float getCurrentZoomLevel() const { return _screenPicRatio + _zoomFactor; }
+
+    friend class ProxyPaintObject;
 
 protected:
 	void initializeGL(); 
-	void paintGL(); 
+    //void paintGL();
+    void paintEvent(QPaintEvent *);
 	void resizeGL(int width, int height);
-	QPoint unprojectScreenPos(QPoint mouseCoord);
+    // unproject Point from window coordinates to picture coordinates
+    QPoint unprojectScreenPos(QPoint mouseCoords);
+    // project Point from picture coordinates to window coordinates
+    QPoint projectPicturePos(QPoint pictureCoords);
 	void keyPressEvent(QKeyEvent *e) override;
 	void mouseMoveEvent(QMouseEvent * e) override;
 	void mousePressEvent(QMouseEvent * e) override;
@@ -35,15 +42,12 @@ protected:
 	void wheelEvent(QWheelEvent * e) override;
 
 private:
-	GLuint _texture; 
-	QVector<QVector2D> _vertices;
-	QVector<QVector2D> _texCoords;
 	cv::Mat _displayImage;
-	std::shared_ptr<TrackingAlgorithm> _tracker;
+    std::unique_ptr<TextureObject> _textureObj;
+	std::shared_ptr<TrackingAlgorithm> _tracker;    
 	bool _isPanZoomMode;
 	int _currentWidth;
 	int _currentHeight;
-	void createTexture(cv::Mat image);
 
 	/**
 	* Modified by user input. 
@@ -53,7 +57,6 @@ private:
 	float _zoomFactor;
 	/* ratio of window size to picture size */
 	float _screenPicRatio;
-
 	float _panX;
 	float _panY;
 	bool _isPanning;
@@ -61,7 +64,6 @@ private:
 	std::chrono::system_clock::time_point _lastPannedTime;
 	std::chrono::system_clock::time_point _lastZoomedTime;
 	QPoint _lastZoomedPoint;
-
 	TrackingAlgorithm::View _selectedView;
 
 public slots:

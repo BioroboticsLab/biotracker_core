@@ -45,8 +45,9 @@ void BeesBookTagMatcher::track(ulong /* frameNumber */, cv::Mat & img/* frame */
 	setNumTags();
 }
 
-void BeesBookTagMatcher::paint(cv::Mat& image, const View&)
+void BeesBookTagMatcher::paint(ProxyPaintObject& p, const View&)
 {
+    auto &image = p.getmat();
 	if (!_trackedObjects.empty() || _activeGrid)
 	{
 		drawTags(image);
