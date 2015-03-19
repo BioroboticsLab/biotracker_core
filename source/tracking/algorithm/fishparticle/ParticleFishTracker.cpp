@@ -185,7 +185,9 @@ void ParticleFishTracker::seedParticles(size_t num_particles, int min_x, int min
 /**
 * Draws the result of the tracking for the current frame.
 */
-void ParticleFishTracker::paint(cv::Mat& image, const View&) {
+void ParticleFishTracker::paint(ProxyPaintObject& p, const View&) {
+    auto &image = p.getmat();
+
 	//dont paint if we want to see original image
 	if(_showOriginal)
 		return;

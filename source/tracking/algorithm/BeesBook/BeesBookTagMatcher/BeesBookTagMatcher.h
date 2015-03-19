@@ -133,7 +133,7 @@ public:
 	~BeesBookTagMatcher();
 
 	void track(ulong frameNumber, cv::Mat& frame) override;
-	void paint(cv::Mat& image, View const& view = OriginalView) override;
+    void paint(ProxyPaintObject&, View const& view = OriginalView) override;
 	void reset() override {}
 	void postLoad() override;
 

@@ -42,15 +42,17 @@ LandmarkTracker::LandmarkTracker(Settings & settings, QWidget *parent)
 	}
 }
 
+
 void LandmarkTracker::track(ulong /* frameNumber */, cv::Mat & /* frame */)
 {
 	setRect();
 }
 
 
-void LandmarkTracker::paint	(cv::Mat& image , const View&)
+void LandmarkTracker::paint	(ProxyPaintObject& p  , const View&)
 {
 	
+auto &image = p.getmat();
 	if(_showSelectorRec)
 	{
 		drawRectangle(image);
@@ -167,7 +169,7 @@ QPixmap LandmarkTracker::mat2QPixmap(const cv::Mat &mat)
 */
 void LandmarkTracker::mouseMoveEvent		( QMouseEvent * e )
 {
-	const bool ctrlModifier = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+    //const bool ctrlModifier = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
 	const bool _leftMouseHold = QApplication::mouseButtons().testFlag(Qt::LeftButton);
 	const bool _rightMouseHold = QApplication::mouseButtons().testFlag(Qt::RightButton);
 

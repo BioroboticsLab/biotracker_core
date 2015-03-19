@@ -53,6 +53,7 @@ void TrackingThread::loadVideo(const std::string &filename)
 
 void TrackingThread::loadPictures(const std::vector<std::string> &&filenames)
 {
+    MutexLocker lock(_readyForNexFrameMutex);
 	_mediaType = MediaType::Images;
 	_pictureFiles = std::move(filenames);
 	_fps = 1;
