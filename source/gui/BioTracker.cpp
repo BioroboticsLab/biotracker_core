@@ -178,7 +178,7 @@ void BioTracker::initPlayback()
 
 	switch (_mediaType) {
     case MediaType::Images:
-		_trackingThread->loadPictures(_settings.getVectorOfParam<std::string>(PICTUREPARAM::PICTURE_FILES));
+		_trackingThread->loadPictures(_settings.getValueOfParam<std::vector<std::string>>(PICTUREPARAM::PICTURE_FILES));
         break;
     case MediaType::Video:
 		_trackingThread->loadVideo(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE));
@@ -253,7 +253,7 @@ void BioTracker::browsePicture()
 			filenamevec.push_back(file.toStdString());
 		}
 		_mediaType = MediaType::Images;
-		_settings.setParamVector<std::string>(PICTUREPARAM::PICTURE_FILES, std::move(filenamevec));
+		_settings.setParam<std::string>(PICTUREPARAM::PICTURE_FILES, std::move(filenamevec));
 		_settings.setParam(GUIPARAM::MEDIA_TYPE, MediaType::Images);
 		initPlayback();
 	}
@@ -386,7 +386,7 @@ boost::optional<std::vector<std::string>> BioTracker::getOpenFiles() const
 	boost::optional<std::vector<std::string>> filename;
 	switch (_mediaType) {
 	case MediaType::Images:
-		filename = _settings.getVectorOfParam<std::string>(PICTUREPARAM::PICTURE_FILES);
+		filename = _settings.getValueOfParam<std::vector<std::string>>(PICTUREPARAM::PICTURE_FILES);
 		break;
 	case MediaType::Video:
 		filename = std::vector<std::string>();
