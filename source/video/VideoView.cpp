@@ -333,11 +333,11 @@ void VideoView::mouseMoveEvent( QMouseEvent * e )
 		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
 			if(_isPanning)
 			{
-				int dX = e->x() - _lastMPos[0];
-				int dY = e->y() - _lastMPos[1];
+                float dX = e->x() - _lastMPos[0];
+                float dY = e->y() - _lastMPos[1];
 				_lastMPos[0] = e->x();
 				_lastMPos[1] = e->y();
-				_panX -= dX * (_screenPicRatio+_zoomFactor);
+                _panX -= dX * (_screenPicRatio+_zoomFactor);
 				_panY -= dY * (_screenPicRatio+_zoomFactor);
 				resizeGL(this->width(), this->height());
 				//Draw the scene               
@@ -414,14 +414,14 @@ void VideoView::wheelEvent( QWheelEvent * e )
 			//when we zoomed only recently, center zoom to same spot again
 			if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() < 500)
 			{
-				_panX = _lastZoomedPoint.x() - ((this->width()*(_screenPicRatio + _zoomFactor)) / 2);
-				_panY = _lastZoomedPoint.y() - ((this->height()*(_screenPicRatio + _zoomFactor)) / 2);
+                _panX = static_cast<float>(_lastZoomedPoint.x()) - ((static_cast<float>(this->width())*(_screenPicRatio + _zoomFactor)) / 2);
+                _panY = static_cast<float>(_lastZoomedPoint.y()) - ((static_cast<float>(this->height())*(_screenPicRatio + _zoomFactor)) / 2);
 			}
 			else
 			{ 			
 				// adjust _panX and _panY, so that zoom is centered on mouse cursor
-				_panX = picturePos.x() - ((this->width()*(_screenPicRatio + _zoomFactor)) / 2);				
-				_panY = picturePos.y() - ((this->height()*(_screenPicRatio + _zoomFactor)) / 2);
+                _panX = static_cast<float>(picturePos.x()) - ((static_cast<float>(this->width())*(_screenPicRatio + _zoomFactor)) / 2);
+                _panY = static_cast<float>(picturePos.y()) - ((static_cast<float>(this->height())*(_screenPicRatio + _zoomFactor)) / 2);
 				_lastZoomedPoint = picturePos;
 			}
 			_lastZoomedTime = std::chrono::system_clock::now();
