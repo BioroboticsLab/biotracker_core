@@ -27,10 +27,9 @@ public:
     friend class ProxyPaintObject;
 
 protected:
-	void initializeGL(); 
-    //void paintGL();
-    void paintEvent(QPaintEvent *);
-	void resizeGL(int width, int height);
+	void initializeGL() override;
+	void paintEvent(QPaintEvent *) override;
+	void resizeGL(int width, int height) override;
     // unproject Point from window coordinates to picture coordinates
     QPoint unprojectScreenPos(QPoint mouseCoords);
     // project Point from picture coordinates to window coordinates
