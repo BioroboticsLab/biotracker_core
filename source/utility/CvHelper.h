@@ -40,4 +40,20 @@ namespace CvHelper
 	{
 		return QPoint( point.x, point.y );
 	}
+
+	/**
+	 * @see: http://en.cppreference.com/w/cpp/algorithm/lexicographical_compare
+	 */
+	struct cv_vec_compare_less_lexicographically
+	{
+		template<typename CV_VEC>
+		bool operator()(const CV_VEC &lhs, const CV_VEC &rhs) const {
+			for (size_t i = 0; i < CV_VEC::channels; ++i) {
+				if (lhs[i] < rhs[i]) { return true;  }
+				if (rhs[i] < lhs[i]) { return false; }
+			}
+			return false;
+		}
+	};
+
 }
