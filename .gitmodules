@@ -1,3 +1,0 @@
-[submodule "source/tracking/algorithm/BeesBook/BeesBookImgAnalysisTracker"]
-	path = source/tracking/algorithm/BeesBook
-	url = git@maserati.mi.fu-berlin.de:beesbook-img-tracker
