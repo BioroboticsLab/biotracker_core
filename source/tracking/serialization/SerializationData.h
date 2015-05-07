@@ -32,10 +32,10 @@ public:
 	std::vector<TrackedObject> const& getTrackedObjects() const { return _trackedObjects; }
 
 private:
-	const std::string _trackerType;
-	const std::string _fileSha1Hash;
-	const std::vector<std::string> _filenames;
-	const std::vector<TrackedObject> _trackedObjects;
+	 std::string _trackerType;
+	 std::string _fileSha1Hash;
+	 std::vector<std::string> _filenames;
+	 std::vector<TrackedObject> _trackedObjects;
 
 	friend class cereal::access;
 	template <class Archive>
