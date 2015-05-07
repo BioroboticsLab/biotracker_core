@@ -13,7 +13,7 @@ public:
 	ColorPatchTracker(Settings& settings, QWidget *parent);
 	~ColorPatchTracker(void);
 	void track(ulong frameNumber, cv::Mat & frame) override;
-    void paint(ProxyPaintObject&, View const& view = OriginalView) override;
+	void paint(cv::Mat& image, View const& view = OriginalView) override;
 	void reset() override;
 };
 

@@ -25,12 +25,9 @@ class BioTracker: public QMainWindow
 {
 	Q_OBJECT
 
-
-public:    
+public:
 	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
 	~BioTracker();
-
-
 public slots:
 	// open file browser for video in/out
 	void browseVideo();
@@ -88,7 +85,6 @@ public slots:
 	void changeCurrentFramebySlider();
 	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
-    void changeCurrentFramebySignal(int frameNumber);
 
 	void takeScreenshot();
 
@@ -103,8 +99,14 @@ private:
 
 	Settings& _settings;
 	std::unique_ptr<TrackingThread> _trackingThread;
-    GUIPARAM::VideoMode _videoMode;
-    void setVideoMode(GUIPARAM::VideoMode vidMode);
+
+	enum class VideoMode : uint8_t {
+		Playing = 0,
+		Paused,
+		Stopped,
+		Init
+	};
+	VideoMode _videoMode;
 
 	GUIPARAM::MediaType _mediaType;
 
@@ -121,7 +123,7 @@ private:
 	void initPlayback();
 	void initAlgorithmList();
 	void connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker);
-    void setPlayfieldEnabled(bool enabled);
+	void setPlayfieldEnabled(bool enabled);
 
 	void loadTrackingData(std::string const& filename);
 	void storeTrackingData(std::string const& filename);
