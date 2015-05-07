@@ -15,6 +15,7 @@ target_link_libraries(BioTracker
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
+    ${Boost_LIBRARIES}
 )
 
 # automatic copy of required dlls to install prefix for windows
