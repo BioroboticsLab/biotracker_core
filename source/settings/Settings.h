@@ -4,9 +4,19 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include <type_traits>
+
 #include "../utility/stringTools.h" // (un)escape_non_ascii
 #include "StringTranslator.h"
 #include "ParamNames.h"
+
+namespace {
+template<typename Test, template<typename...> class Ref>
+struct is_specialization : std::false_type {};
+
+template<template<typename...> class Ref, typename... Args>
+struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
+}
 
 class Settings
 {
@@ -38,10 +48,12 @@ public:
 	 * @param paramVector vector of values of the parameter,
 	 */
 	template <typename T>
-	void setParamVector(std::string const& paramName, std::vector<T>&& paramVector) {
+	void setParam(std::string const& paramName, std::vector<T>&& paramVector) {
 		boost::property_tree::ptree subtree;
 		for (T & value : paramVector) {
-			subtree.push_back(std::make_pair("", boost::property_tree::ptree(preprocess_value(std::move(value)))));
+			boost::property_tree::ptree valuetree;
+			valuetree.put("", value);
+			subtree.push_back(std::make_pair("", valuetree));
 		}
 		_ptree.put_child(paramName, subtree);
 		boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
@@ -53,20 +65,25 @@ public:
 	 * @return the value of the parameter as the specified type.
 	 */
 	template <typename T>
-	T getValueOfParam(const std::string &paramName) const {
+	typename std::enable_if<!is_specialization<T, std::vector>::value, T>::type
+	getValueOfParam(const std::string &paramName) const {
 		return postprocess_value(_ptree.get<T>(paramName));
 	}
 
 	/**
 	 * Gets the vector of values provided by parameter name.
+	 *
+	 * Throws an boost exception if parameter does not exist.
+	 *
 	 * @param paramName the parameter name,
 	 * @return the vector of values of the parameter with the specified type.
 	 */
 	template <typename T>
-	std::vector<T> getVectorOfParam(const std::string &paramName) const {
-		std::vector<T> result;
+	typename std::enable_if<is_specialization<T, std::vector>::value, T>::type
+	getValueOfParam(const std::string &paramName) const {
+		T result;
 		for (auto& item : _ptree.get_child(paramName)) {
-			result.push_back( postprocess_value(item.second.get_value<T>()) );
+			result.push_back(postprocess_value(item.second.get_value<typename T::value_type>()));
 		}
 		return result;
 	}
