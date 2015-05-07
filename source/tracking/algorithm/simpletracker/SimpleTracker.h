@@ -20,7 +20,7 @@ public:
 
 	void track (ulong frameNumber, cv::Mat& frame) override;
 	void reset () override;
-    void paint (ProxyPaintObject&, View const& view = OriginalView) override;
+	void paint (cv::Mat& image, View const& view = OriginalView) override;
 
 private:
 	cv::BackgroundSubtractorMOG2 _bg_subtractor;

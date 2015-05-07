@@ -16,5 +16,5 @@ ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
 void ColorPatchTracker::track(ulong, cv::Mat &){}
-void ColorPatchTracker::paint		(ProxyPaintObject&, const View&){}
+void ColorPatchTracker::paint		(cv::Mat& , const View&){}
 void ColorPatchTracker::reset		(){}

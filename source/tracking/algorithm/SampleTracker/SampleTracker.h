@@ -15,11 +15,12 @@ class SampleTracker : public TrackingAlgorithm
 private:
     std::shared_ptr<QFrame> _paramsFrame;
     std::shared_ptr<QFrame> _toolsFrame;
-    QPointF _selectorRecStart;
-    QPointF _selectorRecEnd;
-    void drawRectangle(QPainter *painter);
+    cv::Point _selectorRecStart;
+	cv::Point _selectorRecEnd;
 	bool _showSelectorRec;
 	bool _showOriginal;
+	void drawRectangle(cv::Mat image);
+	void forcePointIntoPicture(cv::Point & point, cv::Mat & image);
     std::vector<TrackedObject> _trackedObjects;
     void initParamsFrame();
     void initToolsFrame();
@@ -40,23 +41,20 @@ private:
 	QLineEdit *_highVEdit;
 
 	QPushButton *_colorBut;
-    std::string _currentView;
-    bool _imageChanged;
+	QPushButton *_modeBut;
 
 public:
     SampleTracker	( Settings & settings, QWidget *parent );
 
     void track ( ulong frameNumber, cv::Mat & frame ) override;
-    void paint (ProxyPaintObject&,View const& view = OriginalView) override;
-    void paintOverlay(QPainter * painter) override;
+	void paint ( cv::Mat& image, View const& view = OriginalView ) override;
 	void reset ( ) override;
-    void postConnect() override;
-
     std::shared_ptr<QWidget> getParamsWidget () override;
-    std::shared_ptr<QWidget> getToolsWidget	() override;    
+    std::shared_ptr<QWidget> getToolsWidget	() override;
 
 public slots:
     void changeFilterColor();
+    void switchMode();
 private:
 	//mouse click and move events
 	void mouseMoveEvent(QMouseEvent * e) override;

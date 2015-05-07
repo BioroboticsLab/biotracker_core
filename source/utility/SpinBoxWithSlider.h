@@ -50,10 +50,6 @@ public:
 		return m_spinbox.value();
 	}
 
-	void setValue(const int value) {
-		m_spinbox.setValue(value);
-	}
-
 	virtual ~SpinBoxWithSlider() override = default;
 
 private slots:

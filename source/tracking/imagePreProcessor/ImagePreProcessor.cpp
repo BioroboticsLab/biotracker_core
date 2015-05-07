@@ -16,9 +16,9 @@ ImagePreProcessor::ImagePreProcessor(Settings &settings) :
 void ImagePreProcessor::init()
 {
     _pMOG = std::make_unique<cv::BackgroundSubtractorMOG2>(
-		_settings.getValueOfParam<int>(PREPROCESSORPARAM::BG_MOG2_HISTORY),
-		_settings.getValueOfParam<float>(PREPROCESSORPARAM::BG_MOG2_VAR_THRESHOLD),
-		_settings.getValueOfParam<bool>(PREPROCESSORPARAM::BG_MOG2_SHADOW_DETECTION));
+        _settings.getValueOfParam<int>(PREPROCESSORPARAM::BG_MOG2_HISTORY),
+        _settings.getValueOfParam<float>(PREPROCESSORPARAM::BG_MOG2_VAR_THRESHOLD),
+        _settings.getValueOfParam<bool>(PREPROCESSORPARAM::BG_MOG2_SHADOW_DETECTION));
 }
 
 cv::Mat ImagePreProcessor::binarize(cv::Mat image)
