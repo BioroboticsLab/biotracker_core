@@ -30,8 +30,6 @@
 #ifndef CEREAL_TYPES_BASE_CLASS_HPP_
 #define CEREAL_TYPES_BASE_CLASS_HPP_
 
-#include <cereal/details/traits.hpp>
-
 namespace cereal
 {
   //! Casts a derived class to its non-virtual base class in a way that safely supports abstract classes
@@ -69,12 +67,12 @@ namespace cereal
       };
       @endcode */
   template<class Base>
-    struct base_class : private traits::detail::BaseCastBase
+    struct base_class
     {
       template<class Derived>
         base_class(Derived const * derived) :
           base_ptr(const_cast<Base*>(static_cast<Base const *>(derived)))
-      { static_assert( std::is_base_of<Base, Derived>::value, "Can only use base_class on a valid base class" ); }
+      { }
 
         Base * base_ptr;
     };
@@ -149,12 +147,12 @@ namespace cereal
      }
      @endcode */
   template<class Base>
-    struct virtual_base_class : private traits::detail::BaseCastBase
+    struct virtual_base_class
     {
       template<class Derived>
         virtual_base_class(Derived const * derived) :
           base_ptr(const_cast<Base*>(static_cast<Base const *>(derived)))
-      { static_assert( std::is_base_of<Base, Derived>::value, "Can only use base_class on a valid base class" ); }
+      { }
 
         Base * base_ptr;
     };

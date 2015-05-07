@@ -56,12 +56,6 @@ namespace cereal
 
     //! The name given to the root node in a cereal xml archive
     static const char * CEREAL_XML_STRING = CEREAL_XML_STRING_VALUE;
-
-    //! Returns true if the character is whitespace
-    inline bool isWhitespace( char c )
-    {
-      return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-    }
   }
 
   // ######################################################################
@@ -93,7 +87,7 @@ namespace cereal
       is accomplished through the cereal::SizeTag object, which will also add an attribute
       to its parent field.
       \ingroup Archives */
-  class XMLOutputArchive : public OutputArchive<XMLOutputArchive>, public traits::TextArchive
+  class XMLOutputArchive : public OutputArchive<XMLOutputArchive>
   {
     public:
       /*! @name Common Functionality
@@ -202,7 +196,7 @@ namespace cereal
         const auto nameString = itsNodes.top().getValueName();
 
         // allocate strings for all of the data in the XML object
-        auto namePtr = itsXML.allocate_string( nameString.data(), nameString.length() + 1 );
+        auto namePtr = itsXML.allocate_string( nameString.data(), nameString.size() );
 
         // insert into the XML
         auto node = itsXML.allocate_node( rapidxml::node_element, namePtr, nullptr, nameString.size() );
@@ -232,19 +226,8 @@ namespace cereal
         itsOS.clear(); itsOS.seekp( 0, std::ios::beg );
         itsOS << value << std::ends;
 
-        const auto strValue = itsOS.str();
-
-        // If the first or last character is a whitespace, add xml:space attribute
-        // the string always contains a '\0' added by std::ends, so the last character is at len-2 and an 'empty' 
-        // string has a length of 1 or lower
-        const auto len = strValue.length();
-        if ( len > 1 && ( xml_detail::isWhitespace( strValue[0] ) || xml_detail::isWhitespace( strValue[len - 2] ) ) )
-        {
-          itsNodes.top().node->append_attribute( itsXML.allocate_attribute( "xml:space", "preserve" ) );
-        }
-
         // allocate strings for all of the data in the XML object
-        auto dataPtr = itsXML.allocate_string( itsOS.str().c_str(), itsOS.str().length() + 1 );
+        auto dataPtr = itsXML.allocate_string( itsOS.str().c_str() );
 
         // insert into the XML
         itsNodes.top().node->append_node( itsXML.allocate_node( rapidxml::node_data, nullptr, dataPtr ) );
@@ -273,7 +256,7 @@ namespace cereal
         const auto nameString = util::demangledName<T>();
 
         // allocate strings for all of the data in the XML object
-        auto namePtr = itsXML.allocate_string( nameString.data(), nameString.length() + 1 );
+        auto namePtr = itsXML.allocate_string( nameString.data(), nameString.size() );
 
         itsNodes.top().node->append_attribute( itsXML.allocate_attribute( "type", namePtr ) );
       }
@@ -365,7 +348,7 @@ namespace cereal
       @endcode
 
       \ingroup Archives */
-  class XMLInputArchive : public InputArchive<XMLInputArchive>, public traits::TextArchive
+  class XMLInputArchive : public InputArchive<XMLInputArchive>
   {
     public:
       /*! @name Common Functionality
@@ -384,7 +367,7 @@ namespace cereal
         try
         {
           itsData.push_back('\0'); // rapidxml will do terrible things without the data being null terminated
-          itsXML.parse<rapidxml::parse_trim_whitespace | rapidxml::parse_no_data_nodes | rapidxml::parse_declaration_node>( reinterpret_cast<char *>( itsData.data() ) );
+          itsXML.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_declaration_node>( reinterpret_cast<char *>( itsData.data() ) );
         }
         catch( rapidxml::parse_error const & )
         {
@@ -478,13 +461,6 @@ namespace cereal
         itsNodes.top().name = nullptr;
       }
 
-      //! Retrieves the current node name
-      //! will return @c nullptr if the node does not have a name
-      const char * getNodeName() const
-      {
-        return itsNodes.top().node->name();
-      }
-
       //! Sets the name for the next node created with startNode
       void setNextName( const char * name )
       {
@@ -492,78 +468,51 @@ namespace cereal
       }
 
       //! Loads a bool from the current top node
-      template <class T, traits::EnableIf<std::is_unsigned<T>::value,
-                                          std::is_same<T, bool>::value> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_unsigned<T>::value && std::is_same<T, bool>::value, void>::type
+      loadValue( T & value )
       {
         std::istringstream is( itsNodes.top().node->value() );
         is.setf( std::ios::boolalpha );
         is >> value;
       }
 
-      //! Loads a char (signed or unsigned) from the current top node
-      template <class T, traits::EnableIf<std::is_integral<T>::value,
-                                          !std::is_same<T, bool>::value,
-                                          sizeof(T) == sizeof(char)> = traits::sfinae> inline
-      void loadValue( T & value )
-      {
-        value = *reinterpret_cast<T*>( itsNodes.top().node->value() );
-      }
-
-      //! Load an int8_t from the current top node (ensures we parse entire number)
-      void loadValue( int8_t & value )
-      {
-        int32_t val; loadValue( val ); value = static_cast<int8_t>( val );
-      }
-
-      //! Load a uint8_t from the current top node (ensures we parse entire number)
-      void loadValue( uint8_t & value )
-      {
-        uint32_t val; loadValue( val ); value = static_cast<uint8_t>( val );
-      }
-
       //! Loads a type best represented as an unsigned long from the current top node
-      template <class T, traits::EnableIf<std::is_unsigned<T>::value,
-                                          !std::is_same<T, bool>::value,
-                                          !std::is_same<T, unsigned char>::value,
-                                          sizeof(T) < sizeof(long long)> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_unsigned<T>::value && !std::is_same<T, bool>::value && sizeof(T) < sizeof(long long), void>::type
+      loadValue( T & value )
       {
         value = static_cast<T>( std::stoul( itsNodes.top().node->value() ) );
       }
 
       //! Loads a type best represented as an unsigned long long from the current top node
-      template <class T, traits::EnableIf<std::is_unsigned<T>::value,
-                                          !std::is_same<T, bool>::value,
-                                          sizeof(T) >= sizeof(long long)> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_unsigned<T>::value && !std::is_same<T, bool>::value && sizeof(T) >= sizeof(long long), void>::type
+      loadValue( T & value )
       {
         value = static_cast<T>( std::stoull( itsNodes.top().node->value() ) );
       }
 
       //! Loads a type best represented as an int from the current top node
-      template <class T, traits::EnableIf<std::is_signed<T>::value,
-                                          !std::is_same<T, char>::value,
-                                          sizeof(T) <= sizeof(int)> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_signed<T>::value && sizeof(T) <= sizeof(int), void>::type
+      loadValue( T & value )
       {
         value = static_cast<T>( std::stoi( itsNodes.top().node->value() ) );
       }
 
       //! Loads a type best represented as a long from the current top node
-      template <class T, traits::EnableIf<std::is_signed<T>::value,
-                                          (sizeof(T) > sizeof(int)),
-                                          sizeof(T) <= sizeof(long)> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_signed<T>::value && (sizeof(T) > sizeof(int)) && (sizeof(T) <= sizeof(long)), void>::type
+      loadValue( T & value )
       {
         value = static_cast<T>( std::stol( itsNodes.top().node->value() ) );
       }
 
       //! Loads a type best represented as a long long from the current top node
-      template <class T, traits::EnableIf<std::is_signed<T>::value,
-                                          (sizeof(T) > sizeof(long)),
-                                          sizeof(T) <= sizeof(long long)> = traits::sfinae> inline
-      void loadValue( T & value )
+      template <class T> inline
+      typename std::enable_if<std::is_signed<T>::value && (sizeof(T) > sizeof(long)) && (sizeof(T) <= sizeof(long long)), void>::type
+      loadValue( T & value )
       {
         value = static_cast<T>( std::stoll( itsNodes.top().node->value() ) );
       }
@@ -772,18 +721,18 @@ namespace cereal
       that may be given data by the type about to be archived
 
       Minimal types do not start or end nodes */
-  template <class T, traits::DisableIf<traits::has_minimal_base_class_serialization<T, traits::has_minimal_output_serialization, XMLOutputArchive>::value ||
-                                       traits::has_minimal_output_serialization<T, XMLOutputArchive>::value> = traits::sfinae> inline
-  void prologue( XMLOutputArchive & ar, T const & )
+  template <class T> inline
+  typename std::enable_if<!traits::has_minimal_output_serialization<T, XMLOutputArchive>::value, void>::type
+  prologue( XMLOutputArchive & ar, T const & )
   {
     ar.startNode();
     ar.insertType<T>();
   }
 
   //! Prologue for all other types for XML input archives (except minimal types)
-  template <class T, traits::DisableIf<traits::has_minimal_base_class_serialization<T, traits::has_minimal_input_serialization, XMLInputArchive>::value ||
-                                       traits::has_minimal_input_serialization<T, XMLInputArchive>::value> = traits::sfinae> inline
-  void prologue( XMLInputArchive & ar, T const & )
+  template <class T> inline
+  typename std::enable_if<!traits::has_minimal_input_serialization<T, XMLInputArchive>::value, void>::type
+  prologue( XMLInputArchive & ar, T const & )
   {
     ar.startNode();
   }
@@ -793,17 +742,17 @@ namespace cereal
   /*! Finishes the node created in the prologue
 
       Minimal types do not start or end nodes */
-  template <class T, traits::DisableIf<traits::has_minimal_base_class_serialization<T, traits::has_minimal_output_serialization, XMLOutputArchive>::value ||
-                                       traits::has_minimal_output_serialization<T, XMLOutputArchive>::value> = traits::sfinae> inline
-  void epilogue( XMLOutputArchive & ar, T const & )
+  template <class T> inline
+  typename std::enable_if<!traits::has_minimal_output_serialization<T, XMLOutputArchive>::value, void>::type
+  epilogue( XMLOutputArchive & ar, T const & )
   {
     ar.finishNode();
   }
 
   //! Epilogue for all other types other for XML output archives (except minimal types)
-  template <class T, traits::DisableIf<traits::has_minimal_base_class_serialization<T, traits::has_minimal_input_serialization, XMLInputArchive>::value ||
-                                       traits::has_minimal_input_serialization<T, XMLInputArchive>::value> = traits::sfinae> inline
-  void epilogue( XMLInputArchive & ar, T const & )
+  template <class T> inline
+  typename std::enable_if<!traits::has_minimal_input_serialization<T, XMLInputArchive>::value, void>::type
+  epilogue( XMLInputArchive & ar, T const & )
   {
     ar.finishNode();
   }
@@ -814,7 +763,7 @@ namespace cereal
 
   //! Saving NVP types to XML
   template <class T> inline
-  void CEREAL_SAVE_FUNCTION_NAME( XMLOutputArchive & ar, NameValuePair<T> const & t )
+  void save( XMLOutputArchive & ar, NameValuePair<T> const & t )
   {
     ar.setNextName( t.name );
     ar( t.value );
@@ -822,7 +771,7 @@ namespace cereal
 
   //! Loading NVP types from XML
   template <class T> inline
-  void CEREAL_LOAD_FUNCTION_NAME( XMLInputArchive & ar, NameValuePair<T> & t )
+  void load( XMLInputArchive & ar, NameValuePair<T> & t )
   {
     ar.setNextName( t.name );
     ar( t.value );
@@ -831,27 +780,29 @@ namespace cereal
   // ######################################################################
   //! Saving SizeTags to XML
   template <class T> inline
-  void CEREAL_SAVE_FUNCTION_NAME( XMLOutputArchive &, SizeTag<T> const & )
+  void save( XMLOutputArchive &, SizeTag<T> const & )
   { }
 
   //! Loading SizeTags from XML
   template <class T> inline
-  void CEREAL_LOAD_FUNCTION_NAME( XMLInputArchive & ar, SizeTag<T> & st )
+  void load( XMLInputArchive & ar, SizeTag<T> & st )
   {
     ar.loadSize( st.size );
   }
 
   // ######################################################################
   //! Saving for POD types to xml
-  template <class T, traits::EnableIf<std::is_arithmetic<T>::value> = traits::sfinae> inline
-  void CEREAL_SAVE_FUNCTION_NAME(XMLOutputArchive & ar, T const & t)
+  template<class T> inline
+  typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+  save(XMLOutputArchive & ar, T const & t)
   {
     ar.saveValue( t );
   }
 
   //! Loading for POD types from xml
-  template <class T, traits::EnableIf<std::is_arithmetic<T>::value> = traits::sfinae> inline
-  void CEREAL_LOAD_FUNCTION_NAME(XMLInputArchive & ar, T & t)
+  template<class T> inline
+  typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+  load(XMLInputArchive & ar, T & t)
   {
     ar.loadValue( t );
   }
@@ -859,14 +810,14 @@ namespace cereal
   // ######################################################################
   //! saving string to xml
   template<class CharT, class Traits, class Alloc> inline
-  void CEREAL_SAVE_FUNCTION_NAME(XMLOutputArchive & ar, std::basic_string<CharT, Traits, Alloc> const & str)
+  void save(XMLOutputArchive & ar, std::basic_string<CharT, Traits, Alloc> const & str)
   {
     ar.saveValue( str );
   }
 
   //! loading string from xml
   template<class CharT, class Traits, class Alloc> inline
-  void CEREAL_LOAD_FUNCTION_NAME(XMLInputArchive & ar, std::basic_string<CharT, Traits, Alloc> & str)
+  void load(XMLInputArchive & ar, std::basic_string<CharT, Traits, Alloc> & str)
   {
     ar.loadValue( str );
   }
@@ -875,8 +826,5 @@ namespace cereal
 // register archives for polymorphic support
 CEREAL_REGISTER_ARCHIVE(cereal::XMLOutputArchive)
 CEREAL_REGISTER_ARCHIVE(cereal::XMLInputArchive)
-
-// tie input and output archives together
-CEREAL_SETUP_ARCHIVE_TRAITS(cereal::XMLInputArchive, cereal::XMLOutputArchive)
 
 #endif // CEREAL_ARCHIVES_XML_HPP_

@@ -49,57 +49,57 @@ namespace cereal
 
   //! Serializing (save) for std::bitset
   template <class Archive, size_t N> inline
-  void CEREAL_SAVE_FUNCTION_NAME( Archive & ar, std::bitset<N> const & bits )
+  void save( Archive & ar, std::bitset<N> const & bits )
   {
     try
     {
       auto const b = bits.to_ulong();
-      ar( CEREAL_NVP_("type", bitset_detail::type::ulong) );
-      ar( CEREAL_NVP_("data", b) );
+      ar( _CEREAL_NVP("type", bitset_detail::type::ulong) );
+      ar( _CEREAL_NVP("data", b) );
     }
     catch( std::overflow_error const & )
     {
       try
       {
         auto const b = bits.to_ullong();
-        ar( CEREAL_NVP_("type", bitset_detail::type::ullong) );
-        ar( CEREAL_NVP_("data", b) );
+        ar( _CEREAL_NVP("type", bitset_detail::type::ullong) );
+        ar( _CEREAL_NVP("data", b) );
       }
       catch( std::overflow_error const & )
       {
-        ar( CEREAL_NVP_("type", bitset_detail::type::string) );
-        ar( CEREAL_NVP_("data", bits.to_string()) );
+        ar( _CEREAL_NVP("type", bitset_detail::type::string) );
+        ar( _CEREAL_NVP("data", bits.to_string()) );
       }
     }
   }
 
   //! Serializing (load) for std::bitset
   template <class Archive, size_t N> inline
-  void CEREAL_LOAD_FUNCTION_NAME( Archive & ar, std::bitset<N> & bits )
+  void load( Archive & ar, std::bitset<N> & bits )
   {
     bitset_detail::type t;
-    ar( CEREAL_NVP_("type", t) );
+    ar( _CEREAL_NVP("type", t) );
 
     switch( t )
     {
       case bitset_detail::type::ulong:
       {
         unsigned long b;
-        ar( CEREAL_NVP_("data", b) );
+        ar( _CEREAL_NVP("data", b) );
         bits = std::bitset<N>( b );
         break;
       }
       case bitset_detail::type::ullong:
       {
         unsigned long long b;
-        ar( CEREAL_NVP_("data", b) );
+        ar( _CEREAL_NVP("data", b) );
         bits = std::bitset<N>( b );
         break;
       }
       case bitset_detail::type::string:
       {
         std::string b;
-        ar( CEREAL_NVP_("data", b) );
+        ar( _CEREAL_NVP("data", b) );
         bits = std::bitset<N>( b );
         break;
       }

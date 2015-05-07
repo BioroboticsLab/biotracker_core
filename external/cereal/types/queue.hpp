@@ -91,37 +91,37 @@ namespace cereal
 
   //! Saving for std::queue
   template <class Archive, class T, class C> inline
-  void CEREAL_SAVE_FUNCTION_NAME( Archive & ar, std::queue<T, C> const & queue )
+  void save( Archive & ar, std::queue<T, C> const & queue )
   {
-    ar( CEREAL_NVP_("container", queue_detail::container( queue )) );
+    ar( _CEREAL_NVP("container", queue_detail::container( queue )) );
   }
 
   //! Loading for std::queue
   template <class Archive, class T, class C> inline
-  void CEREAL_LOAD_FUNCTION_NAME( Archive & ar, std::queue<T, C> & queue )
+  void load( Archive & ar, std::queue<T, C> & queue )
   {
     C container;
-    ar( CEREAL_NVP_("container", container) );
+    ar( _CEREAL_NVP("container", container) );
     queue = std::queue<T, C>( std::move( container ) );
   }
 
   //! Saving for std::priority_queue
   template <class Archive, class T, class C, class Comp> inline
-  void CEREAL_SAVE_FUNCTION_NAME( Archive & ar, std::priority_queue<T, C, Comp> const & priority_queue )
+  void save( Archive & ar, std::priority_queue<T, C, Comp> const & priority_queue )
   {
-    ar( CEREAL_NVP_("comparator", queue_detail::comparator( priority_queue )) );
-    ar( CEREAL_NVP_("container", queue_detail::container( priority_queue )) );
+    ar( _CEREAL_NVP("comparator", queue_detail::comparator( priority_queue )) );
+    ar( _CEREAL_NVP("container", queue_detail::container( priority_queue )) );
   }
 
   //! Loading for std::priority_queue
   template <class Archive, class T, class C, class Comp> inline
-  void CEREAL_LOAD_FUNCTION_NAME( Archive & ar, std::priority_queue<T, C, Comp> & priority_queue )
+  void load( Archive & ar, std::priority_queue<T, C, Comp> & priority_queue )
   {
     Comp comparator;
-    ar( CEREAL_NVP_("comparator", comparator) );
+    ar( _CEREAL_NVP("comparator", comparator) );
 
     C container;
-    ar( CEREAL_NVP_("container", container) );
+    ar( _CEREAL_NVP("container", container) );
 
     priority_queue = std::priority_queue<T, C, Comp>( comparator, std::move( container ) );
   }

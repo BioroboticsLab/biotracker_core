@@ -1,12 +1,10 @@
 #pragma once
+
+#include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/cereal.hpp>
-
-
 
 #include "source/tracking/algorithm/algorithms.h"
 #include "TrackedObject.h"
@@ -34,22 +32,19 @@ public:
 	std::vector<TrackedObject> const& getTrackedObjects() const { return _trackedObjects; }
 
 private:
-	 std::string _trackerType;
-	 std::string _fileSha1Hash;
-	 std::vector<std::string> _filenames;
-	 std::vector<TrackedObject> _trackedObjects;
+	const std::string _trackerType;
+	const std::string _fileSha1Hash;
+	const std::vector<std::string> _filenames;
+	const std::vector<TrackedObject> _trackedObjects;
 
 	friend class cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar)
 	{
-
 		ar(CEREAL_NVP(_trackerType),
 		   CEREAL_NVP(_fileSha1Hash),
 		   CEREAL_NVP(_filenames),
 		   CEREAL_NVP(_trackedObjects));
-
-
 	}
 };
 }

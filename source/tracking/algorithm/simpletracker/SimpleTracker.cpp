@@ -179,8 +179,9 @@ void SimpleTracker::reset() {
     _fish_candidates.clear();
 }
 
-void SimpleTracker::paint (cv::Mat &image, const View&)
+void SimpleTracker::paint (ProxyPaintObject& p, const View&)
 {
+    auto &image = p.getmat();
     {
         QMutexLocker locker(&lastFrameLock);
         if (lastFrame.empty()) return;
