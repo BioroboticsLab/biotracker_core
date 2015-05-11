@@ -16,6 +16,7 @@ target_link_libraries(BioTracker
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
+    ${Boost_LIBRARIES}
 )
 
 # automatic copy of required dlls to install prefix for windows
