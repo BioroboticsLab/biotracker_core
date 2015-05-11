@@ -19,6 +19,7 @@ find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Boost COMPONENTS filesystem serialization REQUIRED)
 
 # remove all previously set compiler and linker flags for debug build
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -56,10 +57,6 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-
-    # gcc doesn't know about unused-private-field warning
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
-
 	# determine clang version
 	EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
 	string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
@@ -68,7 +65,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	endif()
 	# gcc doesn't know about unused-private-field warning
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
-
     # use Wdocumentation
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
     # enable thread safety analysis
@@ -77,20 +73,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-fallthrough")
 	# implicit conversion warnings
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
-	#to prevent warnings of system-files on mac
-	set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem ")
 endif()
-
-
-if(${UNIX})
- set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override -Wno-deprecated-declarations")
-set(CMAKE_CXX_LINK_FLAGS_DEBUG "-lc++abi")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_LINK_FLAGS_DEBUG}")
-endif()
-
 
 message("${CLANG_VERSION}")
-
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # clang doesnt know about unused-but-set-variable warning
