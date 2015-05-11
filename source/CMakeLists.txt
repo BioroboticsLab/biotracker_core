@@ -15,6 +15,7 @@ target_link_libraries(BioTracker
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 # automatic copy of required dlls to install prefix for windows
