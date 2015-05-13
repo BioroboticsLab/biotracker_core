@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string> // std::string
+
 namespace CONFIGPARAM
 {
 static const std::string CONFIGURATION_FILE = "./config.json";
