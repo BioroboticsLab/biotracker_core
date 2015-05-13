@@ -1,9 +1,9 @@
 #pragma once
 
-#include <opencv2/opencv.hpp> // CV_PI, cv::Matx
-#include <cmath>              // std::{sin,cos}
-#include <stdexcept>          // std::invalid_argument
-#include <QRect>
+#include <opencv2/opencv.hpp> // cv::Point, cv::Rect
+#include <QRect>              // QRect
+#include <QPoint>             // QPoint
+#include <string>             // std::string; std::to_string(int)
 
 /**
  * Computer vision helper functions
@@ -55,5 +55,16 @@ namespace CvHelper
 			return false;
 		}
 	};
+
+	/**
+	 * converts an opencv data type value (int) to the name of the corresponding macro i.e. "CV_\d+[UFS]C\d"
+	 *
+	 * @see: cv::DataType<T>::type
+	 *
+	 * @example:
+	 *   CvHelper::cvDataType2str( CV_8UC3 ) --> std::string( "CV_8UC3" )
+	 *
+	 */
+	std::string cvDataType2str(int type);
 
 }
