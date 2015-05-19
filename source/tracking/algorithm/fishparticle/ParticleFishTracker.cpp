@@ -204,7 +204,7 @@ void ParticleFishTracker::paintOverlay(QPainter *painter)
 		const int size = 2;
 		pen.setColor(color);
 		painter->setPen(pen);
-		painter->drawEllipse(QPoint(x, y), size, size);
+		painter->drawEllipse(QPoint(static_cast<int>(x), static_cast<int>(y)), size, size);
 	};
 
 	// at this point the particle list must not be modified anymore

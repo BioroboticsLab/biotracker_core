@@ -16,12 +16,6 @@ public:
 	explicit FishBackgroundSubtractor(ParticleParams& params);
 	~FishBackgroundSubtractor(void);
 	void reset();
-
-private:
-	/**
-	* The settings containing properties concerning this background subtractor.
-	*/
-	ParticleParams& _params;
 };
 
 #endif
