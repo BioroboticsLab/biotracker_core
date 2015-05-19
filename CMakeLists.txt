@@ -69,10 +69,16 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
     # enable thread safety analysis
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wthread-safety")
-	# enable thread safety analysis
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-fallthrough")
-	# implicit conversion warnings
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
+    # enable thread safety analysis
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-fallthrough")
+    # implicit conversion warnings
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
+    # osx clang3.6 throw additional warnings
+    if(${APPLE})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override -Wno-deprecated-declarations")
+        set(CMAKE_CXX_LINK_FLAGS_DEBUG "-lc++abi")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_LINK_FLAGS_DEBUG}")
+    endif()
 endif()
 
 message("${CLANG_VERSION}")
@@ -88,14 +94,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
 	endif()
 endif()
-
-# osx clang3.6 throw additional warnings
-if(${UNIX})
- set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override -Wno-deprecated-declarations")
-set(CMAKE_CXX_LINK_FLAGS_DEBUG "-lc++abi")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_LINK_FLAGS_DEBUG}")
-endif()
-
 
 # use runtime analyzers when using clang/gcc in debug mode
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
