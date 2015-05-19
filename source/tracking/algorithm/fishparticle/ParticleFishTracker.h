@@ -7,6 +7,8 @@
 #include "particlefilter/ParticleClusters.h"
 #include "particlefilter/particleParams.h"
 
+#include <mutex>
+
 //QT Stuff
 #include <QGroupBox>
 #include <QFormLayout>
@@ -24,7 +26,7 @@ public:
     ParticleFishTracker(Settings& settings, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
 	virtual void track( ulong frameNumber, cv::Mat& frame ) override;
-    virtual void paint(ProxyPaintObject&, View const& view = OriginalView) override;
+	virtual void paintOverlay(QPainter *painter) override;
 	virtual void reset() override;
     std::shared_ptr<QWidget> getToolsWidget	() override;
     std::shared_ptr<QWidget> getParamsWidget() override;
@@ -49,6 +51,11 @@ private:
 	* The particles we are currently dealing with.
 	*/
 	std::vector<Particle> _current_particles;
+
+	/**
+	* Prevents a crash when drawing and modifying the particle list at the same time.
+	*/
+	std::mutex _current_particles_access_mutex;
 
 	/**
 	* The RNG used to generate random data for placing new particles.
