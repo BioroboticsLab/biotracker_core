@@ -4,6 +4,8 @@
 #include <algorithm> // std::generate_n
 #include <iterator> // std::back_inserter
 
+#include <QPainter>
+
 #include <opencv2/opencv.hpp>
 
 #include "source/tracking/algorithm/algorithms.h"
@@ -48,6 +50,9 @@ ParticleFishTracker::~ParticleFishTracker(void)
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
 void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
+	// we are going to modify the particle list, make sure it's not drawn concurrently
+	std::lock_guard<std::mutex> lock(_current_particles_access_mutex);
+
 	try {
 		//dont do nothing if we ain't got an image
 		if(frame.empty())
@@ -185,27 +190,37 @@ void ParticleFishTracker::seedParticles(size_t num_particles, int min_x, int min
 /**
 * Draws the result of the tracking for the current frame.
 */
-void ParticleFishTracker::paint(ProxyPaintObject& p, const View&) {
-    auto &image = p.getmat();
 
-	//dont paint if we want to see original image
-	if(_showOriginal)
-		return;
-	if (!_prepared_frame.empty()) {
-		cv::cvtColor(_prepared_frame, image, CV_GRAY2BGR);
-		for (const Particle& p : _current_particles) {
-			if (_min_score >= _max_score) {
-				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 255, 0), -1);
-			} else {
-				// Scale the score of the particle to get a nice color based on score.
-				unsigned scaled_score = static_cast<unsigned>((p.getScore() - _min_score)	/ (_max_score - _min_score) * 220.f);
-				cv::circle(image, cv::Point(static_cast<int>(p.getX()), static_cast<int>(p.getY())), 1, cv::Scalar(0, 30 + scaled_score, 0), -1);
-			}
+void ParticleFishTracker::paintOverlay(QPainter *painter)
+{
+	// no overlay if we want to see the original image
+	if (_showOriginal) return;
+
+	QPen pen;
+	auto drawParticle = [&](const Particle &particle, const QColor &color)
+	{
+		const float x = particle.getX();
+		const float y = particle.getY();
+		const int size = 2;
+		pen.setColor(color);
+		painter->setPen(pen);
+		painter->drawEllipse(QPoint(x, y), size, size);
+	};
+
+	// at this point the particle list must not be modified anymore
+	std::lock_guard<std::mutex> lock(_current_particles_access_mutex);
+
+	for (const Particle &particle : _current_particles)
+	{
+		if (_min_score >= _max_score)
+		{
+			drawParticle(particle, QColor(0, 255, 0));
 		}
-
-		for (int i = 0; i < _clusters.centers().rows; i++) {
-			cv::Mat center = _clusters.centers().row(i);
-			cv::circle(image, cv::Point(center), 4, cv::Scalar(0, 0, 255));
+		else
+		{
+			// Scale the score of the particle to get a nice color based on score.
+			unsigned scaled_score = static_cast<unsigned>((particle.getScore() - _min_score) / (_max_score - _min_score) * 220.f);
+			drawParticle(particle, QColor(0, 30 + scaled_score, 0));
 		}
 	}
 }
