@@ -114,7 +114,7 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
 # include external dependecies as SYSTEM headers to prevent warnings from
-# external files. unfortunatelly, this has no effect when using MSVC.
+# external files. unfortunately, this has no effect when using MSVC.
 include_directories(
     ${PROJECT_SOURCE_DIR}
     SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
