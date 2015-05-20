@@ -64,7 +64,7 @@ public:
     * paint will be called by "VideoViews" paintEvent method
     * so any picture manipulation stuff goes in here
     */
-    virtual void paint( ProxyPaintObject&, View const& view = OriginalView ) = 0;
+	virtual void paint(ProxyPaintObject&, View const& = OriginalView) {}
 
     /**
      * paint stuff onto "VideoViews" current picture

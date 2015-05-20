@@ -5,7 +5,7 @@
 #include <string>
 #include "glwidget.h"
 #include "RectObject.h"
-#include "cv.h"
+//#include "cv.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
 #include <QLabel>

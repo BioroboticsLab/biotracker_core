@@ -14,9 +14,9 @@
 *                      not be 0.
 */
 GridParticleBuckets::GridParticleBuckets(std::size_t max_per_bucket, std::size_t real_rows, std::size_t real_cols,
-										 std::size_t bucket_width, std::size_t bucket_height) : 
-		_real_rows(real_rows), _real_cols(real_cols), _bucket_width(bucket_width),
-			_bucket_height(bucket_height), _max_per_bucket(max_per_bucket), _buckets()
+										 std::size_t bucket_width, std::size_t bucket_height) :
+			_bucket_width(bucket_width), _bucket_height(bucket_height),
+			_max_per_bucket(max_per_bucket), _buckets()
 {
 	_buckets.resize((real_cols/bucket_width) + 1);
 	for (auto& v : _buckets) {
