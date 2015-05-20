@@ -24,16 +24,6 @@ public:
 
 private:
 	/**
-	* The number of rows in the tracking field (i.e. pixels). Must not be 0.
-	*/
-	const std::size_t _real_rows;
-
-	/**
-	* The number of columns in the tracking field (i.e. pixels). Must not be 0.
-	*/
-	const std::size_t _real_cols;
-
-	/**
 	* The width (in number of colums) of a single bucket. Must not be 0.
 	*/
 	const std::size_t _bucket_width;
