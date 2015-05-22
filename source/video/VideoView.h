@@ -1,7 +1,6 @@
 #ifndef VideoView_H
 #define VideoView_H
 
-#include <memory>
 #include <chrono>
 
 #include <QGLWidget>
@@ -10,8 +9,9 @@
 #include <opencv2/opencv.hpp>
 
 #include "source/settings/Messages.h"
-#include "source/video/TextureObject.h"
 #include "source/tracking/TrackingAlgorithm.h"
+#include "source/utility/stdext.h"
+#include "source/video/TextureObject.h"
 
 class VideoView : public QGLWidget
 {
