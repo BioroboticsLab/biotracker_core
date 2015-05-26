@@ -129,7 +129,7 @@ private:
 	/** 
 	* thread running method.
 	*/
-	void run();
+	virtual void run() override;
 
 public slots:
 	void enableHandlingNextFrame(bool nextFrame);
