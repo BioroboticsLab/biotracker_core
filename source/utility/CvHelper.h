@@ -48,7 +48,7 @@ namespace CvHelper
 	{
 		template<typename CV_VEC>
 		bool operator()(const CV_VEC &lhs, const CV_VEC &rhs) const {
-			for (size_t i = 0; i < CV_VEC::channels; ++i) {
+			for (int i = 0; i < CV_VEC::channels; ++i) {
 				if (lhs[i] < rhs[i]) { return true;  }
 				if (rhs[i] < lhs[i]) { return false; }
 			}
