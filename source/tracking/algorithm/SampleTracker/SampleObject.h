@@ -1,6 +1,7 @@
 #pragma once
 #include "source/tracking/serialization/ObjectModel.h"
-#include <cv.h>
+//#include <cv.h>
+#include <opencv2/opencv.hpp>
 class SampleObject :
 	public ObjectModel
 {

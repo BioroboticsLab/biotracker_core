@@ -866,9 +866,6 @@
        <property name="lineWidth">
         <number>1</number>
        </property>
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
-       </property>
        <property name="tabChangesFocus">
         <bool>false</bool>
        </property>
