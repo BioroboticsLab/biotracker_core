@@ -1,7 +1,7 @@
 #ifndef ColorPatchTracker_H
 #define ColorPatchTracker_H
 
-#include "cv.h"
+//#include "cv.h"
 #include "source/tracking/TrackingAlgorithm.h"
 
 class ColorPatchTracker : public TrackingAlgorithm

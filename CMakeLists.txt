@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 
-cmake_policy (SET CMP0020 NEW)
+if (POLICY CMP0020)
+	cmake_policy (SET CMP0020 NEW)
+endif(POLICY CMP0020)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 project(BioTracker)
@@ -69,10 +71,16 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
     # enable thread safety analysis
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wthread-safety")
-	# enable thread safety analysis
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-fallthrough")
-	# implicit conversion warnings
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
+    # enable thread safety analysis
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-fallthrough")
+    # implicit conversion warnings
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-conversion")
+    # osx clang3.6 throw additional warnings
+    if(${APPLE})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override -Wno-deprecated-declarations")
+        set(CMAKE_CXX_LINK_FLAGS_DEBUG "-lc++abi")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_LINK_FLAGS_DEBUG}")
+    endif()
 endif()
 
 message("${CLANG_VERSION}")
@@ -114,7 +122,7 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
 # include external dependecies as SYSTEM headers to prevent warnings from
-# external files. unfortunatelly, this has no effect when using MSVC.
+# external files. unfortunately, this has no effect when using MSVC.
 include_directories(
     ${PROJECT_SOURCE_DIR}
     SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
