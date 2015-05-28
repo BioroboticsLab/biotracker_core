@@ -148,10 +148,10 @@ void BioTracker::initConnects()
 	QObject::connect(_trackingThread.get(), &TrackingThread::fileNameChange, this, &BioTracker::displayFileName);
 	QObject::connect(this, &BioTracker::changeSelectedView, ui.videoView, &VideoView::changeSelectedView);
 
-	/*	 _______________________
-	*	|						|
-	*	| connect shortcut keys	|
-	*	|_______________________| */
+    /*   _______________________
+    *   |                       |
+    *   | connect shortcut keys |
+    *   |_______________________| */
 	// Pan&Zoom
 	QShortcut *shortcutPan = new QShortcut(QKeySequence
 		(QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), this);
