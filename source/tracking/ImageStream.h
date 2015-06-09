@@ -20,7 +20,7 @@ public:
 	explicit ImageStream();
 
 	/**
-	 * @return the stream's MediaType i.e. "Video", "Images", "None"
+     * @return the stream's MediaType i.e. "Video", "Images", "NoMedia"
 	 */
 	virtual GUIPARAM::MediaType type() const = 0;
 
