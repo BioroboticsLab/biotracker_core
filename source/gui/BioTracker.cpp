@@ -824,13 +824,14 @@ void BioTracker::connectTrackingAlg(std::shared_ptr<TrackingAlgorithm> tracker)
 
 void BioTracker::takeScreenshot()
 {
-	const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
-	const std::time_t t = std::chrono::system_clock::to_time_t(p);
-	std::string dateTime = std::ctime(&t);
-	// ctime adds a newline to the string due to historical reasons
-	dateTime = dateTime.substr(0, dateTime.size() - 1);
-	QString filepath = QString::fromStdString(_settings.getValueOrDefault<std::string>(CAPTUREPARAM::CAP_SCREENSHOT_PATH, "."));
-	filepath.append("/screenshot_").append(QString::fromStdString(dateTime)).append(".png");
+    QString filename = "";
+    const std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
+    const std::time_t t = std::chrono::system_clock::to_time_t(p);
+    std::string dateTime = std::ctime(&t);
+    //ctime adds a newline to the string due to historical reasons
+    dateTime = dateTime.substr(0, dateTime.size() - 1);
+    filename.append("/screenshot_").append(QString::fromStdString(dateTime)).append(".png");
+    QString filepath = QFileDialog::getSaveFileName(this, tr("Save File"), "/home/"+filename , tr("Images (*.png)"));
 	ui.videoView->takeScreenshot(filepath);
 }
 
