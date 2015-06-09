@@ -280,12 +280,8 @@ void TrackingThread::nextFrame()
 	incrementFrameNumber();
 
 	// only works if last frame not yet reached
-	//TODO: need to check memory violation thing here!
 	if (!_frame.empty())
 	{
-		//TODO: if a tracking algorithm is selected
-		//send frame to tracking algorithm
-		// NOTE: this is just for testing!
 		doTracking();
 
 		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
