@@ -18,7 +18,7 @@ public:
 
 	SimpleTracker(Settings & settings, QWidget *parent);
 
-	void track (ulong frameNumber, cv::Mat& frame) override;
+    void track (ulong frameNumber, const cv::Mat& frame) override;
 	void reset () override;
     void paint (ProxyPaintObject&, View const& view = OriginalView) override;
 

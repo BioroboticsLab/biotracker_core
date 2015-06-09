@@ -25,7 +25,7 @@ class ParticleFishTracker :
 public:
     ParticleFishTracker(Settings& settings, QWidget *parent);
 	virtual ~ParticleFishTracker(void);
-	virtual void track( ulong frameNumber, cv::Mat& frame ) override;
+    virtual void track( ulong frameNumber, const cv::Mat& frame ) override;
 	virtual void paintOverlay(QPainter *painter) override;
 	virtual void reset() override;
     std::shared_ptr<QWidget> getToolsWidget	() override;

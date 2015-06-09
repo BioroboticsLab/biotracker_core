@@ -15,6 +15,6 @@ ColorPatchTracker::ColorPatchTracker(Settings& settings, QWidget *parent)
 ColorPatchTracker::~ColorPatchTracker(void)
 {
 }
-void ColorPatchTracker::track(ulong, cv::Mat &){}
+void ColorPatchTracker::track(ulong, const cv::Mat &){}
 void ColorPatchTracker::paint		(ProxyPaintObject&, const View&){}
 void ColorPatchTracker::reset		(){}

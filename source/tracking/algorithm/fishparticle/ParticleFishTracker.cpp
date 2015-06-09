@@ -49,7 +49,7 @@ ParticleFishTracker::~ParticleFishTracker(void)
 /**
 * Does the main work, detecting tracked objects (fish) and building a history for those objects.
 */
-void ParticleFishTracker::track(unsigned long, cv::Mat& frame) {
+void ParticleFishTracker::track(unsigned long, const cv::Mat& frame) {
 	// we are going to modify the particle list, make sure it's not drawn concurrently
 	std::lock_guard<std::mutex> lock(_current_particles_access_mutex);
 

@@ -42,7 +42,7 @@ SimpleTracker::SimpleTracker(Settings & settings, QWidget *parent)
     , _bg_subtractor(BgSub())
 {}
 
-void SimpleTracker::track(ulong frameNumber, cv::Mat &frame) {
+void SimpleTracker::track(ulong frameNumber, const cv::Mat &frame) {
     // TODO history, handle frame number,...
     static cv::RNG rng(12345);
 

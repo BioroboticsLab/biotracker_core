@@ -43,7 +43,7 @@ LandmarkTracker::LandmarkTracker(Settings & settings, QWidget *parent)
 }
 
 
-void LandmarkTracker::track(ulong /* frameNumber */, cv::Mat & /* frame */)
+void LandmarkTracker::track(ulong /* frameNumber */, const cv::Mat & /* frame */)
 {
 	setRect();
 }

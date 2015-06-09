@@ -31,7 +31,7 @@ SampleTracker::SampleTracker(Settings & settings, QWidget *parent)
     _imageChanged=false;
 }
 
-void SampleTracker::track		( ulong, cv::Mat& imgOriginal )
+void SampleTracker::track		( ulong, const cv::Mat& imgOriginal )
 {
 	//dont do nothing if we ain't got an image
 	if(imgOriginal.empty())

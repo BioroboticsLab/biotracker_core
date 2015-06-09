@@ -10,6 +10,7 @@
 
 #include "source/tracking/TrackingAlgorithm.h"
 #include "source/utility/MutexWrapper.h"
+#include "source/tracking/ImageStream.h"
 
 class Settings;
 
@@ -41,12 +42,6 @@ public:
 	*/
 	bool isReadyForNextFrame();
 
-	/**
-	* Gets the length of the video.
-	* @return the video length.
-	*/
-	int getVideoLength();
-
 	/**	
 	* @return  current fps setting
 	*/
@@ -57,24 +52,21 @@ public:
 	 */
 	void stop();
 
+    int getVideoLength();
+
 private:
 	Mutex _captureActiveMutex;
-	Mutex _frameNumberMutex;
 	Mutex _readyForNexFrameMutex;
 	Mutex _trackerMutex;
 
 	/** 
 	* Video handling.
 	*/
-	// For reading the video file or video stream
-	cv::VideoCapture _capture;	
-	//current frame
-	cv::Mat _frame;
+    std::unique_ptr<ImageStream> _imageStream;
 	
 	//defines whether to use pictures as source or a video
 	bool _captureActive GUARDED_BY(_captureActiveMutex);
 	bool _readyForNextFrame GUARDED_BY(_readyForNexFrameMutex);
-	int _frameNumber GUARDED_BY(_frameNumberMutex);
 	std::atomic<bool> _videoPause;
 	bool _trackerActive;
 	double _fps;
@@ -89,7 +81,6 @@ private:
 
 	std::shared_ptr<TrackingAlgorithm> _tracker GUARDED_BY(_trackerMutex);
 
-	cv::Mat getPicture(size_t index);
 
 
 	/**

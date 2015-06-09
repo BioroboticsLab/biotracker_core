@@ -13,7 +13,6 @@ using GUIPARAM::MediaType;
 TrackingThread::TrackingThread(Settings &settings) :
 _captureActive(false),
 _readyForNextFrame(true),
-_frameNumber(0),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
 _fps(30),
 _runningFps(0),
@@ -31,8 +30,8 @@ void TrackingThread::loadVideo(const std::string &filename)
 	MutexLocker lock(_readyForNexFrameMutex);
 	if (!isCaptureActive())
 	{
-		_capture = cv::VideoCapture(filename);
-		if (!_capture.isOpened())
+        _imageStream = make_ImageStreamVideo(filename);
+        if (_imageStream->type() == GUIPARAM::MediaType::NoMedia)
 		{
 			// could not open video
 			std::string errorMsg = "unable to open file " + filename;
@@ -40,11 +39,10 @@ void TrackingThread::loadVideo(const std::string &filename)
 			emit invalidFile();
 			return;
 		}
-		enableCapture(true);
-		_mediaType = MediaType::Video;
-		_fps = _capture.get(CV_CAP_PROP_FPS);
+        enableCapture(true);
+        _fps = _imageStream->fps();
 		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
-			" (#frames: " + QString::number(getVideoLength()).toStdString() + ")";
+            " (#frames: " + QString::number(_imageStream->numFrames()).toStdString() + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		emit fileNameChange(QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
 		QThread::start();
@@ -54,9 +52,9 @@ void TrackingThread::loadVideo(const std::string &filename)
 void TrackingThread::loadPictures(const std::vector<std::string> &&filenames)
 {
     MutexLocker lock(_readyForNexFrameMutex);
-	_mediaType = MediaType::Images;
 	_pictureFiles = std::move(filenames);
 	_fps = 1;
+    _imageStream = make_ImageStreamPictures(filenames);
 	enableCapture(true);
 	QThread::start();
 }
@@ -92,35 +90,21 @@ void TrackingThread::run()
 		//after this timestamp will be taken right before picture is drawn 
 		//to take the amount of time into account it takes to draw the picture
 		if (firstLoop)
+            // measure the capture start time
 			t = std::chrono::system_clock::now();
 
-		// measure the capture start time
-		if ((_mediaType == MediaType::Video) && !_capture.isOpened()) { break; }
+
+        if ((_imageStream->type() == GUIPARAM::MediaType::Video) && _imageStream->lastFrame() ) { break; }
 
 		// load next frame
 			{
-				MutexLocker lock(_frameNumberMutex);
-				switch (_mediaType) {
-				case MediaType::Images:
-					_frame = getPicture(_frameNumber);
-					break;
-				case MediaType::Video:
-					_capture >> _frame;
-                    break;
-                 case MediaType::NoMedia:
-                    break;
-				default:
-					assert(false);
-					break;
-				}
+                if ( !_imageStream->nextFrame() )
+                {
+                    enableCapture(false);
+                }
 			}
 		incrementFrameNumber();
 
-		// exit if last frame is reached
-		if (_frame.empty())	{ break; }
-
-		//TODO: if a tracking algorithm is selected
-		//send frame to tracking algorithm
 		doTracking();
 		std::chrono::microseconds target_dur(static_cast<int>(1000000. / _fps));
 		std::chrono::microseconds dur =
@@ -150,37 +134,13 @@ void TrackingThread::run()
 			{
 				// lock for handling the frame: when GUI is ready, next frame can be handled.
 				enableHandlingNextFrame(false);
-				emit trackingSequenceDone(_frame.clone());
+                emit trackingSequenceDone(_imageStream->currentFrame().clone());
 			}
 			emit newFrameNumber(getFrameNumber());
 		}
 
 
 	}
-	{
-		MutexLocker lock(_frameNumberMutex);
-		_frameNumber = 0;
-	}
-}
-
-cv::Mat TrackingThread::getPicture(size_t index)
-{
-	//check if index in range
-	if (index < _pictureFiles.size())
-	{
-		std::string filename = _pictureFiles.at(index);
-		emit fileNameChange(QString::fromStdString(filename));
-		return cv::imread(filename);
-	}
-	else
-	{
-		//return empty Picture if index out of range
-		cv::Mat emptyPic;
-		//QString filename = "-";
-		//emit fileNameChange(filename);
-		return emptyPic;
-	}
-
 }
 
 void TrackingThread::enableCapture(bool enabled)
@@ -197,100 +157,46 @@ bool TrackingThread::isCaptureActive()
 
 void TrackingThread::setFrameNumber(int frameNumber)
 {
-	const int videoLength = getVideoLength();
-
 	{
-		MutexLocker frameLocker(_frameNumberMutex);
-		if (frameNumber >= 0 && frameNumber <= videoLength)
+        if ( _imageStream->setFrameNumber(frameNumber) )
 		{
-			_frameNumber = frameNumber;
-
-			switch (_mediaType) {
-			case MediaType::Images:
-				_frame = getPicture(_frameNumber);
-				break;
-			case MediaType::Video:
-				_capture.set(CV_CAP_PROP_POS_FRAMES, _frameNumber);
-				_capture >> _frame;
-                break;
-            case MediaType::NoMedia:
-                break;
-			default:
-				assert(false);
-				break;
-			}
-
-			{
-				MutexLocker lock(_trackerMutex);
-				if (_tracker) {
-					_tracker->setCurrentFrameNumber(_frameNumber);
-				}
-			}
+            MutexLocker lock(_trackerMutex);
+            if (_tracker) {
+                _tracker->setCurrentFrameNumber(frameNumber);
+            }
 		}
-	}
-
-	doTracking();
-
+    }
+    doTracking();
 	{
-		MutexLocker frameLocker(_frameNumberMutex);
-		emit trackingSequenceDone(_frame);
-		emit newFrameNumber(_frameNumber);
+        emit trackingSequenceDone(_imageStream->currentFrame());
+        emit newFrameNumber(frameNumber);
 	}
 }
 
 void TrackingThread::incrementFrameNumber()
 {
-	const int videoLength = getVideoLength();
 
-	MutexLocker lock(_frameNumberMutex);
-
-	if (_frameNumber < videoLength - 1)
-	{
-		++_frameNumber;
-
-		emit newFrameNumber(_frameNumber);
-	}
-    {
+        emit newFrameNumber(_imageStream->currentFrameNumber());
+        {
         MutexLocker lock(_trackerMutex);
         if (_tracker) {
-            _tracker->setCurrentFrameNumber(_frameNumber);
+            _tracker->setCurrentFrameNumber(_imageStream->currentFrameNumber());
         }
     }
 }
 
 void TrackingThread::nextFrame()
-{
-	{
-		MutexLocker lock(_frameNumberMutex);
-		switch (_mediaType) {
-		case MediaType::Images:
-			_frame = getPicture(_frameNumber + 1);
-			break;
-		case MediaType::Video:
-			_capture >> _frame;
-            break;
-        case MediaType::NoMedia:
-            break;
-		default:
-			assert(false);
-			break;
-		}
+{	
+    if( _imageStream->nextFrame() )
+    {
+        doTracking();
+        // lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
+        enableHandlingNextFrame(false);
 
-	}
-	incrementFrameNumber();
-
-	// only works if last frame not yet reached
-	if (!_frame.empty())
-	{
-		doTracking();
-
-		// lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
-		enableHandlingNextFrame(false);
-
-		// lets GUI draw the frame.
-		emit trackingSequenceDone(_frame);
-		emit newFrameNumber(getFrameNumber());
-	}
+        // lets GUI draw the frame.
+        emit trackingSequenceDone(_imageStream->currentFrame());
+        incrementFrameNumber();
+    }
 }
 
 
@@ -300,11 +206,10 @@ void TrackingThread::doTracking()
 	if (!_tracker) return;
 
 	// do nothing if we aint got a frame
-	if (_frame.empty()) return;
-	MutexLocker frameNumberLock(_frameNumberMutex);
+    if (_imageStream->currentFrameIsEmpty()) return;
 	try
 	{
-		_tracker->track(_frameNumber, _frame);
+        _tracker->track(_imageStream->currentFrameNumber(), _imageStream->currentFrame());
 	}
 	catch (const std::exception& err)
 	{
@@ -314,13 +219,17 @@ void TrackingThread::doTracking()
 void TrackingThread::doTrackingAndUpdateScreen()
 {
 	doTracking();
-	emit trackingSequenceDone(_frame);
+    emit trackingSequenceDone(_imageStream->currentFrame());
+}
+
+int TrackingThread::getVideoLength()
+{
+    return _imageStream->numFrames();
 }
 
 int TrackingThread::getFrameNumber()
 {
-	MutexLocker lock(_frameNumberMutex);
-	return _frameNumber;
+    return _imageStream->currentFrameNumber();
 }
 
 void TrackingThread::enableHandlingNextFrame(bool nextFrame)
@@ -345,20 +254,6 @@ bool TrackingThread::isVideoPause() const
 	return _videoPause;
 }
 
-int TrackingThread::getVideoLength()
-{
-	switch (_mediaType) {
-	case MediaType::Images:
-		return static_cast<int>(_pictureFiles.size());
-	case MediaType::Video:
-        return static_cast<int>(_capture.get(CV_CAP_PROP_FRAME_COUNT));
-    case MediaType::NoMedia:
-        return -1;
-	default:
-		assert(false);
-		return -1;
-	}
-}
 
 void TrackingThread::resetTracker()
 {

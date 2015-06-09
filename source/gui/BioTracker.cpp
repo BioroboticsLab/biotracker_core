@@ -542,6 +542,7 @@ void BioTracker::stepCaptureBackward()
 {
 	if(_currentFrame > 0)
 	{
+        setVideoMode ( GUIPARAM::VideoMode::Paused) ;
 		updateFrameNumber(static_cast<int>(_currentFrame-1));
 		emit changeFrame(static_cast<int>(_currentFrame));		
 		_settings.setParam(GUIPARAM::PAUSED_AT_FRAME, QString::number(_currentFrame).toStdString());

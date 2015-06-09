@@ -97,7 +97,7 @@ public:
 	~LandmarkTracker	( void ) {}
 
 
-	void track(ulong /* frameNumber */, cv::Mat & /* frame */) override;
+    void track(ulong /* frameNumber */, const cv::Mat & /* frame */) override;
     void paint			( ProxyPaintObject&, View const& view = OriginalView ) override;
 	void reset			( ) override {}
 	void postLoad() override;

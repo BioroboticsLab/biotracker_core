@@ -58,7 +58,7 @@ public:
     /**
     * This function tracks the provided object list within the provided frame.
     */
-    virtual void track(ulong frameNumber, cv::Mat& frame) = 0;
+    virtual void track(ulong frameNumber, const cv::Mat& frame) = 0;
 
     /**
     * paint will be called by "VideoViews" paintEvent method
