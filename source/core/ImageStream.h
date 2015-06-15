@@ -1,18 +1,12 @@
-/*
- * ImageStream.h
- *
- *  Created on: May 13, 2015
- *      Author: tobias
- */
-
 #ifndef IMAGESTREAM_H_
 #define IMAGESTREAM_H_
 
-#include "source/settings/ParamNames.h" // GUIPARAM::MediaType
 #include <memory>                       // std::unique_ptr
 #include <opencv2/opencv.hpp>           // cv::Mat
 #include <vector>                       // std::vector
 #include <string>                       // std::string
+
+#include "source/core/settings/ParamNames.h" // GUIPARAM::MediaType
 
 class ImageStream
 {

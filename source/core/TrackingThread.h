@@ -8,9 +8,9 @@
 
 #include <QThread>
 
-#include "source/tracking/TrackingAlgorithm.h"
-#include "source/utility/MutexWrapper.h"
-#include "source/tracking/ImageStream.h"
+#include "source/core/TrackingAlgorithm.h"
+#include "source/util/MutexWrapper.h"
+#include "source/core/ImageStream.h"
 
 class Settings;
 

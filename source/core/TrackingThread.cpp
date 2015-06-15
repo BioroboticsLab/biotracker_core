@@ -1,12 +1,13 @@
 #include "TrackingThread.h"
 
-#include <QFileInfo>
 #include <chrono>
 #include <thread>
 
-#include "source/settings/Messages.h"
-#include "source/settings/Settings.h"
-#include "source/settings/ParamNames.h"
+#include <QFileInfo>
+
+#include "source/core/settings/Messages.h"
+#include "source/core/settings/Settings.h"
+#include "source/core/settings/ParamNames.h"
 
 using GUIPARAM::MediaType;
 

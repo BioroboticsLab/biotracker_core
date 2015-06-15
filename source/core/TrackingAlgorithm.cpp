@@ -1,5 +1,7 @@
 #include "TrackingAlgorithm.h"
-#include "source/video/VideoView.h"
+
+// TODO: remove dependency
+#include "source/gui/VideoView.h"
 
 cv::Mat& ProxyPaintObject::getmat() {
     if (_img.empty()) {

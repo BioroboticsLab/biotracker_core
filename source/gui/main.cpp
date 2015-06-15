@@ -2,11 +2,11 @@
 
 #include <QtWidgets/QApplication>
 
+#include "source/core/settings/Messages.h"
+#include "source/core/settings/Settings.h"
+#include "source/core/settings/SystemCompatibilityCheck.h"
 #include "source/gui/BioTracker.h"
-#include "source/settings/Messages.h"
-#include "source/settings/Settings.h"
-#include "source/settings/SystemCompatibilityCheck.h"
-#include "source/utility/stdext.h"
+#include "source/util/stdext.h"
 
 int main(int argc, char *argv[])
 {

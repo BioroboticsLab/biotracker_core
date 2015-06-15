@@ -1,4 +1,4 @@
-#include "algorithms.h"
+#include "Registry.h"
 
 namespace Algorithms {
 

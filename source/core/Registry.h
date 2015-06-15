@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "source/tracking/TrackingAlgorithm.h"
-#include "source/utility/stdext.h"
-#include "source/utility/singleton.h"
+#include "source/core/TrackingAlgorithm.h"
+#include "source/util/stdext.h"
+#include "source/util/singleton.h"
 
 namespace Algorithms {
 typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, QWidget *parent);

@@ -1,9 +1,9 @@
 #include "ImagePreProcessor.h"
 
-#include "source/settings/Settings.h"
-#include "source/settings/ParamNames.h"
-
 #include <QReadWriteLock>
+
+#include "source/core/settings/Settings.h"
+#include "source/core/settings/ParamNames.h"
 
 QReadWriteLock lock;
 

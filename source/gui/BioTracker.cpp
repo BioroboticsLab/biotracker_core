@@ -6,23 +6,22 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <chrono>
 
 #include <QCryptographicHash>
 #include <QFileInfo>
-
-#include "source/settings/Settings.h"
-#include "source/utility/stdext.h"
-#include "source/tracking/TrackingThread.h"
-#include "source/tracking/algorithm/algorithms.h"
-#include "source/tracking/serialization/SerializationData.h"
+#include <QStatusBar>
 
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-#include <QStatusBar>
-#include <thread>
-#include <chrono>
+#include "source/core/settings/Settings.h"
+#include "source/util/stdext.h"
+#include "source/core/TrackingThread.h"
+#include "source/core/Registry.h"
+#include "source/core/serialization/SerializationData.h"
+
 
 using GUIPARAM::MediaType;
 

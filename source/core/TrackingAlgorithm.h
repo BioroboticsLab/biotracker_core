@@ -12,9 +12,9 @@
 #include <QWidget>
 #include <QMouseEvent>
 
-#include "source/settings/Messages.h"
-#include "source/settings/ParamNames.h"
-#include "source/tracking/serialization/TrackedObject.h"
+#include "source/core/settings/Messages.h"
+#include "source/core/settings/ParamNames.h"
+#include "source/core/serialization/TrackedObject.h"
 
 class VideoView;
 class ProxyPaintObject

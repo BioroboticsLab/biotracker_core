@@ -6,11 +6,11 @@ file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 qt5_add_resources(UI_RESOURCES ${qrc})
 qt5_wrap_ui(UI_HEADERS ${ui})
 
-add_executable(Gui
+add_executable(BioTracker
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
  
-target_link_libraries(Gui
+target_link_libraries(BioTracker
     Core
     Util
     Qt5::Widgets

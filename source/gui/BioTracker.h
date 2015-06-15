@@ -3,17 +3,14 @@
 
 #include <memory>
 
-// QT 
 #include <QtWidgets/QMainWindow>
 #include <QtCore/QString>
 #include <QTemporaryFile>
 #include <QShortcut>
 
-//BioTracker
-#include "source/settings/ParamNames.h"
-#include "source/tracking/algorithm/algorithms.h"
-
-#include "source/ui_BioTracker.h"
+#include "source/core/settings/ParamNames.h"
+#include "source/core/Registry.h"
+#include "source/gui/ui_BioTracker.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 class TrackingThread;

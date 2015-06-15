@@ -8,10 +8,10 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "source/settings/Messages.h"
-#include "source/tracking/TrackingAlgorithm.h"
-#include "source/utility/stdext.h"
-#include "source/video/TextureObject.h"
+#include "source/core/settings/Messages.h"
+#include "source/core/TrackingAlgorithm.h"
+#include "source/util/stdext.h"
+#include "source/gui/TextureObject.h"
 
 class VideoView : public QGLWidget
 {

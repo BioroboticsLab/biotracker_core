@@ -1,14 +1,14 @@
 #pragma once
 
+#include <type_traits>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include <type_traits>
-
-#include "../utility/stringTools.h" // (un)escape_non_ascii
-#include "StringTranslator.h"
-#include "ParamNames.h"
+#include "source/util/stringTools.h" // (un)escape_non_ascii
+#include "source/core/settings/StringTranslator.h"
+#include "source/core/settings/ParamNames.h"
 
 namespace {
 template<typename Test, template<typename...> class Ref>

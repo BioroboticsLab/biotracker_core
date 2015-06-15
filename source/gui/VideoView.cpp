@@ -1,12 +1,10 @@
-/*
-@author: Tobias von Falkenhausen
-*/
-
 #include "VideoView.h"
+
 #include <QMouseEvent>
 #include <QGLFormat>
-#include "source/tracking/TrackingAlgorithm.h"
 #include <QMatrix>
+
+#include "source/core/TrackingAlgorithm.h"
 
 // OS X puts the headers in a different location in the include path than
 // Windows and Linux, so we need to distinguish between OS X and the other
@@ -17,8 +15,9 @@
 	#include <GL/glu.h>
 #endif
 
-QMutex trackMutex;
-
+namespace {
+	QMutex trackMutex;
+}
 
 
 VideoView::VideoView(QWidget *parent)
