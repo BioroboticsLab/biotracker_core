@@ -95,10 +95,6 @@ public slots:
 	 */
 	void printGuiMessage(std::string message, MSGS::MTYPE mType = MSGS::MTYPE::NOTIFICATION);
 
-	/**
-	 * Sets the algorithm used for tracking
-	 * @param trackingAlgId, the id of the algorithm.
-	 */
 
     // methods to change position in picture series, or video
     //--------------------------------Start-------------------------------------
@@ -112,7 +108,7 @@ public slots:
     /**
      * @brief viewIndexChanged Signal to TrackingAlgorithm
      * with newly selected view
-     * @param index
+     * @param index number of view
      */
 	void viewIndexChanged(int index);
 
