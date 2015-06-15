@@ -60,12 +60,33 @@ public slots:
 
 	// SLOTS FOR TRACKING THREAD: 	
 	void updateFrameNumber(int frameNumber);
+    /**
+      * @brief will send picture to glContainer (VideoView) which then loads it
+      *        into graphics memory
+      * @param image the original picture without any modifications
+      *
+    */
 	void drawImage(cv::Mat image);
 	void showFps(double fps);
 	void invalidFile();
+    /**
+     * @brief displayFileName will display source url
+     * in the notifications tool box
+     * @param filename url to video or picture source
+     */
 	void displayFileName(QString filename);
 
+    /**
+     * @brief resetViews will empty view list,
+     * which were set by a tracking algorithm
+     */
 	void resetViews();
+
+    /**
+     * @brief setViews will set additional views supported by tracking alg.
+     *        (standard: only one view named "original")
+     * @param views list of views Tracking algorrithm can switch between
+     */
 	void setViews(std::vector<TrackingAlgorithm::View> views);
 
 	/**
@@ -78,17 +99,21 @@ public slots:
 	 * Sets the algorithm used for tracking
 	 * @param trackingAlgId, the id of the algorithm.
 	 */
-	
-	//void setTrackingAlg(int trackingAlgId);
 
-	//void changeCurrentFrame();
+    // methods to change position in picture series, or video
+    //--------------------------------Start-------------------------------------
 	void changeCurrentFramebySlider();
 	void changeCurrentFramebySlider(int SliderAction);
 	void changeCurrentFramebyEdit();
     void changeCurrentFramebySignal(int frameNumber);
+    //---------------------------------End--------------------------------------
 
 	void takeScreenshot();
-
+    /**
+     * @brief viewIndexChanged Signal to TrackingAlgorithm
+     * with newly selected view
+     * @param index
+     */
 	void viewIndexChanged(int index);
 
 protected:
@@ -98,7 +123,14 @@ protected:
 private:
 	Ui::BioTrackerClass ui;
 
+    /**
+     * @brief _settings contains all saveable parameters
+     */
 	Settings& _settings;
+    /**
+     * @brief _trackingThread is the main thread which will send pictures as
+     * cv::Mat to tracking Algorithm and to BioTracker::drawImage()
+     */
 	std::unique_ptr<TrackingThread> _trackingThread;
     GUIPARAM::VideoMode _videoMode;
     void setVideoMode(GUIPARAM::VideoMode vidMode);
