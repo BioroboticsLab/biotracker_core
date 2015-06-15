@@ -10,7 +10,7 @@ add_library(Core STATIC
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
  
-target_link_libraries(BioTracker
+target_link_libraries(Core
     Qt5::Widgets
     Qt5::OpenGL
     ${OPENGL_LIBRARIES}
