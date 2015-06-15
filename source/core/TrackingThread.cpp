@@ -12,6 +12,7 @@
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
+_imageStream(make_ImageStreamNoMedia()),
 _captureActive(false),
 _readyForNextFrame(true),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
