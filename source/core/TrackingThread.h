@@ -1,6 +1,4 @@
-#ifndef TrackingThread_h
-#define TrackingThread_h
-
+#pragma once
 #include <atomic>
 #include <memory>
 
@@ -190,5 +188,3 @@ signals:
 	*/
 	void fileNameChange(QString filename);
 };
-
-#endif // !TrackingThread_h

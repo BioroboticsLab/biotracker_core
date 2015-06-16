@@ -21,10 +21,32 @@ class Facade : public QObject {
 Q_OBJECT
 public:
 
+    /**
+     * @brief The TrackerStatus enum
+     * describes the current status of the tracking algorithm
+     */
+    enum class TrackerStatus {
+        NothingLoaded,  ///< No media selected
+        Running,        ///< The tracker is running
+        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
+        Invalid         ///< The replayed file is invalid
+    };
+
     Facade();
 
-    Settings& getSettings();
-    Algorithms::Registry& getRegistry();
+    ~Facade() override;
+
+    Settings& getSettings() {
+        return m_settings;
+    }
+
+    Algorithms::Registry& getRegistry() {
+        return m_registry;
+    }
+
+    TrackerStatus getStatus() const {
+        return m_status;
+    }
 
     /**
      * @throw boost::filesystem_error
@@ -75,6 +97,14 @@ public:
      */
     size_t getNumFrames() const;
 
+    /**
+     * @brief getCurrentFrame
+     * @return the current frame number
+     */
+    size_t getCurrentFrameNumber() const;
+
+
+
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
@@ -111,6 +141,7 @@ private:
     Settings m_settings;
     Algorithms::Registry &m_registry;
     TrackingThread m_trackingThread;
+    TrackerStatus m_status;
 };
 
 } // Core
