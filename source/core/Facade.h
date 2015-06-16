@@ -28,13 +28,13 @@ public:
 
     /**
      * @throw boost::filesystem_error
-     * @brief openVideo opens a single video which type is supported by opencv
+     * @brief openVideo opens a single video which type is supported by opencv and stores path in settings
      */
     void openVideo(const boost::filesystem::path &path);
 
     /**
      * @throw boost::filesystem_error
-     * @brief openImages opens a set of images supported by opencv
+     * @brief openImages opens a set of images supported by opencv and stores path in settings
      */
     void openImages(const std::vector<boost::filesystem::path> &paths);
 
