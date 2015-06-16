@@ -63,7 +63,7 @@ public:
 	 */
 	void stop();
 
-    int getVideoLength();
+    size_t getVideoLength() const;
 
 private:
 	Mutex _captureActiveMutex;
@@ -150,7 +150,7 @@ public slots:
 	* Gets current frame number.
 	* @return the current frame number.
 	*/
-    size_t getFrameNumber();
+    size_t getFrameNumber() const;
 
 	/**
 	* Moves one frame forward

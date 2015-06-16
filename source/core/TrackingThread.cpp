@@ -224,12 +224,12 @@ void TrackingThread::doTrackingAndUpdateScreen()
     emit trackingSequenceDone(_imageStream->currentFrame());
 }
 
-int TrackingThread::getVideoLength()
+size_t TrackingThread::getVideoLength() const
 {
     return _imageStream->numFrames();
 }
 
-size_t TrackingThread::getFrameNumber()
+size_t TrackingThread::getFrameNumber() const
 {
     return _imageStream->currentFrameNumber();
 }
