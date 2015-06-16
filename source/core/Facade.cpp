@@ -31,12 +31,12 @@ void Facade::openImages(std::vector<boost::filesystem::path> paths)
 
 void Facade::play()
 {
-
+    m_trackingThread.enableVideoPause(false);
 }
 
 void Facade::pause()
 {
-
+    m_trackingThread.enableVideoPause(true);
 }
 
 void Facade::setFrame(const size_t frameNumber)
