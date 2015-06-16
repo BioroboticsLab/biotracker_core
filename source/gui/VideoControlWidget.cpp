@@ -20,8 +20,8 @@ VideoControlWidget::VideoControlWidget(QWidget *parent, Core::Facade& facade, Vi
 
 void VideoControlWidget::updateWidgets()
 {
-    const bool validFile = m_facade.getStatus() == TrackingThread::TrackerStatus::Running ||
-                           m_facade.getStatus() == TrackingThread::TrackerStatus::Paused;
+    const bool validFile = m_facade.getStatus() == Core::TrackingThread::TrackerStatus::Running ||
+                           m_facade.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
 
     const bool hasNext = m_facade.getCurrentFrameNumber() < m_facade.getNumFrames();
     const bool hasPrev = m_facade.getCurrentFrameNumber() > 0;
@@ -30,16 +30,16 @@ void VideoControlWidget::updateWidgets()
     m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
 
     switch (m_facade.getStatus()) {
-    case TrackingThread::TrackerStatus::Invalid:
-    case TrackingThread::TrackerStatus::NothingLoaded:
+    case Core::TrackingThread::TrackerStatus::Invalid:
+    case Core::TrackingThread::TrackerStatus::NothingLoaded:
         m_ui.button_playPause->setIcon(m_iconPlay);
         m_ui.button_playPause->setEnabled(false);
         break;
-    case TrackingThread::TrackerStatus::Running:
+    case Core::TrackingThread::TrackerStatus::Running:
         m_ui.button_playPause->setIcon(m_iconPause);
         m_ui.button_playPause->setEnabled(true);
         break;
-    case TrackingThread::TrackerStatus::Paused:
+    case Core::TrackingThread::TrackerStatus::Paused:
         m_ui.button_playPause->setIcon(m_iconPlay);
         m_ui.button_playPause->setEnabled(true);
         break;
@@ -83,10 +83,10 @@ void VideoControlWidget::initConnects()
 void VideoControlWidget::playPause()
 {
     switch (m_facade.getStatus()) {
-    case TrackingThread::TrackerStatus::Paused:
+    case Core::TrackingThread::TrackerStatus::Paused:
         m_facade.play();
         break;
-    case TrackingThread::TrackerStatus::Running:
+    case Core::TrackingThread::TrackerStatus::Running:
         m_facade.pause();
         break;
     default:
