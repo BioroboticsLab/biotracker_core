@@ -16,18 +16,23 @@
 #include "source/core/settings/ParamNames.h"
 #include "source/core/serialization/TrackedObject.h"
 
+namespace BioTracker {
+namespace Gui {
 class VideoView;
+}
+}
+
 class ProxyPaintObject
 {
 private:
-    VideoView &_view;
+    BioTracker::Gui::VideoView &_view;
     cv::Mat _img;
 
-    ProxyPaintObject(VideoView &view):
+    ProxyPaintObject(BioTracker::Gui::VideoView &view):
         _view(view), _img()
     {
     }
-    friend class VideoView;
+    friend class BioTracker::Gui::VideoView;
     ProxyPaintObject(const ProxyPaintObject&) = delete;
     ProxyPaintObject& operator=(const ProxyPaintObject&) = delete;
 public:

@@ -16,7 +16,7 @@ namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
-    : m_isPanZoomMode(false)
+    : m_mainWindow(m_facade)
 {
     initConnects();
 
@@ -32,28 +32,11 @@ void Gui::initConnects()
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
 
-    /*       _______________________
-        *   |                       |
-        *   | connect shortcut keys |
-        *   |_______________________| */
-    // Pan&Zoom
-    QShortcut *shortcutPan = new QShortcut(QKeySequence
-                                           (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), &m_mainWindow);
-    QObject::connect(shortcutPan, &QShortcut::activated, m_mainWindow.getUi().button_panZoom, &QPushButton::click);
+    QObject::connect(m_mainWindow.getUi().actionLoad_tracking_data, &QAction::triggered, this, &Gui::loadTrackingData);
+    QObject::connect(m_mainWindow.getUi().actionSave_tracking_data, &QAction::triggered, this, &Gui::storeTrackingData);
 
-    // Play*Pause
-    QShortcut *shortcutPlay = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), &m_mainWindow);
-    QObject::connect(shortcutPlay, &QShortcut::activated, m_mainWindow.getUi().button_playPause, &QPushButton::click);
+    QObject::connect(m_mainWindow.getUi().actionQuit, &QAction::triggered, this, &Gui::exit);
 
-    // Next Frame
-    QShortcut *shortcutNext = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), &m_mainWindow);
-    QObject::connect(shortcutNext, &QShortcut::activated, m_mainWindow.getUi().button_nextFrame, &QPushButton::click);
-    // Previous Frame
-    QShortcut *shortcutPrev = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), &m_mainWindow);
-    QObject::connect(shortcutPrev, &QShortcut::activated, m_mainWindow.getUi().button_previousFrame, &QPushButton::click);
 }
 
 void Gui::browseVideo()
@@ -83,10 +66,19 @@ void Gui::browsePictures()
     }
 }
 
-void Gui::switchPanZoomMode()
+void Gui::loadTrackingData()
 {
-    m_isPanZoomMode = !m_isPanZoomMode;
-    m_mainWindow.getVideoView()->setPanZoomMode(m_isPanZoomMode);
+
+}
+
+void Gui::storeTrackingData()
+{
+
+}
+
+void Gui::exit()
+{
+
 }
 
 } // Gui

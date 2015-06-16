@@ -19,6 +19,8 @@ namespace {
 	QMutex trackMutex;
 }
 
+namespace BioTracker {
+namespace Gui {
 
 VideoView::VideoView(QWidget *parent)
     : QGLWidget(/*QGLFormat(QGL::SampleBuffers),*/parent)
@@ -450,4 +452,7 @@ void VideoView::setPanZoomMode(bool isPanZoom)
 		this->setCursor(Qt::OpenHandCursor);
 	else
 		this->setCursor(Qt::ArrowCursor);
+}
+
+}
 }

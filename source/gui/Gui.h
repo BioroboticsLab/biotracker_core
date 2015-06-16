@@ -15,15 +15,17 @@ public:
 
 private:
     MainWindow m_mainWindow;
-    bool m_isPanZoomMode;
-
     void initConnects();
     QStringList browse(const QString &title, const QString &filter);
 
 private slots:
     void browseVideo();
     void browsePictures();
-    void switchPanZoomMode();
+
+    void loadTrackingData();
+    void storeTrackingData();
+
+    void exit();
 };
 
 

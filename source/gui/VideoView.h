@@ -1,5 +1,4 @@
-#ifndef VideoView_H
-#define VideoView_H
+#pragma once
 
 #include <chrono>
 
@@ -13,6 +12,9 @@
 #include "source/util/stdext.h"
 #include "source/gui/TextureObject.h"
 
+namespace BioTracker {
+namespace Gui {
+
 class VideoView : public QGLWidget
 {
 	Q_OBJECT
@@ -24,7 +26,7 @@ public:
 	void takeScreenshot(QString screenShotFilename);
 	float getCurrentZoomLevel() const { return _screenPicRatio + _zoomFactor; }
 
-    friend class ProxyPaintObject;
+    friend class ::ProxyPaintObject;
 
 protected:
 	void initializeGL() override;
@@ -83,4 +85,6 @@ signals:
 	*/
 	void reportZoomLevel(float);
 };
-#endif // !VideoView_H
+
+}
+}
