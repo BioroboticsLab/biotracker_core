@@ -23,8 +23,19 @@ public:
 
     Facade();
 
-    Settings& getSettings();
-    Algorithms::Registry& getRegistry();
+    ~Facade() override;
+
+    Settings& getSettings() {
+        return m_settings;
+    }
+
+    Algorithms::Registry& getRegistry() {
+        return m_registry;
+    }
+
+    TrackingThread::TrackerStatus getStatus() const {
+        return m_trackingThread.getStatus();
+    }
 
     /**
      * @throw boost::filesystem_error
@@ -36,7 +47,7 @@ public:
      * @throw boost::filesystem_error
      * @brief openImages opens a set of images supported by opencv and stores path in settings
      */
-    void openImages(const std::vector<boost::filesystem::path> &paths);
+    void openImages(std::vector<boost::filesystem::path> paths);
 
     /**
      * @brief play starts playing the video
@@ -52,7 +63,7 @@ public:
      * @brief setFrame (0 .. getNumFrames() - 1) if the input does not meets the
      *   invariant the frame will stay at the current frame
      */
-    void setFrame(const size_t frameNumber);
+    void setFrame(size_t frameNumber);
 
     /**
      * @brief setTargetFps
@@ -61,7 +72,7 @@ public:
      *      applicable, INFINITY is selected
      * @param fps (0 .. INFINITY)
      */
-    void setTargetFps(const double fps);
+    void setTargetFps(double fps);
 
     /**
      * @brief getTargetFps
@@ -74,6 +85,14 @@ public:
      * @return the number of frames in the current stream
      */
     size_t getNumFrames() const;
+
+    /**
+     * @brief getCurrentFrame
+     * @return the current frame number
+     */
+    size_t getCurrentFrameNumber() const;
+
+
 
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);

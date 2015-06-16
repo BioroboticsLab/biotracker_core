@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>           // cv::Mat
 #include <vector>                       // std::vector
 #include <string>                       // std::string
+#include <boost/filesystem.hpp>
 
 #include "source/core/settings/ParamNames.h" // GUIPARAM::MediaType
 
@@ -113,8 +114,8 @@ private:
 
 std::unique_ptr<ImageStream> make_ImageStreamNoMedia();
 
-std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<std::string> filenames);
+std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<boost::filesystem::path> filenames);
 
-std::unique_ptr<ImageStream> make_ImageStreamVideo(const std::string &filename);
+std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path &filename);
 
 #endif /* IMAGESTREAM_H_ */

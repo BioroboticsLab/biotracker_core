@@ -1,11 +1,9 @@
-#ifndef TrackingThread_h
-#define TrackingThread_h
-
+#pragma once
 #include <atomic>
 #include <memory>
 
 #include <opencv2/opencv.hpp>
-
+#include <boost/filesystem.hpp>
 #include <QThread>
 
 #include "source/core/TrackingAlgorithm.h"
@@ -16,20 +14,38 @@ class Settings;
 
 class TrackingThread : public QThread
 {
+public:
+    /**
+     * @brief The TrackerStatus enum
+     * describes the current status of the tracking algorithm
+     */
+    enum class TrackerStatus {
+        NothingLoaded,  ///< No media selected
+        Running,        ///< The tracker is running
+        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
+        Invalid         ///< The replayed file is invalid
+    };
+
 	Q_OBJECT
 public:
 	TrackingThread(Settings &settings);
 	~TrackingThread(void);
 	
+    TrackerStatus getStatus() const
+    {
+        //TODO maybe lock this part?
+        return m_status;
+    }
+
 	/**
 	* Starts the video thread.
 	*/
-	void loadVideo(const std::string& filename);
+    void loadVideo(const boost::filesystem::path& filename);
 
 	/**
 	* Loads in pictures instead of a video
 	*/
-	void loadPictures(const std::vector<std::string>&& filenames);
+    void loadPictures(std::vector<boost::filesystem::path>&& filenames);
 
 	/**
 	* Reset
@@ -67,15 +83,13 @@ private:
 	//defines whether to use pictures as source or a video
 	bool _captureActive GUARDED_BY(_captureActiveMutex);
 	bool _readyForNextFrame GUARDED_BY(_readyForNexFrameMutex);
+    TrackerStatus m_status;
 	std::atomic<bool> _videoPause;
 	bool _trackerActive;
 	double _fps;
 	double _runningFps;
 	bool _maxSpeed;
 	GUIPARAM::MediaType _mediaType;
-	
-	//contains filenames of all pictures that were selected by user
-	std::vector<std::string> _pictureFiles;
 
 	Settings &_settings;
 
@@ -193,5 +207,3 @@ signals:
 	*/
 	void fileNameChange(QString filename);
 };
-
-#endif // !TrackingThread_h

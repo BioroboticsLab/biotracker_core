@@ -15,6 +15,7 @@ TrackingThread::TrackingThread(Settings &settings) :
 _imageStream(make_ImageStreamNoMedia()),
 _captureActive(false),
 _readyForNextFrame(true),
+m_status(TrackerStatus::NothingLoaded),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
 _fps(30),
 _runningFps(0),
@@ -27,7 +28,7 @@ _tracker(nullptr)
 TrackingThread::~TrackingThread(void)
 {}
 
-void TrackingThread::loadVideo(const std::string &filename)
+void TrackingThread::loadVideo(const boost::filesystem::path &filename)
 {
 	MutexLocker lock(_readyForNexFrameMutex);
 	if (!isCaptureActive())
@@ -36,7 +37,7 @@ void TrackingThread::loadVideo(const std::string &filename)
         if (_imageStream->type() == GUIPARAM::MediaType::NoMedia)
 		{
 			// could not open video
-			std::string errorMsg = "unable to open file " + filename;
+            std::string errorMsg = "unable to open file " + filename.string();
 			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
 			emit invalidFile();
 			return;
@@ -51,12 +52,11 @@ void TrackingThread::loadVideo(const std::string &filename)
 	}
 }
 
-void TrackingThread::loadPictures(const std::vector<std::string> &&filenames)
+void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenames)
 {
     MutexLocker lock(_readyForNexFrameMutex);
-	_pictureFiles = std::move(filenames);
 	_fps = 1;
-    _imageStream = make_ImageStreamPictures(filenames);
+    _imageStream = make_ImageStreamPictures(std::move(filenames));
 	enableCapture(true);
 	QThread::start();
 }

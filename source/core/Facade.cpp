@@ -4,12 +4,6 @@
 namespace BioTracker {
 namespace Core {
 
-// === CTOR
-
-
-
-// === PUBLIC
-
 Facade::Facade()
     :m_settings()
     ,m_registry(Algorithms::Registry::getInstance())
@@ -18,24 +12,21 @@ Facade::Facade()
 
 }
 
-Settings &Facade::getSettings()
+Facade::~Facade()
 {
-    return m_settings;
-}
+    m_trackingThread.terminate();
+    m_trackingThread.wait();
 
-Algorithms::Registry &Facade::getRegistry()
-{
-    return m_registry;
 }
 
 void Facade::openVideo(const boost::filesystem::path &path)
 {
-
+    m_trackingThread.loadVideo(path);
 }
 
-void Facade::openImages(const std::vector<boost::filesystem::path> &paths)
+void Facade::openImages(std::vector<boost::filesystem::path> paths)
 {
-
+    m_trackingThread.loadPictures(std::move(paths));
 }
 
 void Facade::play()
@@ -64,6 +55,11 @@ double Facade::getTargetFps() const
 }
 
 size_t Facade::getNumFrames() const
+{
+    return 0;
+}
+
+size_t Facade::getCurrentFrameNumber() const
 {
     return 0;
 }
