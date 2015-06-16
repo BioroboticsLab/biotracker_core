@@ -5,7 +5,7 @@
 #include "source/core/settings/Messages.h"
 #include "source/core/settings/Settings.h"
 #include "source/core/settings/SystemCompatibilityCheck.h"
-#include "source/gui/BioTracker.h"
+#include "source/gui/Gui.h"
 #include "source/util/stdext.h"
 
 int main(int argc, char *argv[])
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		app.setOrganizationName("Biorobotics Lab / FU Berlin");
 		app.setApplicationName("BioTracker");
 
-		BioTracker w(settings);
+		Gui w(settings);
 		w.show();
 		return app.exec();
 	} else {

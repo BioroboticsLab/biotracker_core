@@ -10,7 +10,7 @@
 
 #include "source/core/settings/ParamNames.h"
 #include "source/core/Registry.h"
-#include "source/gui/ui_BioTracker.h"
+#include "source/gui/ui_Gui.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 class TrackingThread;
@@ -18,14 +18,14 @@ class VideoView;
 class TrackingAlgorithm;
 class Settings;
 
-class BioTracker: public QMainWindow
+class Gui: public QMainWindow
 {
 	Q_OBJECT
 
 
 public:    
-	BioTracker(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
-	~BioTracker();
+	Gui(Settings &settings, QWidget *parent = nullptr,  Qt::WindowFlags flags = 0);
+	~Gui();
 
 
 public slots:
