@@ -61,7 +61,7 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
 	QThread::start();
 }
 
-void TrackingThread::stopCapture()
+void TrackingThread::terminateThread()
 {
 	enableHandlingNextFrame(false);
 	enableCapture(false);
@@ -157,7 +157,7 @@ bool TrackingThread::isCaptureActive()
 	return _captureActive;
 }
 
-void TrackingThread::setFrameNumber(int frameNumber)
+void TrackingThread::setFrameNumber(size_t frameNumber)
 {
 	{
         if ( _imageStream->setFrameNumber(frameNumber) )
@@ -229,7 +229,7 @@ int TrackingThread::getVideoLength()
     return _imageStream->numFrames();
 }
 
-int TrackingThread::getFrameNumber()
+size_t TrackingThread::getFrameNumber()
 {
     return _imageStream->currentFrameNumber();
 }
@@ -256,12 +256,6 @@ bool TrackingThread::isVideoPause() const
 	return _videoPause;
 }
 
-
-void TrackingThread::resetTracker()
-{
-	MutexLocker lock(_trackerMutex);
-	_tracker->reset();
-}
 
 double TrackingThread::getFps() const
 {
