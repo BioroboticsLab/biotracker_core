@@ -8,7 +8,6 @@ Facade::Facade()
     :m_settings()
     ,m_registry(Algorithms::Registry::getInstance())
     ,m_trackingThread(m_settings)
-    ,m_status(TrackerStatus::NothingLoaded)
 {
 
 }
@@ -22,12 +21,12 @@ Facade::~Facade()
 
 void Facade::openVideo(const boost::filesystem::path &path)
 {
-
+    m_trackingThread.loadVideo(path);
 }
 
-void Facade::openImages(const std::vector<boost::filesystem::path> &paths)
+void Facade::openImages(std::vector<boost::filesystem::path> paths)
 {
-
+    m_trackingThread.loadPictures(std::move(paths));
 }
 
 void Facade::play()

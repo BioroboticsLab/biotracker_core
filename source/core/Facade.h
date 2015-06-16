@@ -21,17 +21,6 @@ class Facade : public QObject {
 Q_OBJECT
 public:
 
-    /**
-     * @brief The TrackerStatus enum
-     * describes the current status of the tracking algorithm
-     */
-    enum class TrackerStatus {
-        NothingLoaded,  ///< No media selected
-        Running,        ///< The tracker is running
-        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
-        Invalid         ///< The replayed file is invalid
-    };
-
     Facade();
 
     ~Facade() override;
@@ -44,8 +33,8 @@ public:
         return m_registry;
     }
 
-    TrackerStatus getStatus() const {
-        return m_status;
+    TrackingThread::TrackerStatus getStatus() const {
+        return m_trackingThread.getStatus();
     }
 
     /**
@@ -58,7 +47,7 @@ public:
      * @throw boost::filesystem_error
      * @brief openImages opens a set of images supported by opencv and stores path in settings
      */
-    void openImages(const std::vector<boost::filesystem::path> &paths);
+    void openImages(std::vector<boost::filesystem::path> paths);
 
     /**
      * @brief play starts playing the video
@@ -141,7 +130,6 @@ private:
     Settings m_settings;
     Algorithms::Registry &m_registry;
     TrackingThread m_trackingThread;
-    TrackerStatus m_status;
 };
 
 } // Core

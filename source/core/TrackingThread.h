@@ -14,11 +14,29 @@ class Settings;
 
 class TrackingThread : public QThread
 {
+public:
+    /**
+     * @brief The TrackerStatus enum
+     * describes the current status of the tracking algorithm
+     */
+    enum class TrackerStatus {
+        NothingLoaded,  ///< No media selected
+        Running,        ///< The tracker is running
+        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
+        Invalid         ///< The replayed file is invalid
+    };
+
 	Q_OBJECT
 public:
 	TrackingThread(Settings &settings);
 	~TrackingThread(void);
 	
+    TrackerStatus getStatus() const
+    {
+        //TODO maybe lock this part?
+        return m_status;
+    }
+
 	/**
 	* Starts the video thread.
 	*/
@@ -65,6 +83,7 @@ private:
 	//defines whether to use pictures as source or a video
 	bool _captureActive GUARDED_BY(_captureActiveMutex);
 	bool _readyForNextFrame GUARDED_BY(_readyForNexFrameMutex);
+    TrackerStatus m_status;
 	std::atomic<bool> _videoPause;
 	bool _trackerActive;
 	double _fps;

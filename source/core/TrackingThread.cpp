@@ -15,6 +15,7 @@ TrackingThread::TrackingThread(Settings &settings) :
 _imageStream(make_ImageStreamNoMedia()),
 _captureActive(false),
 _readyForNextFrame(true),
+m_status(TrackerStatus::NothingLoaded),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
 _fps(30),
 _runningFps(0),
