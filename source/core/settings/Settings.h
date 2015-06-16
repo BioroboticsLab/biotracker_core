@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <boost/filesystem.hpp>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/json_parser.hpp>

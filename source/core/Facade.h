@@ -52,7 +52,7 @@ public:
      * @brief setFrame (0 .. getNumFrames() - 1) if the input does not meets the
      *   invariant the frame will stay at the current frame
      */
-    void setFrame(const size_t frameNumber);
+    void setFrame(size_t frameNumber);
 
     /**
      * @brief setTargetFps
@@ -61,7 +61,7 @@ public:
      *      applicable, INFINITY is selected
      * @param fps (0 .. INFINITY)
      */
-    void setTargetFps(const double fps);
+    void setTargetFps(double fps);
 
     /**
      * @brief getTargetFps

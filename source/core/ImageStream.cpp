@@ -141,7 +141,7 @@ private:
 class ImageStreamPictures : public ImageStream
 {
 public:
-	explicit ImageStreamPictures(std::vector<std::string> picture_files)
+    explicit ImageStreamPictures(std::vector<boost::filesystem::path> picture_files)
 		: m_picture_files(std::move(picture_files))
 	{
 		// load first image
@@ -155,12 +155,12 @@ public:
 private:
 	virtual bool setFrameNumber_impl(size_t frame_number) override
 	{
-		const std::string& filename = m_picture_files[frame_number];
+        const std::string& filename = m_picture_files[frame_number].string();
 		const cv::Mat new_frame = cv::imread(filename);
 		this->set_current_frame( new_frame );
 		return ! new_frame.empty();
 	}
-	std::vector<std::string> m_picture_files;
+    std::vector<boost::filesystem::path> m_picture_files;
 };
 
 
@@ -170,8 +170,8 @@ private:
 class ImageStreamVideo : public ImageStream
 {
 public:
-	explicit ImageStreamVideo(const std::string &filename)
-		: m_capture(filename)
+    explicit ImageStreamVideo(const boost::filesystem::path &filename)
+        : m_capture(filename.string())
 		, m_num_frames( static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)) )
 		, m_fps( m_capture.get(CV_CAP_PROP_FPS) )
 	{
@@ -221,13 +221,13 @@ std::unique_ptr<ImageStream> make_ImageStreamNoMedia() {
 	return std::make_unique<ImageStreamNoMedia>();
 }
 
-std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<std::string> filenames) {
+std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<boost::filesystem::path> filenames) {
 	return std::make_unique<ImageStreamPictures>(std::move(filenames));
 }
 
-std::unique_ptr<ImageStream> make_ImageStreamVideo(const std::string &filename) {
+std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path &filename) {
 	try {
-		return std::make_unique<ImageStreamVideo>(filename);
+        return std::make_unique<ImageStreamVideo>(filename);
 	}
 	catch (const video_open_error &) {
 		return make_ImageStreamNoMedia();

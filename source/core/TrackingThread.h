@@ -5,7 +5,7 @@
 #include <memory>
 
 #include <opencv2/opencv.hpp>
-
+#include <boost/filesystem.hpp>
 #include <QThread>
 
 #include "source/core/TrackingAlgorithm.h"
@@ -24,12 +24,12 @@ public:
 	/**
 	* Starts the video thread.
 	*/
-	void loadVideo(const std::string& filename);
+    void loadVideo(const boost::filesystem::path& filename);
 
 	/**
 	* Loads in pictures instead of a video
 	*/
-	void loadPictures(const std::vector<std::string>&& filenames);
+    void loadPictures(std::vector<boost::filesystem::path>&& filenames);
 
 	/**
 	* Reset
@@ -73,9 +73,6 @@ private:
 	double _runningFps;
 	bool _maxSpeed;
 	GUIPARAM::MediaType _mediaType;
-	
-	//contains filenames of all pictures that were selected by user
-	std::vector<std::string> _pictureFiles;
 
 	Settings &_settings;
 
