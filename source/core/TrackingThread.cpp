@@ -9,6 +9,8 @@
 #include "source/core/settings/Settings.h"
 #include "source/core/settings/ParamNames.h"
 
+#include <QCoreApplication>
+
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
@@ -227,6 +229,22 @@ void TrackingThread::doTrackingAndUpdateScreen()
 size_t TrackingThread::getVideoLength() const
 {
     return _imageStream->numFrames();
+}
+
+void TrackingThread::mouseEvent(QMouseEvent *event)
+{
+    MutexLocker lock(_trackerMutex);
+    if (_tracker) {
+        QCoreApplication::sendEvent(_tracker.get(), event);
+    }
+}
+
+void TrackingThread::keyboardEvent(QKeyEvent *event)
+{
+    MutexLocker lock(_trackerMutex);
+    if (_tracker) {
+        QCoreApplication::sendEvent(_tracker.get(), event);
+    }
 }
 
 size_t TrackingThread::getFrameNumber() const

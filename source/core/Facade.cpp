@@ -71,12 +71,12 @@ void Facade::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlg
 
 void Facade::mouseEvent(QMouseEvent *event)
 {
-
+    m_trackingThread.mouseEvent(event);
 }
 
 void Facade::keyboardEvent(QKeyEvent *event)
 {
-
+    m_trackingThread.keyboardEvent(event);
 }
 
 } // Core

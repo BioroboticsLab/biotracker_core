@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <QThread>
+#include <QMouseEvent>
 
 #include "source/core/TrackingAlgorithm.h"
 #include "source/util/MutexWrapper.h"
@@ -65,6 +66,9 @@ public:
 
     size_t getVideoLength() const;
 
+    void mouseEvent(QMouseEvent *event);
+    void keyboardEvent(QKeyEvent *event);
+
 private:
 	Mutex _captureActiveMutex;
 	Mutex _readyForNexFrameMutex;
@@ -89,8 +93,6 @@ private:
 	Settings &_settings;
 
 	std::shared_ptr<TrackingAlgorithm> _tracker GUARDED_BY(_trackerMutex);
-
-
 
 	/**
 	 * Increments the current frame number by 1 frame.

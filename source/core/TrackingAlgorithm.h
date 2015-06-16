@@ -229,7 +229,7 @@ protected:
     virtual void mouseReleaseEvent	(QMouseEvent * /* e */){}
 
     /**
-    * will receive QMouseEvent as soon
+    * will receive QMouseEvent as soond
     * as mouse wheel is activated in video view
     */
     virtual void mouseWheelEvent	(QWheelEvent * /* e */){}
