@@ -92,7 +92,11 @@ public:
      */
     size_t getCurrentFrameNumber() const;
 
-
+    /**
+     * @brief setTrackingAlgorithm
+     * @param TrackingAlgorithm the selected algorithm
+     */
+    void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);

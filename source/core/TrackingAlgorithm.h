@@ -73,11 +73,6 @@ public:
     virtual void paintOverlay(QPainter *) {}
 
     /**
-    * Resets the tracker. never called - yet
-    */
-    virtual void reset() = 0;
-
-    /**
     * getToolsFrame() will be called once at start up
     * to create a widget for gui with all
     * buttons needed for interaction

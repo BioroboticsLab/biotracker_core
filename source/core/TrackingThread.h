@@ -48,11 +48,6 @@ public:
     void loadPictures(std::vector<boost::filesystem::path>&& filenames);
 
 	/**
-	* Reset
-	*/
-	void resetTracker();
-
-	/**
 	* Checks if thread can handle next frame.
 	* @return true if it can, false otherwise.
 	*/
@@ -68,7 +63,7 @@ public:
 	 */
 	void stop();
 
-    int getVideoLength();
+    size_t getVideoLength() const;
 
 private:
 	Mutex _captureActiveMutex;
@@ -143,19 +138,19 @@ public slots:
 	/**
 	* Stops the video.
 	*/
-	void stopCapture();
+    void terminateThread();
 
 	/**
 	* Sets the current frame number.
 	* @param frameNumber specifies the current frame number.
 	*/
-	void setFrameNumber(int frameNumber);
+    void setFrameNumber(size_t frameNumber);
 
 	/**
 	* Gets current frame number.
 	* @return the current frame number.
 	*/
-	int getFrameNumber();
+    size_t getFrameNumber() const;
 
 	/**
 	* Moves one frame forward

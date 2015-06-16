@@ -41,12 +41,12 @@ void Facade::pause()
 
 void Facade::setFrame(const size_t frameNumber)
 {
-
+    m_trackingThread.setFrameNumber(frameNumber);
 }
 
 void Facade::setTargetFps(const double fps)
 {
-
+    m_trackingThread.setFps(fps);
 }
 
 double Facade::getTargetFps() const
@@ -56,12 +56,17 @@ double Facade::getTargetFps() const
 
 size_t Facade::getNumFrames() const
 {
-    return 0;
+    return m_trackingThread.getVideoLength();
 }
 
 size_t Facade::getCurrentFrameNumber() const
 {
-    return 0;
+    return m_trackingThread.getFrameNumber();
+}
+
+void Facade::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm)
+{
+    m_trackingThread.setTrackingAlgorithm(std::move(trackingAlgorithm));
 }
 
 void Facade::mouseEvent(QMouseEvent *event)
