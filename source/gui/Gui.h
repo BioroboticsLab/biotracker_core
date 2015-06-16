@@ -15,6 +15,7 @@ public:
 
 private:
     MainWindow m_mainWindow;
+    bool m_isPanZoomMode;
 
     void initConnects();
     QStringList browse(const QString &title, const QString &filter);
@@ -22,7 +23,7 @@ private:
 private slots:
     void browseVideo();
     void browsePictures();
-
+    void switchPanZoomMode();
 };
 
 

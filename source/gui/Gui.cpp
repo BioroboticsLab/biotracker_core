@@ -8,10 +8,15 @@
 #include <QFileDialog>
 
 
+#include <QShortcut>
+#include <QKeySequence>
+
+
 namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
+    : m_isPanZoomMode(false)
 {
     initConnects();
 
@@ -26,6 +31,29 @@ void Gui::initConnects()
     //File -> Open Video
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
+
+    /*       _______________________
+        *   |                       |
+        *   | connect shortcut keys |
+        *   |_______________________| */
+    // Pan&Zoom
+    QShortcut *shortcutPan = new QShortcut(QKeySequence
+                                           (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), &m_mainWindow);
+    QObject::connect(shortcutPan, &QShortcut::activated, m_mainWindow.getUi().button_panZoom, &QPushButton::click);
+
+//    // Play*Pause
+//    QShortcut *shortcutPlay = new QShortcut(QKeySequence
+//                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), this);
+//    QObject::connect(shortcutPlay, SIGNAL(activated()), ui.button_playPause, SLOT(click()));
+
+//    // Next Frame
+//    QShortcut *shortcutNext = new QShortcut(QKeySequence
+//                                            (QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), this);
+//    QObject::connect(shortcutNext, SIGNAL(activated()), ui.button_nextFrame, SLOT(click()));
+//    // Previous Frame
+//    QShortcut *shortcutPrev = new QShortcut(QKeySequence
+//                                            (QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), this);
+//    QObject::connect(shortcutPrev, SIGNAL(activated()), ui.button_previousFrame, SLOT(click()));
 }
 
 void Gui::browseVideo()
@@ -53,6 +81,12 @@ void Gui::browsePictures()
     if (!files.empty()) {
         m_facade.openImages(files);
     }
+}
+
+void Gui::switchPanZoomMode()
+{
+    m_isPanZoomMode = !m_isPanZoomMode;
+    m_mainWindow.getVideoView()->setPanZoomMode(m_isPanZoomMode);
 }
 
 } // Gui
