@@ -16,6 +16,10 @@ struct video_open_error : std::invalid_argument {
 	using std::invalid_argument::invalid_argument;
 };
 
+struct file_not_found : std::invalid_argument {
+    using std::invalid_argument::invalid_argument;
+};
+
 /*********************************************************/
 
 
@@ -170,11 +174,20 @@ private:
 class ImageStreamVideo : public ImageStream
 {
 public:
+    /**
+     * @throw file_not_found when the file does not exists
+     * @throw video_open_error when there is an error with the video
+     * @brief ImageStreamVideo
+     * @param filename path to the file
+     */
     explicit ImageStreamVideo(const boost::filesystem::path &filename)
         : m_capture(filename.string())
 		, m_num_frames( static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)) )
 		, m_fps( m_capture.get(CV_CAP_PROP_FPS) )
 	{
+        if (!boost::filesystem::exists(filename)) {
+            throw file_not_found("Could not find file " + filename.string());
+        }
 		if (! m_capture.isOpened()) {
 			throw video_open_error(":(");
 		}
