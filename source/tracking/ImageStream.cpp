@@ -9,6 +9,8 @@
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
+#include "source/utility/stdext.h"
+
 
 /*********************************************************/
 
