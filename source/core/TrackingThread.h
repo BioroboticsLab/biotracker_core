@@ -13,6 +13,9 @@
 
 class Settings;
 
+namespace BioTracker {
+namespace Core {
+
 class TrackingThread : public QThread
 {
 public:
@@ -204,3 +207,6 @@ signals:
 	*/
 	void fileNameChange(QString filename);
 };
+
+}
+}

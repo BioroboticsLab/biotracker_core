@@ -11,6 +11,9 @@
 
 #include <QCoreApplication>
 
+namespace BioTracker {
+namespace Core {
+
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
@@ -309,4 +312,7 @@ void TrackingThread::initCaptureForReadingVideoOrStream()
 void TrackingThread::setMaxSpeed(bool enabled)
 {
 	_maxSpeed = enabled;
+}
+
+}
 }
