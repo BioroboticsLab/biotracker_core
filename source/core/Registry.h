@@ -8,7 +8,8 @@
 #include "source/util/singleton.h"
 
 namespace Algorithms {
-typedef std::shared_ptr<TrackingAlgorithm> (*new_tracker_function_t) (Settings& settings, QWidget *parent);
+typedef std::shared_ptr<TrackingAlgorithm>
+    (*new_tracker_function_t) (Settings& settings, QWidget *parent);
 typedef uint8_t Type;
 
 static const Type NoTracking = 0;
