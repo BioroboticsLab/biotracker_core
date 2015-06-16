@@ -41,19 +41,19 @@ void Gui::initConnects()
                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), &m_mainWindow);
     QObject::connect(shortcutPan, &QShortcut::activated, m_mainWindow.getUi().button_panZoom, &QPushButton::click);
 
-//    // Play*Pause
-//    QShortcut *shortcutPlay = new QShortcut(QKeySequence
-//                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), this);
-//    QObject::connect(shortcutPlay, SIGNAL(activated()), ui.button_playPause, SLOT(click()));
+    // Play*Pause
+    QShortcut *shortcutPlay = new QShortcut(QKeySequence
+                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), &m_mainWindow);
+    QObject::connect(shortcutPlay, &QShortcut::activated, m_mainWindow.getUi().button_playPause, &QPushButton::click);
 
-//    // Next Frame
-//    QShortcut *shortcutNext = new QShortcut(QKeySequence
-//                                            (QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), this);
-//    QObject::connect(shortcutNext, SIGNAL(activated()), ui.button_nextFrame, SLOT(click()));
-//    // Previous Frame
-//    QShortcut *shortcutPrev = new QShortcut(QKeySequence
-//                                            (QString::fromStdString(_settings.getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), this);
-//    QObject::connect(shortcutPrev, SIGNAL(activated()), ui.button_previousFrame, SLOT(click()));
+    // Next Frame
+    QShortcut *shortcutNext = new QShortcut(QKeySequence
+                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), &m_mainWindow);
+    QObject::connect(shortcutNext, &QShortcut::activated, m_mainWindow.getUi().button_nextFrame, &QPushButton::click);
+    // Previous Frame
+    QShortcut *shortcutPrev = new QShortcut(QKeySequence
+                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), &m_mainWindow);
+    QObject::connect(shortcutPrev, &QShortcut::activated, m_mainWindow.getUi().button_previousFrame, &QPushButton::click);
 }
 
 void Gui::browseVideo()
