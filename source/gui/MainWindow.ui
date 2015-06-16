@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BioTrackerClass</class>
- <widget class="QMainWindow" name="BioTrackerClass">
+ <class>MainWindowUi</class>
+ <widget class="QMainWindow" name="MainWindowUi">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -236,7 +236,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/arrows-skip-back.png</normaloff>:/BioTracker/resources/arrows-skip-back.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -262,7 +262,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/arrow-forward1.png</normaloff>:/BioTracker/resources/arrow-forward1.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -291,7 +291,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/stop.png</normaloff>:/BioTracker/resources/stop.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -320,7 +320,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/arrows-skip-forward.png</normaloff>:/BioTracker/resources/arrows-skip-forward.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -354,7 +354,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/screenshot.png</normaloff>:/BioTracker/resources/screenshot.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -477,7 +477,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="BioTracker.qrc">
+                   <iconset resource="MainWindow.qrc">
                     <normaloff>:/BioTracker/resources/panZoom.png</normaloff>:/BioTracker/resources/panZoom.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -913,7 +913,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="BioTracker.qrc"/>
+  <include location="MainWindow.qrc"/>
  </resources>
  <connections/>
 </ui>

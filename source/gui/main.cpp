@@ -1,6 +1,7 @@
 #include <clocale>
 
-#include <QtWidgets/QApplication>
+#include <QApplication>
+#include <QMessageBox>
 
 #include "source/core/settings/Messages.h"
 #include "source/core/settings/Settings.h"
@@ -22,13 +23,10 @@ int main(int argc, char *argv[])
 	qRegisterMetaType<std::string>("std::string");
 
 	if (SystemCompatibilityCheck::checkOpenGLSupport()) {
-		Settings settings;
-
 		app.setOrganizationName("Biorobotics Lab / FU Berlin");
 		app.setApplicationName("BioTracker");
 
-		Gui w(settings);
-		w.show();
+        BioTracker::Gui::Gui w;
 		return app.exec();
 	} else {
 		static const std::string title = MSGS::SYSTEM::APPLICATION_CANNOT_START;
