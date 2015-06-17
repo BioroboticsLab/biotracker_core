@@ -1,5 +1,6 @@
 #include "VideoControlWidget.h"
 
+#include <QKeySequence>
 #include <QShortcut>
 
 #include "source/core/TrackingThread.h"
@@ -16,6 +17,9 @@ VideoControlWidget::VideoControlWidget(QWidget *parent, Core::Facade& facade, Vi
 {
     m_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"), QSize(), QIcon::Normal, QIcon::Off);
     m_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+    initConnects();
+    initShortcuts();
 }
 
 void VideoControlWidget::updateWidgets()
@@ -48,6 +52,25 @@ void VideoControlWidget::updateWidgets()
     }
 }
 
+void VideoControlWidget::initShortcuts()
+{
+    const QString shortcutPanKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"));
+    const QShortcut *shortcutPan = new QShortcut(QKeySequence(shortcutPanKey), this);
+    QObject::connect(shortcutPan, &QShortcut::activated, m_ui.button_panZoom, &QPushButton::click);
+
+    const QString shortcutPlayKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"));
+    const QShortcut *shortcutPlay = new QShortcut(QKeySequence(shortcutPlayKey), this);
+    QObject::connect(shortcutPlay, &QShortcut::activated, m_ui.button_playPause, &QPushButton::click);
+
+    const QString shortcutNextKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"));
+    const QShortcut *shortcutNext = new QShortcut(QKeySequence(shortcutNextKey), this);
+    QObject::connect(shortcutNext, &QShortcut::activated, m_ui.button_nextFrame, &QPushButton::click);
+
+    const QString shortcutPrevKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"));
+    const QShortcut *shortcutPrev = new QShortcut(QKeySequence(shortcutPrevKey), this);
+    QObject::connect(shortcutPrev, &QShortcut::activated, m_ui.button_previousFrame, &QPushButton::click);
+}
+
 void VideoControlWidget::initConnects()
 {
     QObject::connect(m_ui.button_playPause, &QPushButton::clicked, this, &VideoControlWidget::playPause);
@@ -55,29 +78,6 @@ void VideoControlWidget::initConnects()
     QObject::connect(m_ui.button_previousFrame, &QPushButton::clicked, this, &VideoControlWidget::previousFrame);
     QObject::connect(m_ui.frame_num_edit, &QLineEdit::returnPressed, this, &VideoControlWidget::changeCurrentFrameByEdit);
     QObject::connect(m_ui.button_screenshot, &QPushButton::clicked, this, &VideoControlWidget::takeScreenshot);
-
-    /*       _______________________
-        *   |                       |
-        *   | connect shortcut keys |
-        *   |_______________________| */
-    // Pan&Zoom
-    QShortcut *shortcutPan = new QShortcut(QKeySequence
-                                           (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"))), this);
-    QObject::connect(shortcutPan, &QShortcut::activated, m_ui.button_panZoom, &QPushButton::click);
-
-    // Play*Pause
-    QShortcut *shortcutPlay = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"))), this);
-    QObject::connect(shortcutPlay, &QShortcut::activated, m_ui.button_playPause, &QPushButton::click);
-
-    // Next Frame
-    QShortcut *shortcutNext = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"))), this);
-    QObject::connect(shortcutNext, &QShortcut::activated, m_ui.button_nextFrame, &QPushButton::click);
-    // Previous Frame
-    QShortcut *shortcutPrev = new QShortcut(QKeySequence
-                                            (QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"))), this);
-    QObject::connect(shortcutPrev, &QShortcut::activated, m_ui.button_previousFrame, &QPushButton::click);
 }
 
 void VideoControlWidget::playPause()

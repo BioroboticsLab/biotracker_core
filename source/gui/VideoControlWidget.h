@@ -29,6 +29,7 @@ private:
 
     void updateWidgets();
     void initConnects();
+    void initShortcuts();
 
 private slots:
     void playPause();
