@@ -3,6 +3,11 @@
 TextureObject::TextureObject(QObject *parent)
     :QObject(parent)
 {
+    // OpenCV's coordinate system originates in the upper left corner.
+    // OpenGL originates in the lower left. Thus the image has to be flipped vertically
+    for (int j = 0; j < 4; ++j) {
+        _texCoords.append(QVector2D(j == 0 || j == 3, j == 2 || j == 3));
+    }
 }
 
 TextureObject::~TextureObject()
@@ -70,13 +75,3 @@ void TextureObject::setPicture(cv::Mat picture)
     createTexture(picture);
 }
 
-void TextureObject::init()
-{
-    // OpenCV's coordinate system originates in the upper left corner.
-    // OpenGL originates in the lower left. Thus the image has to be flipped vertically
-    for (int j = 0; j < 4; ++j) {
-        _texCoords.append(QVector2D(j == 0 || j == 3, j == 2 || j == 3));
-    }
-
-
-}

@@ -12,7 +12,6 @@ public:
     ~TextureObject();
     void setPicture(cv::Mat picture);
     void draw() const;
-    void init();
 private:
     GLuint _texture;
     int _cols, _rows;
