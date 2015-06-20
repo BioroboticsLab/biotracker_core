@@ -22,10 +22,10 @@ public:
 
     const MainWindowUi& getUi() const { return m_ui; }
 
-    const VideoView& getVideoView() const { return m_videoView; }
-    const AlgorithmSelectionWidget& getAlgorithmSelection() const { return m_algorithmSelection; }
-    const NotificationWidget& getNotification() const { return m_notification; }
-    const VideoControlWidget& getVideoControl() const { return m_videoControl; }
+    VideoView& getVideoView() { return m_videoView; }
+    AlgorithmSelectionWidget& getAlgorithmSelection() { return m_algorithmSelection; }
+    NotificationWidget& getNotification() { return m_notification; }
+    VideoControlWidget& getVideoControl() { return m_videoControl; }
 
 private:
     MainWindowUi m_ui;

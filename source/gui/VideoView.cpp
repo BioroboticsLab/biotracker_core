@@ -4,6 +4,15 @@
 #include <QImage>
 #include <QOpenGLFunctions>
 
+// OS X puts the headers in a different location in the include path than
+// Windows and Linux, so we need to distinguish between OS X and the other
+// systems.
+#ifdef __APPLE__
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/glu.h>
+#endif
+
 namespace BioTracker {
 namespace Gui {
 
@@ -11,473 +20,162 @@ VideoView::VideoView(QWidget *parent, QOpenGLContext *context)
     : QOpenGLWidget(parent)
     // TODO add context
     , QOpenGLFunctions()
-    , _currentWidth(0)
-    , _currentHeight(0)
-    , _zoomFactor(0)
-    , _screenPicRatio(0)
-    , _panX(0)
-    , _panY(0)
+    , m_currentMode(Mode::INTERACTION)
     , m_texture(this)
-    //, m_imageTexture(QOpenGLTexture::Target2D)
+    , m_screenPicRatio(0)
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
-
 }
 
-void VideoView::setPanZoomMode(const bool isPanZoom)
+void VideoView::setMode(const VideoView::Mode mode)
 {
-
+    m_currentMode = mode;
+    switch (mode) {
+    case Mode::PANZOOM:
+        setCursor(Qt::OpenHandCursor);
+        break;
+    case Mode::INTERACTION:
+        setCursor(Qt::ArrowCursor);
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
 
 void VideoView::fitToWindow()
 {
-    /*
     makeCurrent();
 
-    if (!_displayImage.empty()) {
-        _zoomFactor = 0;
-        float width = static_cast<float>(this->width());
-        float height = static_cast<float>(this->height());
-        float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
-        float windowRatio = static_cast<float>(width) / height;
-        if(windowRatio < imgRatio)
-        {
-            _panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
-            _panX = 0;
-        } else
-        {
-            _panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);
-            _panY = 0;
-        }
-        glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+    // reset PanZoomState
+    m_panZoomState = PanZoomState();
 
-        width = width * (_screenPicRatio + _zoomFactor);
-        height = height *(_screenPicRatio + _zoomFactor);
+    updatePan();
 
-        float left = _panX;
-        float top	 = _panY;
-        float right = left + width;
-        float bottom = top + height;
-        glOrtho(left, right, bottom, top, 0.0, 1.0);
-        glMatrixMode(GL_MODELVIEW);
+    float width  = static_cast<float>(this->width());
+    float height = static_cast<float>(this->height());
 
-        //emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+    glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
 
-        //Draw the scene
-        update();
+    width  *= (m_screenPicRatio + m_panZoomState.zoomFactor);
+    height *= (m_screenPicRatio + m_panZoomState.zoomFactor);
 
-    }
-    */
+    const float left   = m_panZoomState.panX;
+    const float top    = m_panZoomState.panY;
+    const float right  = left + width;
+    const float bottom = top + height;
 
+    glOrtho(left, right, bottom, top, 0.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+
+    //emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+
+    //Draw the scene
+    update();
+}
+
+void VideoView::setImage(const cv::Mat &image)
+{
+    m_texture.setImage(image);
+
+    resizeGL(width(), height());
+    fitToWindow();
 }
 
 void VideoView::initializeGL()
 {
     initializeOpenGLFunctions();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    glClearDepth(1.0f);                         // Depth Buffer Setup
-glEnable(GL_DEPTH_TEST);                        // Enables Depth Testing
-glDepthFunc(GL_LEQUAL);                         // The Type Of Depth Test To Do
+    m_texture.setImage(cv::Mat::zeros(1, 1, CV_8UC3));
 
-
-    /*
-    glEnable(GL_MULTISAMPLE);
-    cv::Mat img = cv::imread("home/ben/paramoptimizatin.png");
-
-    //cv::Mat img = cv::Mat::zeros(64, 64, CV_8UC3);
-    m_texture.setPicture(img);
-    resizeGL(img.cols, img.rows);
-    */
-    /*
-
-    //QImage blankImage(1, 1, QImage::Format_RGB32);
-    QImage blankImage("/home/ben/paramoptimization.png");
-    //blankImage.fill(0);
-    m_imageTexture.setData(blankImage);
-    m_imageTexture.setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    m_imageTexture.setMagnificationFilter(QOpenGLTexture::Linear);
-
-    //resizeGL(100, 100);
-    */
-
-}
-
-void VideoView::resizeGL(int w, int h)
-{
-    std::cout << w << std::endl;
-    glViewport(0, 0, w, h);
-    //glViewport(0, 0, static_cast<GLsizei>(w), static_cast<GLsizei>(h));
-    /*
-    glViewport(0, 0, static_cast<GLsizei>(w), static_cast<GLsizei>(h));
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   */
-    /*
-    //qreal pixelRatio = devicePixelRatio();
-    makeCurrent();
-
-    // dont do anything if  width or height are 0
-    // or there is no image to display
-    if (width <= 0 || height <= 0)
-        return;
-    if (_displayImage.empty())
-        return;
-
-    //calculate ratio of screen to displayed image
-    float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
-    float windowRatio = static_cast<float>(width) / height;
-    if(windowRatio < imgRatio)
-    {
-        _screenPicRatio = _displayImage.rows/(width/imgRatio);
-    }
-    else
-    {
-        _screenPicRatio = _displayImage.cols/(height*imgRatio);
-    }
-
-    //create viewport with coordinates matching picture size in pixels
-    glViewport(0,0,width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    //if window really was resized,
-    //fit it to window at end of this function
-    bool sizeChanged = false;
-    if(_currentHeight != height || _currentWidth != width)
-    {
-        sizeChanged = true;
-        _currentHeight = height;
-        _currentWidth = width;
-    }
-
-    width = static_cast<int>(width * (_screenPicRatio + _zoomFactor));
-    height = static_cast<int>(height *(_screenPicRatio + _zoomFactor));
-
-    float left = _panX;
-    float top	 = _panY;
-    float right = left + width;
-    float bottom = top + height;
-    glOrtho(left, right, bottom, top, 0.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    if (sizeChanged)
-        fitToWindow();
-        */
-}
-
-void VideoView::paintGL()
-{
-    QImage img = QImage("/home/ben/paramoptimizatin.png").mirrored();
-    QOpenGLTexture *texture = new QOpenGLTexture(img);
-    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    texture->setMagnificationFilter(QOpenGLTexture::Linear);
-
-    glClearColor (1.0,0.0,0.0,1.0);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-}
-}
-}
-
-#ifdef FALSE
-
-#include <QMouseEvent>
-#include <QGLFormat>
-#include <QMatrix>
-
-#include "source/core/TrackingAlgorithm.h"
-
-// OS X puts the headers in a different location in the include path than
-// Windows and Linux, so we need to distinguish between OS X and the other
-// systems.
-#ifdef __APPLE__
-	#include <OpenGL/glu.h>
-#else
-	#include <GL/glu.h>
-#endif
-
-namespace {
-	QMutex trackMutex;
-}
-
-namespace BioTracker {
-namespace Gui {
-
-VideoView::VideoView(QWidget *parent)
-    : QGLWidget(/*QGLFormat(QGL::SampleBuffers),*/parent)
-	, _tracker(nullptr)
-	, _isPanZoomMode(false)
-	, _currentWidth(0)
-	, _currentHeight(0)
-	, _zoomFactor(0)
-	, _screenPicRatio(0)
-	, _panX(0)
-	, _panY(0)
-	, _isPanning(false)
-	, _lastPannedTime(std::chrono::system_clock::now())
-	, _lastZoomedTime(std::chrono::system_clock::now())
-	, _lastZoomedPoint(0, 0)
-	, _selectedView(TrackingAlgorithm::OriginalView)
-{
-    setAutoFillBackground(false);
-}
-
-VideoView::~VideoView(){}
-
-void VideoView::showImage(cv::Mat img)
-{
-    _displayImage = img;
-//    makeCurrent();
-    _textureObj->setPicture(img);
-    resizeGL(this->width(), this->height());
-
-//    //Draw the scene
-    update();
-}
-
-void VideoView::fitToWindow()
-{
-    makeCurrent();
-
-    if (!_displayImage.empty()) {
-        _zoomFactor = 0;
-        float width = static_cast<float>(this->width());
-        float height = static_cast<float>(this->height());
-        float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
-        float windowRatio = static_cast<float>(width) / height;
-        if(windowRatio < imgRatio)
-        {
-            _panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
-            _panX = 0;
-        } else
-        {
-            _panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);
-            _panY = 0;
-        }
-        glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-
-        width = width * (_screenPicRatio + _zoomFactor);
-        height = height *(_screenPicRatio + _zoomFactor);
-
-        float left = _panX;
-        float top	 = _panY;
-        float right = left + width;
-        float bottom = top + height;
-        glOrtho(left, right, bottom, top, 0.0, 1.0);
-        glMatrixMode(GL_MODELVIEW);
-
-        emit reportZoomLevel(_screenPicRatio + _zoomFactor);
-
-        //Draw the scene
-        update();
-
-    }
-}
-
-void VideoView::changeSelectedView(TrackingAlgorithm::View const& selectedView)
-{
-	_selectedView = selectedView;
-    update();
-}
-
-//use paintEvent instad now!!
-/*void VideoView::paintGL()
-{
-	makeCurrent();
-	// Create a black background for the parts of the widget with no image.
-	qglClearColor(Qt::black);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	if(_displayImage.empty()) 
-	{
-		// Don't bother painting an image if we have none.
-		return; 
-	}
-	
-	// if tracking algorithm is selected and zoom/pan is not active:
-	if(_tracker && !_isPanZoomMode)
-	{
-		try
-		{
-			// create copy of curent image and send it for further drawing to tracking algorithm
-			cv::Mat imageCopy = _displayImage.clone();
-			QMutexLocker locker(&trackMutex);
-            _tracker->paint(imageCopy, _selectedView); 
-			// create new texture with processed image copy
-			createTexture(imageCopy);
-			imageCopy.release();
-		}
-		catch(std::exception& err)
-		{
-			std::stringstream ss;
-			ss << "critical error in selected tracking algorithm's paint method!";
-			ss << "\n" << err.what();
-			emit notifyGUI(ss.str() ,MSGS::FAIL);
-		}
-
-	}
-	// Draw it!
-	glDrawArrays(GL_POLYGON, 0, 4);
-}*/
-
-void VideoView::paintEvent(QPaintEvent * /*event*/)
-{
-    if(_displayImage.empty())
-    {
-        // Don't bother painting an image if we have none.
-        return;
-    }
-    makeCurrent();
-    QPainter painter(this);
-
-
-    if(_tracker)
-    {
-        try
-        {
-//            cv::Mat imageCopy = _displayImage.clone();
-//            QMutexLocker locker(&trackMutex);
-//            _tracker->paint(imageCopy, _selectedView);
-//            _textureObj->setPicture(imageCopy);
-//            imageCopy.release();
-            ProxyPaintObject proxy (*this);
-            _tracker->paint(proxy, _selectedView);
-            if(!proxy._img.empty())
-            {
-                _textureObj->setPicture(proxy._img);
-                proxy._img.release();
-            }
-        }
-        catch(std::exception& err)
-        {
-            std::stringstream ss;
-            ss << "critical error in selected tracking algorithm's paint method!";
-            ss << "\n" << err.what();
-            emit notifyGUI(ss.str() ,MSGS::FAIL);
-        }        
-    }    
-    glMatrixMode(GL_MODELVIEW);
-    //glPushMatrix();
-    // Create a black background for the parts of the widget with no image.
-    qglClearColor(Qt::black);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    _textureObj->draw();
-    //glPopMatrix();
-
-    if(_tracker)
-    {
-        painter.setWindow(QRect(0, 0, _displayImage.cols, _displayImage.rows));
-        QPoint upperLeft = projectPicturePos(QPoint(0,0));
-        QPoint lowerRight = projectPicturePos((QPoint(_displayImage.cols,_displayImage.rows)));
-        int width = lowerRight.x() - upperLeft.x();
-        int height = lowerRight.y() - upperLeft.y();
-        painter.setViewport(upperLeft.x(), upperLeft.y(), width, height);
-        _tracker->paintOverlay( &painter);
-    }
-    painter.end();
-}
-
-
-
-/*void VideoView::paintGL(){
-    glDrawArrays(GL_POLYGON, 0, 4);
-}*/
-
-void VideoView::initializeGL()
-{
-    glEnable(GL_MULTISAMPLE);
-    //glEnable(GL_TEXTURE_2D);
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    _textureObj = std::make_unique<TextureObject>(this);
-    _textureObj->init();
+    resizeGL(width(), height());
 }
 
 void VideoView::resizeGL(int width, int height)
 {
-    //qreal pixelRatio = devicePixelRatio();
-	makeCurrent();
+    makeCurrent();
 
-	// dont do anything if  width or height are 0
-	// or there is no image to display
-	if (width <= 0 || height <= 0)
-		return;
-	if (_displayImage.empty())
-		return;
+    // dont do anything if  width or height are 0
+    // or there is no image to display
+    if (width <= 0 || height <= 0) {
+        return;
+    }
 
-	//calculate ratio of screen to displayed image
-	float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
-	float windowRatio = static_cast<float>(width) / height;
-	if(windowRatio < imgRatio)
-	{
-		_screenPicRatio = _displayImage.rows/(width/imgRatio);
-	}
-	else
-	{
-		_screenPicRatio = _displayImage.cols/(height*imgRatio);
-	}
+    const int imageCols = m_texture.getImage().cols;
+    const int imageRows = m_texture.getImage().rows;
 
-	//create viewport with coordinates matching picture size in pixels
-	glViewport(0,0,width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+    // calculate ratio of screen to displayed image
+    const float imgRatio    = static_cast<float>(imageCols) / imageRows;
+    const float windowRatio = static_cast<float>(width) / height;
 
-	//if window really was resized,
-	//fit it to window at end of this function
-	bool sizeChanged = false;
-	if(_currentHeight != height || _currentWidth != width)
-	{
-		sizeChanged = true;
-		_currentHeight = height;
-		_currentWidth = width;
-	}
+    if(windowRatio < imgRatio)
+    {
+        m_screenPicRatio = imageRows / (width / imgRatio);
+    }
+    else
+    {
+        m_screenPicRatio = imageCols / (height * imgRatio);
+    }
 
-	width = static_cast<int>(width * (_screenPicRatio + _zoomFactor));
-	height = static_cast<int>(height *(_screenPicRatio + _zoomFactor));
+    // create viewport with coordinates matching picture size in pixels
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
 
-    float left = _panX;
-    float top	 = _panY;
-    float right = left + width;
-    float bottom = top + height;
+    width = static_cast<int>(width * (m_screenPicRatio + m_panZoomState.zoomFactor));
+    height = static_cast<int>(height *(m_screenPicRatio + m_panZoomState.zoomFactor));
+
+    const float left   = m_panZoomState.panX;
+    const float top    = m_panZoomState.panY;
+    const float right  = left + width;
+    const float bottom = top + height;
+
     glOrtho(left, right, bottom, top, 0.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	if (sizeChanged)
-		fitToWindow();
-	emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+    glMatrixMode(GL_MODELVIEW);
 }
 
-QPoint VideoView::unprojectScreenPos(QPoint position)
+void VideoView::paintEvent(QPaintEvent *event)
 {
     makeCurrent();
 
-	//variables required to map window coordinates to picture coordinates 
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLdouble posX, posY, posZ;
-	QPoint pictureCoord;
+    glMatrixMode(GL_MODELVIEW);
+    glClearColor (0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
 
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewport );
-    gluUnProject(position.x(), viewport[3] - position.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
-	pictureCoord.setX(static_cast<int>(posX));
-	pictureCoord.setY(static_cast<int>(posY));
-	return pictureCoord;
+    m_texture.draw();
+
+    glFlush();
 }
 
-QPoint VideoView::projectPicturePos(QPoint position)
+QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
-    makeCurrent();
+    // TODO: FIXME
 
+    // variables required to map window coordinates to picture coordinates
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    GLdouble posX, posY, posZ;
+    QPoint imageCoord;
+
+    glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+    glGetIntegerv( GL_VIEWPORT, viewport );
+    gluUnProject(mouseCoords.x(), viewport[3] - mouseCoords.y(), 0, modelview, projection, viewport, &posX, &posY, &posZ);
+    imageCoord.setX(static_cast<int>((m_texture.getImage().cols / 2) - posX * (m_texture.getImage().cols / 2)));
+    imageCoord.setY(static_cast<int>((m_texture.getImage().rows / 2) - posY * (m_texture.getImage().rows / 2)));
+
+    return imageCoord;
+}
+
+QPoint VideoView::projectPicturePos(QPoint imageCoords)
+{
     //variables required to map picture coordinates to window coordinates
     GLint viewport[4];
     GLdouble modelview[16];
@@ -488,159 +186,175 @@ QPoint VideoView::projectPicturePos(QPoint position)
     glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
     glGetDoublev( GL_PROJECTION_MATRIX, projection );
     glGetIntegerv( GL_VIEWPORT, viewport );
-    gluProject(position.x(), position.y() , 0, modelview, projection, viewport, &posX, &posY, &posZ);
+    gluProject(imageCoords.x(), imageCoords.y() , 0, modelview, projection, viewport, &posX, &posY, &posZ);
     windowCoord.setX(static_cast<int>(posX));
     windowCoord.setY(-(static_cast<int>(posY - viewport[3])));
+
     return windowCoord;
-}
-
-void VideoView::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm)
-{
-	QMutexLocker locker(&trackMutex);	
-	_tracker = trackingAlgorithm;		
-}
-
-void VideoView::takeScreenshot(QString screenShotFilename)
-{
-	cv::imwrite(screenShotFilename.toStdString(),_displayImage);
 }
 
 void VideoView::keyPressEvent(QKeyEvent *e)
 {
-	e->accept();
-	QKeyEvent event(e->type(), e->key(), e->modifiers(), e->text());
-	QCoreApplication::sendEvent(QApplication::activeWindow(), &event);
+
 }
 
-void VideoView::mouseMoveEvent( QMouseEvent * e )
+void VideoView::mouseMoveEvent(QMouseEvent *e)
 {
-	if (_isPanZoomMode)
-	{
-		const auto elapsed = std::chrono::system_clock::now() - _lastPannedTime;
-		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
-			if(_isPanning)
-			{
-                float dX = e->x() - _lastMPos[0];
-                float dY = e->y() - _lastMPos[1];
-				_lastMPos[0] = e->x();
-				_lastMPos[1] = e->y();
-                _panX -= dX * (_screenPicRatio+_zoomFactor);
-				_panY -= dY * (_screenPicRatio+_zoomFactor);
-				resizeGL(this->width(), this->height());
-				//Draw the scene               
-                update();
-			}
-			_lastPannedTime = std::chrono::system_clock::now();
-		}
-	}
-	else
-	{
-		e->accept();
-		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF localPos(p);
-		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-	}
+    switch (m_currentMode) {
+    case Mode::PANZOOM:
+        if (m_panZoomState.panState)
+        {
+            const QPointF delta = e->localPos() - (*m_panZoomState.panState).lastPos;
+            (*m_panZoomState.panState).lastPos = e->localPos();
+
+            m_panZoomState.panX -= static_cast<float>(delta.x() * (m_screenPicRatio + m_panZoomState.zoomFactor));
+            m_panZoomState.panY -= static_cast<float>(delta.y() * (m_screenPicRatio + m_panZoomState.zoomFactor));
+
+            resizeGL(this->width(), this->height());
+            update();
+        }
+        break;
+    case Mode::INTERACTION:
+        /*
+        e->accept();
+        QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+        */
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
 }
 
-void VideoView::mousePressEvent( QMouseEvent * e )
+void VideoView::mousePressEvent(QMouseEvent *e)
 {
-	if (_isPanZoomMode)
-	{
-		if(QApplication::keyboardModifiers() == Qt::NoModifier)
-		{
-			_isPanning = true;
-			this->setCursor(Qt::ClosedHandCursor);
-			_lastMPos[0] = e->x();
-			_lastMPos[1] = e->y();		
-		}
-		if(e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick)
-		{
-			fitToWindow();
-		}
-	}
-	else
-	{
-		e->accept();
-		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF localPos(p);
-		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-	}
+    switch (m_currentMode) {
+    case Mode::PANZOOM:
+        if (QApplication::keyboardModifiers() == Qt::NoModifier)
+        {
+            m_panZoomState.panState = CurrentPanState(e->localPos());
+            setCursor(Qt::ClosedHandCursor);
+        }
+        if (e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick)
+        {
+            fitToWindow();
+        }
+        break;
+    case Mode::INTERACTION:
+        /*
+        e->accept();
+        QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+        */
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
 
-void VideoView::mouseReleaseEvent( QMouseEvent * e )
+void VideoView::mouseReleaseEvent(QMouseEvent *e)
 {
-	if (_isPanZoomMode)
-	{
-		this->setCursor(Qt::OpenHandCursor);
-		_isPanning = false;
-	}
-	else{
-		e->accept();
-		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF localPos(p);
-		QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-	}
+    switch (m_currentMode) {
+    case Mode::PANZOOM:
+        setCursor(Qt::OpenHandCursor);
+        m_panZoomState.panState.reset();
+        break;
+    case Mode::INTERACTION:
+        /*
+        e->accept();
+        QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+        */
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
 
-void VideoView::wheelEvent( QWheelEvent * e )
+void VideoView::wheelEvent(QWheelEvent *e)
 {
-	QPoint picturePos  = unprojectScreenPos(e->pos());
+    // The maximum zoom is defined such that one image pixel can never become bigger than the widget size. The zoom
+    // step size is calculated based on the ratio of widget size and image size and decays exponentially when zooming
+    // in.
+    float step = 0.0005f * m_screenPicRatio;
+    if ((m_panZoomState.zoomFactor / m_screenPicRatio) < 0.f) {
+        step *= 1.f + (m_panZoomState.zoomFactor / m_screenPicRatio);
+    }
 
-	if (_isPanZoomMode)
-	{
-		int numDegrees = e->delta();
-		if (e->orientation() == Qt::Vertical
-			&& (_zoomFactor+_screenPicRatio) - 0.002 * numDegrees > 0)
-		{
-			_zoomFactor -= 0.002f * numDegrees;
+    switch (m_currentMode) {
+    case Mode::PANZOOM:
+        if (e->orientation() == Qt::Vertical)
+        {
+            const QPointF pos = e->posF();
+            const int numDegrees  = e->delta();
+            const float deltaZoom = step * numDegrees;
 
-			auto elapsed = std::chrono::system_clock::now() - _lastZoomedTime;
-			//when we zoomed only recently, center zoom to same spot again
-			if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() < 500)
-			{
-                _panX = static_cast<float>(_lastZoomedPoint.x()) - ((static_cast<float>(this->width())*(_screenPicRatio + _zoomFactor)) / 2);
-                _panY = static_cast<float>(_lastZoomedPoint.y()) - ((static_cast<float>(this->height())*(_screenPicRatio + _zoomFactor)) / 2);
-			}
-			else
-			{ 			
-				// adjust _panX and _panY, so that zoom is centered on mouse cursor
-                _panX = static_cast<float>(picturePos.x()) - ((static_cast<float>(this->width())*(_screenPicRatio + _zoomFactor)) / 2);
-                _panY = static_cast<float>(picturePos.y()) - ((static_cast<float>(this->height())*(_screenPicRatio + _zoomFactor)) / 2);
-				_lastZoomedPoint = picturePos;
-			}
-			_lastZoomedTime = std::chrono::system_clock::now();
-			
-			if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 1) {
-				resizeGL(this->width(), this->height());
-				//Draw the scene
-                update();
-				e->accept();
-			}
-		}		
-	}
-	else
-	{
-		e->accept();
-		QPoint p  = unprojectScreenPos(e->pos());
-		const QPointF localPos(p);
-		QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
-		QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-	}	
+            m_panZoomState.zoomFactor -= deltaZoom;
+
+            // offset of mouse cursor from widget center in proportion to widget size
+            const float propX = width() / 2.f - static_cast<float>(pos.x());
+            const float propY = height() / 2.f - static_cast<float>(pos.y());
+
+            // zoom to center
+            m_panZoomState.panX += (deltaZoom * width()) / 2;
+            m_panZoomState.panY += (deltaZoom * height()) / 2;
+
+            // adjust for cursor position
+            m_panZoomState.panX -= (deltaZoom * propX);
+            m_panZoomState.panY -= (deltaZoom * propY);
+
+            resizeGL(this->width(), this->height());
+            update();
+            e->accept();
+        }
+        break;
+    case Mode::INTERACTION:
+        /*
+        e->accept();
+        QPoint p  = unprojectScreenPos(e->pos());
+        const QPointF localPos(p);
+        QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
+        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+        */
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
 
-void VideoView::setPanZoomMode(bool isPanZoom)
+void VideoView::updatePan()
 {
-	_isPanZoomMode = isPanZoom;
-	if(_isPanZoomMode)
-		this->setCursor(Qt::OpenHandCursor);
-	else
-		this->setCursor(Qt::ArrowCursor);
+    const int imageCols = m_texture.getImage().cols;
+    const int imageRows = m_texture.getImage().rows;
+
+    const float width  = static_cast<float>(this->width());
+    const float height = static_cast<float>(this->height());
+
+    const float imgRatio    = static_cast<float>(imageCols) / imageRows;
+    const float windowRatio = static_cast<float>(width) / height;
+
+    if(windowRatio < imgRatio)
+    {
+        m_panZoomState.panY = -((height - (width / imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
+        m_panZoomState.panX = 0;
+    }
+    else
+    {
+        m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
+        m_panZoomState.panY = 0;
+    }
 }
 
 }
 }
-
-#endif

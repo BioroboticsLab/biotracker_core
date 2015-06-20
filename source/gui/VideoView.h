@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include <opencv2/opencv.hpp>
 
 #include <QOpenGLWidget>
@@ -20,125 +22,90 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
+    enum class Mode : uint8_t {
+        INTERACTION = 0,
+        PANZOOM
+    };
+
     VideoView(QWidget *parent, QOpenGLContext *context);
 
+    Mode getMode() const { return m_currentMode; }
+
 public slots:
-    void setPanZoomMode (const bool isPanZoom);
+    void setMode(const Mode mode);
     void fitToWindow();
+    void setImage(const cv::Mat &image);
 
 private:
-    void initializeGL() override;
-    void resizeGL(int w, int h) override;
-    void paintGL() override;
+    /**
+     * @brief Used to store mouse cursor offsets while panning.
+     */
+    struct CurrentPanState {
+        QPointF lastPos;
 
-    int _currentWidth;
-    int _currentHeight;
-    float _zoomFactor;
-    float _screenPicRatio;
-    float _panX;
-    float _panY;
-    bool _isPanning;
-    cv::Mat _displayImage;
-    //QOpenGLTexture m_imageTexture;
+        CurrentPanState(const QPointF lastPos)
+            : lastPos(lastPos)
+        {}
+    };
+
+    /**
+     * @brief Stores the current zoom and pan offsets. While panning, panState stores the last mouse cursor position.
+     */
+    struct PanZoomState {
+        float zoomFactor = 0.f;
+        float panX       = 0.f;
+        float panY       = 0.f;
+
+        boost::optional<CurrentPanState> panState;
+    };
+
+    /**
+     * @brief Current State of the VideoWidget. In Interaction mode, mouse and keyboard event will be forwarded to
+     * the currently active tracking algorithm.
+     */
+    Mode m_currentMode;
+
+    /**
+     * @brief Pan/Zoom state variables.
+     */
+    PanZoomState m_panZoomState;
+
+    /**
+     * @brief Wrapper for the OpenGL texture. Also contains the original image as opencv matrix.
+     */
     TextureObject m_texture;
 
+    /**
+     * @brief Ratio of widget size and image size
+     */
+    float m_screenPicRatio;
 
-    //std::unique_ptr<TextureObject> _textureObj;
-};
+    void initializeGL() override;
+    void resizeGL(int w, int h) override;
+    void paintEvent(QPaintEvent *event) override;
 
-}
-}
-
-
-#ifdef FALSE
-
-#include <chrono>
-
-#include <QGLWidget>
-#include <QtOpenGL>
-
-#include <opencv2/opencv.hpp>
-
-#include "source/core/settings/Messages.h"
-#include "source/core/TrackingAlgorithm.h"
-#include "source/util/stdext.h"
-#include "source/gui/TextureObject.h"
-
-namespace BioTracker {
-namespace Gui {
-
-class VideoView : public QGLWidget
-{
-	Q_OBJECT
-public:
-    VideoView(QWidget *parent = nullptr);
-    ~VideoView();
-	void showImage(cv::Mat img);
-	void updateDisplay();
-	void takeScreenshot(QString screenShotFilename);
-	float getCurrentZoomLevel() const { return _screenPicRatio + _zoomFactor; }
-
-    friend class ::ProxyPaintObject;
-
-protected:
-	void initializeGL() override;
-	void paintEvent(QPaintEvent *) override;
-	void resizeGL(int width, int height) override;
-    n// unproject Point from window coordinates to picture coordinates
+    /**
+    * @brief unprojectScreenPos
+    * @param mouseCoords coordinates relative to window
+    * @return coordinates relative to image
+    */
     QPoint unprojectScreenPos(QPoint mouseCoords);
-    // project Point from picture coordinates to window coordinates
-    QPoint projectPicturePos(QPoint pictureCoords);
-	void keyPressEvent(QKeyEvent *e) override;
-	void mouseMoveEvent(QMouseEvent * e) override;
-	void mousePressEvent(QMouseEvent * e) override;
-	void mouseReleaseEvent(QMouseEvent * e) override;
-	void wheelEvent(QWheelEvent * e) override;
 
-private:
-	cv::Mat _displayImage;
-    std::unique_ptr<TextureObject> _textureObj;
-	std::shared_ptr<TrackingAlgorithm> _tracker;    
-	bool _isPanZoomMode;
-	int _currentWidth;
-	int _currentHeight;
+    /**
+     * @brief projectPicturePos
+     * @param imageCoords coordinates relative to image
+     * @return coordinates relative to window
+     */
+    QPoint projectPicturePos(QPoint imageCoords);
 
-	/**
-	* Modified by user input. 
-	* Initially 0, geting negative if we zoom into the picture,
-	* getting positive if we zoom out
-	*/
-	float _zoomFactor;
-	/* ratio of window size to picture size */
-	float _screenPicRatio;
-	float _panX;
-	float _panY;
-	bool _isPanning;
-	int _lastMPos[2];
-	std::chrono::system_clock::time_point _lastPannedTime;
-	std::chrono::system_clock::time_point _lastZoomedTime;
-	QPoint _lastZoomedPoint;
-	TrackingAlgorithm::View _selectedView;
+    void keyPressEvent(QKeyEvent *e) override;
+    void mouseMoveEvent(QMouseEvent * e) override;
+    void mousePressEvent(QMouseEvent * e) override;
+    void mouseReleaseEvent(QMouseEvent * e) override;
+    void wheelEvent(QWheelEvent * e) override;
 
-public slots:
-	void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
-	void setPanZoomMode (bool isPanZoom);
-	void fitToWindow();
-
-	void changeSelectedView(const TrackingAlgorithm::View &selectedView);
-
-signals:
-	/**
-	* print a message in GUI's terminal.
-	*/
-	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
-
-	/**
-	* notify TrackingAlgorithm about current zoom level
-	*/
-    void reportZoomLevelstatic_cast<float>(;
+    void updatePan();
 };
 
 }
 }
-
-#endif

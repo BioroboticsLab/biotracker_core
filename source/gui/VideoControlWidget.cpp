@@ -79,6 +79,7 @@ void VideoControlWidget::initConnects()
     QObject::connect(m_ui.button_previousFrame, &QPushButton::clicked, this, &VideoControlWidget::previousFrame);
     QObject::connect(m_ui.frame_num_edit, &QLineEdit::returnPressed, this, &VideoControlWidget::changeCurrentFrameByEdit);
     QObject::connect(m_ui.button_screenshot, &QPushButton::clicked, this, &VideoControlWidget::takeScreenshot);
+    QObject::connect(m_ui.button_panZoom, &QPushButton::clicked, this, &VideoControlWidget::switchPanZoomMode);
 }
 
 void VideoControlWidget::playPause()
@@ -144,8 +145,17 @@ void VideoControlWidget::takeScreenshot()
 
 void VideoControlWidget::switchPanZoomMode()
 {
-    m_isPanZoomMode = !m_isPanZoomMode;
-    m_videoView.setPanZoomMode(m_isPanZoomMode);
+    switch (m_videoView.getMode()) {
+    case VideoView::Mode::INTERACTION:
+        m_videoView.setMode(VideoView::Mode::PANZOOM);
+        break;
+    case VideoView::Mode::PANZOOM:
+        m_videoView.setMode(VideoView::Mode::INTERACTION);
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
 
 }

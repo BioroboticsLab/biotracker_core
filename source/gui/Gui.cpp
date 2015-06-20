@@ -63,6 +63,9 @@ void Gui::browsePictures()
 
     if (!files.empty()) {
         m_facade.openImages(files);
+
+        // TODO: remove
+        m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
     }
 }
 
