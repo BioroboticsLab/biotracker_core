@@ -51,10 +51,28 @@ void VideoView::fitToWindow()
     // reset PanZoomState
     m_panZoomState = PanZoomState();
 
-    updatePan();
-
     float width  = static_cast<float>(this->width());
     float height = static_cast<float>(this->height());
+
+    // calculate pan such that image is centered in widget
+    {
+        const int imageCols = m_texture.getImage().cols;
+        const int imageRows = m_texture.getImage().rows;
+
+        const float imgRatio    = static_cast<float>(imageCols) / imageRows;
+        const float windowRatio = static_cast<float>(width) / height;
+
+        if(windowRatio < imgRatio)
+        {
+            m_panZoomState.panY = -((height - (width / imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
+            m_panZoomState.panX = 0;
+        }
+        else
+        {
+            m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
+            m_panZoomState.panY = 0;
+        }
+    }
 
     glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
     glMatrixMode(GL_PROJECTION);
@@ -332,29 +350,5 @@ void VideoView::wheelEvent(QWheelEvent *e)
         break;
     }
 }
-
-void VideoView::updatePan()
-{
-    const int imageCols = m_texture.getImage().cols;
-    const int imageRows = m_texture.getImage().rows;
-
-    const float width  = static_cast<float>(this->width());
-    const float height = static_cast<float>(this->height());
-
-    const float imgRatio    = static_cast<float>(imageCols) / imageRows;
-    const float windowRatio = static_cast<float>(width) / height;
-
-    if(windowRatio < imgRatio)
-    {
-        m_panZoomState.panY = -((height - (width / imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
-        m_panZoomState.panX = 0;
-    }
-    else
-    {
-        m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) * (m_screenPicRatio + m_panZoomState.zoomFactor);
-        m_panZoomState.panY = 0;
-    }
-}
-
 }
 }

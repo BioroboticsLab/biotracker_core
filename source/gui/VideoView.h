@@ -102,10 +102,6 @@ private:
     void mouseMoveEvent(QMouseEvent * e) override;
     void mousePressEvent(QMouseEvent * e) override;
     void mouseReleaseEvent(QMouseEvent * e) override;
-    void wheelEvent(QWheelEvent * e) override;
-
-    void updatePan();
-};
-
+    void wheelEvent(QWheelEvent * e) override;};
 }
 }
