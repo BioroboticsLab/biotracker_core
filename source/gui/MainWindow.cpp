@@ -4,14 +4,14 @@ namespace BioTracker {
 namespace Gui {
 
 MainWindow::MainWindow(Core::Facade &facade)
-    : m_algorithmSelection(this, facade)
-    , m_notification(this, facade)
-    , m_videoControl(this, facade, m_ui.videoView)
+    : m_ui(this)
+    , m_algorithmSelection(m_ui.widget_alg, facade)
+    , m_notification(m_ui.dockWidgetNotificationContents, facade)
+    // TODO!!
+    , m_videoControl(m_ui.videoControls, facade, m_videoView)
+    , m_videoView(m_ui.trackingArea, QOpenGLContext::currentContext())
 {
-    m_ui.setupUi(this);
-    m_algorithmSelection.getUi().setupUi(m_ui.widget_alg);
-    m_notification.getUi().setupUi(m_ui.dockWidgetNotificationContents);
-    m_videoControl.getUi().setupUi(m_ui.videoControls);
+    m_ui.videoViewLayout->addWidget(&m_videoView);
 }
 
 }

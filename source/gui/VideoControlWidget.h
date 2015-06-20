@@ -5,6 +5,7 @@
 
 #include "source/core/Facade.h"
 #include "source/gui/ui_VideoControlWidget.h"
+#include "source/util/QtRaiiWrapper.hpp"
 
 namespace BioTracker {
 namespace Gui {
@@ -13,14 +14,16 @@ class VideoControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VideoControlWidget(QWidget *parent, Core::Facade &facade, VideoView* videoView);
+    typedef Util::QtRaiiWrapper<Ui::VideoControlWidget, QWidget> VideoControlUi;
 
-    Ui::VideoControlWidget& getUi() { return m_ui; }
+    explicit VideoControlWidget(QWidget *parent, Core::Facade &facade, VideoView& videoView);
+
+    VideoControlUi& getUi() { return m_ui; }
 
 private:
-    Ui::VideoControlWidget m_ui;
+    VideoControlUi m_ui;
     Core::Facade& m_facade;
-    VideoView* m_videoView;
+    VideoView& m_videoView;
 
     QIcon m_iconPause;
     QIcon m_iconPlay;

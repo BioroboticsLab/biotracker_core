@@ -1,5 +1,191 @@
 #include "VideoView.h"
 
+#include <QColor>
+#include <QImage>
+#include <QOpenGLFunctions>
+
+namespace BioTracker {
+namespace Gui {
+
+VideoView::VideoView(QWidget *parent, QOpenGLContext *context)
+    : QOpenGLWidget(parent)
+    // TODO add context
+    , QOpenGLFunctions()
+    , _currentWidth(0)
+    , _currentHeight(0)
+    , _zoomFactor(0)
+    , _screenPicRatio(0)
+    , _panX(0)
+    , _panY(0)
+    , m_texture(this)
+    //, m_imageTexture(QOpenGLTexture::Target2D)
+{
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setSizePolicy(sizePolicy);
+
+}
+
+void VideoView::setPanZoomMode(const bool isPanZoom)
+{
+
+}
+
+void VideoView::fitToWindow()
+{
+    /*
+    makeCurrent();
+
+    if (!_displayImage.empty()) {
+        _zoomFactor = 0;
+        float width = static_cast<float>(this->width());
+        float height = static_cast<float>(this->height());
+        float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+        float windowRatio = static_cast<float>(width) / height;
+        if(windowRatio < imgRatio)
+        {
+            _panY = -((height - (width/imgRatio))/2)*(_screenPicRatio + _zoomFactor);
+            _panX = 0;
+        } else
+        {
+            _panX = - ((width - (height*imgRatio))/2)*(_screenPicRatio +_zoomFactor);
+            _panY = 0;
+        }
+        glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+
+        width = width * (_screenPicRatio + _zoomFactor);
+        height = height *(_screenPicRatio + _zoomFactor);
+
+        float left = _panX;
+        float top	 = _panY;
+        float right = left + width;
+        float bottom = top + height;
+        glOrtho(left, right, bottom, top, 0.0, 1.0);
+        glMatrixMode(GL_MODELVIEW);
+
+        //emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+
+        //Draw the scene
+        update();
+
+    }
+    */
+
+}
+
+void VideoView::initializeGL()
+{
+    initializeOpenGLFunctions();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    glClearDepth(1.0f);                         // Depth Buffer Setup
+glEnable(GL_DEPTH_TEST);                        // Enables Depth Testing
+glDepthFunc(GL_LEQUAL);                         // The Type Of Depth Test To Do
+
+
+    /*
+    glEnable(GL_MULTISAMPLE);
+    cv::Mat img = cv::imread("home/ben/paramoptimizatin.png");
+
+    //cv::Mat img = cv::Mat::zeros(64, 64, CV_8UC3);
+    m_texture.setPicture(img);
+    resizeGL(img.cols, img.rows);
+    */
+    /*
+
+    //QImage blankImage(1, 1, QImage::Format_RGB32);
+    QImage blankImage("/home/ben/paramoptimization.png");
+    //blankImage.fill(0);
+    m_imageTexture.setData(blankImage);
+    m_imageTexture.setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    m_imageTexture.setMagnificationFilter(QOpenGLTexture::Linear);
+
+    //resizeGL(100, 100);
+    */
+
+}
+
+void VideoView::resizeGL(int w, int h)
+{
+    std::cout << w << std::endl;
+    glViewport(0, 0, w, h);
+    //glViewport(0, 0, static_cast<GLsizei>(w), static_cast<GLsizei>(h));
+    /*
+    glViewport(0, 0, static_cast<GLsizei>(w), static_cast<GLsizei>(h));
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   */
+    /*
+    //qreal pixelRatio = devicePixelRatio();
+    makeCurrent();
+
+    // dont do anything if  width or height are 0
+    // or there is no image to display
+    if (width <= 0 || height <= 0)
+        return;
+    if (_displayImage.empty())
+        return;
+
+    //calculate ratio of screen to displayed image
+    float imgRatio = static_cast<float>(_displayImage.cols) / _displayImage.rows;
+    float windowRatio = static_cast<float>(width) / height;
+    if(windowRatio < imgRatio)
+    {
+        _screenPicRatio = _displayImage.rows/(width/imgRatio);
+    }
+    else
+    {
+        _screenPicRatio = _displayImage.cols/(height*imgRatio);
+    }
+
+    //create viewport with coordinates matching picture size in pixels
+    glViewport(0,0,width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    //if window really was resized,
+    //fit it to window at end of this function
+    bool sizeChanged = false;
+    if(_currentHeight != height || _currentWidth != width)
+    {
+        sizeChanged = true;
+        _currentHeight = height;
+        _currentWidth = width;
+    }
+
+    width = static_cast<int>(width * (_screenPicRatio + _zoomFactor));
+    height = static_cast<int>(height *(_screenPicRatio + _zoomFactor));
+
+    float left = _panX;
+    float top	 = _panY;
+    float right = left + width;
+    float bottom = top + height;
+    glOrtho(left, right, bottom, top, 0.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    if (sizeChanged)
+        fitToWindow();
+        */
+}
+
+void VideoView::paintGL()
+{
+    QImage img = QImage("/home/ben/paramoptimizatin.png").mirrored();
+    QOpenGLTexture *texture = new QOpenGLTexture(img);
+    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    texture->setMagnificationFilter(QOpenGLTexture::Linear);
+
+    glClearColor (1.0,0.0,0.0,1.0);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+}
+}
+}
+
+#ifdef FALSE
+
 #include <QMouseEvent>
 #include <QGLFormat>
 #include <QMatrix>
@@ -456,3 +642,5 @@ void VideoView::setPanZoomMode(bool isPanZoom)
 
 }
 }
+
+#endif

@@ -9,8 +9,9 @@
 namespace BioTracker {
 namespace Gui {
 
-VideoControlWidget::VideoControlWidget(QWidget *parent, Core::Facade& facade, VideoView *videoView)
+VideoControlWidget::VideoControlWidget(QWidget *parent, Core::Facade& facade, VideoView &videoView)
     : QWidget(parent)
+    , m_ui(parent)
     , m_facade(facade)
     , m_videoView(videoView)
     , m_isPanZoomMode(false)
@@ -144,7 +145,7 @@ void VideoControlWidget::takeScreenshot()
 void VideoControlWidget::switchPanZoomMode()
 {
     m_isPanZoomMode = !m_isPanZoomMode;
-    m_videoView->setPanZoomMode(m_isPanZoomMode);
+    m_videoView.setPanZoomMode(m_isPanZoomMode);
 }
 
 }
