@@ -5,9 +5,9 @@ namespace BioTracker {
 namespace Core {
 
 Facade::Facade()
-    :m_settings()
-    ,m_registry(Algorithms::Registry::getInstance())
-    ,m_trackingThread(m_settings)
+    : m_settings()
+    , m_registry(Registry::getInstance())
+    , m_trackingThread(m_settings)
 {
 
 }

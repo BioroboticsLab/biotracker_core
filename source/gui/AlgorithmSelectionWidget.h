@@ -19,13 +19,15 @@ public:
 
     AlgorithmSelectionUi& getUi() { return m_ui; }
 
+public slots:
+    void addTrackingAlgorithm(const Core::TrackerType type);
+
 private:
     AlgorithmSelectionUi m_ui;
     Core::Facade& m_facade;
 
+    void initAlgorithmList();
     void initConnects();
-
-private slots:
 };
 
 }

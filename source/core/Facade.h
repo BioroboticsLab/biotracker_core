@@ -29,7 +29,7 @@ public:
         return m_settings;
     }
 
-    Algorithms::Registry& getRegistry() {
+    Registry& getRegistry() {
         return m_registry;
     }
 
@@ -132,7 +132,7 @@ signals:
 
 private:
     Settings m_settings;
-    Algorithms::Registry &m_registry;
+    Registry &m_registry;
     TrackingThread m_trackingThread;
 };
 

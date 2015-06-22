@@ -1,5 +1,7 @@
-#ifndef SINGLETON_H_
-#define SINGLETON_H_
+#pragma once
+
+namespace BioTracker {
+namespace Util {
 
 template<class T>
 class Singleton {
@@ -21,4 +23,5 @@ T& Singleton<T>::getInstance() {
     return instance;
 }
 
-#endif
+}
+}
