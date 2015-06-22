@@ -77,7 +77,7 @@ void Gui::loadTracker()
     const QString path = QFileDialog::getOpenFileName(&m_mainWindow, "Load Tracker", "", trackerFilter);
     if (!path.isEmpty()) {
         boost::filesystem::path libraryPath(path.toStdString());
-        m_facade.getRegistry().load_tracker_library(libraryPath);
+        m_facade.getRegistry().loadTrackerLibrary(libraryPath);
     }
 }
 

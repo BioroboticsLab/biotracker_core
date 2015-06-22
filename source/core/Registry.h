@@ -33,7 +33,7 @@ public:
      * @brief Load and register a new tracker from a shared library
      * @param path location of library in filesystem
      */
-    void load_tracker_library(const boost::filesystem::path &path);
+    void loadTrackerLibrary(const boost::filesystem::path &path);
 
     /**
      * @see register_tracker_type(std::string, new_tracker_function_t);
@@ -41,17 +41,17 @@ public:
      * @param name name of tracking alg
      */
     template<class TRACKER>
-    bool register_tracker_type(std::string name);
+    bool registerTrackerType(std::string name);
 
     /**
      * creates a new tracker-instance
      * @return new instance
      */
-    std::shared_ptr<TrackingAlgorithm> make_new_tracker(const TrackerType name, Settings& settings, QWidget *parent) const;
+    std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name, Settings& settings, QWidget *parent) const;
 
-    const map_string_type_t &typeByString() const { return _typeByString; }
-    const map_type_fun_t &trackerByType() const { return _trackerByType; }
-    const map_type_string_t &stringByType() const { return _stringByType; }
+    const map_string_type_t &getTypeByString() const { return m_typeByString; }
+    const map_type_fun_t &getTrackerByType() const { return m_trackerByType; }
+    const map_type_string_t &getStringByType() const { return m_stringByType; }
 
 signals:
     void newTracker(const TrackerType type);
@@ -59,9 +59,9 @@ signals:
 private:
     friend class Singleton<Registry>;
 
-    map_string_type_t _typeByString;
-    map_type_string_t _stringByType;
-    map_type_fun_t _trackerByType;
+    map_string_type_t m_typeByString;
+    map_type_string_t m_stringByType;
+    map_type_fun_t m_trackerByType;
 
     Registry();
 
@@ -71,17 +71,17 @@ private:
      * @param f function that creates a new instance
      * @return dummy value
      */
-    bool register_tracker_type(std::string name, new_tracker_function_t f);
+    bool registerTrackerType(std::string name, new_tracker_function_t f);
 };
 
 template<class TRACKER>
-bool Registry::register_tracker_type(std::string name) {
+bool Registry::registerTrackerType(std::string name) {
     struct local_function {
         static std::shared_ptr<TrackingAlgorithm> f(Settings& settings, QWidget *parent) {
             return std::make_shared<TRACKER>(settings, parent);
         }
     };
-    return this->register_tracker_type(std::move(name), local_function::f);
+    return this->registerTrackerType(std::move(name), local_function::f);
 }
 
 }

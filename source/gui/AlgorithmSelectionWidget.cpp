@@ -20,17 +20,17 @@ AlgorithmSelectionWidget::AlgorithmSelectionWidget(QWidget *parent, Core::Facade
 
 void AlgorithmSelectionWidget::addTrackingAlgorithm(const Core::TrackerType type)
 {
-    m_ui.cb_algorithms->addItem(QString::fromStdString(m_facade.getRegistry().stringByType().at(type)));
+    m_ui.cb_algorithms->addItem(QString::fromStdString(m_facade.getRegistry().getStringByType().at(type)));
 }
 
 void AlgorithmSelectionWidget::initAlgorithmList()
 {
     // add NoTracker first
     m_ui.cb_algorithms->addItem(QString::fromStdString(
-        m_facade.getRegistry().stringByType().at(Core::NoTracking)));
+        m_facade.getRegistry().getStringByType().at(Core::NoTracking)));
 
     // add Trackers
-    for (auto& algByStr : m_facade.getRegistry().typeByString())
+    for (auto& algByStr : m_facade.getRegistry().getTypeByString())
     {
         if (algByStr.second != Core::NoTracking)
         {

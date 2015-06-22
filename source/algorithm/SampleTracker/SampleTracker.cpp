@@ -10,7 +10,7 @@
 extern "C" {
 void registerTracker()
 {
-    BioTracker::Core::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
+    BioTracker::Core::Registry::getInstance().registerTrackerType<SampleTracker>("Sample Tracker");
 }
 }
 
