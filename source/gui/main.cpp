@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
+    qRegisterMetaType<BioTracker::Core::TrackerType>("TrackerType");
 
 	if (SystemCompatibilityCheck::checkOpenGLSupport()) {
 		app.setOrganizationName("Biorobotics Lab / FU Berlin");
