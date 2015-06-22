@@ -2,6 +2,8 @@
 
 #include <map>
 
+#include <boost/filesystem/path.hpp>
+
 #include <QObject>
 
 #include "source/core/TrackingAlgorithm.h"
@@ -26,6 +28,12 @@ public:
     typedef std::map<const TrackerType, new_tracker_function_t> map_type_fun_t;
     typedef std::map<const TrackerType, const std::string> map_type_string_t;
     typedef std::map<const std::string, const TrackerType> map_string_type_t;
+
+    /**
+     * @brief Load and register a new tracker from a shared library
+     * @param path location of library in filesystem
+     */
+    void load_tracker_library(const boost::filesystem::path &path);
 
     /**
      * @see register_tracker_type(std::string, new_tracker_function_t);

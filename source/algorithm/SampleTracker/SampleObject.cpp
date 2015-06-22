@@ -1,5 +1,4 @@
-#include "source/tracking/algorithm/SampleTracker/SampleObject.h"
-
+#include "source/algorithm/SampleTracker/SampleObject.h"
 
 SampleObject::SampleObject(void)
 	: ObjectModel()

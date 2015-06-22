@@ -22,6 +22,8 @@ private slots:
     void browseVideo();
     void browsePictures();
 
+    void loadTracker();
+
     void loadTrackingData();
     void storeTrackingData();
 

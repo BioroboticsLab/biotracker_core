@@ -7,7 +7,6 @@
 #include <QAction>
 #include <QFileDialog>
 
-
 #include <QShortcut>
 #include <QKeySequence>
 
@@ -31,6 +30,8 @@ void Gui::initConnects()
     //File -> Open Video
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
+
+    QObject::connect(m_mainWindow.getUi().actionLoad_Tracker, &QAction::triggered, this, &Gui::loadTracker);
 
     QObject::connect(m_mainWindow.getUi().actionLoad_tracking_data, &QAction::triggered, this, &Gui::loadTrackingData);
     QObject::connect(m_mainWindow.getUi().actionSave_tracking_data, &QAction::triggered, this, &Gui::storeTrackingData);
@@ -66,6 +67,17 @@ void Gui::browsePictures()
 
         // TODO: remove
         m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
+    }
+}
+
+void Gui::loadTracker()
+{
+    static const QString trackerFilter("BioTracker algorithms (*.tracker)");
+
+    const QString path = QFileDialog::getOpenFileName(&m_mainWindow, "Load Tracker", "", trackerFilter);
+    if (!path.isEmpty()) {
+        boost::filesystem::path libraryPath(path.toStdString());
+        m_facade.getRegistry().load_tracker_library(libraryPath);
     }
 }
 

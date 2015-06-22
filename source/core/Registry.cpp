@@ -1,5 +1,11 @@
 #include "Registry.h"
 
+#include <boost/filesystem/operations.hpp>
+
+#include <QLibrary>
+
+#include "source/core/Exceptions.h"
+
 namespace BioTracker {
 namespace Core {
 
@@ -23,6 +29,20 @@ bool Registry::register_tracker_type(std::string name, new_tracker_function_t f)
     emit newTracker(type);
 
     return true;
+}
+
+void Registry::load_tracker_library(const boost::filesystem::path &path)
+{
+    typedef void (*RegisterFunction)();
+
+    if (!boost::filesystem::exists(path)) {
+        throw file_not_found("Could not find file " + path.string());
+    }
+
+    QLibrary trackerLibrary(QString::fromStdString(path.string()));
+    auto registerFunction = static_cast<RegisterFunction>(trackerLibrary.resolve("registerTracker"));
+
+    registerFunction();
 }
 
 std::shared_ptr<TrackingAlgorithm> Registry::make_new_tracker(const TrackerType type, Settings &settings, QWidget *parent) const

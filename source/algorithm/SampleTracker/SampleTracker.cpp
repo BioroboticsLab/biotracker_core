@@ -1,15 +1,17 @@
 #include "SampleTracker.h"
+
 #include <QApplication>
 #include <QIntValidator>
 #include <QPushButton>
 #include <QPainter>
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
 
-#include "source/tracking/algorithm/algorithms.h"
+#include "source/core/Registry.h"
 
-namespace {
-    auto _ = Algorithms::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
+extern "C" {
+void registerTracker()
+{
+    BioTracker::Core::Registry::getInstance().register_tracker_type<SampleTracker>("Sample Tracker");
+}
 }
 
 SampleTracker::SampleTracker(Settings & settings, QWidget *parent)
@@ -55,6 +57,7 @@ void SampleTracker::track		( ulong, const cv::Mat& imgOriginal )
     _imageChanged = true;
 }
 
+/*
 void SampleTracker::paint		(ProxyPaintObject& p , const View &view)
 {
     if ( view.name != _currentView || _imageChanged)
@@ -75,6 +78,7 @@ void SampleTracker::paint		(ProxyPaintObject& p , const View &view)
 
 
 }
+*/
 
 void SampleTracker::paintOverlay(QPainter *painter){
     if(_showSelectorRec)
@@ -82,10 +86,6 @@ void SampleTracker::paintOverlay(QPainter *painter){
         drawRectangle( painter );
     }
 }
-
-void SampleTracker::reset		(){}
-
-
 
 //this will draw a basic rectangle
 void SampleTracker::drawRectangle(QPainter *painter)

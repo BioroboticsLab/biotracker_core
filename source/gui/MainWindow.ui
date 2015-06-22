@@ -154,6 +154,8 @@
     <addaction name="actionOpen_Video"/>
     <addaction name="actionOpen_Picture"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_Tracker"/>
+    <addaction name="separator"/>
     <addaction name="actionLoad_tracking_data"/>
     <addaction name="actionSave_tracking_data"/>
     <addaction name="separator"/>
@@ -296,6 +298,11 @@
   <action name="actionQuit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionLoad_Tracker">
+   <property name="text">
+    <string>Load Tracker...</string>
    </property>
   </action>
  </widget>

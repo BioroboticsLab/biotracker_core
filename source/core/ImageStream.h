@@ -1,5 +1,4 @@
-#ifndef IMAGESTREAM_H_
-#define IMAGESTREAM_H_
+#pragma once
 
 #include <memory>                       // std::unique_ptr
 #include <opencv2/opencv.hpp>           // cv::Mat
@@ -8,6 +7,9 @@
 #include <boost/filesystem.hpp>
 
 #include "source/core/settings/ParamNames.h" // GUIPARAM::MediaType
+
+namespace BioTracker {
+namespace Core {
 
 class ImageStream
 {
@@ -118,4 +120,5 @@ std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<boost::filesys
 
 std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path &filename);
 
-#endif /* IMAGESTREAM_H_ */
+}
+}

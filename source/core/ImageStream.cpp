@@ -1,27 +1,12 @@
-/*
- * ImageStream.cpp
- *
- *  Created on: May 13, 2015
- *      Author: tobias
- */
-
 #include "ImageStream.h"
+
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
+#include "source/core/Exceptions.h"
 
-/*********************************************************/
-
-struct video_open_error : std::invalid_argument {
-	using std::invalid_argument::invalid_argument;
-};
-
-struct file_not_found : std::invalid_argument {
-    using std::invalid_argument::invalid_argument;
-};
-
-/*********************************************************/
-
+namespace BioTracker {
+namespace Core {
 
 ImageStream::ImageStream()
 	: m_current_frame(cv::Size(0,0), CV_8UC3)
@@ -245,4 +230,7 @@ std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path
 	catch (const video_open_error &) {
 		return make_ImageStreamNoMedia();
 	}
+}
+
+}
 }
