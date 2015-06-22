@@ -82,6 +82,7 @@ private:
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;
+    void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
     /**

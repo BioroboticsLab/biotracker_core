@@ -18,8 +18,7 @@ namespace Gui {
 
 VideoView::VideoView(QWidget *parent, QOpenGLContext *context)
     : QOpenGLWidget(parent)
-    // TODO add context
-    , QOpenGLFunctions()
+    , QOpenGLFunctions(context)
     , m_currentMode(Mode::INTERACTION)
     , m_texture(this)
     , m_screenPicRatio(0)
@@ -105,6 +104,8 @@ void VideoView::setImage(const cv::Mat &image)
 
 void VideoView::initializeGL()
 {
+    makeCurrent();
+
     initializeOpenGLFunctions();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -155,6 +156,15 @@ void VideoView::resizeGL(int width, int height)
 
     glOrtho(left, right, bottom, top, 0.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
+}
+
+void VideoView::resizeEvent(QResizeEvent *event)
+{
+    QOpenGLWidget::resizeEvent(event);
+    if (isValid())
+    {
+       fitToWindow();
+    }
 }
 
 void VideoView::paintEvent(QPaintEvent *event)

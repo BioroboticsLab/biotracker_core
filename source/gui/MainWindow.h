@@ -9,6 +9,7 @@
 #include "source/gui/VideoControlWidget.h"
 #include "source/gui/VideoView.h"
 #include "source/util/QtRaiiWrapper.hpp"
+#include "source/util/QOpenGLContextWrapper.h"
 
 namespace BioTracker {
 namespace Gui {
@@ -28,6 +29,7 @@ public:
     VideoControlWidget& getVideoControl() { return m_videoControl; }
 
 private:
+    Util::QOpenGLContextWrapper m_context;
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;
     NotificationWidget m_notification;
