@@ -15,7 +15,8 @@
 /*********************************************************/
 
 struct video_open_error : std::invalid_argument {
-	using std::invalid_argument::invalid_argument;
+	//using std::invalid_argument::invalid_argument;
+	explicit video_open_error(const char* what_arg) : std::invalid_argument(what_arg) {}
 };
 
 /*********************************************************/
@@ -178,7 +179,7 @@ public:
 		, m_fps( m_capture.get(CV_CAP_PROP_FPS) )
 	{
 		if (! m_capture.isOpened()) {
-			throw video_open_error(":(");
+			throw video_open_error( ":(" );
 		}
 		// load first image
 		if (this->numFrames() > 0) {
