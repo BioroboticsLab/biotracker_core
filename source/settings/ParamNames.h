@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint> // uint8_t
 #include <string> // std::string
 
 namespace CONFIGPARAM
