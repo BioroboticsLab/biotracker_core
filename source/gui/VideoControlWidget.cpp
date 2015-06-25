@@ -101,7 +101,7 @@ void VideoControlWidget::playPause()
 void VideoControlWidget::setFrame(const int frame)
 {
     assert(frame >= 0);
-    assert(frame < m_facade.getNumFrames());
+    assert(static_cast<size_t>(frame) < m_facade.getNumFrames());
     m_facade.setFrame(frame);
 
     updateWidgets();
