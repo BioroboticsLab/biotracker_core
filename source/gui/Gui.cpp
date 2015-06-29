@@ -67,6 +67,7 @@ void Gui::browsePictures()
 
         // TODO: remove
         m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
+        m_mainWindow.getVideoControl().updateWidgets();
     }
 }
 

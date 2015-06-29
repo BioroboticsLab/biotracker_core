@@ -20,6 +20,8 @@ public:
 
     VideoControlUi& getUi() { return m_ui; }
 
+    void updateWidgets();
+
 private:
     VideoControlUi m_ui;
     Core::Facade& m_facade;
@@ -30,7 +32,6 @@ private:
 
     bool m_isPanZoomMode;
 
-    void updateWidgets();
     void initConnects();
     void initShortcuts();
 
