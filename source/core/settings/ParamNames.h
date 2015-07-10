@@ -20,7 +20,8 @@ namespace GUIPARAM
 enum class MediaType : uint8_t {
 	NoMedia = 0,
 	Video,
-	Images
+	Images,
+	Camera
 };
 
 enum class VideoMode : uint8_t {

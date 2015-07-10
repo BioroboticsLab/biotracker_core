@@ -214,6 +214,51 @@ private:
 
 /*********************************************************/
 
+class ImageStreamCamera : public ImageStream
+{
+public:
+    /**
+     * @throw file_not_found when device does not exists
+     * @throw device_open_error when there is an error with the device
+     * @brief ImageStreamCamera
+     * @param device id according to the VideoCapture class of OpenCV
+     */
+    explicit ImageStreamCamera(int device_id)
+        : m_capture(device_id)
+		, m_fps( m_capture.get(CV_CAP_PROP_FPS) )
+	{
+		if (! m_capture.isOpened()) {
+			throw device_open_error(":(");
+		}
+		// load first image
+		if (this->numFrames() > 0) {
+			this->nextFrame_impl();
+		}
+	}
+	virtual GUIPARAM::MediaType type() const override { return GUIPARAM::MediaType::Camera; }
+	virtual size_t numFrames() const override { return 1; }
+	virtual double fps() const override { return m_fps; }
+private:
+	virtual bool nextFrame_impl() override
+		{
+			cv::Mat new_frame;
+			m_capture >> new_frame;
+			this->set_current_frame(new_frame);
+			return ! new_frame.empty();
+		}
+
+		virtual bool setFrameNumber_impl(size_t ) override
+		{
+			// Well, setting a framenumber for a live feed is pretty useless
+			return false;
+		}
+
+	cv::VideoCapture m_capture;
+	const double     m_fps;
+};
+
+/*********************************************************/
+
 
 std::unique_ptr<ImageStream> make_ImageStreamNoMedia() {
 	return std::make_unique<ImageStreamNoMedia>();

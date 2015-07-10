@@ -144,7 +144,7 @@
      <x>0</x>
      <y>0</y>
      <width>982</width>
-     <height>29</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -153,6 +153,7 @@
     </property>
     <addaction name="actionOpen_Video"/>
     <addaction name="actionOpen_Picture"/>
+    <addaction name="actionOpen_Camera"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Tracker"/>
     <addaction name="separator"/>
@@ -303,6 +304,11 @@
   <action name="actionLoad_Tracker">
    <property name="text">
     <string>Load Tracker...</string>
+   </property>
+  </action>
+  <action name="actionOpen_Camera">
+   <property name="text">
+    <string>Open &amp;Camera...</string>
    </property>
   </action>
  </widget>

@@ -30,6 +30,7 @@ void Gui::initConnects()
     //File -> Open Video
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
+	QObject::connect(m_mainWindow.getUi().actionOpen_Camera, &QAction::triggered, this, &Gui::browseCameras);
 
     QObject::connect(m_mainWindow.getUi().actionLoad_Tracker, &QAction::triggered, this, &Gui::loadTracker);
 
@@ -69,6 +70,11 @@ void Gui::browsePictures()
         //m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
         m_mainWindow.getVideoControl().updateWidgets();
     }
+}
+
+void Gui::browseCameras()
+{
+	// TODO enumerate Devices!!!
 }
 
 void Gui::loadTracker()
