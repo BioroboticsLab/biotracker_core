@@ -17,6 +17,21 @@ namespace Core {
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
+        _imageStream(make_ImageStreamNoMedia()),
+        _captureActive(false),
+        _readyForNextFrame(true),
+        m_status(TrackerStatus::NothingLoaded),
+        _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
+        _fps(30),
+        _runningFps(0),
+        _maxSpeed(false),
+        _mediaType(MediaType::NoMedia),
+        _settings(settings),
+        m_context(nullptr),
+        _tracker(nullptr)
+{}
+
+TrackingThread::TrackingThread(Settings &settings, QOpenGLContext *context) :
 _imageStream(make_ImageStreamNoMedia()),
 _captureActive(false),
 _readyForNextFrame(true),
@@ -27,6 +42,7 @@ _runningFps(0),
 _maxSpeed(false),
 _mediaType(MediaType::NoMedia),
 _settings(settings),
+m_context(context),
 _tracker(nullptr)
 {}
 

@@ -8,6 +8,11 @@ BioTrackerApp::BioTrackerApp()
 
 }
 
+BioTrackerApp::BioTrackerApp(Util::QOpenGLContextWrapper *context)
+    :   m_facade(context)
+{
+}
+
 void BioTrackerApp::unknownError(const std::exception &err) const
 {
 

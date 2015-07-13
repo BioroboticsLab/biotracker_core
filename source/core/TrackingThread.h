@@ -6,6 +6,8 @@
 #include <boost/filesystem.hpp>
 #include <QThread>
 #include <QMouseEvent>
+#include <QtWidgets/qopenglwidget.h>
+#include <source/util/QOpenGLContextWrapper.h>
 
 #include "source/core/TrackingAlgorithm.h"
 #include "source/util/MutexWrapper.h"
@@ -32,7 +34,8 @@ public:
 
 	Q_OBJECT
 public:
-	TrackingThread(Settings &settings);
+    TrackingThread(Settings &settings);
+	TrackingThread(Settings &settings, QOpenGLContext *context);
 	~TrackingThread(void);
 	
     TrackerStatus getStatus() const
@@ -94,6 +97,7 @@ private:
 	GUIPARAM::MediaType _mediaType;
 
 	Settings &_settings;
+	QOpenGLContext m_context;
 
 	std::shared_ptr<TrackingAlgorithm> _tracker GUARDED_BY(_trackerMutex);
 

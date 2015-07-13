@@ -12,6 +12,7 @@ class BioTrackerApp : public QObject
     Q_OBJECT
 public:
     BioTrackerApp();
+    BioTrackerApp(Util::QOpenGLContextWrapper *context);
 
 protected slots:
     void unknownError(const std::exception &err) const;

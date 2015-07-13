@@ -5,12 +5,16 @@ namespace BioTracker {
 namespace Core {
 
 Facade::Facade()
+        : m_settings()
+        , m_registry(Registry::getInstance())
+        , m_trackingThread(m_settings)
+{ }
+
+Facade::Facade(Util::QOpenGLContextWrapper *context)
     : m_settings()
     , m_registry(Registry::getInstance())
-    , m_trackingThread(m_settings)
-{
-
-}
+    , m_trackingThread(m_settings, context)
+{ }
 
 Facade::~Facade()
 {

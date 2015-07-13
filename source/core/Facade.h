@@ -22,6 +22,7 @@ Q_OBJECT
 public:
 
     Facade();
+    Facade(Util::QOpenGLContextWrapper *context);
 
     ~Facade() override;
 

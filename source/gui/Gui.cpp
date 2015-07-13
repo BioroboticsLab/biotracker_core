@@ -10,13 +10,13 @@
 #include <QShortcut>
 #include <QKeySequence>
 
-
 namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
     : m_mainWindow(m_facade)
 {
+    BioTrackerApp(m_mainWindow.getContextWrapper());
     initConnects();
 
     m_mainWindow.show();
