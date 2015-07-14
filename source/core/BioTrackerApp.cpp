@@ -8,8 +8,8 @@ BioTrackerApp::BioTrackerApp()
 
 }
 
-BioTrackerApp::BioTrackerApp(Util::QOpenGLContextWrapper *context)
-    :   m_facade(context)
+BioTrackerApp::BioTrackerApp(QOpenGLWidget *widget)
+    :   m_facade(widget)
 {
 }
 

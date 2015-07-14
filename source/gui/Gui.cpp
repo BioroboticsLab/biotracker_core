@@ -16,7 +16,7 @@ namespace Gui {
 Gui::Gui()
     : m_mainWindow(m_facade)
 {
-    BioTrackerApp(m_mainWindow.getContextWrapper());
+    BioTrackerApp(&m_mainWindow.getVideoView());
     initConnects();
 
     m_mainWindow.show();
@@ -66,7 +66,7 @@ void Gui::browsePictures()
         m_facade.openImages(files);
 
         // TODO: remove
-        m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
+        //m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
         m_mainWindow.getVideoControl().updateWidgets();
     }
 }

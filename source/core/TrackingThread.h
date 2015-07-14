@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QtWidgets/qopenglwidget.h>
 #include <source/util/QOpenGLContextWrapper.h>
+#include <source/gui/TextureObject.h>
 
 #include "source/core/TrackingAlgorithm.h"
 #include "source/util/MutexWrapper.h"
@@ -35,7 +36,7 @@ public:
 	Q_OBJECT
 public:
     TrackingThread(Settings &settings);
-	TrackingThread(Settings &settings, QOpenGLContext *context);
+	TrackingThread(Settings &settings, QOpenGLWidget *widget);
 	~TrackingThread(void);
 	
     TrackerStatus getStatus() const
@@ -83,7 +84,7 @@ private:
 	/** 
 	* Video handling.
 	*/
-    std::unique_ptr<ImageStream> _imageStream;
+    std::unique_ptr<ImageStream> m_imageStream;
 	
 	//defines whether to use pictures as source or a video
 	bool _captureActive GUARDED_BY(_captureActiveMutex);
@@ -97,7 +98,10 @@ private:
 	GUIPARAM::MediaType _mediaType;
 
 	Settings &_settings;
-	QOpenGLContext m_context;
+
+    // widget for sharing textures with VideoView
+    QOpenGLWidget m_widget;
+    TextureObject m_texture;
 
 	std::shared_ptr<TrackingAlgorithm> _tracker GUARDED_BY(_trackerMutex);
 

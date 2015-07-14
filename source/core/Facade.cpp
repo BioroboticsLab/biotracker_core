@@ -10,10 +10,10 @@ Facade::Facade()
         , m_trackingThread(m_settings)
 { }
 
-Facade::Facade(Util::QOpenGLContextWrapper *context)
+Facade::Facade(QOpenGLWidget *widget)
     : m_settings()
     , m_registry(Registry::getInstance())
-    , m_trackingThread(m_settings, context)
+    , m_trackingThread(m_settings, widget)
 { }
 
 Facade::~Facade()

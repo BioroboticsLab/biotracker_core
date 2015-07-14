@@ -10,6 +10,7 @@
 #include "source/core/settings/ParamNames.h"
 
 #include <QCoreApplication>
+#include <QtOpenGL/qgl.h>
 
 namespace BioTracker {
 namespace Core {
@@ -17,7 +18,7 @@ namespace Core {
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
-        _imageStream(make_ImageStreamNoMedia()),
+        m_imageStream(make_ImageStreamNoMedia()),
         _captureActive(false),
         _readyForNextFrame(true),
         m_status(TrackerStatus::NothingLoaded),
@@ -27,23 +28,25 @@ TrackingThread::TrackingThread(Settings &settings) :
         _maxSpeed(false),
         _mediaType(MediaType::NoMedia),
         _settings(settings),
-        m_context(nullptr),
+        m_widget(nullptr),
+        m_texture(&m_widget),
         _tracker(nullptr)
 {}
 
-TrackingThread::TrackingThread(Settings &settings, QOpenGLContext *context) :
-_imageStream(make_ImageStreamNoMedia()),
-_captureActive(false),
-_readyForNextFrame(true),
-m_status(TrackerStatus::NothingLoaded),
-_trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
-_fps(30),
-_runningFps(0),
-_maxSpeed(false),
-_mediaType(MediaType::NoMedia),
-_settings(settings),
-m_context(context),
-_tracker(nullptr)
+TrackingThread::TrackingThread(Settings &settings, QOpenGLWidget *widget) :
+    m_imageStream(make_ImageStreamNoMedia()),
+    _captureActive(false),
+    _readyForNextFrame(true),
+    m_status(TrackerStatus::NothingLoaded),
+    _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
+    _fps(30),
+    _runningFps(0),
+    _maxSpeed(false),
+    _mediaType(MediaType::NoMedia),
+    _settings(settings),
+    m_widget(widget, nullptr),
+    m_texture(&m_widget),
+    _tracker(nullptr)
 {}
 
 TrackingThread::~TrackingThread(void)
@@ -54,8 +57,8 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
 	MutexLocker lock(_readyForNexFrameMutex);
 	if (!isCaptureActive())
 	{
-        _imageStream = make_ImageStreamVideo(filename);
-        if (_imageStream->type() == GUIPARAM::MediaType::NoMedia)
+        m_imageStream = make_ImageStreamVideo(filename);
+        if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia)
 		{
 			// could not open video
             std::string errorMsg = "unable to open file " + filename.string();
@@ -66,9 +69,9 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
 		}
         m_status = TrackerStatus::Paused;
         enableCapture(true);
-        _fps = _imageStream->fps();
+        _fps = m_imageStream->fps();
 		std::string note = "open file: " + _settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
-            " (#frames: " + QString::number(_imageStream->numFrames()).toStdString() + ")";
+            " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
 		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 		emit fileNameChange(QString::fromStdString(_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
 		QThread::start();
@@ -79,8 +82,8 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
 {
     MutexLocker lock(_readyForNexFrameMutex);
 	_fps = 1;
-    _imageStream = make_ImageStreamPictures(std::move(filenames));
-    if (_imageStream->type() == GUIPARAM::MediaType::NoMedia)
+    m_imageStream = make_ImageStreamPictures(std::move(filenames));
+    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia)
     {
         // could not open video
         std::string errorMsg = "unable to open files [";
@@ -133,11 +136,11 @@ void TrackingThread::run()
 			t = std::chrono::system_clock::now();
 
 
-        if ((_imageStream->type() == GUIPARAM::MediaType::Video) && _imageStream->lastFrame() ) { break; }
+        if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
 
 		// load next frame
 			{
-                if ( !_imageStream->nextFrame() )
+                if ( !m_imageStream->nextFrame() )
                 {
                     enableCapture(false);
                 }
@@ -173,13 +176,14 @@ void TrackingThread::run()
 			{
 				// lock for handling the frame: when GUI is ready, next frame can be handled.
 				enableHandlingNextFrame(false);
-                emit trackingSequenceDone(_imageStream->currentFrame().clone());
+                m_texture.setImage(m_imageStream->currentFrame().clone());
+                m_widget.makeCurrent();
+                m_texture.draw();
+                //emit trackingSequenceDone(m_imageStream->currentFrame().clone());
 			}
 			emit newFrameNumber(getFrameNumber());
 		}
-
-
-	}
+    }
 }
 
 void TrackingThread::enableCapture(bool enabled)
@@ -197,7 +201,7 @@ bool TrackingThread::isCaptureActive()
 void TrackingThread::setFrameNumber(size_t frameNumber)
 {
 	{
-        if ( _imageStream->setFrameNumber(frameNumber) )
+        if ( m_imageStream->setFrameNumber(frameNumber) )
 		{
             MutexLocker lock(_trackerMutex);
             if (_tracker) {
@@ -207,7 +211,10 @@ void TrackingThread::setFrameNumber(size_t frameNumber)
     }
     doTracking();
 	{
-        emit trackingSequenceDone(_imageStream->currentFrame());
+        m_texture.setImage(m_imageStream->currentFrame());
+        m_widget.makeCurrent();
+        m_texture.draw();
+        //emit trackingSequenceDone(m_imageStream->currentFrame());
         emit newFrameNumber(frameNumber);
 	}
 }
@@ -215,25 +222,29 @@ void TrackingThread::setFrameNumber(size_t frameNumber)
 void TrackingThread::incrementFrameNumber()
 {
 
-        emit newFrameNumber(_imageStream->currentFrameNumber());
+        emit newFrameNumber(m_imageStream->currentFrameNumber());
         {
         MutexLocker lock(_trackerMutex);
         if (_tracker) {
-            _tracker->setCurrentFrameNumber(_imageStream->currentFrameNumber());
+            _tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }
     }
 }
 
 void TrackingThread::nextFrame()
 {	
-    if( _imageStream->nextFrame() )
+    if( m_imageStream->nextFrame() )
     {
         doTracking();
         // lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
         enableHandlingNextFrame(false);
 
         // lets GUI draw the frame.
-        emit trackingSequenceDone(_imageStream->currentFrame());
+        m_texture.setImage(m_imageStream->currentFrame());
+        m_widget.makeCurrent();
+        m_texture.draw();
+
+        //emit trackingSequenceDone(m_imageStream->currentFrame());
         incrementFrameNumber();
     }
 }
@@ -245,10 +256,10 @@ void TrackingThread::doTracking()
 	if (!_tracker) return;
 
 	// do nothing if we aint got a frame
-    if (_imageStream->currentFrameIsEmpty()) return;
+    if (m_imageStream->currentFrameIsEmpty()) return;
 	try
 	{
-        _tracker->track(_imageStream->currentFrameNumber(), _imageStream->currentFrame());
+        _tracker->track(m_imageStream->currentFrameNumber(), m_imageStream->currentFrame());
 	}
 	catch (const std::exception& err)
 	{
@@ -258,12 +269,15 @@ void TrackingThread::doTracking()
 void TrackingThread::doTrackingAndUpdateScreen()
 {
 	doTracking();
-    emit trackingSequenceDone(_imageStream->currentFrame());
+    m_texture.setImage(m_imageStream->currentFrame());
+    m_widget.makeCurrent();
+    m_texture.draw();
+    //emit trackingSequenceDone(m_imageStream->currentFrame());
 }
 
 size_t TrackingThread::getVideoLength() const
 {
-    return _imageStream->numFrames();
+    return m_imageStream->numFrames();
 }
 
 void TrackingThread::mouseEvent(QMouseEvent *event)
@@ -284,7 +298,7 @@ void TrackingThread::keyboardEvent(QKeyEvent *event)
 
 size_t TrackingThread::getFrameNumber() const
 {
-    return _imageStream->currentFrameNumber();
+    return m_imageStream->currentFrameNumber();
 }
 
 void TrackingThread::enableHandlingNextFrame(bool nextFrame)
