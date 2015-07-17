@@ -74,7 +74,8 @@ void Gui::browsePictures()
 
 void Gui::browseCameras()
 {
-	// TODO enumerate Devices!!!
+	OpenCameraDialog& cameraDialog = m_mainWindow.getOpenCameraDialog();
+	cameraDialog.show();
 }
 
 void Gui::loadTracker()

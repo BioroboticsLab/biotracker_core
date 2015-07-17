@@ -7,6 +7,7 @@
 #include "source/gui/AlgorithmSelectionWidget.h"
 #include "source/gui/NotificationWidget.h"
 #include "source/gui/VideoControlWidget.h"
+#include "source/gui/OpenCameraDialog.h"
 #include "source/gui/VideoView.h"
 #include "source/util/QtRaiiWrapper.hpp"
 #include "source/util/QOpenGLContextWrapper.h"
@@ -28,6 +29,7 @@ public:
     AlgorithmSelectionWidget& getAlgorithmSelection() { return m_algorithmSelection; }
     NotificationWidget& getNotification() { return m_notification; }
     VideoControlWidget& getVideoControl() { return m_videoControl; }
+	OpenCameraDialog& getOpenCameraDialog() { return m_openCameraDialog; }
 
 private:
     Util::QOpenGLContextWrapper m_context;
@@ -36,6 +38,7 @@ private:
     NotificationWidget m_notification;
     VideoControlWidget m_videoControl;
     VideoView m_videoView;
+	OpenCameraDialog m_openCameraDialog;
 };
 
 
