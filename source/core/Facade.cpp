@@ -33,6 +33,10 @@ void Facade::openImages(std::vector<boost::filesystem::path> paths)
     m_trackingThread.loadPictures(std::move(paths));
 }
 
+void Facade::openCamera(int device) {
+	m_trackingThread.openCamera(device);
+}
+
 void Facade::play()
 {
     m_trackingThread.enableVideoPause(false);

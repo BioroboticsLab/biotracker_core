@@ -120,5 +120,7 @@ std::unique_ptr<ImageStream> make_ImageStreamPictures(std::vector<boost::filesys
 
 std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path &filename);
 
+std::unique_ptr<ImageStream> make_ImageStreamCamera(int device);
+
 }
 }

@@ -225,7 +225,7 @@ public:
      */
     explicit ImageStreamCamera(int device_id)
         : m_capture(device_id)
-		, m_fps( m_capture.get(CV_CAP_PROP_FPS) )
+		, m_fps(1)
 	{
 		if (! m_capture.isOpened()) {
 			throw device_open_error(":(");
@@ -236,14 +236,16 @@ public:
 		}
 	}
 	virtual GUIPARAM::MediaType type() const override { return GUIPARAM::MediaType::Camera; }
-	virtual size_t numFrames() const override { return 1; }
+	virtual size_t numFrames() const override { return 100; }
 	virtual double fps() const override { return m_fps; }
 private:
 	virtual bool nextFrame_impl() override
 		{
 			cv::Mat new_frame;
-			m_capture >> new_frame;
+			m_capture.grab();
+			m_capture.retrieve(new_frame);
 			this->set_current_frame(new_frame);
+			std::cout << new_frame.empty() << std::endl;
 			return ! new_frame.empty();
 		}
 
@@ -255,6 +257,7 @@ private:
 
 	cv::VideoCapture m_capture;
 	const double     m_fps;
+	//const size_t     m_num_frames;
 };
 
 /*********************************************************/
@@ -273,6 +276,14 @@ std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path
         return std::make_unique<ImageStreamVideo>(filename);
 	}
 	catch (const video_open_error &) {
+		return make_ImageStreamNoMedia();
+	}
+}
+
+std::unique_ptr<ImageStream> make_ImageStreamCamera(int device) {
+	try {
+		return std::make_unique<ImageStreamCamera>(device);
+	} catch (const device_open_error &) {
 		return make_ImageStreamNoMedia();
 	}
 }

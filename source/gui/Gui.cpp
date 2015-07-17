@@ -92,7 +92,13 @@ void Gui::browseCameras()
 		cameraListWidget->addItem(QString("Camera ") + QString::number(static_cast<int>(i)));
 	}
 
-	cameraDialog.show();
+	if (cameraDialog.exec() == QDialog::Accepted) {
+		// Getting chosen
+		int row = cameraListWidget->currentRow();
+		if (row >= 0) {
+			m_facade.openCamera(row);
+		}
+	}
 }
 
 void Gui::loadTracker()
