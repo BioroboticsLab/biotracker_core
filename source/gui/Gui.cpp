@@ -9,6 +9,8 @@
 
 #include <QShortcut>
 #include <QKeySequence>
+#include <QListWidget>
+#include "opencv2/highgui/highgui.hpp"
 
 namespace BioTracker {
 namespace Gui {
@@ -75,6 +77,21 @@ void Gui::browsePictures()
 void Gui::browseCameras()
 {
 	OpenCameraDialog& cameraDialog = m_mainWindow.getOpenCameraDialog();
+	// Preparing list widget
+	QListWidget* cameraListWidget = cameraDialog.getUi().cameraList;
+	cameraListWidget->clear();
+
+	// Add Item for each camera
+	cv::VideoCapture vcap;
+	for (uint8_t i = 0; i <= 254; i++) {
+		vcap = cv::VideoCapture(i);
+		if (!vcap.isOpened()) {
+			break;
+		}
+		vcap.release();
+		cameraListWidget->addItem(QString("Camera ") + QString::number(static_cast<int>(i)));
+	}
+
 	cameraDialog.show();
 }
 

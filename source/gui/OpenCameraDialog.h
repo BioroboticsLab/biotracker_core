@@ -16,6 +16,7 @@ public:
 	typedef Util::QtRaiiWrapper<Ui::OpenCameraDialog, QDialog> OpenCameraDialogUi;
 
     explicit OpenCameraDialog(QWidget *parent, Core::Facade &facade);
+	OpenCameraDialogUi& getUi() { return m_ui; }
 
 private:
 	OpenCameraDialogUi m_ui;
