@@ -225,7 +225,7 @@ public:
      */
     explicit ImageStreamCamera(int device_id)
         : m_capture(device_id)
-		, m_fps(1)
+		, m_fps(30)
 	{
 		if (! m_capture.isOpened()) {
 			throw device_open_error(":(");
@@ -249,10 +249,13 @@ private:
 			return ! new_frame.empty();
 		}
 
-		virtual bool setFrameNumber_impl(size_t ) override
+		virtual bool setFrameNumber_impl(size_t frame_number) override
 		{
-			// Well, setting a framenumber for a live feed is pretty useless
-			return false;
+			// new frame is next frame --> use next frame function
+			//if (this->currentFrameNumber() + 1 == frame_number) {
+				//return this->nextFrame_impl();
+			//}
+			return this->nextFrame_impl();
 		}
 
 	cv::VideoCapture m_capture;
