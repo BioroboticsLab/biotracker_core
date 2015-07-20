@@ -8,11 +8,6 @@ BioTrackerApp::BioTrackerApp()
 
 }
 
-BioTrackerApp::BioTrackerApp(QOpenGLWidget *widget)
-    :   m_facade(widget)
-{
-}
-
 void BioTrackerApp::unknownError(const std::exception &err) const
 {
 

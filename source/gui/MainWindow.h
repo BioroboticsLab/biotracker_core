@@ -25,14 +25,12 @@ public:
     const MainWindowUi& getUi() const { return m_ui; }
 
     VideoView& getVideoView() { return m_videoView; }
-    Util::QOpenGLContextWrapper* getContextWrapper() { return &m_context; }
     AlgorithmSelectionWidget& getAlgorithmSelection() { return m_algorithmSelection; }
     NotificationWidget& getNotification() { return m_notification; }
     VideoControlWidget& getVideoControl() { return m_videoControl; }
 	OpenCameraDialog& getOpenCameraDialog() { return m_openCameraDialog; }
 
 private:
-    Util::QOpenGLContextWrapper m_context;
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;
     NotificationWidget m_notification;

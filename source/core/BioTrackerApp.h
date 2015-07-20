@@ -12,7 +12,6 @@ class BioTrackerApp : public QObject
     Q_OBJECT
 public:
     BioTrackerApp();
-    BioTrackerApp(QOpenGLWidget *widget);
 
 protected slots:
     void unknownError(const std::exception &err) const;

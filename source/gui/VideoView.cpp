@@ -4,6 +4,9 @@
 #include <QImage>
 #include <QOpenGLFunctions>
 
+// TODO
+// check if m_texture is nullptr
+
 // OS X puts the headers in a different location in the include path than
 // Windows and Linux, so we need to distinguish between OS X and the other
 // systems.
@@ -16,12 +19,13 @@
 namespace BioTracker {
 namespace Gui {
 
-VideoView::VideoView(QWidget *parent, QOpenGLContext *context)
+VideoView::VideoView(QWidget *parent, Core::Facade &facade)
     : QOpenGLWidget(parent)
-    , QOpenGLFunctions(context)
+    , QOpenGLFunctions(facade.getOpenGLContext())
     , m_currentMode(Mode::INTERACTION)
-    , m_texture(this)
+    , m_texture(facade.getTrackingThread().getTexture())
     , m_screenPicRatio(0)
+    , m_facade(facade)
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
@@ -45,6 +49,7 @@ void VideoView::setMode(const VideoView::Mode mode)
 
 void VideoView::fitToWindow()
 {
+    ContextLocker locker(m_facade);
     makeCurrent();
 
     // reset PanZoomState
@@ -94,29 +99,22 @@ void VideoView::fitToWindow()
     update();
 }
 
-void VideoView::setImage(const cv::Mat &image)
-{
-    m_texture.setImage(image);
-
-    resizeGL(width(), height());
-    fitToWindow();
-}
-
 void VideoView::initializeGL()
 {
+    ContextLocker locker(m_facade);
+
     makeCurrent();
 
     initializeOpenGLFunctions();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    m_texture.setImage(cv::Mat::zeros(1, 1, CV_8UC3));
-
     resizeGL(width(), height());
 }
 
 void VideoView::resizeGL(int width, int height)
 {
+    ContextLocker locker(m_facade);
     makeCurrent();
 
     // dont do anything if  width or height are 0
@@ -169,6 +167,7 @@ void VideoView::resizeEvent(QResizeEvent *event)
 
 void VideoView::paintEvent(QPaintEvent *event)
 {
+    ContextLocker locker(m_facade);
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);
@@ -183,6 +182,7 @@ void VideoView::paintEvent(QPaintEvent *event)
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
+    ContextLocker locker(m_facade);
     // TODO: FIXME
 
     // variables required to map window coordinates to picture coordinates
@@ -204,6 +204,7 @@ QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 
 QPoint VideoView::projectPicturePos(QPoint imageCoords)
 {
+    ContextLocker locker(m_facade);
     //variables required to map picture coordinates to window coordinates
     GLint viewport[4];
     GLdouble modelview[16];

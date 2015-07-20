@@ -22,9 +22,10 @@ Q_OBJECT
 public:
 
     Facade();
-    Facade(QOpenGLWidget *widget);
 
     ~Facade() override;
+
+    Util::QOpenGLContextWrapper* getOpenGLContext() { return &m_context; }
 
     Settings& getSettings() {
         return m_settings;
@@ -32,6 +33,10 @@ public:
 
     Registry& getRegistry() {
         return m_registry;
+    }
+
+    TrackingThread& getTrackingThread() {
+        return m_trackingThread;
     }
 
     TrackingThread::TrackerStatus getStatus() const {
@@ -139,6 +144,7 @@ signals:
 private:
     Settings m_settings;
     Registry &m_registry;
+    Util::QOpenGLContextWrapper m_context;
     TrackingThread m_trackingThread;
 };
 

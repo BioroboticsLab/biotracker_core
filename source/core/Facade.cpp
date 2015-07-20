@@ -7,13 +7,8 @@ namespace Core {
 Facade::Facade()
         : m_settings()
         , m_registry(Registry::getInstance())
-        , m_trackingThread(m_settings)
-{ }
-
-Facade::Facade(QOpenGLWidget *widget)
-    : m_settings()
-    , m_registry(Registry::getInstance())
-    , m_trackingThread(m_settings, widget)
+        , m_context(this)
+        , m_trackingThread(m_settings, m_context)
 { }
 
 Facade::~Facade()

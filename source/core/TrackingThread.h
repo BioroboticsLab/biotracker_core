@@ -7,11 +7,12 @@
 #include <QThread>
 #include <QMouseEvent>
 #include <QtWidgets/qopenglwidget.h>
-#include <source/util/QOpenGLContextWrapper.h>
-#include <source/gui/TextureObject.h>
 
-#include "source/core/TrackingAlgorithm.h"
+#include "source/util/QOpenGLContextWrapper.h"
 #include "source/util/MutexWrapper.h"
+
+#include "source/core/TextureObject.h"
+#include "source/core/TrackingAlgorithm.h"
 #include "source/core/ImageStream.h"
 
 class Settings;
@@ -35,14 +36,25 @@ public:
 
 	Q_OBJECT
 public:
-    TrackingThread(Settings &settings);
-	TrackingThread(Settings &settings, QOpenGLWidget *widget);
+    TrackingThread(Settings &settings, QOpenGLContext &context);
 	~TrackingThread(void);
 
     TrackerStatus getStatus() const
     {
         //TODO maybe lock this part?
         return m_status;
+    }
+
+    TextureObject &getTexture() {
+        return m_texture;
+    }
+
+    Mutex &getContextNotCurrent(){
+        return m_contextNotCurrent;
+    }
+
+    void requestContext(){
+        m_context.moveToThread(QApplication::instance()->thread());
     }
 
 	/**
@@ -82,9 +94,9 @@ public:
     void keyboardEvent(QKeyEvent *event);
 
 private:
-	Mutex _captureActiveMutex;
-	Mutex _readyForNexFrameMutex;
-	Mutex _trackerMutex;
+    Mutex m_captureActiveMutex;
+    Mutex m_readyForNexFrameMutex;
+    Mutex m_trackerMutex;
 
 	/**
 	* Video handling.
@@ -92,23 +104,23 @@ private:
     std::unique_ptr<ImageStream> m_imageStream;
 
 	//defines whether to use pictures as source or a video
-	bool _captureActive GUARDED_BY(_captureActiveMutex);
-	bool _readyForNextFrame GUARDED_BY(_readyForNexFrameMutex);
+    bool m_captureActive GUARDED_BY(m_captureActiveMutex);
+    bool m_readyForNextFrame GUARDED_BY(m_readyForNexFrameMutex);
     TrackerStatus m_status;
-	std::atomic<bool> _videoPause;
-	bool _trackerActive;
-	double _fps;
-	double _runningFps;
-	bool _maxSpeed;
-	GUIPARAM::MediaType _mediaType;
+    std::atomic<bool> m_videoPause;
+    bool m_trackerActive;
+    double m_fps;
+    double m_runningFps;
+    bool m_maxSpeed;
+    GUIPARAM::MediaType m_mediaType;
+    Mutex m_contextNotCurrent;
 
-	Settings &_settings;
+    Settings& m_settings;
 
-    // widget for sharing textures with VideoView
-    QOpenGLWidget m_widget;
+    QOpenGLContext& m_context;
     TextureObject m_texture;
 
-	std::shared_ptr<TrackingAlgorithm> _tracker GUARDED_BY(_trackerMutex);
+    std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 
 	/**
 	 * Increments the current frame number by 1 frame.

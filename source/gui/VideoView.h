@@ -10,7 +10,8 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
 
-#include "source/gui/TextureObject.h"
+#include "source/core/TextureObject.h"
+#include "source/core/Facade.h"
 #include "source/util/stdext.h"
 
 class QOpenGLContext;
@@ -27,14 +28,35 @@ public:
         PANZOOM
     };
 
-    VideoView(QWidget *parent, QOpenGLContext *context);
+    class ContextLocker
+    {
+
+    public:
+        ContextLocker(Core::Facade& facade)
+            : m_facade(facade)
+        {
+            m_facade.getTrackingThread().requestContext();
+            m_facade.getTrackingThread().getContextNotCurrent().Lock();
+
+        }
+
+        ~ContextLocker()
+        {
+
+            m_facade.getOpenGLContext()->moveToThread(m_facade.getTrackingThread());
+            m_facade.getTrackingThread().getContextNotCurrent().Unlock();
+        }
+    private:
+        Core::Facade &m_facade;
+    }
+
+    VideoView(QWidget *parent, Core::Facade &facade);
 
     Mode getMode() const { return m_currentMode; }
 
 public slots:
     void setMode(const Mode mode);
     void fitToWindow();
-    void setImage(const cv::Mat &image);
 
 private:
     /**
@@ -73,12 +95,14 @@ private:
     /**
      * @brief Wrapper for the OpenGL texture. Also contains the original image as opencv matrix.
      */
-    TextureObject m_texture;
+    Core::TextureObject& m_texture;
 
     /**
      * @brief Ratio of widget size and image size
      */
     float m_screenPicRatio;
+
+    Core::Facade m_facade;
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;

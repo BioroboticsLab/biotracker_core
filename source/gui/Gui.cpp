@@ -18,7 +18,7 @@ namespace Gui {
 Gui::Gui()
     : m_mainWindow(m_facade)
 {
-    BioTrackerApp(&m_mainWindow.getVideoView());
+    BioTrackerApp();
     initConnects();
 
     m_mainWindow.show();
