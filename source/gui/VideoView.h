@@ -12,7 +12,9 @@
 
 #include "source/core/TextureObject.h"
 #include "source/core/Facade.h"
+
 #include "source/util/stdext.h"
+#include "source/util/contextLocker.h"
 
 class QOpenGLContext;
 
@@ -27,28 +29,6 @@ public:
         INTERACTION = 0,
         PANZOOM
     };
-
-    class ContextLocker
-    {
-
-    public:
-        ContextLocker(Core::Facade& facade)
-            : m_facade(facade)
-        {
-            m_facade.getTrackingThread().requestContext();
-            m_facade.getTrackingThread().getContextNotCurrent().Lock();
-
-        }
-
-        ~ContextLocker()
-        {
-
-            m_facade.getOpenGLContext()->moveToThread(m_facade.getTrackingThread());
-            m_facade.getTrackingThread().getContextNotCurrent().Unlock();
-        }
-    private:
-        Core::Facade &m_facade;
-    }
 
     VideoView(QWidget *parent, Core::Facade &facade);
 
@@ -102,7 +82,7 @@ private:
      */
     float m_screenPicRatio;
 
-    Core::Facade m_facade;
+    Core::Facade& m_facade;
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;
