@@ -132,5 +132,7 @@ include_directories(
     SYSTEM ${PROJECT_SOURCE_DIR}/external
 )
 
+enable_testing()
+
 add_subdirectory(source)
 add_subdirectory(doc)
