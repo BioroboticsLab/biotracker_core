@@ -214,6 +214,57 @@ private:
 
 /*********************************************************/
 
+class ImageStreamCamera : public ImageStream
+{
+public:
+    /**
+     * @throw file_not_found when device does not exists
+     * @throw device_open_error when there is an error with the device
+     * @brief ImageStreamCamera
+     * @param device id according to the VideoCapture class of OpenCV
+     */
+    explicit ImageStreamCamera(int device_id)
+        : m_capture(device_id)
+		, m_fps(30)
+	{
+		if (! m_capture.isOpened()) {
+			throw device_open_error(":(");
+		}
+		// load first image
+		if (this->numFrames() > 0) {
+			this->nextFrame_impl();
+		}
+	}
+	virtual GUIPARAM::MediaType type() const override { return GUIPARAM::MediaType::Camera; }
+	virtual size_t numFrames() const override { return 100; }
+	virtual double fps() const override { return m_fps; }
+private:
+	virtual bool nextFrame_impl() override
+		{
+			cv::Mat new_frame;
+			m_capture.grab();
+			m_capture.retrieve(new_frame);
+			this->set_current_frame(new_frame);
+			std::cout << new_frame.empty() << std::endl;
+			return ! new_frame.empty();
+		}
+
+		virtual bool setFrameNumber_impl(size_t frame_number) override
+		{
+			// new frame is next frame --> use next frame function
+			//if (this->currentFrameNumber() + 1 == frame_number) {
+				//return this->nextFrame_impl();
+			//}
+			return this->nextFrame_impl();
+		}
+
+	cv::VideoCapture m_capture;
+	const double     m_fps;
+	//const size_t     m_num_frames;
+};
+
+/*********************************************************/
+
 
 std::unique_ptr<ImageStream> make_ImageStreamNoMedia() {
 	return std::make_unique<ImageStreamNoMedia>();
@@ -228,6 +279,14 @@ std::unique_ptr<ImageStream> make_ImageStreamVideo(const boost::filesystem::path
         return std::make_unique<ImageStreamVideo>(filename);
 	}
 	catch (const video_open_error &) {
+		return make_ImageStreamNoMedia();
+	}
+}
+
+std::unique_ptr<ImageStream> make_ImageStreamCamera(int device) {
+	try {
+		return std::make_unique<ImageStreamCamera>(device);
+	} catch (const device_open_error &) {
 		return make_ImageStreamNoMedia();
 	}
 }

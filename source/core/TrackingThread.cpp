@@ -101,6 +101,30 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
 	QThread::start();
 }
 
+void TrackingThread::openCamera(int device)
+{
+	MutexLocker lock(_readyForNexFrameMutex);
+	if (!isCaptureActive())
+	{
+        m_imageStream = make_ImageStreamCamera(device);
+        if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia)
+		{
+			// could not open video
+            std::string errorMsg = "unable to open camera " + QString::number(device).toStdString();
+			emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+			emit invalidFile();
+            m_status = TrackerStatus::Invalid;
+			return;
+		}
+        m_status = TrackerStatus::Running;
+        enableCapture(true);
+        _fps = m_imageStream->fps();
+		std::string note = "open camera " + QString::number(device).toStdString();
+		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+		QThread::start();
+	}
+}
+
 void TrackingThread::terminateThread()
 {
 	enableHandlingNextFrame(false);
@@ -129,7 +153,7 @@ void TrackingThread::run()
 		}
 
 		//if thread just started (or is unpaused) start clock here
-		//after this timestamp will be taken right before picture is drawn 
+		//after this timestamp will be taken right before picture is drawn
 		//to take the amount of time into account it takes to draw the picture
 		if (firstLoop)
             // measure the capture start time
@@ -232,7 +256,7 @@ void TrackingThread::incrementFrameNumber()
 }
 
 void TrackingThread::nextFrame()
-{	
+{
     if( m_imageStream->nextFrame() )
     {
         doTracking();

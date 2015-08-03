@@ -38,7 +38,7 @@ public:
     TrackingThread(Settings &settings);
 	TrackingThread(Settings &settings, QOpenGLWidget *widget);
 	~TrackingThread(void);
-	
+
     TrackerStatus getStatus() const
     {
         //TODO maybe lock this part?
@@ -56,12 +56,17 @@ public:
     void loadPictures(std::vector<boost::filesystem::path>&& filenames);
 
 	/**
+	 * Opens a video device
+	 */
+	void openCamera(int device);
+
+	/**
 	* Checks if thread can handle next frame.
 	* @return true if it can, false otherwise.
 	*/
 	bool isReadyForNextFrame();
 
-	/**	
+	/**
 	* @return  current fps setting
 	*/
 	double getFps() const;
@@ -81,11 +86,11 @@ private:
 	Mutex _readyForNexFrameMutex;
 	Mutex _trackerMutex;
 
-	/** 
+	/**
 	* Video handling.
 	*/
     std::unique_ptr<ImageStream> m_imageStream;
-	
+
 	//defines whether to use pictures as source or a video
 	bool _captureActive GUARDED_BY(_captureActiveMutex);
 	bool _readyForNextFrame GUARDED_BY(_readyForNexFrameMutex);
@@ -109,7 +114,7 @@ private:
 	 * Increments the current frame number by 1 frame.
 	 */
 	void incrementFrameNumber();
-	
+
 	/**
 	* Checks if thread is in pause state.
 	* @return true if paused, false otherwise.
@@ -119,7 +124,7 @@ private:
 	/**
 	* Checks if the tracker is on.
 	* @return true if tracker is on, false otherwise.
-	*/ 
+	*/
 	bool isCaptureActive();
 
 	/**
@@ -139,7 +144,7 @@ private:
 	*/
 	void doTracking();
 
-	/** 
+	/**
 	* thread running method.
 	*/
 	virtual void run() override;
@@ -206,10 +211,10 @@ signals:
 	* send a message to the GUI.
 	*/
 	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
-	
+
 	//send current fps to gui
 	void sendFps(double fps);
-	
+
 	/**
 	* display current file name in GUI
 	*/

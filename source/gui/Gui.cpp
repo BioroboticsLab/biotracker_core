@@ -9,6 +9,8 @@
 
 #include <QShortcut>
 #include <QKeySequence>
+#include <QListWidget>
+#include "opencv2/highgui/highgui.hpp"
 
 namespace BioTracker {
 namespace Gui {
@@ -30,6 +32,7 @@ void Gui::initConnects()
     //File -> Open Video
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
+	QObject::connect(m_mainWindow.getUi().actionOpen_Camera, &QAction::triggered, this, &Gui::browseCameras);
 
     QObject::connect(m_mainWindow.getUi().actionLoad_Tracker, &QAction::triggered, this, &Gui::loadTracker);
 
@@ -42,7 +45,7 @@ void Gui::initConnects()
 
 void Gui::browseVideo()
 {
-    static const QString videoFilter("Video files (*.avi, *.wmv, *.mp4, *.mkv)");
+    static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv)");
     std::vector<boost::filesystem::path> files;
 
     const QString filename = QFileDialog::getOpenFileName(&m_mainWindow, "Open video", "", videoFilter);
@@ -69,6 +72,33 @@ void Gui::browsePictures()
         //m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
         m_mainWindow.getVideoControl().updateWidgets();
     }
+}
+
+void Gui::browseCameras()
+{
+	OpenCameraDialog& cameraDialog = m_mainWindow.getOpenCameraDialog();
+	// Preparing list widget
+	QListWidget* cameraListWidget = cameraDialog.getUi().cameraList;
+	cameraListWidget->clear();
+
+	// Add Item for each camera
+	cv::VideoCapture vcap;
+	for (uint8_t i = 0; i <= 254; i++) {
+		vcap = cv::VideoCapture(i);
+		if (!vcap.isOpened()) {
+			break;
+		}
+		vcap.release();
+		cameraListWidget->addItem(QString("Camera ") + QString::number(static_cast<int>(i)));
+	}
+
+	if (cameraDialog.exec() == QDialog::Accepted) {
+		// Getting chosen
+		int row = cameraListWidget->currentRow();
+		if (row >= 0) {
+			m_facade.openCamera(row);
+		}
+	}
 }
 
 void Gui::loadTracker()

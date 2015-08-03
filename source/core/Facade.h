@@ -50,6 +50,11 @@ public:
      */
     void openImages(std::vector<boost::filesystem::path> paths);
 
+	/**
+	 * @brief openCamera opens a video device supported by opencv VideoCapture
+	 */
+	void openCamera(int device);
+
     /**
      * @brief play starts playing the video
      */
