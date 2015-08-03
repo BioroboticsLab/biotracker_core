@@ -12,6 +12,7 @@ class BioTrackerApp : public QObject
     Q_OBJECT
 public:
     BioTrackerApp();
+    BioTrackerApp(Facade *facade);
 
 protected slots:
     void unknownError(const std::exception &err) const;
@@ -21,7 +22,7 @@ protected slots:
     void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps) const;
 
 protected:
-    Facade m_facade;
+    Facade* m_facade;
 };
 
 } // Core

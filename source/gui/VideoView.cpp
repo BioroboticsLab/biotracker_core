@@ -21,7 +21,7 @@ namespace Gui {
 
 VideoView::VideoView(QWidget *parent, Core::Facade &facade)
     : QOpenGLWidget(parent)
-    , QOpenGLFunctions(facade.getOpenGLContext())
+    , QOpenGLFunctions(this->context())
     , m_currentMode(Mode::INTERACTION)
     , m_texture(facade.getTrackingThread().getTexture())
     , m_screenPicRatio(0)
@@ -49,7 +49,7 @@ void VideoView::setMode(const VideoView::Mode mode)
 
 void VideoView::fitToWindow()
 {
-    Util::ContextLocker locker(m_facade);
+    //Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     // reset PanZoomState
@@ -101,7 +101,7 @@ void VideoView::fitToWindow()
 
 void VideoView::initializeGL()
 {
-    Util::ContextLocker locker(m_facade);
+    // Util::ContextLocker locker(m_facade);
 
     makeCurrent();
 
@@ -114,7 +114,6 @@ void VideoView::initializeGL()
 
 void VideoView::resizeGL(int width, int height)
 {
-    Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     // dont do anything if  width or height are 0
@@ -167,7 +166,7 @@ void VideoView::resizeEvent(QResizeEvent *event)
 
 void VideoView::paintEvent(QPaintEvent *event)
 {
-    Util::ContextLocker locker(m_facade);
+    // Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);
@@ -182,7 +181,7 @@ void VideoView::paintEvent(QPaintEvent *event)
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
-    Util::ContextLocker locker(m_facade);
+    // Util::ContextLocker locker(m_facade);
     // TODO: FIXME
 
     // variables required to map window coordinates to picture coordinates
@@ -204,7 +203,7 @@ QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 
 QPoint VideoView::projectPicturePos(QPoint imageCoords)
 {
-    Util::ContextLocker locker(m_facade);
+    // Util::ContextLocker locker(m_facade);
     //variables required to map picture coordinates to window coordinates
     GLint viewport[4];
     GLdouble modelview[16];

@@ -3,6 +3,8 @@
 #include <QStringList>
 
 #include "source/core/BioTrackerApp.h"
+#include "source/core/Facade.h"
+
 #include "source/gui/MainWindow.h"
 
 namespace BioTracker {
@@ -15,6 +17,7 @@ public:
 
 private:
     MainWindow m_mainWindow;
+    QOpenGLContext m_trackingThreadContext;
     void initConnects();
     QStringList browse(const QString &title, const QString &filter);
 

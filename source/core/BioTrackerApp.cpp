@@ -4,9 +4,11 @@ namespace BioTracker {
 namespace Core {
 
 BioTrackerApp::BioTrackerApp()
-{
+{}
 
-}
+BioTrackerApp::BioTrackerApp(Facade *facade)
+    : m_facade(facade)
+{}
 
 void BioTrackerApp::unknownError(const std::exception &err) const
 {

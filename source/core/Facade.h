@@ -20,12 +20,10 @@ namespace Core {
 class Facade : public QObject {
 Q_OBJECT
 public:
-
     Facade();
+    Facade(QOpenGLContext *context);
 
     ~Facade() override;
-
-    Util::QOpenGLContextWrapper* getOpenGLContext() { return &m_context; }
 
     Settings& getSettings() {
         return m_settings;
@@ -144,7 +142,6 @@ signals:
 private:
     Settings m_settings;
     Registry &m_registry;
-    Util::QOpenGLContextWrapper m_context;
     TrackingThread m_trackingThread;
 };
 

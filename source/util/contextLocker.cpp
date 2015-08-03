@@ -13,7 +13,7 @@ ContextLocker::ContextLocker(Core::Facade &facade)
 
 ContextLocker::~ContextLocker()
 {
-    m_facade.getOpenGLContext()->moveToThread(&m_facade.getTrackingThread());
+    //m_facade.getOpenGLContext()->moveToThread(&m_facade.getTrackingThread());
     m_facade.getTrackingThread().getContextNotCurrent().Unlock();
 }
 

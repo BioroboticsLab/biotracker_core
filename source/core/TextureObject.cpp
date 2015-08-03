@@ -18,7 +18,7 @@ TextureObject::TextureObject(QObject *parent, QOpenGLContext *context)
 
 void TextureObject::draw() const
 {
-    //m_context->makeCurrent();
+    //m_context->makeCurrent(surface);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glVertexPointer(2, GL_FLOAT, 0, m_vertices.constData());

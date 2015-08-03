@@ -16,11 +16,19 @@ namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
-    : m_mainWindow(m_facade)
+    : m_trackingThreadContext()
+    , m_facade(&m_trackingThreadContext)
+    , BioTrackerApp(m_facade)
+    , m_mainWindow(*m_facade)
 {
-    BioTrackerApp();
-    initConnects();
+    //QSurfaceFormat format = videoViewContext->format();
+    //trackingThreadContext->setFormat(format);
 
+    m_trackingThreadContext.setShareContext(m_mainWindow.getVideoView().context());
+    m_trackingThreadContext.create();
+    m_trackingThreadContext.moveToThread(&m_facade.getTrackingThread());
+
+    initConnects();
     m_mainWindow.show();
 }
 

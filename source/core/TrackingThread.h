@@ -36,7 +36,8 @@ public:
 
 	Q_OBJECT
 public:
-    TrackingThread(Settings &settings, QOpenGLContext &context);
+	TrackingThread(Settings &settings);
+    TrackingThread(Settings &settings, QOpenGLContext *context);
 	~TrackingThread(void);
 
     TrackerStatus getStatus() const
@@ -50,10 +51,11 @@ public:
     }
 
     Mutex &getContextNotCurrent(){
-        return m_contextNotCurrent;
+        return m_contextNotCurrentMutex;
     }
 
     void requestContext(){
+        m_context.doneCurrent();
         m_context.moveToThread(QApplication::instance()->thread());
     }
 
@@ -97,6 +99,7 @@ private:
     Mutex m_captureActiveMutex;
     Mutex m_readyForNexFrameMutex;
     Mutex m_trackerMutex;
+	Mutex m_contextNotCurrentMutex;
 
 	/**
 	* Video handling.
@@ -113,11 +116,11 @@ private:
     double m_runningFps;
     bool m_maxSpeed;
     GUIPARAM::MediaType m_mediaType;
-    Mutex m_contextNotCurrent;
+
 
     Settings& m_settings;
 
-    QOpenGLContext& m_context;
+    QOpenGLContext m_context;
     TextureObject m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
