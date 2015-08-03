@@ -24,5 +24,5 @@ protected:
     virtual void TearDown();
 
     // The mock bar library shaed by all tests
-    size_t my_int;
+    int my_int;
 };
