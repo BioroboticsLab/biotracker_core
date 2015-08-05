@@ -6,7 +6,6 @@
 #include <boost/filesystem.hpp>
 #include <QThread>
 #include <QMouseEvent>
-#include <QtWidgets/qopenglwidget.h>
 
 #include "source/util/QOpenGLContextWrapper.h"
 #include "source/util/MutexWrapper.h"
