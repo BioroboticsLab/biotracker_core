@@ -1,5 +1,6 @@
 #include "ImageStream.h"
 
+#include "source/util/stdext.h"
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
