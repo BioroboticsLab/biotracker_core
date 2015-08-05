@@ -6,9 +6,11 @@ namespace Core {
 BioTrackerApp::BioTrackerApp()
 {}
 
-BioTrackerApp::BioTrackerApp(Facade *facade)
-    : m_facade(facade)
-{}
+BioTrackerApp::BioTrackerApp(QOpenGLContext *context)
+    : m_facade(context)
+{
+    // m_facade = new Facade(context);
+}
 
 void BioTrackerApp::unknownError(const std::exception &err) const
 {

@@ -4,8 +4,9 @@ namespace BioTracker{
 namespace Core {
 
 TextureObject::TextureObject(QObject *parent, QOpenGLContext *context)
-    : QObject(parent)
-    , m_context(context)
+    : //QObject(parent)
+    // ,
+        m_context(context)
 {
     // OpenCV's coordinate system originates in the upper left corner.
     // OpenGL originates in the lower left. Thus the image has to be flipped vertically

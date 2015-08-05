@@ -16,10 +16,8 @@ namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
-    : m_trackingThreadContext()
-    , m_facade(&m_trackingThreadContext)
-    , BioTrackerApp(m_facade)
-    , m_mainWindow(*m_facade)
+    : BioTrackerApp(&m_trackingThreadContext)
+    , m_mainWindow(m_facade)
 {
     //QSurfaceFormat format = videoViewContext->format();
     //trackingThreadContext->setFormat(format);

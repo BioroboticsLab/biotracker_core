@@ -45,8 +45,8 @@ TrackingThread::TrackingThread(Settings &settings, QOpenGLContext *context) :
     m_mediaType(MediaType::NoMedia),
     m_settings(settings),
     m_context(context),
-    m_texture(this, &m_context),
-    m_tracker(nullptr)
+    m_texture(nullptr, nullptr)//,
+    //m_tracker(nullptr)
 {}
 
 TrackingThread::~TrackingThread(void)
