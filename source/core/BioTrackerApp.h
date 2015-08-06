@@ -1,28 +1,152 @@
 #pragma once
 
-#include <QObject>
+#include <memory>
+#include <exception>
 
-#include "source/core/Facade.h"
+#include <boost/filesystem.hpp>
+
+#include <QObject>
+#include <QKeyEvent>
+#include <QMouseEvent>
+
+#include "source/core/TrackingThread.h"
+#include "source/core/ImageStream.h"
+#include "source/core/Registry.h"
+#include "source/core/settings/Settings.h"
+
+#include "source/util/SharedOpenGlContext.h"
+
 
 namespace BioTracker {
 namespace Core {
 
-class BioTrackerApp : public QObject
-{
-    Q_OBJECT
+/* Used to be Facade */
+class BioTrackerApp : public QObject {
+Q_OBJECT
 public:
     BioTrackerApp();
-    BioTrackerApp(QOpenGLContext *context);
 
-protected slots:
-    void unknownError(const std::exception &err) const;
-    //void fileError(const fileException &err) const;
+    ~BioTrackerApp() override;
 
-    void notify(const std::string &message, const MSGS::MTYPE type) const;
-    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps) const;
+    void initializeOpenGL(QOpenGLContext *mainContext, TextureObject &texture);
 
-protected:
-    Facade m_facade;
+    Settings& getSettings() {
+        return m_settings;
+    }
+
+    Registry& getRegistry() {
+        return m_registry;
+    }
+
+    TrackingThread& getTrackingThread() {
+        return m_trackingThread;
+    }
+
+    TrackingThread::TrackerStatus getStatus() const {
+        return m_trackingThread.getStatus();
+    }
+
+    /**
+     * @throw boost::filesystem_error
+     * @brief openVideo opens a single video which type is supported by opencv and stores path in settings
+     */
+    void openVideo(const boost::filesystem::path &path);
+
+    /**
+     * @throw boost::filesystem_error
+     * @brief openImages opens a set of images supported by opencv and stores path in settings
+     */
+    void openImages(std::vector<boost::filesystem::path> paths);
+
+	/**
+	 * @brief openCamera opens a video device supported by opencv VideoCapture
+	 */
+	void openCamera(int device);
+
+    /**
+     * @brief play starts playing the video
+     */
+    void play();
+
+    /**
+     * @brief pause stops the video at the current frame + 1
+     */
+    void pause();
+
+    /**
+     * @brief setFrame (0 .. getNumFrames() - 1) if the input does not meets the
+     *   invariant the frame will stay at the current frame
+     */
+    void setFrame(size_t frameNumber);
+
+    /**
+     * @brief setTargetFps
+     *      if variant is invalid, input is ignored
+     *      Default value is set by the data from the video, if this is not
+     *      applicable, INFINITY is selected
+     * @param fps (0 .. INFINITY)
+     */
+    void setTargetFps(double fps);
+
+    /**
+     * @brief getTargetFps
+     * @return the set FPS of the program
+     */
+    double getTargetFps() const;
+
+    /**
+     * @brief getNumFrames
+     * @return the number of frames in the current stream
+     */
+    size_t getNumFrames() const;
+
+    /**
+     * @brief getCurrentFrame
+     * @return the current frame number
+     */
+    size_t getCurrentFrameNumber() const;
+
+    /**
+     * @brief setTrackingAlgorithm
+     * @param TrackingAlgorithm the selected algorithm
+     */
+    void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+
+    void mouseEvent(QMouseEvent *event);
+    void keyboardEvent(QKeyEvent *event);
+
+signals:
+    /**
+     * @brief unknownError
+     *      handles Errors that are not handled by other signales
+     */
+    void unknownError(const std::exception_ptr err);
+
+    /**
+     * @brief fileError
+     *      handles file errors that appear inside of the tracking thread
+     */
+    void fileError(const boost::filesystem::filesystem_error &err);
+
+    /**
+     * @brief notify
+     *      Status messages for the user interface
+     */
+    void notify(const std::string &message, const MSGS::MTYPE type);
+
+    /**
+     * @brief frameCalculated
+     *      Callback that gets called every time a new frame is calculated
+     * @param frameNumber the frame number of the calculated frame
+     * @param filename filename of the current frame
+     * @param currentFps actual fps of the calculation
+     */
+    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
+
+private:
+    Settings m_settings;
+    Registry &m_registry;
+    TrackingThread m_trackingThread;
 };
 
 } // Core

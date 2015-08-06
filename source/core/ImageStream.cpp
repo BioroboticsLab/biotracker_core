@@ -222,7 +222,7 @@ public:
      * @throw file_not_found when device does not exists
      * @throw device_open_error when there is an error with the device
      * @brief ImageStreamCamera
-     * @param device id according to the VideoCapture class of OpenCV
+     * @param device_id according to the VideoCapture class of OpenCV
      */
     explicit ImageStreamCamera(int device_id)
         : m_capture(device_id)

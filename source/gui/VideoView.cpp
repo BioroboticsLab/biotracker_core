@@ -19,16 +19,20 @@
 namespace BioTracker {
 namespace Gui {
 
-VideoView::VideoView(QWidget *parent, Core::Facade &facade)
+VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
     : QOpenGLWidget(parent)
-    , QOpenGLFunctions(this->context())
     , m_currentMode(Mode::INTERACTION)
-    , m_texture(facade.getTrackingThread().getTexture())
     , m_screenPicRatio(0)
-    , m_facade(facade)
+    , m_texture(this)
+    , m_biotracker(biotracker)
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
+
+    initializeGL();
+
+    //context->makeCurrent(this->su);
+    //initializeOpenGLFunctions();
 }
 
 void VideoView::setMode(const VideoView::Mode mode)
@@ -101,10 +105,6 @@ void VideoView::fitToWindow()
 
 void VideoView::initializeGL()
 {
-    // Util::ContextLocker locker(m_facade);
-
-    makeCurrent();
-
     initializeOpenGLFunctions();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

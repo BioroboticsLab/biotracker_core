@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/gui/ui_OpenCameraDialog.h"
 #include "source/util/QtRaiiWrapper.hpp"
 
@@ -15,12 +15,12 @@ class OpenCameraDialog : public QDialog
 public:
 	typedef Util::QtRaiiWrapper<Ui::OpenCameraDialog, QDialog> OpenCameraDialogUi;
 
-    explicit OpenCameraDialog(QWidget *parent, Core::Facade &facade);
+    explicit OpenCameraDialog(QWidget *parent, Core::BioTrackerApp &facade);
 	OpenCameraDialogUi& getUi() { return m_ui; }
 
 private:
 	OpenCameraDialogUi m_ui;
-    Core::Facade& m_facade;
+    Core::BioTrackerApp& m_facade;
 
     void initConnects();
 

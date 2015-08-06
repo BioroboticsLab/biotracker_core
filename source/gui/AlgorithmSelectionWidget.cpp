@@ -7,7 +7,7 @@
 namespace BioTracker {
 namespace Gui {
 
-AlgorithmSelectionWidget::AlgorithmSelectionWidget(QWidget *parent, Core::Facade &facade)
+AlgorithmSelectionWidget::AlgorithmSelectionWidget(QWidget *parent, Core::BioTrackerApp &facade)
     : QWidget(parent)
     , m_ui(parent)
     , m_facade(facade)

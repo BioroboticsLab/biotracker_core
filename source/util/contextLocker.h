@@ -1,4 +1,4 @@
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/core/TrackingThread.h"
 
 namespace BioTracker {
@@ -7,11 +7,11 @@ namespace Util {
 class ContextLocker
 {
 public:
-    ContextLocker(Core::Facade& facade);
+    ContextLocker(Core::BioTrackerApp& facade);
     ~ContextLocker();
 
 private:
-    Core::Facade &m_facade;
+    Core::BioTrackerApp &m_facade;
 };
 
 }   // namespace Util

@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/gui/ui_NotificationWidget.h"
 #include "source/util/QtRaiiWrapper.hpp"
 
@@ -15,13 +15,13 @@ class NotificationWidget : public QWidget
 public:
     typedef Util::QtRaiiWrapper<Ui::NotificationWidget, QWidget> NotificationUi;
 
-    explicit NotificationWidget(QWidget *parent, Core::Facade &facade);
+    explicit NotificationWidget(QWidget *parent, Core::BioTrackerApp &facade);
 
     NotificationUi& getUi() { return m_ui; }
 
 private:
     NotificationUi m_ui;
-    Core::Facade& m_facade;
+    Core::BioTrackerApp& m_facade;
 
     void initConnects();
 

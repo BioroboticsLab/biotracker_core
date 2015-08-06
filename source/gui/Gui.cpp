@@ -16,16 +16,12 @@ namespace BioTracker {
 namespace Gui {
 
 Gui::Gui()
-    : BioTrackerApp(&m_trackingThreadContext)
-    , m_mainWindow(m_facade)
+    : QObject()
+    , m_biotracker()
+    , m_mainWindow(m_biotracker)
 {
-    //QSurfaceFormat format = videoViewContext->format();
-    //trackingThreadContext->setFormat(format);
-
-    m_trackingThreadContext.setShareContext(m_mainWindow.getVideoView().context());
-    m_trackingThreadContext.create();
-    m_trackingThreadContext.moveToThread(&m_facade.getTrackingThread());
-
+    m_biotracker.initializeOpenGL(m_mainWindow.getVideoView()->context(),
+                                  m_mainWindow.getVideoView()->getTexture());
     initConnects();
     m_mainWindow.show();
 }
@@ -57,7 +53,7 @@ void Gui::browseVideo()
     const QString filename = QFileDialog::getOpenFileName(&m_mainWindow, "Open video", "", videoFilter);
 
     if (!filename.isEmpty()) {
-        m_facade.openVideo(boost::filesystem::path(filename.toStdString()));
+        m_biotracker.openVideo(boost::filesystem::path(filename.toStdString()));
     }
 }
 
@@ -72,11 +68,11 @@ void Gui::browsePictures()
     }
 
     if (!files.empty()) {
-        m_facade.openImages(files);
+        m_biotracker.openImages(files);
 
         // TODO: remove
         //m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
-        m_mainWindow.getVideoControl().updateWidgets();
+        m_mainWindow.getVideoControl()->updateWidgets();
     }
 }
 
@@ -102,7 +98,7 @@ void Gui::browseCameras()
 		// Getting chosen
 		int row = cameraListWidget->currentRow();
 		if (row >= 0) {
-			m_facade.openCamera(row);
+            m_biotracker.openCamera(row);
 		}
 	}
 }
@@ -114,7 +110,7 @@ void Gui::loadTracker()
     const QString path = QFileDialog::getOpenFileName(&m_mainWindow, "Load Tracker", "", trackerFilter);
     if (!path.isEmpty()) {
         boost::filesystem::path libraryPath(path.toStdString());
-        m_facade.getRegistry().loadTrackerLibrary(libraryPath);
+        m_biotracker.getRegistry().loadTrackerLibrary(libraryPath);
     }
 }
 

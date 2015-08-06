@@ -1,6 +1,8 @@
 #pragma once
 
+#include <QGuiApplication>
 #include <QOpenGLContext>
+#include <QSurface>
 
 namespace BioTracker {
 namespace Util {

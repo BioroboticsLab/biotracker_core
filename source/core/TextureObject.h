@@ -11,7 +11,7 @@ namespace Core {
 class TextureObject : public QObject
 {
 public:
-    explicit TextureObject(QObject *parent, QOpenGLContext *context);
+    explicit TextureObject(QObject *parent);
     void draw() const;
 
     void setImage(const cv::Mat &img);
@@ -20,7 +20,6 @@ public:
 private:
     cv::Mat m_img;
     GLuint m_texture;
-    QOpenGLContext *m_context;
 
     QVector<QVector2D> m_vertices;
     QVector<QVector2D> m_texCoords;

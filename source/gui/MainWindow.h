@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/gui/ui_MainWindow.h"
 #include "source/gui/AlgorithmSelectionWidget.h"
 #include "source/gui/NotificationWidget.h"
@@ -20,23 +20,25 @@ class MainWindow : public QMainWindow {
 public:
     typedef Util::QtRaiiWrapper<Ui::MainWindow, QMainWindow> MainWindowUi;
 
-    MainWindow(Core::Facade &facade);
+    MainWindow(Core::BioTrackerApp &biotracker);
 
     const MainWindowUi& getUi() const { return m_ui; }
 
-    VideoView& getVideoView() { return m_videoView; }
+    VideoView* getVideoView() { return m_videoView.get(); }
     AlgorithmSelectionWidget& getAlgorithmSelection() { return m_algorithmSelection; }
     NotificationWidget& getNotification() { return m_notification; }
-    VideoControlWidget& getVideoControl() { return m_videoControl; }
+    VideoControlWidget* getVideoControl() { return m_videoControl.get(); }
 	OpenCameraDialog& getOpenCameraDialog() { return m_openCameraDialog; }
 
 private:
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;
     NotificationWidget m_notification;
-    VideoControlWidget m_videoControl;
-    VideoView m_videoView;
-	OpenCameraDialog m_openCameraDialog;
+    std::unique_ptr<VideoView> m_videoView;
+    std::unique_ptr<VideoControlWidget> m_videoControl;
+    OpenCameraDialog m_openCameraDialog;
+
+    void initalizeVideoView(Core::BioTrackerApp &biotracker);
 };
 
 

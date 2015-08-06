@@ -3,15 +3,24 @@
 namespace BioTracker {
 namespace Gui {
 
-MainWindow::MainWindow(Core::Facade &facade)
+MainWindow::MainWindow(Core::BioTrackerApp &biotracker)
     : m_ui(this)
-    , m_algorithmSelection(m_ui.widget_alg, facade)
-    , m_notification(m_ui.dockWidgetNotificationContents, facade)
-    , m_videoControl(m_ui.videoControls, facade, m_videoView)
-    , m_videoView(m_ui.trackingArea, facade)
-    , m_openCameraDialog(m_ui.centralWidget, facade)
+    , m_algorithmSelection(m_ui.widget_alg, biotracker)
+    , m_notification(m_ui.dockWidgetNotificationContents, biotracker)
+    , m_openCameraDialog(m_ui.centralWidget, biotracker)
 {
-    m_ui.videoViewLayout->addWidget(&m_videoView);
+    initalizeVideoView(biotracker);
+}
+
+/* TODO: move to ctor */
+void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker)
+{
+    m_videoView = std::make_unique<VideoView>(m_ui.trackingArea, biotracker);
+    m_ui.videoViewLayout->addWidget(m_videoView.get());
+    std::cout << m_videoView->context() << std::endl;
+    m_videoView->makeCurrent();
+    std::cout << m_videoView->context() << std::endl;
+    m_videoControl = std::make_unique<VideoControlWidget>(m_ui.videoControls, biotracker, m_videoView.get());
 }
 
 }

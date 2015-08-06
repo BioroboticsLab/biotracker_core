@@ -3,7 +3,7 @@
 namespace BioTracker {
 namespace Util {
 
-ContextLocker::ContextLocker(Core::Facade &facade)
+ContextLocker::ContextLocker(Core::BioTrackerApp &facade)
     : m_facade(facade)
 {
     m_facade.getTrackingThread().requestContext();

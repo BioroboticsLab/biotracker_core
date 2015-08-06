@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/gui/ui_AlgorithmSelectionWidget.h"
 #include "source/util/QtRaiiWrapper.hpp"
 
@@ -17,7 +17,7 @@ class AlgorithmSelectionWidget : public QWidget
 public:
     typedef Util::QtRaiiWrapper<Ui::AlgorithmSelectionWidget, QWidget> AlgorithmSelectionUi;
 
-    explicit AlgorithmSelectionWidget(QWidget *parent, Core::Facade &facade);
+    explicit AlgorithmSelectionWidget(QWidget *parent, Core::BioTrackerApp &facade);
 
     AlgorithmSelectionUi& getUi() { return m_ui; }
 
@@ -26,7 +26,7 @@ public slots:
 
 private:
     AlgorithmSelectionUi m_ui;
-    Core::Facade& m_facade;
+    Core::BioTrackerApp& m_facade;
 
     void initAlgorithmList();
     void initConnects();

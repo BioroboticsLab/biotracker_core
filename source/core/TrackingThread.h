@@ -7,7 +7,7 @@
 #include <QThread>
 #include <QMouseEvent>
 
-#include "source/util/QOpenGLContextWrapper.h"
+#include "source/util/SharedOpenGlContext.h"
 #include "source/util/MutexWrapper.h"
 
 #include "source/core/TextureObject.h"
@@ -35,9 +35,10 @@ public:
 
 	Q_OBJECT
 public:
-	TrackingThread(Settings &settings);
-    TrackingThread(Settings &settings, QOpenGLContext *context);
+    TrackingThread(Settings &settings);
 	~TrackingThread(void);
+
+    void initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>&& context, TextureObject &texture);
 
     TrackerStatus getStatus() const
     {
@@ -45,17 +46,13 @@ public:
         return m_status;
     }
 
-    TextureObject &getTexture() {
-        return m_texture;
-    }
-
     Mutex &getContextNotCurrent(){
         return m_contextNotCurrentMutex;
     }
 
     void requestContext(){
-        m_context.doneCurrent();
-        m_context.moveToThread(QApplication::instance()->thread());
+        m_context->doneCurrent();
+        m_context->moveToThread(QApplication::instance()->thread());
     }
 
 	/**
@@ -119,8 +116,9 @@ private:
 
     Settings& m_settings;
 
-    QOpenGLContext m_context;
-    TextureObject m_texture;
+    QOffscreenSurface m_surface;
+    std::unique_ptr<Util::SharedOpenGLContext> m_context;
+    TextureObject *m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 

@@ -11,7 +11,7 @@
 #include <QOpenGLTexture>
 
 #include "source/core/TextureObject.h"
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 
 #include "source/util/stdext.h"
 #include "source/util/contextLocker.h"
@@ -30,9 +30,11 @@ public:
         PANZOOM
     };
 
-    VideoView(QWidget *parent, Core::Facade &facade);
+    VideoView(QWidget *parent, Core::BioTrackerApp &facade);
 
     Mode getMode() const { return m_currentMode; }
+
+    Core::TextureObject &getTexture() { return m_texture; }
 
 public slots:
     void setMode(const Mode mode);
@@ -73,16 +75,16 @@ private:
     PanZoomState m_panZoomState;
 
     /**
-     * @brief Wrapper for the OpenGL texture. Also contains the original image as opencv matrix.
-     */
-    Core::TextureObject& m_texture;
-
-    /**
      * @brief Ratio of widget size and image size
      */
     float m_screenPicRatio;
 
-    Core::Facade& m_facade;
+    /**
+     * @brief Wrapper for the OpenGL texture. Also contains the original image as opencv matrix.
+     */
+    Core::TextureObject m_texture;
+
+    Core::BioTrackerApp &m_biotracker;
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;
@@ -107,6 +109,7 @@ private:
     void mouseMoveEvent(QMouseEvent * e) override;
     void mousePressEvent(QMouseEvent * e) override;
     void mouseReleaseEvent(QMouseEvent * e) override;
-    void wheelEvent(QWheelEvent * e) override;};
+    void wheelEvent(QWheelEvent * e) override;
+};
 }
 }

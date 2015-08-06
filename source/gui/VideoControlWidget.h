@@ -3,7 +3,7 @@
 #include <QIcon>
 #include <QWidget>
 
-#include "source/core/Facade.h"
+#include "source/core/BioTrackerApp.h"
 #include "source/gui/ui_VideoControlWidget.h"
 #include "source/util/QtRaiiWrapper.hpp"
 
@@ -16,7 +16,7 @@ class VideoControlWidget : public QWidget
 public:
     typedef Util::QtRaiiWrapper<Ui::VideoControlWidget, QWidget> VideoControlUi;
 
-    explicit VideoControlWidget(QWidget *parent, Core::Facade &facade, VideoView& videoView);
+    explicit VideoControlWidget(QWidget *parent, Core::BioTrackerApp &facade, VideoView *videoView);
 
     VideoControlUi& getUi() { return m_ui; }
 
@@ -24,8 +24,8 @@ public:
 
 private:
     VideoControlUi m_ui;
-    Core::Facade& m_facade;
-    VideoView& m_videoView;
+    Core::BioTrackerApp &m_facade;
+    VideoView *m_videoView;
 
     QIcon m_iconPause;
     QIcon m_iconPlay;

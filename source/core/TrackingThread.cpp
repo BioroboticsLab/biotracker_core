@@ -18,22 +18,6 @@ namespace Core {
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
-        m_imageStream(make_ImageStreamNoMedia()),
-        m_captureActive(false),
-        m_readyForNextFrame(true),
-        m_status(TrackerStatus::NothingLoaded),
-        m_trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
-        m_fps(30),
-        m_runningFps(0),
-        m_maxSpeed(false),
-        m_mediaType(MediaType::NoMedia),
-        m_settings(settings),
-        m_context(nullptr),
-        m_texture(this, &m_context),
-        m_tracker(nullptr)
-{}
-
-TrackingThread::TrackingThread(Settings &settings, QOpenGLContext *context) :
     m_imageStream(make_ImageStreamNoMedia()),
     m_captureActive(false),
     m_readyForNextFrame(true),
@@ -44,13 +28,17 @@ TrackingThread::TrackingThread(Settings &settings, QOpenGLContext *context) :
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
     m_settings(settings),
-    m_context(context),
-    m_texture(nullptr, nullptr)//,
-    //m_tracker(nullptr)
+    m_texture(nullptr)
 {}
 
 TrackingThread::~TrackingThread(void)
 {}
+
+void TrackingThread::initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext> &&context, TextureObject &texture)
+{
+    m_context = std::move(context);
+    m_texture = &texture;
+}
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename)
 {
@@ -261,7 +249,7 @@ void TrackingThread::nextFrame()
     if( m_imageStream->nextFrame() )
     {
         MutexLocker lock(m_contextNotCurrentMutex);
-        m_texture.setImage(m_imageStream->currentFrame());
+        m_texture->setImage(m_imageStream->currentFrame());
         doTracking();
         // lock for handling the frame: for GUI, when GUI is ready, next frame can be handled.
         enableHandlingNextFrame(false);
