@@ -53,7 +53,6 @@ void VideoView::setMode(const VideoView::Mode mode)
 
 void VideoView::fitToWindow()
 {
-    //Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     // reset PanZoomState
@@ -166,7 +165,6 @@ void VideoView::resizeEvent(QResizeEvent *event)
 
 void VideoView::paintEvent(QPaintEvent *event)
 {
-    // Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);
@@ -181,9 +179,6 @@ void VideoView::paintEvent(QPaintEvent *event)
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
-    // Util::ContextLocker locker(m_facade);
-    // TODO: FIXME
-
     // variables required to map window coordinates to picture coordinates
     GLint viewport[4];
     GLdouble modelview[16];
@@ -203,7 +198,6 @@ QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 
 QPoint VideoView::projectPicturePos(QPoint imageCoords)
 {
-    // Util::ContextLocker locker(m_facade);
     //variables required to map picture coordinates to window coordinates
     GLint viewport[4];
     GLdouble modelview[16];

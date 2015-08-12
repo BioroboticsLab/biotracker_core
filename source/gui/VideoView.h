@@ -14,7 +14,6 @@
 #include "source/core/BioTrackerApp.h"
 
 #include "source/util/stdext.h"
-#include "source/util/contextLocker.h"
 
 class QOpenGLContext;
 
