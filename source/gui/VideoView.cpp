@@ -1,9 +1,5 @@
 #include "VideoView.h"
 
-#include <QColor>
-#include <QImage>
-#include <QOpenGLFunctions>
-
 // TODO
 // check if m_texture is nullptr
 
@@ -29,10 +25,7 @@ VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
 
-    initializeGL();
-
     //context->makeCurrent(this->su);
-    //initializeOpenGLFunctions();
 }
 
 void VideoView::setMode(const VideoView::Mode mode)
@@ -53,7 +46,6 @@ void VideoView::setMode(const VideoView::Mode mode)
 
 void VideoView::fitToWindow()
 {
-    //Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     // reset PanZoomState
@@ -106,10 +98,12 @@ void VideoView::fitToWindow()
 void VideoView::initializeGL()
 {
     initializeOpenGLFunctions();
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     resizeGL(width(), height());
+
+    m_biotracker.initializeOpenGL(context(),
+                                  this->getTexture());
 }
 
 void VideoView::resizeGL(int width, int height)
@@ -166,7 +160,6 @@ void VideoView::resizeEvent(QResizeEvent *event)
 
 void VideoView::paintEvent(QPaintEvent *event)
 {
-    // Util::ContextLocker locker(m_facade);
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);
@@ -181,7 +174,6 @@ void VideoView::paintEvent(QPaintEvent *event)
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
-    // Util::ContextLocker locker(m_facade);
     // TODO: FIXME
 
     // variables required to map window coordinates to picture coordinates
@@ -203,7 +195,6 @@ QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 
 QPoint VideoView::projectPicturePos(QPoint imageCoords)
 {
-    // Util::ContextLocker locker(m_facade);
     //variables required to map picture coordinates to window coordinates
     GLint viewport[4];
     GLdouble modelview[16];

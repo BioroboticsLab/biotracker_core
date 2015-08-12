@@ -17,9 +17,6 @@ void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker)
 {
     m_videoView = std::make_unique<VideoView>(m_ui.trackingArea, biotracker);
     m_ui.videoViewLayout->addWidget(m_videoView.get());
-    std::cout << m_videoView->context() << std::endl;
-    m_videoView->makeCurrent();
-    std::cout << m_videoView->context() << std::endl;
     m_videoControl = std::make_unique<VideoControlWidget>(m_ui.videoControls, biotracker, m_videoView.get());
 }
 

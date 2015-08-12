@@ -20,8 +20,7 @@ Gui::Gui()
     , m_biotracker()
     , m_mainWindow(m_biotracker)
 {
-    m_biotracker.initializeOpenGL(m_mainWindow.getVideoView()->context(),
-                                  m_mainWindow.getVideoView()->getTexture());
+
     initConnects();
     m_mainWindow.show();
 }
