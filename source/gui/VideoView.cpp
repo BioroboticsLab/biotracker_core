@@ -174,8 +174,6 @@ void VideoView::paintEvent(QPaintEvent *event)
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)
 {
-    // TODO: FIXME
-
     // variables required to map window coordinates to picture coordinates
     GLint viewport[4];
     GLdouble modelview[16];
