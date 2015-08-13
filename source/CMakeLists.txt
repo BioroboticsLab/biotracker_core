@@ -1,5 +1,0 @@
-add_subdirectory(algorithm)
-add_subdirectory(core)
-add_subdirectory(gui)
-add_subdirectory(test)
-add_subdirectory(util)
