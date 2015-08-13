@@ -24,7 +24,7 @@ public:
 
 private:
     VideoControlUi m_ui;
-    Core::BioTrackerApp &m_facade;
+    Core::BioTrackerApp &m_bioTracker;
     VideoView *m_videoView;
 
     QIcon m_iconPause;

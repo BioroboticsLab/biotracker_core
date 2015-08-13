@@ -11,9 +11,14 @@ public:
     SharedOpenGLContext(QOpenGLContext *mainContext)
         : QOpenGLContext(nullptr)
     {
-        setFormat(mainContext->format());
+        QSurfaceFormat format = mainContext->format();
+        format.setProfile(QSurfaceFormat::CoreProfile);
+        format.setOption(QSurfaceFormat::DebugContext);
+
+        setFormat(format);
         setShareContext(mainContext);
-        create();
+        bool isCreated = create();
+        assert(isCreated);
     }
 };
 

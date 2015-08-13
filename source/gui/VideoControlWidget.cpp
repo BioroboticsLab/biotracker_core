@@ -12,7 +12,7 @@ namespace Gui {
 VideoControlWidget::VideoControlWidget(QWidget *parent, Core::BioTrackerApp& facade, VideoView *videoView)
     : QWidget(parent)
     , m_ui(parent)
-    , m_facade(facade)
+    , m_bioTracker(facade)
     , m_videoView(videoView)
     , m_isPanZoomMode(false)
 {
@@ -25,16 +25,16 @@ VideoControlWidget::VideoControlWidget(QWidget *parent, Core::BioTrackerApp& fac
 
 void VideoControlWidget::updateWidgets()
 {
-    const bool validFile = m_facade.getStatus() == Core::TrackingThread::TrackerStatus::Running ||
-                           m_facade.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
+    const bool validFile = m_bioTracker.getStatus() == Core::TrackingThread::TrackerStatus::Running ||
+                           m_bioTracker.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
 
-    const bool hasNext = m_facade.getCurrentFrameNumber() < m_facade.getNumFrames();
-    const bool hasPrev = m_facade.getCurrentFrameNumber() > 0;
+    const bool hasNext = m_bioTracker.getCurrentFrameNumber() < m_bioTracker.getNumFrames();
+    const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
 
     m_ui.button_nextFrame->setEnabled(validFile && hasNext);
     m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
 
-    switch (m_facade.getStatus()) {
+    switch (m_bioTracker.getStatus()) {
     case Core::TrackingThread::TrackerStatus::Invalid:
     case Core::TrackingThread::TrackerStatus::NothingLoaded:
         m_ui.button_playPause->setIcon(m_iconPlay);
@@ -55,19 +55,19 @@ void VideoControlWidget::updateWidgets()
 
 void VideoControlWidget::initShortcuts()
 {
-    const QString shortcutPanKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"));
+    const QString shortcutPanKey = QString::fromStdString(m_bioTracker.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_ZOOM,"Z"));
     const QShortcut *shortcutPan = new QShortcut(QKeySequence(shortcutPanKey), this);
     QObject::connect(shortcutPan, &QShortcut::activated, m_ui.button_panZoom, &QPushButton::click);
 
-    const QString shortcutPlayKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"));
+    const QString shortcutPlayKey = QString::fromStdString(m_bioTracker.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PLAY,"Space"));
     const QShortcut *shortcutPlay = new QShortcut(QKeySequence(shortcutPlayKey), this);
     QObject::connect(shortcutPlay, &QShortcut::activated, m_ui.button_playPause, &QPushButton::click);
 
-    const QString shortcutNextKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"));
+    const QString shortcutNextKey = QString::fromStdString(m_bioTracker.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_NEXT,"Right"));
     const QShortcut *shortcutNext = new QShortcut(QKeySequence(shortcutNextKey), this);
     QObject::connect(shortcutNext, &QShortcut::activated, m_ui.button_nextFrame, &QPushButton::click);
 
-    const QString shortcutPrevKey = QString::fromStdString(m_facade.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"));
+    const QString shortcutPrevKey = QString::fromStdString(m_bioTracker.getSettings().getValueOrDefault<std::string>(GUIPARAM::SHORTCUT_PREV,"Left"));
     const QShortcut *shortcutPrev = new QShortcut(QKeySequence(shortcutPrevKey), this);
     QObject::connect(shortcutPrev, &QShortcut::activated, m_ui.button_previousFrame, &QPushButton::click);
 }
@@ -84,12 +84,12 @@ void VideoControlWidget::initConnects()
 
 void VideoControlWidget::playPause()
 {
-    switch (m_facade.getStatus()) {
+    switch (m_bioTracker.getStatus()) {
     case Core::TrackingThread::TrackerStatus::Paused:
-        m_facade.play();
+        m_bioTracker.play();
         break;
     case Core::TrackingThread::TrackerStatus::Running:
-        m_facade.pause();
+        m_bioTracker.pause();
         break;
     default:
         assert(false);
@@ -101,24 +101,24 @@ void VideoControlWidget::playPause()
 void VideoControlWidget::setFrame(const int frame)
 {
     assert(frame >= 0);
-    assert(static_cast<size_t>(frame) < m_facade.getNumFrames());
-    m_facade.setFrame(frame);
+    assert(static_cast<size_t>(frame) < m_bioTracker.getNumFrames());
+    m_bioTracker.setFrame(frame);
 
     updateWidgets();
 }
 
 void VideoControlWidget::nextFrame()
 {
-    assert(m_facade.getCurrentFrameNumber() < m_facade.getNumFrames());
-    m_facade.setFrame(m_facade.getCurrentFrameNumber() + 1);
+    assert(m_bioTracker.getCurrentFrameNumber() < m_bioTracker.getNumFrames());
+    m_bioTracker.setFrame(m_bioTracker.getCurrentFrameNumber() + 1);
 
     updateWidgets();
 }
 
 void VideoControlWidget::previousFrame()
 {
-    assert(m_facade.getCurrentFrameNumber() > 0);
-    m_facade.setFrame(m_facade.getCurrentFrameNumber() - 1);
+    assert(m_bioTracker.getCurrentFrameNumber() > 0);
+    m_bioTracker.setFrame(m_bioTracker.getCurrentFrameNumber() - 1);
 
     updateWidgets();
 }

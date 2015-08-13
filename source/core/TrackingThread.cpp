@@ -1,5 +1,7 @@
 #include "TrackingThread.h"
 
+#include <iostream>
+
 #include <chrono>
 #include <thread>
 
@@ -28,7 +30,8 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
     m_settings(settings),
-    m_texture(nullptr)
+    m_texture(nullptr),
+    m_openGLLogger(this)
 {}
 
 TrackingThread::~TrackingThread(void)
@@ -38,6 +41,13 @@ void TrackingThread::initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>
 {
     m_context = std::move(context);
     m_texture = &texture;
+    std::cout << m_context->format().minorVersion() << std::endl;
+    m_surface.setFormat(m_context->format());
+    m_surface.create();
+
+    m_openGLLogger.initialize(); // initializes in the current context, i.e. ctx
+    connect(&m_openGLLogger, &QOpenGLDebugLogger::messageLogged, this, &TrackingThread::handleLoggedMessage);
+    m_openGLLogger.startLogging();
 }
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename)
@@ -58,11 +68,15 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
         m_status = TrackerStatus::Paused;
         enableCapture(true);
         m_fps = m_imageStream->fps();
-        std::string note = "open file: " + m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
-            " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-		emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
-        emit fileNameChange(QString::fromStdString(m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
-		QThread::start();
+
+        // TODO: crashes at getValueOfParam
+        std::string note = "abc";
+//        std::string note = "open file: " + m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
+//            " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
+        emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+        //emit fileNameChange(QString::fromStdString(m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
+        emit fileNameChange(QString::fromStdString(note));
+        QThread::start();
 	}
 }
 
@@ -127,6 +141,12 @@ void TrackingThread::terminateThread()
 
 void TrackingThread::run()
 {
+    m_context->makeCurrent(&m_surface);
+    std::cout << QOpenGLContext::currentContext() << std::endl;
+    m_texture->setImage(m_imageStream->currentFrame().clone());
+    m_context->doneCurrent();
+    return;
+
 	std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
 
@@ -150,13 +170,8 @@ void TrackingThread::run()
 
         if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
 
-		// load next frame
-			{
-                if ( !m_imageStream->nextFrame() )
-                {
-                    enableCapture(false);
-                }
-			}
+
+
 		incrementFrameNumber();
 
 		doTracking();
@@ -188,13 +203,16 @@ void TrackingThread::run()
 			{
 				// lock for handling the frame: when GUI is ready, next frame can be handled.
                 enableHandlingNextFrame(false);
-                //m_videoView.setImage(m_imageStream->currentFrame().clone());
-                //m_widget.makeCurrent();
-                //m_texture.draw();
+                m_texture->setImage(m_imageStream->currentFrame().clone());
+
                 //emit trackingSequenceDone(m_imageStream->currentFrame().clone());
 			}
 			emit newFrameNumber(getFrameNumber());
 		}
+        if ( !m_imageStream->nextFrame() )
+        {
+            enableCapture(false);
+        }
     }
 }
 
@@ -380,6 +398,10 @@ void TrackingThread::initCaptureForReadingVideoOrStream()
 void TrackingThread::setMaxSpeed(bool enabled)
 {
     m_maxSpeed = enabled;
+}
+
+void TrackingThread::handleLoggedMessage(const QOpenGLDebugMessage &debugMessage) {
+    std::cout << debugMessage.message().toStdString() << std::endl;
 }
 
 }

@@ -122,6 +122,8 @@ private:
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 
+	QOpenGLDebugLogger m_openGLLogger;
+
 	/**
 	 * Increments the current frame number by 1 frame.
 	 */
@@ -200,6 +202,9 @@ public slots:
 	void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 
 	void doTrackingAndUpdateScreen();
+
+private slots:
+	void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
 
 signals:
 	/**

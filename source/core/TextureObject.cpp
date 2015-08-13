@@ -17,7 +17,7 @@ TextureObject::TextureObject(QObject *parent)
 
 void TextureObject::draw() const
 {
-    //m_context->makeCurrent(surface);
+    glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glVertexPointer(2, GL_FLOAT, 0, m_vertices.constData());
@@ -30,6 +30,7 @@ void TextureObject::draw() const
 
 void TextureObject::createVertices()
 {
+    glEnable(GL_DEBUG_OUTPUT);
     //create a vertice as wide and long as the image has pixels
     //for later being able to locate mouseclicks
     const int corner1[2] = { m_img.cols, 0 };
@@ -45,6 +46,7 @@ void TextureObject::createVertices()
 
 void TextureObject::createTexture()
 {
+    glEnable(GL_DEBUG_OUTPUT);
     // free memory
     glDeleteTextures(1, &m_texture);
     glVertexPointer(2, GL_FLOAT, 0, m_vertices.constData());
@@ -67,11 +69,20 @@ void TextureObject::createTexture()
 
 void TextureObject::setImage(const cv::Mat &img)
 {
+
+    std::cout << "in setImage, before:" << std::endl;
+    std::cout << m_vertices.constData() << std::endl;
+    std::cout << m_texCoords.constData() << std::endl;
     assert(!img.empty());
 
     m_img = img;
     createVertices();
     createTexture();
+    draw();
+
+    std::cout << "in setImage, after:" << std::endl;
+    std::cout << m_vertices.constData() << std::endl;
+    std::cout << m_texCoords.constData() << std::endl;
 }
 
 }   // namespace Core
