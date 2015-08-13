@@ -142,10 +142,6 @@ void TrackingThread::terminateThread()
 void TrackingThread::run()
 {
     m_context->makeCurrent(&m_surface);
-    std::cout << QOpenGLContext::currentContext() << std::endl;
-    m_texture->setImage(m_imageStream->currentFrame().clone());
-    m_context->doneCurrent();
-    return;
 
 	std::chrono::system_clock::time_point t;
 	bool firstLoop = true;
@@ -170,15 +166,9 @@ void TrackingThread::run()
 
         if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
 
-
-
-		incrementFrameNumber();
-
-		doTracking();
         std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
-		std::chrono::microseconds dur =
-			std::chrono::duration_cast<std::chrono::microseconds>(
-			std::chrono::system_clock::now() - t);
+		std::chrono::microseconds dur = std::chrono::duration_cast<std::chrono::microseconds>(
+                std::chrono::system_clock::now() - t);
         if (!m_maxSpeed)
 		{
 			if (dur <= target_dur)
@@ -192,28 +182,30 @@ void TrackingThread::run()
 		// calculate the running fps.
         m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
         emit sendFps(m_runningFps);
+
 		std::this_thread::sleep_for(target_dur);
 		t = std::chrono::system_clock::now();
 		firstLoop = false;
 
+        m_context->makeCurrent(&m_surface);
+        m_texture->setImage(m_imageStream->currentFrame().clone());
+        m_context->doneCurrent();
+
 		if (isCaptureActive())
 		{
-			// lets GUI draw the frame.
-			if (isReadyForNextFrame())
-			{
-				// lock for handling the frame: when GUI is ready, next frame can be handled.
-                enableHandlingNextFrame(false);
-                m_texture->setImage(m_imageStream->currentFrame().clone());
-
-                //emit trackingSequenceDone(m_imageStream->currentFrame().clone());
-			}
+            doTracking();
 			emit newFrameNumber(getFrameNumber());
+
+            if ( !m_imageStream->nextFrame() )
+            {
+                enableCapture(false);
+            } else {
+                incrementFrameNumber();
+            }
 		}
-        if ( !m_imageStream->nextFrame() )
-        {
-            enableCapture(false);
-        }
     }
+
+    m_context->doneCurrent();
 }
 
 void TrackingThread::enableCapture(bool enabled)

@@ -165,6 +165,8 @@ void VideoView::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
+    std::cout << "dim:" << m_texture.getImage().cols << ", " << m_texture.getImage().rows << std::endl;
+
 
     m_texture.draw();
 
