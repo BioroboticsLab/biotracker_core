@@ -132,6 +132,11 @@ private:
 	*/
 	void doTracking();
 
+    /**
+     * Play and calculate the next frame only.
+     */
+    void playOnce();
+
 	/**
  	* Does exactly one tick, eg. drawing one image and starting tracker once.
  	*/

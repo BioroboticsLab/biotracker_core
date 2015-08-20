@@ -62,8 +62,10 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
         emit invalidFile();
         m_status = TrackerStatus::Invalid;
         return;
+    }else {
+        playOnce();
     }
-    m_status = TrackerStatus::Paused;
+
     m_fps = m_imageStream->fps();
 
     // TODO: crashes at getValueOfParam
@@ -91,8 +93,15 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
         emit invalidFile();
         m_status = TrackerStatus::Invalid;
         return;
+    }else {
+        playOnce();
     }
+}
+
+void TrackingThread::playOnce(){
     m_status = TrackerStatus::Paused;
+    m_playOnce = true;
+    m_conditionVariable.notify_all();
 }
 
 void TrackingThread::openCamera(int device)
@@ -163,6 +172,7 @@ void TrackingThread::run()
 
 void TrackingThread::tick(){
     m_context->makeCurrent(&m_surface);
+    std::cout << m_imageStream->currentFrameNumber() << " current frame" << std::endl;
     m_texture->setImage(m_imageStream->currentFrame().clone());
     m_context->doneCurrent();
 
@@ -183,8 +193,7 @@ void TrackingThread::setFrameNumber(size_t frameNumber)
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(frameNumber);
         }
-        m_playOnce = true;
-        m_conditionVariable.notify_all();
+        playOnce();
     }
 }
 
@@ -249,10 +258,14 @@ void TrackingThread::setPause(){
 
 void TrackingThread::setPlay(){
     m_playing = true;
+    m_conditionVariable.notify_all();
 }
 
 void TrackingThread::togglePlaying(){
     m_playing = !m_playing;
+    if (m_playing) {
+        m_conditionVariable.notify_all();
+    }
 }
 
 bool TrackingThread::isPaused() const
