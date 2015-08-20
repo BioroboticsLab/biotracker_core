@@ -157,7 +157,6 @@ void VideoView::resizeEvent(QResizeEvent *event)
 
 void VideoView::paintEvent(QPaintEvent *event)
 {
-
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);

@@ -44,12 +44,12 @@ void BioTrackerApp::openCamera(int device) {
 
 void BioTrackerApp::play()
 {
-    m_trackingThread.enableVideoPause(false);
+    m_trackingThread.setPlay();
 }
 
 void BioTrackerApp::pause()
 {
-    m_trackingThread.enableVideoPause(true);
+    m_trackingThread.setPause();
 }
 
 void BioTrackerApp::setFrame(const size_t frameNumber)

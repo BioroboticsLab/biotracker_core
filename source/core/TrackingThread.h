@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <QThread>
+#include <condition_variable>
 #include <QMouseEvent>
 
 #include "source/util/SharedOpenGlContext.h"
@@ -46,10 +47,6 @@ public:
         return m_status;
     }
 
-    Mutex &getContextNotCurrent(){
-        return m_contextNotCurrentMutex;
-    }
-
     void requestContext(){
         m_context->doneCurrent();
         m_context->moveToThread(QApplication::instance()->thread());
@@ -70,21 +67,25 @@ public:
 	 */
 	void openCamera(int device);
 
-	/**
-	* Checks if thread can handle next frame.
-	* @return true if it can, false otherwise.
-	*/
-	bool isReadyForNextFrame();
+    /**
+	 * Pause video plaing.
+	 */
+    void setPause();
+
+    /**
+     * Enables video playing.
+     */
+    void setPlay();
+
+    /**
+     * Toggles the playing state.
+     */
+    void togglePlaying();
 
 	/**
 	* @return  current fps setting
 	*/
 	double getFps() const;
-
-	/**
-	 * @brief stops the currently running thread
-	 */
-	void stop();
 
     size_t getVideoLength() const;
 
@@ -92,22 +93,17 @@ public:
     void keyboardEvent(QKeyEvent *event);
 
 private:
-    Mutex m_captureActiveMutex;
-    Mutex m_readyForNexFrameMutex;
-    Mutex m_trackerMutex;
-	Mutex m_contextNotCurrentMutex;
-
-	/**
-	* Video handling.
-	*/
     std::unique_ptr<ImageStream> m_imageStream;
+    Mutex m_trackerMutex;
+    std::mutex m_tickMutex;
+    std::condition_variable m_conditionVariable;
+
+    bool m_playing;
+    bool m_playOnce;
 
 	//defines whether to use pictures as source or a video
-    bool m_captureActive GUARDED_BY(m_captureActiveMutex);
-    bool m_readyForNextFrame GUARDED_BY(m_readyForNexFrameMutex);
     TrackerStatus m_status;
-    std::atomic<bool> m_videoPause;
-    bool m_trackerActive;
+
     double m_fps;
     double m_runningFps;
     bool m_maxSpeed;
@@ -125,32 +121,10 @@ private:
 	QOpenGLDebugLogger m_openGLLogger;
 
 	/**
-	 * Increments the current frame number by 1 frame.
-	 */
-	void incrementFrameNumber();
-
-	/**
 	* Checks if thread is in pause state.
 	* @return true if paused, false otherwise.
 	*/
-	bool isVideoPause() const;
-
-	/**
-	* Checks if the tracker is on.
-	* @return true if tracker is on, false otherwise.
-	*/
-	bool isCaptureActive();
-
-	/**
-	* Set the capture in active or in-active state
-	* @param enabled if true capture will be activated, false otherwise
-	*/
-	void enableCapture(bool enabled);
-
-	/**
-	* Initializes the reading capture.
-	*/
-	void initCaptureForReadingVideoOrStream();
+	bool isPaused() const;
 
 	/**
 	* sends frame and everything else that is needed to selected
@@ -159,18 +133,16 @@ private:
 	void doTracking();
 
 	/**
+ 	* Does exactly one tick, eg. drawing one image and starting tracker once.
+ 	*/
+	void tick();
+
+	/**
 	* thread running method.
 	*/
 	virtual void run() override;
 
 public slots:
-	void enableHandlingNextFrame(bool nextFrame);
-	void enableVideoPause(bool videoPause);
-
-	/**
-	* Stops the video.
-	*/
-    void terminateThread();
 
 	/**
 	* Sets the current frame number.
@@ -201,8 +173,6 @@ public slots:
 
 	void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
 
-	void doTrackingAndUpdateScreen();
-
 private slots:
 	void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
 
@@ -217,7 +187,8 @@ signals:
 	* emit current frame number.
 	* @param frameNumber the current frame number.
 	*/
-	void newFrameNumber(int frameNumber);
+	//void newFrameNumber(int frameNumber);
+    void showFrame(int frameNumber);
 
 	/**
 	* singal to gui that video is paused

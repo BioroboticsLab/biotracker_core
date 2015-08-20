@@ -27,9 +27,6 @@ Gui::Gui()
 
 void Gui::initConnects()
 {
-    //Start Up
-    //QObject::connect(this, SIGNAL(window_loaded()), this, SLOT(startUp()), Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
-
     //File -> Open Video
     QObject::connect(m_mainWindow.getUi().actionOpen_Video, &QAction::triggered, this, &Gui::browseVideo);
     QObject::connect(m_mainWindow.getUi().actionOpen_Picture, &QAction::triggered, this, &Gui::browsePictures);
@@ -41,7 +38,6 @@ void Gui::initConnects()
     QObject::connect(m_mainWindow.getUi().actionSave_tracking_data, &QAction::triggered, this, &Gui::storeTrackingData);
 
     QObject::connect(m_mainWindow.getUi().actionQuit, &QAction::triggered, this, &Gui::exit);
-
 }
 
 void Gui::browseVideo()
@@ -53,6 +49,7 @@ void Gui::browseVideo()
 
     if (!filename.isEmpty()) {
         m_biotracker.openVideo(boost::filesystem::path(filename.toStdString()));
+        m_mainWindow.getVideoControl()->updateWidgets();
     }
 }
 
@@ -68,9 +65,6 @@ void Gui::browsePictures()
 
     if (!files.empty()) {
         m_biotracker.openImages(files);
-
-        // TODO: remove
-        //m_mainWindow.getVideoView().setImage(cv::imread(files[0].string()));
         m_mainWindow.getVideoControl()->updateWidgets();
     }
 }
@@ -98,6 +92,7 @@ void Gui::browseCameras()
 		int row = cameraListWidget->currentRow();
 		if (row >= 0) {
             m_biotracker.openCamera(row);
+            m_mainWindow.getVideoControl()->updateWidgets();
 		}
 	}
 }
