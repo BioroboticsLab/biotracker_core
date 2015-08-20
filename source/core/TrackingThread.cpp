@@ -98,12 +98,6 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
     }
 }
 
-void TrackingThread::playOnce(){
-    m_status = TrackerStatus::Paused;
-    m_playOnce = true;
-    m_conditionVariable.notify_all();
-}
-
 void TrackingThread::openCamera(int device)
 {
     m_imageStream = make_ImageStreamCamera(device);
@@ -254,18 +248,27 @@ size_t TrackingThread::getFrameNumber() const
 
 void TrackingThread::setPause(){
     m_playing = false;
+    m_status = TrackerStatus::Paused;
 }
 
 void TrackingThread::setPlay(){
     m_playing = true;
+    m_status = TrackerStatus::Running;
     m_conditionVariable.notify_all();
 }
 
 void TrackingThread::togglePlaying(){
-    m_playing = !m_playing;
     if (m_playing) {
-        m_conditionVariable.notify_all();
+        setPause();
+    } else {
+        setPlay();
     }
+}
+
+void TrackingThread::playOnce(){
+    m_status = TrackerStatus::Paused;
+    m_playOnce = true;
+    m_conditionVariable.notify_all();
 }
 
 bool TrackingThread::isPaused() const
