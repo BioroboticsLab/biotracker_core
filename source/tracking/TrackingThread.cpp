@@ -11,6 +11,7 @@
 using GUIPARAM::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
+_imageStream(make_ImageStreamNoMedia()),
 _captureActive(false),
 _readyForNextFrame(true),
 _trackerActive(settings.getValueOfParam<bool>(TRACKERPARAM::TRACKING_ENABLED)),
@@ -176,11 +177,11 @@ void TrackingThread::setFrameNumber(int frameNumber)
 void TrackingThread::incrementFrameNumber()
 {
 
-        emit newFrameNumber(_imageStream->currentFrameNumber());
+        emit newFrameNumber(static_cast<int>(_imageStream->currentFrameNumber()));
         {
         MutexLocker lock(_trackerMutex);
         if (_tracker) {
-            _tracker->setCurrentFrameNumber(_imageStream->currentFrameNumber());
+			_tracker->setCurrentFrameNumber(static_cast<int>(_imageStream->currentFrameNumber()));
         }
     }
 }
@@ -210,7 +211,7 @@ void TrackingThread::doTracking()
 
 	try
 	{
-        _tracker->track(_imageStream->currentFrameNumber(), _imageStream->currentFrame());
+		_tracker->track(static_cast<int>(_imageStream->currentFrameNumber()), _imageStream->currentFrame());
 	}
 	catch (const std::exception& err)
 	{
@@ -228,12 +229,12 @@ void TrackingThread::doTrackingAndUpdateScreen()
 
 int TrackingThread::getVideoLength()
 {
-    return _imageStream ? _imageStream->numFrames() : 0;
+    return _imageStream ? static_cast<int>(_imageStream->numFrames()) : 0;
 }
 
 int TrackingThread::getFrameNumber()
 {
-    return _imageStream ? _imageStream->currentFrameNumber() : 0;
+    return _imageStream ? static_cast<int>(_imageStream->currentFrameNumber()) : 0;
 }
 
 void TrackingThread::enableHandlingNextFrame(bool nextFrame)
