@@ -206,7 +206,8 @@ void TrackingThread::doTracking()
 	if (!_tracker) return;
 
 	// do nothing if we aint got a frame
-    if (_imageStream->currentFrameIsEmpty()) return;
+    if (!_imageStream || _imageStream->currentFrameIsEmpty()) return;
+
 	try
 	{
         _tracker->track(_imageStream->currentFrameNumber(), _imageStream->currentFrame());
@@ -219,17 +220,20 @@ void TrackingThread::doTracking()
 void TrackingThread::doTrackingAndUpdateScreen()
 {
 	doTracking();
-    emit trackingSequenceDone(_imageStream->currentFrame());
+
+    if (_imageStream) {
+        emit trackingSequenceDone(_imageStream->currentFrame());
+    }
 }
 
 int TrackingThread::getVideoLength()
 {
-    return _imageStream->numFrames();
+    return _imageStream ? _imageStream->numFrames() : 0;
 }
 
 int TrackingThread::getFrameNumber()
 {
-    return _imageStream->currentFrameNumber();
+    return _imageStream ? _imageStream->currentFrameNumber() : 0;
 }
 
 void TrackingThread::enableHandlingNextFrame(bool nextFrame)
