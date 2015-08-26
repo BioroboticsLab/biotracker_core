@@ -63,8 +63,7 @@ bool ImageStream::nextFrame()
 		const bool success = this->nextFrame_impl();
 		m_current_frame_number = new_frame_number;
 		return success;
-	}
-	else {
+	} else {
 		this->clearImage();
 		return false;
 	}
@@ -246,22 +245,16 @@ private:
 			m_capture.grab();
 			m_capture.retrieve(new_frame);
 			this->set_current_frame(new_frame);
-			std::cout << new_frame.empty() << std::endl;
 			return ! new_frame.empty();
 		}
 
 		virtual bool setFrameNumber_impl(size_t frame_number) override
 		{
-			// new frame is next frame --> use next frame function
-			//if (this->currentFrameNumber() + 1 == frame_number) {
-				//return this->nextFrame_impl();
-			//}
 			return this->nextFrame_impl();
 		}
 
 	cv::VideoCapture m_capture;
-	const double     m_fps;
-	//const size_t     m_num_frames;
+	const double m_fps;
 };
 
 /*********************************************************/

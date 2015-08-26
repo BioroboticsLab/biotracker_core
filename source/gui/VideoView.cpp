@@ -24,8 +24,6 @@ VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
-
-    //context->makeCurrent(this->su);
 }
 
 void VideoView::setMode(const VideoView::Mode mode)
@@ -105,8 +103,6 @@ void VideoView::initializeGL()
 
 void VideoView::resizeGL(int width, int height)
 {
-    makeCurrent();
-
     // dont do anything if  width or height are 0
     // or there is no image to display
     if (width <= 0 || height <= 0) {
@@ -164,12 +160,10 @@ void VideoView::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    std::cout << "dim:" << m_texture.getImage().cols << ", " << m_texture.getImage().rows << std::endl;
-
-
     m_texture.draw();
 
     glFlush();
+    doneCurrent();
 }
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords)

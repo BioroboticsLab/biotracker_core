@@ -1,5 +1,6 @@
 #include "BioTrackerApp.h"
 #include <limits>
+#include <thread>
 
 #include "source/util/QOpenGLContextWrapper.h"
 
@@ -11,13 +12,18 @@ BioTrackerApp::BioTrackerApp()
         , m_registry(Registry::getInstance())
         , m_trackingThread(m_settings)
 {
+    initConnects();
 }
 
 BioTrackerApp::~BioTrackerApp()
 {
     m_trackingThread.terminate();
     m_trackingThread.wait();
+}
 
+void BioTrackerApp::initConnects(){
+    QObject::connect(&m_trackingThread, &Core::TrackingThread::frameCalculated,
+                     this, &BioTrackerApp::frameCalculatedFromTrackingThread);
 }
 
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext, TextureObject &texture)
@@ -82,14 +88,22 @@ void BioTrackerApp::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trac
     m_trackingThread.setTrackingAlgorithm(std::move(trackingAlgorithm));
 }
 
-void BioTrackerApp::mouseEvent(QMouseEvent *event)
-{
+void BioTrackerApp::mouseEvent(QMouseEvent *event) {
     m_trackingThread.mouseEvent(event);
 }
 
-void BioTrackerApp::keyboardEvent(QKeyEvent *event)
-{
+void BioTrackerApp::keyboardEvent(QKeyEvent *event) {
     m_trackingThread.keyboardEvent(event);
+}
+
+// all slots will only pass the signals through
+
+void BioTrackerApp::notifyFromTrackingThread(const std::string &message, const MSGS::MTYPE type){
+    emit notify(message, type);
+}
+
+void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber, const std::string &filename, const double currentFps) {
+    emit frameCalculated(frameNumber, filename, currentFps);
 }
 
 } // Core

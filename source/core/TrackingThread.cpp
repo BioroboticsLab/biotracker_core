@@ -40,7 +40,6 @@ void TrackingThread::initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>
 {
     m_context = std::move(context);
     m_texture = &texture;
-    std::cout << m_context->format().minorVersion() << std::endl;
     m_surface.setFormat(m_context->format());
     m_surface.create();
 
@@ -59,7 +58,6 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
         emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        emit invalidFile();
         m_status = TrackerStatus::Invalid;
         return;
     }else {
@@ -72,9 +70,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename)
     std::string note = "abc";
 //        std::string note = "open file: " + m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
 //            " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
-    //emit fileNameChange(QString::fromStdString(m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE)));
-    emit fileNameChange(QString::fromStdString(note));
+    emit notifyGUI(note, MSGS::MTYPE::FILE_NAME_CHANGE);
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenames)
@@ -90,7 +86,6 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path> &&filenam
         }
         errorMsg += "]";
         emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        emit invalidFile();
         m_status = TrackerStatus::Invalid;
         return;
     }else {
@@ -106,7 +101,6 @@ void TrackingThread::openCamera(int device)
         // could not open video
         std::string errorMsg = "unable to open camera " + QString::number(device).toStdString();
         emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        emit invalidFile();
         m_status = TrackerStatus::Invalid;
         return;
     }
@@ -125,39 +119,38 @@ void TrackingThread::run()
 	{
         std::unique_lock<std::mutex> lk(m_tickMutex);
         m_conditionVariable.wait(lk, [&]{return m_playing || m_playOnce;});
+        m_playOnce = false;
 
         tick();
 
-		//if thread just started (or is unpaused) start clock here
-		//after this timestamp will be taken right before picture is drawn
-		//to take the amount of time into account it takes to draw the picture
-		if (firstLoop)
+        //if thread just started (or is unpaused) start clock here
+        //after this timestamp will be taken right before picture is drawn
+        //to take the amount of time into account it takes to draw the picture
+        if (firstLoop)
             // measure the capture start time
-			t = std::chrono::system_clock::now();
-
+            t = std::chrono::system_clock::now();
+        firstLoop = false;
 
         if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
 
         std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
-		std::chrono::microseconds dur = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::microseconds dur = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::system_clock::now() - t);
-        if (!m_maxSpeed)
-		{
-			if (dur <= target_dur)
-				target_dur -= dur;
-			else {
-				target_dur = std::chrono::microseconds(0);
-			}
-		}
-		else
-			target_dur = std::chrono::microseconds(0);
-		// calculate the running fps.
-        m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
-        emit sendFps(m_runningFps);
+        if (!m_maxSpeed) {
+            if (dur <= target_dur) {
+                target_dur -= dur;
+            } else {
+                target_dur = std::chrono::microseconds(0);
+            }
+        } else {
+            target_dur = std::chrono::microseconds(0);
+        }
 
-		std::this_thread::sleep_for(target_dur);
-		t = std::chrono::system_clock::now();
-		firstLoop = false;
+        // calculate the running fps.
+        m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
+
+        std::this_thread::sleep_for(target_dur);
+        t = std::chrono::system_clock::now();
 
         // unlock mutex
         lk.unlock();
@@ -166,42 +159,70 @@ void TrackingThread::run()
 
 void TrackingThread::tick(){
     m_context->makeCurrent(&m_surface);
-    std::cout << m_imageStream->currentFrameNumber() << " current frame" << std::endl;
+
+    double fps = 0;
     m_texture->setImage(m_imageStream->currentFrame().clone());
-    m_context->doneCurrent();
 
+    //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
+    emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
 
-    if ( m_playing )
-    {
+    if (m_playing) {
         nextFrame();
     }
+    m_context->doneCurrent();
+}
 
-    emit showFrame(m_imageStream->currentFrameNumber());
+void TrackingThread::computeFps() {
+    /*//if thread just started (or is unpaused) start clock here
+    //after this timestamp will be taken right before picture is drawn
+    //to take the amount of time into account it takes to draw the picture
+    if (firstLoop)
+    // measure the capture start time
+    t = std::chrono::system_clock::now();
+    firstLoop = false;
+
+    if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
+
+    std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
+    std::chrono::microseconds dur = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::system_clock::now() - t);
+    if (!m_maxSpeed) {
+        if (dur <= target_dur) {
+            target_dur -= dur;
+        } else {
+            target_dur = std::chrono::microseconds(0);
+        }
+    } else {
+        target_dur = std::chrono::microseconds(0);
+    }
+
+    // calculate the running fps.
+    m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
+
+    std::this_thread::sleep_for(target_dur);
+    t = std::chrono::system_clock::now();*/
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber)
 {
-    if ( m_imageStream->setFrameNumber(frameNumber) )
-    {
+    if ( m_imageStream->setFrameNumber(frameNumber) ) {
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(frameNumber);
         }
         playOnce();
     }
 }
-
-void TrackingThread::nextFrame()
-{
-    if( m_imageStream->nextFrame()) { // incements the frame number
+void TrackingThread::nextFrame() {
+    if( m_imageStream->nextFrame()) { // increments the frame number if possible
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }
-        m_playOnce = true;
-        m_conditionVariable.notify_all();
+    } else {
+        m_playing = false;
+        m_playOnce = false;
     }
 }
-
 
 void TrackingThread::doTracking()
 {
@@ -285,6 +306,7 @@ void TrackingThread::setFps(double fps)
 {
     m_fps = fps;
 }
+
 void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>  trackingAlgorithm)
 {
 	{

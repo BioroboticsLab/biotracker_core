@@ -69,20 +69,12 @@ void TextureObject::createTexture()
 
 void TextureObject::setImage(const cv::Mat &img)
 {
-
-    std::cout << "in setImage, before:" << std::endl;
-    std::cout << m_vertices.constData() << std::endl;
-    std::cout << m_texCoords.constData() << std::endl;
     assert(!img.empty());
 
     m_img = img;
     createVertices();
     createTexture();
     draw();
-
-    std::cout << "in setImage, after:" << std::endl;
-    std::cout << m_vertices.constData() << std::endl;
-    std::cout << m_texCoords.constData() << std::endl;
 }
 
 }   // namespace Core

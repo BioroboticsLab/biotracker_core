@@ -34,15 +34,18 @@ private:
 
     void initConnects();
     void initShortcuts();
+public slots:
+    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
 
 private slots:
     void playPause();
-    void setFrame(const int frame);
+    void setFrame(const size_t frame);
     void nextFrame();
     void previousFrame();
     void changeCurrentFrameByEdit();
     void takeScreenshot();
     void switchPanZoomMode();
+
 };
 
 }

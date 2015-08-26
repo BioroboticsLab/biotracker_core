@@ -2,9 +2,11 @@
 
 #include <QKeySequence>
 #include <QShortcut>
+#include <thread>
 
 #include "source/core/TrackingThread.h"
 #include "source/gui/VideoView.h"
+
 
 namespace BioTracker {
 namespace Gui {
@@ -98,10 +100,8 @@ void VideoControlWidget::playPause()
     updateWidgets();
 }
 
-void VideoControlWidget::setFrame(const int frame)
-{
-    assert(frame >= 0);
-    assert(static_cast<size_t>(frame) < m_bioTracker.getNumFrames());
+void VideoControlWidget::setFrame(const size_t frame) {
+    assert(frame < m_bioTracker.getNumFrames());
     m_bioTracker.setFrame(frame);
 
     updateWidgets();
@@ -158,5 +158,14 @@ void VideoControlWidget::switchPanZoomMode()
     }
 }
 
+void VideoControlWidget::frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps) {
+    //m_videoView->update(); // does not work somehow -.-
+    m_videoView->resize(m_videoView->width()+1, m_videoView->height());
+    m_videoView->resize(m_videoView->width()-1, m_videoView->height());
+
+    m_ui.lbl_frame->setText(QString::number(frameNumber));
+    m_ui.fps_label->setText(QString::number(currentFps));
 }
-}
+
+} // Gui
+} // BioTracker

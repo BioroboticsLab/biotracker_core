@@ -47,11 +47,6 @@ public:
         return m_status;
     }
 
-    void requestContext(){
-        m_context->doneCurrent();
-        m_context->moveToThread(QApplication::instance()->thread());
-    }
-
 	/**
 	* Starts the video thread.
 	*/
@@ -142,6 +137,16 @@ private:
  	*/
 	void tick();
 
+    /**
+     * computes fps
+     */
+    void computeFps();
+
+    /**
+	* Moves one frame forward
+	*/
+    void nextFrame();
+
 	/**
 	* thread running method.
 	*/
@@ -162,11 +167,6 @@ public slots:
     size_t getFrameNumber() const;
 
 	/**
-	* Moves one frame forward
-	*/
-	void nextFrame();
-
-	/**
 	* change framerate
 	*/
 	void setFps(double fps);
@@ -183,35 +183,16 @@ private slots:
 
 signals:
 	/**
-	* Signals when a tracking sequence is done.
-	* @param image send the image to draw,
-	*/
-	void trackingSequenceDone(cv::Mat image);
-
-	/**
 	* emit current frame number.
 	* @param frameNumber the current frame number.
 	*/
 	//void newFrameNumber(int frameNumber);
-    void showFrame(int frameNumber);
-
-	/**
-	* singal to gui that video is paused
-	*/
-	void invalidFile();
+    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
 
 	/**
 	* send a message to the GUI.
 	*/
 	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
-
-	//send current fps to gui
-	void sendFps(double fps);
-
-	/**
-	* display current file name in GUI
-	*/
-	void fileNameChange(QString filename);
 };
 
 }

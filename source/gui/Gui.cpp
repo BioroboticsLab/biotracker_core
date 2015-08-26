@@ -38,6 +38,9 @@ void Gui::initConnects()
     QObject::connect(m_mainWindow.getUi().actionSave_tracking_data, &QAction::triggered, this, &Gui::storeTrackingData);
 
     QObject::connect(m_mainWindow.getUi().actionQuit, &QAction::triggered, this, &Gui::exit);
+
+    QObject::connect(&m_biotracker, &Core::BioTrackerApp::frameCalculated,
+                     m_mainWindow.getVideoControl(), &VideoControlWidget::frameCalculated);
 }
 
 void Gui::browseVideo()

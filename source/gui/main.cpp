@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<MSGS::MTYPE>("MSGS::MTYPE");
 	qRegisterMetaType<std::string>("std::string");
+	qRegisterMetaType<std::size_t>("std::size_t");
+    qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<BioTracker::Core::TrackerType>("TrackerType");
 
 	if (SystemCompatibilityCheck::checkOpenGLSupport()) {

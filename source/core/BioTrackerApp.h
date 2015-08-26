@@ -28,6 +28,8 @@ public:
 
     ~BioTrackerApp() override;
 
+    void initConnects();
+
     void initializeOpenGL(QOpenGLContext *mainContext, TextureObject &texture);
 
     Settings& getSettings() {
@@ -115,19 +117,20 @@ public:
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
+private slots:
+    /**
+     * @brief notify
+     *      Status messages for the user interface
+     */
+    void notifyFromTrackingThread(const std::string &message, const MSGS::MTYPE type);
+
+    /**
+     * @brief notify
+     *      Status messages for the user interface
+     */
+    void frameCalculatedFromTrackingThread(const size_t frameNumber, const std::string &filename, const double currentFps);
+
 signals:
-    /**
-     * @brief unknownError
-     *      handles Errors that are not handled by other signales
-     */
-    void unknownError(const std::exception_ptr err);
-
-    /**
-     * @brief fileError
-     *      handles file errors that appear inside of the tracking thread
-     */
-    void fileError(const boost::filesystem::filesystem_error &err);
-
     /**
      * @brief notify
      *      Status messages for the user interface
