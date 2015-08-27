@@ -20,9 +20,8 @@ class Settings;
 namespace BioTracker {
 namespace Core {
 
-class TrackingThread : public QThread
-{
-public:
+class TrackingThread : public QThread {
+  public:
     /**
      * @brief The TrackerStatus enum
      * describes the current status of the tracking algorithm
@@ -34,37 +33,37 @@ public:
         Invalid         ///< The replayed file is invalid
     };
 
-	Q_OBJECT
-public:
+    Q_OBJECT
+  public:
     TrackingThread(Settings &settings);
-	~TrackingThread(void);
+    ~TrackingThread(void);
 
-    void initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>&& context, TextureObject &texture);
+    void initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext> &&context,
+                          TextureObject &texture);
 
-    TrackerStatus getStatus() const
-    {
+    TrackerStatus getStatus() const {
         //TODO maybe lock this part?
         return m_status;
     }
 
-	/**
-	* Starts the video thread.
-	*/
-    void loadVideo(const boost::filesystem::path& filename);
-
-	/**
-	* Loads in pictures instead of a video
-	*/
-    void loadPictures(std::vector<boost::filesystem::path>&& filenames);
-
-	/**
-	 * Opens a video device
-	 */
-	void openCamera(int device);
+    /**
+    * Starts the video thread.
+    */
+    void loadVideo(const boost::filesystem::path &filename);
 
     /**
-	 * Pause video plaing.
-	 */
+    * Loads in pictures instead of a video
+    */
+    void loadPictures(std::vector<boost::filesystem::path> &&filenames);
+
+    /**
+     * Opens a video device
+     */
+    void openCamera(int device);
+
+    /**
+     * Pause video plaing.
+     */
     void setPause();
 
     /**
@@ -77,17 +76,17 @@ public:
      */
     void togglePlaying();
 
-	/**
-	* @return  current fps setting
-	*/
-	double getFps() const;
+    /**
+    * @return  current fps setting
+    */
+    double getFps() const;
 
     size_t getVideoLength() const;
 
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
-private:
+  private:
     std::unique_ptr<ImageStream> m_imageStream;
     Mutex m_trackerMutex;
     std::mutex m_tickMutex;
@@ -96,7 +95,7 @@ private:
     bool m_playing;
     bool m_playOnce;
 
-	//defines whether to use pictures as source or a video
+    //defines whether to use pictures as source or a video
     TrackerStatus m_status;
 
     double m_fps;
@@ -105,7 +104,7 @@ private:
     GUIPARAM::MediaType m_mediaType;
 
 
-    Settings& m_settings;
+    Settings &m_settings;
 
     QOffscreenSurface m_surface;
     std::unique_ptr<Util::SharedOpenGLContext> m_context;
@@ -113,29 +112,29 @@ private:
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 
-	QOpenGLDebugLogger m_openGLLogger;
+    QOpenGLDebugLogger m_openGLLogger;
 
-	/**
-	* Checks if thread is in pause state.
-	* @return true if paused, false otherwise.
-	*/
-	bool isPaused() const;
+    /**
+    * Checks if thread is in pause state.
+    * @return true if paused, false otherwise.
+    */
+    bool isPaused() const;
 
-	/**
-	* sends frame and everything else that is needed to selected
-	* tracking algorithm
-	*/
-	void doTracking();
+    /**
+    * sends frame and everything else that is needed to selected
+    * tracking algorithm
+    */
+    void doTracking();
 
     /**
      * Play and calculate the next frame only.
      */
     void playOnce();
 
-	/**
- 	* Does exactly one tick, eg. drawing one image and starting tracker once.
- 	*/
-	void tick();
+    /**
+    * Does exactly one tick, eg. drawing one image and starting tracker once.
+    */
+    void tick();
 
     /**
      * computes fps
@@ -143,56 +142,58 @@ private:
     void computeFps();
 
     /**
-	* Moves one frame forward
-	*/
+    * Moves one frame forward
+    */
     void nextFrame();
 
-	/**
-	* thread running method.
-	*/
-	virtual void run() override;
+    /**
+    * thread running method.
+    */
+    virtual void run() override;
 
-public slots:
+  public slots:
 
-	/**
-	* Sets the current frame number.
-	* @param frameNumber specifies the current frame number.
-	*/
+    /**
+    * Sets the current frame number.
+    * @param frameNumber specifies the current frame number.
+    */
     void setFrameNumber(size_t frameNumber);
 
-	/**
-	* Gets current frame number.
-	* @return the current frame number.
-	*/
+    /**
+    * Gets current frame number.
+    * @return the current frame number.
+    */
     size_t getFrameNumber() const;
 
-	/**
-	* change framerate
-	*/
-	void setFps(double fps);
+    /**
+    * change framerate
+    */
+    void setFps(double fps);
 
-	/**
-	* enable maximum playback speed
-	*/
-	void setMaxSpeed (bool enabled);
+    /**
+    * enable maximum playback speed
+    */
+    void setMaxSpeed(bool enabled);
 
-	void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
 
-private slots:
-	void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
+  private slots:
+    void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
 
-signals:
-	/**
-	* emit current frame number.
-	* @param frameNumber the current frame number.
-	*/
-	//void newFrameNumber(int frameNumber);
-    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
+  signals:
+    /**
+    * emit current frame number.
+    * @param frameNumber the current frame number.
+    */
+    //void newFrameNumber(int frameNumber);
+    void frameCalculated(const size_t frameNumber, const std::string &filename,
+                         const double currentFps);
 
-	/**
-	* send a message to the GUI.
-	*/
-	void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    /**
+    * send a message to the GUI.
+    */
+    void notifyGUI(std::string message,
+                   MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
 };
 
 }

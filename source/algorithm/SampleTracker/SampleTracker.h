@@ -7,26 +7,25 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-class SampleTracker : public TrackingAlgorithm
-{
+class SampleTracker : public TrackingAlgorithm {
     Q_OBJECT
-public:
-    SampleTracker	( Settings & settings, QWidget *parent );
+  public:
+    SampleTracker(Settings &settings, QWidget *parent);
 
-    void track ( ulong frameNumber, const cv::Mat & frame ) override;
+    void track(ulong frameNumber, const cv::Mat &frame) override;
     /*
     void paint (ProxyPaintObject&,View const& view = OriginalView) override;
     */
-    void paintOverlay(QPainter * painter) override;
+    void paintOverlay(QPainter *painter) override;
     void postConnect() override;
 
-    std::shared_ptr<QWidget> getParamsWidget () override;
-    std::shared_ptr<QWidget> getToolsWidget	() override;
+    std::shared_ptr<QWidget> getParamsWidget() override;
+    std::shared_ptr<QWidget> getToolsWidget() override;
 
-public slots:
+  public slots:
     void changeFilterColor();
 
-private:
+  private:
     std::shared_ptr<QFrame> _paramsFrame;
     std::shared_ptr<QFrame> _toolsFrame;
     QPointF _selectorRecStart;
@@ -57,8 +56,8 @@ private:
     std::string _currentView;
     bool _imageChanged;
     //mouse click and move events
-    void mouseMoveEvent(QMouseEvent * e) override;
-    void mousePressEvent(QMouseEvent * e) override;
-    void mouseReleaseEvent(QMouseEvent * e) override;
-    void mouseWheelEvent(QWheelEvent * e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void mouseWheelEvent(QWheelEvent *e) override;
 };

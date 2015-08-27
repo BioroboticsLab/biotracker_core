@@ -8,26 +8,25 @@
 #include "TrackedFish.h"
 #include "FishCandidate.h"
 
-class SimpleTracker : public TrackingAlgorithm
-{
-public:
-	static const float MAX_TRACK_DISTANCE_PER_FRAME;
-	static const float MAX_TRACK_DISTANCE;
-	static const int   CANDIDATE_SCORE_THRESHOLD;
-	static const int   MAX_NUMBER_OF_TRACKED_OBJECTS;
+class SimpleTracker : public TrackingAlgorithm {
+  public:
+    static const float MAX_TRACK_DISTANCE_PER_FRAME;
+    static const float MAX_TRACK_DISTANCE;
+    static const int   CANDIDATE_SCORE_THRESHOLD;
+    static const int   MAX_NUMBER_OF_TRACKED_OBJECTS;
 
-	SimpleTracker(Settings & settings, QWidget *parent);
+    SimpleTracker(Settings &settings, QWidget *parent);
 
-    void track (ulong frameNumber, const cv::Mat& frame) override;
-	void reset () override;
-    void paint (ProxyPaintObject&, View const& view = OriginalView) override;
+    void track(ulong frameNumber, const cv::Mat &frame) override;
+    void reset() override;
+    void paint(ProxyPaintObject &, View const &view = OriginalView) override;
 
-private:
-	cv::BackgroundSubtractorMOG2 _bg_subtractor;
-	std::vector<FishCandidate>   _fish_candidates;
+  private:
+    cv::BackgroundSubtractorMOG2 _bg_subtractor;
+    std::vector<FishCandidate>   _fish_candidates;
 
-	QMutex  lastFrameLock;
-	cv::Mat lastFrame;
+    QMutex  lastFrameLock;
+    cv::Mat lastFrame;
 };
 
 #endif

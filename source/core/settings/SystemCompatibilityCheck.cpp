@@ -2,7 +2,6 @@
 
 #include <QGLFormat>
 
-bool SystemCompatibilityCheck::checkOpenGLSupport()
-{
-	return QGLFormat::hasOpenGL();
+bool SystemCompatibilityCheck::checkOpenGLSupport() {
+    return QGLFormat::hasOpenGL();
 }

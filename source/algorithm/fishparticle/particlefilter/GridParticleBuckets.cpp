@@ -13,19 +13,18 @@
 * @param bucket_height The height (in rows) of a single bucket/grid cell. Must
 *                      not be 0.
 */
-GridParticleBuckets::GridParticleBuckets(std::size_t max_per_bucket, std::size_t real_rows, std::size_t real_cols,
-										 std::size_t bucket_width, std::size_t bucket_height) :
-			_bucket_width(bucket_width), _bucket_height(bucket_height),
-			_max_per_bucket(max_per_bucket), _buckets()
-{
-	_buckets.resize((real_cols/bucket_width) + 1);
-	for (auto& v : _buckets) {
-		v.resize((real_rows/bucket_height) + 1);
-	}
+GridParticleBuckets::GridParticleBuckets(std::size_t max_per_bucket,
+        std::size_t real_rows, std::size_t real_cols,
+        std::size_t bucket_width, std::size_t bucket_height) :
+    _bucket_width(bucket_width), _bucket_height(bucket_height),
+    _max_per_bucket(max_per_bucket), _buckets() {
+    _buckets.resize((real_cols/bucket_width) + 1);
+    for (auto &v : _buckets) {
+        v.resize((real_rows/bucket_height) + 1);
+    }
 }
 
-GridParticleBuckets::~GridParticleBuckets(void)
-{
+GridParticleBuckets::~GridParticleBuckets(void) {
 }
 
 /**
@@ -35,24 +34,25 @@ GridParticleBuckets::~GridParticleBuckets(void)
 * cell's maximum particle count has already been reached.
 */
 bool GridParticleBuckets::putInBucket(const Particle &particle) {
-	std::size_t& candidate = getBucketForParticle(particle);
-	if (candidate >= _max_per_bucket) {
-		return false;
-	}
-	++candidate;
-	return true;
+    std::size_t &candidate = getBucketForParticle(particle);
+    if (candidate >= _max_per_bucket) {
+        return false;
+    }
+    ++candidate;
+    return true;
 }
 
 /**
 * Returns a reference to the count of the grid cell at the particle's 2D (x,y)
 * position.
 */
-std::size_t& GridParticleBuckets::getBucketForParticle(const Particle& particle) {
-	float x = particle.getX();
-	float y = particle.getY();
+std::size_t &GridParticleBuckets::getBucketForParticle(const Particle
+        &particle) {
+    float x = particle.getX();
+    float y = particle.getY();
 
-	std::size_t bucket_x = static_cast<size_t>(x / _bucket_width);
-	std::size_t bucket_y = static_cast<size_t>(y / _bucket_height);
+    std::size_t bucket_x = static_cast<size_t>(x / _bucket_width);
+    std::size_t bucket_y = static_cast<size_t>(y / _bucket_height);
 
-	return _buckets[bucket_x][bucket_y];
+    return _buckets[bucket_x][bucket_y];
 }

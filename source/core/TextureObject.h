@@ -5,19 +5,20 @@
 #include <QObject>
 #include <QtOpenGL>
 
-namespace BioTracker{
+namespace BioTracker {
 namespace Core {
 
-class TextureObject : public QObject
-{
-public:
+class TextureObject : public QObject {
+  public:
     explicit TextureObject(QObject *parent);
     void draw() const;
 
     void setImage(const cv::Mat &img);
-    const cv::Mat &getImage() const { return m_img; }
+    const cv::Mat &getImage() const {
+        return m_img;
+    }
 
-private:
+  private:
     cv::Mat m_img;
     GLuint m_texture;
 

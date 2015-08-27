@@ -6,19 +6,19 @@ namespace Util {
 template<class T>
 class Singleton {
 
-protected:
+  protected:
     Singleton() {}
     ~Singleton() {}
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
+    Singleton(const Singleton &) = delete;
+    Singleton &operator=(const Singleton &) = delete;
 
-public:
-    static T& getInstance();
+  public:
+    static T &getInstance();
 
 };
 
 template<class T>
-T& Singleton<T>::getInstance() {
+T &Singleton<T>::getInstance() {
     static T instance;
     return instance;
 }

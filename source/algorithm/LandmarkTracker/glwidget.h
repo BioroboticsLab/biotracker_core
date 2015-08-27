@@ -12,106 +12,107 @@
 
 class LandmarkTracker;
 
-class GLWidget : public QGLWidget
-{
+class GLWidget : public QGLWidget {
     Q_OBJECT
 
-public:
-	explicit GLWidget(QWidget *parent = 0);
+  public:
+    explicit GLWidget(QWidget *parent = 0);
 
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
 
-	void updatePixelCubes();
+    void updatePixelCubes();
 
     void drawingAxes();
-    void drawCube (float red, float green, float blue, float f = 25.5/2);
-	void drawingCubes();
+    void drawCube(float red, float green, float blue, float f = 25.5/2);
+    void drawingCubes();
 
-	float calc_f(float pixel_size);
-	float cube_size(float div_factor, int pixel_count);
-	
-	
-	/******************************/
-	//VON TOOLWINDOW ÜBERNOMMEN
+    float calc_f(float pixel_size);
+    float cube_size(float div_factor, int pixel_count);
 
-	void getRoiCalcMap();
-	void clearPixelCubes();
 
-	cv::Vec3b values;
-	cv::Mat roiMat;
-	cv::Mat roiDummy;
+    /******************************/
+    //VON TOOLWINDOW ÜBERNOMMEN
 
-	size_t rgbValue_max;
-	size_t rgbMap_size;
+    void getRoiCalcMap();
+    void clearPixelCubes();
 
-	struct Vec3bCompare
-	{
-		bool operator()(const cv::Vec3b& lhs, const cv::Vec3b& rhs) const{
-			//return lhs.val[0]<rhs.val[0] && lhs.val[1]<rhs.val[1] && lhs.val[2]<rhs.val[2];
-			for (size_t i = 0; i <3; ++i){
-				if (lhs.val[i] < rhs.val[i]) return true;
-				if (lhs.val[i] > rhs.val[i])	return false;
-			}
-			return false;
-		}
-	};
+    cv::Vec3b values;
+    cv::Mat roiMat;
+    cv::Mat roiDummy;
 
-	typedef std::map<const cv::Vec3b, size_t, Vec3bCompare> map_t;
+    size_t rgbValue_max;
+    size_t rgbMap_size;
 
-	using vec3f = std::array < GLfloat, 3 > ;
+    struct Vec3bCompare {
+        bool operator()(const cv::Vec3b &lhs, const cv::Vec3b &rhs) const {
+            //return lhs.val[0]<rhs.val[0] && lhs.val[1]<rhs.val[1] && lhs.val[2]<rhs.val[2];
+            for (size_t i = 0; i <3; ++i) {
+                if (lhs.val[i] < rhs.val[i]) {
+                    return true;
+                }
+                if (lhs.val[i] > rhs.val[i]) {
+                    return false;
+                }
+            }
+            return false;
+        }
+    };
 
-	vec3f colorStart;
-	vec3f colorEnd;
-	
+    typedef std::map<const cv::Vec3b, size_t, Vec3bCompare> map_t;
 
-	
+    using vec3f = std::array < GLfloat, 3 > ;
 
-	const map_t &getRGBMap() const
-	{
-		return rgbMap;
-	}
+    vec3f colorStart;
+    vec3f colorEnd;
 
-private:
 
-	GLfloat rotX;
-	GLfloat rotY;
-	GLfloat rotZ;
 
-	GLfloat moveUpDown;
-	GLfloat moveLeftRight;
 
-	QPoint lastPos;
-	GLfloat zoomFactor;
+    const map_t &getRGBMap() const {
+        return rgbMap;
+    }
 
-	QSize viewport_size;
+  private:
 
-	void updateRGBCube();
+    GLfloat rotX;
+    GLfloat rotY;
+    GLfloat rotZ;
 
-	/******************************/
-	//VON TOOLWINDOW ÜBERNOMMEN
+    GLfloat moveUpDown;
+    GLfloat moveLeftRight;
 
-	LandmarkTracker *tracker;
+    QPoint lastPos;
+    GLfloat zoomFactor;
 
-	void computeRgbMap(const cv::Mat &mat);
-	void calcHistogram(const cv::Mat &mat);
-	
-	map_t rgbMap;
+    QSize viewport_size;
 
-	cv::Mat roi;
+    void updateRGBCube();
 
-signals:
+    /******************************/
+    //VON TOOLWINDOW ÜBERNOMMEN
 
-public slots:
+    LandmarkTracker *tracker;
+
+    void computeRgbMap(const cv::Mat &mat);
+    void calcHistogram(const cv::Mat &mat);
+
+    map_t rgbMap;
+
+    cv::Mat roi;
+
+  signals:
+
+  public slots:
 
     //mouse click and move events
-    void mouseMoveEvent		(QMouseEvent * e);
-    void mousePressEvent	(QMouseEvent * e);
-    void mouseReleaseEvent  (QMouseEvent * e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
     void wheelEvent(QWheelEvent *e);
 
-	void keyPressEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 
 
 };

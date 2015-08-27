@@ -12,111 +12,114 @@
 #include <QFormLayout>
 #include <QPushButton>
 
-class LandmarkTracker : public TrackingAlgorithm
-{
-	Q_OBJECT
+class LandmarkTracker : public TrackingAlgorithm {
+    Q_OBJECT
 
-private:
-	
-	std::shared_ptr<GLWidget> _glwidget;
-	std::shared_ptr<QFrame> _roiFrame;
-	
-	size_t	_frameNr;
-	size_t _rectId;
-	
-	cv::Rect _rectangle;
+  private:
 
-	cv::Point _selectorRecStart;
-	cv::Point _selectorRecEnd;
-	bool _showSelectorRec;
-	bool _mouseMoved;
-	bool _cubeIsRoi;
+    std::shared_ptr<GLWidget> _glwidget;
+    std::shared_ptr<QFrame> _roiFrame;
 
-	cv::Point _mouseStart;
-	cv::Point _mouseStop;
+    size_t  _frameNr;
+    size_t _rectId;
 
-	//KML
-	cv::Point pointOfText();
-	cv::Point pot;
-	
-	std::string rectInfo();
+    cv::Rect _rectangle;
 
-	void drawRectangle(cv::Mat image);
-	void setRectangle(cv::Mat image, cv::Scalar color);
+    cv::Point _selectorRecStart;
+    cv::Point _selectorRecEnd;
+    bool _showSelectorRec;
+    bool _mouseMoved;
+    bool _cubeIsRoi;
 
-	bool _lockRect;
-	bool _movedRect;
-	void lockRect();
-	void unlockRect();
-	
-	cv::Rect box;
-	cv::Mat selectedRoi;
-	cv::Mat sampledRoi;
+    cv::Point _mouseStart;
+    cv::Point _mouseStop;
 
-	boost::optional<cv::Mat> img;
-	QPixmap _pixmap;
+    //KML
+    cv::Point pointOfText();
+    cv::Point pot;
 
-	QPixmap mat2QPixmap(const cv::Mat& mat);
+    std::string rectInfo();
 
-	void mouseMoveEvent		( QMouseEvent * e ) override;
-	void mousePressEvent	( QMouseEvent * e ) override;
-	void mouseReleaseEvent	( QMouseEvent * e ) override;
-	void keyPressEvent(QKeyEvent *e) override;
+    void drawRectangle(cv::Mat image);
+    void setRectangle(cv::Mat image, cv::Scalar color);
 
-	virtual std::set<Qt::Key> const& grabbedKeys() const override;
+    bool _lockRect;
+    bool _movedRect;
+    void lockRect();
+    void unlockRect();
 
-	void forcePointIntoBorders(cv::Point & point, cv::Rect const & borders);
+    cv::Rect box;
+    cv::Mat selectedRoi;
+    cv::Mat sampledRoi;
 
-	
+    boost::optional<cv::Mat> img;
+    QPixmap _pixmap;
 
-	
+    QPixmap mat2QPixmap(const cv::Mat &mat);
+
+    void mouseMoveEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
+
+    virtual std::set<Qt::Key> const &grabbedKeys() const override;
+
+    void forcePointIntoBorders(cv::Point &point, cv::Rect const &borders);
 
 
-	std::shared_ptr<RectObject>	_rectObject;
 
-	//ParamsWidget GUI Elements
 
-	QLabel *_roiInParams;
-	QLabel *_sampledRoiInParams;
-	
-	QPushButton *_roiButton;
-	QPushButton *_sampledRoiButton;
 
-	void initParamsWidget();
-	void updateParamsWidget();
 
-	void addRect2TrackedObj();
+    std::shared_ptr<RectObject> _rectObject;
 
-	void setRect();
+    //ParamsWidget GUI Elements
 
-public:
+    QLabel *_roiInParams;
+    QLabel *_sampledRoiInParams;
 
-	cv::Scalar COLOR_RECTANGLE = cv::Scalar(0, 0, 255);
+    QPushButton *_roiButton;
+    QPushButton *_sampledRoiButton;
 
-	LandmarkTracker	( Settings & settings, QWidget *parent );
-	~LandmarkTracker	( void ) {}
+    void initParamsWidget();
+    void updateParamsWidget();
+
+    void addRect2TrackedObj();
+
+    void setRect();
+
+  public:
+
+    cv::Scalar COLOR_RECTANGLE = cv::Scalar(0, 0, 255);
+
+    LandmarkTracker(Settings &settings, QWidget *parent);
+    ~LandmarkTracker(void) {}
 
 
     void track(ulong /* frameNumber */, const cv::Mat & /* frame */) override;
-    void paint			( ProxyPaintObject&, View const& view = OriginalView ) override;
-	void reset			( ) override {}
-	void postLoad() override;
+    void paint(ProxyPaintObject &, View const &view = OriginalView) override;
+    void reset() override {}
+    void postLoad() override;
 
-	std::shared_ptr<QWidget> getToolsWidget() override { return std::static_pointer_cast<QWidget>(_glwidget); }
-	std::shared_ptr<QWidget> getParamsWidget() override { return std::static_pointer_cast<QWidget>(_roiFrame); }
+    std::shared_ptr<QWidget> getToolsWidget() override {
+        return std::static_pointer_cast<QWidget>(_glwidget);
+    }
+    std::shared_ptr<QWidget> getParamsWidget() override {
+        return std::static_pointer_cast<QWidget>(_roiFrame);
+    }
 
-	//KML
-	void defineROI( cv::Mat image );
-	void startTool();
+    //KML
+    void defineROI(cv::Mat image);
+    void startTool();
 
-	cv::Mat getSelectedRoi();
+    cv::Mat getSelectedRoi();
 
-	void samplingROI();
+    void samplingROI();
 
-public slots:
-	
-	void setLabelRoi();
-	void setLabelSampledRoi();
+  public slots:
+
+    void setLabelRoi();
+    void setLabelSampledRoi();
 
 };
 

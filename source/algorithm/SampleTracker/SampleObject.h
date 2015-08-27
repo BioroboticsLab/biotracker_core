@@ -4,15 +4,14 @@
 
 #include "source/core/serialization/ObjectModel.h"
 
-class SampleObject : public ObjectModel
-{
-public:
+class SampleObject : public ObjectModel {
+  public:
     SampleObject(void);
     virtual ~SampleObject(void);
 
     void setPosition(const cv::Point pos);
     cv::Point getPosition();
 
-private:
+  private:
     cv::Point _position;
 };

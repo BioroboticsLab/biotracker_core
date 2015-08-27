@@ -7,12 +7,10 @@
 namespace BioTracker {
 namespace Util {
 
-class QOpenGLContextWrapper : public QOpenGLContext
-{
-public:
+class QOpenGLContextWrapper : public QOpenGLContext {
+  public:
     QOpenGLContextWrapper(QObject *parent)
-        : QOpenGLContext(parent)
-    {
+        : QOpenGLContext(parent) {
         create();
     }
 };

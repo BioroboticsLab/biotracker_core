@@ -22,9 +22,8 @@ class VideoView;
 }
 }
 
-class ProxyPaintObject
-{
-private:
+class ProxyPaintObject {
+  private:
     BioTracker::Gui::VideoView &_view;
     //cv::Mat _img;
 
@@ -34,9 +33,9 @@ private:
     {
     }
     friend class BioTracker::Gui::VideoView;
-    ProxyPaintObject(const ProxyPaintObject&) = delete;
-    ProxyPaintObject& operator=(const ProxyPaintObject&) = delete;
-public:
+    ProxyPaintObject(const ProxyPaintObject &) = delete;
+    ProxyPaintObject &operator=(const ProxyPaintObject &) = delete;
+  public:
     //cv::Mat& getmat();
 
 
@@ -47,12 +46,11 @@ namespace Algorithm {
 typedef uint8_t Type;
 }
 
-class TrackingAlgorithm : public QObject
-{
+class TrackingAlgorithm : public QObject {
     Q_OBJECT
 
-public:
-    TrackingAlgorithm(Settings& settings, QWidget *parent);
+  public:
+    TrackingAlgorithm(Settings &settings, QWidget *parent);
     virtual ~TrackingAlgorithm() override = default;
 
     struct View {
@@ -64,13 +62,13 @@ public:
     /**
     * This function tracks the provided object list within the provided frame.
     */
-    virtual void track(ulong frameNumber, const cv::Mat& frame) = 0;
+    virtual void track(ulong frameNumber, const cv::Mat &frame) = 0;
 
     /**
     * paint will be called by "VideoViews" paintEvent method
     * so any picture manipulation stuff goes in here
     */
-	virtual void paint(ProxyPaintObject&, View const& = OriginalView) {}
+    virtual void paint(ProxyPaintObject &, View const & = OriginalView) {}
 
     /**
      * paint stuff onto "VideoViews" current picture
@@ -98,7 +96,7 @@ public:
      * be forwarded to the algorithm
      * @return const reference to the set of keys
      */
-    virtual std::set<Qt::Key> const& grabbedKeys() const;
+    virtual std::set<Qt::Key> const &grabbedKeys() const;
 
     /**
      * @brief prepareSave() is called once before the serialization of
@@ -120,61 +118,72 @@ public:
      */
     virtual void postConnect() {}
 
-    void loadObjects(std::vector<TrackedObject> const& objects);
-    void loadObjects(std::vector<TrackedObject>&& objects);
-    std::vector<TrackedObject> const& getObjects();
+    void loadObjects(std::vector<TrackedObject> const &objects);
+    void loadObjects(std::vector<TrackedObject> &&objects);
+    std::vector<TrackedObject> const &getObjects();
 
-    boost::optional<Algorithm::Type> getType() const { return _type; }
-    void setType(Algorithm::Type type) { _type = type; }
+    boost::optional<Algorithm::Type> getType() const {
+        return _type;
+    }
+    void setType(Algorithm::Type type) {
+        _type = type;
+    }
 
-    int getCurrentFrameNumber() const
-    {	return _currentFrameNumber;	}
+    int getCurrentFrameNumber() const {
+        return _currentFrameNumber;
+    }
 
-    int getMaxFrameNumber() const
-    {	return _maxFrameNumber;	}
+    int getMaxFrameNumber() const {
+        return _maxFrameNumber;
+    }
 
-    float getCurrentZoomLevel() const
-    {	return _currentZoomLevel;	}
+    float getCurrentZoomLevel() const {
+        return _currentZoomLevel;
+    }
 
-public slots:
+  public slots:
     /**
     * receive Signal to set current frame number
     */
-    void setCurrentFrameNumber(int frameNumber)
-    {	_currentFrameNumber = frameNumber;	}
+    void setCurrentFrameNumber(int frameNumber) {
+        _currentFrameNumber = frameNumber;
+    }
 
     /**
     * receive Signal to set maximum frame number
     */
-    void setmaxFrameNumber(int maxFrameNumber)
-    {	_maxFrameNumber = maxFrameNumber;	}
+    void setmaxFrameNumber(int maxFrameNumber) {
+        _maxFrameNumber = maxFrameNumber;
+    }
 
     /**
     * receive current zoom level from VideoView
     */
-    void setZoomLevel(float zLevel)
-    {	_currentZoomLevel = zLevel;	}
+    void setZoomLevel(float zLevel) {
+        _currentZoomLevel = zLevel;
+    }
 
     /**
     * receive current image from TrackingThread
     */
-    void setCurrentImage(cv::Mat img)
-    {	_currentImage = img;	}
+    void setCurrentImage(cv::Mat img) {
+        _currentImage = img;
+    }
 
     /**
     * receive current video mode from gui
     */
-    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode)
-    {
+    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode) {
         _videoMode = videoMode;
     }
 
 
-signals:
+  signals:
     /**
     * send a message to the GUI.
     */
-    void notifyGUI(std::string message, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    void notifyGUI(std::string message,
+                   MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
 
     /**
     * send signal to VideoView and update display
@@ -198,16 +207,15 @@ signals:
      */
     void jumpToFrame(int framenumber);
 
-protected:
-    Settings & _settings;
+  protected:
+    Settings &_settings;
     std::vector<TrackedObject> _trackedObjects;
 
-    GUIPARAM::VideoMode getVideoMode()
-    {
+    GUIPARAM::VideoMode getVideoMode() {
         return _videoMode;
     }
 
-    bool event(QEvent* event) override;
+    bool event(QEvent *event) override;
 
     /**
      * @return either a copy of the current frame image, wrapped in a
@@ -220,35 +228,35 @@ protected:
     * will receive QMouseEvent as soon
     * as mouse is getting moved in video view
     */
-    virtual void mouseMoveEvent		(QMouseEvent * /* e */){}
+    virtual void mouseMoveEvent(QMouseEvent * /* e */) {}
 
     /**
     * will receive QMouseEvent as soon
     * as any mouse button is pressed in video view
     */
-    virtual void mousePressEvent	(QMouseEvent * /* e */){}
+    virtual void mousePressEvent(QMouseEvent * /* e */) {}
 
     /**
     * will receive QMouseEvent as soon
     * as any mouse button is released in video view
     */
-    virtual void mouseReleaseEvent	(QMouseEvent * /* e */){}
+    virtual void mouseReleaseEvent(QMouseEvent * /* e */) {}
 
     /**
     * will receive QMouseEvent as soond
     * as mouse wheel is activated in video view
     */
-    virtual void mouseWheelEvent	(QWheelEvent * /* e */){}
+    virtual void mouseWheelEvent(QWheelEvent * /* e */) {}
 
 
     /**
     * will receive QKeyEvent as soon
     * as any keyboard key from 'grabbedKeys()' is pressed in video view
     */
-    virtual void keyPressEvent		(QKeyEvent * /* e */){}
+    virtual void keyPressEvent(QKeyEvent * /* e */) {}
 
 
-private:
+  private:
     int _currentFrameNumber;
     int _maxFrameNumber;
     float _currentZoomLevel;

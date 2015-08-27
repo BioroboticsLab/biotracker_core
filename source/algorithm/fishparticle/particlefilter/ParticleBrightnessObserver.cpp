@@ -4,13 +4,12 @@
 * Constructs a new ParticleBrightnessObserver, using the grayscale image for
 * particle scores.
 */
-ParticleBrightnessObserver::ParticleBrightnessObserver(cv::Mat image, ParticleParams& params) : _image(image), _params(params)
-{
+ParticleBrightnessObserver::ParticleBrightnessObserver(cv::Mat image,
+        ParticleParams &params) : _image(image), _params(params) {
 }
 
 
-ParticleBrightnessObserver::~ParticleBrightnessObserver(void)
-{
+ParticleBrightnessObserver::~ParticleBrightnessObserver(void) {
 }
 
 /**
@@ -18,8 +17,9 @@ ParticleBrightnessObserver::~ParticleBrightnessObserver(void)
 * the result. A particle's score is proportional to the value of the image at
 * its position.
 */
-void ParticleBrightnessObserver::score(Particle& particle) {
-	uchar pixel = _image.at<uchar>(static_cast<int>(particle.getY()), static_cast<int>(particle.getX()));
-	
-	particle.setScore(std::max(pixel, static_cast<uchar>(_params.getMinScore())));
+void ParticleBrightnessObserver::score(Particle &particle) {
+    uchar pixel = _image.at<uchar>(static_cast<int>(particle.getY()),
+                                   static_cast<int>(particle.getX()));
+
+    particle.setScore(std::max(pixel, static_cast<uchar>(_params.getMinScore())));
 }

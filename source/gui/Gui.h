@@ -13,17 +13,17 @@ namespace Gui {
 
 class Gui : public QObject {
     Q_OBJECT
-public:
+  public:
     Gui();
 
-private:
+  private:
     Core::BioTrackerApp m_biotracker;
     MainWindow m_mainWindow;
 
     void initConnects();
     QStringList browse(const QString &title, const QString &filter);
 
-private slots:
+  private slots:
     void browseVideo();
     void browsePictures();
     void browseCameras();

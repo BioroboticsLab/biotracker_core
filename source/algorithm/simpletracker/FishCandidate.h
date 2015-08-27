@@ -6,9 +6,8 @@
 #include <cereal/access.hpp>
 #include <opencv2/opencv.hpp>
 
-class FishCandidate	: public TrackedFish
-{
-public:
+class FishCandidate : public TrackedFish {
+  public:
     FishCandidate();
     virtual ~FishCandidate() override {}
 
@@ -16,19 +15,18 @@ public:
     void decreaseScore();
     int score() const;
 
-    bool operator==(const FishCandidate& other) const;
-    bool operator<(const FishCandidate& other) const;
-private:
+    bool operator==(const FishCandidate &other) const;
+    bool operator<(const FishCandidate &other) const;
+  private:
     int _score;
 
     friend class cereal::access;
     template <class Archive>
-    void serialize(Archive& ar)
-    {
-		ar(CEREAL_NVP(_last_known_position),
-		   CEREAL_NVP(_age_of_last_known_position),
-		   CEREAL_NVP(_associated_color),
-		   CEREAL_NVP(_score));
+    void serialize(Archive &ar) {
+        ar(CEREAL_NVP(_last_known_position),
+           CEREAL_NVP(_age_of_last_known_position),
+           CEREAL_NVP(_associated_color),
+           CEREAL_NVP(_score));
     }
 };
 

@@ -20,10 +20,9 @@ class QOpenGLContext;
 namespace BioTracker {
 namespace Gui {
 
-class VideoView : public QOpenGLWidget, protected QOpenGLFunctions
-{
+class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
-public:
+  public:
     enum class Mode : uint8_t {
         INTERACTION = 0,
         PANZOOM
@@ -31,15 +30,19 @@ public:
 
     VideoView(QWidget *parent, Core::BioTrackerApp &facade);
 
-    Mode getMode() const { return m_currentMode; }
+    Mode getMode() const {
+        return m_currentMode;
+    }
 
-    Core::TextureObject &getTexture() { return m_texture; }
+    Core::TextureObject &getTexture() {
+        return m_texture;
+    }
 
-public slots:
+  public slots:
     void setMode(const Mode mode);
     void fitToWindow();
 
-private:
+  private:
     /**
      * @brief Used to store mouse cursor offsets while panning.
      */
@@ -47,8 +50,8 @@ private:
         QPointF lastPos;
 
         CurrentPanState(const QPointF lastPos)
-            : lastPos(lastPos)
-        {}
+            : lastPos(lastPos) {
+        }
     };
 
     /**
@@ -105,10 +108,10 @@ private:
     QPoint projectPicturePos(QPoint imageCoords);
 
     void keyPressEvent(QKeyEvent *e) override;
-    void mouseMoveEvent(QMouseEvent * e) override;
-    void mousePressEvent(QMouseEvent * e) override;
-    void mouseReleaseEvent(QMouseEvent * e) override;
-    void wheelEvent(QWheelEvent * e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void wheelEvent(QWheelEvent *e) override;
 };
 }
 }

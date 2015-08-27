@@ -17,20 +17,32 @@ namespace Gui {
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-public:
+  public:
     typedef Util::QtRaiiWrapper<Ui::MainWindow, QMainWindow> MainWindowUi;
 
     MainWindow(Core::BioTrackerApp &biotracker);
 
-    const MainWindowUi& getUi() const { return m_ui; }
+    const MainWindowUi &getUi() const {
+        return m_ui;
+    }
 
-    VideoView* getVideoView() { return m_videoView.get(); }
-    AlgorithmSelectionWidget& getAlgorithmSelection() { return m_algorithmSelection; }
-    NotificationWidget& getNotification() { return m_notification; }
-    VideoControlWidget* getVideoControl() { return m_videoControl.get(); }
-	OpenCameraDialog& getOpenCameraDialog() { return m_openCameraDialog; }
+    VideoView *getVideoView() {
+        return m_videoView.get();
+    }
+    AlgorithmSelectionWidget &getAlgorithmSelection() {
+        return m_algorithmSelection;
+    }
+    NotificationWidget &getNotification() {
+        return m_notification;
+    }
+    VideoControlWidget *getVideoControl() {
+        return m_videoControl.get();
+    }
+    OpenCameraDialog &getOpenCameraDialog() {
+        return m_openCameraDialog;
+    }
 
-private:
+  private:
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;
     NotificationWidget m_notification;

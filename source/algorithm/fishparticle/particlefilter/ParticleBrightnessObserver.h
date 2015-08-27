@@ -11,22 +11,21 @@
 * a particle at position x, y based solely on the brightness of the pixel
 * at x, y.
 */
-class ParticleBrightnessObserver
-{
-public:
-	ParticleBrightnessObserver(cv::Mat image, ParticleParams& params);
-	~ParticleBrightnessObserver(void);
-	void score(Particle& particle);
-private:
-	/**
-	* The grayscale image used for scoring particles.
-	*/
-	cv::Mat _image;
+class ParticleBrightnessObserver {
+  public:
+    ParticleBrightnessObserver(cv::Mat image, ParticleParams &params);
+    ~ParticleBrightnessObserver(void);
+    void score(Particle &particle);
+  private:
+    /**
+    * The grayscale image used for scoring particles.
+    */
+    cv::Mat _image;
 
-	/**
-	* The parameters used by this algorithm.
-	*/
-	ParticleParams& _params;
+    /**
+    * The parameters used by this algorithm.
+    */
+    ParticleParams &_params;
 };
 
 #endif

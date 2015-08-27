@@ -14,17 +14,16 @@ namespace BioTracker {
 namespace Core {
 
 typedef std::shared_ptr<TrackingAlgorithm>
-    (*new_tracker_function_t) (Settings& settings, QWidget *parent);
+(*new_tracker_function_t)(Settings &settings, QWidget *parent);
 typedef uint8_t TrackerType;
 
 static const TrackerType NoTracking = 0;
 // construct on first use idiom
 TrackerType getNextId();
 
-class Registry : public QObject, public Util::Singleton<Registry>
-{
+class Registry : public QObject, public Util::Singleton<Registry> {
     Q_OBJECT
-public:
+  public:
     typedef std::map<const TrackerType, new_tracker_function_t> map_type_fun_t;
     typedef std::map<const TrackerType, const std::string> map_type_string_t;
     typedef std::map<const std::string, const TrackerType> map_string_type_t;
@@ -47,16 +46,23 @@ public:
      * creates a new tracker-instance
      * @return new instance
      */
-    std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name, Settings& settings, QWidget *parent) const;
+    std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name,
+            Settings &settings, QWidget *parent) const;
 
-    const map_string_type_t &getTypeByString() const { return m_typeByString; }
-    const map_type_fun_t &getTrackerByType() const { return m_trackerByType; }
-    const map_type_string_t &getStringByType() const { return m_stringByType; }
+    const map_string_type_t &getTypeByString() const {
+        return m_typeByString;
+    }
+    const map_type_fun_t &getTrackerByType() const {
+        return m_trackerByType;
+    }
+    const map_type_string_t &getStringByType() const {
+        return m_stringByType;
+    }
 
-signals:
+  signals:
     void newTracker(const TrackerType type);
 
-private:
+  private:
     friend class Singleton<Registry>;
 
     map_string_type_t m_typeByString;
@@ -77,7 +83,8 @@ private:
 template<class TRACKER>
 bool Registry::registerTrackerType(std::string name) {
     struct local_function {
-        static std::shared_ptr<TrackingAlgorithm> f(Settings& settings, QWidget *parent) {
+        static std::shared_ptr<TrackingAlgorithm> f(Settings &settings,
+                QWidget *parent) {
             return std::make_shared<TRACKER>(settings, parent);
         }
     };

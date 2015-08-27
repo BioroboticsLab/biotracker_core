@@ -22,8 +22,8 @@ namespace Core {
 
 /* Used to be Facade */
 class BioTrackerApp : public QObject {
-Q_OBJECT
-public:
+    Q_OBJECT
+  public:
     BioTrackerApp();
 
     ~BioTrackerApp() override;
@@ -32,15 +32,15 @@ public:
 
     void initializeOpenGL(QOpenGLContext *mainContext, TextureObject &texture);
 
-    Settings& getSettings() {
+    Settings &getSettings() {
         return m_settings;
     }
 
-    Registry& getRegistry() {
+    Registry &getRegistry() {
         return m_registry;
     }
 
-    TrackingThread& getTrackingThread() {
+    TrackingThread &getTrackingThread() {
         return m_trackingThread;
     }
 
@@ -60,10 +60,10 @@ public:
      */
     void openImages(std::vector<boost::filesystem::path> paths);
 
-	/**
-	 * @brief openCamera opens a video device supported by opencv VideoCapture
-	 */
-	void openCamera(int device);
+    /**
+     * @brief openCamera opens a video device supported by opencv VideoCapture
+     */
+    void openCamera(int device);
 
     /**
      * @brief play starts playing the video
@@ -112,25 +112,27 @@ public:
      * @brief setTrackingAlgorithm
      * @param TrackingAlgorithm the selected algorithm
      */
-    void setTrackingAlgorithm( std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm );
+    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
 
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
-private slots:
+  private slots:
     /**
      * @brief notify
      *      Status messages for the user interface
      */
-    void notifyFromTrackingThread(const std::string &message, const MSGS::MTYPE type);
+    void notifyFromTrackingThread(const std::string &message,
+                                  const MSGS::MTYPE type);
 
     /**
      * @brief notify
      *      Status messages for the user interface
      */
-    void frameCalculatedFromTrackingThread(const size_t frameNumber, const std::string &filename, const double currentFps);
+    void frameCalculatedFromTrackingThread(const size_t frameNumber,
+                                           const std::string &filename, const double currentFps);
 
-signals:
+  signals:
     /**
      * @brief notify
      *      Status messages for the user interface
@@ -144,9 +146,10 @@ signals:
      * @param filename filename of the current frame
      * @param currentFps actual fps of the calculation
      */
-    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
+    void frameCalculated(const size_t frameNumber, const std::string &filename,
+                         const double currentFps);
 
-private:
+  private:
     Settings m_settings;
     Registry &m_registry;
     TrackingThread m_trackingThread;

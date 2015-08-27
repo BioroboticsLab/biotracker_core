@@ -1,16 +1,16 @@
 #include "source/algorithm/SampleTracker/SampleObject.h"
 
 SampleObject::SampleObject(void)
-	: ObjectModel()
-{
+    : ObjectModel() {
 }
 
 
-SampleObject::~SampleObject(void)
-{
+SampleObject::~SampleObject(void) {
 }
 
-void SampleObject::setPosition(cv::Point){}
-cv::Point SampleObject::getPosition(){return _position;}
+void SampleObject::setPosition(cv::Point) {}
+cv::Point SampleObject::getPosition() {
+    return _position;
+}
 
 

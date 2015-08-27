@@ -10,19 +10,21 @@
 namespace BioTracker {
 namespace Gui {
 
-class VideoControlWidget : public QWidget
-{
+class VideoControlWidget : public QWidget {
     Q_OBJECT
-public:
+  public:
     typedef Util::QtRaiiWrapper<Ui::VideoControlWidget, QWidget> VideoControlUi;
 
-    explicit VideoControlWidget(QWidget *parent, Core::BioTrackerApp &facade, VideoView *videoView);
+    explicit VideoControlWidget(QWidget *parent, Core::BioTrackerApp &facade,
+                                VideoView *videoView);
 
-    VideoControlUi& getUi() { return m_ui; }
+    VideoControlUi &getUi() {
+        return m_ui;
+    }
 
     void updateWidgets();
 
-private:
+  private:
     VideoControlUi m_ui;
     Core::BioTrackerApp &m_bioTracker;
     VideoView *m_videoView;
@@ -34,10 +36,11 @@ private:
 
     void initConnects();
     void initShortcuts();
-public slots:
-    void frameCalculated(const size_t frameNumber, const std::string &filename, const double currentFps);
+  public slots:
+    void frameCalculated(const size_t frameNumber, const std::string &filename,
+                         const double currentFps);
 
-private slots:
+  private slots:
     void playPause();
     void setFrame(const size_t frame);
     void nextFrame();

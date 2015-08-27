@@ -4,14 +4,12 @@
 /**
  * Constructs a new instance using the preprocessor settings set in settings.
  */
-FramePreprocessor::FramePreprocessor(ParticleParams& params)
-	: _params(params)
-	, _background_subtractor(params)
-{
+FramePreprocessor::FramePreprocessor(ParticleParams &params)
+    : _params(params)
+    , _background_subtractor(params) {
 }
 
-FramePreprocessor::~FramePreprocessor(void)
-{
+FramePreprocessor::~FramePreprocessor(void) {
 }
 
 /**
@@ -19,11 +17,12 @@ FramePreprocessor::~FramePreprocessor(void)
  * image may be modified by this method.
  */
 cv::Mat FramePreprocessor::preProcess(cv::Mat image) {
-	image = backgroundSubtract(image);
-	/*cv::erode(image, image, cv::Mat());
-	cv::dilate(image, image, cv::Mat());*/
-	cv::GaussianBlur(image, image, cv::Size(_params.getGaussianBlurSize(), _params.getGaussianBlurSize()), 0);
-	return image;
+    image = backgroundSubtract(image);
+    /*cv::erode(image, image, cv::Mat());
+    cv::dilate(image, image, cv::Mat());*/
+    cv::GaussianBlur(image, image, cv::Size(_params.getGaussianBlurSize(),
+                                            _params.getGaussianBlurSize()), 0);
+    return image;
 }
 
 /**
@@ -31,9 +30,9 @@ cv::Mat FramePreprocessor::preProcess(cv::Mat image) {
  * not modify image.
  */
 cv::Mat FramePreprocessor::backgroundSubtract(cv::Mat image) {
-	cv::Mat foreground;
-	_background_subtractor(image, foreground);
-	return foreground;
+    cv::Mat foreground;
+    _background_subtractor(image, foreground);
+    return foreground;
 }
 
 /**
@@ -41,5 +40,5 @@ cv::Mat FramePreprocessor::backgroundSubtract(cv::Mat image) {
  * frames from the video (ex background subtraction), this can be used to reset that state to the initial state.
  */
 void FramePreprocessor::reset() {
-	_background_subtractor.reset();
+    _background_subtractor.reset();
 }

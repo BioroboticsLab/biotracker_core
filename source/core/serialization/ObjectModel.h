@@ -5,12 +5,11 @@
 #include <cereal/access.hpp>
 
 /**
-* class representing the object/animal 
+* class representing the object/animal
 * which is to be tracked
 */
-class ObjectModel 
-{
-public:
+class ObjectModel {
+  public:
     virtual ~ObjectModel() = 0;
 };
 

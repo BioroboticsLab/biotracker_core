@@ -5,7 +5,7 @@
 // The fixture for testing class Foo.
 class MainTest : public ::testing::Test {
 
-protected:
+  protected:
 
     // You can do set-up work for each test here.
     MainTest();

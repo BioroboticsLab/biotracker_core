@@ -10,12 +10,11 @@
 * Shadows are marked black instead of gray.
 */
 class FishBackgroundSubtractor :
-	public cv::BackgroundSubtractorMOG2
-{
-public:
-	explicit FishBackgroundSubtractor(ParticleParams& params);
-	~FishBackgroundSubtractor(void);
-	void reset();
+    public cv::BackgroundSubtractorMOG2 {
+  public:
+    explicit FishBackgroundSubtractor(ParticleParams &params);
+    ~FishBackgroundSubtractor(void);
+    void reset();
 };
 
 #endif

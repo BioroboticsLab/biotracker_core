@@ -11,22 +11,24 @@ class Facade;
 namespace BioTracker {
 namespace Gui {
 
-class AlgorithmSelectionWidget : public QWidget
-{
+class AlgorithmSelectionWidget : public QWidget {
     Q_OBJECT
-public:
-    typedef Util::QtRaiiWrapper<Ui::AlgorithmSelectionWidget, QWidget> AlgorithmSelectionUi;
+  public:
+    typedef Util::QtRaiiWrapper<Ui::AlgorithmSelectionWidget, QWidget>
+    AlgorithmSelectionUi;
 
     explicit AlgorithmSelectionWidget(QWidget *parent, Core::BioTrackerApp &facade);
 
-    AlgorithmSelectionUi& getUi() { return m_ui; }
+    AlgorithmSelectionUi &getUi() {
+        return m_ui;
+    }
 
-public slots:
+  public slots:
     void addTrackingAlgorithm(const Core::TrackerType type);
 
-private:
+  private:
     AlgorithmSelectionUi m_ui;
-    Core::BioTrackerApp& m_facade;
+    Core::BioTrackerApp &m_facade;
 
     void initAlgorithmList();
     void initConnects();
