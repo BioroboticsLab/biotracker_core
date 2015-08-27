@@ -36,7 +36,17 @@ else()
   include(${CPM_DIR}/CPM.cmake)
 endif()
 
-# Include CPM modules or externals here (with CPM_AddModule).
+CPM_AddModule("cpm_cereal"
+    GIT_REPOSITORY https://github.com/BioroboticsLab/cpm_cereal.git
+    GIT_TAG 874092ae503eec016192ddd6ff17ae23839085be
+    EXPORT_MODULE true
+)
+
+CPM_AddModule("cpm_boost"
+    GIT_REPOSITORY https://github.com/BioroboticsLab/cpm_boost.git
+    GIT_TAG 87d95cb8f0c91809422f9d03539a332ccde986ab
+)
+
 CPM_InitModule(${CPM_MODULE_NAME})
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH})
@@ -99,6 +109,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	endif()
 	# gcc doesn't know about unused-private-field warning
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-private-field")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=absolute-value")
     # use Wdocumentation
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
     # enable thread safety analysis
@@ -161,7 +172,6 @@ include_directories(
     SYSTEM ${OpenCV_INCLUDE_DIRS}
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
-    SYSTEM ${PROJECT_SOURCE_DIR}/external
 )
 
 enable_testing()

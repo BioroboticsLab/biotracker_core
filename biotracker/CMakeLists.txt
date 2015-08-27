@@ -4,7 +4,9 @@ add_subdirectory(gui)
 add_subdirectory(test)
 add_subdirectory(util)
 
-set(libs
+add_library(${CPM_LIB_TARGET_NAME})
+
+target_link_libraries(${CPM_LIB_TARGET_NAME}
     Core
     Util
     Qt5::Widgets
@@ -14,8 +16,3 @@ set(libs
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${CPM_LIBRARIES})
-
-add_library(${CPM_LIB_TARGET_NAME})
-
-target_link_libraries(${CPM_LIB_TARGET_NAME}
-    ${libs})
