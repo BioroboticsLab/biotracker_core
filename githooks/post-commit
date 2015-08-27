@@ -8,6 +8,7 @@ fi
 
 OPTIONS="--options=.astylerc" 
 FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
+RETURN=0
 
 for FILE in $FILES; do
     $ASTYLE $OPTIONS < $FILE | cmp -s $FILE -
