@@ -1,0 +1,15 @@
+--style=google                  # http://astyle.sourceforge.net/astyle.html#_style=google
+# tabs and spaces = default     # http://astyle.sourceforge.net/astyle.html#_default_indent
+--attach-namespaces             # http://astyle.sourceforge.net/astyle.html#_attach_namespaces
+--attach-classes                # http://astyle.sourceforge.net/astyle.html#_attach_classes
+--indent-modifiers              # http://astyle.sourceforge.net/astyle.html#_indent-modifiers
+--pad-header                    # http://astyle.sourceforge.net/astyle.html#_pad-header
+--unpad-paren                   # http://astyle.sourceforge.net/astyle.html#_unpad-paren
+--align-pointer=name            # http://astyle.sourceforge.net/astyle.html#_align-pointer
+--align-reference=name          # http://astyle.sourceforge.net/astyle.html#_align-reference
+--add-brackets                  # http://astyle.sourceforge.net/astyle.html#_add-brackets
+--convert-tabs                  # http://astyle.sourceforge.net/astyle.html#_convert-tabs
+--max-code-length=80            # http://astyle.sourceforge.net/astyle.html#_max-code-length
+
+#### Other options
+--recursive
