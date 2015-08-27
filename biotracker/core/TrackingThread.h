@@ -186,7 +186,7 @@ class TrackingThread : public QThread {
     * @param frameNumber the current frame number.
     */
     //void newFrameNumber(int frameNumber);
-    void frameCalculated(const size_t frameNumber, const std::string &filename,
+    void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
 
     /**

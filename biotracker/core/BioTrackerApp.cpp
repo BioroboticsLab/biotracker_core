@@ -94,7 +94,7 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
 }
 
 void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
-        const std::string &filename, const double currentFps) {
+        const std::string filename, const double currentFps) {
     emit frameCalculated(frameNumber, filename, currentFps);
 }
 

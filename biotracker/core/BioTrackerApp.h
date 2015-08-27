@@ -130,7 +130,7 @@ class BioTrackerApp : public QObject {
      *      Status messages for the user interface
      */
     void frameCalculatedFromTrackingThread(const size_t frameNumber,
-                                           const std::string &filename, const double currentFps);
+                                           const std::string filename, const double currentFps);
 
   signals:
     /**
@@ -146,7 +146,7 @@ class BioTrackerApp : public QObject {
      * @param filename filename of the current frame
      * @param currentFps actual fps of the calculation
      */
-    void frameCalculated(const size_t frameNumber, const std::string &filename,
+    void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
 
   private:

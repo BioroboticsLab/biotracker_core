@@ -37,7 +37,7 @@ class VideoControlWidget : public QWidget {
     void initConnects();
     void initShortcuts();
   public slots:
-    void frameCalculated(const size_t frameNumber, const std::string &filename,
+    void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
 
   private slots:
