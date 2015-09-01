@@ -63,6 +63,14 @@ void TextureObject::createTexture() {
     // If texture area is smaller than the image, downsample using no interpolation.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+    // Set Alignment for OpenGL for reading pixel data
+    // When the dimension of the image does not produce a 4-byte aligned structure
+    // we will get a crash here
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+
     // create Texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_img.cols, m_img.rows, 0, GL_BGR,
                  GL_UNSIGNED_BYTE, m_img.data);
