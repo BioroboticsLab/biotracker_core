@@ -16,9 +16,11 @@ pwd >&2
 FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
 echo "changed files: $FILES" >&2
 for FILE in $FILES; do
-    $ASTYLE $OPTIONS < $FILE | cmp -s $FILE -
+    $ASTYLE $OPTIONS < $FILE > /tmp/diff
     if [ $? -ne 0 ]; then
         echo "[!] $FILE does not respect the agreed coding style." >&2
+        change=$(diff /tmp/diff $FILE)
+        echo "diff is: " >&2
         RETURN=1
     fi
 done
