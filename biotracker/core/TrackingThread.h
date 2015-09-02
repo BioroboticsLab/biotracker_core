@@ -134,7 +134,7 @@ class TrackingThread : public QThread {
     /**
     * Does exactly one tick, eg. drawing one image and starting tracker once.
     */
-    void tick();
+    void tick(const double fps);
 
     /**
      * computes fps

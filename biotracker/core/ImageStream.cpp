@@ -116,6 +116,10 @@ class ImageStreamNoMedia : public ImageStream {
     virtual double fps() const override {
         return 1.0;
     }
+    virtual std::string currentFilename() const override {
+        return "No Media"; // TODO make this nicer..
+    }
+
   private:
     virtual bool setFrameNumber_impl(size_t) override {
         return false;
@@ -144,6 +148,11 @@ class ImageStreamPictures : public ImageStream {
     virtual double fps() const override {
         return 1.0;
     }
+    virtual std::string currentFilename() const override {
+        assert(currentFrameNumber() < m_picture_files.size());
+        return m_picture_files[currentFrameNumber()].string();
+    }
+
   private:
     virtual bool setFrameNumber_impl(size_t frame_number) override {
         const std::string &filename = m_picture_files[frame_number].string();
@@ -190,6 +199,10 @@ class ImageStreamVideo : public ImageStream {
     virtual double fps() const override {
         return m_fps;
     }
+    virtual std::string currentFilename() const override {
+        return "test"; // TODO impl
+    }
+
   private:
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;
@@ -245,6 +258,10 @@ class ImageStreamCamera : public ImageStream {
     virtual double fps() const override {
         return m_fps;
     }
+    virtual std::string currentFilename() const override {
+        return "Camera"; // TODO be more specific!
+    }
+
   private:
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;

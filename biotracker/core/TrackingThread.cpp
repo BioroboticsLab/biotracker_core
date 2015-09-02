@@ -116,7 +116,6 @@ void TrackingThread::run() {
         m_conditionVariable.wait(lk, [&] {return m_playing || m_playOnce;});
         m_playOnce = false;
 
-        tick();
 
         //if thread just started (or is unpaused) start clock here
         //after this timestamp will be taken right before picture is drawn
@@ -148,8 +147,11 @@ void TrackingThread::run() {
         }
 
         // calculate the running fps.
+        // TODO: why is this a member var??
         m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
                        (dur + target_dur).count();
+
+        tick(m_runningFps);
 
         std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
@@ -159,10 +161,9 @@ void TrackingThread::run() {
     }
 }
 
-void TrackingThread::tick() {
+void TrackingThread::tick(const double fps) {
     m_context->makeCurrent(&m_surface);
 
-    double fps = 0;
     m_texture->setImage(m_imageStream->currentFrame().clone());
 
     //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);

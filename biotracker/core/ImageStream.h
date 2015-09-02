@@ -51,6 +51,11 @@ class ImageStream {
     virtual double fps() const = 0;
 
     /**
+     * @return the filename of the current file defined through the frameNumber
+     */
+    virtual std::string currentFilename() const = 0;
+
+    /**
      * returns the current frame.
      * - if the current frame position is invalid or an error occurred, an empty image is returned.
      */
