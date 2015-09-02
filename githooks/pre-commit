@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function astyle {
+    for FILE in $FILES_TO_ADJUST; do
+        $ASTYLE $OPTIONS $FILE
+        git add $FILE
+    done
+}
+
 echo "running pre commit hook to check style guide!" >&2
 OPTIONS="--options=astyle/.astylerc"
 
@@ -11,22 +18,52 @@ if [ $? -ne 0 ]; then
 fi
 
 FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
+FILES_TO_ADJUST=()
 for FILE in $FILES; do
     $ASTYLE $OPTIONS < $FILE > /tmp/diff
-    if [ $? -ne 0 ]; then
+    DIFF=$(diff $FILE /tmp/diff)
+
+    if [ "$DIFF" != "" ]; then
+        FILES_TO_ADJUST+=$FILE
         echo "[!] $FILE does not respect the agreed coding style." >&2
-        change=$(diff /tmp/diff $FILE)
         echo "diff is: " >&2
-        echo "$change" >&2
+        echo "$DIFF" >&2
         RETURN=1
     fi
+    rm /tmp/diff
 done
 
 if [ $RETURN -eq 1 ]; then
-    echo "" >&2
-    echo "Make sure you have run:" >&2
-    echo "$ASTYLE $OPTIONS --recursive "biotracker/*.cpp"" >&2
-    echo "$ASTYLE $OPTIONS --recursive "biotracker/*.h"" >&2
+    
+    # Allows us to read user input below, assigns stdin to keyboard
+    exec < /dev/tty
+    read -r -p "Do you wan't to run the automatic style adjustment? [Y/n]" yn
+
+    if [ "$yn" = "" ]; then
+        yn='Y'
+    fi
+    case $yn in
+        [Yy] ) 
+            echo "adjusting files: $FILES_TO_ADJUST"
+            astyle
+            ;;
+        [Nn] ) 
+            echo "Make sure you have run:" >&2
+            echo "$ASTYLE $OPTIONS --recursive "biotracker/*.cpp"" >&2
+            echo "$ASTYLE $OPTIONS --recursive "biotracker/*.h"" >&2
+            ;;
+        * ) 
+            echo "Please answer y or n for yes or no."
+            ;;
+    esac 
+
+    case $response in
+        [yY][eE][sS]|[yY]) 
+            echo "in yes" >&2
+            ;;
+        *)
+            ;;
+    esac
 fi
 
 exit $RETURN
