@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "running pre commit hook" >&2
+echo "running pre commit hook to check style guide!" >&2
 OPTIONS="--options=astyle/.astylerc"
 
 RETURN=0
@@ -10,11 +10,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "running git diff in: "
-pwd >&2
-
 FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
-echo "changed files: $FILES" >&2
 for FILE in $FILES; do
     $ASTYLE $OPTIONS < $FILE > /tmp/diff
     if [ $? -ne 0 ]; then
