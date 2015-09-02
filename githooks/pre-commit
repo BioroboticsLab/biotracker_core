@@ -1,15 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
+echo "running pre commit hook" >&2
+OPTIONS="--options=astyle/.astylerc"
+
+RETURN=0
 ASTYLE=$(which astyle)
 if [ $? -ne 0 ]; then
     echo "[!] astyle not installed. Unable to check source file format policy." >&2
     exit 1
 fi
 
-OPTIONS="--options=.astylerc" 
-FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
-RETURN=0
+echo "running git diff in: "
+pwd >&2
 
+FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
 for FILE in $FILES; do
     $ASTYLE $OPTIONS < $FILE | cmp -s $FILE -
     if [ $? -ne 0 ]; then
@@ -20,7 +24,7 @@ done
 
 if [ $RETURN -eq 1 ]; then
     echo "" >&2
-    echo "Make sure you have run astyle with the following options:" >&2
+    echo "Make sure you have run astyle for all files with the following options:" >&2
     echo $OPTIONS >&2
 fi
 

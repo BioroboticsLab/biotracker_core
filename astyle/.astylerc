@@ -10,6 +10,3 @@
 --add-brackets                  # http://astyle.sourceforge.net/astyle.html#_add-brackets
 --convert-tabs                  # http://astyle.sourceforge.net/astyle.html#_convert-tabs
 --max-code-length=80            # http://astyle.sourceforge.net/astyle.html#_max-code-length
-
-#### Other options
---recursive
