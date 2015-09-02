@@ -24,8 +24,9 @@ done
 
 if [ $RETURN -eq 1 ]; then
     echo "" >&2
-    echo "Make sure you have run astyle for all files with the following options:" >&2
-    echo $OPTIONS >&2
+    echo "Make sure you have run:" >&2
+    echo "$ASTYLE $OPTIONS --recursive "biotracker/*.cpp"" >&2
+    echo "$ASTYLE $OPTIONS --recursive "biotracker/*.h"" >&2
 fi
 
 exit $RETURN
