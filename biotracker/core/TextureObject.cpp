@@ -34,7 +34,9 @@ void TextureObject::createVertices() {
     const int corner2[2] = { 0, 0 };
     const int corner3[2] = { 0, m_img.rows };
     const int corner4[2] = { m_img.cols, m_img.rows };
-    m_vertices.clear();
+
+    // does not free the memory, so no segfault
+    m_vertices.remove(0, m_vertices.length());
     m_vertices.append(QVector2D(static_cast<float>(corner1[0]),
                                 static_cast<float>(corner1[1])));
     m_vertices.append(QVector2D(static_cast<float>(corner2[0]),
