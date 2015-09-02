@@ -22,6 +22,7 @@ auto _ = Algorithms::Registry::getInstance().register_tracker_type<ParticleFishT
 struct compareReverseParticleScorePredicate {
     bool operator()(const Particle &p1, const Particle &p2) const {
         return p1.getScore() > p2.getScore();
+        //test
     }
 };
 
