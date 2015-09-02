@@ -17,6 +17,7 @@ for FILE in $FILES; do
         echo "[!] $FILE does not respect the agreed coding style." >&2
         change=$(diff /tmp/diff $FILE)
         echo "diff is: " >&2
+        echo "$change" >&2
         RETURN=1
     fi
 done
