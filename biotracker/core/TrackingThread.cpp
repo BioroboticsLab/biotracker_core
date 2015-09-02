@@ -166,9 +166,11 @@ void TrackingThread::tick(const double fps) {
 
     m_texture->setImage(m_imageStream->currentFrame().clone());
 
+    std::string fileName = m_imageStream->currentFilename();
+
     //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
-    emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
+    emit frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
 
     if (m_playing) {
         nextFrame();

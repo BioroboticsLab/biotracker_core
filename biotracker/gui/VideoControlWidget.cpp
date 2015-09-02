@@ -184,8 +184,8 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
     m_videoView->resize(m_videoView->width()+1, m_videoView->height());
     m_videoView->resize(m_videoView->width()-1, m_videoView->height());
 
-    m_ui.lbl_frame->setText(QString::number(frameNumber));
-    m_ui.fps_label->setText(QString::number(currentFps));
+    m_ui.frame_num_edit->setText(QString::number(frameNumber));
+    m_ui.fps_edit->setText(QString::number(currentFps));
 }
 
 } // Gui
