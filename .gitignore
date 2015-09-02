@@ -35,3 +35,5 @@ doxygen_sqlite3.db
 /build
 *.kate-swp
 
+# astyle original files
+*.orig
