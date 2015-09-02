@@ -151,9 +151,9 @@ void TrackingThread::run() {
         m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
                        (dur + target_dur).count();
 
-        tick(m_runningFps);
+        tick();
 
-        std::this_thread::sleep_for(target_dur);
+        //std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
 
         // unlock mutex
@@ -161,12 +161,13 @@ void TrackingThread::run() {
     }
 }
 
-void TrackingThread::tick(const double fps) {
+void TrackingThread::tick() {
     m_context->makeCurrent(&m_surface);
 
     m_texture->setImage(m_imageStream->currentFrame().clone());
 
     std::string fileName = m_imageStream->currentFilename();
+    double fps = m_imageStream->fps();
 
     //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
@@ -176,37 +177,6 @@ void TrackingThread::tick(const double fps) {
         nextFrame();
     }
     m_context->doneCurrent();
-}
-
-void TrackingThread::computeFps() {
-    /*//if thread just started (or is unpaused) start clock here
-    //after this timestamp will be taken right before picture is drawn
-    //to take the amount of time into account it takes to draw the picture
-    if (firstLoop)
-    // measure the capture start time
-    t = std::chrono::system_clock::now();
-    firstLoop = false;
-
-    if ((m_imageStream->type() == GUIPARAM::MediaType::Video) && m_imageStream->lastFrame() ) { break; }
-
-    std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
-    std::chrono::microseconds dur = std::chrono::duration_cast<std::chrono::microseconds>(
-    std::chrono::system_clock::now() - t);
-    if (!m_maxSpeed) {
-        if (dur <= target_dur) {
-            target_dur -= dur;
-        } else {
-            target_dur = std::chrono::microseconds(0);
-        }
-    } else {
-        target_dur = std::chrono::microseconds(0);
-    }
-
-    // calculate the running fps.
-    m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>(dur + target_dur).count();
-
-    std::this_thread::sleep_for(target_dur);
-    t = std::chrono::system_clock::now();*/
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
