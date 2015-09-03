@@ -134,7 +134,7 @@ class TrackingThread : public QThread {
     /**
     * Does exactly one tick, eg. drawing one image and starting tracker once.
     */
-    void tick();
+    void tick(const double fps);
 
     /**
     * Moves one frame forward
@@ -179,6 +179,8 @@ class TrackingThread : public QThread {
     /**
     * emit current frame number.
     * @param frameNumber the current frame number.
+    * @param filename the current file name
+    * @param currentFps the fps of the last frame: when the fps are -1, no fps should be shown
     */
     //void newFrameNumber(int frameNumber);
     void frameCalculated(const size_t frameNumber, const std::string filename,

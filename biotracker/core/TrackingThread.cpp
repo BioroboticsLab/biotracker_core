@@ -114,7 +114,6 @@ void TrackingThread::run() {
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
         m_conditionVariable.wait(lk, [&] {return m_playing || m_playOnce;});
-        m_playOnce = false;
 
 
         //if thread just started (or is unpaused) start clock here
@@ -151,23 +150,28 @@ void TrackingThread::run() {
         m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
                        (dur + target_dur).count();
 
-        tick();
+        if (m_playOnce && !m_playing) {
+            m_runningFps = -1;
+        }
 
-        //std::this_thread::sleep_for(target_dur);
+        tick(m_runningFps);
+
+        std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
+
+        m_playOnce = false;
 
         // unlock mutex
         lk.unlock();
     }
 }
 
-void TrackingThread::tick() {
+void TrackingThread::tick(const double fps) {
     m_context->makeCurrent(&m_surface);
 
     m_texture->setImage(m_imageStream->currentFrame().clone());
 
     std::string fileName = m_imageStream->currentFilename();
-    double fps = m_imageStream->fps();
 
     //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
