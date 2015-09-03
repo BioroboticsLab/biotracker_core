@@ -173,7 +173,6 @@ void TrackingThread::tick(const double fps) {
 
     std::string fileName = m_imageStream->currentFilename();
 
-    //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
     emit frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
 
