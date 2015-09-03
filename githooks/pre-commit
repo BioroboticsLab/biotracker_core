@@ -21,7 +21,7 @@ FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(cpp|h)$"`
 FILES_TO_ADJUST=()
 for FILE in $FILES; do
     $ASTYLE $OPTIONS < $FILE > /tmp/diff
-    DIFF=$(diff $FILE /tmp/diff)
+    DIFF=$(diff -B $FILE /tmp/diff)
 
     if [ "$DIFF" != "" ]; then
         FILES_TO_ADJUST+=$FILE
