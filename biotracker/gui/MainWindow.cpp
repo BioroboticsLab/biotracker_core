@@ -18,12 +18,15 @@ void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker) {
                      biotracker, m_videoView.get());
 }
 
+
+
 void MainWindow::notify(const std::string &message, const MSGS::MTYPE type) {
     switch (type) {
-    case MSGS::MTYPE::FILE_NAME_CHANGE: {
+    case MSGS::MTYPE::FILE_OPEN: {
         QString filename = QString(message.c_str());
+        QFile file(filename);
         statusBar()->showMessage(filename);
-        setWindowTitle("BioTracker [" + filename + "]");
+        setWindowTitle("BioTracker [" + file.fileName() + "]");
         break;
     }
     default: {

@@ -51,6 +51,31 @@ void TrackingThread::initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>
     QThread::start();
 }
 
+void TrackingThread::loadFromSettings() {
+    std::string filenameStr = m_settings.getValueOfParam<std::string>
+                              (CAPTUREPARAM::CAP_VIDEO_FILE);
+    boost::filesystem::path filename {filenameStr};
+    m_imageStream = make_ImageStreamVideo(filename);
+    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
+        // could not open video
+        std::string errorMsg = "unable to open file " + filename.string();
+        emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        m_status = TrackerStatus::Invalid;
+        return;
+    } else {
+        playOnce();
+    }
+
+    m_fps = m_imageStream->fps();
+
+
+    emit fileOpened(filenameStr, m_imageStream->numFrames());
+
+    std::string note = "opened file: " + filenameStr + " (#frames: "
+                       + QString::number(m_imageStream->numFrames()).toStdString() + ")";
+    emit notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
+}
+
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     m_imageStream = make_ImageStreamVideo(filename);
     if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
@@ -67,10 +92,10 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     m_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE, filename.string());
 
-    std::string note = "open file: " +
-                       m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
-                       " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    emit notifyGUI(note, MSGS::MTYPE::FILE_NAME_CHANGE);
+    std::string note = filename.string()
+                       + " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() +
+                       ")";
+    emit notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>

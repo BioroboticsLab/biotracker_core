@@ -47,17 +47,22 @@ class TrackingThread : public QThread {
     }
 
     /**
-    * Starts the video thread.
+    * Loads the last loaded file.
+    */
+    void loadFromSettings();
+
+    /**
+    * Loads a video.
     */
     void loadVideo(const boost::filesystem::path &filename);
 
     /**
-    * Loads in pictures instead of a video
+    * Loads in pictures.
     */
     void loadPictures(std::vector<boost::filesystem::path> &&filenames);
 
     /**
-     * Opens a video device
+     * Opens a video device.
      */
     void openCamera(int device);
 
@@ -185,6 +190,11 @@ class TrackingThread : public QThread {
     //void newFrameNumber(int frameNumber);
     void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
+
+    /**
+     * emit new filename and entire frame quantity
+     */
+    void fileOpened(const std::string message, const size_t numFrame);
 
     /**
     * send a message to the GUI.

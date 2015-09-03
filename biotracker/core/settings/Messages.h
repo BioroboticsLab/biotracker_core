@@ -15,7 +15,7 @@ enum MTYPE {
     NOTIFICATION,
     WARNING,
     FAIL,
-    FILE_NAME_CHANGE
+    FILE_OPEN
 };
 }
 #endif // !Messages_h
