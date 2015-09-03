@@ -48,7 +48,7 @@ class VideoControlWidget : public QWidget {
     void changeCurrentFrameByEdit();
     void takeScreenshot();
     void switchPanZoomMode();
-
+    void sliderRender();
 };
 
 }

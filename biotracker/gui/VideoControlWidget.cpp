@@ -44,14 +44,17 @@ void VideoControlWidget::updateWidgets() {
     case Core::TrackingThread::TrackerStatus::NothingLoaded:
         m_ui.button_playPause->setIcon(m_iconPlay);
         m_ui.button_playPause->setEnabled(false);
+        m_ui.sld_video->setEnabled(false);
         break;
     case Core::TrackingThread::TrackerStatus::Running:
         m_ui.button_playPause->setIcon(m_iconPause);
         m_ui.button_playPause->setEnabled(true);
+        m_ui.sld_video->setEnabled(true);
         break;
     case Core::TrackingThread::TrackerStatus::Paused:
         m_ui.button_playPause->setIcon(m_iconPlay);
         m_ui.button_playPause->setEnabled(true);
+        m_ui.sld_video->setEnabled(true);
         break;
     default:
         assert(false);
@@ -105,6 +108,10 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::takeScreenshot);
     QObject::connect(m_ui.button_panZoom, &QPushButton::clicked, this,
                      &VideoControlWidget::switchPanZoomMode);
+    // slider
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
+    timer->start(250);
 }
 
 void VideoControlWidget::playPause() {
@@ -141,6 +148,14 @@ void VideoControlWidget::previousFrame() {
     m_bioTracker.setFrame(m_bioTracker.getCurrentFrameNumber() - 1);
 
     updateWidgets();
+}
+
+void VideoControlWidget::sliderRender() {
+    if (m_ui.sld_video->isEnabled()) {
+        if (m_ui.sld_video->isSliderDown()) {
+            setFrame(m_ui.sld_video->value());
+        }
+    }
 }
 
 void VideoControlWidget::changeCurrentFrameByEdit() {
@@ -181,6 +196,7 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
     m_videoView->resize(m_videoView->width()+1, m_videoView->height());
     m_videoView->resize(m_videoView->width()-1, m_videoView->height());
 
+    m_ui.sld_video->setValue(frameNumber);
     m_ui.frame_num_edit->setText(QString::number(frameNumber));
 
     if (currentFps >= 0) {
