@@ -92,9 +92,9 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     m_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE, filename.string());
 
-    std::string note = filename.string()
-                       + " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() +
-                       ")";
+    std::string note = filename.string() + " (#frames: "
+                       + QString::number(m_imageStream->numFrames()).toStdString() + ")";
+    emit fileOpened(filename.string(), m_imageStream->numFrames());
     emit notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
 }
 

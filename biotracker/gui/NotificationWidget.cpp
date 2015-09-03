@@ -18,7 +18,7 @@ void NotificationWidget::initConnects() {
 void NotificationWidget::notify(const std::string &message,
                                 const MSGS::MTYPE type) {
     switch (type) {
-    case MSGS::NOTIFICATION:
+    case MSGS::FILE_OPEN:
         m_ui.edit_notification->append(QString(message.c_str()));
         break;
     default:
