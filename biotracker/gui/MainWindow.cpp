@@ -11,7 +11,6 @@ MainWindow::MainWindow(Core::BioTrackerApp &biotracker)
     initalizeVideoView(biotracker);
 }
 
-/* TODO: move to ctor */
 void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker) {
     m_videoView = std::make_unique<VideoView>(m_ui.trackingArea, biotracker);
     m_ui.videoViewLayout->addWidget(m_videoView.get());
@@ -19,5 +18,18 @@ void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker) {
                      biotracker, m_videoView.get());
 }
 
+void MainWindow::notify(const std::string &message, const MSGS::MTYPE type) {
+    switch (type) {
+    case MSGS::MTYPE::FILE_NAME_CHANGE: {
+        QString filename = QString(message.c_str());
+        statusBar()->showMessage(filename);
+        setWindowTitle("BioTracker [" + filename + "]");
+        break;
+    }
+    default: {
+    }
+    }
 }
-}
+
+} // Gui
+} // BioTracker

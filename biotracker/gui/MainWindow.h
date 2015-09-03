@@ -42,6 +42,13 @@ class MainWindow : public QMainWindow {
         return m_openCameraDialog;
     }
 
+  public slots:
+    /**
+     * @brief notify
+     *      Status messages for the user interface
+     */
+    void notify(const std::string &message, const MSGS::MTYPE type);
+
   private:
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;

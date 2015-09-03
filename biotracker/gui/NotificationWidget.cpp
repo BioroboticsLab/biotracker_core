@@ -15,8 +15,16 @@ void NotificationWidget::initConnects() {
 
 }
 
-void NotificationWidget::notify(const std::string &message, const MSGS::MTYPE type) {
-    m_ui.edit_notification->append(QString(message.c_str()));
+void NotificationWidget::notify(const std::string &message,
+                                const MSGS::MTYPE type) {
+    switch (type) {
+    case MSGS::NOTIFICATION:
+        m_ui.edit_notification->append(QString(message.c_str()));
+        break;
+    default:
+        ;
+    }
+
 }
 
 }
