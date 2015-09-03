@@ -25,7 +25,7 @@ for FILE in $FILES; do
     DIFF=$(diff -B $FILE /tmp/diff)
 
     if [ "$DIFF" != "" ]; then
-        FILES_TO_ADJUST+=$FILE
+        FILES_TO_ADJUST+="$FILE "
         echo "[!] $FILE does not respect the agreed coding style." >&2
         echo "diff is: " >&2
         echo "$DIFF" >&2
