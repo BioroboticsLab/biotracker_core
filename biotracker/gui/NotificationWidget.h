@@ -20,6 +20,15 @@ class NotificationWidget : public QWidget {
         return m_ui;
     }
 
+public slots:
+    /**
+     * @brief notify
+     *      Status messages for the user interface
+     */
+    void notify(const std::string &message, const MSGS::MTYPE type);
+
+
+
   private:
     NotificationUi m_ui;
     Core::BioTrackerApp &m_facade;

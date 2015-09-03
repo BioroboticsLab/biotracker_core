@@ -46,6 +46,9 @@ void Gui::initConnects() {
 
     QObject::connect(&m_biotracker, &Core::BioTrackerApp::frameCalculated,
                      m_mainWindow.getVideoControl(), &VideoControlWidget::frameCalculated);
+
+    QObject::connect(&m_biotracker, &Core::BioTrackerApp::notify,
+                     &m_mainWindow.getNotification(), &NotificationWidget::notify);
 }
 
 void Gui::browseVideo() {

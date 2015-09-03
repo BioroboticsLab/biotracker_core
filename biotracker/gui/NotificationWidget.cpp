@@ -15,5 +15,9 @@ void NotificationWidget::initConnects() {
 
 }
 
+void NotificationWidget::notify(const std::string &message, const MSGS::MTYPE type) {
+    m_ui.edit_notification->append(QString(message.c_str()));
+}
+
 }
 }

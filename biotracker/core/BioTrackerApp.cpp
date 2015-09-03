@@ -22,6 +22,8 @@ BioTrackerApp::~BioTrackerApp() {
 void BioTrackerApp::initConnects() {
     QObject::connect(&m_trackingThread, &Core::TrackingThread::frameCalculated,
                      this, &BioTrackerApp::frameCalculatedFromTrackingThread);
+    QObject::connect(&m_trackingThread, &Core::TrackingThread::notifyGUI,
+                     this, &BioTrackerApp::notifyFromTrackingThread);
 }
 
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
