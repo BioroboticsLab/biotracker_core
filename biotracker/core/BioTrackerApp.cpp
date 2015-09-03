@@ -24,6 +24,8 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::frameCalculatedFromTrackingThread);
     QObject::connect(&m_trackingThread, &Core::TrackingThread::notifyGUI,
                      this, &BioTrackerApp::notifyFromTrackingThread);
+    QObject::connect(&m_trackingThread, &Core::TrackingThread::fileOpened,
+                     this, &BioTrackerApp::fileOpenedFromTrackingThread);
 }
 
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
@@ -104,6 +106,11 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
 void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
         const std::string filename, const double currentFps) {
     emit frameCalculated(frameNumber, filename, currentFps);
+}
+
+void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,
+        const size_t numFrame) {
+    emit fileOpened(fileName, numFrame);
 }
 
 } // Core

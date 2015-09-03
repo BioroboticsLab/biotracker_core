@@ -49,8 +49,11 @@ void Gui::initConnects() {
 
     QObject::connect(&m_biotracker, &Core::BioTrackerApp::notify,
                      &m_mainWindow.getNotification(), &NotificationWidget::notify);
-    QObject::connect(&m_biotracker, &Core::BioTrackerApp::notify,
+
+    QObject::connect(&m_biotracker, &Core::BioTrackerApp::fileOpened,
                      &m_mainWindow, &MainWindow::fileOpened);
+    QObject::connect(&m_biotracker, &Core::BioTrackerApp::fileOpened,
+                     m_mainWindow.getVideoControl(), &VideoControlWidget::fileOpened);
 }
 
 void Gui::browseVideo() {

@@ -128,6 +128,13 @@ class BioTrackerApp : public QObject {
     /**
      * @brief notify
      *      Status messages for the user interface
+     */
+    void fileOpenedFromTrackingThread(const std::string fileName,
+                                      const size_t numFrame);
+
+    /**
+     * @brief notify
+     *      Status messages for the user interface
      *      When currentFps = -1, we are not running the video stream but rather
      *      just clicked next or previous
      */
@@ -140,6 +147,12 @@ class BioTrackerApp : public QObject {
      *      Status messages for the user interface
      */
     void notify(const std::string &message, const MSGS::MTYPE type);
+
+    /**
+     * @brief fileOpened
+     *      Update event for title and slider
+     */
+    void fileOpened(const std::string message, const size_t numFrame);
 
     /**
      * @brief frameCalculated
