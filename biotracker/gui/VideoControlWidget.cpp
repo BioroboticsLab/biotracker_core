@@ -145,7 +145,9 @@ void VideoControlWidget::nextFrame() {
 
 void VideoControlWidget::fileOpened(const std::string filename,
                                     const size_t totalFrames) {
-    // TODO impl
+    (void)filename; // "un-use" filename. FileOpen is a generic event, but we dont
+    // need the filename at this place
+    m_ui.sld_video->setMaximum(totalFrames);
 }
 
 void VideoControlWidget::previousFrame() {
