@@ -46,7 +46,7 @@ if [ $RETURN -eq 1 ]; then
         [Yy] ) 
             echo "adjusting files: $FILES_TO_ADJUST"
             astyle
-            exit 0
+            RETURN=0
             ;;
         [Nn] ) 
             echo "Make sure you have run:" >&2
@@ -57,14 +57,6 @@ if [ $RETURN -eq 1 ]; then
             echo "Please answer y or n for yes or no."
             ;;
     esac 
-
-    case $response in
-        [yY][eE][sS]|[yY]) 
-            echo "in yes" >&2
-            ;;
-        *)
-            ;;
-    esac
 fi
 
 exit $RETURN
