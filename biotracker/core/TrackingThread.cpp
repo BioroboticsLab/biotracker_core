@@ -65,10 +65,11 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     m_fps = m_imageStream->fps();
 
-    // TODO: crashes at getValueOfParam
-    std::string note = "abc";
-//        std::string note = "open file: " + m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
-//            " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
+    m_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE, filename.string());
+
+    std::string note = "open file: " +
+                       m_settings.getValueOfParam<std::string>(CAPTUREPARAM::CAP_VIDEO_FILE) +
+                       " (#frames: " + QString::number(m_imageStream->numFrames()).toStdString() + ")";
     emit notifyGUI(note, MSGS::MTYPE::FILE_NAME_CHANGE);
 }
 
@@ -173,7 +174,6 @@ void TrackingThread::tick(const double fps) {
 
     std::string fileName = m_imageStream->currentFilename();
 
-    //emit frameCalculated(m_imageStream->currentFrameNumber(), "kurukurukuru", fps);
     doTracking();
     emit frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
 
