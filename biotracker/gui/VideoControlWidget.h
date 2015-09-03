@@ -36,6 +36,7 @@ class VideoControlWidget : public QWidget {
     QIcon m_iconPlay;
 
     bool m_isPanZoomMode;
+    bool m_videoSliderChanged;
 
     void initConnects();
     void initShortcuts();
@@ -52,6 +53,7 @@ class VideoControlWidget : public QWidget {
     void takeScreenshot();
     void switchPanZoomMode();
     void sliderRender();
+    void videoSliderChanged(const size_t frame);
 };
 
 }

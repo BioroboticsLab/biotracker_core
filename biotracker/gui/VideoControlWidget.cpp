@@ -108,10 +108,13 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::takeScreenshot);
     QObject::connect(m_ui.button_panZoom, &QPushButton::clicked, this,
                      &VideoControlWidget::switchPanZoomMode);
+
     // slider
+    QObject::connect(m_ui.sld_video, &QSlider::valueChanged, this,
+                     &VideoControlWidget::videoSliderChanged);
     QTimer *timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
-    timer->start(250);
+    timer->start(200);
 }
 
 void VideoControlWidget::playPause() {
@@ -159,10 +162,16 @@ void VideoControlWidget::previousFrame() {
 
 void VideoControlWidget::sliderRender() {
     if (m_ui.sld_video->isEnabled()) {
-        if (m_ui.sld_video->isSliderDown()) {
+        if (m_ui.sld_video->isSliderDown() || m_videoSliderChanged) {
             setFrame(m_ui.sld_video->value());
+            m_videoSliderChanged = false;
         }
     }
+}
+
+void VideoControlWidget::videoSliderChanged(const size_t frame) {
+    (void) frame; // we dont really need the variable..
+    m_videoSliderChanged = true;
 }
 
 void VideoControlWidget::changeCurrentFrameByEdit() {
