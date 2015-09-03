@@ -128,6 +128,8 @@ class BioTrackerApp : public QObject {
     /**
      * @brief notify
      *      Status messages for the user interface
+     *      When currentFps = -1, we are not running the video stream but rather
+     *      just clicked next or previous
      */
     void frameCalculatedFromTrackingThread(const size_t frameNumber,
                                            const std::string filename, const double currentFps);

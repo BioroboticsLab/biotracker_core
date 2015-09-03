@@ -97,7 +97,7 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
 
 /**
  * @brief BioTrackerApp::frameCalculatedFromTrackingThread
- * @param frameNumber
+ * @param frameNumber the number of the last frame that was calculated
  * @param filename
  * @param currentFps, when -1, then the stream is not playing but the user clicked next
  */
