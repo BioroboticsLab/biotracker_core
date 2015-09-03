@@ -143,6 +143,11 @@ void VideoControlWidget::nextFrame() {
     updateWidgets();
 }
 
+void VideoControlWidget::fileOpened(const std::string filename,
+                                    const size_t totalFrames) {
+    // TODO impl
+}
+
 void VideoControlWidget::previousFrame() {
     assert(m_bioTracker.getCurrentFrameNumber() > 0);
     m_bioTracker.setFrame(m_bioTracker.getCurrentFrameNumber() - 1);
