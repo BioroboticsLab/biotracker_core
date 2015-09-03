@@ -24,6 +24,9 @@ class VideoControlWidget : public QWidget {
 
     void updateWidgets();
 
+  public slots:
+    void fileOpened(const std::string filename, const size_t totalFrames);
+
   private:
     VideoControlUi m_ui;
     Core::BioTrackerApp &m_bioTracker;
