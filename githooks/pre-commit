@@ -46,6 +46,7 @@ if [ $RETURN -eq 1 ]; then
         [Yy] ) 
             echo "adjusting files: $FILES_TO_ADJUST"
             astyle
+            exit 0
             ;;
         [Nn] ) 
             echo "Make sure you have run:" >&2
