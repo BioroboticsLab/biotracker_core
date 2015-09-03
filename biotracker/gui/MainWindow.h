@@ -47,7 +47,7 @@ class MainWindow : public QMainWindow {
      * @brief notify
      *      Status messages for the user interface
      */
-    void notify(const std::string &message, const MSGS::MTYPE type);
+    void fileOpened(const std::string filename, const size_t numFrames);
 
   private:
     MainWindowUi m_ui;
