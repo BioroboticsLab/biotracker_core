@@ -77,6 +77,12 @@ class TrackingThread : public QThread {
     void setPlay();
 
     /**
+     * Checks if the thread is in the rendering stage right now
+     * @return
+     */
+    bool isRendering() const;
+
+    /**
      * Toggles the playing state.
      */
     void togglePlaying();
@@ -99,6 +105,7 @@ class TrackingThread : public QThread {
 
     bool m_playing;
     bool m_playOnce;
+    bool m_isRendering;
 
     //defines whether to use pictures as source or a video
     TrackerStatus m_status;

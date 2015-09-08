@@ -140,7 +140,7 @@ void TrackingThread::run() {
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
         m_conditionVariable.wait(lk, [&] {return m_playing || m_playOnce;});
-
+        m_isRendering = true;
 
         //if thread just started (or is unpaused) start clock here
         //after this timestamp will be taken right before picture is drawn
@@ -154,6 +154,7 @@ void TrackingThread::run() {
 
         if ((m_imageStream->type() == GUIPARAM::MediaType::Video)
                 && m_imageStream->lastFrame()) {
+            // TODO is this still correct?
             break;
         }
 
@@ -186,7 +187,7 @@ void TrackingThread::run() {
         t = std::chrono::system_clock::now();
 
         m_playOnce = false;
-
+        m_isRendering = false;
         // unlock mutex
         lk.unlock();
     }
@@ -295,6 +296,10 @@ void TrackingThread::playOnce() {
 
 bool TrackingThread::isPaused() const {
     return !m_playing;
+}
+
+bool TrackingThread::isRendering() const {
+    return m_isRendering;
 }
 
 double TrackingThread::getFps() const {

@@ -110,8 +110,14 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::switchPanZoomMode);
 
     // slider
-    QObject::connect(m_ui.sld_video, &QSlider::valueChanged, this,
+    QObject::connect(m_ui.sld_video, &QSlider::sliderMoved, this,
                      &VideoControlWidget::videoSliderChanged);
+    QObject::connect(m_ui.sld_video, &QSlider::sliderReleased, this,
+                     &VideoControlWidget::videoSliderReleased);
+    QObject::connect(m_ui.sld_video, &QSlider::sliderPressed, this,
+                     &VideoControlWidget::videoSliderPressed);
+
+
     QTimer *timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
     timer->start(200);
@@ -156,15 +162,20 @@ void VideoControlWidget::fileOpened(const std::string filename,
 void VideoControlWidget::previousFrame() {
     assert(m_bioTracker.getCurrentFrameNumber() > 0);
     m_bioTracker.setFrame(m_bioTracker.getCurrentFrameNumber() - 1);
-
     updateWidgets();
 }
 
 void VideoControlWidget::sliderRender() {
     if (m_ui.sld_video->isEnabled()) {
         if (m_ui.sld_video->isSliderDown() || m_videoSliderChanged) {
-            setFrame(m_ui.sld_video->value());
-            m_videoSliderChanged = false;
+            if (!m_bioTracker.isRendering()) { // needed to prevent race condition
+                const int frame = m_ui.sld_video->value();
+                if (frame < m_ui.sld_video->maximum()) {
+                    // do not render after the last frame
+                    setFrame(frame);
+                }
+                m_videoSliderChanged = false;
+            }
         }
     }
 }
@@ -172,6 +183,19 @@ void VideoControlWidget::sliderRender() {
 void VideoControlWidget::videoSliderChanged(const size_t frame) {
     (void) frame; // we dont really need the variable..
     m_videoSliderChanged = true;
+}
+
+void VideoControlWidget::videoSliderReleased() {
+    if (m_sliderVideoWasRunning) {
+        m_bioTracker.play();
+    }
+    this->updateWidgets();
+}
+
+void VideoControlWidget::videoSliderPressed() {
+    m_sliderVideoWasRunning = m_bioTracker.isRunning();
+    m_bioTracker.pause();
+    this->updateWidgets();
 }
 
 void VideoControlWidget::changeCurrentFrameByEdit() {

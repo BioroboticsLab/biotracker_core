@@ -76,6 +76,21 @@ class BioTrackerApp : public QObject {
     void pause();
 
     /**
+     * @return when True, the thread is still rendering a frame right now, even when
+     *  paused
+     */
+    bool isRendering();
+
+    /**
+     * Attention: This boolean does not reflect the actual state in the tracking thread but
+     * rather the attempted status; that means, that it might return false, when "pause" is
+     * called but the tracking thread might still render a last frame.
+     * @brief isRunning
+     * @return True if the biotracker is playing, if it set to pause, False is returned.
+     */
+    bool isRunning();
+
+    /**
      * @brief setFrame (0 .. getNumFrames() - 1) if the input does not meets the
      *   invariant the frame will stay at the current frame
      */
@@ -165,6 +180,7 @@ class BioTrackerApp : public QObject {
                          const double currentFps);
 
   private:
+    bool m_isRunning;
     Settings m_settings;
     Registry &m_registry;
     TrackingThread m_trackingThread;
