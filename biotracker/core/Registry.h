@@ -59,7 +59,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
         return m_stringByType;
     }
 
-  signals:
+  Q_SIGNALS:
     void newTracker(const TrackerType type);
 
   private:

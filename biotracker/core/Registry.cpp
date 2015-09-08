@@ -24,7 +24,7 @@ bool Registry::registerTrackerType(std::string name, new_tracker_function_t f) {
     m_stringByType.emplace(type, name);
     m_trackerByType.emplace(type, f);
 
-    emit newTracker(type);
+    Q_EMIT newTracker(type);
 
     return true;
 }

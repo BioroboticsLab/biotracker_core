@@ -9,7 +9,7 @@ qt5_wrap_ui(UI_HEADERS ${ui})
 add_library(Core STATIC 
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
- 
+
 target_link_libraries(Core
     Qt5::Widgets
     Qt5::OpenGL
@@ -17,6 +17,7 @@ target_link_libraries(Core
     ${OpenCV_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARIES}
 )
 
 # automatic copy of required dlls to install prefix for windows

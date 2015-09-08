@@ -38,7 +38,7 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
         return m_texture;
     }
 
-  public slots:
+  public Q_SLOTS:
     void setMode(const Mode mode);
     void fitToWindow();
 

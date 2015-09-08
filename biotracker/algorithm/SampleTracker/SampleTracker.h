@@ -22,7 +22,7 @@ class SampleTracker : public TrackingAlgorithm {
     std::shared_ptr<QWidget> getParamsWidget() override;
     std::shared_ptr<QWidget> getToolsWidget() override;
 
-  public slots:
+  public Q_SLOTS:
     void changeFilterColor();
 
   private:

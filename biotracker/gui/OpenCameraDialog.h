@@ -25,7 +25,7 @@ class OpenCameraDialog : public QDialog {
 
     void initConnects();
 
-  private slots:
+  private Q_SLOTS:
 };
 
 }

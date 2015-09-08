@@ -58,11 +58,11 @@ class SpinBoxWithSlider: public QWidget {
 
     virtual ~SpinBoxWithSlider() override = default;
 
-  private slots:
+  private Q_SLOTS:
     void SpinBoxValueChanged(int val);
     void SliderValueChanged(int value);
 
-  signals:
+  Q_SIGNALS:
     void valueChanged(int i);
 
   private:
@@ -97,11 +97,11 @@ class DoubleSpinBoxWithSlider: public QWidget {
 
     virtual ~DoubleSpinBoxWithSlider() override = default;
 
-  private slots:
+  private Q_SLOTS:
     void SpinBoxValueChanged(double val);
     void SliderValueChanged(int value);
 
-  signals:
+  Q_SIGNALS:
     void valueChanged(double i);
 
   private:

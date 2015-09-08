@@ -20,7 +20,7 @@ class NotificationWidget : public QWidget {
         return m_ui;
     }
 
-public slots:
+  public Q_SLOTS:
     /**
      * @brief notify
      *      Status messages for the user interface
@@ -35,7 +35,7 @@ public slots:
 
     void initConnects();
 
-  private slots:
+  private Q_SLOTS:
 };
 
 }

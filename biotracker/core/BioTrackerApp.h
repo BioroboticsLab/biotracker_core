@@ -132,7 +132,7 @@ class BioTrackerApp : public QObject {
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
-  private slots:
+  private Q_SLOTS:
     /**
      * @brief notify
      *      Status messages for the user interface
@@ -156,7 +156,7 @@ class BioTrackerApp : public QObject {
     void frameCalculatedFromTrackingThread(const size_t frameNumber,
                                            const std::string filename, const double currentFps);
 
-  signals:
+  Q_SIGNALS:
     /**
      * @brief notify
      *      Status messages for the user interface

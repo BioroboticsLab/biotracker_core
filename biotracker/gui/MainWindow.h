@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow {
         return m_openCameraDialog;
     }
 
-  public slots:
+  public Q_SLOTS:
     /**
      * @brief notify
      *      Status messages for the user interface

@@ -104,7 +104,7 @@ void BioTrackerApp::keyboardEvent(QKeyEvent *event) {
 
 void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
         const MSGS::MTYPE type) {
-    emit notify(message, type);
+    Q_EMIT notify(message, type);
 }
 
 /**
@@ -115,12 +115,12 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
  */
 void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
         const std::string filename, const double currentFps) {
-    emit frameCalculated(frameNumber, filename, currentFps);
+    Q_EMIT frameCalculated(frameNumber, filename, currentFps);
 }
 
 void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,
         const size_t numFrame) {
-    emit fileOpened(fileName, numFrame);
+    Q_EMIT fileOpened(fileName, numFrame);
 }
 
 } // Core

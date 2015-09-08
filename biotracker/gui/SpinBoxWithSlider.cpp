@@ -85,11 +85,11 @@ SpinBoxWithSlider::SpinBoxWithSlider(QWidget *parent, QFormLayout *layout,
 
 void SpinBoxWithSlider::SpinBoxValueChanged(int val) {
     m_slider.setValue((val - m_spinbox.minimum()) / m_step_size);
-    emit valueChanged(this->value());
+    Q_EMIT valueChanged(this->value());
 }
 void SpinBoxWithSlider::SliderValueChanged(int value) {
     m_spinbox.setValue(m_spinbox.minimum() + value * m_step_size);
-    emit valueChanged(this->value());
+    Q_EMIT valueChanged(this->value());
 }
 
 DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent,
@@ -132,10 +132,10 @@ DoubleSpinBoxWithSlider::DoubleSpinBoxWithSlider(QWidget *parent,
 
 void DoubleSpinBoxWithSlider::SpinBoxValueChanged(double val) {
     m_slider.setValue(static_cast<int>(val * m_factor));
-    emit valueChanged(this->value());
+    Q_EMIT valueChanged(this->value());
 }
 
 void DoubleSpinBoxWithSlider::SliderValueChanged(int value) {
     m_spinbox.setValue(static_cast<double>(value) / m_factor);
-    emit valueChanged(this->value());
+    Q_EMIT valueChanged(this->value());
 }

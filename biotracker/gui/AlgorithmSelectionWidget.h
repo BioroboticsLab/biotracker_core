@@ -23,7 +23,7 @@ class AlgorithmSelectionWidget : public QWidget {
         return m_ui;
     }
 
-  public slots:
+  public Q_SLOTS:
     void addTrackingAlgorithm(const Core::TrackerType type);
 
   private:

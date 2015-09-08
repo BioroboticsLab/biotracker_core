@@ -15,6 +15,8 @@
 #include "biotracker/core/TrackingAlgorithm.h"
 #include "biotracker/core/ImageStream.h"
 
+#include "biotracker/core/interpreter/interpreter.h"
+
 class Settings;
 
 namespace BioTracker {
@@ -158,7 +160,7 @@ class TrackingThread : public QThread {
     */
     virtual void run() override;
 
-  public slots:
+  public Q_SLOTS:
 
     /**
     * Sets the current frame number.
@@ -184,10 +186,10 @@ class TrackingThread : public QThread {
 
     void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
 
-  private slots:
+  private Q_SLOTS:
     void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
 
-  signals:
+  Q_SIGNALS:
     /**
     * emit current frame number.
     * @param frameNumber the current frame number.

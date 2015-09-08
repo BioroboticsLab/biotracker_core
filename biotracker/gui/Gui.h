@@ -23,7 +23,7 @@ class Gui : public QObject {
     void initConnects();
     QStringList browse(const QString &title, const QString &filter);
 
-  private slots:
+  private Q_SLOTS:
     void browseVideo();
     void browsePictures();
     void browseCameras();

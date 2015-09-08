@@ -104,7 +104,7 @@ void SampleTracker::mouseMoveEvent(QMouseEvent *e) {
         _selectorRecEnd.setX(e->x());
         _selectorRecEnd.setY(e->y());
         //draw rectangle!
-        emit update();
+        Q_EMIT update();
     }
 }
 void SampleTracker::mousePressEvent(QMouseEvent *e) {
@@ -129,13 +129,13 @@ void SampleTracker::mouseReleaseEvent(QMouseEvent *e) {
             _selectorRecEnd.setY(e->y());
             _showSelectorRec = false;
             //next draw will delete rectangle!
-            emit update();
+            Q_EMIT update();
             std::string note = "selected area from " + QString::number(
                                    _selectorRecStart.x()).toStdString() + ":"+
                                QString::number(_selectorRecStart.y()).toStdString()
                                + " to " +  QString::number(_selectorRecEnd.x()).toStdString() + ":"+
                                QString::number(_selectorRecEnd.y()).toStdString();
-            emit notifyGUI(note,MSGS::NOTIFICATION);
+            Q_EMIT notifyGUI(note,MSGS::NOTIFICATION);
         }
     }
 }
@@ -201,9 +201,9 @@ void SampleTracker::changeFilterColor() {
     _highS =    _highSEdit->text().toInt();
     _lowV  =    _lowVEdit->text().toInt();
     _highV =    _highVEdit->text().toInt();
-    emit forceTracking();
+    Q_EMIT forceTracking();
 }
 
 void SampleTracker::postConnect() {
-    emit registerViews({ { "Filter" } });
+    Q_EMIT registerViews({ { "Filter" } });
 }

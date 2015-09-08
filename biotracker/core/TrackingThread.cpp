@@ -31,6 +31,8 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_settings(settings),
     m_texture(nullptr),
     m_openGLLogger(this) {
+    Interpreter::Interpreter p;
+    std::cout << "inter:" << p.interpret() << "\n";
 }
 
 TrackingThread::~TrackingThread(void) {
@@ -59,7 +61,7 @@ void TrackingThread::loadFromSettings() {
     if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
-        emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -69,11 +71,11 @@ void TrackingThread::loadFromSettings() {
     m_fps = m_imageStream->fps();
 
 
-    emit fileOpened(filenameStr, m_imageStream->numFrames());
+    Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames());
 
     std::string note = "opened file: " + filenameStr + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    emit notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
+    Q_EMIT notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
 }
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
@@ -81,7 +83,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
-        emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -94,8 +96,8 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     std::string note = filename.string() + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    emit fileOpened(filename.string(), m_imageStream->numFrames());
-    emit notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
+    Q_EMIT fileOpened(filename.string(), m_imageStream->numFrames());
+    Q_EMIT notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
@@ -109,7 +111,7 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
             errorMsg += ", " + filename.string();
         }
         errorMsg += "]";
-        emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -123,14 +125,14 @@ void TrackingThread::openCamera(int device) {
         // could not open video
         std::string errorMsg = "unable to open camera " + QString::number(
                                    device).toStdString();
-        emit notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     }
     m_status = TrackerStatus::Running;
     m_fps = m_imageStream->fps();
     std::string note = "open camera " + QString::number(device).toStdString();
-    emit notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+    Q_EMIT notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
 }
 
 void TrackingThread::run() {
@@ -201,7 +203,7 @@ void TrackingThread::tick(const double fps) {
     std::string fileName = m_imageStream->currentFilename();
 
     doTracking();
-    emit frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
+    Q_EMIT frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
 
     if (m_playing) {
         nextFrame();
@@ -242,8 +244,9 @@ void TrackingThread::doTracking() {
         m_tracker->track(m_imageStream->currentFrameNumber(),
                          m_imageStream->currentFrame());
     } catch (const std::exception &err) {
-        emit notifyGUI("critical error in selected tracking algorithm: " + std::string(
-                           err.what()), MSGS::FAIL);
+        Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
+                         std::string(
+                             err.what()), MSGS::FAIL);
     }
 }
 

@@ -24,7 +24,7 @@ class VideoControlWidget : public QWidget {
 
     void updateWidgets();
 
-  public slots:
+  public Q_SLOTS:
     void fileOpened(const std::string filename, const size_t totalFrames);
 
   private:
@@ -41,11 +41,11 @@ class VideoControlWidget : public QWidget {
 
     void initConnects();
     void initShortcuts();
-  public slots:
+  public Q_SLOTS:
     void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
 
-  private slots:
+  private Q_SLOTS:
     void playPause();
     void setFrame(const size_t frame);
     void nextFrame();

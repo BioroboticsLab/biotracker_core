@@ -141,7 +141,7 @@ class TrackingAlgorithm : public QObject {
         return _currentZoomLevel;
     }
 
-  public slots:
+  public Q_SLOTS:
     /**
     * receive Signal to set current frame number
     */
@@ -178,7 +178,7 @@ class TrackingAlgorithm : public QObject {
     }
 
 
-  signals:
+  Q_SIGNALS:
     /**
     * send a message to the GUI.
     */
