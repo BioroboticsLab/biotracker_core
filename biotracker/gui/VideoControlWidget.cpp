@@ -109,7 +109,7 @@ void VideoControlWidget::initConnects() {
     QObject::connect(m_ui.button_panZoom, &QPushButton::clicked, this,
                      &VideoControlWidget::switchPanZoomMode);
 
-    // slider
+    // video slider
     QObject::connect(m_ui.sld_video, &QSlider::sliderMoved, this,
                      &VideoControlWidget::videoSliderChanged);
     QObject::connect(m_ui.sld_video, &QSlider::sliderReleased, this,
@@ -121,6 +121,11 @@ void VideoControlWidget::initConnects() {
     QTimer *timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
     timer->start(200);
+
+    // speed slider
+    QObject::connect(m_ui.sld_speed, &QSlider::sliderReleased, this,
+                     &VideoControlWidget::speedSliderReleased);
+
 }
 
 void VideoControlWidget::playPause() {
@@ -196,6 +201,15 @@ void VideoControlWidget::videoSliderPressed() {
     m_sliderVideoWasRunning = m_bioTracker.isRunning();
     m_bioTracker.pause();
     this->updateWidgets();
+}
+
+void VideoControlWidget::speedSliderReleased() {
+    const int speed = m_ui.sld_speed->value();
+    if (speed <= m_ui.sld_speed->maximum()) {
+
+    } else {
+        //m_bioTracker
+    }
 }
 
 void VideoControlWidget::changeCurrentFrameByEdit() {
