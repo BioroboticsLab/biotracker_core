@@ -15,9 +15,6 @@ class Interpreter : public QObject {
     ~Interpreter() {}
     size_t interpret() {
 
-        //std::string name = "test";
-        //Py_SetProgramName(name.c_str());
-
         Py_Initialize();
 
         PyRun_SimpleString("print('test 123')");
