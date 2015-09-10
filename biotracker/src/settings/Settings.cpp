@@ -1,4 +1,4 @@
-#include "Settings.h"
+#include "settings/Settings.h"
 #include "Messages.h"
 
 #include <QFile>

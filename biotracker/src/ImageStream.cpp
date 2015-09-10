@@ -1,10 +1,10 @@
 #include "ImageStream.h"
 
-#include "biotracker/util/stdext.h"
+#include "util/stdext.h"
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
-#include "biotracker/core/Exceptions.h"
+#include "Exceptions.h"
 
 namespace BioTracker {
 namespace Core {

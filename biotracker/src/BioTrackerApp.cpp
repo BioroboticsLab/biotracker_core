@@ -2,7 +2,7 @@
 #include <limits>
 #include <thread>
 
-#include "biotracker/util/QOpenGLContextWrapper.h"
+#include "util/QOpenGLContextWrapper.h"
 
 namespace BioTracker {
 namespace Core {

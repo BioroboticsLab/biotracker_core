@@ -12,9 +12,9 @@
 #include <QWidget>
 #include <QMouseEvent>
 
-#include "biotracker/core/settings/Messages.h"
-#include "biotracker/core/settings/ParamNames.h"
-#include "biotracker/core/serialization/TrackedObject.h"
+#include "settings/Messages.h"
+#include "settings/ParamNames.h"
+#include "serialization/TrackedObject.h"
 
 namespace BioTracker {
 namespace Gui {

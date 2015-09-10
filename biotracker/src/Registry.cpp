@@ -4,7 +4,7 @@
 
 #include <QLibrary>
 
-#include "biotracker/core/Exceptions.h"
+#include "Exceptions.h"
 
 namespace BioTracker {
 namespace Core {

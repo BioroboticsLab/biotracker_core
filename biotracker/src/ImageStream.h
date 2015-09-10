@@ -6,7 +6,7 @@
 #include <string>                       // std::string
 #include <boost/filesystem.hpp>
 
-#include "biotracker/core/settings/ParamNames.h" // GUIPARAM::MediaType
+#include "settings/ParamNames.h" // GUIPARAM::MediaType
 
 namespace BioTracker {
 namespace Core {

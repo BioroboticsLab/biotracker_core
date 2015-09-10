@@ -1,9 +1,9 @@
-#include "ImagePreProcessor.h"
+#include "util/imagePreProcessor/ImagePreProcessor.h"
 
 #include <QReadWriteLock>
 
-#include "biotracker/core/settings/Settings.h"
-#include "biotracker/core/settings/ParamNames.h"
+#include "settings/Settings.h"
+#include "settings/ParamNames.h"
 
 QReadWriteLock lock;
 

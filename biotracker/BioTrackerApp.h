@@ -9,10 +9,10 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 
-#include "biotracker/core/TrackingThread.h"
-#include "biotracker/core/ImageStream.h"
-#include "biotracker/core/Registry.h"
-#include "biotracker/core/settings/Settings.h"
+#include "TrackingThread.h"
+#include "ImageStream.h"
+#include "Registry.h"
+#include "settings/Settings.h"
 
 
 namespace BioTracker {

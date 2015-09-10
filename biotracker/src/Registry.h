@@ -6,9 +6,9 @@
 
 #include <QObject>
 
-#include "biotracker/core/TrackingAlgorithm.h"
-#include "biotracker/util/stdext.h"
-#include "biotracker/util/singleton.h"
+#include "TrackingAlgorithm.h"
+#include "util/stdext.h"
+#include "util/singleton.h"
 
 namespace BioTracker {
 namespace Core {

@@ -64,6 +64,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
+find_package(PythonLibs REQUIRED)
 
 # remove all previously set compiler and linker flags for debug build
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -164,9 +165,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Widgets_DEFINITIONS})
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
-
-# python
-find_package(PythonLibs REQUIRED)
 
 
 # include external dependecies as SYSTEM headers to prevent warnings from

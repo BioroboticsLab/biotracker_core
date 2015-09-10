@@ -8,13 +8,13 @@
 #include <condition_variable>
 #include <QMouseEvent>
 
-#include "biotracker/util/MutexWrapper.h"
+#include "util/MutexWrapper.h"
 
-#include "biotracker/core/TextureObject.h"
-#include "biotracker/core/TrackingAlgorithm.h"
-#include "biotracker/core/ImageStream.h"
+#include "TextureObject.h"
+#include "TrackingAlgorithm.h"
+#include "ImageStream.h"
 
-#include "biotracker/core/interpreter/interpreter.h"
+#include "interpreter/interpreter.h"
 
 class Settings;
 

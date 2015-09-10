@@ -6,9 +6,9 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "biotracker/core/Registry.h"
-#include "biotracker/core/serialization/TrackedObject.h"
-#include "biotracker/core/serialization/types.hpp"
+#include "Registry.h"
+#include "serialization/TrackedObject.h"
+#include "serialization/types.hpp"
 
 namespace Serialization {
 class Data {

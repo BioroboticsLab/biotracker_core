@@ -7,9 +7,9 @@
 
 #include <QFileInfo>
 
-#include "biotracker/core/settings/Messages.h"
-#include "biotracker/core/settings/Settings.h"
-#include "biotracker/core/settings/ParamNames.h"
+#include "settings/Messages.h"
+#include "settings/Settings.h"
+#include "settings/ParamNames.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>

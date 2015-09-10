@@ -5,7 +5,7 @@
  *      Author: tobias
  */
 
-#include "CvHelper.h"
+#include "util/CvHelper.h"
 
 namespace CvHelper {
 

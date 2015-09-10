@@ -7,9 +7,9 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "biotracker/util/stringTools.h" // (un)escape_non_ascii
-#include "biotracker/core/settings/StringTranslator.h"
-#include "biotracker/core/settings/ParamNames.h"
+#include "util/stringTools.h" // (un)escape_non_ascii
+#include "settings/StringTranslator.h"
+#include "settings/ParamNames.h"
 
 namespace {
 template<typename Test, template<typename...> class Ref>
