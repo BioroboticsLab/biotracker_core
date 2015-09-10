@@ -164,8 +164,8 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Widgets_DEFINITIONS})
-ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
-
+add_definitions(-DQT_NO_KEYWORDS)
+CPM_ExportAdditionalDefinition(-DQT_NO_KEYWORDS)
 
 # include external dependecies as SYSTEM headers to prevent warnings from
 # external files. unfortunately, this has no effect when using MSVC.
