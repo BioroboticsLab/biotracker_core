@@ -6,8 +6,6 @@ file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 qt5_add_resources(UI_RESOURCES ${qrc})
 qt5_wrap_ui(UI_HEADERS ${ui})
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
-
 add_library(${CPM_LIB_TARGET_NAME} STATIC 
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
