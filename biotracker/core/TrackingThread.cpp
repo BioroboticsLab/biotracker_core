@@ -25,6 +25,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_imageStream(make_ImageStreamNoMedia()),
     m_playing(false),
     m_playOnce(false),
+    m_somethingIsLoaded(false),
     m_status(TrackerStatus::NothingLoaded),
     m_fps(30),
     m_runningFps(0),
@@ -131,6 +132,7 @@ void TrackingThread::openCamera(int device) {
     m_fps = m_imageStream->fps();
     std::string note = "open camera " + QString::number(device).toStdString();
     Q_EMIT notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+    m_somethingIsLoaded = true;
 }
 
 void TrackingThread::run() {
@@ -279,22 +281,28 @@ void TrackingThread::setPlay() {
 }
 
 void TrackingThread::paintOverlay(QPainter &painter) {
-    QRect myQRect(10,10,200,200);
-    QLinearGradient gradient(myQRect.topLeft(),
-                             myQRect.bottomRight()); // diagonal gradient from top-left to bottom-right
-    gradient.setColorAt(0, Qt::white);
-    gradient.setColorAt(1, Qt::red);
-    painter.fillRect(myQRect, gradient);
+    if (m_somethingIsLoaded) {
+        QRect myQRect(10,10,200,200);
+        QLinearGradient gradient(myQRect.topLeft(),
+                                 myQRect.bottomRight()); // diagonal gradient from top-left to bottom-right
+        gradient.setColorAt(0, Qt::white);
+        gradient.setColorAt(1, Qt::red);
+        painter.fillRect(myQRect, gradient);
+    }
 }
 
 void TrackingThread::paintRaw() {
-    ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
-    m_texture->setImage(proxy.getmat());
+    if (m_somethingIsLoaded) {
+        ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
+        m_texture->setImage(proxy.getmat());
+    }
 }
 
 void TrackingThread::paintDone() {
-    m_isRendering = false;
-    m_conditionVariable.notify_all();
+    if (m_somethingIsLoaded) {
+        m_isRendering = false;
+        m_conditionVariable.notify_all();
+    }
 }
 
 void TrackingThread::togglePlaying() {
@@ -308,6 +316,7 @@ void TrackingThread::togglePlaying() {
 void TrackingThread::playOnce() {
     m_status = TrackerStatus::Paused;
     m_playOnce = true;
+    m_somethingIsLoaded = true;
     m_conditionVariable.notify_all();
 }
 

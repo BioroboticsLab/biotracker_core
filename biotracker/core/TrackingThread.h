@@ -8,7 +8,6 @@
 #include <condition_variable>
 #include <QMouseEvent>
 
-#include "biotracker/util/SharedOpenGlContext.h"
 #include "biotracker/util/MutexWrapper.h"
 
 #include "biotracker/core/TextureObject.h"
@@ -128,6 +127,7 @@ class TrackingThread : public QThread {
     bool m_playing;
     bool m_playOnce;
     bool m_isRendering;
+    bool m_somethingIsLoaded;
 
     //defines whether to use pictures as source or a video
     TrackerStatus m_status;

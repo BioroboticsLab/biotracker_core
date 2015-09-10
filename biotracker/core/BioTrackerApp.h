@@ -14,8 +14,6 @@
 #include "biotracker/core/Registry.h"
 #include "biotracker/core/settings/Settings.h"
 
-#include "biotracker/util/SharedOpenGlContext.h"
-
 
 namespace BioTracker {
 namespace Core {
