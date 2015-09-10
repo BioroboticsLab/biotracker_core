@@ -25,8 +25,8 @@ class ProxyPaintObject {
     bool m_matrixHasBeenModified;
 
   public:
-    ProxyPaintObject(cv::Mat img):
-        m_img(img)
+    ProxyPaintObject(cv::Mat img)
+        : m_img(img)
         , m_matrixHasBeenModified(false) {
     }
 
