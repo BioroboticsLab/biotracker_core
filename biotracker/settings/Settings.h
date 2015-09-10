@@ -7,9 +7,9 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "util/stringTools.h" // (un)escape_non_ascii
-#include "settings/StringTranslator.h"
-#include "settings/ParamNames.h"
+#include "../util/stringTools.h" // (un)escape_non_ascii
+#include "StringTranslator.h"
+#include "ParamNames.h"
 
 namespace {
 template<typename Test, template<typename...> class Ref>
