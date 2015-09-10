@@ -1,4 +1,4 @@
-#include "SystemCompatibilityCheck.h"
+#include "settings/SystemCompatibilityCheck.h"
 
 #include <QGLFormat>
 

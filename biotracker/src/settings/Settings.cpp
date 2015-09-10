@@ -1,5 +1,5 @@
 #include "settings/Settings.h"
-#include "Messages.h"
+#include "settings/Messages.h"
 
 #include <QFile>
 #include <QMessageBox>
