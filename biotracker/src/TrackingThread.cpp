@@ -294,7 +294,11 @@ void TrackingThread::paintOverlay(QPainter &painter) {
 void TrackingThread::paintRaw() {
     if (m_somethingIsLoaded) {
         ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
-        m_texture->setImage(proxy.getmat());
+        // TODO: only copy matrix to gpu if modified
+        m_texture->setImage(proxy.getMat());
+        if (proxy.hasBeenModified()) {
+            m_texture->setImage(proxy.getMat());
+        }
     }
 }
 

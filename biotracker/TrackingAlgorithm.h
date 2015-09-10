@@ -16,27 +16,32 @@
 #include "settings/ParamNames.h"
 #include "serialization/TrackedObject.h"
 
-namespace BioTracker {
-namespace Gui {
-class VideoView;
-}
-}
-
 class ProxyPaintObject {
   private:
-    cv::Mat m_img;
     ProxyPaintObject(const ProxyPaintObject &) = delete;
     ProxyPaintObject &operator=(const ProxyPaintObject &) = delete;
 
+    cv::Mat m_img;
+    bool m_matrixHasBeenModified;
+
   public:
     ProxyPaintObject(cv::Mat img):
-        m_img(img) {
+        m_img(img)
+        , m_matrixHasBeenModified(false) {
     }
-    cv::Mat &getmat() {
+
+    cv::Mat &getMat() {
+        m_matrixHasBeenModified = true;
         return m_img;
     }
 
+    cv::Mat const &getMatConst() {
+        return m_img;
+    }
 
+    bool hasBeenModified() const {
+        return m_matrixHasBeenModified;
+    }
 };
 
 class Settings;
