@@ -1,6 +1,6 @@
 #pragma once
-//#include <Python.h>
-#include "/usr/include/python3.4/Python.h"
+#include <Python.h>
+//#include "/usr/include/python3.4/Python.h"
 
 #include <stdlib.h>
 
