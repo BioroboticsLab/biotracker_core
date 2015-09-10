@@ -14,7 +14,7 @@
 #include "TrackingAlgorithm.h"
 #include "ImageStream.h"
 
-#include "interpreter/interpreter.h"
+#include "interpreter/Interpreter.h"
 
 class Settings;
 
