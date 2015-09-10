@@ -14,6 +14,8 @@
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
 
+#include <QPainter>
+
 namespace BioTracker {
 namespace Core {
 
@@ -38,12 +40,9 @@ TrackingThread::TrackingThread(Settings &settings) :
 TrackingThread::~TrackingThread(void) {
 }
 
-void TrackingThread::initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext>
-                                      &&context, TextureObject &texture) {
-    m_context = std::move(context);
+void TrackingThread::initializeOpenGL(QOpenGLContext *context,
+                                      TextureObject &texture) {
     m_texture = &texture;
-    m_surface.setFormat(m_context->format());
-    m_surface.create();
 
     m_openGLLogger.initialize(); // initializes in the current context, i.e. ctx
     connect(&m_openGLLogger, &QOpenGLDebugLogger::messageLogged, this,
@@ -69,7 +68,6 @@ void TrackingThread::loadFromSettings() {
     }
 
     m_fps = m_imageStream->fps();
-
 
     Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames());
 
@@ -141,7 +139,7 @@ void TrackingThread::run() {
 
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
-        m_conditionVariable.wait(lk, [&] {return m_playing || m_playOnce;});
+        m_conditionVariable.wait(lk, [&] {return (m_playing || m_playOnce) && !m_isRendering;});
         m_isRendering = true;
 
         //if thread just started (or is unpaused) start clock here
@@ -189,35 +187,32 @@ void TrackingThread::run() {
         t = std::chrono::system_clock::now();
 
         m_playOnce = false;
-        m_isRendering = false;
         // unlock mutex
         lk.unlock();
     }
 }
 
 void TrackingThread::tick(const double fps) {
-    m_context->makeCurrent(&m_surface);
-
-    m_texture->setImage(m_imageStream->currentFrame().clone());
-
+    m_renderMutex.lock();
     std::string fileName = m_imageStream->currentFilename();
-
     doTracking();
-    Q_EMIT frameCalculated(m_imageStream->currentFrameNumber(), fileName, fps);
-
+    const size_t currentFrame = m_imageStream->currentFrameNumber();
     if (m_playing) {
         nextFrame();
     }
-    m_context->doneCurrent();
+    m_renderMutex.unlock();
+    Q_EMIT frameCalculated(currentFrame, fileName, fps);
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
+    m_renderMutex.lock();
     if (m_imageStream->setFrameNumber(frameNumber)) {
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(frameNumber);
         }
         playOnce();
     }
+    m_renderMutex.unlock();
 }
 void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
@@ -280,6 +275,25 @@ void TrackingThread::setPause() {
 void TrackingThread::setPlay() {
     m_playing = true;
     m_status = TrackerStatus::Running;
+    m_conditionVariable.notify_all();
+}
+
+void TrackingThread::paintOverlay(QPainter &painter) {
+    QRect myQRect(10,10,200,200);
+    QLinearGradient gradient(myQRect.topLeft(),
+                             myQRect.bottomRight()); // diagonal gradient from top-left to bottom-right
+    gradient.setColorAt(0, Qt::white);
+    gradient.setColorAt(1, Qt::red);
+    painter.fillRect(myQRect, gradient);
+}
+
+void TrackingThread::paintRaw() {
+    ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
+    m_texture->setImage(proxy.getmat());
+}
+
+void TrackingThread::paintDone() {
+    m_isRendering = false;
     m_conditionVariable.notify_all();
 }
 

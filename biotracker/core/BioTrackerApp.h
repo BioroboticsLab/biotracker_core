@@ -76,6 +76,13 @@ class BioTrackerApp : public QObject {
     void pause();
 
     /**
+     * @brief paint
+     * @param device
+     * @param painter
+     */
+    void paint(QPaintDevice &device, QPainter &painter);
+
+    /**
      * @return when True, the thread is still rendering a frame right now, even when
      *  paused
      */

@@ -1,16 +1,5 @@
 #include "TrackingAlgorithm.h"
 
-// TODO: remove dependency
-//#include "biotracker/gui/VideoView.h"
-/*
-cv::Mat& ProxyPaintObject::getmat() {
-    if (_img.empty()) {
-        _img = _view._displayImage.clone();
-    }
-    return _img;
-}
-*/
-
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
     : QObject(parent)
     , _settings(settings)

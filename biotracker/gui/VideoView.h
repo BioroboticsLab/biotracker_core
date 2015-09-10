@@ -88,6 +88,11 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
 
     Core::BioTrackerApp &m_biotracker;
 
+    /**
+     * @brief m_painter
+     */
+    QPainter m_painter;
+
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void resizeEvent(QResizeEvent *event) override;

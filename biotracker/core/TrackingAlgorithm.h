@@ -24,19 +24,17 @@ class VideoView;
 
 class ProxyPaintObject {
   private:
-    BioTracker::Gui::VideoView &_view;
-    //cv::Mat _img;
-
-    ProxyPaintObject(BioTracker::Gui::VideoView &view):
-        _view(view)
-        //_img()
-    {
-    }
-    friend class BioTracker::Gui::VideoView;
+    cv::Mat m_img;
     ProxyPaintObject(const ProxyPaintObject &) = delete;
     ProxyPaintObject &operator=(const ProxyPaintObject &) = delete;
+
   public:
-    //cv::Mat& getmat();
+    ProxyPaintObject(cv::Mat img):
+        m_img(img) {
+    }
+    cv::Mat &getmat() {
+        return m_img;
+    }
 
 
 };

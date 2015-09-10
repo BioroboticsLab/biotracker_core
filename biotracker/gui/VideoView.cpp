@@ -20,7 +20,8 @@ VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
     , m_currentMode(Mode::INTERACTION)
     , m_screenPicRatio(0)
     , m_texture(this)
-    , m_biotracker(biotracker) {
+    , m_biotracker(biotracker)
+    , m_painter() {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
 }
@@ -90,6 +91,7 @@ void VideoView::fitToWindow() {
 }
 
 void VideoView::initializeGL() {
+    makeCurrent();
     initializeOpenGLFunctions();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     resizeGL(width(), height());
@@ -142,18 +144,8 @@ void VideoView::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void VideoView::paintEvent(QPaintEvent *event) {
-    makeCurrent();
-
-    glMatrixMode(GL_MODELVIEW);
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-
-    m_texture.draw();
-
-    glFlush();
-    doneCurrent();
+void VideoView::paintEvent(QPaintEvent *) {
+    m_biotracker.paint(*this, m_painter);
 }
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords) {

@@ -30,11 +30,8 @@ void BioTrackerApp::initConnects() {
 
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
                                      TextureObject &texture) {
-    auto trackingThreadContext = std::make_unique<Util::SharedOpenGLContext>
-                                 (mainContext);
-    trackingThreadContext->moveToThread(&m_trackingThread);
+    m_trackingThread.initializeOpenGL(mainContext, texture);
 
-    m_trackingThread.initializeOpenGL(std::move(trackingThreadContext), texture);
 }
 
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
@@ -57,6 +54,16 @@ void BioTrackerApp::play() {
 void BioTrackerApp::pause() {
     m_isRunning = false;
     m_trackingThread.setPause();
+}
+
+void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter) {
+    // using painters algorithm to draw in the right order
+    m_trackingThread.paintRaw();
+    painter.begin(&device);
+    //painter->setWindow(QRect(0,0,w,h));
+    m_trackingThread.paintOverlay(painter);
+    m_trackingThread.paintDone();
+    painter.end();
 }
 
 bool BioTrackerApp::isRendering() {

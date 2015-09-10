@@ -1,5 +1,6 @@
 #include "VideoControlWidget.h"
 
+
 #include <QKeySequence>
 #include <QShortcut>
 #include <thread>
@@ -247,8 +248,11 @@ void VideoControlWidget::switchPanZoomMode() {
 void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
 
+
     m_videoView->resize(m_videoView->width()+1, m_videoView->height());
     m_videoView->resize(m_videoView->width()-1, m_videoView->height());
+
+    m_videoView->update();
 
     m_ui.sld_video->setValue(frameNumber);
     m_ui.frame_num_edit->setText(QString::number(frameNumber));
@@ -258,6 +262,7 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
     } else {
         m_ui.fps_edit->clear();
     }
+
 }
 
 } // Gui

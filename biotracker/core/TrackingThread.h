@@ -40,7 +40,7 @@ class TrackingThread : public QThread {
     TrackingThread(Settings &settings);
     ~TrackingThread(void);
 
-    void initializeOpenGL(std::unique_ptr<Util::SharedOpenGLContext> &&context,
+    void initializeOpenGL(QOpenGLContext *context,
                           TextureObject &texture);
 
     TrackerStatus getStatus() const {
@@ -79,6 +79,25 @@ class TrackingThread : public QThread {
     void setPlay();
 
     /**
+     * allows to paint an overlay when rendered AFTER paintRaw.
+     * @brief paint
+     */
+    void paintOverlay(QPainter &painter);
+
+    /**
+     * Paints the raw texture of the data of the current frame
+     * @brief paintRaw
+     */
+    void paintRaw();
+
+    /**
+     * notifies the thread that it can do the next calculation
+     * Must be the last paint-call!!!!
+     * @brief paintDone
+     */
+    void paintDone();
+
+    /**
      * Checks if the thread is in the rendering stage right now
      * @return
      */
@@ -103,6 +122,7 @@ class TrackingThread : public QThread {
     std::unique_ptr<ImageStream> m_imageStream;
     Mutex m_trackerMutex;
     std::mutex m_tickMutex;
+    std::mutex m_renderMutex;
     std::condition_variable m_conditionVariable;
 
     bool m_playing;
@@ -120,8 +140,6 @@ class TrackingThread : public QThread {
 
     Settings &m_settings;
 
-    QOffscreenSurface m_surface;
-    std::unique_ptr<Util::SharedOpenGLContext> m_context;
     TextureObject *m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
