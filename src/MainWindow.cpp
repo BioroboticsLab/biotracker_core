@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "../MainWindow.h"
 
 namespace BioTracker {
 namespace Gui {

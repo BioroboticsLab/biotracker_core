@@ -1,4 +1,4 @@
-#include "OpenCameraDialog.h"
+#include "../OpenCameraDialog.h"
 
 namespace BioTracker {
 namespace Gui {

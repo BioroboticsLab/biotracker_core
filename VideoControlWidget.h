@@ -3,8 +3,10 @@
 #include <QIcon>
 #include <QWidget>
 
-#include "biotracker/core/BioTrackerApp.h"
-#include "biotracker/gui/ui_VideoControlWidget.h"
+#include "biotracker/BioTrackerApp.h"
+#include "ui_VideoControlWidget.h"
+#include "biotracker/util/QtRaiiWrapper.hpp"
+#include "VideoView.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 
 namespace BioTracker {

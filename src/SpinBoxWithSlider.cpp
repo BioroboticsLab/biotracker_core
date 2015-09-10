@@ -5,7 +5,7 @@
  *      Author: tobias
  */
 
-#include "SpinBoxWithSlider.h"
+#include "../SpinBoxWithSlider.h"
 #include <stdexcept> // std::invalid_argument
 
 int pow(int base, unsigned int exp) {

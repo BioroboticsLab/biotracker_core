@@ -3,10 +3,10 @@
 #include <QApplication>
 #include <QMessageBox>
 
-#include "biotracker/core/settings/Messages.h"
-#include "biotracker/core/settings/Settings.h"
-#include "biotracker/core/settings/SystemCompatibilityCheck.h"
-#include "biotracker/gui/Gui.h"
+#include "biotracker/settings/Messages.h"
+#include "biotracker/settings/Settings.h"
+#include "biotracker/settings/SystemCompatibilityCheck.h"
+#include "../Gui.h"
 #include "biotracker/util/stdext.h"
 
 int main(int argc, char *argv[]) {

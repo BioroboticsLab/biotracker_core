@@ -2,13 +2,13 @@
 
 #include <QMainWindow>
 
-#include "biotracker/core/BioTrackerApp.h"
-#include "biotracker/gui/ui_MainWindow.h"
-#include "biotracker/gui/AlgorithmSelectionWidget.h"
-#include "biotracker/gui/NotificationWidget.h"
-#include "biotracker/gui/VideoControlWidget.h"
-#include "biotracker/gui/OpenCameraDialog.h"
-#include "biotracker/gui/VideoView.h"
+#include "biotracker/BioTrackerApp.h"
+#include "ui_MainWindow.h"
+#include "AlgorithmSelectionWidget.h"
+#include "NotificationWidget.h"
+#include "VideoControlWidget.h"
+#include "OpenCameraDialog.h"
+#include "VideoView.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 #include "biotracker/util/QOpenGLContextWrapper.h"
 

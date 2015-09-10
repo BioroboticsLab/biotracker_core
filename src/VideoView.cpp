@@ -1,4 +1,4 @@
-#include "VideoView.h"
+#include "../VideoView.h"
 
 // TODO
 // check if m_texture is nullptr

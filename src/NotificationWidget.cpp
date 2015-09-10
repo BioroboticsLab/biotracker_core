@@ -1,4 +1,4 @@
-#include "NotificationWidget.h"
+#include "../NotificationWidget.h"
 
 namespace BioTracker {
 namespace Gui {

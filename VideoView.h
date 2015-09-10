@@ -10,8 +10,8 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
 
-#include "biotracker/core/TextureObject.h"
-#include "biotracker/core/BioTrackerApp.h"
+#include "biotracker/TextureObject.h"
+#include "biotracker/BioTrackerApp.h"
 
 #include "biotracker/util/stdext.h"
 

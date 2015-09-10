@@ -2,8 +2,8 @@
 
 #include <QWidget>
 
-#include "biotracker/core/BioTrackerApp.h"
-#include "biotracker/gui/ui_NotificationWidget.h"
+#include "biotracker/BioTrackerApp.h"
+#include "ui_NotificationWidget.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 
 namespace BioTracker {

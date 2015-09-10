@@ -1,4 +1,4 @@
-#include "Gui.h"
+#include "../Gui.h"
 
 #include <vector>
 

@@ -2,8 +2,8 @@
 
 #include <QDialog>
 
-#include "biotracker/core/BioTrackerApp.h"
-#include "biotracker/gui/ui_OpenCameraDialog.h"
+#include "biotracker/BioTrackerApp.h"
+#include "ui_OpenCameraDialog.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 
 namespace BioTracker {

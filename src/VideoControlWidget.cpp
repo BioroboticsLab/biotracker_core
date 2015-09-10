@@ -1,12 +1,11 @@
-#include "VideoControlWidget.h"
+#include "../VideoControlWidget.h"
 
 
 #include <QKeySequence>
 #include <QShortcut>
 #include <thread>
 
-#include "biotracker/core/TrackingThread.h"
-#include "biotracker/gui/VideoView.h"
+#include "../VideoView.h"
 
 
 namespace BioTracker {
@@ -29,37 +28,38 @@ VideoControlWidget::VideoControlWidget(QWidget *parent,
 }
 
 void VideoControlWidget::updateWidgets() {
-    const bool validFile = m_bioTracker.getStatus() ==
-                           Core::TrackingThread::TrackerStatus::Running ||
-                           m_bioTracker.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
-
-    const bool hasNext = m_bioTracker.getCurrentFrameNumber() <
-                         m_bioTracker.getNumFrames();
-    const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
-
-    m_ui.button_nextFrame->setEnabled(validFile && hasNext);
-    m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
-
-    switch (m_bioTracker.getStatus()) {
-    case Core::TrackingThread::TrackerStatus::Invalid:
-    case Core::TrackingThread::TrackerStatus::NothingLoaded:
-        m_ui.button_playPause->setIcon(m_iconPlay);
-        m_ui.button_playPause->setEnabled(false);
-        m_ui.sld_video->setEnabled(false);
-        break;
-    case Core::TrackingThread::TrackerStatus::Running:
-        m_ui.button_playPause->setIcon(m_iconPause);
-        m_ui.button_playPause->setEnabled(true);
-        m_ui.sld_video->setEnabled(true);
-        break;
-    case Core::TrackingThread::TrackerStatus::Paused:
-        m_ui.button_playPause->setIcon(m_iconPlay);
-        m_ui.button_playPause->setEnabled(true);
-        m_ui.sld_video->setEnabled(true);
-        break;
-    default:
-        assert(false);
-    }
+// TODO: This shoud be done by biotracker_core
+//    const bool validFile = m_bioTracker.getStatus() ==
+//                           Core::TrackingThread::TrackerStatus::Running ||
+//                           m_bioTracker.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
+//
+//    const bool hasNext = m_bioTracker.getCurrentFrameNumber() <
+//                         m_bioTracker.getNumFrames();
+//    const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
+//
+//    m_ui.button_nextFrame->setEnabled(validFile && hasNext);
+//    m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
+//
+//    switch (m_bioTracker.getStatus()) {
+//    case Core::TrackingThread::TrackerStatus::Invalid:
+//    case Core::TrackingThread::TrackerStatus::NothingLoaded:
+//        m_ui.button_playPause->setIcon(m_iconPlay);
+//        m_ui.button_playPause->setEnabled(false);
+//        m_ui.sld_video->setEnabled(false);
+//        break;
+//    case Core::TrackingThread::TrackerStatus::Running:
+//        m_ui.button_playPause->setIcon(m_iconPause);
+//        m_ui.button_playPause->setEnabled(true);
+//        m_ui.sld_video->setEnabled(true);
+//        break;
+//    case Core::TrackingThread::TrackerStatus::Paused:
+//        m_ui.button_playPause->setIcon(m_iconPlay);
+//        m_ui.button_playPause->setEnabled(true);
+//        m_ui.sld_video->setEnabled(true);
+//        break;
+//    default:
+//        assert(false);
+//    }
 }
 
 void VideoControlWidget::initShortcuts() {
@@ -130,18 +130,19 @@ void VideoControlWidget::initConnects() {
 }
 
 void VideoControlWidget::playPause() {
-    switch (m_bioTracker.getStatus()) {
-    case Core::TrackingThread::TrackerStatus::Paused:
-        m_bioTracker.play();
-        break;
-    case Core::TrackingThread::TrackerStatus::Running:
-        m_bioTracker.pause();
-        break;
-    default:
-        assert(false);
-    }
-
-    updateWidgets();
+// TODO: This shoud be done by biotracker_core
+//    switch (m_bioTracker.getStatus()) {
+//    case Core::TrackingThread::TrackerStatus::Paused:
+//        m_bioTracker.play();
+//        break;
+//    case Core::TrackingThread::TrackerStatus::Running:
+//        m_bioTracker.pause();
+//        break;
+//    default:
+//        assert(false);
+//    }
+//
+//    updateWidgets();
 }
 
 void VideoControlWidget::setFrame(const size_t frame) {

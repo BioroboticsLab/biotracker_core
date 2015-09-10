@@ -2,9 +2,9 @@
 
 #include <QStringList>
 
-#include "biotracker/core/BioTrackerApp.h"
+#include "biotracker/BioTrackerApp.h"
 
-#include "biotracker/gui/MainWindow.h"
+#include "MainWindow.h"
 
 #include "biotracker/util/QOpenGLContextWrapper.h"
 

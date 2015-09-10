@@ -1,8 +1,8 @@
-#include "AlgorithmSelectionWidget.h"
+#include "../AlgorithmSelectionWidget.h"
 
 #include <QString>
 
-#include "biotracker/core/Registry.h"
+#include "biotracker/Registry.h"
 
 namespace BioTracker {
 namespace Gui {
