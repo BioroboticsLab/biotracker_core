@@ -182,3 +182,4 @@ enable_testing()
 
 add_subdirectory(biotracker)
 add_subdirectory(doc)
+add_subdirectory(test)
