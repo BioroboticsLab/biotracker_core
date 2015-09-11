@@ -6,9 +6,8 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "Registry.h"
-#include "serialization/TrackedObject.h"
-#include "serialization/types.hpp"
+#include "TrackedObject.h"
+#include "types.hpp"
 
 namespace Serialization {
 class Data {
