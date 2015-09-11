@@ -42,11 +42,6 @@ CPM_AddModule("cpm_cereal"
     EXPORT_MODULE true
 )
 
-CPM_AddModule("cpm_boost"
-    GIT_REPOSITORY https://github.com/BioroboticsLab/cpm_boost.git
-    GIT_TAG 87d95cb8f0c91809422f9d03539a332ccde986ab
-)
-
 CPM_InitModule(${CPM_MODULE_NAME})
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH})
