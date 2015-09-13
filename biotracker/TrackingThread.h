@@ -15,6 +15,7 @@
 #include "ImageStream.h"
 
 #include "interpreter/Interpreter.h"
+//#include "BioTrackerApp.h"
 
 class Settings;
 
@@ -23,17 +24,6 @@ namespace Core {
 
 class TrackingThread : public QThread {
   public:
-    /**
-     * @brief The TrackerStatus enum
-     * describes the current status of the tracking algorithm
-     */
-    enum class TrackerStatus {
-        NothingLoaded,  ///< No media selected
-        Running,        ///< The tracker is running
-        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
-        Invalid         ///< The replayed file is invalid
-    };
-
     Q_OBJECT
   public:
     TrackingThread(Settings &settings);
@@ -42,7 +32,7 @@ class TrackingThread : public QThread {
     void initializeOpenGL(QOpenGLContext *context,
                           TextureObject &texture);
 
-    TrackerStatus getStatus() const {
+    BioTrackerApp::TrackerStatus getStatus() const {
         //TODO maybe lock this part?
         return m_status;
     }
@@ -130,7 +120,7 @@ class TrackingThread : public QThread {
     bool m_somethingIsLoaded;
 
     //defines whether to use pictures as source or a video
-    TrackerStatus m_status;
+    BioTrackerApp::TrackerStatus m_status;
 
     double m_fps;
     double m_runningFps;

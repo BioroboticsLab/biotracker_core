@@ -20,6 +20,18 @@ namespace Core {
 
 /* Used to be Facade */
 class BioTrackerApp : public QObject {
+  public:
+    /**
+     * @brief The TrackerStatus enum
+     * describes the current status of the tracking algorithm
+     */
+    enum class TrackerStatus {
+        NothingLoaded,  ///< No media selected
+        Running,        ///< The tracker is running
+        Paused,         ///< The tracker is paused. The calculation of the current frame might still be running
+        Invalid         ///< The replayed file is invalid
+    };
+
     Q_OBJECT
   public:
     BioTrackerApp();
@@ -42,7 +54,7 @@ class BioTrackerApp : public QObject {
         return m_trackingThread;
     }
 
-    TrackingThread::TrackerStatus getStatus() const {
+    BioTrackerApp::TrackerStatus getStatus() const {
         return m_trackingThread.getStatus();
     }
 

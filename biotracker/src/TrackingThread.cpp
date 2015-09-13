@@ -26,7 +26,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_playing(false),
     m_playOnce(false),
     m_somethingIsLoaded(false),
-    m_status(TrackerStatus::NothingLoaded),
+    m_status(BioTrackerApp::TrackerStatus::NothingLoaded),
     m_fps(30),
     m_runningFps(0),
     m_maxSpeed(false),
@@ -62,7 +62,7 @@ void TrackingThread::loadFromSettings() {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
         Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        m_status = TrackerStatus::Invalid;
+        m_status = BioTrackerApp::TrackerStatus::Invalid;
         return;
     } else {
         playOnce();
@@ -83,7 +83,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
         Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        m_status = TrackerStatus::Invalid;
+        m_status = BioTrackerApp::TrackerStatus::Invalid;
         return;
     } else {
         playOnce();
@@ -111,7 +111,7 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         }
         errorMsg += "]";
         Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        m_status = TrackerStatus::Invalid;
+        m_status = BioTrackerApp::TrackerStatus::Invalid;
         return;
     } else {
         playOnce();
@@ -125,10 +125,10 @@ void TrackingThread::openCamera(int device) {
         std::string errorMsg = "unable to open camera " + QString::number(
                                    device).toStdString();
         Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
-        m_status = TrackerStatus::Invalid;
+        m_status = BioTrackerApp::TrackerStatus::Invalid;
         return;
     }
-    m_status = TrackerStatus::Running;
+    m_status = BioTrackerApp::TrackerStatus::Running;
     m_fps = m_imageStream->fps();
     std::string note = "open camera " + QString::number(device).toStdString();
     Q_EMIT notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
@@ -271,12 +271,12 @@ size_t TrackingThread::getFrameNumber() const {
 
 void TrackingThread::setPause() {
     m_playing = false;
-    m_status = TrackerStatus::Paused;
+    m_status = BioTrackerApp::TrackerStatus::Paused;
 }
 
 void TrackingThread::setPlay() {
     m_playing = true;
-    m_status = TrackerStatus::Running;
+    m_status = BioTrackerApp::TrackerStatus::Running;
     m_conditionVariable.notify_all();
 }
 
@@ -318,7 +318,7 @@ void TrackingThread::togglePlaying() {
 }
 
 void TrackingThread::playOnce() {
-    m_status = TrackerStatus::Paused;
+    m_status = BioTrackerApp::TrackerStatus::Paused;
     m_playOnce = true;
     m_somethingIsLoaded = true;
     m_conditionVariable.notify_all();

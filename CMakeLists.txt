@@ -5,7 +5,7 @@ if (POLICY CMP0020)
 endif(POLICY CMP0020)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-project(BioTracker)
+project(biotracker_core)
 
 #-----------------------------------------------------------------------
 # CPM configuration
