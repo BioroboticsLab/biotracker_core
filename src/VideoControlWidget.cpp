@@ -29,37 +29,37 @@ VideoControlWidget::VideoControlWidget(QWidget *parent,
 
 void VideoControlWidget::updateWidgets() {
 // TODO: This shoud be done by biotracker_core
-//    const bool validFile = m_bioTracker.getStatus() ==
-//                           Core::TrackingThread::TrackerStatus::Running ||
-//                           m_bioTracker.getStatus() == Core::TrackingThread::TrackerStatus::Paused;
-//
-//    const bool hasNext = m_bioTracker.getCurrentFrameNumber() <
-//                         m_bioTracker.getNumFrames();
-//    const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
-//
-//    m_ui.button_nextFrame->setEnabled(validFile && hasNext);
-//    m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
-//
-//    switch (m_bioTracker.getStatus()) {
-//    case Core::TrackingThread::TrackerStatus::Invalid:
-//    case Core::TrackingThread::TrackerStatus::NothingLoaded:
-//        m_ui.button_playPause->setIcon(m_iconPlay);
-//        m_ui.button_playPause->setEnabled(false);
-//        m_ui.sld_video->setEnabled(false);
-//        break;
-//    case Core::TrackingThread::TrackerStatus::Running:
-//        m_ui.button_playPause->setIcon(m_iconPause);
-//        m_ui.button_playPause->setEnabled(true);
-//        m_ui.sld_video->setEnabled(true);
-//        break;
-//    case Core::TrackingThread::TrackerStatus::Paused:
-//        m_ui.button_playPause->setIcon(m_iconPlay);
-//        m_ui.button_playPause->setEnabled(true);
-//        m_ui.sld_video->setEnabled(true);
-//        break;
-//    default:
-//        assert(false);
-//    }
+    const bool validFile = m_bioTracker.getStatus() ==
+                           BioTracker::Core::TrackerStatus::Running ||
+                           m_bioTracker.getStatus() == BioTracker::Core::TrackerStatus::Paused;
+
+    const bool hasNext = m_bioTracker.getCurrentFrameNumber() <
+                         m_bioTracker.getNumFrames();
+    const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
+
+    m_ui.button_nextFrame->setEnabled(validFile && hasNext);
+    m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
+
+    switch (m_bioTracker.getStatus()) {
+    case BioTracker::Core::TrackerStatus::Invalid:
+    case BioTracker::Core::TrackerStatus::NothingLoaded:
+        m_ui.button_playPause->setIcon(m_iconPlay);
+        m_ui.button_playPause->setEnabled(false);
+        m_ui.sld_video->setEnabled(false);
+        break;
+    case BioTracker::Core::TrackerStatus::Running:
+        m_ui.button_playPause->setIcon(m_iconPause);
+        m_ui.button_playPause->setEnabled(true);
+        m_ui.sld_video->setEnabled(true);
+        break;
+    case BioTracker::Core::TrackerStatus::Paused:
+        m_ui.button_playPause->setIcon(m_iconPlay);
+        m_ui.button_playPause->setEnabled(true);
+        m_ui.sld_video->setEnabled(true);
+        break;
+    default:
+        assert(false);
+    }
 }
 
 void VideoControlWidget::initShortcuts() {
@@ -131,18 +131,18 @@ void VideoControlWidget::initConnects() {
 
 void VideoControlWidget::playPause() {
 // TODO: This shoud be done by biotracker_core
-//    switch (m_bioTracker.getStatus()) {
-//    case Core::TrackingThread::TrackerStatus::Paused:
-//        m_bioTracker.play();
-//        break;
-//    case Core::TrackingThread::TrackerStatus::Running:
-//        m_bioTracker.pause();
-//        break;
-//    default:
-//        assert(false);
-//    }
-//
-//    updateWidgets();
+    switch (m_bioTracker.getStatus()) {
+    case BioTracker::Core::TrackerStatus::Paused:
+        m_bioTracker.play();
+        break;
+    case BioTracker::Core::TrackerStatus::Running:
+        m_bioTracker.pause();
+        break;
+    default:
+        assert(false);
+    }
+
+    updateWidgets();
 }
 
 void VideoControlWidget::setFrame(const size_t frame) {

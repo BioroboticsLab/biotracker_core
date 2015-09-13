@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "biotracker/BioTrackerApp.h"
+#include "biotracker/TrackerStatus.h"
 #include "ui_VideoControlWidget.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 #include "VideoView.h"
