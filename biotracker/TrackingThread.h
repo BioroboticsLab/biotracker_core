@@ -15,7 +15,7 @@
 #include "ImageStream.h"
 
 #include "interpreter/Interpreter.h"
-//#include "BioTrackerApp.h"
+#include "TrackerStatus.h"
 
 class Settings;
 
@@ -32,7 +32,7 @@ class TrackingThread : public QThread {
     void initializeOpenGL(QOpenGLContext *context,
                           TextureObject &texture);
 
-    BioTrackerApp::TrackerStatus getStatus() const {
+    TrackerStatus getStatus() const {
         //TODO maybe lock this part?
         return m_status;
     }
@@ -120,7 +120,7 @@ class TrackingThread : public QThread {
     bool m_somethingIsLoaded;
 
     //defines whether to use pictures as source or a video
-    BioTrackerApp::TrackerStatus m_status;
+    TrackerStatus m_status;
 
     double m_fps;
     double m_runningFps;
