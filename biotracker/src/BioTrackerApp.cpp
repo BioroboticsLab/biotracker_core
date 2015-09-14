@@ -31,7 +31,6 @@ void BioTrackerApp::initConnects() {
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
                                      TextureObject &texture) {
     m_trackingThread.initializeOpenGL(mainContext, texture);
-
 }
 
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
@@ -80,6 +79,10 @@ void BioTrackerApp::setFrame(const size_t frameNumber) {
 
 void BioTrackerApp::setTargetFps(const double fps) {
     m_trackingThread.setFps(fps);
+}
+
+void BioTrackerApp::setMaxSpeed(bool enabled) {
+    m_trackingThread.setMaxSpeed(enabled);
 }
 
 double BioTrackerApp::getTargetFps() const {

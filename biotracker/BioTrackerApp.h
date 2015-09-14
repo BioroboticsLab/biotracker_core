@@ -112,6 +112,12 @@ class BioTrackerApp : public QObject {
     void setTargetFps(double fps);
 
     /**
+     * @brief setMaxSpeed
+     * @param enabled
+     */
+    void setMaxSpeed(bool enabled);
+
+    /**
      * @brief getTargetFps
      * @return the set FPS of the program
      */
