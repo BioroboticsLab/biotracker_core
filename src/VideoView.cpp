@@ -85,7 +85,7 @@ void VideoView::fitToWindow() {
     glOrtho(left, right, bottom, top, 0.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
 
-    //emit reportZoomLevel(_screenPicRatio + _zoomFactor);
+    // Q_EMIT reportZoomLevel(m_screenPicRatio + m_panZoomState.zoomFactor);
 
     //Draw the scene
     update();
@@ -110,6 +110,10 @@ void VideoView::initializeGL() {
 }
 
 void VideoView::resizeGL(int width, int height) {
+
+    makeCurrent();
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_ACCUM_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+
     // dont do anything if  width or height are 0
     // or there is no image to display
     if (width <= 0 || height <= 0) {
@@ -204,81 +208,85 @@ void VideoView::keyPressEvent(QKeyEvent *e) {
 }
 
 void VideoView::mouseMoveEvent(QMouseEvent *e) {
+
     switch (m_currentMode) {
-    case Mode::PANZOOM:
-        if (m_panZoomState.panState) {
-            const QPointF delta = e->localPos() - (*m_panZoomState.panState).lastPos;
-            (*m_panZoomState.panState).lastPos = e->localPos();
+        case Mode::PANZOOM: {
+            if (m_panZoomState.panState) {
+                const QPointF delta = e->localPos() - (*m_panZoomState.panState).lastPos;
+                (*m_panZoomState.panState).lastPos = e->localPos();
 
-            m_panZoomState.panX -= static_cast<float>(delta.x() * (m_screenPicRatio +
-                                   m_panZoomState.zoomFactor));
-            m_panZoomState.panY -= static_cast<float>(delta.y() * (m_screenPicRatio +
-                                   m_panZoomState.zoomFactor));
+                m_panZoomState.panX -= static_cast<float>(delta.x() * (m_screenPicRatio +
+                                       m_panZoomState.zoomFactor));
+                m_panZoomState.panY -= static_cast<float>(delta.y() * (m_screenPicRatio +
+                                       m_panZoomState.zoomFactor));
 
-            resizeGL(this->width(), this->height());
-            update();
+                resizeGL(this->width(), this->height());
+                update();
+            }
+            break;
         }
-        break;
-    case Mode::INTERACTION:
-        /*
-        e->accept();
-        QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-        */
-        break;
-    default:
-        assert(false);
-        break;
+        case Mode::INTERACTION: {
+            e->accept();
+            QPoint p  = unprojectScreenPos(e->pos());
+            const QPointF localPos(p);
+            QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            break;
+        }
+        default: {
+            assert(false);
+            break;
+        }
     }
 
 }
 
 void VideoView::mousePressEvent(QMouseEvent *e) {
     switch (m_currentMode) {
-    case Mode::PANZOOM:
-        if (QApplication::keyboardModifiers() == Qt::NoModifier) {
-            m_panZoomState.panState = CurrentPanState(e->localPos());
-            setCursor(Qt::ClosedHandCursor);
+        case Mode::PANZOOM: {
+            if (QApplication::keyboardModifiers() == Qt::NoModifier) {
+                m_panZoomState.panState = CurrentPanState(e->localPos());
+                setCursor(Qt::ClosedHandCursor);
+            }
+            if (e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick) {
+                fitToWindow();
+            }
+            break;
         }
-        if (e->button() == Qt::LeftButton && e->type() == QEvent::MouseButtonDblClick) {
-            fitToWindow();
+        case Mode::INTERACTION: {
+            e->accept();
+            QPoint p  = unprojectScreenPos(e->pos());
+            const QPointF localPos(p);
+            QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            break;
         }
-        break;
-    case Mode::INTERACTION:
-        /*
-        e->accept();
-        QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-        */
-        break;
-    default:
-        assert(false);
-        break;
+        default: {
+            assert(false);
+            break;
+        }
     }
 }
 
 void VideoView::mouseReleaseEvent(QMouseEvent *e) {
     switch (m_currentMode) {
-    case Mode::PANZOOM:
-        setCursor(Qt::OpenHandCursor);
-        m_panZoomState.panState.reset();
-        break;
-    case Mode::INTERACTION:
-        /*
-        e->accept();
-        QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-        */
-        break;
-    default:
-        assert(false);
-        break;
+        case Mode::PANZOOM: {
+            setCursor(Qt::OpenHandCursor);
+            m_panZoomState.panState.reset();
+            break;
+        }
+        case Mode::INTERACTION: {
+            e->accept();
+            QPoint p  = unprojectScreenPos(e->pos());
+            const QPointF localPos(p);
+            QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
+            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            break;
+        }
+        default: {
+            assert(false);
+            break;
+        }
     }
 }
 
@@ -292,44 +300,46 @@ void VideoView::wheelEvent(QWheelEvent *e) {
     }
 
     switch (m_currentMode) {
-    case Mode::PANZOOM:
-        if (e->orientation() == Qt::Vertical) {
-            const QPointF pos = e->posF();
-            const int numDegrees  = e->delta();
-            const float deltaZoom = step * numDegrees;
+        case Mode::PANZOOM: {
+            if (e->orientation() == Qt::Vertical) {
+                const QPointF pos = e->posF();
+                const int numDegrees  = e->delta();
+                const float deltaZoom = step * numDegrees;
 
-            m_panZoomState.zoomFactor -= deltaZoom;
+                m_panZoomState.zoomFactor -= deltaZoom;
 
-            // offset of mouse cursor from widget center in proportion to widget size
-            const float propX = width() / 2.f - static_cast<float>(pos.x());
-            const float propY = height() / 2.f - static_cast<float>(pos.y());
+                // offset of mouse cursor from widget center in proportion to widget size
+                const float propX = width() / 2.f - static_cast<float>(pos.x());
+                const float propY = height() / 2.f - static_cast<float>(pos.y());
 
-            // zoom to center
-            m_panZoomState.panX += (deltaZoom * width()) / 2;
-            m_panZoomState.panY += (deltaZoom * height()) / 2;
+                // zoom to center
+                m_panZoomState.panX += (deltaZoom * width()) / 2;
+                m_panZoomState.panY += (deltaZoom * height()) / 2;
 
-            // adjust for cursor position
-            m_panZoomState.panX -= (deltaZoom * propX);
-            m_panZoomState.panY -= (deltaZoom * propY);
+                // adjust for cursor position
+                m_panZoomState.panX -= (deltaZoom * propX);
+                m_panZoomState.panY -= (deltaZoom * propY);
 
-            resizeGL(this->width(), this->height());
-            update();
-            e->accept();
+                resizeGL(this->width(), this->height());
+                update();
+                e->accept();
+            }
+            break;
         }
-        break;
-    case Mode::INTERACTION:
-        /*
-        e->accept();
-        QPoint p  = unprojectScreenPos(e->pos());
-        const QPointF localPos(p);
-        QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
-        QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
-        */
-        break;
-    default:
-        assert(false);
-        break;
+        case Mode::INTERACTION: {
+            e->accept();
+            QPoint p  = unprojectScreenPos(e->pos());
+            const QPointF localPos(p);
+            QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
+            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            break;
+        }
+        default: {
+            assert(false);
+            break;
+        }
     }
 }
+
 }
 }
