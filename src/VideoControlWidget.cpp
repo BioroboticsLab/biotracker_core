@@ -28,13 +28,13 @@ VideoControlWidget::VideoControlWidget(QWidget *parent,
 }
 
 void VideoControlWidget::updateWidgets() {
-// TODO: This shoud be done by biotracker_core
+
     const bool validFile = m_bioTracker.getStatus() ==
                            BioTracker::Core::TrackerStatus::Running ||
                            m_bioTracker.getStatus() == BioTracker::Core::TrackerStatus::Paused;
 
     const bool hasNext = m_bioTracker.getCurrentFrameNumber() <
-                         m_bioTracker.getNumFrames();
+                         m_bioTracker.getNumFrames()-1;
     const bool hasPrev = m_bioTracker.getCurrentFrameNumber() > 0;
 
     m_ui.button_nextFrame->setEnabled(validFile && hasNext);
@@ -130,7 +130,6 @@ void VideoControlWidget::initConnects() {
 }
 
 void VideoControlWidget::playPause() {
-// TODO: This shoud be done by biotracker_core
     switch (m_bioTracker.getStatus()) {
     case BioTracker::Core::TrackerStatus::Paused:
         m_bioTracker.play();
