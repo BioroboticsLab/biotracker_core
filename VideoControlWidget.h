@@ -60,7 +60,7 @@ class VideoControlWidget : public QWidget {
     void videoSliderChanged(const size_t frame);
     void videoSliderReleased();
     void videoSliderPressed();
-    void speedSliderReleased();
+    void speedSliderValueChanged(int value);
 };
 
 }
