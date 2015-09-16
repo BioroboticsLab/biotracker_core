@@ -17,6 +17,7 @@ namespace Gui {
 
 VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
     : QOpenGLWidget(parent)
+    , m_openGLLogger(this)
     , m_currentMode(Mode::INTERACTION)
     , m_screenPicRatio(0)
     , m_texture(this)
@@ -90,9 +91,19 @@ void VideoView::fitToWindow() {
     update();
 }
 
+void VideoView::handleLoggedMessage(const QOpenGLDebugMessage &debugMessage) {
+    std::cout << debugMessage.message().toStdString() << std::endl;
+}
+
 void VideoView::initializeGL() {
     makeCurrent();
     initializeOpenGLFunctions();
+
+    m_openGLLogger.initialize(); // initializes in the current context, i.e. ctx
+    connect(&m_openGLLogger, &QOpenGLDebugLogger::messageLogged, this,
+            &VideoView::handleLoggedMessage);
+    m_openGLLogger.startLogging();
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     resizeGL(width(), height());
     m_biotracker.initializeOpenGL(context(), this->getTexture());
