@@ -124,9 +124,8 @@ void VideoControlWidget::initConnects() {
     timer->start(200);
 
     // speed slider
-    QObject::connect(m_ui.sld_speed, &QSlider::sliderReleased, this,
-                     &VideoControlWidget::speedSliderReleased);
-
+    QObject::connect(m_ui.sld_speed, &QSlider::valueChanged, this,
+                     &VideoControlWidget::speedSliderValueChanged);
 }
 
 void VideoControlWidget::playPause() {
@@ -208,13 +207,14 @@ void VideoControlWidget::videoSliderPressed() {
     this->updateWidgets();
 }
 
-void VideoControlWidget::speedSliderReleased() {
-    const int speed = m_ui.sld_speed->value();
+void VideoControlWidget::speedSliderValueChanged(int speed) {
     if (speed < m_ui.sld_speed->maximum()) {
         m_bioTracker.setMaxSpeed(false);
         m_bioTracker.setTargetFps(speed);
+        m_ui.fps_label->setText(QString::number(speed));
     } else {
         m_bioTracker.setMaxSpeed(true);
+        m_ui.fps_label->setText("max");
     }
 }
 
