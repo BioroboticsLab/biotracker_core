@@ -44,51 +44,9 @@ void VideoView::setMode(const VideoView::Mode mode) {
 
 void VideoView::fitToWindow() {
     makeCurrent();
-
     // reset PanZoomState
     m_panZoomState = PanZoomState();
-
-    float width  = static_cast<float>(this->width());
-    float height = static_cast<float>(this->height());
-
-    // calculate pan such that image is centered in widget
-    {
-        const int imageCols = m_texture.getImage().cols;
-        const int imageRows = m_texture.getImage().rows;
-
-        const float imgRatio    = static_cast<float>(imageCols) / imageRows;
-        const float windowRatio = static_cast<float>(width) / height;
-
-        if (windowRatio < imgRatio) {
-            m_panZoomState.panY = -((height - (width / imgRatio)) / 2) *
-                                  (m_screenPicRatio + m_panZoomState.zoomFactor);
-            m_panZoomState.panX = 0;
-        } else {
-            m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) *
-                                  (m_screenPicRatio + m_panZoomState.zoomFactor);
-            m_panZoomState.panY = 0;
-        }
-    }
-
-    glViewport(0,0, static_cast<GLsizei>(width) ,static_cast<GLsizei>(height));
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    width  *= (m_screenPicRatio + m_panZoomState.zoomFactor);
-    height *= (m_screenPicRatio + m_panZoomState.zoomFactor);
-
-    const float left   = m_panZoomState.panX;
-    const float top    = m_panZoomState.panY;
-    const float right  = left + width;
-    const float bottom = top + height;
-
-    glOrtho(left, right, bottom, top, 0.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-
-    // Q_EMIT reportZoomLevel(m_screenPicRatio + m_panZoomState.zoomFactor);
-
-    //Draw the scene
-    update();
+    directPaint(width(), height());
 }
 
 void VideoView::handleLoggedMessage(const QOpenGLDebugMessage &debugMessage) {
@@ -110,46 +68,7 @@ void VideoView::initializeGL() {
 }
 
 void VideoView::resizeGL(int width, int height) {
-
-    makeCurrent();
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_ACCUM_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-
-    // dont do anything if  width or height are 0
-    // or there is no image to display
-    if (width <= 0 || height <= 0) {
-        return;
-    }
-
-    const int imageCols = m_texture.getImage().cols;
-    const int imageRows = m_texture.getImage().rows;
-
-    // calculate ratio of screen to displayed image
-    const float imgRatio    = static_cast<float>(imageCols) / imageRows;
-    const float windowRatio = static_cast<float>(width) / height;
-
-    if (windowRatio < imgRatio) {
-        m_screenPicRatio = imageRows / (width / imgRatio);
-    } else {
-        m_screenPicRatio = imageCols / (height * imgRatio);
-    }
-
-    // create viewport with coordinates matching picture size in pixels
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    width = static_cast<int>(width * (m_screenPicRatio +
-                                      m_panZoomState.zoomFactor));
-    height = static_cast<int>(height *(m_screenPicRatio +
-                                       m_panZoomState.zoomFactor));
-
-    const float left   = m_panZoomState.panX;
-    const float top    = m_panZoomState.panY;
-    const float right  = left + width;
-    const float bottom = top + height;
-
-    glOrtho(left, right, bottom, top, 0.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
+    directPaint(width, height);
 }
 
 void VideoView::resizeEvent(QResizeEvent *event) {
@@ -160,7 +79,60 @@ void VideoView::resizeEvent(QResizeEvent *event) {
 }
 
 void VideoView::paintEvent(QPaintEvent *) {
+    directPaint(this->width(), this->height());
     m_biotracker.paint(*this, m_painter);
+}
+
+void VideoView::directPaint(const size_t w, const size_t h)
+{
+   makeCurrent();
+   if (w == 0 || h == 0) {
+       return;
+   }
+
+   int width = w;
+   int height = h;
+
+   const int imageCols = m_texture.getImage().cols;
+   const int imageRows = m_texture.getImage().rows;
+
+   // calculate ratio of screen to displayed image
+   const float imgRatio    = static_cast<float>(imageCols) / imageRows;
+   const float windowRatio = static_cast<float>(width) / height;
+
+   // create viewport with coordinates matching picture size in pixels
+   glViewport(0, 0, width, height);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+
+   if (windowRatio < imgRatio) {
+       m_screenPicRatio = imageRows / (width / imgRatio);
+   } else {
+       m_screenPicRatio = imageCols / (height * imgRatio);
+   }
+
+   width = static_cast<int>(width * (m_screenPicRatio +
+                                     m_panZoomState.zoomFactor));
+   height = static_cast<int>(height *(m_screenPicRatio +
+                                      m_panZoomState.zoomFactor));
+
+   if (windowRatio < imgRatio) {
+       m_panZoomState.panY = -((height - (width / imgRatio)) / 2) *
+                             (m_screenPicRatio + m_panZoomState.zoomFactor);
+       m_panZoomState.panX = 0;
+   } else {
+       m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) *
+                             (m_screenPicRatio + m_panZoomState.zoomFactor);
+       m_panZoomState.panY = 0;
+   }
+
+   const float left   = m_panZoomState.panX;
+   const float top    = m_panZoomState.panY;
+   const float right  = left + width;
+   const float bottom = top + height;
+
+   glOrtho(left, right, bottom, top, 0.0, 1.0);
+   glMatrixMode(GL_MODELVIEW);
 }
 
 QPoint VideoView::unprojectScreenPos(QPoint mouseCoords) {

@@ -253,9 +253,6 @@ void VideoControlWidget::switchPanZoomMode() {
 void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
 
-    m_videoView->resize(m_videoView->width()+1, m_videoView->height());
-    m_videoView->resize(m_videoView->width()-1, m_videoView->height());
-
     m_videoView->update();
 
     m_ui.sld_video->setValue(frameNumber);
