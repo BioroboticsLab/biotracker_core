@@ -32,8 +32,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
     m_settings(settings),
-    m_texture(nullptr),
-    m_openGLLogger(this) {
+    m_texture(nullptr) {
     Interpreter::Interpreter p;
     std::cout << "inter:" << p.interpret() << "\n";
 }
@@ -44,12 +43,6 @@ TrackingThread::~TrackingThread(void) {
 void TrackingThread::initializeOpenGL(QOpenGLContext *context,
                                       TextureObject &texture) {
     m_texture = &texture;
-
-    m_openGLLogger.initialize(); // initializes in the current context, i.e. ctx
-    connect(&m_openGLLogger, &QOpenGLDebugLogger::messageLogged, this,
-            &TrackingThread::handleLoggedMessage);
-    m_openGLLogger.startLogging();
-
     QThread::start();
 }
 
@@ -350,11 +343,6 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
 
 void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
-}
-
-void TrackingThread::handleLoggedMessage(const QOpenGLDebugMessage
-        &debugMessage) {
-    std::cout << debugMessage.message().toStdString() << std::endl;
 }
 
 }

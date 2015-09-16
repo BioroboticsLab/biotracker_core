@@ -134,8 +134,6 @@ class TrackingThread : public QThread {
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 
-    QOpenGLDebugLogger m_openGLLogger;
-
     /**
     * Checks if thread is in pause state.
     * @return true if paused, false otherwise.
@@ -193,9 +191,6 @@ class TrackingThread : public QThread {
     void setMaxSpeed(bool enabled);
 
     void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
-
-  private Q_SLOTS:
-    void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
 
   Q_SIGNALS:
     /**
