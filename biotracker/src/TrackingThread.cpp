@@ -274,13 +274,9 @@ void TrackingThread::setPlay() {
 }
 
 void TrackingThread::paintOverlay(QPainter &painter) {
+    (void) painter; // TODO: remove me ASAP
     if (m_somethingIsLoaded) {
-        QRect myQRect(10,10,200,200);
-        QLinearGradient gradient(myQRect.topLeft(),
-                                 myQRect.bottomRight()); // diagonal gradient from top-left to bottom-right
-        gradient.setColorAt(0, Qt::white);
-        gradient.setColorAt(1, Qt::red);
-        painter.fillRect(myQRect, gradient);
+
     }
 }
 
