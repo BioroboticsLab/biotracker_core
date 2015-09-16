@@ -206,7 +206,8 @@ class TrackingThread : public QThread {
     /**
      * emit new filename and entire frame quantity
      */
-    void fileOpened(const std::string fileName, const size_t numFrame);
+    void fileOpened(const std::string fileName, const size_t numFrame,
+                    const double targetFps);
 
     /**
     * send a message to the GUI.

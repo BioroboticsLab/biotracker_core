@@ -63,7 +63,7 @@ void TrackingThread::loadFromSettings() {
 
     m_fps = m_imageStream->fps();
 
-    Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames());
+    Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames(), m_fps);
 
     std::string note = "opened file: " + filenameStr + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
@@ -88,7 +88,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     std::string note = filename.string() + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    Q_EMIT fileOpened(filename.string(), m_imageStream->numFrames());
+    Q_EMIT fileOpened(filename.string(), m_imageStream->numFrames(), m_fps);
     Q_EMIT notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
 }
 

@@ -157,7 +157,7 @@ class BioTrackerApp : public QObject {
      *      Status messages for the user interface
      */
     void fileOpenedFromTrackingThread(const std::string fileName,
-                                      const size_t numFrame);
+                                      const size_t numFrame, const double tfps);
 
     /**
      * @brief notify
@@ -179,7 +179,8 @@ class BioTrackerApp : public QObject {
      * @brief fileOpened
      *      Update event for title and slider
      */
-    void fileOpened(const std::string message, const size_t numFrame);
+    void fileOpened(const std::string message, const size_t numFrame,
+                    const double tfps);
 
     /**
      * @brief frameCalculated

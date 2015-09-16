@@ -129,8 +129,8 @@ void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
 }
 
 void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,
-        const size_t numFrame) {
-    Q_EMIT fileOpened(fileName, numFrame);
+        const size_t numFrame, const double tfps) {
+    Q_EMIT fileOpened(fileName, numFrame, tfps);
 }
 
 } // Core
