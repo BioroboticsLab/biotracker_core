@@ -42,6 +42,9 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
     void setMode(const Mode mode);
     void fitToWindow();
 
+private Q_SLOTS:
+    void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
+
   private:
     /**
      * @brief Used to store mouse cursor offsets while panning.
@@ -64,6 +67,8 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
 
         boost::optional<CurrentPanState> panState;
     };
+
+    QOpenGLDebugLogger m_openGLLogger;
 
     /**
      * @brief Current State of the VideoWidget. In Interaction mode, mouse and keyboard event will be forwarded to

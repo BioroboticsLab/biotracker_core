@@ -15,7 +15,6 @@ class Gui : public QObject {
     Q_OBJECT
   public:
     Gui();
-
   private:
     Core::BioTrackerApp m_biotracker;
     MainWindow m_mainWindow;

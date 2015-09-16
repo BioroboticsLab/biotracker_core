@@ -207,9 +207,10 @@ void VideoControlWidget::videoSliderPressed() {
 void VideoControlWidget::speedSliderReleased() {
     const int speed = m_ui.sld_speed->value();
     if (speed <= m_ui.sld_speed->maximum()) {
-
+        m_bioTracker.setMaxSpeed(false);
+        m_bioTracker.setTargetFps(speed);
     } else {
-        //m_bioTracker
+        m_bioTracker.setMaxSpeed(true);
     }
 }
 
@@ -247,7 +248,6 @@ void VideoControlWidget::switchPanZoomMode() {
 
 void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
-
 
     m_videoView->resize(m_videoView->width()+1, m_videoView->height());
     m_videoView->resize(m_videoView->width()-1, m_videoView->height());
