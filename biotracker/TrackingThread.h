@@ -68,23 +68,11 @@ class TrackingThread : public QThread {
     void setPlay();
 
     /**
-     * allows to paint an overlay when rendered AFTER paintRaw.
      * @brief paint
+     * @param device
+     * @param painter
      */
-    void paintOverlay(QPainter &painter);
-
-    /**
-     * Paints the raw texture of the data of the current frame
-     * @brief paintRaw
-     */
-    void paintRaw();
-
-    /**
-     * notifies the thread that it can do the next calculation
-     * Must be the last paint-call!!!!
-     * @brief paintDone
-     */
-    void paintDone();
+    void paint(QPaintDevice &device, QPainter &painter);
 
     /**
      * Checks if the thread is in the rendering stage right now
@@ -111,6 +99,7 @@ class TrackingThread : public QThread {
     std::unique_ptr<ImageStream> m_imageStream;
     Mutex m_trackerMutex;
     std::mutex m_tickMutex;
+    std::mutex m_paintMutex;
     std::mutex m_renderMutex;
     std::condition_variable m_conditionVariable;
 
@@ -150,6 +139,25 @@ class TrackingThread : public QThread {
      * Play and calculate the next frame only.
      */
     void playOnce();
+
+    /**
+      * allows to paint an overlay when rendered AFTER paintRaw.
+      * @brief paint
+      */
+    void paintOverlay(QPainter &painter);
+
+    /**
+     * Paints the raw texture of the data of the current frame
+     * @brief paintRaw
+     */
+    void paintRaw();
+
+    /**
+     * notifies the thread that it can do the next calculation
+     * Must be the last paint-call!!!!
+     * @brief paintDone
+     */
+    void paintDone();
 
     /**
     * Does exactly one tick, eg. drawing one image and starting tracker once.

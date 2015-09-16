@@ -196,7 +196,9 @@ void TrackingThread::tick(const double fps) {
         nextFrame();
     }
     m_renderMutex.unlock();
+    m_paintMutex.lock();
     Q_EMIT frameCalculated(currentFrame, fileName, fps);
+    m_paintMutex.unlock();
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
@@ -339,6 +341,19 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
 
 void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
+}
+
+void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
+        QPainter &painter) {
+    m_paintMutex.lock();
+    // using painters algorithm to draw in the right order
+    paintRaw();
+    painter.begin(&device);
+    //painter->setWindow(QRect(0,0,w,h));
+    paintOverlay(painter);
+    paintDone();
+    painter.end();
+    m_paintMutex.unlock();
 }
 
 }

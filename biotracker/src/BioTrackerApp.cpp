@@ -56,13 +56,7 @@ void BioTrackerApp::pause() {
 }
 
 void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter) {
-    // using painters algorithm to draw in the right order
-    m_trackingThread.paintRaw();
-    painter.begin(&device);
-    //painter->setWindow(QRect(0,0,w,h));
-    m_trackingThread.paintOverlay(painter);
-    m_trackingThread.paintDone();
-    painter.end();
+    m_trackingThread.paint(device, painter);
 }
 
 bool BioTrackerApp::isRendering() {
