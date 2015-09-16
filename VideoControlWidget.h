@@ -28,7 +28,7 @@ class VideoControlWidget : public QWidget {
     void updateWidgets();
 
   public Q_SLOTS:
-    void fileOpened(const std::string filename, const size_t totalFrames);
+    void fileOpened(const std::string filename, const size_t totalFrames, const double tfps);
 
   private:
     VideoControlUi m_ui;

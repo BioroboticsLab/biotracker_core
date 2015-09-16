@@ -159,10 +159,14 @@ void VideoControlWidget::nextFrame() {
 }
 
 void VideoControlWidget::fileOpened(const std::string filename,
-                                    const size_t totalFrames) {
+                                    const size_t totalFrames,
+                                    const double targetFps) {
     (void)filename; // "un-use" filename. FileOpen is a generic event, but we dont
     // need the filename at this place
     m_ui.sld_video->setMaximum(totalFrames);
+    m_ui.fps_label->setText(QString::number(targetFps));
+    const int fpsAsInt = static_cast<int>(targetFps + 0.5);
+    m_ui.sld_speed->setValue(fpsAsInt);
 }
 
 void VideoControlWidget::previousFrame() {
@@ -206,7 +210,7 @@ void VideoControlWidget::videoSliderPressed() {
 
 void VideoControlWidget::speedSliderReleased() {
     const int speed = m_ui.sld_speed->value();
-    if (speed <= m_ui.sld_speed->maximum()) {
+    if (speed < m_ui.sld_speed->maximum()) {
         m_bioTracker.setMaxSpeed(false);
         m_bioTracker.setTargetFps(speed);
     } else {
