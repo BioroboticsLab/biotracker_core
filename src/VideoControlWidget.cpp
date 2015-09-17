@@ -257,7 +257,8 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
 
     if (!m_videoView->isZoomed()) {
         // TODO: fix this ugly hack
-        m_videoView->fitToWindow();
+        m_videoView->resize(m_videoView->width() + 1, m_videoView->height());
+        m_videoView->resize(m_videoView->width() - 1, m_videoView->height());
     }
     m_videoView->update();
     updateWidgets();
