@@ -137,17 +137,18 @@ void TrackingThread::run() {
         m_conditionVariable.wait(lk, [&] {return (m_playing || m_playOnce) && !m_isRendering;});
         m_isRendering = true;
 
+        m_playOnce = false;
+        if (m_imageStream->lastFrame()) {
+            setPause();
+        }
+
         //if thread just started (or is unpaused) start clock here
         //after this timestamp will be taken right before picture is drawn
         //to take the amount of time into account it takes to draw the picture
-        if (firstLoop)
-            // measure the capture start time
-        {
+        if (firstLoop) { // measure the capture start time
             t = std::chrono::system_clock::now();
         }
         firstLoop = false;
-
-
 
         std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
         std::chrono::microseconds dur =
@@ -176,11 +177,6 @@ void TrackingThread::run() {
 
         std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
-
-        m_playOnce = false;
-        if (m_imageStream->lastFrame()) {
-            m_playing = false;
-        }
 
         lk.unlock();
     }
