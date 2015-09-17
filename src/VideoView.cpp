@@ -182,7 +182,6 @@ QPoint VideoView::projectPicturePos(QPoint imageCoords) {
 }
 
 void VideoView::keyPressEvent(QKeyEvent *e) {
-
 }
 
 void VideoView::mouseMoveEvent(QMouseEvent *e) {
@@ -193,6 +192,7 @@ void VideoView::mouseMoveEvent(QMouseEvent *e) {
                 const QPointF delta = e->localPos() - (*m_panZoomState.panState).lastPos;
                 (*m_panZoomState.panState).lastPos = e->localPos();
 
+                m_panZoomState.isChanged = true;
                 m_panZoomState.panX -= static_cast<float>(delta.x() * (m_screenPicRatio +
                                        m_panZoomState.zoomFactor));
                 m_panZoomState.panY -= static_cast<float>(delta.y() * (m_screenPicRatio +
@@ -223,6 +223,7 @@ void VideoView::mousePressEvent(QMouseEvent *e) {
     switch (m_currentMode) {
         case Mode::PANZOOM: {
             if (QApplication::keyboardModifiers() == Qt::NoModifier) {
+                m_panZoomState.isChanged = true;
                 m_panZoomState.panState = CurrentPanState(e->localPos());
                 setCursor(Qt::ClosedHandCursor);
             }
@@ -285,6 +286,7 @@ void VideoView::wheelEvent(QWheelEvent *e) {
                 const float deltaZoom = step * numDegrees;
 
                 m_panZoomState.zoomFactor -= deltaZoom;
+                m_panZoomState.isChanged = true;
 
                 // offset of mouse cursor from widget center in proportion to widget size
                 const float propX = width() / 2.f - static_cast<float>(pos.x());
@@ -317,6 +319,10 @@ void VideoView::wheelEvent(QWheelEvent *e) {
             break;
         }
     }
+}
+
+bool VideoView::isZoomed() {
+    return m_panZoomState.isChanged;
 }
 
 }

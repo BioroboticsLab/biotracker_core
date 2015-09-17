@@ -38,7 +38,9 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
         return m_texture;
     }
 
-  public Q_SLOTS:
+    bool isZoomed();
+
+public Q_SLOTS:
     void setMode(const Mode mode);
     void fitToWindow();
 
@@ -64,6 +66,7 @@ private Q_SLOTS:
         float zoomFactor = 0.f;
         float panX       = 0.f;
         float panY       = 0.f;
+        bool isChanged = false;
 
         boost::optional<CurrentPanState> panState;
     };
@@ -103,7 +106,6 @@ private Q_SLOTS:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
-    void directPaint(const size_t w, const size_t h, const bool fitToWindow);
 
     /**
     * @brief unprojectScreenPos
@@ -124,6 +126,8 @@ private Q_SLOTS:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
+
+    void directPaint(const size_t w, const size_t h, const bool fitToWindow);
 };
 }
 }

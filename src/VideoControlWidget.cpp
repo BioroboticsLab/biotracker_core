@@ -253,6 +253,10 @@ void VideoControlWidget::switchPanZoomMode() {
 void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
 
+    if (!m_videoView->isZoomed()) {
+        // TODO: fix this ugly hack
+        m_videoView->fitToWindow();
+    }
     m_videoView->update();
     updateWidgets();
 
