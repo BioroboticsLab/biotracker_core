@@ -198,13 +198,13 @@ void VideoControlWidget::videoSliderReleased() {
     if (m_sliderVideoWasRunning) {
         m_bioTracker.play();
     }
-    this->updateWidgets();
+    updateWidgets();
 }
 
 void VideoControlWidget::videoSliderPressed() {
     m_sliderVideoWasRunning = m_bioTracker.isRunning();
     m_bioTracker.pause();
-    this->updateWidgets();
+    updateWidgets();
 }
 
 void VideoControlWidget::speedSliderValueChanged(int speed) {
@@ -254,6 +254,7 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
 
     m_videoView->update();
+    updateWidgets();
 
     m_ui.sld_video->setValue(frameNumber);
     m_ui.frame_num_edit->setText(QString::number(frameNumber));
