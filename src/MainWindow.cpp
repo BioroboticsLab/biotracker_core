@@ -18,10 +18,9 @@ void MainWindow::initalizeVideoView(Core::BioTrackerApp &biotracker) {
                      biotracker, m_videoView.get());
 }
 
-void MainWindow::fileOpened(const std::string filename,
-                            const size_t numFrames) {
-    statusBar()->showMessage(QString::fromStdString(filename));
-    setWindowTitle("BioTracker [" + QString::fromStdString(filename) + "]");
+void MainWindow::frameCalculated(const size_t frameNumber,
+                                 const std::string filename, const double currentFps) {
+    setWindowTitle("BioTracker [" + QString::fromStdString(stem_filename(filename)) + "]");
 }
 
 } // Gui

@@ -11,6 +11,7 @@
 #include "VideoView.h"
 #include "biotracker/util/QtRaiiWrapper.hpp"
 #include "biotracker/util/QOpenGLContextWrapper.h"
+#include "biotracker/util/stringTools.h"
 
 namespace BioTracker {
 namespace Gui {
@@ -44,10 +45,11 @@ class MainWindow : public QMainWindow {
 
   public Q_SLOTS:
     /**
-     * @brief notify
-     *      Status messages for the user interface
+     * @brief frameCalculated
+     *      handles the showing of filenames in statusbar
      */
-    void fileOpened(const std::string filename, const size_t numFrames);
+    void frameCalculated(const size_t frameNumber,
+                    const std::string filename, const double currentFps);
 
   private:
     MainWindowUi m_ui;
