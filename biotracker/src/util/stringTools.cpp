@@ -6,6 +6,8 @@
  */
 
 #include <climits>
+#include <boost/filesystem/path.hpp>
+
 #include <string>    // std::string
 #include <stdexcept> // std::invalid_argument
 
@@ -79,4 +81,9 @@ std::string unescape_non_ascii(const std::string &s) {
         }
     }
     return result;
+}
+
+std::string stem_filename(const std::string &s) {
+    boost::filesystem::path p(s);
+    return p.stem().string();
 }

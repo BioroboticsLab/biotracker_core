@@ -10,7 +10,6 @@
 
 #include <string>
 
-
 /**
  * replaces every non-ASCII character in s with an escape sequence containing the hexadecimal representation of it's value.
  *
@@ -42,6 +41,12 @@ std::string escape_non_ascii(const std::string &s);
  *
  */
 std::string unescape_non_ascii(const std::string &s);
+
+/**
+ * @brief stem_filename
+ *      stems the filename from a path
+ */
+std::string stem_filename(const std::string &s);
 
 
 #endif /* STRINGTOOLS_H_ */
