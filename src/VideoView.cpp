@@ -90,6 +90,8 @@ void VideoView::directPaint(const size_t w, const size_t h)
        return;
    }
 
+   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_ACCUM_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+
    int width = w;
    int height = h;
 
