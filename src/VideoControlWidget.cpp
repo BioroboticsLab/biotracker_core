@@ -162,7 +162,7 @@ void VideoControlWidget::fileOpened(const std::string filename,
                                     const double targetFps) {
     (void)filename; // "un-use" filename. FileOpen is a generic event, but we dont
     // need the filename at this place
-    m_ui.sld_video->setMaximum(totalFrames);
+    m_ui.sld_video->setMaximum(totalFrames - 1);
     m_ui.fps_label->setText(QString::number(targetFps));
     const int fpsAsInt = static_cast<int>(targetFps + 0.5);
     m_ui.sld_speed->setValue(fpsAsInt);
