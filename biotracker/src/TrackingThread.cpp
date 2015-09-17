@@ -108,6 +108,8 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         return;
     } else {
         playOnce();
+        Q_EMIT fileOpened(m_imageStream->currentFilename(), m_imageStream->numFrames(),
+                          m_fps);
     }
 }
 
