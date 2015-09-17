@@ -17,7 +17,9 @@ VideoControlWidget::VideoControlWidget(QWidget *parent,
     , m_ui(parent)
     , m_bioTracker(facade)
     , m_videoView(videoView)
-    , m_isPanZoomMode(false) {
+    , m_isPanZoomMode(false)
+    , m_videoSliderChanged(false)
+{
     m_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"),
                         QSize(), QIcon::Normal, QIcon::Off);
     m_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"),
@@ -175,8 +177,8 @@ void VideoControlWidget::previousFrame() {
 }
 
 void VideoControlWidget::sliderRender() {
-    if (m_ui.sld_video->isEnabled()) {
-        if (m_ui.sld_video->isSliderDown() || m_videoSliderChanged) {
+    if (m_ui.sld_video->isEnabled() || m_videoSliderChanged) {
+        if (m_ui.sld_video->isSliderDown()) {
             if (!m_bioTracker.isRendering()) { // needed to prevent race condition
                 const int frame = m_ui.sld_video->value();
                 if (frame < m_ui.sld_video->maximum()) {
