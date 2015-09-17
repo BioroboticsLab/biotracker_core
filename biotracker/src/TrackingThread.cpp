@@ -147,11 +147,7 @@ void TrackingThread::run() {
         }
         firstLoop = false;
 
-        if ((m_imageStream->type() == GUIPARAM::MediaType::Video)
-                && m_imageStream->lastFrame()) {
-            // TODO is this still correct?
-            break;
-        }
+
 
         std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
         std::chrono::microseconds dur =
@@ -182,7 +178,10 @@ void TrackingThread::run() {
         t = std::chrono::system_clock::now();
 
         m_playOnce = false;
-        // unlock mutex
+        if (m_imageStream->lastFrame()) {
+            m_playing = false;
+        }
+
         lk.unlock();
     }
 }
