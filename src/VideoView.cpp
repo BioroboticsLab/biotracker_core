@@ -22,7 +22,8 @@ VideoView::VideoView(QWidget *parent, Core::BioTrackerApp &biotracker)
     , m_screenPicRatio(0)
     , m_texture(this)
     , m_biotracker(biotracker)
-    , m_painter() {
+    , m_painter()
+    , m_firstAttempt(true) {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setSizePolicy(sizePolicy);
 }
@@ -48,6 +49,16 @@ void VideoView::fitToWindow() {
     m_panZoomState = PanZoomState();
     directPaint(width(), height(), true);
     update();
+}
+
+/**
+  This attempts to fix a nasty bug that the very first image is not set
+  correctly.
+  TODO: fix this bug CORRECTLY!
+ * @brief VideoView::initialPaint
+ */
+void VideoView::initialPaint() {
+    QTimer::singleShot(20, this, SLOT(firstPaint()));
 }
 
 void VideoView::handleLoggedMessage(const QOpenGLDebugMessage &debugMessage) {
@@ -82,6 +93,17 @@ void VideoView::resizeEvent(QResizeEvent *event) {
 void VideoView::paintEvent(QPaintEvent *) {
     directPaint(this->width(), this->height(), false);
     m_biotracker.paint(*this, m_painter);
+}
+
+void VideoView::firstPaint() {
+
+    if (m_firstAttempt) {
+        m_firstAttempt = false;
+        this->resize(this->width() + 1, this->height());
+        QTimer::singleShot(20, this, SLOT(firstPaint()));
+    } else {
+        this->resize(this->width() - 1, this->height());
+    }
 }
 
 void VideoView::directPaint(const size_t w, const size_t h, const bool fitToWindow)

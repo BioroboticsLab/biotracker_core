@@ -168,6 +168,10 @@ void VideoControlWidget::fileOpened(const std::string filename,
     m_ui.fps_label->setText(QString::number(targetFps));
     const int fpsAsInt = static_cast<int>(targetFps + 0.5);
     m_ui.sld_speed->setValue(fpsAsInt);
+
+    // refresh
+    m_videoView->initialPaint();
+
 }
 
 void VideoControlWidget::previousFrame() {

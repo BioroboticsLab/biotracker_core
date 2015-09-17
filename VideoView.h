@@ -43,6 +43,7 @@ class VideoView : public QOpenGLWidget, protected QOpenGLFunctions {
 public Q_SLOTS:
     void setMode(const Mode mode);
     void fitToWindow();
+    void initialPaint();
 
 private Q_SLOTS:
     void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
@@ -100,6 +101,7 @@ private Q_SLOTS:
      * @brief m_painter
      */
     QPainter m_painter;
+    bool m_firstAttempt;
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;
@@ -128,6 +130,8 @@ private Q_SLOTS:
     void wheelEvent(QWheelEvent *e) override;
 
     void directPaint(const size_t w, const size_t h, const bool fitToWindow);
+private Q_SLOTS:
+    void firstPaint();
 };
 }
 }
