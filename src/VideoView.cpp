@@ -46,7 +46,8 @@ void VideoView::fitToWindow() {
     makeCurrent();
     // reset PanZoomState
     m_panZoomState = PanZoomState();
-    directPaint(width(), height());
+    directPaint(width(), height(), true);
+    update();
 }
 
 void VideoView::handleLoggedMessage(const QOpenGLDebugMessage &debugMessage) {
@@ -68,7 +69,7 @@ void VideoView::initializeGL() {
 }
 
 void VideoView::resizeGL(int width, int height) {
-    directPaint(width, height);
+    directPaint(width, height, false);
 }
 
 void VideoView::resizeEvent(QResizeEvent *event) {
@@ -79,11 +80,11 @@ void VideoView::resizeEvent(QResizeEvent *event) {
 }
 
 void VideoView::paintEvent(QPaintEvent *) {
-    directPaint(this->width(), this->height());
+    directPaint(this->width(), this->height(), false);
     m_biotracker.paint(*this, m_painter);
 }
 
-void VideoView::directPaint(const size_t w, const size_t h)
+void VideoView::directPaint(const size_t w, const size_t h, const bool fitToWindow)
 {
    makeCurrent();
    if (w == 0 || h == 0) {
@@ -107,10 +108,22 @@ void VideoView::directPaint(const size_t w, const size_t h)
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
 
-   if (windowRatio < imgRatio) {
-       m_screenPicRatio = imageRows / (width / imgRatio);
+   if (fitToWindow) {
+       if (windowRatio < imgRatio) {
+           m_panZoomState.panY = -((height - (width / imgRatio)) / 2) *
+               (m_screenPicRatio + m_panZoomState.zoomFactor);
+           m_panZoomState.panX = 0;
+       } else {
+           m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) *
+               (m_screenPicRatio + m_panZoomState.zoomFactor);
+           m_panZoomState.panY = 0;
+       }
    } else {
-       m_screenPicRatio = imageCols / (height * imgRatio);
+       if (windowRatio < imgRatio) {
+           m_screenPicRatio = imageRows / (width / imgRatio);
+       } else {
+           m_screenPicRatio = imageCols / (height * imgRatio);
+       }
    }
 
    width = static_cast<int>(width * (m_screenPicRatio +
@@ -118,15 +131,6 @@ void VideoView::directPaint(const size_t w, const size_t h)
    height = static_cast<int>(height *(m_screenPicRatio +
                                       m_panZoomState.zoomFactor));
 
-   if (windowRatio < imgRatio) {
-       m_panZoomState.panY = -((height - (width / imgRatio)) / 2) *
-                             (m_screenPicRatio + m_panZoomState.zoomFactor);
-       m_panZoomState.panX = 0;
-   } else {
-       m_panZoomState.panX = - ((width - (height * imgRatio)) / 2) *
-                             (m_screenPicRatio + m_panZoomState.zoomFactor);
-       m_panZoomState.panY = 0;
-   }
 
    const float left   = m_panZoomState.panX;
    const float top    = m_panZoomState.panY;

@@ -103,7 +103,7 @@ private Q_SLOTS:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
-    void directPaint(const size_t w, const size_t h);
+    void directPaint(const size_t w, const size_t h, const bool fitToWindow);
 
     /**
     * @brief unprojectScreenPos
