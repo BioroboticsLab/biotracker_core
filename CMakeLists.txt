@@ -173,8 +173,11 @@ include_directories(
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
-enable_testing()
-
 add_subdirectory(biotracker)
 add_subdirectory(doc)
-add_subdirectory(test)
+
+option(BIOTRACKER_BUILD_TESTS "BIOTRACKER_BUILD_TESTS" On)
+if (BIOTRACKER_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()
