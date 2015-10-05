@@ -127,5 +127,12 @@ void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,
     Q_EMIT fileOpened(fileName, numFrame, tfps);
 }
 
+void BioTracker::Core::BioTrackerApp::loadTrackers(
+    std::vector<boost::filesystem::path>) {
+
+    std::cout << "stuff\n";
+
+}
+
 } // Core
 } // BioTracker

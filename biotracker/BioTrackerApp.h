@@ -60,6 +60,12 @@ class BioTrackerApp : public QObject {
     void openImages(std::vector<boost::filesystem::path> paths);
 
     /**
+     * loads a list of biotracker modules and makes them available in the selection
+     * @brief loadTrackers
+     */
+    void loadTrackers(std::vector<boost::filesystem::path> path);
+
+    /**
      * @brief openCamera opens a video device supported by opencv VideoCapture
      */
     void openCamera(int device);

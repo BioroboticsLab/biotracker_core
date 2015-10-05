@@ -5,7 +5,8 @@
 #include <QMessageBox>
 
 Settings::Settings() {
-    if (!QFile::exists(QString::fromStdString(CONFIGPARAM::CONFIGURATION_FILE))) {
+    if (true || !QFile::exists(QString::fromStdString(
+                                   CONFIGPARAM::CONFIGURATION_FILE))) {
         QMessageBox::warning(nullptr, "No configuration file",
                              QString::fromStdString(MSGS::SYSTEM::MISSING_CONFIGURATION_FILE));
         _ptree = getDefaultParams();

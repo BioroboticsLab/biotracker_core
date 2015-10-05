@@ -36,11 +36,16 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
         throw file_not_found("Could not find file " + path.string());
     }
 
-    QLibrary trackerLibrary(QString::fromStdString(path.string()));
-    auto registerFunction = static_cast<RegisterFunction>
-                            (trackerLibrary.resolve("registerTracker"));
-
-    registerFunction();
+    const QString str = QString::fromStdString(path.string());
+    if (str.endsWith("py")) {
+        std::string pyTracker = m_pyInterpreter.loadScript(path);
+        Q_EMIT pythonTrackerLoaded(pyTracker);
+    } else {
+        QLibrary trackerLibrary(QString::fromStdString(path.string()));
+        auto registerFunction = static_cast<RegisterFunction>
+                                (trackerLibrary.resolve("registerTracker"));
+        registerFunction();
+    }
 }
 
 std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
@@ -59,6 +64,17 @@ TrackerType getNextId() {
     static TrackerType nextType = NoTracking + 1;
 
     return nextType++;
+}
+
+std::shared_ptr<TrackingAlgorithm> BioTracker::Core::Registry::getTracker(
+    const std::__cxx11::string &name, Settings &s, QWidget *p) {
+    if (m_pyInterpreter.hasModule(name)) {
+        return m_pyInterpreter.activatePythonModule(name, s, p);
+    } else {
+        // TODO: implement (?)
+        assert(false);
+        throw std::invalid_argument("fail for now");
+    }
 }
 
 }

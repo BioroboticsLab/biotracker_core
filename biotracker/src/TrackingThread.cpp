@@ -33,8 +33,6 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_mediaType(MediaType::NoMedia),
     m_settings(settings),
     m_texture(nullptr) {
-    Interpreter::Interpreter p;
-    std::cout << "inter:" << p.interpret() << "\n";
 }
 
 TrackingThread::~TrackingThread(void) {

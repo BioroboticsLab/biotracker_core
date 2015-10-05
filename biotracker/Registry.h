@@ -9,6 +9,7 @@
 #include "TrackingAlgorithm.h"
 #include "util/stdext.h"
 #include "util/singleton.h"
+#include "interpreter/PyInterpreter.h"
 
 namespace BioTracker {
 namespace Core {
@@ -49,6 +50,9 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name,
             Settings &settings, QWidget *parent) const;
 
+    std::shared_ptr<TrackingAlgorithm> getTracker(const std::string &name,
+            Settings &s, QWidget *p);
+
     const map_string_type_t &getTypeByString() const {
         return m_typeByString;
     }
@@ -61,6 +65,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
 
   Q_SIGNALS:
     void newTracker(const TrackerType type);
+    void pythonTrackerLoaded(std::string &name);
 
   private:
     friend class Singleton<Registry>;
@@ -68,6 +73,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     map_string_type_t m_typeByString;
     map_type_string_t m_stringByType;
     map_type_fun_t m_trackerByType;
+    Interpreter::PyInterpreter m_pyInterpreter;
 
     Registry();
 
