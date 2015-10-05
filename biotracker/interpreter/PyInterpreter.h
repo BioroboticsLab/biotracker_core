@@ -31,6 +31,7 @@ class PyInterpreter : public QObject {
     Q_OBJECT
   public:
     PyInterpreter() {
+        //PyEval_InitThreads();
         Py_Initialize();
         // import standard libs
         PyRun_SimpleString("import sys");

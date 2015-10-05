@@ -11,6 +11,7 @@ BioTrackerApp::BioTrackerApp()
     : m_settings()
     , m_registry(Registry::getInstance())
     , m_trackingThread(m_settings) {
+    PyEval_InitThreads(); // must be called before any side thread is created!
     initConnects();
 }
 

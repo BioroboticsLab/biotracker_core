@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <boost/python.hpp>
 
 #include "TrackingThread.h"
 #include "ImageStream.h"
