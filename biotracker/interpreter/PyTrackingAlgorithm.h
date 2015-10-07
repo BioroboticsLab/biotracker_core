@@ -1,9 +1,12 @@
 #pragma once
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <QPainter>
+#include <thread>
 #include <QWidget>
 #include <stdlib.h>
 #include <boost/python.hpp>
+#include <QTimer>
+#include <QApplication>
 #include <numpy/ndarrayobject.h>
 #include "../TrackingAlgorithm.h"
 #include "../settings/Settings.h"
@@ -56,12 +59,13 @@ class PyTrackingAlgorithm : public TrackingAlgorithm {
 
     bool isFunc(PyObject *pFunc);
 
-
   private:
     std::set<Qt::Key> m_keys;
     PyObject *m_pModule;
     PyObject *m_pTrackFunc;
+
 };
+
 
 }
 }

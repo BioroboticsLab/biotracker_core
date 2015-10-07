@@ -9,8 +9,14 @@ namespace BioTracker {
 namespace Core {
 namespace Interpreter {
 
+void *init_nu() {
+    import_array();
+    return NULL;
+}
+
 std::string BioTracker::Core::Interpreter::PyInterpreter::loadScript(
     const boost::filesystem::path &path) {
+
     const auto moduleName = QString(path.stem().string().data());
     if (m_importedModules.contains(moduleName)) {
         Q_EMIT moduleIsAlreadyLoaded(moduleName.toStdString());

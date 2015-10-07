@@ -16,6 +16,8 @@
 
 #include "TrackerStatus.h"
 
+#include "interpreter/PyInterpreter.h"
+
 class Settings;
 
 namespace BioTracker {
@@ -221,6 +223,7 @@ class TrackingThread : public QThread {
     */
     void notifyGUI(std::string message,
                    MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+
 };
 
 }

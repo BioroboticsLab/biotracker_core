@@ -17,17 +17,17 @@ PyTrackingAlgorithm::PyTrackingAlgorithm(QString moduleName, Settings &s,
     }
 
     std::cout << "valid modules" << std::endl;
-
-
 }
 
 void PyTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
-    PyObject *pFrameNumber = PyLong_FromUnsignedLong(frameNumber);
+    std::cout << "pytrack " << std::this_thread::get_id() << std::endl;
     PyObject *pMat = convert(frame);
+    PyObject *pFrameNumber = PyLong_FromUnsignedLong(frameNumber);
     PyObject *pArgs = PyTuple_New(2);
     PyTuple_SetItem(pArgs, 0, pFrameNumber);
     PyTuple_SetItem(pArgs, 1, pMat);
     PyObject_CallObject(m_pTrackFunc, pArgs);
+
 }
 
 void PyTrackingAlgorithm::paint(ProxyPaintObject &,
@@ -139,6 +139,10 @@ static inline int *refcountFromPyObject(const PyObject *obj) {
     return (int *)((size_t)obj + REFCOUNT_OFFSET);
 }
 
+void *init_numpy() {
+    import_array();
+    return NULL;
+}
 
 class NumpyAllocator : public cv::MatAllocator {
   public:
@@ -147,7 +151,9 @@ class NumpyAllocator : public cv::MatAllocator {
 
     void allocate(int dims, const int *sizes, int type, int *&refcount,
                   uchar *&datastart, uchar *&data, size_t *step) {
+
         PyEnsureGIL gil;
+        init_numpy();
 
         int depth = CV_MAT_DEPTH(type);
         int cn = CV_MAT_CN(type);
@@ -167,21 +173,17 @@ class NumpyAllocator : public cv::MatAllocator {
             else*/
             _sizes[dims++] = cn;
         }
-        std::cout << "allocate1:" << dims << ":" << typenum << ":" << _sizes << ":" <<
-                  CV_MAX_DIM << std::endl;
+
         PyObject *o = PyArray_SimpleNew(dims, _sizes, typenum);
         if (!o) {
             CV_Error_(CV_StsError,
                       ("The numpy array of typenum=%d, ndims=%d can not be created", typenum, dims));
         }
-        std::cout << "allocate2" << std::endl;
         refcount = refcountFromPyObject(o);
-        std::cout << "allocate3" << std::endl;
         npy_intp *_strides = PyArray_STRIDES((PyArrayObject *) o);
         for (i = 0; i < dims - (cn > 1); i++) {
             step[i] = (size_t)_strides[i];
         }
-        std::cout << "allocate4" << std::endl;
         datastart = data = (uchar *)PyArray_DATA((PyArrayObject *) o);
     }
 
@@ -206,7 +208,6 @@ PyObject *PyTrackingAlgorithm::convert(const cv::Mat &m) {
     if (!p->refcount || p->allocator != &g_numpyAllocator) {
         temp.allocator = &g_numpyAllocator;
         ERRWRAP2(m.copyTo(temp));
-        Py_RETURN_NONE;
         p = &temp;
     }
     p->addref();

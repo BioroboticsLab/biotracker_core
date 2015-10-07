@@ -14,9 +14,11 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
+#include <thread>
 #include <numpy/ndarrayobject.h>
 #include "PyTrackingAlgorithm.h"
 #include "../settings/Settings.h"
+#include "../util/PyHelper.h"
 
 namespace BioTracker {
 namespace Core {
@@ -32,12 +34,35 @@ class PyInterpreter : public QObject {
   public:
     PyInterpreter() {
         //PyEval_InitThreads();
-        Py_Initialize();
+        std::wstring name = L"biotrack";
+        wchar_t *n =  const_cast<wchar_t *>(name.c_str());
+        Py_SetProgramName(n);
+        init_numpy();
+
+        npy_intp length[1];
+        length[0] = 10;
+        PyObject *my_array = PyArray_SimpleNew(1, length, NPY_FLOAT);
+        npy_intp length1[1];
+        length1[0] = 10;
+        PyObject *my_array1 = PyArray_SimpleNew(1, length1, NPY_FLOAT);
+
+
         // import standard libs
         PyRun_SimpleString("import sys");
+
+
+
     }
     ~PyInterpreter() {
         Py_Finalize();
+    }
+
+    void *init_numpy() const {
+        std::cout << "before init numpy" << std::this_thread::get_id() << std::endl;
+        Py_Initialize();
+        import_array();
+        std::cout << "init numpy" << std::endl;
+        return NULL;
     }
 
     /**
