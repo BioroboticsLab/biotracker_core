@@ -10,6 +10,7 @@
 #include <numpy/ndarrayobject.h>
 #include "../TrackingAlgorithm.h"
 #include "../settings/Settings.h"
+#include "../util/PyHelper.h"
 
 namespace BioTracker {
 namespace Core {
@@ -63,6 +64,7 @@ class PyTrackingAlgorithm : public TrackingAlgorithm {
     std::set<Qt::Key> m_keys;
     PyObject *m_pModule;
     PyObject *m_pTrackFunc;
+    PyObject *m_pPaintOverlayFunc;
 
 };
 

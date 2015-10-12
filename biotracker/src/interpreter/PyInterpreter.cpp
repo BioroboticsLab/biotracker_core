@@ -9,11 +9,6 @@ namespace BioTracker {
 namespace Core {
 namespace Interpreter {
 
-void *init_nu() {
-    import_array();
-    return NULL;
-}
-
 std::string BioTracker::Core::Interpreter::PyInterpreter::loadScript(
     const boost::filesystem::path &path) {
 
@@ -25,61 +20,6 @@ std::string BioTracker::Core::Interpreter::PyInterpreter::loadScript(
         m_importedModules.append(moduleName);
     }
     return moduleName.toStdString();
-
-    /*
-    QString newpath = QDir::currentPath() + "/" + QString(path.filename().string().data());
-    QString oldPath = QString(path.string().data());
-    QFile::copy(oldPath, newpath);
-    const char* importModule = path.stem().string().data();
-
-    QString importModuleStr = QString(importModule);
-    wchar_t* a = new wchar_t[importModuleStr.length() + 1];
-    importModuleStr.toWCharArray(a);
-    a[importModuleStr.length()] = '\0';
-
-    Py_SetProgramName(a);
-
-    const char* pyDirectory = path.parent_path().string().data();
-    const size_t cSize = strlen(pyDirectory) + 1;
-    wchar_t* pyDir = new wchar_t[cSize];
-    auto pyDirIntermediate = QString(pyDirectory);
-    pyDirIntermediate.toWCharArray(pyDir);
-    pyDir[cSize-1] = '\0';
-
-    //Py_SetPythonHome(pyDir);
-    std::wcout << pyDir << std::endl;
-
-    PySys_SetPath(pyDir);
-
-    PyRun_SimpleString("import sys\nsys.path.append('')\nprint('set sys..')");
-
-
-
-    PyRun_SimpleString("import example_tracker\nprint('import example tracker')");
-
-    PyObject *pName = PyUnicode_FromString(importModule);
-
-    if (pName) {
-        std::cout << "cool" << std::endl;
-    }
-
-    PyObject *pModule = PyImport_Import(pName);
-
-    Py_DECREF(pName);
-    if (pModule) {
-
-        std::cout << "good" << std::endl;
-
-    } else {
-        std::cout << "fuck" << " in import " << importModule << std::endl;
-        PyErr_Print();
-        std::exit(1);
-    }
-    */
-
-
-
-
 }
 
 bool PyInterpreter::hasModule(const std::__cxx11::string &name) const {
@@ -117,13 +57,9 @@ void PyInterpreter::addToPyPath(const boost::filesystem::path &path) {
     }
 }
 
-bool PyInterpreter::isFunc(PyObject *pFunc) {
-    return (pFunc && PyCallable_Check(pFunc));
-}
-
 // =========== C O N V E R T ====================
 PyObject *PyInterpreter::convert(const cv::Mat &m) {
-    return PyTrackingAlgorithm::convert(m);
+    return PyHelper::convert(m);
 }
 
 }

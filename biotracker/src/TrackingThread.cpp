@@ -271,9 +271,8 @@ void TrackingThread::setPlay() {
 }
 
 void TrackingThread::paintOverlay(QPainter &painter) {
-    (void) painter; // TODO: remove me ASAP
     if (m_somethingIsLoaded) {
-
+        m_tracker->paintOverlay(&painter);
     }
 }
 
