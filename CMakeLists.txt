@@ -52,13 +52,15 @@ if (HOOK_SCRIPTS)
 	file(COPY ${HOOK_SCRIPTS} DESTINATION ${CMAKE_SOURCE_DIR}/.git/hooks)
 endif (HOOK_SCRIPTS)
 
+set(Python_ADDITIONAL_VERSIONS 3.4)
+
 # project dependecies
 find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
+find_package(Boost COMPONENTS filesystem serialization system python-py34 REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 # remove all previously set compiler and linker flags for debug build
@@ -161,6 +163,8 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(-DQT_NO_KEYWORDS)
 CPM_ExportAdditionalDefinition(-DQT_NO_KEYWORDS)
+CPM_ExportAdditionalIncludeDir(${PYTHON_INCLUDE_DIRS})
+
 
 # include external dependecies as SYSTEM headers to prevent warnings from
 # external files. unfortunately, this has no effect when using MSVC.
@@ -172,6 +176,7 @@ include_directories(
     SYSTEM ${PYTHON_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
+
 
 add_subdirectory(biotracker)
 add_subdirectory(doc)

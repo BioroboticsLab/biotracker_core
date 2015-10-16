@@ -164,7 +164,7 @@ std::string PyHelper::toString(PyObject *o) {
                 return result;
             }
         } else {
-            // throw exception
+            throw std::invalid_argument("String is not Unicode");
         }
     }
     return "";

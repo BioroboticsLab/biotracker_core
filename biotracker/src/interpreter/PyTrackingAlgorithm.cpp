@@ -37,8 +37,16 @@ void PyTrackingAlgorithm::paint(ProxyPaintObject &,
 void PyTrackingAlgorithm::paintOverlay(QPainter *p) {
     if (PyHelper::isFunc(m_pPaintOverlayFunc)) {
         // TODO: more stuff.. like convert the QPainter
-        PyObject *pArgs = PyTuple_New(0);
-        PyObject_CallObject(m_pPaintOverlayFunc, pArgs);
+        boost::python::object pyQPainterInstance = PyQPainterClass();
+        PyObject *pPainter = pyQPainterInstance.ptr();
+        PyObject *pArg = PyTuple_New(1);
+        PyTuple_SetItem(pArg, 0, pPainter);
+        PyObject_CallObject(m_pPaintOverlayFunc, pArg);
+
+
+        if (PyHelper::hasError()) {
+            std::cout << "ERROR:" << PyHelper::errorMessage() << std::endl;
+        }
     }
 }
 

@@ -6,9 +6,15 @@ file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 qt5_add_resources(UI_RESOURCES ${qrc})
 qt5_wrap_ui(UI_HEADERS ${ui})
 
+
 add_library(${CPM_LIB_TARGET_NAME} SHARED
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
+
+add_library(pybiotracker SHARED "src/interpreter/PyQPainter.cpp")
+
+target_link_libraries(pybiotracker ${Boost_LIBRARIES})
+
 
 target_link_libraries(${CPM_LIB_TARGET_NAME}
     Qt5::Widgets
@@ -16,8 +22,8 @@ target_link_libraries(${CPM_LIB_TARGET_NAME}
     ${OPENGL_LIBRARIES}
     ${OpenCV_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
-    ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
+    ${Boost_LIBRARIES}
     ${CPM_LIBRARIES}
 )
 

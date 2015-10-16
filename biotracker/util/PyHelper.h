@@ -11,6 +11,7 @@
 #include <codecvt>        // std::codecvt_utf8
 #include <sstream>
 #include <numpy/ndarrayobject.h>
+#include "../interpreter/PyQPainter.h"
 
 /**
  * Python helper functions

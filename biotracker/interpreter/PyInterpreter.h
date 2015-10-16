@@ -16,6 +16,7 @@
 #include <opencv2/core/core.hpp>
 #include <thread>
 #include <numpy/ndarrayobject.h>
+#include <QDir>
 #include "PyTrackingAlgorithm.h"
 #include "../settings/Settings.h"
 #include "../util/PyHelper.h"
@@ -41,6 +42,15 @@ class PyInterpreter : public QObject {
 
         // import standard libs
         PyRun_SimpleString("import sys");
+
+        QString cwd = QDir::currentPath();
+        cwd.append("/libpybiotracker");
+        boost::filesystem::path pylib(cwd.toUtf8().constData());
+
+        loadScript(pylib);
+
+        //PyRun_SimpleString("import os\nprint('cwd:' + os.getcwd() + ' v:' + sys.version)");
+        //PyRun_SimpleString("import libpybiotracker");
 
     }
     ~PyInterpreter() {

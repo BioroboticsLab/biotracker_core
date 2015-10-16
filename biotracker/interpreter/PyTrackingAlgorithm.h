@@ -11,6 +11,10 @@
 #include "../TrackingAlgorithm.h"
 #include "../settings/Settings.h"
 #include "../util/PyHelper.h"
+#include "PyQPainter.h"
+
+extern boost::python::object PyQPainterClass;
+//extern boost::python::object pyQPainterInstance;
 
 namespace BioTracker {
 namespace Core {
