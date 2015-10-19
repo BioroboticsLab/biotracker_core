@@ -61,6 +61,23 @@ find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
 find_package(PythonLibs REQUIRED)
 
+# FIND ZMQ
+if (ZMQ_LIBS AND ZMQ_INCLUDES)
+    set(ZMQ_FOUND TRUE)
+else (ZMQ_LIB AND ZMQ_INCLUDE)
+    find_path(ZMQ_INCLUDE NAMES zmq.h PATHS /usr/include /usr/local/include)
+    find_library(ZMQ_LIB NAMES zmq PATHS /usr/lib /usr/local/lib)
+
+    set (ZMQ_INCLUDES ${ZMQ_INCLUDE})
+
+    if (ZMQ_LIB)
+        set (ZMQ_LIBS ${ZMQ_LIBS} ${ZMQ_LIB})
+    endif (ZMQ_LIB)
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(ZMQ DEFAULT_MSG ZMQ_LIBS ZMQ_INCLUDES)
+
+endif (ZMQ_LIBS AND ZMQ_INCLUDES)
+
 
 # Qt options
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
