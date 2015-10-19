@@ -10,6 +10,7 @@ add_library(${CPM_LIB_TARGET_NAME} SHARED
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
 
+
 target_link_libraries(${CPM_LIB_TARGET_NAME}
     Qt5::Widgets
     Qt5::OpenGL
@@ -19,6 +20,7 @@ target_link_libraries(${CPM_LIB_TARGET_NAME}
     ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
     ${CPM_LIBRARIES}
+    ${ZMQ_LIBS}
 )
 
 # automatic copy of required dlls to install prefix for windows

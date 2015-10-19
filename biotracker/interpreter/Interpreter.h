@@ -1,7 +1,8 @@
 #pragma once
-#include <Python.h>
 
 #include <stdlib.h>
+
+// http://czmq.zeromq.org/page:get-the-software
 
 namespace BioTracker {
 namespace Core {
@@ -14,13 +15,7 @@ class Interpreter : public QObject {
     ~Interpreter() {}
     size_t interpret() {
 
-        Py_Initialize();
-
-        PyRun_SimpleString("print('test 123')");
-
-        Py_Finalize();
-
-        return 5;
+        return 7;
     }
 
 };
