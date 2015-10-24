@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <czmq.h>
 
 // http://czmq.zeromq.org/page:get-the-software
 
@@ -15,7 +16,7 @@ class Interpreter : public QObject {
     ~Interpreter() {}
     size_t interpret() {
 
-        return 7;
+        return 87;
     }
 
 };

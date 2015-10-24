@@ -9,6 +9,7 @@
 #include "TrackingAlgorithm.h"
 #include "util/stdext.h"
 #include "util/singleton.h"
+#include "ZmqTrackingAlgorithm.h"
 
 namespace BioTracker {
 namespace Core {
@@ -49,6 +50,11 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name,
             Settings &settings, QWidget *parent) const;
 
+
+    std::shared_ptr<TrackingAlgorithm> getTracker(Zmq::ZmqInfoFile &info,
+            Settings &s, QWidget *p) const;
+
+
     const map_string_type_t &getTypeByString() const {
         return m_typeByString;
     }
@@ -61,6 +67,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
 
   Q_SIGNALS:
     void newTracker(const TrackerType type);
+    void newZmqTracker(BioTracker::Core::Zmq::ZmqInfoFile &info);
 
   private:
     friend class Singleton<Registry>;

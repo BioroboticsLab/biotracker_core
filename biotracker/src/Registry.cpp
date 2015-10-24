@@ -52,6 +52,11 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
                                 (trackerLibrary.resolve("registerTracker"));
 
         registerFunction();
+    } else if (ext == "zmq") {
+        Zmq::ZmqInfoFile info = Zmq::getInfo(path);
+        Q_EMIT newZmqTracker(info);
+    } else {
+
     }
 }
 
@@ -65,6 +70,12 @@ std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
     } else {
         return nullptr;
     }
+}
+
+std::shared_ptr<TrackingAlgorithm> Registry::getTracker(Zmq::ZmqInfoFile &info,
+        Settings &s, QWidget *p) const {
+    auto tracker = std::make_shared<Zmq::ZmqTrackingAlgorithm>(info, s, p);
+    return tracker;
 }
 
 TrackerType getNextId() {
