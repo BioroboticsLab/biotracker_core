@@ -47,6 +47,17 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
 
     const std::string ext(parts[parts.size() - 1]);
     if (ext == "so" || ext == "dylib" || ext == "dll") {
+       /*
+=======
+    const QString str = QString::fromStdString(path.string());
+    if (str.endsWith("zmq")) {
+        Zmq::ZmqInfoFile info = Zmq::getInfo(path);
+
+        Q_EMIT newZmqTracker(info);
+
+    } else {
+>>>>>>> first steps for zmq implementa. Strings may be received by the tracker now
+                */
         QLibrary trackerLibrary(QString::fromStdString(path.string()));
         auto registerFunction = static_cast<RegisterFunction>
                                 (trackerLibrary.resolve("registerTracker"));
