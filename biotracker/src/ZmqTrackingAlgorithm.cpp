@@ -118,21 +118,26 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
     std::cout << "HERE" << std::endl;
 
     QProcess *zmqClient = new QProcess(this);
-    zmqClient->setProcessChannelMode(QProcess::MergedChannels);
-    zmqClient->start(info.m_program + " " + info.m_arguments.first());
-    zmqClient->waitForFinished();
-    QByteArray o = zmqClient->readAllStandardOutput();
-    QString _o(o);
-
-    std::cout << "cmd " << _o.toUtf8().constData() << std::endl;
+    zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
+    //zmqClient->setProcessChannelMode(QProcess::MergedChannels);
+    zmqClient->start(info.m_program + " " + info.m_arguments.first() +
+                     " > demo.txt");
+    //zmqClient->waitForFinished();
 
     //zmq::message_t funcStructure(100);
     //memset(funcStructure.data(), 0, 100);
     //m_socket.recv(&funcStructure);
 
     QString string = recv_string(m_socket);
-
     std::cout << "receive string:" << string.toUtf8().constData() << std::endl;
+
+    std::cout << "send back to python.." << std::endl;
+    QString toPy = "Hallo to Pyhon from c++";
+    send_string(m_socket, toPy);
+
+    QByteArray o = zmqClient->readAllStandardOutput();
+    QString _o(o);
+    std::cout << "[PY] cmd " << _o.toUtf8().constData() << std::endl;
 
 }
 

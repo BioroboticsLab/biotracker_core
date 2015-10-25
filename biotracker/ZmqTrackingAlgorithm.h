@@ -86,10 +86,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void keyPressEvent(QKeyEvent *) override;
 
   private:
-<<<<<<< ae85bc32dfdad7c56de09ac9285a80fa054504ae
     bool m_isTracking;
-=======
->>>>>>> first steps for zmq implementa. Strings may be received by the tracker now
     std::set<Qt::Key> m_keys;
     void *m_context;
     void *m_socket;
