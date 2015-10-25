@@ -52,6 +52,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     ZmqTrackingAlgorithm(ZmqInfoFile &info, Settings &settings, QWidget *parent);
 
     ~ZmqTrackingAlgorithm() {
+        zmq_disconnect(m_socket, "172.0.0.1:5556");
         zmq_close(m_socket);
         zmq_ctx_term(m_context);
     }
