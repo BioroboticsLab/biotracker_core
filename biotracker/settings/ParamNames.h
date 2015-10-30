@@ -2,10 +2,23 @@
 
 #include <string> // std::string
 
+#include <boost/filesystem.hpp>
+#include <boost/predef.h>
+
+#include <QDir>
+
 namespace CONFIGPARAM {
-static const std::string CONFIGURATION_FILE = "./config.json";
-static const std::string GEOMETRY_FILE      = "./geometry.cfg";
-static const std::string STATE_FILE         = "./state.cfg";
+static const boost::filesystem::path HOME_PATH = boost::filesystem::path(
+            QDir::toNativeSeparators(QDir::homePath()).toStdString());
+#if BOOST_OS_WINDOWS
+static const boost::filesystem::path BASE_PATH = HOME_PATH / "BioTracker";
+#else
+static const boost::filesystem::path BASE_PATH = HOME_PATH / ".biotracker";
+#endif
+static const boost::filesystem::path CONFIGURATION_FILE = BASE_PATH / "config.json";
+static const boost::filesystem::path GEOMETRY_FILE      = BASE_PATH / "geometry.cfg";
+static const boost::filesystem::path STATE_FILE         = BASE_PATH / "state.cfg";
+static const boost::filesystem::path MODULE_PATH        = BASE_PATH / "modules";
 }
 
 namespace TRACKERPARAM {

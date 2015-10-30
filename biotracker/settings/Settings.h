@@ -39,7 +39,7 @@ class Settings {
     template <typename T>
     void setParam(std::string const &paramName, T &&paramValue) {
         _ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
-        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE.string(), _ptree);
     }
 
     /**
@@ -56,7 +56,7 @@ class Settings {
             subtree.push_back(std::make_pair("", valuetree));
         }
         _ptree.put_child(paramName, subtree);
-        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE, _ptree);
+        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE.string(), _ptree);
     }
 
     /**
