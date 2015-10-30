@@ -59,7 +59,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH})
 # add git hooks
 file(GLOB HOOK_SCRIPTS githooks/*)
 if (HOOK_SCRIPTS)
-    file(COPY ${HOOK_SCRIPTS} DESTINATION ${CMAKE_SOURCE_DIR}/.git/hooks)
+    file(COPY ${HOOK_SCRIPTS} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/.git/hooks)
 endif (HOOK_SCRIPTS)
 
 # project dependecies
