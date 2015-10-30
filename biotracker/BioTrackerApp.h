@@ -168,6 +168,13 @@ class BioTrackerApp : public QObject {
     void frameCalculatedFromTrackingThread(const size_t frameNumber,
                                            const std::string filename, const double currentFps);
 
+    /**
+     * @brief loadModulesInPath
+     *      Dynamically load all modules in path.
+     * @param path
+     */
+    void loadModulesInPath(const boost::filesystem::path &path);
+
   Q_SIGNALS:
     /**
      * @brief notify

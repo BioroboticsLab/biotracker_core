@@ -2,7 +2,10 @@
 #include <limits>
 #include <thread>
 
+#include <boost/algorithm/string.hpp>
+
 #include "util/QOpenGLContextWrapper.h"
+#include "Exceptions.h"
 
 namespace BioTracker {
 namespace Core {
@@ -12,6 +15,8 @@ BioTrackerApp::BioTrackerApp()
     , m_registry(Registry::getInstance())
     , m_trackingThread(m_settings) {
     initConnects();
+
+    loadModulesInPath(CONFIGPARAM::MODULE_PATH);
 }
 
 BioTrackerApp::~BioTrackerApp() {
@@ -120,6 +125,23 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
 void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
         const std::string filename, const double currentFps) {
     Q_EMIT frameCalculated(frameNumber, filename, currentFps);
+}
+
+void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path)
+{
+    if (!boost::filesystem::is_directory(path)) {
+        throw directory_not_found("Invalid path");
+    }
+
+    boost::filesystem::directory_iterator directoryIt(path);
+    for (const boost::filesystem::path &p : directoryIt) {
+        std::vector<std::string> parts;
+        boost::split(parts, p.string(), boost::is_any_of("."));
+        /* expect filename to be of form: name.tracker.ext */
+        if (parts.size() >= 3) {
+            getRegistry().loadTrackerLibrary(p);
+        }
+    }
 }
 
 void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,

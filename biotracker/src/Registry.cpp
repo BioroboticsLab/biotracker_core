@@ -1,5 +1,6 @@
 #include "Registry.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem/operations.hpp>
 
 #include <QLibrary>
@@ -36,11 +37,22 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
         throw file_not_found("Could not find file " + path.string());
     }
 
-    QLibrary trackerLibrary(QString::fromStdString(path.string()));
-    auto registerFunction = static_cast<RegisterFunction>
-                            (trackerLibrary.resolve("registerTracker"));
+    std::vector<std::string> parts;
+    boost::split(parts, path.string(), boost::is_any_of("."));
 
-    registerFunction();
+    /* expect filename to be of form: name.tracker.ext */
+    if (parts.size() < 3) {
+        throw std::invalid_argument("Filename must obey pattern $name.tracker.$ext");
+    }
+
+    const std::string ext(parts[parts.size() - 1]);
+    if (ext == "so" || ext == "dylib" || ext == "dll") {
+        QLibrary trackerLibrary(QString::fromStdString(path.string()));
+        auto registerFunction = static_cast<RegisterFunction>
+                                (trackerLibrary.resolve("registerTracker"));
+
+        registerFunction();
+    }
 }
 
 std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
