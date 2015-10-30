@@ -37,6 +37,7 @@ class VideoControlWidget : public QWidget {
 
     QIcon m_iconPause;
     QIcon m_iconPlay;
+    QTimer m_timer;
 
     bool m_isPanZoomMode;
     bool m_videoSliderChanged;

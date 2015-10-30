@@ -120,10 +120,8 @@ void VideoControlWidget::initConnects() {
     QObject::connect(m_ui.sld_video, &QSlider::sliderPressed, this,
                      &VideoControlWidget::videoSliderPressed);
 
-
-    QTimer *timer = new QTimer(this);
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
-    timer->start(200);
+    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
+    m_timer.start(2000);
 
     // speed slider
     QObject::connect(m_ui.sld_speed, &QSlider::valueChanged, this,
