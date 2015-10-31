@@ -42,6 +42,8 @@ void VideoControlWidget::updateWidgets() {
     m_ui.button_nextFrame->setEnabled(validFile && hasNext);
     m_ui.button_previousFrame->setEnabled(validFile && hasPrev);
 
+    m_ui.button_stop->setEnabled(validFile && hasPrev);
+
     switch (m_bioTracker.getStatus()) {
     case BioTracker::Core::TrackerStatus::Invalid:
     case BioTracker::Core::TrackerStatus::NothingLoaded:
@@ -111,6 +113,8 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::takeScreenshot);
     QObject::connect(m_ui.button_panZoom, &QPushButton::clicked, this,
                      &VideoControlWidget::switchPanZoomMode);
+    QObject::connect(m_ui.button_stop, &QPushButton::clicked, this,
+                     &VideoControlWidget::stop);
 
     // video slider
     QObject::connect(m_ui.sld_video, &QSlider::sliderMoved, this,
@@ -141,6 +145,11 @@ void VideoControlWidget::playPause() {
     }
 
     updateWidgets();
+}
+
+void VideoControlWidget::stop() {
+    m_bioTracker.pause();
+    setFrame(0);
 }
 
 void VideoControlWidget::setFrame(const size_t frame) {

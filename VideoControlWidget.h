@@ -51,6 +51,7 @@ class VideoControlWidget : public QWidget {
 
   private Q_SLOTS:
     void playPause();
+    void stop();
     void setFrame(const size_t frame);
     void nextFrame();
     void previousFrame();
