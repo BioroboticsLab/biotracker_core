@@ -56,7 +56,7 @@ void VideoControlWidget::updateWidgets() {
         break;
     case BioTracker::Core::TrackerStatus::Paused:
         m_ui.button_playPause->setIcon(m_iconPlay);
-        m_ui.button_playPause->setEnabled(true);
+        m_ui.button_playPause->setEnabled(hasNext);
         m_ui.sld_video->setEnabled(true);
         break;
     default:
@@ -121,7 +121,7 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::videoSliderPressed);
 
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
-    m_timer.start(2000);
+    m_timer.start(200);
 
     // speed slider
     QObject::connect(m_ui.sld_speed, &QSlider::valueChanged, this,
@@ -166,7 +166,6 @@ void VideoControlWidget::fileOpened(const std::string filename,
     m_ui.fps_label->setText(QString::number(targetFps));
     const int fpsAsInt = static_cast<int>(targetFps + 0.5);
     m_ui.sld_speed->setValue(fpsAsInt);
-
     // refresh
     m_videoView->initialPaint();
 
@@ -257,13 +256,14 @@ void VideoControlWidget::switchPanZoomMode() {
 void VideoControlWidget::frameCalculated(const size_t frameNumber,
         const std::string filename, const double currentFps) {
 
+    const bool hasNext = frameNumber < m_bioTracker.getNumFrames() - 1;
+
     if (!m_videoView->isZoomed()) {
         // TODO: fix this ugly hack
         m_videoView->resize(m_videoView->width() + 1, m_videoView->height());
         m_videoView->resize(m_videoView->width() - 1, m_videoView->height());
     }
     m_videoView->update();
-    updateWidgets();
 
     m_ui.sld_video->setValue(frameNumber);
     m_ui.frame_num_edit->setText(QString::number(frameNumber));
@@ -273,6 +273,12 @@ void VideoControlWidget::frameCalculated(const size_t frameNumber,
     } else {
         m_ui.fps_edit->clear();
     }
+
+    if (!hasNext) {
+        m_bioTracker.pause();
+    }
+
+    updateWidgets();
 
 }
 
