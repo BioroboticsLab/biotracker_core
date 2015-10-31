@@ -40,7 +40,6 @@ class VideoControlWidget : public QWidget {
     QTimer m_timer;
 
     bool m_isPanZoomMode;
-    bool m_videoSliderChanged;
     bool m_sliderVideoWasRunning;
 
     void initConnects();
@@ -58,8 +57,6 @@ class VideoControlWidget : public QWidget {
     void changeCurrentFrameByEdit();
     void takeScreenshot();
     void switchPanZoomMode();
-    void sliderRender();
-    void videoSliderChanged(const size_t frame);
     void videoSliderReleased();
     void videoSliderPressed();
     void speedSliderValueChanged(int value);

@@ -18,7 +18,6 @@ VideoControlWidget::VideoControlWidget(QWidget *parent,
     , m_bioTracker(facade)
     , m_videoView(videoView)
     , m_isPanZoomMode(false)
-    , m_videoSliderChanged(false)
 {
     m_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"),
                         QSize(), QIcon::Normal, QIcon::Off);
@@ -117,15 +116,10 @@ void VideoControlWidget::initConnects() {
                      &VideoControlWidget::stop);
 
     // video slider
-    QObject::connect(m_ui.sld_video, &QSlider::sliderMoved, this,
-                     &VideoControlWidget::videoSliderChanged);
     QObject::connect(m_ui.sld_video, &QSlider::sliderReleased, this,
                      &VideoControlWidget::videoSliderReleased);
     QObject::connect(m_ui.sld_video, &QSlider::sliderPressed, this,
                      &VideoControlWidget::videoSliderPressed);
-
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(sliderRender()));
-    m_timer.start(200);
 
     // speed slider
     QObject::connect(m_ui.sld_speed, &QSlider::valueChanged, this,
@@ -186,30 +180,21 @@ void VideoControlWidget::previousFrame() {
     updateWidgets();
 }
 
-void VideoControlWidget::sliderRender() {
-    if (m_ui.sld_video->isEnabled() || m_videoSliderChanged) {
-        if (m_ui.sld_video->isSliderDown()) {
-            if (!m_bioTracker.isRendering()) { // needed to prevent race condition
-                const int frame = m_ui.sld_video->value();
-                if (frame < m_ui.sld_video->maximum()) {
-                    // do not render after the last frame
-                    setFrame(frame);
-                }
-                m_videoSliderChanged = false;
-            }
-        }
-    }
-}
-
-void VideoControlWidget::videoSliderChanged(const size_t frame) {
-    (void) frame; // we dont really need the variable..
-    m_videoSliderChanged = true;
-}
-
 void VideoControlWidget::videoSliderReleased() {
+
+
+    const int frame = m_ui.sld_video->value();
+    if (frame <= m_ui.sld_video->maximum()) {
+        if (frame == m_ui.sld_video->maximum()) {
+            m_bioTracker.pause();
+        }
+        setFrame(frame);
+    }
+
     if (m_sliderVideoWasRunning) {
         m_bioTracker.play();
     }
+
     updateWidgets();
 }
 
