@@ -46,12 +46,10 @@ void BioTrackerApp::openCamera(int device) {
 }
 
 void BioTrackerApp::play() {
-    m_isRunning = true;
     m_trackingThread.setPlay();
 }
 
 void BioTrackerApp::pause() {
-    m_isRunning = false;
     m_trackingThread.setPause();
 }
 
@@ -64,7 +62,7 @@ bool BioTrackerApp::isRendering() {
 }
 
 bool BioTrackerApp::isRunning() {
-    return m_isRunning;
+    return !m_trackingThread.isPaused();
 }
 
 void BioTrackerApp::setFrame(const size_t frameNumber) {
