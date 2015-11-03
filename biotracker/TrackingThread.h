@@ -122,7 +122,6 @@ class TrackingThread : public QThread {
     bool m_maxSpeed;
     GUIPARAM::MediaType m_mediaType;
 
-
     Settings &m_settings;
 
     TextureObject *m_texture;

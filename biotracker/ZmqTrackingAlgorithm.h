@@ -10,6 +10,9 @@
 
 #include <QFile>
 #include <QWidget>
+#include <QColor>
+#include <QStringRef>
+#include <QVector>
 #include <QMouseEvent>
 
 //#include <zmq.hpp>
@@ -83,6 +86,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void keyPressEvent(QKeyEvent *) override;
 
   private:
+    bool m_isTracking;
     std::set<Qt::Key> m_keys;
     void *m_context;
     void *m_socket;

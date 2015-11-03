@@ -8,15 +8,6 @@ namespace Zmq {
 // P R I V A T E  Z M Q  H E L P E R  F U N C S
 // ==============================================
 
-zmq_msg_t recv_msg(void *socket) {
-    int rc;
-    zmq_msg_t msg;
-    rc = zmq_msg_init(&msg);
-    assert(rc == 0);
-    int bytes = zmq_msg_recv(&msg, socket, 0);
-    return msg;
-}
-
 QString recv_string(void *socket) {
     int rc;
     zmq_msg_t msg;
@@ -31,8 +22,50 @@ QString recv_string(void *socket) {
     zmq_msg_close(&msg);
     string[bytes] = 0;
     QString result(string);
+    zmq_msg_close(&msg);
     free(string);
     return result;
+
+}
+
+QColor getColor(const QStringRef content) {
+    QVector<QStringRef> colorStr = content.split(",");
+    const int r = colorStr.at(0).toInt();
+    const int g = colorStr.at(1).toInt();
+    const int b = colorStr.at(2).toInt();
+    const int a = colorStr.at(3).toInt();
+    QColor color(r, g, b, a);
+    return color;
+}
+
+QRect getRect(const QStringRef content) {
+    QVector<QStringRef> colorStr = content.split(",");
+    const int x = colorStr.at(0).toInt();
+    const int y = colorStr.at(1).toInt();
+    const int w = colorStr.at(2).toInt();
+    const int h = colorStr.at(3).toInt();
+    QRect rect(x, y, w, h);
+    return rect;
+}
+
+void recv_QPainter(void *socket, QPainter *p) {
+    QString paintBatch = recv_string(socket);
+    if (paintBatch.length() > 0) {
+        QStringList batch = paintBatch.split(";");
+        for (int i = 0; i < batch.size(); ++i) {
+            const QString paintOperation = batch.at(i);
+            int start = 2;
+            int length = paintOperation.size() - 3;
+            QStringRef content(&paintOperation, start, length);
+            if (paintOperation.startsWith("p")) {
+                p->setPen(getColor(content));
+            } else if (paintOperation.startsWith("b")) {
+                p->setBrush(getColor(content));
+            } else if (paintOperation.startsWith("r")) {
+                p->drawRect(getRect(content));
+            }
+        }
+    }
 
 }
 
@@ -50,8 +83,17 @@ void send_string(void *socket, QString str) {
 
 }
 
-void send_cvMat(void *socket, cv::Mat &mat) {
-
+void send_cvMat(void *socket, const cv::Mat &mat) {
+    QString data = QString::number(mat.cols) + "," + QString::number(
+                       mat.rows) + "," + QString::number(mat.type());
+    send_string(socket, data);
+    //TODO error handling
+    size_t sizeInBytes = mat.total() * mat.elemSize();
+    zmq_msg_t msg;
+    zmq_msg_init_size(&msg, sizeInBytes);
+    memcpy(zmq_msg_data(&msg), mat.data, sizeInBytes);
+    zmq_msg_send(&msg, socket, 0);
+    zmq_msg_close(&msg);
 }
 
 // ==============================================
@@ -59,6 +101,7 @@ void send_cvMat(void *socket, cv::Mat &mat) {
 ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
         Settings &settings, QWidget *parent) :
     TrackingAlgorithm(settings, parent),
+    m_isTracking(false),
     m_context(zmq_ctx_new()),
     m_socket(zmq_socket(m_context, ZMQ_PAIR)) {
 
@@ -75,34 +118,41 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
     std::cout << "HERE" << std::endl;
 
     QProcess *zmqClient = new QProcess(this);
-    zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
-    //zmqClient->setProcessChannelMode(QProcess::MergedChannels);
-    zmqClient->start(info.m_program + " " + info.m_arguments.first() +
-                     " > demo.txt");
-    //zmqClient->waitForFinished();
+    //zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
+    //zmqClient->setStandardErrorFile("/example_tracker_py/err.txt");
+    zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
+    QString command = info.m_program + " " + info.m_arguments.first();
+    std::cout << "[exec]:" << command.toUtf8().constData() << std::endl;
+    zmqClient->start(command);
 
-    //zmq::message_t funcStructure(100);
-    //memset(funcStructure.data(), 0, 100);
-    //m_socket.recv(&funcStructure);
+    cv::Mat E = cv::Mat::eye(4,4, CV_8UC1);
+    send_cvMat(m_socket, E);
 
-    QString string = recv_string(m_socket);
-    std::cout << "receive string:" << string.toUtf8().constData() << std::endl;
-
-    std::cout << "send back to python.." << std::endl;
-    QString toPy = "Hallo to Pyhon from c++";
-    send_string(m_socket, toPy);
-
-    QByteArray o = zmqClient->readAllStandardOutput();
-    QString _o(o);
-    std::cout << "[PY] cmd " << _o.toUtf8().constData() << std::endl;
+    cv::Mat E2 = cv::Mat::eye(4,4, CV_8UC3);
+    send_cvMat(m_socket, E2);
 
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     std::cout << "track" << std::endl;
+    send_cvMat(m_socket, frame);
+    m_isTracking = true;
 }
 
 void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p, const View &) {
+    std::cout << "paint" << std::endl;
+}
+
+void ZmqTrackingAlgorithm::paintOverlay(QPainter *p) {
+    std::cout << "paintOverlay" << std::endl;
+    //p->setBrush(Qt::cyan);
+    //p->setPen(Qt::darkCyan);
+    //p->drawRect(0, 0, 100, 100);
+    if (m_isTracking) {
+        recv_QPainter(m_socket, p);
+        m_isTracking = false;
+    }
+>>>>>>> wip #9 save
 
 }
 
