@@ -51,12 +51,10 @@ void BioTrackerApp::openCamera(int device) {
 }
 
 void BioTrackerApp::play() {
-    m_isRunning = true;
     m_trackingThread.setPlay();
 }
 
 void BioTrackerApp::pause() {
-    m_isRunning = false;
     m_trackingThread.setPause();
 }
 
@@ -69,7 +67,7 @@ bool BioTrackerApp::isRendering() {
 }
 
 bool BioTrackerApp::isRunning() {
-    return m_isRunning;
+    return !m_trackingThread.isPaused();
 }
 
 void BioTrackerApp::setFrame(const size_t frameNumber) {
@@ -127,8 +125,7 @@ void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
     Q_EMIT frameCalculated(frameNumber, filename, currentFps);
 }
 
-void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path)
-{
+void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path) {
     if (!boost::filesystem::is_directory(path)) {
         throw directory_not_found("Invalid path");
     }

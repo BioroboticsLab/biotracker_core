@@ -81,6 +81,12 @@ class TrackingThread : public QThread {
     bool isRendering() const;
 
     /**
+    * Checks if thread is in pause state.
+    * @return true if paused, false otherwise.
+    */
+    bool isPaused() const;
+
+    /**
      * Toggles the playing state.
      */
     void togglePlaying();
@@ -122,12 +128,6 @@ class TrackingThread : public QThread {
     TextureObject *m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
-
-    /**
-    * Checks if thread is in pause state.
-    * @return true if paused, false otherwise.
-    */
-    bool isPaused() const;
 
     /**
     * sends frame and everything else that is needed to selected

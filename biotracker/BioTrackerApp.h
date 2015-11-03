@@ -200,7 +200,6 @@ class BioTrackerApp : public QObject {
                          const double currentFps);
 
   private:
-    bool m_isRunning;
     Settings m_settings;
     Registry &m_registry;
     TrackingThread m_trackingThread;
