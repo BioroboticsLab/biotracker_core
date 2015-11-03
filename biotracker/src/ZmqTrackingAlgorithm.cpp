@@ -118,26 +118,18 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
     std::cout << "HERE" << std::endl;
 
     QProcess *zmqClient = new QProcess(this);
-    zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
-    //zmqClient->setProcessChannelMode(QProcess::MergedChannels);
-    zmqClient->start(info.m_program + " " + info.m_arguments.first() +
-                     " > demo.txt");
-    //zmqClient->waitForFinished();
+    //zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
+    //zmqClient->setStandardErrorFile("/example_tracker_py/err.txt");
+    zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
+    QString command = info.m_program + " " + info.m_arguments.first();
+    std::cout << "[exec]:" << command.toUtf8().constData() << std::endl;
+    zmqClient->start(command);
 
-    //zmq::message_t funcStructure(100);
-    //memset(funcStructure.data(), 0, 100);
-    //m_socket.recv(&funcStructure);
+    cv::Mat E = cv::Mat::eye(4,4, CV_8UC1);
+    send_cvMat(m_socket, E);
 
-    QString string = recv_string(m_socket);
-    std::cout << "receive string:" << string.toUtf8().constData() << std::endl;
-
-    std::cout << "send back to python.." << std::endl;
-    QString toPy = "Hallo to Pyhon from c++";
-    send_string(m_socket, toPy);
-
-    QByteArray o = zmqClient->readAllStandardOutput();
-    QString _o(o);
-    std::cout << "[PY] cmd " << _o.toUtf8().constData() << std::endl;
+    cv::Mat E2 = cv::Mat::eye(4,4, CV_8UC3);
+    send_cvMat(m_socket, E2);
 
 }
 
@@ -158,7 +150,6 @@ void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p, const View &) 
         m_isTracking = false;
     }
 }
-
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
     auto ptr = std::make_shared<QWidget>();
