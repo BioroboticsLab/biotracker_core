@@ -16,7 +16,7 @@ tbd
 ### Windows
 tbd
 
-### Setup
+## Setup
 The easiest way to use BioTracker Core is with [cmake](https://cmake.org/) in combination with [cpm](http://www.cpm.rocks/).
 You should first add our [cmakeconfig](https://github.com/BioroboticsLab/cmakeconfig) to you CMakeList.txt:
 ```CMake
