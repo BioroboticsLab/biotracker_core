@@ -5,6 +5,9 @@ This repository contains the core functionality of the BioTracker application th
 Please consult the [documentation wiki](https://github.com/BioroboticsLab/biotracker_core/wiki/Documentation) for an complete API documentation.
 To get insight into the technology and patterns used you can hold on to the [development wiki](https://github.com/BioroboticsLab/biotracker_core/wiki/Development)
 
+This core library is used in the [BioTracker GUI](https://github.com/BioroboticsLab/biotracker_gui):
+![BioTracker GUI](https://cloud.githubusercontent.com/assets/831215/10982001/2ca550c6-840b-11e5-9bd8-f4e13846438d.png) 
+
 ## Dependencies
 ### Unix
 You can find an up-to-date list of [dependencies](https://github.com/BioroboticsLab/DockerFiles/blob/master/biotracker/dependencies.sh)
