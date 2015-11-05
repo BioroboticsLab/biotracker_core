@@ -139,7 +139,8 @@ void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     m_isTracking = true;
 }
 
-void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p, const View &) {
+void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p,
+                                 const View &) {
     std::cout << "paint" << std::endl;
     std::cout << "paintOverlay" << std::endl;
     //p->setBrush(Qt::cyan);
