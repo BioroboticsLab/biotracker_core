@@ -69,15 +69,12 @@ class TrackingAlgorithm : public QObject {
 
     /**
     * paint will be called by "VideoViews" paintEvent method
-    * so any picture manipulation stuff goes in here
+    * so any picture manipulation stuff goes in here.
+    * QPainter paints stuff onto "VideoViews" current picture
+    * without touching it
     */
-    virtual void paint(ProxyPaintObject &, View const & = OriginalView) {}
-
-    /**
-     * paint stuff onto "VideoViews" current picture
-     * without touching it
-     */
-    virtual void paintOverlay(QPainter *) {}
+    virtual void paint(ProxyPaintObject &, QPainter *,
+                       View const & = OriginalView) {}
 
     /**
     * getToolsFrame() will be called once at start up

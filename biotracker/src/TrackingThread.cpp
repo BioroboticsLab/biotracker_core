@@ -272,22 +272,7 @@ void TrackingThread::setPlay() {
     m_conditionVariable.notify_all();
 }
 
-void TrackingThread::paintOverlay(QPainter &painter) {
-    (void) painter; // TODO: remove me ASAP
-    if (m_somethingIsLoaded) {
-
-    }
-}
-
 void TrackingThread::paintRaw() {
-    if (m_somethingIsLoaded) {
-        ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
-        // TODO: only copy matrix to gpu if modified
-        m_texture->setImage(proxy.getMat());
-        if (proxy.hasBeenModified()) {
-            m_texture->setImage(proxy.getMat());
-        }
-    }
 }
 
 void TrackingThread::paintDone() {
@@ -344,12 +329,21 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         QPainter &painter) {
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
-    paintRaw();
-    painter.begin(&device);
+    if (m_somethingIsLoaded) {
+        painter.begin(&device);
+        ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
+        // TODO: only copy matrix to gpu if modified
+        m_texture->setImage(proxy.getMat());
+        if (m_tracker) {
+            m_tracker.get()->paint(proxy, &painter);
+        }
+        if (proxy.hasBeenModified()) {
+            m_texture->setImage(proxy.getMat());
+        }
+        paintDone();
+        painter.end();
+    }
     //painter->setWindow(QRect(0,0,w,h));
-    paintOverlay(painter);
-    paintDone();
-    painter.end();
     m_paintMutex.unlock();
 }
 
