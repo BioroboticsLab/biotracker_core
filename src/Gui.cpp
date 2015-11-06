@@ -114,7 +114,7 @@ void Gui::browseCameras() {
 }
 
 void Gui::loadTracker() {
-    static const QString trackerFilter("BioTracker algorithms (*.tracker)");
+    static const QString trackerFilter("BioTracker algorithms (*.tracker *.tracker.zmq)");
 
     const QString path = QFileDialog::getOpenFileName(&m_mainWindow, "Load Tracker",
                          "", trackerFilter);
