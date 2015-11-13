@@ -70,7 +70,6 @@ find_package(Qt5OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
 find_package(PythonLibs REQUIRED)
-find_package(Protobuf REQUIRED)
 
 # FIND ZMQ
 if (ZMQ_LIBS AND ZMQ_INCLUDES)
@@ -123,7 +122,6 @@ include_directories(
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
     SYSTEM ${PYTHON_INCLUDE_DIRS}
     SYSTEM ${ZMQ_INCLUDES}
-    SYSTEM ${PROTOBUF_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
