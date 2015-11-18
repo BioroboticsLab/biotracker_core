@@ -8,7 +8,7 @@ file(GLOB_RECURSE qrc RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qrc)
 qt5_add_resources(UI_RESOURCES ${qrc})
 qt5_wrap_ui(UI_HEADERS ${ui})
 
-add_executable(BioTrackerGui
+add_executable(BioTracker
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
 include_directories( SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
