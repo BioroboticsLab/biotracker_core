@@ -125,11 +125,11 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
     std::cout << "[exec]:" << command.toUtf8().constData() << std::endl;
     zmqClient->start(command);
 
-    cv::Mat E = cv::Mat::eye(4,4, CV_8UC1);
-    send_cvMat(m_socket, E);
+    //cv::Mat E = cv::Mat::eye(4,4, CV_8UC1);
+    //send_cvMat(m_socket, E);
 
-    cv::Mat E2 = cv::Mat::eye(4,4, CV_8UC3);
-    send_cvMat(m_socket, E2);
+    //cv::Mat E2 = cv::Mat::eye(4,4, CV_8UC3);
+    //send_cvMat(m_socket, E2);
 
 }
 
