@@ -3,7 +3,7 @@
 #include <QStringList>
 
 #include "biotracker/BioTrackerApp.h"
-#include "biotracker/ZmqTrackingAlgorithm.h"
+//#include "biotracker/ZmqTrackingAlgorithm.h"
 
 #include "MainWindow.h"
 
@@ -29,7 +29,7 @@ class Gui : public QObject {
     void browseCameras();
 
     void loadTracker();
-    void loadZmqTracker(BioTracker::Core::Zmq::ZmqInfoFile &info);
+//    void loadZmqTracker(BioTracker::Core::Zmq::ZmqInfoFile &info);
 
     void loadTrackingData();
     void storeTrackingData();
