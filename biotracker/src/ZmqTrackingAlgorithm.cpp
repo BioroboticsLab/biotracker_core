@@ -4,6 +4,10 @@ namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
+const QString TYPE_TRACK("0");
+const QString TYPE_PAINT("1");
+const QString TYPE_SHUTDOWN("2");
+
 // ==============================================
 // P R I V A T E  Z M Q  H E L P E R  F U N C S
 // ==============================================
@@ -69,24 +73,33 @@ void recv_QPainter(void *socket, QPainter *p) {
 
 }
 
-void send_string(void *socket, QString str) {
+void send_string(void *socket, QString str, int flags) {
     const int msg_size = str.length();
     int rc = 0;
     zmq_msg_t msg;
     rc = zmq_msg_init_size(&msg, msg_size);
     assert(rc == 0);
     memcpy(zmq_msg_data(&msg), str.toUtf8().constData(), msg_size);
-    zmq_msg_send(&msg, socket, 0);
+    zmq_msg_send(&msg, socket, flags);
     assert(rc == 0);
     rc = zmq_msg_close(&msg);
     assert(rc == 0);
 
 }
 
-void send_cvMat(void *socket, const cv::Mat &mat) {
+/**
+ * @brief zmq_track
+ * @param socket
+ * @param mat
+ * @param frame
+ */
+void zmq_track(void *socket, const cv::Mat &mat, const size_t frame) {
+
+    send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
+
     QString data = QString::number(mat.cols) + "," + QString::number(
-                       mat.rows) + "," + QString::number(mat.type());
-    send_string(socket, data);
+                       mat.rows) + "," + QString::number(mat.type()) + "," + QString::number(frame);
+    send_string(socket, data, ZMQ_SNDMORE);
     //TODO error handling
     size_t sizeInBytes = mat.total() * mat.elemSize();
     zmq_msg_t msg;
@@ -94,6 +107,7 @@ void send_cvMat(void *socket, const cv::Mat &mat) {
     memcpy(zmq_msg_data(&msg), mat.data, sizeInBytes);
     zmq_msg_send(&msg, socket, 0);
     zmq_msg_close(&msg);
+
 }
 
 // ==============================================
@@ -135,7 +149,8 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     std::cout << "track" << std::endl;
-    send_cvMat(m_socket, frame);
+    //send_cvMat(m_socket, frame);
+    zmq_track(m_socket, frame, frameNumber);
     m_isTracking = true;
 }
 
@@ -146,10 +161,10 @@ void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p,
     //p->setBrush(Qt::cyan);
     //p->setPen(Qt::darkCyan);
     //p->drawRect(0, 0, 100, 100);
-    if (m_isTracking) {
-        recv_QPainter(m_socket, p);
-        m_isTracking = false;
-    }
+    //if (m_isTracking) {
+    //    recv_QPainter(m_socket, p);
+    //    m_isTracking = false;
+    //}
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {

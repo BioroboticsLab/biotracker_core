@@ -24,6 +24,7 @@
 #include "TrackingThread.h"
 #include "Exceptions.h"
 
+
 namespace BioTracker {
 namespace Core {
 namespace Zmq {
