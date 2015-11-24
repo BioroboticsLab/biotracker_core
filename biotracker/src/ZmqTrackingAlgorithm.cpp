@@ -94,9 +94,7 @@ void send_string(void *socket, QString str, int flags) {
  * @param frame
  */
 void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame) {
-
     send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
-
     QString data = QString::number(mat.cols) + "," + QString::number(
                        mat.rows) + "," + QString::number(mat.type()) + "," + QString::number(frame);
     send_string(socket, data, ZMQ_SNDMORE);
@@ -107,12 +105,33 @@ void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame) {
     memcpy(zmq_msg_data(&msg), mat.data, sizeInBytes);
     zmq_msg_send(&msg, socket, 0);
     zmq_msg_close(&msg);
-
 }
 
 void zmqserver_shutdown(void *socket) {
     send_string(socket, TYPE_SHUTDOWN, 0);
     QThread::msleep(500);
+}
+
+void zmqserver_paint(void *socket, const size_t frame, QPainter *p) {
+    send_string(socket, TYPE_PAINT, ZMQ_SNDMORE);
+    QString data = QString::number(frame);
+    send_string(socket, data, 0);
+
+    std::cout << "#1" << std::endl;
+
+    // wait for reply
+    QString flag = recv_string(socket);
+    std::cout << "#2" << std::endl;
+    recv_QPainter(socket, p);
+    std::cout << "#3" << std::endl;
+    if (QString::compare(flag, "Y") == 0) {
+        std::cout << "#4" << flag.toUtf8().data() << std::endl;
+        QString shape = recv_string(socket);
+        std::cout << "#5" << std::endl;
+        std::cout << "shape: " << shape.toUtf8().data() << std::endl;
+        //auto data =
+    }
+
 }
 
 // ==============================================
@@ -164,6 +183,7 @@ void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p,
                                  const View &) {
     std::cout << "paint" << std::endl;
     std::cout << "paintOverlay" << std::endl;
+    zmqserver_paint(m_socket, 0, p);
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
