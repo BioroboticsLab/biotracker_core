@@ -93,7 +93,7 @@ void send_string(void *socket, QString str, int flags) {
  * @param mat
  * @param frame
  */
-void zmq_track(void *socket, const cv::Mat &mat, const size_t frame) {
+void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame) {
 
     send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
 
@@ -108,6 +108,11 @@ void zmq_track(void *socket, const cv::Mat &mat, const size_t frame) {
     zmq_msg_send(&msg, socket, 0);
     zmq_msg_close(&msg);
 
+}
+
+void zmqserver_shutdown(void *socket) {
+    send_string(socket, TYPE_SHUTDOWN, 0);
+    QThread::msleep(500);
 }
 
 // ==============================================
@@ -131,26 +136,27 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
 
     std::cout << "HERE" << std::endl;
 
-    QProcess *zmqClient = new QProcess(this);
-    //zmqClient->setStandardOutputFile("/example_tracker_py/out.txt");
-    //zmqClient->setStandardErrorFile("/example_tracker_py/err.txt");
-    zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
+    m_zmqClient = new QProcess(this);
+
+    m_zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
     QString command = info.m_program + " " + info.m_arguments.first();
     std::cout << "[exec]:" << command.toUtf8().constData() << std::endl;
-    zmqClient->start(command);
+    m_zmqClient->start(command);
+}
 
-    //cv::Mat E = cv::Mat::eye(4,4, CV_8UC1);
-    //send_cvMat(m_socket, E);
-
-    //cv::Mat E2 = cv::Mat::eye(4,4, CV_8UC3);
-    //send_cvMat(m_socket, E2);
-
+ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
+    //zmq_disconnect(m_socket, "172.0.0.1:5556");
+    zmqserver_shutdown(m_socket);
+    m_zmqClient->kill();
+    m_zmqClient->waitForFinished(1000);
+    zmq_close(m_socket);
+    zmq_ctx_term(m_context);
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     std::cout << "track" << std::endl;
     //send_cvMat(m_socket, frame);
-    zmq_track(m_socket, frame, frameNumber);
+    zmqserver_track(m_socket, frame, frameNumber);
     m_isTracking = true;
 }
 
@@ -158,13 +164,6 @@ void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p,
                                  const View &) {
     std::cout << "paint" << std::endl;
     std::cout << "paintOverlay" << std::endl;
-    //p->setBrush(Qt::cyan);
-    //p->setPen(Qt::darkCyan);
-    //p->drawRect(0, 0, 100, 100);
-    //if (m_isTracking) {
-    //    recv_QPainter(m_socket, p);
-    //    m_isTracking = false;
-    //}
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {

@@ -55,11 +55,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
   public:
     ZmqTrackingAlgorithm(ZmqInfoFile &info, Settings &settings, QWidget *parent);
 
-    ~ZmqTrackingAlgorithm() {
-        //zmq_disconnect(m_socket, "172.0.0.1:5556");
-        zmq_close(m_socket);
-        zmq_ctx_term(m_context);
-    }
+    ~ZmqTrackingAlgorithm();
 
     void track(ulong frameNumber, const cv::Mat &frame) override;
 
@@ -87,6 +83,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void keyPressEvent(QKeyEvent *) override;
 
   private:
+    QProcess *m_zmqClient;
     bool m_isTracking;
     std::set<Qt::Key> m_keys;
     void *m_context;
