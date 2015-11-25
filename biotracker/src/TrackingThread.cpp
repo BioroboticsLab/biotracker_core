@@ -333,13 +333,14 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         painter.begin(&device);
         ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
         // TODO: only copy matrix to gpu if modified
-        m_texture->setImage(proxy.getMat());
+        //m_texture->setImage(proxy.getMat());
         if (m_tracker) {
             m_tracker.get()->paint(proxy, &painter);
         }
-        if (proxy.hasBeenModified()) {
-            m_texture->setImage(proxy.getMat());
-        }
+        //if (proxy.hasBeenModified()) {
+
+        m_texture->setImage(proxy.getMat());
+        //}
         paintDone();
         painter.end();
     }

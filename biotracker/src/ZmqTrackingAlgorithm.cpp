@@ -32,6 +32,33 @@ QString recv_string(void *socket) {
 
 }
 
+void recv_mat(void *socket, cv::Mat &mat) {
+    int rc = 0;
+    QString temp_shape = recv_string(socket);
+    QStringRef shape(&temp_shape);
+    QVector<QStringRef> shapeStr = shape.split(",");
+    const int w = shapeStr.at(0).toInt();
+    const int h = shapeStr.at(1).toInt();
+    const int type = shapeStr.at(2).toInt();
+
+    zmq_msg_t msg;
+    rc = zmq_msg_init(&msg);
+    assert(rc == 0);
+    zmq_msg_recv(&msg, socket, 0);
+    void *msg_content = zmq_msg_data(&msg);
+
+    cv::Mat newMat(h, w, type, msg_content);
+
+    std::cout << "new:" << newMat.rows << "," << newMat.cols << "," << newMat.type()
+              << std::endl;
+    std::cout << "old:" << mat.rows << "," << mat.cols << "," << mat.type() <<
+              std::endl;
+
+    newMat.copyTo(mat);
+
+    zmq_msg_close(&msg);
+}
+
 QColor getColor(const QStringRef content) {
     QVector<QStringRef> colorStr = content.split(",");
     const int r = colorStr.at(0).toInt();
@@ -112,24 +139,17 @@ void zmqserver_shutdown(void *socket) {
     QThread::msleep(500);
 }
 
-void zmqserver_paint(void *socket, const size_t frame, QPainter *p) {
+void zmqserver_paint(void *socket, const size_t frame, ProxyPaintObject &m,
+                     QPainter *p) {
     send_string(socket, TYPE_PAINT, ZMQ_SNDMORE);
     QString data = QString::number(frame);
     send_string(socket, data, 0);
 
-    std::cout << "#1" << std::endl;
-
     // wait for reply
     QString flag = recv_string(socket);
-    std::cout << "#2" << std::endl;
     recv_QPainter(socket, p);
-    std::cout << "#3" << std::endl;
     if (QString::compare(flag, "Y") == 0) {
-        std::cout << "#4" << flag.toUtf8().data() << std::endl;
-        QString shape = recv_string(socket);
-        std::cout << "#5" << std::endl;
-        std::cout << "shape: " << shape.toUtf8().data() << std::endl;
-        //auto data =
+        recv_mat(socket, m.getMat());
     }
 
 }
@@ -173,17 +193,21 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
+    m_testMutex.lock();
     std::cout << "track" << std::endl;
     //send_cvMat(m_socket, frame);
     zmqserver_track(m_socket, frame, frameNumber);
     m_isTracking = true;
+    m_testMutex.unlock();
 }
 
-void ZmqTrackingAlgorithm::paint(ProxyPaintObject &, QPainter *p,
+void ZmqTrackingAlgorithm::paint(ProxyPaintObject &m, QPainter *p,
                                  const View &) {
+    m_testMutex.lock();
     std::cout << "paint" << std::endl;
     std::cout << "paintOverlay" << std::endl;
-    zmqserver_paint(m_socket, 0, p);
+    zmqserver_paint(m_socket, 0, m, p);
+    m_testMutex.unlock();
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
