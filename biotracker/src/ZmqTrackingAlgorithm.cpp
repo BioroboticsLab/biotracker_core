@@ -193,21 +193,17 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
-    m_testMutex.lock();
     std::cout << "track" << std::endl;
     //send_cvMat(m_socket, frame);
     zmqserver_track(m_socket, frame, frameNumber);
     m_isTracking = true;
-    m_testMutex.unlock();
 }
 
 void ZmqTrackingAlgorithm::paint(ProxyPaintObject &m, QPainter *p,
                                  const View &) {
-    m_testMutex.lock();
     std::cout << "paint" << std::endl;
     std::cout << "paintOverlay" << std::endl;
     zmqserver_paint(m_socket, 0, m, p);
-    m_testMutex.unlock();
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {

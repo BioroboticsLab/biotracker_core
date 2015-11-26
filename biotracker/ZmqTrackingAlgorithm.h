@@ -88,8 +88,6 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     std::set<Qt::Key> m_keys;
     void *m_context;
     void *m_socket;
-    std::mutex m_testMutex;
-
 };
 }
 }
