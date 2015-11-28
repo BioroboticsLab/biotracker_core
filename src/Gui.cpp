@@ -19,7 +19,6 @@ Gui::Gui()
     : QObject()
     , m_biotracker()
     , m_mainWindow(m_biotracker) {
-    std::cout << "start gui" << std::endl;
     initConnects();
     m_mainWindow.show();
 }
