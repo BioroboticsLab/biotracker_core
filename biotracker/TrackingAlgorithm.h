@@ -16,34 +16,6 @@
 #include "settings/ParamNames.h"
 #include "serialization/TrackedObject.h"
 
-class ProxyPaintObject {
-  private:
-    ProxyPaintObject(const ProxyPaintObject &) = delete;
-    ProxyPaintObject &operator=(const ProxyPaintObject &) = delete;
-
-    cv::Mat m_img;
-    bool m_matrixHasBeenModified;
-
-  public:
-    ProxyPaintObject(cv::Mat img)
-        : m_img(img)
-        , m_matrixHasBeenModified(false) {
-    }
-
-    cv::Mat &getMat() {
-        m_matrixHasBeenModified = true;
-        return m_img;
-    }
-
-    cv::Mat const &getMatConst() {
-        return m_img;
-    }
-
-    bool hasBeenModified() const {
-        return m_matrixHasBeenModified;
-    }
-};
-
 class Settings;
 namespace Algorithm {
 typedef uint8_t Type;
@@ -73,8 +45,9 @@ class TrackingAlgorithm : public QObject {
     * QPainter paints stuff onto "VideoViews" current picture
     * without touching it
     */
-    virtual void paint(ProxyPaintObject &, QPainter *,
-                       View const & = OriginalView) {}
+    virtual void paint(cv::Mat &, View const & = OriginalView) {}
+
+    virtual void paintOverlay(QPainter *) {}
 
     /**
     * getToolsFrame() will be called once at start up

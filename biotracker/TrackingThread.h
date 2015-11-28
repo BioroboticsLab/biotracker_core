@@ -140,12 +140,6 @@ class TrackingThread : public QThread {
     void playOnce();
 
     /**
-      * allows to paint an overlay when rendered AFTER paintRaw.
-      * @brief paint
-      */
-    void paintOverlay(QPainter &painter);
-
-    /**
      * Paints the raw texture of the data of the current frame
      * @brief paintRaw
      */
@@ -206,7 +200,6 @@ class TrackingThread : public QThread {
     * @param filename the current file name
     * @param currentFps the fps of the last frame: when the fps are -1, no fps should be shown
     */
-    //void newFrameNumber(int frameNumber);
     void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
 

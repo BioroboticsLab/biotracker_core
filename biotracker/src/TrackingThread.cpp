@@ -327,23 +327,24 @@ void TrackingThread::setMaxSpeed(bool enabled) {
 
 void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         QPainter &painter) {
+
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
     if (m_somethingIsLoaded) {
         painter.begin(&device);
-        ProxyPaintObject proxy(m_imageStream->currentFrame().clone());
-        // TODO: only copy matrix to gpu if modified
-        m_texture->setImage(proxy.getMat());
+        cv::Mat m = m_imageStream->currentFrame().clone();
         if (m_tracker) {
-            m_tracker.get()->paint(proxy, &painter);
+            m_tracker.get()->paint(m);
         }
-        if (proxy.hasBeenModified()) {
-            m_texture->setImage(proxy.getMat());
+        m_texture->setImage(m);
+
+        if (m_tracker) {
+            m_tracker.get()->paintOverlay(&painter);
         }
+
         paintDone();
         painter.end();
     }
-    //painter->setWindow(QRect(0,0,w,h));
     m_paintMutex.unlock();
 }
 

@@ -15,7 +15,7 @@ class Interpreter : public QObject {
     ~Interpreter() {}
     size_t interpret() {
 
-        return 87;
+        return 2;
     }
 
 };
