@@ -139,7 +139,8 @@ class BioTrackerApp : public QObject {
      * @brief setTrackingAlgorithm
      * @param TrackingAlgorithm the selected algorithm
      */
-    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
+    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
+    void setTrackingAlgorithm(std::string const &trackerName);
 
     void mouseEvent(QMouseEvent *event);
     void keyboardEvent(QKeyEvent *event);

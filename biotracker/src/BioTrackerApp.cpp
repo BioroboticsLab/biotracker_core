@@ -99,6 +99,14 @@ void BioTrackerApp::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
     m_trackingThread.setTrackingAlgorithm(std::move(trackingAlgorithm));
 }
 
+void BioTrackerApp::setTrackingAlgorithm(const std::string &trackerName) {
+    const auto trackerType = m_registry.getTypeByString().at(trackerName);
+    if (trackerType != NoTracking) {
+        setTrackingAlgorithm(m_registry.makeNewTracker(trackerType, m_settings,
+                             nullptr));
+    }
+}
+
 void BioTrackerApp::mouseEvent(QMouseEvent *event) {
     m_trackingThread.mouseEvent(event);
 }
