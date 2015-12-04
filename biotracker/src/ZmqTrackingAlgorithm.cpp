@@ -152,7 +152,7 @@ void zmqserver_paintOverlay(void *socket, QPainter *p) {
 
 // ==============================================
 
-ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
+ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info,
         Settings &settings, QWidget *parent) :
     TrackingAlgorithm(settings, parent),
     m_isTracking(false),
@@ -171,7 +171,7 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile &info,
 
     std::cout << "HERE" << std::endl;
 
-    m_zmqClient = new QProcess(this);
+    m_zmqClient = std::make_unique<QProcess>(this);
 
     m_zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
     QString command = info.m_program + " " + info.m_arguments.first();
@@ -184,8 +184,8 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
     zmqserver_shutdown(m_socket);
     m_zmqClient->kill();
     m_zmqClient->waitForFinished(1000);
-    zmq_close(m_socket);
-    zmq_ctx_term(m_context);
+    //zmq_close(m_socket);
+    //zmq_ctx_term(m_context);
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {

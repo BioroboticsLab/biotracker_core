@@ -22,10 +22,17 @@ static const TrackerType NoTracking = 0;
 // construct on first use idiom
 TrackerType getNextId();
 
+struct NewTrackerFactory {
+    virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
+            QWidget *parent) const = 0;
+    virtual ~NewTrackerFactory() {}
+};
+
 class Registry : public QObject, public Util::Singleton<Registry> {
     Q_OBJECT
   public:
-    typedef std::map<const TrackerType, new_tracker_function_t> map_type_fun_t;
+    typedef std::map<const TrackerType, std::shared_ptr<NewTrackerFactory>>
+            map_type_fun_t;
     typedef std::map<const TrackerType, const std::string> map_type_string_t;
     typedef std::map<const std::string, const TrackerType> map_string_type_t;
 
@@ -42,6 +49,8 @@ class Registry : public QObject, public Util::Singleton<Registry> {
      */
     template<class TRACKER>
     bool registerTrackerType(std::string name);
+
+    bool registerZmqTracker(Zmq::ZmqInfoFile trackerInfo);
 
     /**
      * creates a new tracker-instance
@@ -67,7 +76,6 @@ class Registry : public QObject, public Util::Singleton<Registry> {
 
   Q_SIGNALS:
     void newTracker(const TrackerType type);
-    void newZmqTracker(BioTracker::Core::Zmq::ZmqInfoFile &info);
 
   private:
     friend class Singleton<Registry>;
@@ -75,6 +83,8 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     map_string_type_t m_typeByString;
     map_type_string_t m_stringByType;
     map_type_fun_t m_trackerByType;
+
+    std::map<std::string, Zmq::ZmqInfoFile> m_zmqRegistry;
 
     Registry();
 
@@ -84,18 +94,20 @@ class Registry : public QObject, public Util::Singleton<Registry> {
      * @param f function that creates a new instance
      * @return dummy value
      */
-    bool registerTrackerType(std::string name, new_tracker_function_t f);
+    bool registerTrackerType(std::string name,
+                             std::shared_ptr<NewTrackerFactory> f);
 };
 
 template<class TRACKER>
 bool Registry::registerTrackerType(std::string name) {
-    struct local_function {
-        static std::shared_ptr<TrackingAlgorithm> f(Settings &settings,
-                QWidget *parent) {
+    struct NewCppTrackerFactory : NewTrackerFactory {
+        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
+                QWidget *parent) const override {
             return std::make_shared<TRACKER>(settings, parent);
         }
     };
-    return this->registerTrackerType(std::move(name), local_function::f);
+    return this->registerTrackerType(std::move(name),
+                                     std::make_shared<NewCppTrackerFactory>());
 }
 
 }

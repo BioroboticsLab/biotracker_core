@@ -16,7 +16,8 @@ Registry::Registry() {
     m_stringByType.insert(std::make_pair(NoTracking, "No Tracking"));
 }
 
-bool Registry::registerTrackerType(std::string name, new_tracker_function_t f) {
+bool Registry::registerTrackerType(std::string name,
+                                   std::shared_ptr<NewTrackerFactory> f) {
     if (m_typeByString.find(name) != m_typeByString.end()) {
         throw std::invalid_argument("Tracker with same name already registered");
     }
@@ -47,26 +48,13 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
 
     const std::string ext(parts[parts.size() - 1]);
     if (ext == "so" || ext == "dylib" || ext == "dll") {
-        /*
-        =======
-        const QString str = QString::fromStdString(path.string());
-        if (str.endsWith("zmq")) {
-         Zmq::ZmqInfoFile info = Zmq::getInfo(path);
-
-         Q_EMIT newZmqTracker(info);
-
-        } else {
-        >>>>>>> first steps for zmq implementa. Strings may be received by the tracker now
-                 */
         QLibrary trackerLibrary(QString::fromStdString(path.string()));
         auto registerFunction = static_cast<RegisterFunction>
                                 (trackerLibrary.resolve("registerTracker"));
 
         registerFunction();
     } else if (ext == "zmq") {
-        std::cout << "LOAD ZMQ THINGY" << std::endl;
-        Zmq::ZmqInfoFile info = Zmq::getInfo(path);
-        Q_EMIT newZmqTracker(info);
+        registerZmqTracker(Zmq::getInfo(path));
     } else {
 
     }
@@ -76,7 +64,8 @@ std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
     const TrackerType type, Settings &settings, QWidget *parent) const {
     const auto &it = m_trackerByType.find(type);
     if (it != m_trackerByType.cend()) {
-        std::shared_ptr<TrackingAlgorithm> tracker = (it->second)(settings, parent);
+        std::shared_ptr<NewTrackerFactory> factory = it->second;
+        std::shared_ptr<TrackingAlgorithm> tracker = (*factory)(settings, parent);
         tracker->setType(type);
         return tracker;
     } else {
@@ -90,10 +79,29 @@ std::shared_ptr<TrackingAlgorithm> Registry::getTracker(Zmq::ZmqInfoFile &info,
     return tracker;
 }
 
+
 TrackerType getNextId() {
     static TrackerType nextType = NoTracking + 1;
 
     return nextType++;
+}
+
+bool BioTracker::Core::Registry::registerZmqTracker(Zmq::ZmqInfoFile
+        trackerInfo) {
+    struct NewZmqTrackerFactory : NewTrackerFactory {
+        NewZmqTrackerFactory(Zmq::ZmqInfoFile trackerInfo) : m_trackerInfo(
+                trackerInfo) {}
+
+        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
+                QWidget *parent) const override {
+            return std::make_shared<Zmq::ZmqTrackingAlgorithm>(m_trackerInfo, settings,
+                    parent);
+        }
+
+        Zmq::ZmqInfoFile m_trackerInfo;
+    };
+    return this->registerTrackerType(trackerInfo.m_name.toStdString(),
+                                     std::make_shared<NewZmqTrackerFactory>(trackerInfo));
 }
 
 }

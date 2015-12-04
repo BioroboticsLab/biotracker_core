@@ -53,7 +53,7 @@ ZmqInfoFile getInfo(const boost::filesystem::path &path);
 class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
   public:
-    ZmqTrackingAlgorithm(ZmqInfoFile &info, Settings &settings, QWidget *parent);
+    ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings, QWidget *parent);
 
     ~ZmqTrackingAlgorithm();
 
@@ -85,7 +85,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void keyPressEvent(QKeyEvent *) override;
 
   private:
-    QProcess *m_zmqClient;
+    std::unique_ptr<QProcess> m_zmqClient;
     bool m_isTracking;
     std::set<Qt::Key> m_keys;
     void *m_context;
