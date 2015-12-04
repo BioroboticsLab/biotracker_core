@@ -124,12 +124,6 @@ void Gui::loadTracker() {
     }
 }
 
-void Gui::loadZmqTracker(BioTracker::Core::Zmq::ZmqInfoFile &info) {
-    std::cout << "load zmq tracker!" << std::endl;
-    auto tracker = m_biotracker.getRegistry().getTracker(info, m_biotracker.getSettings(), &m_mainWindow);
-    m_biotracker.setTrackingAlgorithm(tracker);
-}
-
 void Gui::loadTrackingData() {
 
 }
