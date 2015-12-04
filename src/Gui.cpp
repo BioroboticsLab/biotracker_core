@@ -53,9 +53,6 @@ void Gui::initConnects() {
 
     QObject::connect(&m_biotracker, &Core::BioTrackerApp::fileOpened,
                      m_mainWindow.getVideoControl(), &VideoControlWidget::fileOpened);
-
-    QObject::connect(&m_biotracker.getRegistry(), &Core::Registry::newZmqTracker,
-                     this, &Gui::loadZmqTracker);
 }
 
 void Gui::browseVideo() {
