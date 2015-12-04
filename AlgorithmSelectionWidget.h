@@ -28,10 +28,13 @@ class AlgorithmSelectionWidget : public QWidget {
 
   private:
     AlgorithmSelectionUi m_ui;
-    Core::BioTrackerApp &m_facade;
+    Core::BioTrackerApp &m_biotracker;
 
     void initAlgorithmList();
     void initConnects();
+
+  private Q_SLOTS:
+    void trackingAlgorithmSelected(const QString& name);
 };
 
 }
