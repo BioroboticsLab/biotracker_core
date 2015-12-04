@@ -1,8 +1,6 @@
 #pragma once
 
 #include <stdlib.h>
-#include <czmq.h>
-// http://czmq.zeromq.org/page:get-the-software
 
 namespace BioTracker {
 namespace Core {
