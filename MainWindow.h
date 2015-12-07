@@ -51,6 +51,13 @@ class MainWindow : public QMainWindow {
     void frameCalculated(const size_t frameNumber,
                     const std::string filename, const double currentFps);
 
+    /**
+     * @brief trackerSelected
+     * gets called whenever a new tracker is selected
+     * @param tracker
+     */
+    void trackerSelected(std::shared_ptr<TrackingAlgorithm> tracker);
+
   private:
     MainWindowUi m_ui;
     AlgorithmSelectionWidget m_algorithmSelection;
@@ -58,6 +65,14 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<VideoView> m_videoView;
     std::unique_ptr<VideoControlWidget> m_videoControl;
     OpenCameraDialog m_openCameraDialog;
+    QVBoxLayout m_tools;
+
+    /**
+     * @brief lastToolsWidget
+     * We need to store a reference to the last used widget so we can
+     * remove it upon selecting a new algorithm
+     */
+    std::shared_ptr<QWidget> m_lastToolsWidget;
 
     void initalizeVideoView(Core::BioTrackerApp &biotracker);
 };

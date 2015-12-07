@@ -46,8 +46,7 @@ void AlgorithmSelectionWidget::initConnects() {
                      this, &AlgorithmSelectionWidget::trackingAlgorithmSelected);
 }
 
-void AlgorithmSelectionWidget::trackingAlgorithmSelected(const QString &name)
-{
+void AlgorithmSelectionWidget::trackingAlgorithmSelected(const QString &name) {
     m_biotracker.setTrackingAlgorithm(name.toStdString());
 }
 

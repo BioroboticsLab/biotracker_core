@@ -48,6 +48,9 @@ void Gui::initConnects() {
     QObject::connect(&m_biotracker, &Core::BioTrackerApp::frameCalculated,
                      &m_mainWindow, &MainWindow::frameCalculated);
 
+    QObject::connect(&m_biotracker, &Core::BioTrackerApp::trackerSelected,
+                      &m_mainWindow, &MainWindow::trackerSelected);
+
     QObject::connect(&m_biotracker, &Core::BioTrackerApp::notify,
                      &m_mainWindow.getNotification(), &NotificationWidget::notify);
 
