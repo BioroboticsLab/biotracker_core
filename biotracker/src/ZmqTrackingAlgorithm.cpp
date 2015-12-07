@@ -206,11 +206,6 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
     return ptr;
 }
 
-std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getParamsWidget() {
-    auto ptr = std::make_shared<QWidget>();
-    return ptr;
-}
-
 void ZmqTrackingAlgorithm::prepareSave() {
 
 }

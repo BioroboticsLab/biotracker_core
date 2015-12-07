@@ -57,13 +57,6 @@ class TrackingAlgorithm : public QObject {
     virtual std::shared_ptr<QWidget> getToolsWidget();
 
     /**
-    * getParamsWidget() will be called once at start up
-    * to create a widget for gui with all
-    * parameter fields needed
-    */
-    virtual std::shared_ptr<QWidget> getParamsWidget();
-
-    /**
      * @brief grabbedKeys() has to return a set of all keys that the
      * algorithms needs access to. All KeyEvents with keys in the set will
      * be forwarded to the algorithm

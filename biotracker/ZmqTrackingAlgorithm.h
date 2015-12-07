@@ -65,8 +65,6 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     std::shared_ptr<QWidget> getToolsWidget() override;
 
-    std::shared_ptr<QWidget> getParamsWidget() override;
-
     //    std::set<Qt::Key> &grabbedKeys() const override;
 
     void prepareSave() override;
