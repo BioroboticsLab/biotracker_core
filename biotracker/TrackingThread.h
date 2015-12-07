@@ -214,6 +214,13 @@ class TrackingThread : public QThread {
     */
     void notifyGUI(std::string message,
                    MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+
+    /**
+     * @brief trackerSelected
+     * Notify the application that the tracker has changed
+     * @param tracker
+     */
+    void trackerSelected(std::shared_ptr<TrackingAlgorithm> tracker);
 };
 
 }

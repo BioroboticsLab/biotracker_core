@@ -319,6 +319,8 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
         MutexLocker lock(m_trackerMutex);
         m_tracker = trackingAlgorithm;
     }
+    Q_EMIT trackerSelected(trackingAlgorithm);
+
 }
 
 void TrackingThread::setMaxSpeed(bool enabled) {

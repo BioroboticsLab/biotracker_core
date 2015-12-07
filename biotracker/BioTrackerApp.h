@@ -170,6 +170,13 @@ class BioTrackerApp : public QObject {
                                            const std::string filename, const double currentFps);
 
     /**
+     * @brief trackerSelectedFromTrackingThread
+     * forward
+     * @param a
+     */
+    void trackerSelectedFromTrackingThread(std::shared_ptr<TrackingAlgorithm> a);
+
+    /**
      * @brief loadModulesInPath
      *      Dynamically load all modules in path.
      * @param path
@@ -199,6 +206,13 @@ class BioTrackerApp : public QObject {
      */
     void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
+
+    /**
+     * @brief trackerSelected
+     * Gets thrown when a new Tracker is selected
+     * @param trackingAlgorithm
+     */
+    void trackerSelected(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 
   private:
     Settings m_settings;
