@@ -130,10 +130,9 @@ void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path) {
         throw directory_not_found("Invalid path");
     }
 
-    boost::filesystem::directory_iterator directoryIt(path);
-    for (const boost::filesystem::path &p : directoryIt) {
+    for (auto &p : boost::make_iterator_range(boost::filesystem::directory_iterator(path), {})) {
         std::vector<std::string> parts;
-        boost::split(parts, p.string(), boost::is_any_of("."));
+        boost::split(parts, p.path().string(), boost::is_any_of("."));
         /* expect filename to be of form: name.tracker.ext */
         if (parts.size() >= 3) {
             getRegistry().loadTrackerLibrary(p);
