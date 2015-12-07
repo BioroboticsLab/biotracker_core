@@ -10,7 +10,7 @@ This core library is used in the [BioTracker GUI](https://github.com/Biorobotics
 
 ## Dependencies
 ### Unix
-You can find an up-to-date list of [dependencies](https://github.com/BioroboticsLab/DockerFiles/blob/master/biotracker/dependencies.sh)
+You can find an up-to-date list of [dependencies](https://github.com/BioroboticsLab/DockerFiles/blob/master/ubuntu-15.10-biotracker/dependencies.sh)
 needed to build the BioTracker in our docker repository.
 
 ### OSX
