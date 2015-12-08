@@ -8,6 +8,8 @@ const QString TYPE_TRACK("0");
 const QString TYPE_PAINT("1");
 const QString TYPE_SHUTDOWN("2");
 const QString TYPE_PAINTOVERLAY("3");
+const QString TYPE_REQUEST_WIDGETS("4");
+const QString TYPE_SEND_WIDGET_EVENT("5");
 
 // ==============================================
 // P R I V A T E  Z M Q  H E L P E R  F U N C S
@@ -89,7 +91,32 @@ void recv_QPainter(void *socket, QPainter *p) {
             }
         }
     }
+}
 
+void recv_ToolsWidgets(void *socket, std::shared_ptr<QWidget> tools) {
+    std::cout << "get tools recv" << std::endl;
+    QString data = recv_string(socket);
+    std::cout << data.toUtf8().data() << std::endl;
+    if (data.length() > 0) {
+        QStringList batch = data.split(";");
+        for (auto &widgetStr : batch) {
+            const QChar type = widgetStr.at(0);
+            if (type == QChar('d')) {
+
+            } else if (type == QChar('t')) {
+
+            } else if (type == QChar('b')) {
+                auto btn = new QPushButton(tools.get());
+                QString btnTxtDirty = widgetStr.split(",")[1];
+                QString btnTxt = btnTxtDirty.left(btnTxtDirty.size() - 1);
+                btn->setText(btnTxt);
+            } else if (type == QChar('s')) {
+
+            } else {
+
+            }
+        }
+    }
 }
 
 void send_string(void *socket, QString str, int flags) {
@@ -103,7 +130,6 @@ void send_string(void *socket, QString str, int flags) {
     assert(rc == 0);
     rc = zmq_msg_close(&msg);
     assert(rc == 0);
-
 }
 
 /**
@@ -147,8 +173,9 @@ void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m) {
 void zmqserver_paintOverlay(void *socket, QPainter *p) {
     send_string(socket, TYPE_PAINTOVERLAY, 0);
     recv_QPainter(socket, p);
-
 }
+
+
 
 // ==============================================
 
@@ -157,10 +184,8 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info,
     TrackingAlgorithm(settings, parent),
     m_isTracking(false),
     m_context(zmq_ctx_new()),
-    m_socket(zmq_socket(m_context, ZMQ_PAIR)) {
-
-    std::cout << info.m_arguments.first().toUtf8().constData() << std::endl;
-
+    m_socket(zmq_socket(m_context, ZMQ_PAIR)),
+    m_tools(std::make_shared<QFrame>()) {
     int rc = zmq_bind(m_socket, "tcp://127.0.0.1:5556");
     if (rc != 0) {
         int rno = zmq_errno();
@@ -168,14 +193,9 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info,
         std::cout << "error: " << err_msg.toUtf8().constData() << std::endl;
     }
     assert(rc == 0);
-
-    std::cout << "HERE" << std::endl;
-
     m_zmqClient = std::make_unique<QProcess>(this);
-
     m_zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
     QString command = info.m_program + " " + info.m_arguments.first();
-    std::cout << "[exec]:" << command.toUtf8().constData() << std::endl;
     m_zmqClient->start(command);
 }
 
@@ -202,8 +222,9 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p) {
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    auto ptr = std::make_shared<QWidget>();
-    return ptr;
+    send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
+    recv_ToolsWidgets(m_socket, m_tools);
+    return m_tools;
 }
 
 void ZmqTrackingAlgorithm::prepareSave() {
