@@ -143,6 +143,9 @@ class TrackingAlgorithm : public QObject {
         _videoMode = videoMode;
     }
 
+    void setVideoFps(const size_t fps) {
+        m_videoFps = fps;
+    }
 
   Q_SIGNALS:
     /**
@@ -221,6 +224,8 @@ class TrackingAlgorithm : public QObject {
     */
     virtual void keyPressEvent(QKeyEvent * /* e */) {}
 
+  protected:
+    size_t m_videoFps = -1;
 
   private:
     int _currentFrameNumber;
