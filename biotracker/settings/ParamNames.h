@@ -3,14 +3,13 @@
 #include <string> // std::string
 
 #include <boost/filesystem.hpp>
-#include <boost/predef.h>
 
 #include <QDir>
 
 namespace CONFIGPARAM {
 static const boost::filesystem::path HOME_PATH = boost::filesystem::path(
             QDir::toNativeSeparators(QDir::homePath()).toStdString());
-#if BOOST_OS_WINDOWS
+#ifdef _WIN32
 static const boost::filesystem::path BASE_PATH = HOME_PATH / "BioTracker";
 #else
 static const boost::filesystem::path BASE_PATH = HOME_PATH / ".biotracker";
