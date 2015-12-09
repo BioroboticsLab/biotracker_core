@@ -204,6 +204,9 @@ QPoint VideoView::projectPicturePos(QPoint imageCoords) {
 }
 
 void VideoView::keyPressEvent(QKeyEvent *e) {
+    e->accept();
+    QKeyEvent event(e->type(), e->key(), e->modifiers(), e->text());
+    m_biotracker.keyboardEvent(&event);
 }
 
 void VideoView::mouseMoveEvent(QMouseEvent *e) {
@@ -230,7 +233,7 @@ void VideoView::mouseMoveEvent(QMouseEvent *e) {
             QPoint p  = unprojectScreenPos(e->pos());
             const QPointF localPos(p);
             QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            m_biotracker.mouseEvent(&modifiedEvent);
             break;
         }
         default: {
@@ -259,7 +262,7 @@ void VideoView::mousePressEvent(QMouseEvent *e) {
             QPoint p  = unprojectScreenPos(e->pos());
             const QPointF localPos(p);
             QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            m_biotracker.mouseEvent(&modifiedEvent);
             break;
         }
         default: {
@@ -281,7 +284,7 @@ void VideoView::mouseReleaseEvent(QMouseEvent *e) {
             QPoint p  = unprojectScreenPos(e->pos());
             const QPointF localPos(p);
             QMouseEvent modifiedEvent(e->type(),localPos,e->screenPos(),e->button(),e->buttons(),e->modifiers());
-            QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            m_biotracker.mouseEvent(&modifiedEvent);
             break;
         }
         default: {
@@ -334,6 +337,7 @@ void VideoView::wheelEvent(QWheelEvent *e) {
             const QPointF localPos(p);
             QWheelEvent modifiedEvent(e->pos(),localPos,e->pixelDelta(),e->angleDelta(),e->delta(),e->orientation(),e->buttons(),e->modifiers());
             QCoreApplication::sendEvent(QApplication::activeWindow(), &modifiedEvent);
+            m_biotracker.mouseWheelEvent(&modifiedEvent);
             break;
         }
         default: {
