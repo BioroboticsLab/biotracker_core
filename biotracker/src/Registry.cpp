@@ -61,11 +61,11 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
 }
 
 std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
-    const TrackerType type, Settings &settings, QWidget *parent) const {
+    const TrackerType type, Settings &settings) const {
     const auto &it = m_trackerByType.find(type);
     if (it != m_trackerByType.cend()) {
         std::shared_ptr<NewTrackerFactory> factory = it->second;
-        std::shared_ptr<TrackingAlgorithm> tracker = (*factory)(settings, parent);
+        std::shared_ptr<TrackingAlgorithm> tracker = (*factory)(settings);
         tracker->setType(type);
         return tracker;
     } else {
@@ -74,8 +74,8 @@ std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
 }
 
 std::shared_ptr<TrackingAlgorithm> Registry::getTracker(Zmq::ZmqInfoFile &info,
-        Settings &s, QWidget *p) const {
-    auto tracker = std::make_shared<Zmq::ZmqTrackingAlgorithm>(info, s, p);
+        Settings &s) const {
+    auto tracker = std::make_shared<Zmq::ZmqTrackingAlgorithm>(info, s);
     return tracker;
 }
 
@@ -92,10 +92,9 @@ bool BioTracker::Core::Registry::registerZmqTracker(Zmq::ZmqInfoFile
         NewZmqTrackerFactory(Zmq::ZmqInfoFile trackerInfo) : m_trackerInfo(
                 trackerInfo) {}
 
-        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
-                QWidget *parent) const override {
-            return std::make_shared<Zmq::ZmqTrackingAlgorithm>(m_trackerInfo, settings,
-                    parent);
+        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings)
+        const override {
+            return std::make_shared<Zmq::ZmqTrackingAlgorithm>(m_trackerInfo, settings);
         }
 
         Zmq::ZmqInfoFile m_trackerInfo;

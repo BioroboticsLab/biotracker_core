@@ -15,7 +15,7 @@ namespace BioTracker {
 namespace Core {
 
 typedef std::shared_ptr<TrackingAlgorithm>
-(*new_tracker_function_t)(Settings &settings, QWidget *parent);
+(*new_tracker_function_t)(Settings &settings);
 typedef uint8_t TrackerType;
 
 static const TrackerType NoTracking = 0;
@@ -23,8 +23,7 @@ static const TrackerType NoTracking = 0;
 TrackerType getNextId();
 
 struct NewTrackerFactory {
-    virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
-            QWidget *parent) const = 0;
+    virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings) const = 0;
     virtual ~NewTrackerFactory() {}
 };
 
@@ -57,11 +56,11 @@ class Registry : public QObject, public Util::Singleton<Registry> {
      * @return new instance
      */
     std::shared_ptr<TrackingAlgorithm> makeNewTracker(const TrackerType name,
-            Settings &settings, QWidget *parent) const;
+            Settings &settings) const;
 
 
     std::shared_ptr<TrackingAlgorithm> getTracker(Zmq::ZmqInfoFile &info,
-            Settings &s, QWidget *p) const;
+            Settings &s) const;
 
 
     const map_string_type_t &getTypeByString() const {
@@ -101,9 +100,8 @@ class Registry : public QObject, public Util::Singleton<Registry> {
 template<class TRACKER>
 bool Registry::registerTrackerType(std::string name) {
     struct NewCppTrackerFactory : NewTrackerFactory {
-        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings,
-                QWidget *parent) const override {
-            return std::make_shared<TRACKER>(settings, parent);
+        virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings) const override {
+            return std::make_shared<TRACKER>(settings);
         }
     };
     return this->registerTrackerType(std::move(name),

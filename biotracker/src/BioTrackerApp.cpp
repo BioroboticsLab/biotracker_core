@@ -105,8 +105,7 @@ void BioTrackerApp::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
 void BioTrackerApp::setTrackingAlgorithm(const std::string &trackerName) {
     const auto trackerType = m_registry.getTypeByString().at(trackerName);
     if (trackerType != NoTracking) {
-        setTrackingAlgorithm(m_registry.makeNewTracker(trackerType, m_settings,
-                             nullptr));
+        setTrackingAlgorithm(m_registry.makeNewTracker(trackerType, m_settings));
     }
 }
 

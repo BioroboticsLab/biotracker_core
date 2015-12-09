@@ -1,7 +1,7 @@
 #include "TrackingAlgorithm.h"
 
-TrackingAlgorithm::TrackingAlgorithm(Settings &settings, QWidget *parent)
-    : QObject(parent)
+TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
+    : QObject()
     , _settings(settings)
     , _currentFrameNumber(0)
     , _currentZoomLevel(0.0f)

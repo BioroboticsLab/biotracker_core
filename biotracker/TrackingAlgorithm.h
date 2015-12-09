@@ -25,7 +25,7 @@ class TrackingAlgorithm : public QObject {
     Q_OBJECT
 
   public:
-    TrackingAlgorithm(Settings &settings, QWidget *parent);
+    TrackingAlgorithm(Settings &settings);
     virtual ~TrackingAlgorithm() override = default;
 
     struct View {

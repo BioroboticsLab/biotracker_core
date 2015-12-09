@@ -53,7 +53,7 @@ ZmqInfoFile getInfo(const boost::filesystem::path &path);
 class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
   public:
-    ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings, QWidget *parent);
+    ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings);
 
     ~ZmqTrackingAlgorithm();
 

@@ -179,9 +179,8 @@ void zmqserver_paintOverlay(void *socket, QPainter *p) {
 
 // ==============================================
 
-ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info,
-        Settings &settings, QWidget *parent) :
-    TrackingAlgorithm(settings, parent),
+ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings) :
+    TrackingAlgorithm(settings),
     m_isTracking(false),
     m_context(zmq_ctx_new()),
     m_socket(zmq_socket(m_context, ZMQ_PAIR)),
