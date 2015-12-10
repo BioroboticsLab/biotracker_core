@@ -22,6 +22,8 @@ BioTrackerApp::BioTrackerApp()
 BioTrackerApp::~BioTrackerApp() {
     m_trackingThread.terminate();
     m_trackingThread.wait();
+
+    std::cout << "closing" << std::endl;
 }
 
 void BioTrackerApp::initConnects() {
@@ -111,6 +113,10 @@ void BioTrackerApp::setTrackingAlgorithm(const std::string &trackerName) {
 
 void BioTrackerApp::mouseEvent(QMouseEvent *event) {
     m_trackingThread.mouseEvent(event);
+}
+
+void BioTracker::Core::BioTrackerApp::mouseWheelEvent(QWheelEvent *event) {
+    m_trackingThread.mouseWheelEvent(event);
 }
 
 void BioTrackerApp::keyboardEvent(QKeyEvent *event) {

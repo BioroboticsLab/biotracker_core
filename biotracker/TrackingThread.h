@@ -99,6 +99,7 @@ class TrackingThread : public QThread {
     size_t getVideoLength() const;
 
     void mouseEvent(QMouseEvent *event);
+    void mouseWheelEvent(QWheelEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
   private:

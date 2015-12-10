@@ -143,6 +143,7 @@ class BioTrackerApp : public QObject {
     void setTrackingAlgorithm(std::string const &trackerName);
 
     void mouseEvent(QMouseEvent *event);
+    void mouseWheelEvent(QWheelEvent *event);
     void keyboardEvent(QKeyEvent *event);
 
   private Q_SLOTS:

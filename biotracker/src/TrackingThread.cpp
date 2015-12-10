@@ -250,6 +250,13 @@ void TrackingThread::mouseEvent(QMouseEvent *event) {
     }
 }
 
+void BioTracker::Core::TrackingThread::mouseWheelEvent(QWheelEvent *event) {
+    MutexLocker lock(m_trackerMutex);
+    if (m_tracker) {
+        QCoreApplication::sendEvent(m_tracker.get(), event);
+    }
+}
+
 void TrackingThread::keyboardEvent(QKeyEvent *event) {
     MutexLocker lock(m_trackerMutex);
     if (m_tracker) {
@@ -349,6 +356,7 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
     }
     m_paintMutex.unlock();
 }
+
 
 }
 }
