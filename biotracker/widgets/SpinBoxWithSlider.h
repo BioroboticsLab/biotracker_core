@@ -1,12 +1,4 @@
-/*
- * SpinBoxWithSlider.h
- *
- *  Created on: Nov 14, 2014
- *      Author: tobias
- */
-
-#ifndef SPINBOXWITHSLIDER_H_
-#define SPINBOXWITHSLIDER_H_
+#pragma once
 
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -111,6 +103,3 @@ class DoubleSpinBoxWithSlider: public QWidget {
     QSlider        m_slider;
     QDoubleSpinBox m_spinbox;
 };
-
-
-#endif /* SPINBOXWITHSLIDER_H_ */

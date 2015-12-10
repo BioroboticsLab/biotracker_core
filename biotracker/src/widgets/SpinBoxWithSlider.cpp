@@ -1,18 +1,10 @@
-/*
- * SpinBoxWithSlider.cpp
- *
- *  Created on: Nov 14, 2014
- *      Author: tobias
- */
-
-#include "../SpinBoxWithSlider.h"
 #include <stdexcept> // std::invalid_argument
+
+#include "widgets/SpinBoxWithSlider.h"
 
 int pow(int base, unsigned int exp) {
     return exp == 0 ? 1 : base * pow(base, exp - 1);
 }
-
-
 
 SteppedSpinBox::SteppedSpinBox(QWidget *p)
     : QSpinBox(p) {
