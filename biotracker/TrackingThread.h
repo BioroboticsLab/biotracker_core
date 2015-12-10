@@ -72,7 +72,7 @@ class TrackingThread : public QThread {
      * @param device
      * @param painter
      */
-    void paint(QPaintDevice &device, QPainter &painter);
+    void paint(QPaintDevice &device, QPainter &painter, TrackingAlgorithm::View const &);
 
     /**
      * Checks if the thread is in the rendering stage right now

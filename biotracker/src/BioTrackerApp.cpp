@@ -64,8 +64,8 @@ void BioTrackerApp::pause() {
     m_trackingThread.setPause();
 }
 
-void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter) {
-    m_trackingThread.paint(device, painter);
+void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter, const TrackingAlgorithm::View &v) {
+    m_trackingThread.paint(device, painter, v);
 }
 
 bool BioTrackerApp::isRendering() {

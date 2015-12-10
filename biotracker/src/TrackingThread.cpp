@@ -343,7 +343,7 @@ void TrackingThread::setMaxSpeed(bool enabled) {
 }
 
 void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
-        QPainter &painter) {
+        QPainter &painter, TrackingAlgorithm::View const &v) {
 
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
@@ -351,12 +351,12 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         painter.begin(&device);
         cv::Mat m = m_imageStream->currentFrame().clone();
         if (m_tracker) {
-            m_tracker.get()->paint(m);
+            m_tracker.get()->paint(m, v);
         }
         m_texture->setImage(m);
 
         if (m_tracker) {
-            m_tracker.get()->paintOverlay(&painter);
+            m_tracker.get()->paintOverlay(&painter, v);
         }
 
         paintDone();
