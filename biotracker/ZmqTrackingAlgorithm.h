@@ -61,7 +61,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void paint(cv::Mat &, const View &) override;
 
-    void paintOverlay(QPainter *) override;
+    void paintOverlay(QPainter *, const View &) override;
 
     std::shared_ptr<QWidget> getToolsWidget() override;
 

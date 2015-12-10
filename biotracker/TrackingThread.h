@@ -194,6 +194,8 @@ class TrackingThread : public QThread {
 
     void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
 
+    void registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views);
+
   Q_SIGNALS:
     /**
     * emit current frame number.
@@ -222,6 +224,8 @@ class TrackingThread : public QThread {
      * @param tracker
      */
     void trackerSelected(std::shared_ptr<TrackingAlgorithm> tracker);
+
+    void registerViews(const std::vector<TrackingAlgorithm::View> views);
 };
 
 }

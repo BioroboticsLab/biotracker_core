@@ -35,6 +35,8 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::fileOpenedFromTrackingThread);
     QObject::connect(&m_trackingThread, &Core::TrackingThread::trackerSelected,
                      this, &BioTrackerApp::trackerSelectedFromTrackingThread);
+    QObject::connect(&m_trackingThread, &Core::TrackingThread::registerViews,
+                     this, &BioTrackerApp::registerViewsFromTrackingThread);
 }
 
 void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
@@ -164,6 +166,11 @@ void BioTrackerApp::fileOpenedFromTrackingThread(const std::string fileName,
 void BioTracker::Core::BioTrackerApp::trackerSelectedFromTrackingThread(
     std::shared_ptr<TrackingAlgorithm> a) {
     Q_EMIT trackerSelected(a);
+}
+
+void BioTracker::Core::BioTrackerApp::registerViewsFromTrackingThread(const std::vector<TrackingAlgorithm::View>
+        views) {
+    Q_EMIT registerViews(views);
 }
 
 } // Core

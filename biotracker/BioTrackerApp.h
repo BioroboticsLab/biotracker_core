@@ -184,6 +184,8 @@ class BioTrackerApp : public QObject {
      */
     void loadModulesInPath(const boost::filesystem::path &path);
 
+    void registerViewsFromTrackingThread(const std::vector<TrackingAlgorithm::View> views);
+
   Q_SIGNALS:
     /**
      * @brief notify
@@ -207,6 +209,8 @@ class BioTrackerApp : public QObject {
      */
     void frameCalculated(const size_t frameNumber, const std::string filename,
                          const double currentFps);
+
+    void registerViews(const std::vector<TrackingAlgorithm::View> views);
 
     /**
      * @brief trackerSelected

@@ -324,7 +324,15 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
         trackingAlgorithm) {
     {
         MutexLocker lock(m_trackerMutex);
+
+        if (m_tracker) {
+            m_tracker.get()->disconnect();
+        }
+
         m_tracker = trackingAlgorithm;
+        QObject::connect(m_tracker.get(), &TrackingAlgorithm::registerViews,
+                         this, &TrackingThread::registerViewsFromTracker);
+        m_tracker.get()->postConnect();
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
 
@@ -355,6 +363,10 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         painter.end();
     }
     m_paintMutex.unlock();
+}
+
+void BioTracker::Core::TrackingThread::registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views) {
+    Q_EMIT registerViews(views);
 }
 
 

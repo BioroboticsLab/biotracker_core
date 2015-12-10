@@ -216,7 +216,7 @@ void ZmqTrackingAlgorithm::paint(cv::Mat &m, const View &) {
     zmqserver_paint(m_socket, 0, m);
 }
 
-void ZmqTrackingAlgorithm::paintOverlay(QPainter *p) {
+void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
     zmqserver_paintOverlay(m_socket, p);
 }
 

@@ -47,7 +47,7 @@ class TrackingAlgorithm : public QObject {
     */
     virtual void paint(cv::Mat &, View const & = OriginalView) {}
 
-    virtual void paintOverlay(QPainter *) {}
+    virtual void paintOverlay(QPainter *, View const & = OriginalView) {}
 
     /**
     * getToolsFrame() will be called once at start up
