@@ -186,6 +186,8 @@ class BioTrackerApp : public QObject {
 
     void registerViewsFromTrackingThread(const std::vector<TrackingAlgorithm::View> views);
 
+    void requestPaintFromTrackingThread();
+
   Q_SIGNALS:
     /**
      * @brief notify
@@ -218,6 +220,12 @@ class BioTrackerApp : public QObject {
      * @param trackingAlgorithm
      */
     void trackerSelected(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
+
+    /**
+     * @brief requestPaint
+     * asks the front end to repaint
+     */
+    void requestPaint();
 
   private:
     Settings m_settings;

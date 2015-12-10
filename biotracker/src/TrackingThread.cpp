@@ -330,8 +330,11 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
         }
 
         m_tracker = trackingAlgorithm;
+        // connect the tracker
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::registerViews,
                          this, &TrackingThread::registerViewsFromTracker);
+        QObject::connect(m_tracker.get(), &TrackingAlgorithm::update,
+                         this, &TrackingThread::requestPaint);
         m_tracker.get()->postConnect();
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
@@ -367,6 +370,10 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
 
 void BioTracker::Core::TrackingThread::registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views) {
     Q_EMIT registerViews(views);
+}
+
+void BioTracker::Core::TrackingThread::requestPaintFromTracker() {
+    Q_EMIT requestPaint();
 }
 
 
