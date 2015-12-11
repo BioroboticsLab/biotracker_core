@@ -198,6 +198,10 @@ class TrackingThread : public QThread {
 
     void requestPaintFromTracker();
 
+    void requestTrackFromTracker();
+
+
+
   Q_SIGNALS:
     /**
     * emit current frame number.
