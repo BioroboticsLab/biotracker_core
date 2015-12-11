@@ -19,7 +19,6 @@ target_link_libraries(${CPM_LIB_TARGET_NAME}
     ${OpenCV_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
-    ${PYTHON_LIBRARIES}
     ${CPM_LIBRARIES}
     ${ZMQ_LIBS}
 )
