@@ -10,6 +10,7 @@
 #include "settings/Messages.h"
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
+#include "util/GlHelper.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
@@ -361,6 +362,16 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         m_texture->setImage(m);
 
         if (m_tracker) {
+            painter.setWindow(QRect(0, 0, m_texture->getImage().cols, m_texture->getImage().rows));
+            const QPoint upperLeft = Util::projectPicturePos(QPoint(0,0));
+            const QPoint lowerRight = Util::projectPicturePos((QPoint(m_texture->getImage().cols,
+                                      m_texture->getImage().rows)));
+
+            int width = lowerRight.x() - upperLeft.x();
+            int height = lowerRight.y() - upperLeft.y();
+
+            painter.setViewport(upperLeft.x(), upperLeft.y(), width, height);
+
             m_tracker.get()->paintOverlay(&painter, v);
         }
 
