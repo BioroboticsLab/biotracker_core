@@ -338,6 +338,8 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
                          this, &TrackingThread::requestPaint);
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::forceTracking,
                          this, &TrackingThread::requestTrackFromTracker);
+        QObject::connect(m_tracker.get(), &TrackingAlgorithm::notifyGUI,
+                         this, &TrackingThread::notifyGUIFromTracker);
         m_tracker.get()->postConnect();
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
@@ -391,6 +393,10 @@ void BioTracker::Core::TrackingThread::requestPaintFromTracker() {
 
 void BioTracker::Core::TrackingThread::requestTrackFromTracker() {
     playOnce();
+}
+
+void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::__cxx11::string m, MSGS::MTYPE type) {
+    Q_EMIT notifyGUI(m, type);
 }
 
 
