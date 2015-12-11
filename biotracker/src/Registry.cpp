@@ -52,6 +52,9 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
         auto registerFunction = static_cast<RegisterFunction>
                                 (trackerLibrary.resolve("registerTracker"));
 
+        if (!registerFunction) {
+            throw invalid_tracker_lib_error(trackerLibrary.errorString().toStdString());
+        }
         registerFunction();
     } else if (ext == "zmq") {
         registerZmqTracker(Zmq::getInfo(path));
