@@ -395,7 +395,7 @@ void BioTracker::Core::TrackingThread::requestTrackFromTracker() {
     playOnce();
 }
 
-void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::__cxx11::string m, MSGS::MTYPE type) {
+void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MSGS::MTYPE type) {
     Q_EMIT notifyGUI(m, type);
 }
 
