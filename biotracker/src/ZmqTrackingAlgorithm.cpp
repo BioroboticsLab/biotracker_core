@@ -171,6 +171,8 @@ void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m) {
 }
 
 void zmqserver_paintOverlay(void *socket, QPainter *p) {
+    p->setPen(QColor(255, 0, 0));
+    p->drawText(10, 10, QString("Julian?"));
     send_string(socket, TYPE_PAINTOVERLAY, 0);
     recv_QPainter(socket, p);
 }

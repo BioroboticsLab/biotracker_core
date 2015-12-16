@@ -18,6 +18,8 @@ class TextureObject : public QObject {
         return m_img;
     }
 
+    QImage gen(const cv::Mat &img);
+
   private:
     cv::Mat m_img;
     GLuint m_texture;

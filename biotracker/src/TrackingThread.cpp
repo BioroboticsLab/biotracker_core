@@ -10,7 +10,6 @@
 #include "settings/Messages.h"
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
-#include "util/GlHelper.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
@@ -35,7 +34,6 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_settings(settings),
     m_texture(nullptr) {
     Interpreter::Interpreter p;
-    std::cout << "inter:" << p.interpret() << "\n";
 }
 
 TrackingThread::~TrackingThread(void) {
@@ -137,6 +135,8 @@ void TrackingThread::run() {
 
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
+
+
         m_conditionVariable.wait(lk, [&] {return (m_playing || m_playOnce) && !m_isRendering;});
         m_isRendering = true;
 
@@ -144,6 +144,7 @@ void TrackingThread::run() {
         if (m_imageStream->lastFrame()) {
             setPause();
         }
+
 
         //if thread just started (or is unpaused) start clock here
         //after this timestamp will be taken right before picture is drawn
@@ -166,6 +167,7 @@ void TrackingThread::run() {
         } else {
             target_dur = std::chrono::microseconds(0);
         }
+
 
         // calculate the running fps.
         // TODO: why is this a member var??
@@ -356,29 +358,35 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
     if (m_somethingIsLoaded) {
-        painter.begin(&device);
         cv::Mat m = m_imageStream->currentFrame().clone();
         if (m_tracker) {
             m_tracker.get()->paint(m, v);
         }
-        m_texture->setImage(m);
+
+        //m_texture->setImage(m);
+        QImage matImg = m_texture->gen(m);
+        painter.drawImage(0, 0, matImg);
 
         if (m_tracker) {
-            painter.setWindow(QRect(0, 0, m_texture->getImage().cols, m_texture->getImage().rows));
-            const QPoint upperLeft = Util::projectPicturePos(QPoint(0,0));
-            const QPoint lowerRight = Util::projectPicturePos((QPoint(m_texture->getImage().cols,
-                                      m_texture->getImage().rows)));
+            //painter.setWindow(QRect(0, 0, m_texture->getImage().cols, m_texture->getImage().rows));
+            //const QPoint upperLeft = Util::projectPicturePos(QPoint(0,0));
+            //const QPoint lowerRight = Util::projectPicturePos((QPoint(m_texture->getImage().cols,
+            //                          m_texture->getImage().rows)));
 
-            int width = lowerRight.x() - upperLeft.x();
-            int height = lowerRight.y() - upperLeft.y();
+            //int width = lowerRight.x() - upperLeft.x();
+            //int height = lowerRight.y() - upperLeft.y();
 
-            painter.setViewport(upperLeft.x(), upperLeft.y(), width, height);
+            //painter.setViewport(0, 0, 300, 200);
 
             m_tracker.get()->paintOverlay(&painter, v);
+
+            //painter.setPen(QColor(255, 0, 0));
+            //painter.drawText(50, 50, QString("Memel"));
+
+            //painter.end();
         }
 
         paintDone();
-        painter.end();
     }
     m_paintMutex.unlock();
 }
