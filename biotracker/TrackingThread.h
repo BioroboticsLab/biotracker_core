@@ -16,6 +16,7 @@
 
 #include "interpreter/Interpreter.h"
 #include "TrackerStatus.h"
+#include "PanZoomState.h"
 
 class Settings;
 
@@ -72,7 +73,8 @@ class TrackingThread : public QThread {
      * @param device
      * @param painter
      */
-    void paint(QPaintDevice &device, QPainter &painter, TrackingAlgorithm::View const &);
+    void paint(const size_t, const size_t, QPainter &painter, BioTracker::Core::PanZoomState &z,
+               TrackingAlgorithm::View const &);
 
     /**
      * Checks if the thread is in the rendering stage right now
@@ -139,12 +141,6 @@ class TrackingThread : public QThread {
      * Play and calculate the next frame only.
      */
     void playOnce();
-
-    /**
-     * Paints the raw texture of the data of the current frame
-     * @brief paintRaw
-     */
-    void paintRaw();
 
     /**
      * notifies the thread that it can do the next calculation

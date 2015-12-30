@@ -14,6 +14,7 @@
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
 
+#include <biotracker/util/ScreenHelper.h>
 #include <QPainter>
 
 namespace BioTracker {
@@ -282,9 +283,6 @@ void TrackingThread::setPlay() {
     m_conditionVariable.notify_all();
 }
 
-void TrackingThread::paintRaw() {
-}
-
 void TrackingThread::paintDone() {
     if (m_somethingIsLoaded) {
         m_isRendering = false;
@@ -352,8 +350,13 @@ void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
 }
 
-void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
-        QPainter &painter, TrackingAlgorithm::View const &v) {
+void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
+        BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
+
+    // clear background
+    painter.setBrush(QColor(0, 0, 0));
+    painter.drawRect(QRect(0, 0, w, h));
+    painter.setBrush(QColor(0, 0, 0, 0));
 
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
@@ -364,26 +367,48 @@ void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
         }
 
         //m_texture->setImage(m);
-        QImage matImg = m_texture->gen(m);
-        painter.drawImage(0, 0, matImg);
+        const QImage matImg = m_texture->gen(m);
+
+
+        // We use setWindow and setViewport to fit the video into the
+        // given video widget frame (with width "w" and height "h")
+        // we later need to adjust an offset caused the use of different
+        // dimensions for window and viewport.
+
+        // adjust the panning as the viewport is potentially scewed
+        // and mouse movements given by the window are not translated
+        // one-to-one anymore
+        QRect window;
+        QRect viewport;
+        const float viewport_scew = ScreenHelper::calculate_viewport(
+                                        matImg.width(), matImg.height(), w, h, window, viewport
+                                    );
+
+        painter.setWindow(window);
+        painter.setViewport(viewport);
+
+        float zoomFactor = 1 + zoom.zoomFactor;
+
+        painter.scale(zoomFactor, zoomFactor);
+
+        painter.translate(
+            QPointF(
+                -zoom.panX * viewport_scew / zoomFactor,
+                -zoom.panY * viewport_scew / zoomFactor
+            )
+        );
+
+        // TODO only paint that part that is visible
+        painter.drawImage(
+            QRectF(0, 0 , matImg.width(), matImg.height()),
+            matImg,
+            QRect(0, 0, matImg.width(), matImg.height()));
+
+        painter.setPen(QColor(255, 0, 0));
+        painter.drawText(50, 50, QString("Memel"));
 
         if (m_tracker) {
-            //painter.setWindow(QRect(0, 0, m_texture->getImage().cols, m_texture->getImage().rows));
-            //const QPoint upperLeft = Util::projectPicturePos(QPoint(0,0));
-            //const QPoint lowerRight = Util::projectPicturePos((QPoint(m_texture->getImage().cols,
-            //                          m_texture->getImage().rows)));
-
-            //int width = lowerRight.x() - upperLeft.x();
-            //int height = lowerRight.y() - upperLeft.y();
-
-            //painter.setViewport(0, 0, 300, 200);
-
             m_tracker.get()->paintOverlay(&painter, v);
-
-            //painter.setPen(QColor(255, 0, 0));
-            //painter.drawText(50, 50, QString("Memel"));
-
-            //painter.end();
         }
 
         paintDone();

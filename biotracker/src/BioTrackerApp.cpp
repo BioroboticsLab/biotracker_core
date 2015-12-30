@@ -4,7 +4,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "util/QOpenGLContextWrapper.h"
 #include "Exceptions.h"
 
 namespace BioTracker {
@@ -66,8 +65,9 @@ void BioTrackerApp::pause() {
     m_trackingThread.setPause();
 }
 
-void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter, const TrackingAlgorithm::View &v) {
-    m_trackingThread.paint(device, painter, v);
+void BioTrackerApp::paint(const size_t w, const size_t h, QPainter &painter, PanZoomState zoom,
+                          const TrackingAlgorithm::View &v) {
+    m_trackingThread.paint(w, h, painter, zoom, v);
 }
 
 bool BioTrackerApp::isRendering() {

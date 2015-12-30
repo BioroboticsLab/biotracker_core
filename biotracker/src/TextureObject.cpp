@@ -43,6 +43,8 @@ void TextureObject::setImage(const cv::Mat &img) {
 }
 
 QImage TextureObject::gen(const cv::Mat &img) {
+    m_img = img;
+    cv::cvtColor(img, img, cv::COLOR_BGR2RGB); // TODO copy into new  buffer
     QImage pic = Mat2QImage(img);
     return pic;
 

@@ -14,6 +14,7 @@
 #include "Registry.h"
 #include "settings/Settings.h"
 #include "TrackerStatus.h"
+#include "PanZoomState.h"
 
 namespace BioTracker {
 namespace Core {
@@ -79,7 +80,8 @@ class BioTrackerApp : public QObject {
      * @param device
      * @param painter
      */
-    void paint(QPaintDevice &device, QPainter &painter, TrackingAlgorithm::View const & = TrackingAlgorithm::OriginalView);
+    void paint(const size_t, const size_t, QPainter &painter, PanZoomState,
+               TrackingAlgorithm::View const & = TrackingAlgorithm::OriginalView);
 
     /**
      * @return when True, the thread is still rendering a frame right now, even when
