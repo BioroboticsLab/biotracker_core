@@ -2,6 +2,7 @@
 
 #include <QRect>              // QRect
 #include <QPoint>             // QPoint
+#include "biotracker/PanZoomState.h"
 
 /**
  * Screen helper functions
@@ -16,8 +17,8 @@ namespace ScreenHelper {
  * @param im_h height of the image
  * @param w width of the videoview
  * @param h height of the videoview
- * @param window
- * @param viewport
+ * @param window OUT parameter
+ * @param viewport OUT parameter
  * @return
  */
 inline float calculate_viewport(
@@ -71,9 +72,66 @@ inline float calculate_viewport(
     return screen_w / im_wf;
 }
 
-//inline QPoint imageToScreenCoords() {
+/**
+ * @brief getImDimsInScreenCoords
+ * Calculates the actual dimension of the image with all zoom, pan and
+ * viewport transformations applied
+ * @param zoomState
+ * @param im_w
+ * @param im_h
+ * @param w
+ * @param h
+ * @return a rectangle that represents the position and dimension of the
+ * image in the videoview element
+ */
+inline QRect getImDimsInScreenCoords(
+    const PanZoomState zoomState,
+    const int im_w, const int im_h,
+    const int w, const int h) {
 
-//}
+    QRect viewport, window;
+    const float viewportRatio = calculate_viewport(im_w, im_h, w, h, window, viewport);
+    const float zoom = 1 + zoomState.zoomFactor;
+    // back-translate the pan to non-zoomed coordinate space
+    float realPanX = -zoomState.panX;
+    float realPanY = -zoomState.panY;
+    realPanX += (viewport.x());
+    realPanY += (viewport.y());
+
+    // The image in screen coords
+    QRect actualIm(
+        static_cast<int>(realPanX), static_cast<int>(realPanY),
+        static_cast<int>((im_w / viewportRatio) * zoom),
+        static_cast<int>((im_h / viewportRatio) * zoom)
+    );
+    return actualIm;
+}
+
+/**
+ * @brief imageToScreenCoords
+ * @param zoomState
+ * @param im_w
+ * @param im_h
+ * @param w
+ * @param h
+ * @param poi
+ * @return
+ */
+inline QPoint imageToScreenCoords(
+    const PanZoomState zoomState,
+    const int im_w, const int im_h,
+    const int w, const int h,
+    const QPoint poi) {
+    QPoint result(0, 0);
+    const QRect actualIm = getImDimsInScreenCoords(zoomState, im_w, im_h, w, h);
+    const float one_step_x = actualIm.width() / static_cast<float>(im_w);
+    const float one_step_y = actualIm.height() / static_cast<float>(im_h);
+    const int actualPosXInIm = static_cast<int>(round(poi.x() * one_step_x));
+    const int actualPosYInIm = static_cast<int>(round(poi.y() * one_step_y));
+    result.setX(actualPosXInIm + actualIm.x());
+    result.setY(actualPosYInIm + actualIm.y());
+    return result;
+}
 
 /**
  * @brief screenToImageCoords
@@ -93,25 +151,8 @@ inline QPoint screenToImageCoords(
     QPoint poi) {
     QPoint result(0, 0);
 
-    QRect viewport;
-    QRect window;
-    const float viewport_offset =
-        calculate_viewport(im_w, im_h, w, h, window, viewport);
-
-    const float zoom = 1 + zoomState.zoomFactor;
-
-    // back-translate the pan to non-zoomed coordinate space
-    float realPanX = -zoomState.panX;
-    float realPanY = -zoomState.panY;
-    realPanX += (viewport.x());
-    realPanY += (viewport.y());
-
     // The image in screen coords
-    QRect actualIm(
-        static_cast<int>(realPanX), static_cast<int>(realPanY),
-        static_cast<int>((im_w / viewport_offset) * zoom),
-        static_cast<int>((im_h / viewport_offset) * zoom)
-    );
+    QRect actualIm = getImDimsInScreenCoords(zoomState, im_w, im_h, w, h);
 
     const float im_wf = static_cast<float>(im_w);
     const float im_hf = static_cast<float>(im_h);
@@ -121,45 +162,65 @@ inline QPoint screenToImageCoords(
     const float transformedX = (-actualIm.x() + poi.x()) * one_step_x;
     const float transformedY = (-actualIm.y() + poi.y()) * one_step_y;
 
-    result.setX(static_cast<int>(transformedX));
-    result.setY(static_cast<int>(transformedY));
-
-    if (!actualIm.contains(poi)) {
-
-        // both x and y coords are oor so we need to put our result in one
-        // of the 4 corners
-        //     * <-- POI
-        //        .-------.
-        //        | Image |
-        //
-        if (poi.x() < actualIm.x()) {
-            result.setX(0);
-        } else {
-            result.setX(im_w);
-        }
-        if (poi.y() < actualIm.y()) {
-            result.setY(0);
-        } else {
-            result.setY(im_h);
-        }
-
-        if (poi.y() > actualIm.y() && poi.y() < actualIm.y() + actualIm.height()) {
-            //   POI  .-------.
-            //    |   | Image |
-            //    v   |       |
-            //    *   |       |
-            result.setY(static_cast<int>(one_step_y * poi.y()));
-        } else if (poi.x() > actualIm.x() && poi.x() < actualIm.x() + actualIm.width()) {
-            //          * <-- POI
-            //        .-------.
-            //        | Image |
-            //
-            result.setX(static_cast<int>(one_step_x * poi.x()));
-        }
-    }
+    result.setX(static_cast<int>(round(transformedX)));
+    result.setY(static_cast<int>(round(transformedY)));
 
     return result;
 }
+
+/**
+ * @brief zoomTo
+ * Modifies the panzoomstate so that the cursor (zoomCenter) will point to the same
+ * location in the image as prior to the zoom
+ * @param state
+ * @param im_w width of the image (in px)
+ * @param im_h height of the image (in px)
+ * @param w width of the videoview element
+ * @param h height of the videoview element
+ * @param deltaZoom
+ * @param zoomCenter
+ * @return
+ */
+inline PanZoomState zoomTo(
+    PanZoomState state,
+    const int im_w,
+    const int im_h,
+    const int w,
+    const int h,
+    const float deltaZoom,
+    const QPoint zoomCenter) {
+
+    const QPoint imPos = screenToImageCoords(state, im_w, im_h, w, h, zoomCenter);
+
+    const float oldZoomFactor = state.zoomFactor;
+    const float newZoomFactor = state.zoomFactor - (deltaZoom/1200);
+
+    if (newZoomFactor <= -1.0f) {
+        // MAX VALUE
+        return state;
+    }
+
+    const float zoom = 1 + newZoomFactor;
+
+    const float oldPanX = state.panX / (1 + oldZoomFactor);
+    const float oldPanY = state.panY / (1 + oldZoomFactor);
+
+    // zoom with origin in (0/0)
+    state.panX = oldPanX * zoom;
+    state.panY = oldPanY * zoom;
+    state.zoomFactor = newZoomFactor;
+
+    // As we do not want to zoom to (0/0) but rather keep the focus on the chosen
+    // image position (zoomCenter) we now have to "back-translate" to our initial
+    // position
+    const QPoint translatedZoomCenter = imageToScreenCoords(state, im_w, im_h, w, h, imPos);
+    const QPoint translate = translatedZoomCenter - zoomCenter;
+    state.panX += translate.x();
+    state.panY += translate.y();
+    state.isChanged = true;
+    return state;
+}
+
 }
 }
 }
