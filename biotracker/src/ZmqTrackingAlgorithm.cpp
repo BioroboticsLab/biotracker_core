@@ -29,7 +29,6 @@ QString recv_string(void *socket) {
     zmq_msg_close(&msg);
     string[bytes] = 0;
     QString result(string);
-    zmq_msg_close(&msg);
     free(string);
     return result;
 
@@ -120,16 +119,7 @@ void recv_ToolsWidgets(void *socket, std::shared_ptr<QWidget> tools) {
 }
 
 void send_string(void *socket, QString str, int flags) {
-    const int msg_size = str.length();
-    int rc = 0;
-    zmq_msg_t msg;
-    rc = zmq_msg_init_size(&msg, msg_size);
-    assert(rc == 0);
-    memcpy(zmq_msg_data(&msg), str.toUtf8().constData(), msg_size);
-    zmq_msg_send(&msg, socket, flags);
-    assert(rc == 0);
-    rc = zmq_msg_close(&msg);
-    assert(rc == 0);
+    zmq_send(socket, str.toUtf8().constData(), str.length(), flags);
 }
 
 /**
@@ -138,27 +128,34 @@ void send_string(void *socket, QString str, int flags) {
  * @param mat
  * @param frame
  */
-void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame) {
+void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame, std::mutex &mut) {
+    mut.lock();
     send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
     QString data = QString::number(mat.cols) + "," + QString::number(
                        mat.rows) + "," + QString::number(mat.type()) + "," + QString::number(frame);
     send_string(socket, data, ZMQ_SNDMORE);
     //TODO error handling
     size_t sizeInBytes = mat.total() * mat.elemSize();
-    zmq_msg_t msg;
-    zmq_msg_init_size(&msg, sizeInBytes);
-    memcpy(zmq_msg_data(&msg), mat.data, sizeInBytes);
-    zmq_msg_send(&msg, socket, 0);
-    zmq_msg_close(&msg);
+    zmq_send(socket, mat.data, sizeInBytes, 0);
+    mut.unlock();
 }
 
-void zmqserver_shutdown(void *socket) {
+void zmqserver_shutdown(void *socket, std::mutex &mut) {
+    mut.lock();
     send_string(socket, TYPE_SHUTDOWN, 0);
     QThread::msleep(500);
+    mut.unlock();
 }
 
+void zmqserver_requestWidgets(void *socket, std::shared_ptr<QWidget> tools, std::mutex &mut) {
+    mut.lock();
+    send_string(socket, TYPE_REQUEST_WIDGETS, 0);
+    recv_ToolsWidgets(socket, tools);
+    mut.unlock();
+}
 
-void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m) {
+void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m, std::mutex &mut) {
+    mut.lock();
     send_string(socket, TYPE_PAINT, ZMQ_SNDMORE);
     QString data = QString::number(frame);
     send_string(socket, data, 0);
@@ -168,16 +165,15 @@ void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m) {
     if (QString::compare(flag, "Y") == 0) {
         recv_mat(socket, m);
     }
+    mut.unlock();
 }
 
-void zmqserver_paintOverlay(void *socket, QPainter *p) {
-    p->setPen(QColor(255, 0, 0));
-    p->drawText(10, 10, QString("Julian?"));
+void zmqserver_paintOverlay(void *socket, QPainter *p, std::mutex &mut) {
+    mut.lock();
     send_string(socket, TYPE_PAINTOVERLAY, 0);
     recv_QPainter(socket, p);
+    mut.unlock();
 }
-
-
 
 // ==============================================
 
@@ -202,7 +198,7 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings)
 
 ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
     //zmq_disconnect(m_socket, "172.0.0.1:5556");
-    zmqserver_shutdown(m_socket);
+    zmqserver_shutdown(m_socket, m_zmqMutex);
     m_zmqClient->kill();
     m_zmqClient->waitForFinished(1000);
     //zmq_close(m_socket);
@@ -210,21 +206,22 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
-    zmqserver_track(m_socket, frame, frameNumber);
+    zmqserver_track(m_socket, frame, frameNumber, m_zmqMutex);
     m_isTracking = true;
 }
 
 void ZmqTrackingAlgorithm::paint(cv::Mat &m, const View &) {
-    zmqserver_paint(m_socket, 0, m);
+    zmqserver_paint(m_socket, 0, m, m_zmqMutex);
 }
 
 void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
-    zmqserver_paintOverlay(m_socket, p);
+    zmqserver_paintOverlay(m_socket, p, m_zmqMutex);
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
-    recv_ToolsWidgets(m_socket, m_tools);
+    zmqserver_requestWidgets(m_socket, m_tools, m_zmqMutex);
+    //send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
+    //recv_ToolsWidgets(m_socket, m_tools);
     return m_tools;
 }
 

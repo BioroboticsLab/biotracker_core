@@ -89,6 +89,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void *m_context;
     void *m_socket;
     std::shared_ptr<QWidget> m_tools;
+    std::mutex m_zmqMutex;
 };
 }
 }
