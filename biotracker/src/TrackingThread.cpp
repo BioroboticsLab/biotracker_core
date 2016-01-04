@@ -402,9 +402,6 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
             matImg,
             QRect(0, 0, matImg.width(), matImg.height()));
 
-        painter.setPen(QColor(255, 0, 0));
-        painter.drawText(50, 50, QString("Memel"));
-
         if (m_tracker) {
             m_tracker.get()->paintOverlay(&painter, v);
         }
