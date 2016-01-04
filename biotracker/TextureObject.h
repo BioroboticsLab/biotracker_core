@@ -4,6 +4,10 @@
 
 #include <QObject>
 #include <QtOpenGL>
+#include <atomic>
+#include <memory>
+#include <condition_variable>
+#include <QThread>
 
 namespace BioTracker {
 namespace Core {
@@ -21,11 +25,12 @@ class TextureObject : public QObject {
     QImage gen(const cv::Mat &img);
 
   private:
+    QImage m_texture;
     cv::Mat m_img;
-    GLuint m_texture;
+    cv::Mat m_imgTemp;
+    std::mutex m_genMutex;
 
-    QVector<QVector2D> m_vertices;
-    QVector<QVector2D> m_texCoords;
+    void updateTexture(const cv::Mat &img);
 
     void createTexture();
     void createVertices();

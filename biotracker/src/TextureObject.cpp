@@ -1,17 +1,5 @@
 #include "TextureObject.h"
 
-
-QImage Mat2QImage(const cv::Mat &image2Draw_mat) {
-    auto image2Draw_qt = QImage(
-                             image2Draw_mat.data,
-                             image2Draw_mat.cols,
-                             image2Draw_mat.rows,
-                             image2Draw_mat.step,
-                             QImage::Format_RGB888);
-    return image2Draw_qt;
-}
-
-
 namespace BioTracker {
 namespace Core {
 
@@ -19,7 +7,7 @@ TextureObject::TextureObject(QObject *parent)
     : QObject(parent) {
     // OpenCV's coordinate system originates in the upper left corner.
     // OpenGL originates in the lower left. Thus the image has to be flipped vertically
-
+    m_texture = QImage(1, 1, QImage::Format_RGB888);
     setImage(cv::Mat::zeros(1, 1, CV_8UC3));
 }
 
@@ -36,18 +24,27 @@ void TextureObject::createTexture() {
 
 void TextureObject::setImage(const cv::Mat &img) {
     assert(!img.empty());
-
     m_img = img;
-
-    QImage pic = Mat2QImage(img);
 }
 
 QImage TextureObject::gen(const cv::Mat &img) {
+    m_genMutex.lock();
     m_img = img;
-    cv::cvtColor(img, img, cv::COLOR_BGR2RGB); // TODO copy into new  buffer
-    QImage pic = Mat2QImage(img);
-    return pic;
+    updateTexture(img);
+    m_genMutex.unlock();
+    return m_texture;
 
+}
+
+void TextureObject::updateTexture(const cv::Mat &src) {
+    cv::cvtColor(src, m_imgTemp, CV_BGR2RGB);
+    m_texture = QImage(
+                    m_imgTemp.data,
+                    src.cols,
+                    src.rows,
+                    src.step,
+                    QImage::Format_RGB888
+                );
 }
 
 }   // namespace Core

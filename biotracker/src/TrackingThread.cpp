@@ -366,9 +366,7 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
             m_tracker.get()->paint(m, v);
         }
 
-        //m_texture->setImage(m);
         const QImage matImg = m_texture->gen(m);
-
 
         // We use setWindow and setViewport to fit the video into the
         // given video widget frame (with width "w" and height "h")
@@ -410,7 +408,6 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         if (m_tracker) {
             m_tracker.get()->paintOverlay(&painter, v);
         }
-
         paintDone();
     }
     m_paintMutex.unlock();
