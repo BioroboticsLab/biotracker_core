@@ -121,7 +121,6 @@ class TrackingThread : public QThread {
     TrackerStatus m_status;
 
     double m_fps;
-    double m_runningFps;
     bool m_maxSpeed;
     GUIPARAM::MediaType m_mediaType;
 

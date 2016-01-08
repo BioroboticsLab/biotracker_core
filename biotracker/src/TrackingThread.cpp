@@ -171,15 +171,14 @@ void TrackingThread::run() {
 
 
         // calculate the running fps.
-        // TODO: why is this a member var??
-        m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
-                       (dur + target_dur).count();
+        double runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
+                            (dur + target_dur).count();
 
         if (m_playOnce && !m_playing) {
-            m_runningFps = -1;
+            runningFps = -1;
         }
 
-        tick(m_runningFps);
+        tick(runningFps);
 
         std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
