@@ -1,5 +1,7 @@
 #include "../ZmqTrackingAlgorithm.h"
 
+#include "biotracker/util/ZmqHelper.h"
+
 namespace BioTracker {
 namespace Core {
 namespace Zmq {
@@ -11,28 +13,12 @@ const QString TYPE_PAINTOVERLAY("3");
 const QString TYPE_REQUEST_WIDGETS("4");
 const QString TYPE_SEND_WIDGET_EVENT("5");
 
+const QString WIDGET_EVENT_CLICK("0");
+const QString WIDGET_EVENT_CHANGED("1");
+
 // ==============================================
 // P R I V A T E  Z M Q  H E L P E R  F U N C S
 // ==============================================
-
-QString recv_string(void *socket) {
-    int rc;
-    zmq_msg_t msg;
-    rc = zmq_msg_init(&msg);
-    assert(rc == 0);
-    int bytes = zmq_msg_recv(&msg, socket, 0);
-
-    char *string = static_cast<char *>(malloc(bytes + 1));
-    void *msg_content = zmq_msg_data(&msg);
-
-    memcpy(string, msg_content, bytes);
-    zmq_msg_close(&msg);
-    string[bytes] = 0;
-    QString result(string);
-    free(string);
-    return result;
-
-}
 
 void recv_mat(void *socket, cv::Mat &mat) {
     int rc = 0;
@@ -92,36 +78,6 @@ void recv_QPainter(void *socket, QPainter *p) {
     }
 }
 
-void recv_ToolsWidgets(void *socket, std::shared_ptr<QWidget> tools) {
-    std::cout << "get tools recv" << std::endl;
-    QString data = recv_string(socket);
-    std::cout << data.toUtf8().data() << std::endl;
-    if (data.length() > 0) {
-        QStringList batch = data.split(";");
-        for (auto &widgetStr : batch) {
-            const QChar type = widgetStr.at(0);
-            if (type == QChar('d')) {
-
-            } else if (type == QChar('t')) {
-
-            } else if (type == QChar('b')) {
-                auto btn = new QPushButton(tools.get());
-                QString btnTxtDirty = widgetStr.split(",")[1];
-                QString btnTxt = btnTxtDirty.left(btnTxtDirty.size() - 1);
-                btn->setText(btnTxt);
-            } else if (type == QChar('s')) {
-
-            } else {
-
-            }
-        }
-    }
-}
-
-void send_string(void *socket, QString str, int flags) {
-    zmq_send(socket, str.toUtf8().constData(), str.length(), flags);
-}
-
 /**
  * @brief zmq_track
  * @param socket
@@ -147,13 +103,6 @@ void zmqserver_shutdown(void *socket, std::mutex &mut) {
     mut.unlock();
 }
 
-void zmqserver_requestWidgets(void *socket, std::shared_ptr<QWidget> tools, std::mutex &mut) {
-    mut.lock();
-    send_string(socket, TYPE_REQUEST_WIDGETS, 0);
-    recv_ToolsWidgets(socket, tools);
-    mut.unlock();
-}
-
 void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m, std::mutex &mut) {
     mut.lock();
     send_string(socket, TYPE_PAINT, ZMQ_SNDMORE);
@@ -174,6 +123,17 @@ void zmqserver_paintOverlay(void *socket, QPainter *p, std::mutex &mut) {
     recv_QPainter(socket, p);
     mut.unlock();
 }
+
+inline QString senderId(QObject *obj) {
+    QPushButton *btn = qobject_cast<QPushButton *>(obj);
+    return btn->accessibleName();
+}
+
+// ==============================================
+// ZMQ SlotListener
+// ==============================================
+/*
+*/
 
 // ==============================================
 
@@ -219,9 +179,48 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    zmqserver_requestWidgets(m_socket, m_tools, m_zmqMutex);
-    //send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
-    //recv_ToolsWidgets(m_socket, m_tools);
+    //zmqserver_requestWidgets(m_socket, m_tools, btns, txts, sliders, m_zmqMutex);
+    m_zmqMutex.lock();
+
+    // request widgets from client
+    send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(m_tools.get()); // LEAK_CHECK?
+
+    // wait for response
+    // Elements are defined at:
+    // https://github.com/BioroboticsLab/biotracker_core/wiki/dev_zmq#possible-elements
+    QString data = recv_string(m_socket);
+    std::cout << "data:" << data.toUtf8().data() << std::endl;
+    if (data.length() > 0) {
+        QStringList batch = data.split(";");
+        for (auto &widgetStr : batch) {
+            const QChar type = widgetStr.at(0);
+            widgetStr.chop(1); // remove trailing ')'
+            widgetStr = widgetStr.right(widgetStr.length() - 2); // remove first '_('
+            auto widgetElems = widgetStr.split(",");
+            const int uniqueId = widgetElems[0].toInt();
+            if (type == QChar('d')) {
+
+            } else if (type == QChar('t')) {
+                QLabel *txt = new QLabel(m_tools.get());
+                std::cout << "label?" << std::endl;
+                txt->setText(widgetElems[1]);
+                mainLayout->addWidget(txt);
+            } else if (type == QChar('b')) {
+                QPushButton *btn = new QPushButton(m_tools.get()); // LEAK_CHECK?
+                btn->setText(widgetElems[1]);
+                btn->setAccessibleName(QString::number(uniqueId));
+                mainLayout->addWidget(btn);
+                QObject::connect(btn, &QPushButton::clicked, this, &ZmqTrackingAlgorithm::btnClicked);
+            } else if (type == QChar('s')) {
+
+            } else {
+
+            }
+        }
+    }
+    m_zmqMutex.unlock();
     return m_tools;
 }
 
@@ -252,6 +251,25 @@ void ZmqTrackingAlgorithm::mouseWheelEvent(QWheelEvent *) {
 void ZmqTrackingAlgorithm::keyPressEvent(QKeyEvent *) {
 
 }
+
+void ZmqTrackingAlgorithm::zmqserverRequestWidgets() {
+
+}
+// == EVENTS ==
+
+void ZmqTrackingAlgorithm::btnClicked() {
+    const QString widgetId = senderId(sender());
+    QString message;
+    message.append(WIDGET_EVENT_CLICK);
+    message.append(",");
+    message.append(widgetId);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_SEND_WIDGET_EVENT, ZMQ_SNDMORE);
+    send_string(m_socket, message, 0);
+    m_zmqMutex.unlock();
+}
+
+// == EVENTS end ==
 
 ZmqInfoFile getInfo(const boost::filesystem::path &path) {
 

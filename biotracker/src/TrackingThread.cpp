@@ -426,6 +426,5 @@ void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MSGS:
     Q_EMIT notifyGUI(m, type);
 }
 
-
 }
 }

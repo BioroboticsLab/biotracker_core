@@ -82,6 +82,17 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void keyPressEvent(QKeyEvent *) override;
 
+    // zmq functions
+
+    /**
+     * @brief zmqserverRequestWidgets
+     * handles the whole process of
+     */
+    void zmqserverRequestWidgets();
+
+  private Q_SLOTS:
+    void btnClicked();
+
   private:
     std::unique_ptr<QProcess> m_zmqClient;
     bool m_isTracking;
