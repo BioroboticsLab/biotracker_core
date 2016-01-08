@@ -1,6 +1,7 @@
 GeneratedFiles/
 CMakeLists.txt.user
 desktop.ini
+*.swp
 *.opensdf
 *.sdf
 *.suo
