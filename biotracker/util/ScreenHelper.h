@@ -193,7 +193,7 @@ inline PanZoomState zoomTo(
     const QPoint imPos = screenToImageCoords(state, im_w, im_h, w, h, zoomCenter);
 
     const float oldZoomFactor = state.zoomFactor;
-    const float newZoomFactor = state.zoomFactor - (deltaZoom/1200);
+    const float newZoomFactor = state.zoomFactor - (deltaZoom/2000);
 
     if (newZoomFactor <= -1.0f) {
         // MAX VALUE
