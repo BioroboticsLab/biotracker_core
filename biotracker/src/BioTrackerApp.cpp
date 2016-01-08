@@ -14,8 +14,9 @@ BioTrackerApp::BioTrackerApp()
     , m_registry(Registry::getInstance())
     , m_trackingThread(m_settings) {
     initConnects();
-
     loadModulesInPath(CONFIGPARAM::MODULE_PATH);
+
+    m_trackingThread.start();
 }
 
 BioTrackerApp::~BioTrackerApp() {
@@ -38,11 +39,6 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::registerViewsFromTrackingThread);
     QObject::connect(&m_trackingThread, &Core::TrackingThread::requestPaint,
                      this, &BioTrackerApp::requestPaintFromTrackingThread);
-}
-
-void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
-                                     TextureObject &texture) {
-    m_trackingThread.initializeOpenGL(mainContext, texture);
 }
 
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {

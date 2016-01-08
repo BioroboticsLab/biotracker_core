@@ -30,9 +30,6 @@ class TrackingThread : public QThread {
     TrackingThread(Settings &settings);
     ~TrackingThread(void);
 
-    void initializeOpenGL(QOpenGLContext *context,
-                          TextureObject &texture);
-
     TrackerStatus getStatus() const {
         //TODO maybe lock this part?
         return m_status;
@@ -100,6 +97,10 @@ class TrackingThread : public QThread {
 
     size_t getVideoLength() const;
 
+    TextureObject const &getTexture() const {
+        return m_texture;
+    }
+
     void mouseEvent(QMouseEvent *event);
     void mouseWheelEvent(QWheelEvent *event);
     void keyboardEvent(QKeyEvent *event);
@@ -126,7 +127,7 @@ class TrackingThread : public QThread {
 
     Settings &m_settings;
 
-    TextureObject *m_texture;
+    TextureObject m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 

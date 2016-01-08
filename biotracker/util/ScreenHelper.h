@@ -122,7 +122,7 @@ inline QPoint imageToScreenCoords(
     const int im_w, const int im_h,
     const int w, const int h,
     const QPoint poi) {
-    QPoint result(0, 0);
+    QPoint result;
     const QRect actualIm = getImDimsInScreenCoords(zoomState, im_w, im_h, w, h);
     const float one_step_x = actualIm.width() / static_cast<float>(im_w);
     const float one_step_y = actualIm.height() / static_cast<float>(im_h);

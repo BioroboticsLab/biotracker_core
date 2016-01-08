@@ -30,8 +30,6 @@ class BioTrackerApp : public QObject {
 
     void initConnects();
 
-    void initializeOpenGL(QOpenGLContext *mainContext, TextureObject &texture);
-
     Settings &getSettings() {
         return m_settings;
     }

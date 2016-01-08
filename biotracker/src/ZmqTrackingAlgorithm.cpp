@@ -170,8 +170,8 @@ void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     m_isTracking = true;
 }
 
-void ZmqTrackingAlgorithm::paint(cv::Mat &m, const View &) {
-    zmqserver_paint(m_socket, 0, m, m_zmqMutex);
+void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
+    zmqserver_paint(m_socket, 0, m.getMat(), m_zmqMutex);
 }
 
 void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {

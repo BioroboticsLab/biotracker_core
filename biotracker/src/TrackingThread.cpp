@@ -29,21 +29,13 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_somethingIsLoaded(false),
     m_status(TrackerStatus::NothingLoaded),
     m_fps(30),
-    m_runningFps(0),
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
-    m_settings(settings),
-    m_texture(nullptr) {
+    m_settings(settings) {
     Interpreter::Interpreter p;
 }
 
 TrackingThread::~TrackingThread(void) {
-}
-
-void TrackingThread::initializeOpenGL(QOpenGLContext *context,
-                                      TextureObject &texture) {
-    m_texture = &texture;
-    QThread::start();
 }
 
 void TrackingThread::loadFromSettings() {
@@ -213,6 +205,7 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
 }
 void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
+        m_texture.set(m_imageStream->currentFrame());
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }
@@ -301,6 +294,7 @@ void TrackingThread::playOnce() {
     m_status = TrackerStatus::Paused;
     m_playOnce = true;
     m_somethingIsLoaded = true;
+    m_texture.set(m_imageStream->currentFrame());
     m_conditionVariable.notify_all();
 }
 
@@ -349,6 +343,7 @@ void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
 }
 
+#include "TrackingAlgorithm.h"
 void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
         BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
 
@@ -360,12 +355,15 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
     if (m_somethingIsLoaded) {
-        cv::Mat m = m_imageStream->currentFrame().clone();
+        ProxyMat proxy(m_imageStream->currentFrame());
+
         if (m_tracker) {
-            m_tracker.get()->paint(m, v);
+            m_tracker.get()->paint(proxy, v);
         }
 
-        const QImage matImg = m_texture->gen(m);
+        if (proxy.isModified()) {
+            m_texture.set(proxy.getMat());
+        }
 
         // We use setWindow and setViewport to fit the video into the
         // given video widget frame (with width "w" and height "h")
@@ -377,8 +375,10 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         // one-to-one anymore
         QRect window;
         QRect viewport;
-        const float viewport_scew = ScreenHelper::calculate_viewport(
-                                        matImg.width(), matImg.height(), w, h, window, viewport
+        const float viewport_skew = ScreenHelper::calculate_viewport(
+                                        m_texture.width(),
+                                        m_texture.height(),
+                                        w, h, window, viewport
                                     );
 
         painter.setWindow(window);
@@ -390,16 +390,16 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
 
         painter.translate(
             QPointF(
-                -zoom.panX * viewport_scew / zoomFactor,
-                -zoom.panY * viewport_scew / zoomFactor
+                -zoom.panX * viewport_skew / zoomFactor,
+                -zoom.panY * viewport_skew / zoomFactor
             )
         );
 
         // TODO only paint that part that is visible
         painter.drawImage(
-            QRectF(0, 0 , matImg.width(), matImg.height()),
-            matImg,
-            QRect(0, 0, matImg.width(), matImg.height()));
+            QRectF(0, 0 , m_texture.width(), m_texture.height()),
+            m_texture.get(),
+            QRect(0, 0, m_texture.width(), m_texture.height()));
 
         if (m_tracker) {
             m_tracker.get()->paintOverlay(&painter, v);

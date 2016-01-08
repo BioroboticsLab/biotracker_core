@@ -12,28 +12,25 @@
 namespace BioTracker {
 namespace Core {
 
-class TextureObject : public QObject {
+class TextureObject {
   public:
-    explicit TextureObject(QObject *parent);
-    void draw() const;
+    explicit TextureObject();
 
-    void setImage(const cv::Mat &img);
-    const cv::Mat &getImage() const {
-        return m_img;
+    void set(cv::Mat const &img);
+
+    QImage const &get() const {
+        return m_texture;
+    }
+    int width() const {
+        return m_texture.width();
+    }
+    int height() const {
+        return m_texture.height();
     }
 
-    QImage gen(const cv::Mat &img);
-
   private:
-    QImage m_texture;
     cv::Mat m_img;
-    cv::Mat m_imgTemp;
-    std::mutex m_genMutex;
-
-    void updateTexture(const cv::Mat &img);
-
-    void createTexture();
-    void createVertices();
+    QImage m_texture;
 };
 
 }   // namespace Core
