@@ -10,11 +10,11 @@
 #include "settings/Messages.h"
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
-#include "util/GlHelper.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
 
+#include <biotracker/util/ScreenHelper.h>
 #include <QPainter>
 
 namespace BioTracker {
@@ -29,22 +29,13 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_somethingIsLoaded(false),
     m_status(TrackerStatus::NothingLoaded),
     m_fps(30),
-    m_runningFps(0),
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
-    m_settings(settings),
-    m_texture(nullptr) {
+    m_settings(settings) {
     Interpreter::Interpreter p;
-    std::cout << "inter:" << p.interpret() << "\n";
 }
 
 TrackingThread::~TrackingThread(void) {
-}
-
-void TrackingThread::initializeOpenGL(QOpenGLContext *context,
-                                      TextureObject &texture) {
-    m_texture = &texture;
-    QThread::start();
 }
 
 void TrackingThread::loadFromSettings() {
@@ -137,6 +128,8 @@ void TrackingThread::run() {
 
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
+
+
         m_conditionVariable.wait(lk, [&] {return (m_playing || m_playOnce) && !m_isRendering;});
         m_isRendering = true;
 
@@ -144,6 +137,7 @@ void TrackingThread::run() {
         if (m_imageStream->lastFrame()) {
             setPause();
         }
+
 
         //if thread just started (or is unpaused) start clock here
         //after this timestamp will be taken right before picture is drawn
@@ -167,16 +161,16 @@ void TrackingThread::run() {
             target_dur = std::chrono::microseconds(0);
         }
 
+
         // calculate the running fps.
-        // TODO: why is this a member var??
-        m_runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
-                       (dur + target_dur).count();
+        double runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
+                            (dur + target_dur).count();
 
         if (m_playOnce && !m_playing) {
-            m_runningFps = -1;
+            runningFps = -1;
         }
 
-        tick(m_runningFps);
+        tick(runningFps);
 
         std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
@@ -211,6 +205,7 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
 }
 void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
+        m_texture.set(m_imageStream->currentFrame());
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }
@@ -280,9 +275,6 @@ void TrackingThread::setPlay() {
     m_conditionVariable.notify_all();
 }
 
-void TrackingThread::paintRaw() {
-}
-
 void TrackingThread::paintDone() {
     if (m_somethingIsLoaded) {
         m_isRendering = false;
@@ -302,6 +294,7 @@ void TrackingThread::playOnce() {
     m_status = TrackerStatus::Paused;
     m_playOnce = true;
     m_somethingIsLoaded = true;
+    m_texture.set(m_imageStream->currentFrame());
     m_conditionVariable.notify_all();
 }
 
@@ -350,35 +343,68 @@ void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
 }
 
-void BioTracker::Core::TrackingThread::paint(QPaintDevice &device,
-        QPainter &painter, TrackingAlgorithm::View const &v) {
+#include "TrackingAlgorithm.h"
+void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
+        BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
+
+    // clear background
+    painter.setBrush(QColor(0, 0, 0));
+    painter.drawRect(QRect(0, 0, w, h));
+    painter.setBrush(QColor(0, 0, 0, 0));
 
     m_paintMutex.lock();
     // using painters algorithm to draw in the right order
     if (m_somethingIsLoaded) {
-        painter.begin(&device);
-        cv::Mat m = m_imageStream->currentFrame().clone();
+        ProxyMat proxy(m_imageStream->currentFrame());
+
         if (m_tracker) {
-            m_tracker.get()->paint(m, v);
+            m_tracker.get()->paint(proxy, v);
         }
-        m_texture->setImage(m);
+
+        if (proxy.isModified()) {
+            m_texture.set(proxy.getMat());
+        }
+
+        // We use setWindow and setViewport to fit the video into the
+        // given video widget frame (with width "w" and height "h")
+        // we later need to adjust an offset caused the use of different
+        // dimensions for window and viewport.
+
+        // adjust the panning as the viewport is potentially scewed
+        // and mouse movements given by the window are not translated
+        // one-to-one anymore
+        QRect window;
+        QRect viewport;
+        const float viewport_skew = ScreenHelper::calculate_viewport(
+                                        m_texture.width(),
+                                        m_texture.height(),
+                                        w, h, window, viewport
+                                    );
+
+        painter.setWindow(window);
+        painter.setViewport(viewport);
+
+        float zoomFactor = 1 + zoom.zoomFactor;
+
+        painter.scale(zoomFactor, zoomFactor);
+
+        painter.translate(
+            QPointF(
+                -zoom.panX * viewport_skew / zoomFactor,
+                -zoom.panY * viewport_skew / zoomFactor
+            )
+        );
+
+        // TODO only paint that part that is visible
+        painter.drawImage(
+            QRectF(0, 0 , m_texture.width(), m_texture.height()),
+            m_texture.get(),
+            QRect(0, 0, m_texture.width(), m_texture.height()));
 
         if (m_tracker) {
-            painter.setWindow(QRect(0, 0, m_texture->getImage().cols, m_texture->getImage().rows));
-            const QPoint upperLeft = Util::projectPicturePos(QPoint(0,0));
-            const QPoint lowerRight = Util::projectPicturePos((QPoint(m_texture->getImage().cols,
-                                      m_texture->getImage().rows)));
-
-            int width = lowerRight.x() - upperLeft.x();
-            int height = lowerRight.y() - upperLeft.y();
-
-            painter.setViewport(upperLeft.x(), upperLeft.y(), width, height);
-
             m_tracker.get()->paintOverlay(&painter, v);
         }
-
         paintDone();
-        painter.end();
     }
     m_paintMutex.unlock();
 }
@@ -398,7 +424,6 @@ void BioTracker::Core::TrackingThread::requestTrackFromTracker() {
 void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MSGS::MTYPE type) {
     Q_EMIT notifyGUI(m, type);
 }
-
 
 }
 }

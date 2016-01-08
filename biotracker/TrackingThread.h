@@ -16,6 +16,7 @@
 
 #include "interpreter/Interpreter.h"
 #include "TrackerStatus.h"
+#include "PanZoomState.h"
 
 class Settings;
 
@@ -28,9 +29,6 @@ class TrackingThread : public QThread {
   public:
     TrackingThread(Settings &settings);
     ~TrackingThread(void);
-
-    void initializeOpenGL(QOpenGLContext *context,
-                          TextureObject &texture);
 
     TrackerStatus getStatus() const {
         //TODO maybe lock this part?
@@ -72,7 +70,8 @@ class TrackingThread : public QThread {
      * @param device
      * @param painter
      */
-    void paint(QPaintDevice &device, QPainter &painter, TrackingAlgorithm::View const &);
+    void paint(const size_t, const size_t, QPainter &painter, BioTracker::Core::PanZoomState &z,
+               TrackingAlgorithm::View const &);
 
     /**
      * Checks if the thread is in the rendering stage right now
@@ -98,6 +97,10 @@ class TrackingThread : public QThread {
 
     size_t getVideoLength() const;
 
+    TextureObject const &getTexture() const {
+        return m_texture;
+    }
+
     void mouseEvent(QMouseEvent *event);
     void mouseWheelEvent(QWheelEvent *event);
     void keyboardEvent(QKeyEvent *event);
@@ -119,13 +122,12 @@ class TrackingThread : public QThread {
     TrackerStatus m_status;
 
     double m_fps;
-    double m_runningFps;
     bool m_maxSpeed;
     GUIPARAM::MediaType m_mediaType;
 
     Settings &m_settings;
 
-    TextureObject *m_texture;
+    TextureObject m_texture;
 
     std::shared_ptr<TrackingAlgorithm> m_tracker GUARDED_BY(m_trackerMutex);
 
@@ -139,12 +141,6 @@ class TrackingThread : public QThread {
      * Play and calculate the next frame only.
      */
     void playOnce();
-
-    /**
-     * Paints the raw texture of the data of the current frame
-     * @brief paintRaw
-     */
-    void paintRaw();
 
     /**
      * notifies the thread that it can do the next calculation

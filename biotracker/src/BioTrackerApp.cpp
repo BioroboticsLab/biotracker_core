@@ -4,7 +4,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "util/QOpenGLContextWrapper.h"
 #include "Exceptions.h"
 
 namespace BioTracker {
@@ -15,8 +14,9 @@ BioTrackerApp::BioTrackerApp()
     , m_registry(Registry::getInstance())
     , m_trackingThread(m_settings) {
     initConnects();
-
     loadModulesInPath(CONFIGPARAM::MODULE_PATH);
+
+    m_trackingThread.start();
 }
 
 BioTrackerApp::~BioTrackerApp() {
@@ -41,11 +41,6 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::requestPaintFromTrackingThread);
 }
 
-void BioTrackerApp::initializeOpenGL(QOpenGLContext *mainContext,
-                                     TextureObject &texture) {
-    m_trackingThread.initializeOpenGL(mainContext, texture);
-}
-
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
     m_trackingThread.loadVideo(path);
 }
@@ -66,8 +61,9 @@ void BioTrackerApp::pause() {
     m_trackingThread.setPause();
 }
 
-void BioTrackerApp::paint(QPaintDevice &device, QPainter &painter, const TrackingAlgorithm::View &v) {
-    m_trackingThread.paint(device, painter, v);
+void BioTrackerApp::paint(const size_t w, const size_t h, QPainter &painter, PanZoomState zoom,
+                          const TrackingAlgorithm::View &v) {
+    m_trackingThread.paint(w, h, painter, zoom, v);
 }
 
 bool BioTrackerApp::isRendering() {

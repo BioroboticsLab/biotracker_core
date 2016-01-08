@@ -4,29 +4,33 @@
 
 #include <QObject>
 #include <QtOpenGL>
+#include <atomic>
+#include <memory>
+#include <condition_variable>
+#include <QThread>
 
 namespace BioTracker {
 namespace Core {
 
-class TextureObject : public QObject {
+class TextureObject {
   public:
-    explicit TextureObject(QObject *parent);
-    void draw() const;
+    explicit TextureObject();
 
-    void setImage(const cv::Mat &img);
-    const cv::Mat &getImage() const {
-        return m_img;
+    void set(cv::Mat const &img);
+
+    QImage const &get() const {
+        return m_texture;
+    }
+    int width() const {
+        return m_texture.width();
+    }
+    int height() const {
+        return m_texture.height();
     }
 
   private:
     cv::Mat m_img;
-    GLuint m_texture;
-
-    QVector<QVector2D> m_vertices;
-    QVector<QVector2D> m_texCoords;
-
-    void createTexture();
-    void createVertices();
+    QImage m_texture;
 };
 
 }   // namespace Core

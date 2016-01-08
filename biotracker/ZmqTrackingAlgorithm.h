@@ -59,7 +59,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void track(ulong frameNumber, const cv::Mat &frame) override;
 
-    void paint(cv::Mat &, const View &) override;
+    void paint(ProxyMat &, const View &) override;
 
     void paintOverlay(QPainter *, const View &) override;
 
@@ -82,6 +82,17 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void keyPressEvent(QKeyEvent *) override;
 
+    // zmq functions
+
+    /**
+     * @brief zmqserverRequestWidgets
+     * handles the whole process of
+     */
+    void zmqserverRequestWidgets();
+
+  private Q_SLOTS:
+    void btnClicked();
+
   private:
     std::unique_ptr<QProcess> m_zmqClient;
     bool m_isTracking;
@@ -89,6 +100,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void *m_context;
     void *m_socket;
     std::shared_ptr<QWidget> m_tools;
+    std::mutex m_zmqMutex;
 };
 }
 }
