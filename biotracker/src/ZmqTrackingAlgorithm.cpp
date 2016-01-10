@@ -16,63 +16,10 @@ const QString TYPE_SEND_WIDGET_EVENT("5");
 const QString WIDGET_EVENT_CLICK("0");
 const QString WIDGET_EVENT_CHANGED("1");
 
-// ==============================================
-// P R I V A T E  Z M Q  H E L P E R  F U N C S
-// ==============================================
-
-/**
- * @brief zmq_track
- * @param socket
- * @param mat
- * @param frame
- */
-void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame, std::mutex &mut) {
-    mut.lock();
-    send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
-    send_mat(socket, mat, frame);
-    mut.unlock();
-}
-
-void zmqserver_shutdown(void *socket, std::mutex &mut) {
-    mut.lock();
-    send_string(socket, TYPE_SHUTDOWN, 0);
-    QThread::msleep(500);
-    mut.unlock();
-}
-
-void zmqserver_paint(void *socket, const size_t frame, cv::Mat &m, std::mutex &mut) {
-    mut.lock();
-    send_string(socket, TYPE_PAINT, ZMQ_SNDMORE);
-    QString data = QString::number(frame);
-    send_string(socket, data, 0);
-
-    // wait for reply
-    QString flag = recv_string(socket);
-    if (QString::compare(flag, "Y") == 0) {
-        recv_mat(socket, m);
-    }
-    mut.unlock();
-}
-
-void zmqserver_paintOverlay(void *socket, QPainter *p, std::mutex &mut) {
-    mut.lock();
-    send_string(socket, TYPE_PAINTOVERLAY, 0);
-    recv_QPainter(socket, p);
-    mut.unlock();
-}
-
 inline QString senderId(QObject *obj) {
     QPushButton *btn = qobject_cast<QPushButton *>(obj);
     return btn->accessibleName();
 }
-
-// ==============================================
-// ZMQ SlotListener
-// ==============================================
-/*
-*/
-
-// ==============================================
 
 ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings) :
     TrackingAlgorithm(settings),
@@ -95,7 +42,10 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings)
 
 ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
     //zmq_disconnect(m_socket, "172.0.0.1:5556");
-    zmqserver_shutdown(m_socket, m_zmqMutex);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_SHUTDOWN, 0);
+    QThread::msleep(500);
+    m_zmqMutex.unlock();
     m_zmqClient->kill();
     m_zmqClient->waitForFinished(1000);
     //zmq_close(m_socket);
@@ -103,16 +53,31 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
-    zmqserver_track(m_socket, frame, frameNumber, m_zmqMutex);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_TRACK, ZMQ_SNDMORE);
+    send_mat(m_socket, frame, frameNumber);
     m_isTracking = true;
+    m_zmqMutex.unlock();
 }
 
 void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
-    zmqserver_paint(m_socket, 0, m.getMat(), m_zmqMutex);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_PAINT, ZMQ_SNDMORE);
+    QString data = QString::number(99);
+    send_string(m_socket, data, 0);
+    // wait for reply
+    QString flag = recv_string(m_socket);
+    if (QString::compare(flag, "Y") == 0) {
+        recv_mat(m_socket, m.getMat());
+    }
+    m_zmqMutex.unlock();
 }
 
 void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
-    zmqserver_paintOverlay(m_socket, p, m_zmqMutex);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_PAINTOVERLAY, 0);
+    recv_QPainter(m_socket, p);
+    m_zmqMutex.unlock();
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
