@@ -20,24 +20,6 @@ const QString WIDGET_EVENT_CHANGED("1");
 // P R I V A T E  Z M Q  H E L P E R  F U N C S
 // ==============================================
 
-void recv_mat(void *socket, cv::Mat &mat) {
-    int rc = 0;
-    QString temp_shape = recv_string(socket);
-    QStringRef shape(&temp_shape);
-    QVector<QStringRef> shapeStr = shape.split(",");
-    const int w = shapeStr.at(0).toInt();
-    const int h = shapeStr.at(1).toInt();
-    const int type = shapeStr.at(2).toInt();
-    zmq_msg_t msg;
-    rc = zmq_msg_init(&msg);
-    assert(rc == 0);
-    zmq_msg_recv(&msg, socket, 0);
-    void *msg_content = zmq_msg_data(&msg);
-    cv::Mat newMat(h, w, type, msg_content);
-    newMat.copyTo(mat);
-    zmq_msg_close(&msg);
-}
-
 QColor getColor(const QStringRef content) {
     QVector<QStringRef> colorStr = content.split(",");
     const int r = colorStr.at(0).toInt();
@@ -87,12 +69,7 @@ void recv_QPainter(void *socket, QPainter *p) {
 void zmqserver_track(void *socket, const cv::Mat &mat, const size_t frame, std::mutex &mut) {
     mut.lock();
     send_string(socket, TYPE_TRACK, ZMQ_SNDMORE);
-    QString data = QString::number(mat.cols) + "," + QString::number(
-                       mat.rows) + "," + QString::number(mat.type()) + "," + QString::number(frame);
-    send_string(socket, data, ZMQ_SNDMORE);
-    //TODO error handling
-    size_t sizeInBytes = mat.total() * mat.elemSize();
-    zmq_send(socket, mat.data, sizeInBytes, 0);
+    send_mat(socket, mat, frame);
     mut.unlock();
 }
 
