@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QString>
+#include <QRect>
+#include <QPainter>
+#include <QPoint>
 #include <zmq.h>
 #include <opencv2/opencv.hpp>
 
@@ -81,6 +84,46 @@ inline void send_mat(void *socket, const cv::Mat &mat, const size_t frameNbr) {
     //TODO error handling
     size_t sizeInBytes = mat.total() * mat.elemSize();
     zmq_send(socket, mat.data, sizeInBytes, 0);
+}
+
+QColor getColor(const QStringRef content) {
+    QVector<QStringRef> colorStr = content.split(",");
+    const int r = colorStr.at(0).toInt();
+    const int g = colorStr.at(1).toInt();
+    const int b = colorStr.at(2).toInt();
+    const int a = colorStr.at(3).toInt();
+    QColor color(r, g, b, a);
+    return color;
+}
+
+QRect getRect(const QStringRef content) {
+    QVector<QStringRef> colorStr = content.split(",");
+    const int x = colorStr.at(0).toInt();
+    const int y = colorStr.at(1).toInt();
+    const int w = colorStr.at(2).toInt();
+    const int h = colorStr.at(3).toInt();
+    QRect rect(x, y, w, h);
+    return rect;
+}
+
+void recv_QPainter(void *socket, QPainter *p) {
+    QString paintBatch = recv_string(socket);
+    if (paintBatch.length() > 0) {
+        QStringList batch = paintBatch.split(";");
+        for (int i = 0; i < batch.size(); ++i) {
+            const QString paintOperation = batch.at(i);
+            int start = 2;
+            int length = paintOperation.size() - 3;
+            QStringRef content(&paintOperation, start, length);
+            if (paintOperation.startsWith("p")) {
+                p->setPen(getColor(content));
+            } else if (paintOperation.startsWith("b")) {
+                p->setBrush(getColor(content));
+            } else if (paintOperation.startsWith("r")) {
+                p->drawRect(getRect(content));
+            }
+        }
+    }
 }
 
 }
