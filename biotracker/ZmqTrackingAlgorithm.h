@@ -55,7 +55,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
   public:
     ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings);
 
-    ~ZmqTrackingAlgorithm();
+    virtual ~ZmqTrackingAlgorithm() override;
 
     void track(ulong frameNumber, const cv::Mat &frame) override;
 
@@ -82,13 +82,14 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void keyPressEvent(QKeyEvent *) override;
 
-    // zmq functions
-
     /**
-     * @brief zmqserverRequestWidgets
-     * handles the whole process of
+     * @brief listenToEvents
+     * This function MUST be called whenever the zmq tracker calls its client as
+     * we need to wait for user input to "stay responsive"
+     * CAREFUL! This function is NOT threadsafe and must be called from
+     * a protected environment (protected by m_zmqMutex)
      */
-    void zmqserverRequestWidgets();
+    void listenToEvents();
 
   private Q_SLOTS:
     void btnClicked();

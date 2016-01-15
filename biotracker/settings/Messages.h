@@ -12,11 +12,16 @@ static const std::string MISSING_CONFIGURATION_FILE =
 }
 
 enum MTYPE {
-    NOTIFICATION,
-    WARNING,
-    FAIL,
-    FILE_OPEN
+    NOTIFICATION=0,
+    WARNING=1,
+    FAIL=2,
+    FILE_OPEN=3
 };
+
+inline MTYPE fromInt(const size_t v) {
+    return static_cast<MTYPE>(v);
+}
+
 }
 #endif // !Messages_h
 

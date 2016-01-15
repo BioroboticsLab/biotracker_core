@@ -112,6 +112,7 @@ class TrackingThread : public QThread {
     std::mutex m_paintMutex;
     std::mutex m_renderMutex;
     std::condition_variable m_conditionVariable;
+    size_t m_lastFrameNumber;
 
     bool m_playing;
     bool m_playOnce;

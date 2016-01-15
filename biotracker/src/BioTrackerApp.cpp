@@ -22,8 +22,6 @@ BioTrackerApp::BioTrackerApp()
 BioTrackerApp::~BioTrackerApp() {
     m_trackingThread.terminate();
     m_trackingThread.wait();
-
-    std::cout << "closing" << std::endl;
 }
 
 void BioTrackerApp::initConnects() {

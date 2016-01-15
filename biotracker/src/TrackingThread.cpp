@@ -205,7 +205,6 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
 }
 void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
-        m_texture.set(m_imageStream->currentFrame());
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }
@@ -361,8 +360,9 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
             m_tracker.get()->paint(proxy, v);
         }
 
-        if (proxy.isModified()) {
+        if (proxy.isModified() || (m_lastFrameNumber != m_imageStream->currentFrameNumber())) {
             m_texture.set(proxy.getMat());
+            m_lastFrameNumber = m_imageStream->currentFrameNumber();
         }
 
         // We use setWindow and setViewport to fit the video into the

@@ -16,6 +16,15 @@ const QString TYPE_SEND_WIDGET_EVENT("5");
 const QString WIDGET_EVENT_CLICK("0");
 const QString WIDGET_EVENT_CHANGED("1");
 
+const QString EVENT_STOP_LISTENING("99");
+const QString EVENT_NOTIFY_GUI("0");
+const QString EVENT_UPDATE("1");
+const QString EVENT_FORCE_TRACKING("2");
+const QString EVENT_JUMP_TO_FRAME("3");
+const QString EVENT_PLAY_PAUSE("4");
+
+const QString EVENT_MSG_FALSE("0");
+
 inline QString senderId(QObject *obj) {
     QPushButton *btn = qobject_cast<QPushButton *>(obj);
     return btn->accessibleName();
@@ -41,21 +50,24 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings)
 }
 
 ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
-    //zmq_disconnect(m_socket, "172.0.0.1:5556");
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_SHUTDOWN, 0);
+    this->listenToEvents();
     QThread::msleep(500);
     m_zmqMutex.unlock();
     m_zmqClient->kill();
     m_zmqClient->waitForFinished(1000);
-    //zmq_close(m_socket);
-    //zmq_ctx_term(m_context);
+    m_zmqMutex.unlock();
+    zmq_disconnect(m_socket, "172.0.0.1:5556");
+    zmq_close(m_socket);
+    zmq_ctx_term(m_context);
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_TRACK, ZMQ_SNDMORE);
     send_mat(m_socket, frame, frameNumber);
+    this->listenToEvents();
     m_isTracking = true;
     m_zmqMutex.unlock();
 }
@@ -65,6 +77,7 @@ void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
     send_string(m_socket, TYPE_PAINT, ZMQ_SNDMORE);
     QString data = QString::number(99);
     send_string(m_socket, data, 0);
+    this->listenToEvents();
     // wait for reply
     QString flag = recv_string(m_socket);
     if (QString::compare(flag, "Y") == 0) {
@@ -76,6 +89,7 @@ void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
 void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_PAINTOVERLAY, 0);
+    this->listenToEvents();
     recv_QPainter(m_socket, p);
     m_zmqMutex.unlock();
 }
@@ -86,6 +100,7 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
 
     // request widgets from client
     send_string(m_socket, TYPE_REQUEST_WIDGETS, 0);
+    this->listenToEvents();
 
     QVBoxLayout *mainLayout = new QVBoxLayout(m_tools.get()); // LEAK_CHECK?
 
@@ -93,7 +108,6 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
     // Elements are defined at:
     // https://github.com/BioroboticsLab/biotracker_core/wiki/dev_zmq#possible-elements
     QString data = recv_string(m_socket);
-    std::cout << "data:" << data.toUtf8().data() << std::endl;
     if (data.length() > 0) {
         QStringList batch = data.split(";");
         for (auto &widgetStr : batch) {
@@ -106,7 +120,6 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
 
             } else if (type == QChar('t')) {
                 QLabel *txt = new QLabel(m_tools.get());
-                std::cout << "label?" << std::endl;
                 txt->setText(widgetElems[1]);
                 mainLayout->addWidget(txt);
             } else if (type == QChar('b')) {
@@ -154,9 +167,49 @@ void ZmqTrackingAlgorithm::keyPressEvent(QKeyEvent *) {
 
 }
 
-void ZmqTrackingAlgorithm::zmqserverRequestWidgets() {
+/**
+ * @brief ZmqTrackingAlgorithm::listenToEvents
+ * CAREFUL, this function is NOT THREADSAFE
+ */
+void ZmqTrackingAlgorithm::listenToEvents() {
+    QString event = recv_string(m_socket);
+    while (event != EVENT_STOP_LISTENING) {
+        // handle event
+        if (event == EVENT_UPDATE) {
+            Q_EMIT update();
+        } else if (event == EVENT_FORCE_TRACKING) {
+            Q_EMIT forceTracking();
+        } else {
+            const QStringList eventParts = event.split(",");
+            if (eventParts[0] == EVENT_NOTIFY_GUI) {
+                QString message = eventParts[1];
+                // as the ',' and ';' characters are special symbols
+                // for the zmq message transmission they get encoded
+                // so they dont mess with the zmq message. Here we need
+                // to restore them
+                message = message.replace("%2C", ",");
+                message = message.replace("%3B", ";");
 
+                const size_t mtypeInt = eventParts[2].toInt();
+                const MSGS::MTYPE mtype = MSGS::fromInt(mtypeInt);
+                Q_EMIT notifyGUI(message.toStdString(), mtype);
+            } else if (eventParts[0] == EVENT_JUMP_TO_FRAME) {
+                const size_t frame = eventParts[1].toInt();
+                Q_EMIT jumpToFrame(frame);
+            } else if (eventParts[0] == EVENT_PLAY_PAUSE) {
+                if (eventParts[1] == EVENT_MSG_FALSE) {
+                    Q_EMIT pausePlayback(false);
+                } else {
+                    Q_EMIT pausePlayback(true);
+                }
+            } else {
+                assert(false);
+            }
+        }
+        event = recv_string(m_socket);
+    }
 }
+
 // == EVENTS ==
 
 void ZmqTrackingAlgorithm::btnClicked() {
@@ -168,6 +221,7 @@ void ZmqTrackingAlgorithm::btnClicked() {
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_SEND_WIDGET_EVENT, ZMQ_SNDMORE);
     send_string(m_socket, message, 0);
+    this->listenToEvents();
     m_zmqMutex.unlock();
 }
 
