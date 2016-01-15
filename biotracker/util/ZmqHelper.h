@@ -25,21 +25,13 @@ namespace Zmq {
  * @return
  */
 inline QString recv_string(void *socket) {
-    int rc;
     zmq_msg_t msg;
-    rc = zmq_msg_init(&msg);
+    int rc = zmq_msg_init(&msg);
     assert(rc == 0);
-    int bytes = zmq_msg_recv(&msg, socket, 0);
-
-    char *string = static_cast<char *>(malloc(bytes + 1));
-    void *msg_content = zmq_msg_data(&msg);
-
-    memcpy(string, msg_content, bytes);
+    const int bytes = zmq_msg_recv(&msg, socket, 0);
+    auto string = QString::fromLocal8Bit(static_cast<char *>(zmq_msg_data(&msg)), bytes);
     zmq_msg_close(&msg);
-    string[bytes] = 0;
-    QString result(string);
-    free(string);
-    return result;
+    return string;
 }
 
 /**
