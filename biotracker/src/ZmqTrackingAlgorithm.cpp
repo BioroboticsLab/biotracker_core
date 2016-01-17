@@ -25,10 +25,15 @@ const QString EVENT_PLAY_PAUSE("4");
 
 const QString EVENT_MSG_FALSE("0");
 
-inline QString senderId(QObject *obj) {
-    QPushButton *btn = qobject_cast<QPushButton *>(obj);
-    return btn->accessibleName();
+inline QString getSenderId(QObject *obj) {
+    QWidget *w = qobject_cast<QWidget *>(obj);
+    return w->accessibleName();
 }
+
+inline void setSenderId(QWidget *w, const QString id) {
+    w->setAccessibleName(id);
+}
+
 
 ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings) :
     TrackingAlgorithm(settings),
@@ -115,7 +120,7 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
             widgetStr.chop(1); // remove trailing ')'
             widgetStr = widgetStr.right(widgetStr.length() - 2); // remove first '_('
             auto widgetElems = widgetStr.split(",");
-            const int uniqueId = widgetElems[0].toInt();
+            const QString uniqueId = widgetElems[0];
             if (type == QChar('d')) {
 
             } else if (type == QChar('t')) {
@@ -125,13 +130,25 @@ std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
             } else if (type == QChar('b')) {
                 QPushButton *btn = new QPushButton(m_tools.get()); // LEAK_CHECK?
                 btn->setText(widgetElems[1]);
-                btn->setAccessibleName(QString::number(uniqueId));
+                setSenderId(btn, uniqueId);
                 mainLayout->addWidget(btn);
                 QObject::connect(btn, &QPushButton::clicked, this, &ZmqTrackingAlgorithm::btnClicked);
             } else if (type == QChar('s')) {
-
+                const int min = widgetElems[2].toInt();
+                const int max = widgetElems[3].toInt();
+                const int defaultValue = widgetElems[4].toInt();
+                QLabel *txt = new QLabel(m_tools.get());
+                txt->setText(widgetElems[1]);
+                mainLayout->addWidget(txt);
+                QSlider *sld = new QSlider(Qt::Horizontal, m_tools.get());
+                setSenderId(sld, uniqueId);
+                sld->setMinimum(min);
+                sld->setMaximum(max);
+                sld->setValue(defaultValue);
+                mainLayout->addWidget(sld);
+                QObject::connect(sld, &QSlider::valueChanged, this, &ZmqTrackingAlgorithm::sldValueChanged);
             } else {
-
+                // silently ignore
             }
         }
     }
@@ -213,11 +230,26 @@ void ZmqTrackingAlgorithm::listenToEvents() {
 // == EVENTS ==
 
 void ZmqTrackingAlgorithm::btnClicked() {
-    const QString widgetId = senderId(sender());
+    const QString widgetId = getSenderId(sender());
     QString message;
     message.append(WIDGET_EVENT_CLICK);
     message.append(",");
     message.append(widgetId);
+    m_zmqMutex.lock();
+    send_string(m_socket, TYPE_SEND_WIDGET_EVENT, ZMQ_SNDMORE);
+    send_string(m_socket, message, 0);
+    this->listenToEvents();
+    m_zmqMutex.unlock();
+}
+
+void ZmqTrackingAlgorithm::sldValueChanged(int value) {
+    const QString widgetId = getSenderId(sender());
+    QString message;
+    message.append(WIDGET_EVENT_CHANGED);
+    message.append(",");
+    message.append(widgetId);
+    message.append(",");
+    message.append(QString::number(value));
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_SEND_WIDGET_EVENT, ZMQ_SNDMORE);
     send_string(m_socket, message, 0);

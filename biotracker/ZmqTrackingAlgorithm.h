@@ -93,6 +93,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
   private Q_SLOTS:
     void btnClicked();
+    void sldValueChanged(int value);
 
   private:
     std::unique_ptr<QProcess> m_zmqClient;
