@@ -91,12 +91,17 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
      */
     void listenToEvents();
 
+    void shutdown();
+
   private Q_SLOTS:
     void btnClicked();
     void sldValueChanged(int value);
+    void processError(QProcess::ProcessError error);
+    void processHasError();
 
   private:
     std::unique_ptr<QProcess> m_zmqClient;
+    bool m_isDead; // if this is true: its OVER
     bool m_isTracking;
     std::set<Qt::Key> m_keys;
     void *m_context;

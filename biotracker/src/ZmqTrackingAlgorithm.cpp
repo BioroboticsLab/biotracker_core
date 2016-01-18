@@ -25,6 +25,10 @@ const QString EVENT_PLAY_PAUSE("4");
 
 const QString EVENT_MSG_FALSE("0");
 
+
+const int ZMQ_TIMEOUT_IN_MS = 10000; // timeout for the zmq tracker during execution
+const int ZMQ_SMALL_TIMEOUT_IN_MS = 1000; // timeout for the startup of the zmq tracker
+
 inline QString getSenderId(QObject *obj) {
     QWidget *w = qobject_cast<QWidget *>(obj);
     return w->accessibleName();
@@ -41,6 +45,10 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings)
     m_context(zmq_ctx_new()),
     m_socket(zmq_socket(m_context, ZMQ_PAIR)),
     m_tools(std::make_shared<QFrame>()) {
+
+    // set timeout
+    zmq_setsockopt(m_socket, ZMQ_RCVTIMEO, &ZMQ_SMALL_TIMEOUT_IN_MS, sizeof(int));
+
     int rc = zmq_bind(m_socket, "tcp://127.0.0.1:5556");
     if (rc != 0) {
         int rno = zmq_errno();
@@ -51,24 +59,27 @@ ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings)
     m_zmqClient = std::make_unique<QProcess>(this);
     m_zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
     QString command = info.m_program + " " + info.m_arguments.first();
+
+    // connect listeners
+    QObject::connect(m_zmqClient.get(), &QProcess::readyReadStandardError,
+                     this, &ZmqTrackingAlgorithm::processHasError);
+
+    QObject::connect(m_zmqClient.get(),
+                     static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+                     this, &ZmqTrackingAlgorithm::processError);
+
     m_zmqClient->start(command);
+    m_zmqClient->waitForStarted();
 }
 
 ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
-    m_zmqMutex.lock();
-    send_string(m_socket, TYPE_SHUTDOWN, 0);
-    this->listenToEvents();
-    QThread::msleep(500);
-    m_zmqMutex.unlock();
-    m_zmqClient->kill();
-    m_zmqClient->waitForFinished(1000);
-    m_zmqMutex.unlock();
-    zmq_disconnect(m_socket, "172.0.0.1:5556");
-    zmq_close(m_socket);
-    zmq_ctx_term(m_context);
+    shutdown();
 }
 
 void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
+    if (m_isDead) {
+        return;
+    }
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_TRACK, ZMQ_SNDMORE);
     send_mat(m_socket, frame, frameNumber);
@@ -78,6 +89,9 @@ void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
 }
 
 void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
+    if (m_isDead) {
+        return;
+    }
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_PAINT, ZMQ_SNDMORE);
     QString data = QString::number(99);
@@ -92,6 +106,9 @@ void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &) {
 }
 
 void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
+    if (m_isDead) {
+        return;
+    }
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_PAINTOVERLAY, 0);
     this->listenToEvents();
@@ -100,7 +117,6 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    //zmqserver_requestWidgets(m_socket, m_tools, btns, txts, sliders, m_zmqMutex);
     m_zmqMutex.lock();
 
     // request widgets from client
@@ -189,47 +205,77 @@ void ZmqTrackingAlgorithm::keyPressEvent(QKeyEvent *) {
  * CAREFUL, this function is NOT THREADSAFE
  */
 void ZmqTrackingAlgorithm::listenToEvents() {
-    QString event = recv_string(m_socket);
-    while (event != EVENT_STOP_LISTENING) {
-        // handle event
-        if (event == EVENT_UPDATE) {
-            Q_EMIT update();
-        } else if (event == EVENT_FORCE_TRACKING) {
-            Q_EMIT forceTracking();
-        } else {
-            const QStringList eventParts = event.split(",");
-            if (eventParts[0] == EVENT_NOTIFY_GUI) {
-                QString message = eventParts[1];
-                // as the ',' and ';' characters are special symbols
-                // for the zmq message transmission they get encoded
-                // so they dont mess with the zmq message. Here we need
-                // to restore them
-                message = message.replace("%2C", ",");
-                message = message.replace("%3B", ";");
+    if (!m_isDead) {
+        QString event = recv_string(m_socket);
 
-                const size_t mtypeInt = eventParts[2].toInt();
-                const MSGS::MTYPE mtype = MSGS::fromInt(mtypeInt);
-                Q_EMIT notifyGUI(message.toStdString(), mtype);
-            } else if (eventParts[0] == EVENT_JUMP_TO_FRAME) {
-                const size_t frame = eventParts[1].toInt();
-                Q_EMIT jumpToFrame(frame);
-            } else if (eventParts[0] == EVENT_PLAY_PAUSE) {
-                if (eventParts[1] == EVENT_MSG_FALSE) {
-                    Q_EMIT pausePlayback(false);
-                } else {
-                    Q_EMIT pausePlayback(true);
-                }
-            } else {
-                assert(false);
-            }
+        switch (zmq_errno()) {
+        case EAGAIN:
+            // if we timeout, we wont to notify the tracker..
+            m_isDead = true;
+            return;
         }
-        event = recv_string(m_socket);
+
+        while (event != EVENT_STOP_LISTENING) {
+            // handle event
+            if (event == EVENT_UPDATE) {
+                Q_EMIT update();
+            } else if (event == EVENT_FORCE_TRACKING) {
+                Q_EMIT forceTracking();
+            } else {
+                const QStringList eventParts = event.split(",");
+                if (eventParts[0] == EVENT_NOTIFY_GUI) {
+                    QString message = eventParts[1];
+                    // as the ',' and ';' characters are special symbols
+                    // for the zmq message transmission they get encoded
+                    // so they dont mess with the zmq message. Here we need
+                    // to restore them
+                    message = message.replace("%2C", ",");
+                    message = message.replace("%3B", ";");
+
+                    const size_t mtypeInt = eventParts[2].toInt();
+                    const MSGS::MTYPE mtype = MSGS::fromInt(mtypeInt);
+                    Q_EMIT notifyGUI(message.toStdString(), mtype);
+                } else if (eventParts[0] == EVENT_JUMP_TO_FRAME) {
+                    const size_t frame = eventParts[1].toInt();
+                    Q_EMIT jumpToFrame(frame);
+                } else if (eventParts[0] == EVENT_PLAY_PAUSE) {
+                    if (eventParts[1] == EVENT_MSG_FALSE) {
+                        Q_EMIT pausePlayback(false);
+                    } else {
+                        Q_EMIT pausePlayback(true);
+                    }
+                } else {
+                    assert(false);
+                }
+            }
+            event = recv_string(m_socket);
+        }
     }
+}
+
+void ZmqTrackingAlgorithm::shutdown() {
+    std::cout << "try shutdown!" << std::endl;
+    m_zmqMutex.lock();
+    m_isDead = true;
+    send_string(m_socket, TYPE_SHUTDOWN, 0);
+    this->listenToEvents();
+    QThread::msleep(500);
+    m_zmqMutex.unlock();
+    m_zmqClient->kill();
+    m_zmqClient->waitForFinished(1000);
+    m_zmqMutex.unlock();
+    zmq_disconnect(m_socket, "172.0.0.1:5556");
+    zmq_close(m_socket);
+    zmq_ctx_term(m_context);
+    std::cout << "end shutdown!" << std::endl;
 }
 
 // == EVENTS ==
 
 void ZmqTrackingAlgorithm::btnClicked() {
+    if (m_isDead) {
+        return;
+    }
     const QString widgetId = getSenderId(sender());
     QString message;
     message.append(WIDGET_EVENT_CLICK);
@@ -243,6 +289,9 @@ void ZmqTrackingAlgorithm::btnClicked() {
 }
 
 void ZmqTrackingAlgorithm::sldValueChanged(int value) {
+    if (m_isDead) {
+        return;
+    }
     const QString widgetId = getSenderId(sender());
     QString message;
     message.append(WIDGET_EVENT_CHANGED);
@@ -258,6 +307,17 @@ void ZmqTrackingAlgorithm::sldValueChanged(int value) {
 }
 
 // == EVENTS end ==
+
+void ZmqTrackingAlgorithm::processError(QProcess::ProcessError error) {
+    const QString errorStr(m_zmqClient->readAllStandardError());
+    shutdown();
+}
+
+void ZmqTrackingAlgorithm::processHasError() {
+    const QString error(m_zmqClient->readAllStandardError());
+    shutdown();
+
+}
 
 ZmqInfoFile getInfo(const boost::filesystem::path &path) {
 
