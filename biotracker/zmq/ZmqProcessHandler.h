@@ -13,7 +13,7 @@ namespace Zmq {
 
 class ZmqProcessHandler {
 
-}
+};
 
 }
 }

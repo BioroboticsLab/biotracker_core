@@ -57,7 +57,7 @@ void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {
         }
         registerFunction();
     } else if (ext == "zmq") {
-        registerZmqTracker(Zmq::getInfo(path));
+        registerZmqTracker(Zmq::ZmqInfoFile(path));
     } else {
 
     }

@@ -6,6 +6,7 @@
 
 #include <QObject>
 
+#include "zmq/ZmqInfoFile.h"
 #include "TrackingAlgorithm.h"
 #include "util/stdext.h"
 #include "util/singleton.h"

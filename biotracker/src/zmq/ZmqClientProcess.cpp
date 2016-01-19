@@ -1,4 +1,4 @@
-#include "util/ZmqHelper.h"
+#include "zmq/ZmqClientProcess.h"
 
 namespace BioTracker {
 namespace Core {

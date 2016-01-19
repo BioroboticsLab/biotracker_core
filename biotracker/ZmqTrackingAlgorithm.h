@@ -15,7 +15,6 @@
 #include <QVector>
 #include <QMouseEvent>
 
-//#include <zmq.hpp>
 #include <zmq.h>
 
 #include "settings/Messages.h"
@@ -24,31 +23,11 @@
 #include "TrackingThread.h"
 #include "Exceptions.h"
 
+#include "zmq/ZmqInfoFile.h"
 
 namespace BioTracker {
 namespace Core {
 namespace Zmq {
-
-class ZmqInfoFile {
-  public:
-    ZmqInfoFile(QString n, QString p, QStringList a):
-        m_name(n),
-        m_program(p),
-        m_arguments(a) {}
-    QString m_name;
-    QString m_program;
-    QStringList m_arguments;
-};
-
-/**
- * @brief getInfo
- *
- *
- *
- * @param path to the *.zmq file
- * @return the info provided in the *.zmq file
- */
-ZmqInfoFile getInfo(const boost::filesystem::path &path);
 
 class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
