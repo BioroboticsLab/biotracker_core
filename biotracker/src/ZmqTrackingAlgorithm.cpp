@@ -113,7 +113,7 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &) {
     m_zmqMutex.lock();
     send_string(m_socket, TYPE_PAINTOVERLAY, 0);
     this->listenToEvents();
-    recv_QPainter(m_socket, p);
+    //recv_QPainter(m_socket, p);
     m_zmqMutex.unlock();
 }
 

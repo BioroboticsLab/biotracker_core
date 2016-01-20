@@ -7,6 +7,8 @@
 #include <zmq.h>
 #include <opencv2/opencv.hpp>
 
+#include "ZmqMessageParser.h"
+
 /**
  * Zmq helper functions
  *
@@ -78,6 +80,7 @@ inline void send_mat(void *socket, const cv::Mat &mat, const size_t frameNbr) {
     zmq_send(socket, mat.data, sizeInBytes, 0);
 }
 
+/*
 QColor getColor(const QStringRef content) {
     QVector<QStringRef> colorStr = content.split(",");
     const int r = colorStr.at(0).toInt();
@@ -117,7 +120,7 @@ void recv_QPainter(void *socket, QPainter *p) {
         }
     }
 }
-
+*/
 }
 }
 }
