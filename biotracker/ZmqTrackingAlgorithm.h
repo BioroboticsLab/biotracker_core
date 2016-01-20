@@ -61,13 +61,6 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void keyPressEvent(QKeyEvent *) override;
 
-    /**
-     * @brief listenToEvents
-     * This function MUST be called whenever the zmq tracker calls its client as
-     * we need to wait for user input to "stay responsive"
-     * CAREFUL! This function is NOT threadsafe and must be called from
-     * a protected environment (protected by m_zmqMutex)
-     */
     void listenToEvents();
 
     void shutdown();

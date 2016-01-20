@@ -20,7 +20,8 @@ const int ZMQ_SMALL_TIMEOUT_IN_MS = 1000; // timeout for the startup of the zmq 
 class ZmqClientProcess: public QObject {
     Q_OBJECT
   public:
-    ZmqClientProcess(ZmqInfoFile file, void *socket, const int ts=ZMQ_TIMEOUT_IN_MS);
+    ZmqClientProcess(ZmqInfoFile file, void *socket, std::string url="tcp://127.0.0.1:5556",
+                     const int ts=ZMQ_TIMEOUT_IN_MS);
     ~ZmqClientProcess() {
         shutdown();
     }
@@ -54,9 +55,8 @@ class ZmqClientProcess: public QObject {
     void listenToEvents(EventHandler &handler);
     void requestResults(GenericReceiveMessage &message);
 
-    const int m_timeout;
     std::unique_ptr<QProcess> m_zmqClient;
-    void *m_socket;
+    std::mutex m_zmqMutex;
 
 };
 

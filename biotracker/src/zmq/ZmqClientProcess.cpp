@@ -1,6 +1,8 @@
 #include "zmq/ZmqClientProcess.h"
 
 #include <opencv/cv.hpp>
+#include <QProcess>
+#include <QString>
 
 #include "zmq/ZmqHelper.h"
 
@@ -9,28 +11,51 @@ namespace Core {
 namespace Zmq {
 
 bool isFree = true;
-void *SOCKET;
+void *SOCKET; // TODO make this a member variable. To do so, we need to provide the socket
+// to the callback functions (to receive string and receive mat) somehow
 
 // =========================================
 // PUBLIC
 // =========================================
 
-BioTracker::Core::Zmq::ZmqClientProcess::ZmqClientProcess(ZmqInfoFile file, void *socket, const int ts):
-    m_timeout(ts),
-    m_socket(socket) {
+ZmqClientProcess::ZmqClientProcess(ZmqInfoFile info, void *socket, std::string url, const int ts) {
     if (isFree) { // there can be only ONE ZmqClientProcess at the same time!
         SOCKET = socket;
         isFree = false;
     } else {
         throw std::invalid_argument("Socket is already in use and must be shutdown`d before using it again");
     }
+
+    zmq_setsockopt(SOCKET, ZMQ_RCVTIMEO, &ts, sizeof(int));
+
+    int rc = zmq_bind(SOCKET, url.c_str());
+    if (rc != 0) {
+        int rno = zmq_errno();
+        QString err_msg(zmq_strerror(rno));
+        throw std::invalid_argument(err_msg.toStdString());
+    }
+
+    m_zmqClient = std::make_unique<QProcess>(this);
+    m_zmqClient->setProcessChannelMode(QProcess::ForwardedChannels);
+    QString command = info.m_program + " " + info.m_arguments.first();
+
+    QObject::connect(m_zmqClient.get(), &QProcess::readyReadStandardError,
+                     this, &ZmqClientProcess::processError);
+
+    QObject::connect(m_zmqClient.get(),
+                     static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+                     this, &ZmqClientProcess::processBadError);
+
+    m_zmqClient->start(command);
+    m_zmqClient->waitForStarted();
 }
 
 
-void BioTracker::Core::Zmq::ZmqClientProcess::send(GenericSendMessage &message, EventHandler &handler) {
+void ZmqClientProcess::send(GenericSendMessage &message, EventHandler &handler) {
+    m_zmqMutex.lock();
     switch (message.type) {
     case None: {
-        // exception
+        throw std::invalid_argument("Message type must not be 'None'");
         break;
     }
     case Track: {
@@ -64,6 +89,7 @@ void BioTracker::Core::Zmq::ZmqClientProcess::send(GenericSendMessage &message, 
         break;
     }
     }
+    m_zmqMutex.unlock();
 }
 
 void BioTracker::Core::Zmq::ZmqClientProcess::shutdown() {
@@ -74,38 +100,38 @@ void BioTracker::Core::Zmq::ZmqClientProcess::shutdown() {
 // PRIVATE
 // =========================================
 
-void BioTracker::Core::Zmq::ZmqClientProcess::track(SendTrackMessage &message, EventHandler &handler) {
+void ZmqClientProcess::track(SendTrackMessage &message, EventHandler &handler) {
     sendMessage(message);
     listenToEvents(handler);
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::paint(SendPaintMessage &message, EventHandler &handler) {
+void ZmqClientProcess::paint(SendPaintMessage &message, EventHandler &handler) {
     ReceivePaintMessage result(message);
     sendMessage(message);
     listenToEvents(handler);
     requestResults(result);
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::paintOverlay(SendPaintOverlayMessage &message, EventHandler &handler) {
+void ZmqClientProcess::paintOverlay(SendPaintOverlayMessage &message, EventHandler &handler) {
     ReceiveQPainterMessage result(message);
     sendMessage(message);
     listenToEvents(handler);
     requestResults(result);
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::requestTools(SendRequestWidgetsMessage &message, EventHandler &handler) {
+void ZmqClientProcess::requestTools(SendRequestWidgetsMessage &message, EventHandler &handler) {
     ReceiveToolsWidgetMessage result(message);
     sendMessage(message);
     listenToEvents(handler);
     requestResults(result);
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::buttonClicked(SendButtonClickMessage &message, EventHandler &handler) {
+void ZmqClientProcess::buttonClicked(SendButtonClickMessage &message, EventHandler &handler) {
     sendMessage(message);
     listenToEvents(handler);
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::sendValue(SendValueChangedMessage &message, EventHandler &handler) {
+void ZmqClientProcess::sendValue(SendValueChangedMessage &message, EventHandler &handler) {
     sendMessage(message);
     listenToEvents(handler);
 }
@@ -127,7 +153,7 @@ void ZmqClientProcess::sendMessage(GenericSendMessage &message) {
             flag = ZMQ_SNDMORE;
         }
         ZmqMessage m = messageParts[i];
-        zmq_send(m_socket, m.data, m.sizeInBytes, flag);
+        zmq_send(SOCKET, m.data, m.sizeInBytes, flag);
     }
 }
 
