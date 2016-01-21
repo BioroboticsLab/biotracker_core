@@ -24,6 +24,7 @@
 #include "Exceptions.h"
 
 #include "zmq/ZmqInfoFile.h"
+#include "zmq/ZmqClientProcess.h"
 
 namespace BioTracker {
 namespace Core {
@@ -32,7 +33,7 @@ namespace Zmq {
 class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
   public:
-    ZmqTrackingAlgorithm(ZmqInfoFile info, Settings &settings);
+    ZmqTrackingAlgorithm(std::shared_ptr<ZmqClientProcess> process, Settings &settings);
 
     virtual ~ZmqTrackingAlgorithm() override;
 
@@ -61,25 +62,18 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void keyPressEvent(QKeyEvent *) override;
 
-    void listenToEvents();
-
     void shutdown();
 
   private Q_SLOTS:
-    void btnClicked();
-    void sldValueChanged(int value);
-    void processError(QProcess::ProcessError error);
-    void processHasError();
+    void btnClicked(const QString);
+    void sldValueChanged(const QString, int value);
 
   private:
-    std::unique_ptr<QProcess> m_zmqClient;
-    bool m_isDead; // if this is true: its OVER
     bool m_isTracking;
     std::set<Qt::Key> m_keys;
-    void *m_context;
-    void *m_socket;
     std::shared_ptr<QWidget> m_tools;
-    std::mutex m_zmqMutex;
+    std::shared_ptr<ZmqClientProcess> m_process;
+    EventHandler m_events;
 };
 }
 }

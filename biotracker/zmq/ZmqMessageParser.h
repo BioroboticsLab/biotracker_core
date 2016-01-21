@@ -10,25 +10,72 @@
 #include <zmq.h>
 #include <opencv2/opencv.hpp>
 #include <QProcess>
-#include "TrackingAlgorithm.h"
-#include "zmq/ZmqInfoFile.h"
-#include "settings/Messages.h"
+#include "biotracker/TrackingAlgorithm.h"
+#include "biotracker/zmq/ZmqInfoFile.h"
+#include "biotracker/settings/Messages.h"
 
 namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
+const QString TYPE_TRACK("0");
+const QString TYPE_PAINT("1");
+const QString TYPE_SHUTDOWN("2");
+const QString TYPE_PAINTOVERLAY("3");
+const QString TYPE_REQUEST_WIDGETS("4");
+const QString TYPE_SEND_WIDGET_EVENT("5");
+
+const QString WIDGET_EVENT_CLICK("0");
+const QString WIDGET_EVENT_CHANGED("1");
+
+
+const cv::Mat DEFAULT_1x1(1,1, CV_8UC3);
+
+// TODO solve this more elegant with polymorphsm
 class ZmqMessage {
   public:
 
-    ZmqMessage(const void *d, int s):
-        data(d),
-        sizeInBytes(s) {}
+    ZmqMessage(QString str):
+        isText(true),
+        text(str),
+        mat(DEFAULT_1x1) {
+    }
+    ZmqMessage(const cv::Mat &m):
+        isText(false),
+        mat(m) {}
 
-    const void *data;
-    int sizeInBytes;
+    const bool isText;
+    const QString text;
+    const cv::Mat &mat;
+};
 
-    QString toString();
+typedef QString(*recvString)();
+typedef void (*recvMat)(cv::Mat &mat);
+
+// ======================================
+// EVENT HANDLER
+// ======================================
+
+class EventHandler : public QObject {
+    Q_OBJECT
+  public:
+    EventHandler(QObject *p): QObject(p) {}
+    void receive(recvString receiveStr);
+  Q_SIGNALS:
+    void notifyGUI(std::string, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    void update();
+    // cv::Mat requestCurrentScreen();
+    void forceTracking();
+    //void registerViews(const std::vector<View> views);
+    void pausePlayback(bool paused);
+    void jumpToFrame(int frameNumber);
+
+    void btnClicked(const QString widgetId);
+    void sldValueChanged(const QString widgetId, int value);
+  public Q_SLOTS:
+    void btnClickedInternal();
+    void sldValueChangedInternal(int value);
+
 };
 
 // ======================================
@@ -45,10 +92,6 @@ enum MessageType {
     ValueChanged
 };
 
-typedef QString(*recvString)();
-typedef void (*recvMat)(cv::Mat &mat);
-
-
 class GenericSendMessage {
   public:
     GenericSendMessage(const MessageType t): type(t) {}
@@ -63,7 +106,7 @@ class GenericSendMessage {
     const MessageType type;
 
   protected:
-    ZmqMessage fromString(const QString &str);
+    ZmqMessage fromString(const QString str);
 };
 
 // ======================================
@@ -181,36 +224,28 @@ class ReceiveQPainterMessage: public GenericReceiveMessage {
 // REQUESTWIDGETS
 // ======================================
 
-typedef void (*ButtonClickCallback)();
-typedef void (*SliderChangedCallback)(int value);
-
 class SendRequestWidgetsMessage: public GenericSendMessage {
   public:
-    SendRequestWidgetsMessage(std::shared_ptr<QWidget> tools,
-                              ButtonClickCallback button, SliderChangedCallback slider):
+    SendRequestWidgetsMessage(std::shared_ptr<QWidget> tools):
         GenericSendMessage(RequestTools),
-        m_tools(tools), m_button(button), m_slider(slider) {}
+        m_tools(tools) {}
     std::vector<ZmqMessage>get() override;
 
     std::shared_ptr<QWidget> m_tools;
-    ButtonClickCallback m_button;
-    SliderChangedCallback m_slider;
 };
 
 // ======================================
 
 class ReceiveToolsWidgetMessage: public GenericReceiveMessage {
   public:
-    ReceiveToolsWidgetMessage(SendRequestWidgetsMessage &m):
-        m_tools(m.m_tools), m_buttonClickCallback(m.m_button),
-        m_sliderChangedCallback(m.m_slider) {}
+    ReceiveToolsWidgetMessage(SendRequestWidgetsMessage &m, EventHandler &evt):
+        m_tools(m.m_tools), m_events(evt) {}
 
     void receive(recvString receiveStr, recvMat recvMat) override;
 
   private:
     std::shared_ptr<QWidget> m_tools;
-    ButtonClickCallback m_buttonClickCallback;
-    SliderChangedCallback m_sliderChangedCallback;
+    EventHandler &m_events;
 };
 
 // ======================================
@@ -240,25 +275,6 @@ class SendValueChangedMessage: public GenericSendMessage {
   private:
     const QString m_sender;
     const int m_value;
-};
-
-// ======================================
-// EVENT HANDLER
-// ======================================
-
-class EventHandler : public QObject {
-    Q_OBJECT
-  public:
-    void receive(recvString receiveStr);
-  Q_SIGNALS:
-    void notifyGUI(std::string, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
-    void update();
-    // cv::Mat requestCurrentScreen();
-    void forceTracking();
-    //void registerViews(const std::vector<View> views);
-    void pausePlayback(bool paused);
-    void jumpToFrame(int frameNumber);
-
 };
 
 

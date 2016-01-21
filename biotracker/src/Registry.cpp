@@ -6,6 +6,8 @@
 #include <QLibrary>
 
 #include "Exceptions.h"
+#include "biotracker/zmq/ZmqProcessHandler.h"
+#include "biotracker/zmq/ZmqClientProcess.h"
 
 namespace BioTracker {
 namespace Core {
@@ -78,7 +80,9 @@ std::shared_ptr<TrackingAlgorithm> Registry::makeNewTracker(
 
 std::shared_ptr<TrackingAlgorithm> Registry::getTracker(Zmq::ZmqInfoFile &info,
         Settings &s) const {
-    auto tracker = std::make_shared<Zmq::ZmqTrackingAlgorithm>(info, s);
+    Zmq::ZmqProcessHandler &handler = Zmq::ZmqProcessHandler::getInstance();
+    std::shared_ptr<Zmq::ZmqClientProcess> proc = handler.startProcess(info);
+    auto tracker = std::make_shared<Zmq::ZmqTrackingAlgorithm>(proc, s);
     return tracker;
 }
 
@@ -97,7 +101,10 @@ bool BioTracker::Core::Registry::registerZmqTracker(Zmq::ZmqInfoFile
 
         virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings)
         const override {
-            return std::make_shared<Zmq::ZmqTrackingAlgorithm>(m_trackerInfo, settings);
+            Zmq::ZmqProcessHandler &zmqhandler = Zmq::ZmqProcessHandler::getInstance();
+            Zmq::ZmqInfoFile info = m_trackerInfo;
+            std::shared_ptr<Zmq::ZmqClientProcess> proc = zmqhandler.startProcess(info);
+            return std::make_shared<Zmq::ZmqTrackingAlgorithm>(proc, settings);
         }
 
         Zmq::ZmqInfoFile m_trackerInfo;

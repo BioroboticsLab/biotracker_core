@@ -1,4 +1,4 @@
-#include "zmq/ZmqMessageParser.h"
+#include "biotracker/zmq/ZmqMessageParser.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -9,22 +9,12 @@ namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
-const QString TYPE_TRACK("0");
-const QString TYPE_PAINT("1");
-const QString TYPE_SHUTDOWN("2");
-const QString TYPE_PAINTOVERLAY("3");
-const QString TYPE_REQUEST_WIDGETS("4");
-const QString TYPE_SEND_WIDGET_EVENT("5");
-
-const QString WIDGET_EVENT_CLICK("0");
-const QString WIDGET_EVENT_CHANGED("1");
-
 // ================================
 // GenericSendMessage
 // ================================
 
-ZmqMessage GenericSendMessage::fromString(const QString &str) {
-    ZmqMessage m(str.toUtf8().constData(), str.size());
+ZmqMessage GenericSendMessage::fromString(const QString str) {
+    ZmqMessage m(str);
     return m;
 }
 
@@ -41,8 +31,7 @@ std::vector<ZmqMessage> SendTrackMessage::get() {
                    QString::number(m_frameNumber);
     message.push_back(fromString(data)); // #2
 
-    size_t sizeInBytes = m_frame.total() * m_frame.elemSize();
-    message.push_back(ZmqMessage(m_frame.data, sizeInBytes)); // #3
+    message.push_back(ZmqMessage(m_frame)); // #3
 
     return message;
 }
@@ -89,7 +78,6 @@ std::vector<ZmqMessage> SendRequestWidgetsMessage::get() {
 std::vector<ZmqMessage> SendButtonClickMessage::get() {
     std::vector<ZmqMessage> message;
     message.push_back(fromString(TYPE_SEND_WIDGET_EVENT));
-
     QString click;
     click.append(WIDGET_EVENT_CLICK);
     click.append(",");
@@ -169,60 +157,31 @@ void EventHandler::receive(BioTracker::Core::Zmq::recvString receiveStr) {
     }
 }
 
-// ================================
-// ZmqMessage
-// ================================
+inline QString getSenderId(QObject *obj) {
+    QWidget *w = qobject_cast<QWidget *>(obj);
+    return w->accessibleName();
+}
 
-QString ZmqMessage::toString() {
-    return QString::fromLocal8Bit(static_cast<const char *>(data), sizeInBytes);
+void EventHandler::btnClickedInternal() {
+    QWidget *w = qobject_cast<QWidget *>(sender());
+    const QString widgetId = w->accessibleName();
+    Q_EMIT btnClicked(widgetId);
+}
+
+void EventHandler::sldValueChangedInternal(int value) {
+    const QString widgetId = getSenderId(sender());
+    Q_EMIT sldValueChanged(widgetId, value);
 }
 
 // ================================
 // ReceivePaintMessage
 // ================================
 
-/*
-bool ReceivePaintMessage::receive(ZmqMessage m)
-{
-    const QString input = m.toString();
-    if (m_firstCall) {
-        m_firstCall = false;
-        if (input == "Y") {
-            return true;
-        }
-    } else if (m_secondCall) {
-        // receive matrix shape
-        QStringRef shape(&input);
-        QVector<QStringRef> shapeStr = shape.split(",");
-        m_w = shapeStr.at(0).toInt();
-        m_h = shapeStr.at(1).toInt();
-        m_type = shapeStr.at(2).toInt();
-        return true;
-    } else {
-        // receive matrix data
-        cv::Mat newMat(m_h, m_w, m_type, &m.data);
-        newMat.copyTo(m_mat);
-    }
-    return false;
-}
-*/
-
 void ReceivePaintMessage::receive(BioTracker::Core::Zmq::recvString receiveStr,
                                   BioTracker::Core::Zmq::recvMat recvMat) {
     QString input = receiveStr();
-    if (input != "Y") {
+    if (input == "Y") {
         recvMat(m_mat);
-        // receive matrix shape
-        /*input = receiveStr();
-        QStringRef shape(&input);
-        QVector<QStringRef> shapeStr = shape.split(",");
-        m_w = shapeStr.at(0).toInt();
-        m_h = shapeStr.at(1).toInt();
-        m_type = shapeStr.at(2).toInt();
-        return true;
-        // receive matrix data
-        cv::Mat newMat(m_h, m_w, m_type, &m.data);
-        newMat.copyTo(m_mat);*/
     }
 
 }
@@ -304,7 +263,7 @@ void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiv
                 btn->setText(widgetElems[1]);
                 btn->setAccessibleName(uniqueId);
                 mainLayout->addWidget(btn);
-                QObject::connect(btn, &QPushButton::clicked, m_buttonClickCallback);
+                QObject::connect(btn, &QPushButton::clicked, &m_events, &EventHandler::btnClickedInternal);
             } else if (type == QChar('s')) {
                 const int min = widgetElems[2].toInt();
                 const int max = widgetElems[3].toInt();
@@ -318,9 +277,10 @@ void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiv
                 sld->setMaximum(max);
                 sld->setValue(defaultValue);
                 mainLayout->addWidget(sld);
-                QObject::connect(sld, &QSlider::valueChanged, m_sliderChangedCallback);
+                QObject::connect(sld, &QSlider::valueChanged, &m_events, &EventHandler::sldValueChangedInternal);
             } else {
                 // silently ignore
+                // TODO: do something
             }
         }
     }

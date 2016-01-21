@@ -1,8 +1,8 @@
-#include "zmq/ZmqInfoFile.h"
+#include "biotracker/zmq/ZmqInfoFile.h"
 
 #include <QFile>
 #include <QTextStream>
-#include "Exceptions.h"
+#include "biotracker/Exceptions.h"
 
 namespace BioTracker {
 namespace Core {

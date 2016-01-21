@@ -1,10 +1,10 @@
-#include "zmq/ZmqClientProcess.h"
+#include "biotracker/zmq/ZmqClientProcess.h"
 
 #include <opencv/cv.hpp>
 #include <QProcess>
 #include <QString>
 
-#include "zmq/ZmqHelper.h"
+#include "biotracker/zmq/ZmqHelper.h"
 
 namespace BioTracker {
 namespace Core {
@@ -92,8 +92,17 @@ void ZmqClientProcess::send(GenericSendMessage &message, EventHandler &handler) 
     m_zmqMutex.unlock();
 }
 
-void BioTracker::Core::Zmq::ZmqClientProcess::shutdown() {
+void ZmqClientProcess::shutdown() {
     isFree = true;
+    m_zmqMutex.lock();
+    send_string(SOCKET, TYPE_SHUTDOWN, 0);
+    EventHandler temp(this);
+    listenToEvents(temp);
+    m_zmqClient->kill();
+    m_zmqClient->waitForFinished(1000);
+    zmq_disconnect(SOCKET, "172.0.0.1:5556");
+    zmq_close(SOCKET);
+    m_zmqMutex.unlock();
 }
 
 // =========================================
@@ -120,7 +129,7 @@ void ZmqClientProcess::paintOverlay(SendPaintOverlayMessage &message, EventHandl
 }
 
 void ZmqClientProcess::requestTools(SendRequestWidgetsMessage &message, EventHandler &handler) {
-    ReceiveToolsWidgetMessage result(message);
+    ReceiveToolsWidgetMessage result(message, handler);
     sendMessage(message);
     listenToEvents(handler);
     requestResults(result);
@@ -153,7 +162,13 @@ void ZmqClientProcess::sendMessage(GenericSendMessage &message) {
             flag = ZMQ_SNDMORE;
         }
         ZmqMessage m = messageParts[i];
-        zmq_send(SOCKET, m.data, m.sizeInBytes, flag);
+
+        if (m.isText) {
+            send_string(SOCKET, m.text, flag);
+        } else { // send mat DATA
+            size_t sizeInBytes = m.mat.total() * m.mat.elemSize();
+            zmq_send(SOCKET, m.mat.data, sizeInBytes, flag);
+        }
     }
 }
 
@@ -170,7 +185,8 @@ void recvThatMat(cv::Mat &m) {
  * @param handler
  */
 void ZmqClientProcess::listenToEvents(EventHandler &handler) {
-
+    recvString func = &recvThisString;
+    handler.receive(func);
 }
 
 /**
@@ -178,18 +194,20 @@ void ZmqClientProcess::listenToEvents(EventHandler &handler) {
  * @param message
  */
 void ZmqClientProcess::requestResults(GenericReceiveMessage &message) {
-
+    recvString func = &recvThisString;
+    recvMat funcMat = &recvThatMat;
+    message.receive(func, funcMat);
 }
 
 // ===========================================
 // ===========================================
 
 void BioTracker::Core::Zmq::ZmqClientProcess::processBadError(QProcess::ProcessError error) {
-
+    // TODO implement error handling
 }
 
 void BioTracker::Core::Zmq::ZmqClientProcess::processError() {
-
+    // TODO implement error handling
 }
 
 }

@@ -7,8 +7,8 @@
 #include <QPoint>
 #include <zmq.h>
 #include <opencv2/opencv.hpp>
-#include "zmq/ZmqMessageParser.h"
-#include "zmq/ZmqInfoFile.h"
+#include "biotracker/zmq/ZmqMessageParser.h"
+#include "biotracker/zmq/ZmqInfoFile.h"
 
 namespace BioTracker {
 namespace Core {

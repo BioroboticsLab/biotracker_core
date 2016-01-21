@@ -1,33 +1,37 @@
-#include "zmq/ZmqProcessHandler.h"
+#include "biotracker/zmq/ZmqProcessHandler.h"
 
 namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
-ZmqProcessHandler::ZmqProcessHandler(QObject *p, const ZmqInfoFile info, void *socket):
-    QObject(p),
-    m_socket(socket) {
+/**
+  CTOR
+ * @brief ZmqProcessHandler::ZmqProcessHandler
+ * @param parent
+ */
+ZmqProcessHandler::ZmqProcessHandler():
+    m_context(zmq_ctx_new()) {
 
 }
 
+/**
+  DTOR
+ * @brief ZmqProcessHandler::~ZmqProcessHandler
+ */
 ZmqProcessHandler::~ZmqProcessHandler() {
-
+    zmq_ctx_term(m_context);
 }
 
-void ZmqProcessHandler::stop() {
+std::shared_ptr<ZmqClientProcess> ZmqProcessHandler::startProcess(ZmqInfoFile &info) {
+    if (m_currentProcess) {
+        m_currentProcess->shutdown();
+        m_currentProcess.reset();
+    }
 
-}
+    void *socket = zmq_socket(m_context, ZMQ_PAIR);
+    m_currentProcess = std::make_shared<ZmqClientProcess>(info, std::move(socket));
 
-void ZmqProcessHandler::start() {
-
-}
-
-void ZmqProcessHandler::processBadError(QProcess::ProcessError error) {
-
-}
-
-void ZmqProcessHandler::processError() {
-
+    return m_currentProcess;
 }
 
 

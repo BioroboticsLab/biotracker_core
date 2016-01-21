@@ -10,7 +10,9 @@
 #include <zmq.h>
 #include <opencv2/opencv.hpp>
 #include <QProcess>
-#include "zmq/ZmqInfoFile.h"
+#include "ZmqInfoFile.h"
+#include "ZmqClientProcess.h"
+#include "biotracker/util/singleton.h"
 
 namespace BioTracker {
 namespace Core {
@@ -19,29 +21,19 @@ namespace Zmq {
 /**
  * @brief The ZmqProcessHandler class
  */
-class ZmqProcessHandler : public QObject {
+class ZmqProcessHandler : public QObject, public Util::Singleton<ZmqProcessHandler> {
   public:
     Q_OBJECT
   public:
-    ZmqProcessHandler(QObject *parent, const ZmqInfoFile info, void *socket);
+    ZmqProcessHandler();
     ~ZmqProcessHandler();
 
-    void stop();
-
-    void start();
-
-  Q_SIGNALS:
-    void onError(std::string errorMessage);
-
-  private Q_SLOTS:
-    void processBadError(QProcess::ProcessError error);
-    void processError();
+    std::shared_ptr<ZmqClientProcess> startProcess(ZmqInfoFile &info);
 
   private:
-    void *m_socket;
+    void *m_context;
     std::mutex m_zmqMutex;
-    std::unique_ptr<QProcess> m_zmqClient;
-
+    std::shared_ptr<ZmqClientProcess> m_currentProcess;
 };
 
 }
