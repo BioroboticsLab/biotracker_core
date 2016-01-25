@@ -121,7 +121,7 @@ const QString EVENT_MSG_FALSE("0");
 
 void EventHandler::receive(BioTracker::Core::Zmq::recvString receiveStr) {
     auto string = receiveStr();
-    while (string != EVENT_STOP_LISTENING) {
+    while (string != EVENT_STOP_LISTENING && string != FAILED_RECV_STRING) {
         if (string == EVENT_UPDATE) {
             Q_EMIT update();
         } else if (string == EVENT_FORCE_TRACKING) {
@@ -150,6 +150,7 @@ void EventHandler::receive(BioTracker::Core::Zmq::recvString receiveStr) {
                     Q_EMIT pausePlayback(true);
                 }
             } else {
+                std::cout << "WRONG EVENT:" << string.toStdString() << std::endl;
                 assert(false);
             }
         }

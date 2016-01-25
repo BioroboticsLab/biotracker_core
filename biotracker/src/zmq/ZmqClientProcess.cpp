@@ -4,6 +4,8 @@
 #include <QProcess>
 #include <QString>
 
+#include <thread>
+#include <chrono>
 #include "biotracker/zmq/ZmqHelper.h"
 
 namespace BioTracker {
@@ -18,8 +20,9 @@ void *SOCKET; // TODO make this a member variable. To do so, we need to provide 
 // PUBLIC
 // =========================================
 
-ZmqClientProcess::ZmqClientProcess(ZmqInfoFile info, void *socket, std::string url, const int ts) {
-    if (isFree) { // there can be only ONE ZmqClientProcess at the same time!
+ZmqClientProcess::ZmqClientProcess(ZmqInfoFile info, void *socket, std::string url, const int ts):
+    m_isAlive(true) {
+    if (isFree) { // ATM there can be only ONE ZmqClientProcess at the same time!
         SOCKET = socket;
         isFree = false;
     } else {
@@ -53,55 +56,60 @@ ZmqClientProcess::ZmqClientProcess(ZmqInfoFile info, void *socket, std::string u
 
 void ZmqClientProcess::send(GenericSendMessage &message, EventHandler &handler) {
     m_zmqMutex.lock();
-    switch (message.type) {
-    case None: {
-        throw std::invalid_argument("Message type must not be 'None'");
-        break;
-    }
-    case Track: {
-        auto &m = static_cast<SendTrackMessage &>(message);
-        track(m, handler);
-        break;
-    }
-    case Paint: {
-        auto &m = static_cast<SendPaintMessage &>(message);
-        paint(m, handler);
-        break;
-    }
-    case PaintOverlay: {
-        auto &m = static_cast<SendPaintOverlayMessage &>(message);
-        paintOverlay(m, handler);
-        break;
-    }
-    case RequestTools: {
-        auto &m = static_cast<SendRequestWidgetsMessage &>(message);
-        requestTools(m, handler);
-        break;
-    }
-    case ButtonClick: {
-        auto &m = static_cast<SendButtonClickMessage &>(message);
-        buttonClicked(m, handler);
-        break;
-    }
-    case ValueChanged: {
-        auto &m = static_cast<SendValueChangedMessage &>(message);
-        sendValue(m, handler);
-        break;
-    }
+    if (m_isAlive) {
+        switch (message.type) {
+        case None: {
+            throw std::invalid_argument("Message type must not be 'None'");
+            break;
+        }
+        case Track: {
+            auto &m = static_cast<SendTrackMessage &>(message);
+            track(m, handler);
+            break;
+        }
+        case Paint: {
+            auto &m = static_cast<SendPaintMessage &>(message);
+            paint(m, handler);
+            break;
+        }
+        case PaintOverlay: {
+            auto &m = static_cast<SendPaintOverlayMessage &>(message);
+            paintOverlay(m, handler);
+            break;
+        }
+        case RequestTools: {
+            auto &m = static_cast<SendRequestWidgetsMessage &>(message);
+            requestTools(m, handler);
+            break;
+        }
+        case ButtonClick: {
+            auto &m = static_cast<SendButtonClickMessage &>(message);
+            buttonClicked(m, handler);
+            break;
+        }
+        case ValueChanged: {
+            auto &m = static_cast<SendValueChangedMessage &>(message);
+            sendValue(m, handler);
+            break;
+        }
+        }
     }
     m_zmqMutex.unlock();
 }
 
 void ZmqClientProcess::shutdown() {
     isFree = true;
+    m_isAlive = false;
     m_zmqMutex.lock();
     send_string(SOCKET, TYPE_SHUTDOWN, 0);
     EventHandler temp(this);
     listenToEvents(temp);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     m_zmqClient->kill();
     m_zmqClient->waitForFinished(1000);
     zmq_disconnect(SOCKET, "172.0.0.1:5556");
     zmq_close(SOCKET);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     m_zmqMutex.unlock();
 }
 

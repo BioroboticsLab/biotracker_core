@@ -8,11 +8,6 @@ namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
-
-inline void setSenderId(QWidget *w, const QString id) {
-    w->setAccessibleName(id);
-}
-
 /**
  * @brief ZmqTrackingAlgorithm::ZmqTrackingAlgorithm
  * @param process
@@ -57,9 +52,10 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &v) {
 }
 
 std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    SendRequestWidgetsMessage message(m_tools);
+    std::shared_ptr<QWidget> tools(new QWidget);
+    SendRequestWidgetsMessage message(tools);
     m_process->send(message, m_events);
-    return m_tools;
+    return tools;
 }
 
 void ZmqTrackingAlgorithm::prepareSave() {

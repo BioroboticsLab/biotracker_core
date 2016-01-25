@@ -28,6 +28,8 @@ const QString TYPE_SEND_WIDGET_EVENT("5");
 const QString WIDGET_EVENT_CLICK("0");
 const QString WIDGET_EVENT_CHANGED("1");
 
+const QString FAILED_RECV_STRING("FAILEDRECVSTR");
+
 
 const cv::Mat DEFAULT_1x1(1,1, CV_8UC3);
 

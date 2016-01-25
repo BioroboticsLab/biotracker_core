@@ -57,6 +57,7 @@ class ZmqClientProcess: public QObject {
 
     std::unique_ptr<QProcess> m_zmqClient;
     std::mutex m_zmqMutex;
+    bool m_isAlive;
 
 };
 

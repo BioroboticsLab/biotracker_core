@@ -20,6 +20,7 @@ namespace BioTracker {
 namespace Core {
 namespace Zmq {
 
+
 /**
  * @brief recv_string
  *    receives a string from the given socket
@@ -31,7 +32,10 @@ inline QString recv_string(void *socket) {
     int rc = zmq_msg_init(&msg);
     assert(rc == 0);
     const int bytes = zmq_msg_recv(&msg, socket, 0);
-    auto string = QString::fromLocal8Bit(static_cast<char *>(zmq_msg_data(&msg)), bytes);
+    auto string = FAILED_RECV_STRING;
+    if (bytes > 0) {
+        string = QString::fromLocal8Bit(static_cast<char *>(zmq_msg_data(&msg)), bytes);
+    }
     zmq_msg_close(&msg);
     return string;
 }
