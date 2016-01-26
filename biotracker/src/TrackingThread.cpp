@@ -125,6 +125,7 @@ void TrackingThread::openCamera(int device) {
 void TrackingThread::run() {
     std::chrono::system_clock::time_point t;
     bool firstLoop = true;
+    bool ignoreFps = false;
 
     while (true) {
         std::unique_lock<std::mutex> lk(m_tickMutex);
@@ -132,6 +133,8 @@ void TrackingThread::run() {
 
         m_conditionVariable.wait(lk, [&] {return (m_playing || m_playOnce) && !m_isRendering;});
         m_isRendering = true;
+
+        ignoreFps = m_playOnce && !m_playing;
 
         m_playOnce = false;
         if (m_imageStream->lastFrame()) {
@@ -166,7 +169,7 @@ void TrackingThread::run() {
         double runningFps = 1000000. / std::chrono::duration_cast<std::chrono::microseconds>
                             (dur + target_dur).count();
 
-        if (m_playOnce && !m_playing) {
+        if (ignoreFps) {
             runningFps = -1;
         }
 
