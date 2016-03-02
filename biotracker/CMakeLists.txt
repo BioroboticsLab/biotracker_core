@@ -21,6 +21,10 @@ target_link_libraries(${CPM_LIB_TARGET_NAME}
     ${ZMQ_LIBS}
 )
 
+target_include_directories(${CPM_LIB_TARGET_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # automatic copy of required dlls to install prefix for windows
 if(WIN32)
 	set(APPS "\${CMAKE_INSTALL_PREFIX}/BioTracker.exe")
