@@ -95,7 +95,7 @@ class TrackingAlgorithm : public QObject {
 
     /**
      * @brief prepareSave() is called once before the serialization of
-     * _trackedObjects. It should store or discard all temporary values
+     * m_trackedObjects. It should store or discard all temporary values
      * that are related to tracked Objects.
      */
     virtual void prepareSave() {}
@@ -118,22 +118,22 @@ class TrackingAlgorithm : public QObject {
     std::vector<TrackedObject> const &getObjects();
 
     boost::optional<Algorithm::Type> getType() const {
-        return _type;
+        return m_type;
     }
     void setType(Algorithm::Type type) {
-        _type = type;
+        m_type = type;
     }
 
     int getCurrentFrameNumber() const {
-        return _currentFrameNumber;
+        return m_currentFrameNumber;
     }
 
     int getMaxFrameNumber() const {
-        return _maxFrameNumber;
+        return m_maxFrameNumber;
     }
 
     float getCurrentZoomLevel() const {
-        return _currentZoomLevel;
+        return m_currentZoomLevel;
     }
 
   public Q_SLOTS:
@@ -141,35 +141,35 @@ class TrackingAlgorithm : public QObject {
     * receive Signal to set current frame number
     */
     void setCurrentFrameNumber(int frameNumber) {
-        _currentFrameNumber = frameNumber;
+        m_currentFrameNumber = frameNumber;
     }
 
     /**
     * receive Signal to set maximum frame number
     */
     void setmaxFrameNumber(int maxFrameNumber) {
-        _maxFrameNumber = maxFrameNumber;
+        m_maxFrameNumber = maxFrameNumber;
     }
 
     /**
     * receive current zoom level from VideoView
     */
     void setZoomLevel(float zLevel) {
-        _currentZoomLevel = zLevel;
+        m_currentZoomLevel = zLevel;
     }
 
     /**
     * receive current image from TrackingThread
     */
     void setCurrentImage(cv::Mat img) {
-        _currentImage = img;
+        m_currentImage = img;
     }
 
     /**
     * receive current video mode from gui
     */
     void setCurrentVideoMode(GUIPARAM::VideoMode videoMode) {
-        _videoMode = videoMode;
+        m_videoMode = videoMode;
     }
 
     void setVideoFps(const size_t fps) {
@@ -206,11 +206,11 @@ class TrackingAlgorithm : public QObject {
     void jumpToFrame(int framenumber);
 
   protected:
-    Settings &_settings;
-    std::vector<TrackedObject> _trackedObjects;
+    Settings &m_settings;
+    std::vector<TrackedObject> m_trackedObjects;
 
     GUIPARAM::VideoMode getVideoMode() {
-        return _videoMode;
+        return m_videoMode;
     }
 
     bool event(QEvent *event) override;
@@ -257,12 +257,12 @@ class TrackingAlgorithm : public QObject {
     size_t m_videoFps = -1;
 
   private:
-    int _currentFrameNumber;
-    int _maxFrameNumber;
-    float _currentZoomLevel;
-    boost::optional<Algorithm::Type> _type;
-    boost::optional<cv::Mat> _currentImage;
-    GUIPARAM::VideoMode _videoMode;
+    int m_currentFrameNumber;
+    int m_maxFrameNumber;
+    float m_currentZoomLevel;
+    boost::optional<Algorithm::Type> m_type;
+    boost::optional<cv::Mat> m_currentImage;
+    GUIPARAM::VideoMode m_videoMode;
 };
 
 #endif // !TrackingAlgorithm_H

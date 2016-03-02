@@ -2,25 +2,25 @@
 
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
     : QObject()
-    , _settings(settings)
-    , _currentFrameNumber(0)
-    , _currentZoomLevel(0.0f)
-    , _videoMode(GUIPARAM::VideoMode::Init) {
+    , m_settings(settings)
+    , m_currentFrameNumber(0)
+    , m_currentZoomLevel(0.0f)
+    , m_videoMode(GUIPARAM::VideoMode::Init) {
 }
 
 void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects) {
-    _trackedObjects = objects;
+    m_trackedObjects = objects;
     postLoad();
 }
 
 void TrackingAlgorithm::loadObjects(std::vector<TrackedObject> &&objects) {
-    _trackedObjects = std::move(objects);
+    m_trackedObjects = std::move(objects);
     postLoad();
 }
 
 const std::vector<TrackedObject> &TrackingAlgorithm::getObjects() {
     prepareSave();
-    return _trackedObjects;
+    return m_trackedObjects;
 }
 
 std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget() {
@@ -57,8 +57,8 @@ bool TrackingAlgorithm::event(QEvent *event) {
 }
 
 boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const {
-    if (_currentImage) {
-        return _currentImage.get().clone();
+    if (m_currentImage) {
+        return m_currentImage.get().clone();
     } else {
         return boost::optional<cv::Mat>();
     }
