@@ -63,7 +63,7 @@ if (HOOK_SCRIPTS)
 endif (HOOK_SCRIPTS)
 
 # project dependecies
-set(OpenCV_STATIC ON)
+#set(OpenCV_STATIC ON)
 find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
