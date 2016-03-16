@@ -335,6 +335,8 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
                          this, &TrackingThread::requestTrackFromTracker);
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::notifyGUI,
                          this, &TrackingThread::notifyGUIFromTracker);
+        QObject::connect(m_tracker.get(), &TrackingAlgorithm::pausePlayback,
+                         this, &TrackingThread::requestPauseFromTracker);
         m_tracker.get()->postConnect();
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
@@ -345,7 +347,6 @@ void TrackingThread::setMaxSpeed(bool enabled) {
     m_maxSpeed = enabled;
 }
 
-#include "TrackingAlgorithm.h"
 void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
         BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
 
@@ -426,6 +427,14 @@ void BioTracker::Core::TrackingThread::requestTrackFromTracker() {
 
 void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MSGS::MTYPE type) {
     Q_EMIT notifyGUI(m, type);
+}
+
+void BioTracker::Core::TrackingThread::requestPauseFromTracker(bool pause) {
+    if (pause) {
+        setPause();
+    } else {
+        setPlay();
+    }
 }
 
 }

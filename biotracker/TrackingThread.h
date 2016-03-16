@@ -197,6 +197,8 @@ class TrackingThread : public QThread {
 
     void requestTrackFromTracker();
 
+    void requestPauseFromTracker(bool pause);
+
     void notifyGUIFromTracker(std::string m, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
 
   Q_SIGNALS:

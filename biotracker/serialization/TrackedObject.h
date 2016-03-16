@@ -63,6 +63,10 @@ class TrackedObject {
     }
     boost::optional<size_t> getLastFrameNumber() const;
 
+    bool hasValuesAtFrame(const size_t frameNumber) {
+        return _objectsByFrame.find(frameNumber) != _objectsByFrame.end();
+    }
+
   private:
     size_t _id;
     std::map<size_t, std::shared_ptr<ObjectModel>> _objectsByFrame;
