@@ -39,9 +39,9 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void track(ulong frameNumber, const cv::Mat &frame) override;
 
-    void paint(ProxyMat &, const View &) override;
+    void paint(ulong frameNbr, ProxyMat &, const View &) override;
 
-    void paintOverlay(QPainter *, const View &) override;
+    void paintOverlay(ulong frameNbr, QPainter *, const View &) override;
 
     std::shared_ptr<QWidget> getToolsWidget() override;
 

@@ -74,9 +74,9 @@ class TrackingAlgorithm : public QObject {
     * QPainter paints stuff onto "VideoViews" current picture
     * without touching it
     */
-    virtual void paint(ProxyMat &, View const & = OriginalView) {}
+    virtual void paint(ulong frameNumber, ProxyMat &, View const & = OriginalView) {}
 
-    virtual void paintOverlay(QPainter *, View const & = OriginalView) {}
+    virtual void paintOverlay(ulong frameNumber, QPainter *, View const & = OriginalView) {}
 
     /**
     * getToolsFrame() will be called once at start up

@@ -41,12 +41,12 @@ void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
     m_process->send(message, m_events);
 }
 
-void ZmqTrackingAlgorithm::paint(ProxyMat &m, const View &v) {
+void ZmqTrackingAlgorithm::paint(ulong, ProxyMat &m, const View &v) {
     SendPaintMessage message(99, v.name, m.getMat());
     m_process->send(message, m_events);
 }
 
-void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &v) {
+void ZmqTrackingAlgorithm::paintOverlay(ulong, QPainter *p, const View &v) {
     SendPaintOverlayMessage message(v.name, p);
     m_process->send(message, m_events);
 }
