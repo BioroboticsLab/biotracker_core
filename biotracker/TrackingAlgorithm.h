@@ -67,7 +67,7 @@ class TrackingAlgorithm : public QObject {
     /**
     * This function tracks the provided object list within the provided frame.
     */
-    virtual void track(ulong frameNumber, const cv::Mat &frame) = 0;
+    virtual void track(size_t frameNumber, const cv::Mat &frame) = 0;
 
     /**
     * paint will be called by "VideoViews" paintEvent method
@@ -75,9 +75,9 @@ class TrackingAlgorithm : public QObject {
     * QPainter paints stuff onto "VideoViews" current picture
     * without touching it
     */
-    virtual void paint(ulong frameNumber, ProxyMat &, View const & = OriginalView) {}
+    virtual void paint(size_t frameNumber, ProxyMat &, View const & = OriginalView) {}
 
-    virtual void paintOverlay(ulong frameNumber, QPainter *, View const & = OriginalView) {}
+    virtual void paintOverlay(size_t frameNumber, QPainter *, View const & = OriginalView) {}
 
     /**
     * getToolsFrame() will be called once at start up
