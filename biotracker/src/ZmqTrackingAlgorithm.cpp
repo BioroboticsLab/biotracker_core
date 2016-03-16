@@ -51,11 +51,10 @@ void ZmqTrackingAlgorithm::paintOverlay(QPainter *p, const View &v) {
     m_process->send(message, m_events);
 }
 
-std::shared_ptr<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    std::shared_ptr<QWidget> tools(new QWidget);
-    SendRequestWidgetsMessage message(tools);
+QPointer<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
+    SendRequestWidgetsMessage message(getToolsWidget());
     m_process->send(message, m_events);
-    return tools;
+    return getToolsWidget();
 }
 
 void ZmqTrackingAlgorithm::prepareSave() {

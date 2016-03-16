@@ -239,7 +239,7 @@ void BioTracker::Core::Zmq::ReceiveQPainterMessage::receive(BioTracker::Core::Zm
 
 void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiveStr,
                                         BioTracker::Core::Zmq::recvMat) {
-    QVBoxLayout *mainLayout = new QVBoxLayout(m_tools.get()); // LEAK_CHECK?
+    QVBoxLayout *mainLayout = new QVBoxLayout(m_tools);
 
     // wait for response
     // Elements are defined at:
@@ -256,11 +256,11 @@ void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiv
             if (type == QChar('d')) {
 
             } else if (type == QChar('t')) {
-                QLabel *txt = new QLabel(m_tools.get());
+                QLabel *txt = new QLabel(m_tools);
                 txt->setText(widgetElems[1]);
                 mainLayout->addWidget(txt);
             } else if (type == QChar('b')) {
-                QPushButton *btn = new QPushButton(m_tools.get()); // LEAK_CHECK?
+                QPushButton *btn = new QPushButton(m_tools);
                 btn->setText(widgetElems[1]);
                 btn->setAccessibleName(uniqueId);
                 mainLayout->addWidget(btn);
@@ -269,10 +269,10 @@ void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiv
                 const int min = widgetElems[2].toInt();
                 const int max = widgetElems[3].toInt();
                 const int defaultValue = widgetElems[4].toInt();
-                QLabel *txt = new QLabel(m_tools.get());
+                QLabel *txt = new QLabel(m_tools);
                 txt->setText(widgetElems[1]);
                 mainLayout->addWidget(txt);
-                QSlider *sld = new QSlider(Qt::Horizontal, m_tools.get());
+                QSlider *sld = new QSlider(Qt::Horizontal, m_tools);
                 sld->setAccessibleName(uniqueId);
                 sld->setMinimum(min);
                 sld->setMaximum(max);

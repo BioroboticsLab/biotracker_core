@@ -10,6 +10,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <QWidget>
+#include <QPointer>
 #include <QMouseEvent>
 
 #include "settings/Messages.h"
@@ -55,7 +56,7 @@ class TrackingAlgorithm : public QObject {
 
   public:
     TrackingAlgorithm(Settings &settings);
-    virtual ~TrackingAlgorithm() override = default;
+    virtual ~TrackingAlgorithm() override;
 
     struct View {
         std::string name;
@@ -83,7 +84,7 @@ class TrackingAlgorithm : public QObject {
     * to create a widget for gui with all
     * buttons needed for interaction
     */
-    virtual std::shared_ptr<QWidget> getToolsWidget();
+    virtual QPointer<QWidget> getToolsWidget();
 
     /**
      * @brief grabbedKeys() has to return a set of all keys that the
@@ -263,6 +264,7 @@ class TrackingAlgorithm : public QObject {
     boost::optional<Algorithm::Type> m_type;
     boost::optional<cv::Mat> m_currentImage;
     GUIPARAM::VideoMode m_videoMode;
+    QPointer<QWidget> m_tools;
 };
 
 #endif // !TrackingAlgorithm_H

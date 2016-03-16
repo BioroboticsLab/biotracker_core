@@ -5,7 +5,14 @@ TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
     , m_settings(settings)
     , m_currentFrameNumber(0)
     , m_currentZoomLevel(0.0f)
-    , m_videoMode(GUIPARAM::VideoMode::Init) {
+    , m_videoMode(GUIPARAM::VideoMode::Init)
+    , m_tools(new QWidget()) {
+}
+
+TrackingAlgorithm::~TrackingAlgorithm() {
+    if (m_tools) {
+        delete m_tools;
+    }
 }
 
 void TrackingAlgorithm::loadObjects(const std::vector<TrackedObject> &objects) {
@@ -23,8 +30,8 @@ const std::vector<TrackedObject> &TrackingAlgorithm::getObjects() {
     return m_trackedObjects;
 }
 
-std::shared_ptr<QWidget> TrackingAlgorithm::getToolsWidget() {
-    return std::make_shared<QWidget>();
+QPointer<QWidget> TrackingAlgorithm::getToolsWidget() {
+    return m_tools;
 }
 
 const std::set<Qt::Key> &TrackingAlgorithm::grabbedKeys() const {

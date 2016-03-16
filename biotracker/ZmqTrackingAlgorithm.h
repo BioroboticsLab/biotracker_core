@@ -43,7 +43,7 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     void paintOverlay(QPainter *, const View &) override;
 
-    std::shared_ptr<QWidget> getToolsWidget() override;
+    QPointer<QWidget> getToolsWidget() override;
 
     //    std::set<Qt::Key> &grabbedKeys() const override;
 
