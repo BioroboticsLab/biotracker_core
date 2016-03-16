@@ -238,7 +238,7 @@ void BioTracker::Core::Zmq::ReceiveQPainterMessage::receive(BioTracker::Core::Zm
 
 
 void ReceiveToolsWidgetMessage::receive(BioTracker::Core::Zmq::recvString receiveStr,
-                                        BioTracker::Core::Zmq::recvMat recvMat) {
+                                        BioTracker::Core::Zmq::recvMat) {
     QVBoxLayout *mainLayout = new QVBoxLayout(m_tools.get()); // LEAK_CHECK?
 
     // wait for response

@@ -29,8 +29,12 @@ namespace Zmq {
  */
 inline QString recv_string(void *socket) {
     zmq_msg_t msg;
-    int rc = zmq_msg_init(&msg);
-    assert(rc == 0);
+
+    const int rc = zmq_msg_init(&msg);
+    if (rc != 0) {
+        throw std::runtime_error("Unable to initialize zmq");
+    }
+
     const int bytes = zmq_msg_recv(&msg, socket, 0);
     auto string = FAILED_RECV_STRING;
     if (bytes > 0) {
@@ -58,7 +62,6 @@ inline void send_string(void *socket, QString str, int flags=0) {
  * @param mat
  */
 inline void recv_mat(void *socket, cv::Mat &mat) {
-    int rc = 0;
     QString temp_shape = recv_string(socket);
     QStringRef shape(&temp_shape);
     QVector<QStringRef> shapeStr = shape.split(",");
@@ -66,8 +69,10 @@ inline void recv_mat(void *socket, cv::Mat &mat) {
     const int h = shapeStr.at(1).toInt();
     const int type = shapeStr.at(2).toInt();
     zmq_msg_t msg;
-    rc = zmq_msg_init(&msg);
-    assert(rc == 0);
+    const int rc = zmq_msg_init(&msg);
+    if (rc != 0) {
+        throw std::runtime_error("Unable to create zmq message");
+    }
     zmq_msg_recv(&msg, socket, 0);
     void *msg_content = zmq_msg_data(&msg);
     cv::Mat newMat(h, w, type, msg_content);

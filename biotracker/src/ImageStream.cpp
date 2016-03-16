@@ -271,8 +271,8 @@ class ImageStreamCamera : public ImageStream {
         return ! new_frame.empty();
     }
 
-    virtual bool setFrameNumber_impl(size_t frame_number) override {
-        return this->nextFrame_impl();
+    virtual bool setFrameNumber_impl(size_t) override {
+        throw std::runtime_error("setFrameNumber not available for ImageStreamCamera");
     }
 
     cv::VideoCapture m_capture;
