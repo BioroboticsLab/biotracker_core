@@ -228,12 +228,12 @@ class ReceiveQPainterMessage: public GenericReceiveMessage {
 
 class SendRequestWidgetsMessage: public GenericSendMessage {
   public:
-    SendRequestWidgetsMessage(std::shared_ptr<QWidget> tools):
+    SendRequestWidgetsMessage(QPointer<QWidget> tools):
         GenericSendMessage(RequestTools),
         m_tools(tools) {}
     std::vector<ZmqMessage>get() override;
 
-    std::shared_ptr<QWidget> m_tools;
+    QPointer<QWidget> m_tools;
 };
 
 // ======================================
@@ -246,7 +246,7 @@ class ReceiveToolsWidgetMessage: public GenericReceiveMessage {
     void receive(recvString receiveStr, recvMat recvMat) override;
 
   private:
-    std::shared_ptr<QWidget> m_tools;
+    QPointer<QWidget> m_tools;
     EventHandler &m_events;
 };
 
