@@ -20,7 +20,7 @@
 namespace BioTracker {
 namespace Core {
 
-using GUIPARAM::MediaType;
+using GuiParam::MediaType;
 
 TrackingThread::TrackingThread(Settings &settings) :
     m_imageStream(make_ImageStreamNoMedia()),
@@ -40,13 +40,13 @@ TrackingThread::~TrackingThread(void) {
 
 void TrackingThread::loadFromSettings() {
     std::string filenameStr = m_settings.getValueOfParam<std::string>
-                              (CAPTUREPARAM::CAP_VIDEO_FILE);
+                              (CaptureParam::CAP_VIDEO_FILE);
     boost::filesystem::path filename {filenameStr};
     m_imageStream = make_ImageStreamVideo(filename);
-    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
+    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
-        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -59,15 +59,15 @@ void TrackingThread::loadFromSettings() {
 
     std::string note = "opened file: " + filenameStr + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    Q_EMIT notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
+    Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     m_imageStream = make_ImageStreamVideo(filename);
-    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
+    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open file " + filename.string();
-        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -76,26 +76,26 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
 
     m_fps = m_imageStream->fps();
 
-    m_settings.setParam(CAPTUREPARAM::CAP_VIDEO_FILE, filename.string());
+    m_settings.setParam(CaptureParam::CAP_VIDEO_FILE, filename.string());
 
     std::string note = filename.string() + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
     Q_EMIT fileOpened(filename.string(), m_imageStream->numFrames(), m_fps);
-    Q_EMIT notifyGUI(note, MSGS::MTYPE::FILE_OPEN);
+    Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
                                   &&filenames) {
     m_fps = 1;
     m_imageStream = make_ImageStreamPictures(std::move(filenames));
-    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
+    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open files [";
         for (boost::filesystem::path filename: filenames) {
             errorMsg += ", " + filename.string();
         }
         errorMsg += "]";
-        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     } else {
@@ -107,18 +107,18 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
 
 void TrackingThread::openCamera(int device) {
     m_imageStream = make_ImageStreamCamera(device);
-    if (m_imageStream->type() == GUIPARAM::MediaType::NoMedia) {
+    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
         std::string errorMsg = "unable to open camera " + QString::number(
                                    device).toStdString();
-        Q_EMIT notifyGUI(errorMsg, MSGS::MTYPE::FAIL);
+        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     }
     m_status = TrackerStatus::Running;
     m_fps = m_imageStream->fps();
     std::string note = "open camera " + QString::number(device).toStdString();
-    Q_EMIT notifyGUI(note, MSGS::MTYPE::NOTIFICATION);
+    Q_EMIT notifyGUI(note, MessageType::NOTIFICATION);
     m_somethingIsLoaded = true;
 }
 
@@ -232,8 +232,7 @@ void TrackingThread::doTracking() {
                          m_imageStream->currentFrame());
     } catch (const std::exception &err) {
         Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
-                         std::string(
-                             err.what()), MSGS::FAIL);
+                         std::string(err.what()), MessageType::FAIL);
     }
 }
 
@@ -425,7 +424,7 @@ void BioTracker::Core::TrackingThread::requestTrackFromTracker() {
     playOnce();
 }
 
-void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MSGS::MTYPE type) {
+void BioTracker::Core::TrackingThread::notifyGUIFromTracker(std::string m, MessageType type) {
     Q_EMIT notifyGUI(m, type);
 }
 

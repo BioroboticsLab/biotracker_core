@@ -1,7 +1,4 @@
-#ifndef TrackedObject_h
-#define TrackedObject_h
-
-#include "ObjectModel.h"
+#pragma once
 
 #include <deque>
 #include <memory>
@@ -14,7 +11,11 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
 
+#include "ObjectModel.h"
 #include "types.hpp"
+
+namespace BioTracker {
+namespace Core {
 
 class TrackedObject {
   public:
@@ -78,6 +79,5 @@ class TrackedObject {
     }
 };
 
-#endif // !TrackedObject_h
-
-
+}
+}

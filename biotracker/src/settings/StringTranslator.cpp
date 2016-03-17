@@ -1,7 +1,7 @@
 #include "settings/StringTranslator.h"
 
 namespace {
-typedef GUIPARAM::MediaType EnumType;
+typedef GuiParam::MediaType EnumType;
 }
 
 namespace StringTranslator {

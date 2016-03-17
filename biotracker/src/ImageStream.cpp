@@ -107,8 +107,8 @@ ImageStream::~ImageStream() = default;
 class ImageStreamNoMedia : public ImageStream {
   public:
     explicit ImageStreamNoMedia() = default;
-    virtual GUIPARAM::MediaType type() const override {
-        return GUIPARAM::MediaType::NoMedia;
+    virtual GuiParam::MediaType type() const override {
+        return GuiParam::MediaType::NoMedia;
     }
     virtual size_t numFrames() const override {
         return 0;
@@ -139,8 +139,8 @@ class ImageStreamPictures : public ImageStream {
             this->setFrameNumber_impl(0);
         }
     }
-    virtual GUIPARAM::MediaType type() const override {
-        return GUIPARAM::MediaType::Images;
+    virtual GuiParam::MediaType type() const override {
+        return GuiParam::MediaType::Images;
     }
     virtual size_t numFrames() const override {
         return m_picture_files.size();
@@ -190,8 +190,8 @@ class ImageStreamVideo : public ImageStream {
             this->nextFrame_impl();
         }
     }
-    virtual GUIPARAM::MediaType type() const override {
-        return GUIPARAM::MediaType::Video;
+    virtual GuiParam::MediaType type() const override {
+        return GuiParam::MediaType::Video;
     }
     virtual size_t numFrames() const override {
         return m_num_frames;
@@ -249,8 +249,8 @@ class ImageStreamCamera : public ImageStream {
             this->nextFrame_impl();
         }
     }
-    virtual GUIPARAM::MediaType type() const override {
-        return GUIPARAM::MediaType::Camera;
+    virtual GuiParam::MediaType type() const override {
+        return GuiParam::MediaType::Camera;
     }
     virtual size_t numFrames() const override {
         return 100;

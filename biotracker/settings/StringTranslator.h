@@ -45,8 +45,8 @@ namespace property_tree {
 // this allows boost::property_tree to store a string representation of
 // MediaType in the settings file
 template<>
-struct translator_between<std::string, GUIPARAM::MediaType> {
-    typedef StringTranslator::StringTranslator<GUIPARAM::MediaType> type;
+struct translator_between<std::string, GuiParam::MediaType> {
+    typedef StringTranslator::StringTranslator<GuiParam::MediaType> type;
 };
 
 }

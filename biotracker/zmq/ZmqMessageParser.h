@@ -64,7 +64,7 @@ class EventHandler : public QObject {
     EventHandler(QObject *p): QObject(p) {}
     void receive(recvString receiveStr);
   Q_SIGNALS:
-    void notifyGUI(std::string, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    void notifyGUI(std::string, Core::MessageType type = Core::MessageType::NOTIFICATION);
     void update();
     // cv::Mat requestCurrentScreen();
     void forceTracking();

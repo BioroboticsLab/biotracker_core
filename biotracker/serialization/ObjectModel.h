@@ -1,8 +1,10 @@
-#ifndef ObjectModel_H
-#define ObjectModel_H
+#pragma once
 
 #include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
+
+namespace BioTracker {
+namespace Core {
 
 /**
 * class representing the object/animal
@@ -15,5 +17,5 @@ class ObjectModel {
 
 inline ObjectModel::~ObjectModel() {}
 
-#endif // !ObjectModel_H
-
+}
+}

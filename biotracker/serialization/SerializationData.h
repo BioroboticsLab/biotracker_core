@@ -11,7 +11,10 @@
 #include "TrackedObject.h"
 #include "types.hpp"
 
+namespace BioTracker {
+namespace Core {
 namespace Serialization {
+
 class Data {
   public:
     // default ctor required for serialization
@@ -55,4 +58,8 @@ class Data {
            CEREAL_NVP(_trackedObjects));
     }
 };
+
 }
+}
+}
+

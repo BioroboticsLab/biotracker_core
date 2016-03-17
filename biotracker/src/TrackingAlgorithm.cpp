@@ -1,11 +1,14 @@
 #include "TrackingAlgorithm.h"
 
+namespace BioTracker {
+namespace Core {
+
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
     : QObject()
     , m_settings(settings)
     , m_currentFrameNumber(0)
     , m_currentZoomLevel(0.0f)
-    , m_videoMode(GUIPARAM::VideoMode::Init)
+    , m_videoMode(GuiParam::VideoMode::Init)
     , m_tools(new QWidget()) {
 }
 
@@ -72,3 +75,6 @@ boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const {
 }
 
 const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};
+
+}
+}

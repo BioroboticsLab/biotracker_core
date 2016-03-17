@@ -5,7 +5,12 @@
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
 
+namespace {
 QReadWriteLock lock;
+}
+
+namespace BioTracker {
+namespace Core {
 
 ImagePreProcessor::ImagePreProcessor(Settings &settings) :
     _settings(settings) {
@@ -205,3 +210,8 @@ void ImagePreProcessor::resetBackgroundImage() {
     }
 
 }
+
+}
+}
+
+

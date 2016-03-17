@@ -14,7 +14,7 @@ BioTrackerApp::BioTrackerApp()
     , m_registry(Registry::getInstance())
     , m_trackingThread(m_settings) {
     initConnects();
-    loadModulesInPath(CONFIGPARAM::MODULE_PATH);
+    loadModulesInPath(ConfigParam::MODULE_PATH);
 
     m_trackingThread.start();
 }
@@ -124,7 +124,7 @@ void BioTrackerApp::keyboardEvent(QKeyEvent *event) {
 // all slots will only pass the signals through
 
 void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
-        const MSGS::MTYPE type) {
+        const MessageType type) {
     Q_EMIT notify(message, type);
 }
 

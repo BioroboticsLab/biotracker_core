@@ -153,7 +153,7 @@ class BioTrackerApp : public QObject {
      *      Status messages for the user interface
      */
     void notifyFromTrackingThread(const std::string &message,
-                                  const MSGS::MTYPE type);
+                                  const MessageType type);
 
     /**
      * @brief notify
@@ -194,7 +194,7 @@ class BioTrackerApp : public QObject {
      * @brief notify
      *      Status messages for the user interface
      */
-    void notify(const std::string &message, const MSGS::MTYPE type);
+    void notify(const std::string &message, const MessageType type);
 
     /**
      * @brief fileOpened

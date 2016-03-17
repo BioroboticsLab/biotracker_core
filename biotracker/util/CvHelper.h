@@ -8,6 +8,8 @@
 /**
  * Computer vision helper functions
  */
+namespace BioTracker {
+namespace Core {
 namespace CvHelper {
 struct cv_point_compare_less_x {
     template<typename CV_POINT>
@@ -64,4 +66,6 @@ struct cv_vec_compare_less_lexicographically {
  */
 std::string cvDataType2str(int type);
 
+}
+}
 }

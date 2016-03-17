@@ -6,7 +6,7 @@
 
 #include <QDir>
 
-namespace CONFIGPARAM {
+namespace ConfigParam {
 static const boost::filesystem::path HOME_PATH = boost::filesystem::path(
             QDir::toNativeSeparators(QDir::homePath()).toStdString());
 #ifdef _WIN32
@@ -20,13 +20,13 @@ static const boost::filesystem::path STATE_FILE         = BASE_PATH / "state.cfg
 static const boost::filesystem::path MODULE_PATH        = BASE_PATH / "modules";
 }
 
-namespace TRACKERPARAM {
+namespace TrackerParam {
 static const std::string TRACKING_ENABLED = "TRACKERPARAM.TRACKING_ENABLED";
 
 static const std::string SELECTED_TRACKER = "TRACKERPARAM.SELECTED_TRACKER";
 }
 
-namespace GUIPARAM {
+namespace GuiParam {
 enum class MediaType : uint8_t {
     NoMedia = 0,
     Video,
@@ -51,12 +51,12 @@ static const std::string SHORTCUT_ZOOM      = "GUIPARAM.SHORTCUT_ZOOM";
 static const std::string PAUSED_AT_FRAME    = "GUIPARAM.PAUSED_AT_FRAME";
 }
 
-namespace PICTUREPARAM {
+namespace PictureParam {
 //path to picture
 static const std::string PICTURE_FILES = "PICTUREPARAM.PICTURE_FILES";
 }
 
-namespace CAPTUREPARAM {
+namespace CaptureParam {
 // Video path
 static const std::string CAP_VIDEO_FILE      = "CAPTUREPARAM.CAP_VIDEO_FILE";
 static const std::string CAP_SCREENSHOT_PATH =

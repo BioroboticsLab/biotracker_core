@@ -1,5 +1,6 @@
 #include "../ZmqTrackingAlgorithm.h"
 
+#include "biotracker/settings/Settings.h"
 #include "biotracker/zmq/ZmqInfoFile.h"
 #include "biotracker/zmq/ZmqHelper.h"
 #include "biotracker/zmq/ZmqMessageParser.h"
@@ -52,9 +53,9 @@ void ZmqTrackingAlgorithm::paintOverlay(ulong, QPainter *p, const View &v) {
 }
 
 QPointer<QWidget> ZmqTrackingAlgorithm::getToolsWidget() {
-    SendRequestWidgetsMessage message(getToolsWidget());
+    SendRequestWidgetsMessage message(TrackingAlgorithm::getToolsWidget());
     m_process->send(message, m_events);
-    return getToolsWidget();
+    return TrackingAlgorithm::getToolsWidget();
 }
 
 void ZmqTrackingAlgorithm::prepareSave() {

@@ -2,9 +2,14 @@
 
 #include "widgets/SpinBoxWithSlider.h"
 
+namespace {
 int pow(int base, unsigned int exp) {
     return exp == 0 ? 1 : base * pow(base, exp - 1);
 }
+}
+
+namespace BioTracker {
+namespace Widgets {
 
 SteppedSpinBox::SteppedSpinBox(QWidget *p)
     : QSpinBox(p) {
@@ -130,4 +135,7 @@ void DoubleSpinBoxWithSlider::SpinBoxValueChanged(double val) {
 void DoubleSpinBoxWithSlider::SliderValueChanged(int value) {
     m_spinbox.setValue(static_cast<double>(value) / m_factor);
     Q_EMIT valueChanged(this->value());
+}
+
+}
 }

@@ -7,6 +7,8 @@
 
 #include "util/CvHelper.h"
 
+namespace BioTracker {
+namespace Core {
 namespace CvHelper {
 
 std::string cvDataType2str(int type) {
@@ -44,4 +46,6 @@ std::string cvDataType2str(int type) {
     return result;
 }
 
+}
+}
 }

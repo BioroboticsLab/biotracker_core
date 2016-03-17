@@ -1,5 +1,4 @@
-#ifndef TrackingAlgorithm_H
-#define TrackingAlgorithm_H
+#pragma once
 
 #include <vector>
 #include <memory>
@@ -17,7 +16,12 @@
 #include "settings/ParamNames.h"
 #include "serialization/TrackedObject.h"
 
+
+namespace BioTracker {
+namespace Core {
+
 class Settings;
+
 namespace Algorithm {
 typedef uint8_t Type;
 }
@@ -75,9 +79,9 @@ class TrackingAlgorithm : public QObject {
     * QPainter paints stuff onto "VideoViews" current picture
     * without touching it
     */
-    virtual void paint(size_t frameNumber, ProxyMat &, View const & = OriginalView) {}
+    virtual void paint(size_t, ProxyMat &, View const & = OriginalView) {}
 
-    virtual void paintOverlay(size_t frameNumber, QPainter *, View const & = OriginalView) {}
+    virtual void paintOverlay(size_t, QPainter *, View const & = OriginalView) {}
 
     /**
     * getToolsFrame() will be called once at start up
@@ -169,7 +173,7 @@ class TrackingAlgorithm : public QObject {
     /**
     * receive current video mode from gui
     */
-    void setCurrentVideoMode(GUIPARAM::VideoMode videoMode) {
+    void setCurrentVideoMode(GuiParam::VideoMode videoMode) {
         m_videoMode = videoMode;
     }
 
@@ -181,8 +185,7 @@ class TrackingAlgorithm : public QObject {
     /**
     * send a message to the GUI.
     */
-    void notifyGUI(std::string message,
-                   MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    void notifyGUI(std::string message, MessageType type = MessageType::NOTIFICATION);
 
     /**
     * send signal to VideoView and update display
@@ -210,7 +213,7 @@ class TrackingAlgorithm : public QObject {
     Settings &m_settings;
     std::vector<TrackedObject> m_trackedObjects;
 
-    GUIPARAM::VideoMode getVideoMode() {
+    GuiParam::VideoMode getVideoMode() {
         return m_videoMode;
     }
 
@@ -263,8 +266,9 @@ class TrackingAlgorithm : public QObject {
     float m_currentZoomLevel;
     boost::optional<Algorithm::Type> m_type;
     boost::optional<cv::Mat> m_currentImage;
-    GUIPARAM::VideoMode m_videoMode;
+    GuiParam::VideoMode m_videoMode;
     QPointer<QWidget> m_tools;
 };
 
-#endif // !TrackingAlgorithm_H
+}
+}

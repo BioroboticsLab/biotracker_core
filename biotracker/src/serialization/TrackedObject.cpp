@@ -2,6 +2,9 @@
 
 #include <cassert>
 
+namespace BioTracker {
+namespace Core {
+
 TrackedObject::TrackedObject(size_t id)
     : _id(id) {
 }
@@ -41,3 +44,7 @@ boost::optional<size_t> TrackedObject::getLastFrameNumber() const {
         return _objectsByFrame.rbegin()->first;
     }
 }
+
+}
+}
+

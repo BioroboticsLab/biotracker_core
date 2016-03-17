@@ -8,6 +8,8 @@
 #include <QFormLayout>
 #include <QString>
 
+namespace BioTracker {
+namespace Widgets {
 
 class SteppedSpinBox: public QSpinBox {
     Q_OBJECT
@@ -103,3 +105,8 @@ class DoubleSpinBoxWithSlider: public QWidget {
     QSlider        m_slider;
     QDoubleSpinBox m_spinbox;
 };
+
+}
+}
+
+

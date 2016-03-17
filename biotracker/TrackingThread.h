@@ -18,10 +18,10 @@
 #include "TrackerStatus.h"
 #include "PanZoomState.h"
 
-class Settings;
-
 namespace BioTracker {
 namespace Core {
+
+class Settings;
 
 class TrackingThread : public QThread {
   public:
@@ -124,7 +124,7 @@ class TrackingThread : public QThread {
 
     double m_fps;
     bool m_maxSpeed;
-    GUIPARAM::MediaType m_mediaType;
+    GuiParam::MediaType m_mediaType;
 
     Settings &m_settings;
 
@@ -199,7 +199,7 @@ class TrackingThread : public QThread {
 
     void requestPauseFromTracker(bool pause);
 
-    void notifyGUIFromTracker(std::string m, MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+    void notifyGUIFromTracker(std::string m, MessageType type = MessageType::NOTIFICATION);
 
   Q_SIGNALS:
     /**
@@ -221,7 +221,7 @@ class TrackingThread : public QThread {
     * send a message to the GUI.
     */
     void notifyGUI(std::string message,
-                   MSGS::MTYPE type = MSGS::MTYPE::NOTIFICATION);
+                   MessageType type = MessageType::NOTIFICATION);
 
     /**
      * @brief trackerSelected

@@ -19,6 +19,9 @@ template<template<typename...> class Ref, typename... Args>
 struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
 }
 
+namespace BioTracker {
+namespace Core {
+
 class Settings {
   public:
     /**
@@ -39,7 +42,7 @@ class Settings {
     template <typename T>
     void setParam(std::string const &paramName, T &&paramValue) {
         _ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
-        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE.string(), _ptree);
+        boost::property_tree::write_json(ConfigParam::CONFIGURATION_FILE.string(), _ptree);
     }
 
     /**
@@ -56,7 +59,7 @@ class Settings {
             subtree.push_back(std::make_pair("", valuetree));
         }
         _ptree.put_child(paramName, subtree);
-        boost::property_tree::write_json(CONFIGPARAM::CONFIGURATION_FILE.string(), _ptree);
+        boost::property_tree::write_json(ConfigParam::CONFIGURATION_FILE.string(), _ptree);
     }
 
     /**
@@ -159,7 +162,7 @@ class Settings {
  */
 template<>
 inline std::string Settings::preprocess_value(std::string &&paramValue) {
-    return escape_non_ascii(paramValue);
+    return Util::escape_non_ascii(paramValue);
 }
 
 /**
@@ -170,5 +173,8 @@ inline std::string Settings::preprocess_value(std::string &&paramValue) {
  */
 template<>
 inline std::string Settings::postprocess_value(std::string &&paramValue) {
-    return unescape_non_ascii(paramValue);
+    return Util::unescape_non_ascii(paramValue);
+}
+
+}
 }

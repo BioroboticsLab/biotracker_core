@@ -18,7 +18,7 @@ class ImageStream {
     /**
      * @return the stream's MediaType i.e. "Video", "Images", "NoMedia"
      */
-    virtual GUIPARAM::MediaType type() const = 0;
+    virtual GuiParam::MediaType type() const = 0;
 
     /**
      * @return the total number of frames

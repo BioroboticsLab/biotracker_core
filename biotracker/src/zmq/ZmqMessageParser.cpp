@@ -138,7 +138,7 @@ void EventHandler::receive(BioTracker::Core::Zmq::recvString receiveStr) {
                 message = message.replace("%3B", ";");
 
                 const size_t mtypeInt = eventParts[2].toInt();
-                const MSGS::MTYPE mtype = MSGS::fromInt(mtypeInt);
+                const Messages::MessageType mtype = Messages::fromInt(mtypeInt);
                 Q_EMIT notifyGUI(message.toStdString(), mtype);
             } else if (eventParts[0] == EVENT_JUMP_TO_FRAME) {
                 const size_t frame = eventParts[1].toInt();

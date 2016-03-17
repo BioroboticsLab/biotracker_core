@@ -1,4 +1,5 @@
 #pragma once
+
 namespace BioTracker {
 namespace Core {
 
@@ -24,7 +25,6 @@ struct PanZoomState {
 
     boost::optional<CurrentPanState> panState;
 };
-
 
 }
 }

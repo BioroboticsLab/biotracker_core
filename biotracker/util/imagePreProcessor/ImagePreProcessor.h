@@ -4,6 +4,9 @@
 
 #include "util/stdext.h"
 
+namespace BioTracker {
+namespace Core {
+
 namespace PREPROCESSORPARAM {
 // Parameter for the opencv BackgroundSubtractorMOG2 class
 static const std::string BG_MOG2_HISTORY            =
@@ -172,3 +175,7 @@ class ImagePreProcessor {
     bool _erodeEnabled;
     bool _dilateEnabled;
 };
+
+}
+}
+

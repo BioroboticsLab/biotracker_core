@@ -1,14 +1,9 @@
-/*
- * stringTools.h
- *
- *  Created on: Dec 18, 2014
- *      Author: tobias
- */
-
-#ifndef STRINGTOOLS_H_
-#define STRINGTOOLS_H_
+#pragma once
 
 #include <string>
+
+namespace BioTracker {
+namespace Util {
 
 /**
  * replaces every non-ASCII character in s with an escape sequence containing the hexadecimal representation of it's value.
@@ -48,5 +43,5 @@ std::string unescape_non_ascii(const std::string &s);
  */
 std::string stem_filename(const std::string &s);
 
-
-#endif /* STRINGTOOLS_H_ */
+}
+}
