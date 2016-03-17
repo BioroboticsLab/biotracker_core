@@ -361,8 +361,11 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
     if (m_somethingIsLoaded) {
         ProxyMat proxy(m_imageStream->currentFrame());
 
-        if (m_tracker) {
-            m_tracker.get()->paint(m_imageStream->currentFrameNumber(), proxy, v);
+        {
+            MutexLocker trackerLock(m_trackerMutex);
+            if (m_tracker) {
+                m_tracker.get()->paint(m_imageStream->currentFrameNumber(), proxy, v);
+            }
         }
 
         if (proxy.isModified() || (m_lastFrameNumber != m_imageStream->currentFrameNumber())) {
@@ -406,8 +409,11 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
             m_texture.get(),
             QRect(0, 0, m_texture.width(), m_texture.height()));
 
-        if (m_tracker) {
-            m_tracker.get()->paintOverlay(m_imageStream->currentFrameNumber(), &painter, v);
+        {
+            MutexLocker trackerLock(m_trackerMutex);
+            if (m_tracker) {
+                m_tracker.get()->paintOverlay(m_imageStream->currentFrameNumber(), &painter, v);
+            }
         }
         paintDone();
     }
