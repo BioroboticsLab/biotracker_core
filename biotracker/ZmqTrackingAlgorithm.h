@@ -69,7 +69,6 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
     void sldValueChanged(const QString, int value);
 
   private:
-    bool m_isTracking;
     std::set<Qt::Key> m_keys;
     std::shared_ptr<QWidget> m_tools;
     std::shared_ptr<ZmqClientProcess> m_process;

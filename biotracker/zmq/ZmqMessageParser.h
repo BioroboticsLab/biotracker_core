@@ -176,19 +176,12 @@ class SendPaintMessage: public GenericSendMessage {
 class ReceivePaintMessage : public GenericReceiveMessage {
   public:
     ReceivePaintMessage(SendPaintMessage &sending):
-        m_mat(sending.m_mat),
-        m_firstCall(true),
-        m_secondCall(false) {}
+        m_mat(sending.m_mat) {}
 
     void receive(recvString receiveStr, recvMat recvMat) override;
 
   private:
     cv::Mat &m_mat;
-    int m_w;
-    int m_h;
-    int m_type;
-    bool m_firstCall;
-    bool m_secondCall;
 };
 
 // ======================================

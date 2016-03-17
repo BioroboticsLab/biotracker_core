@@ -14,7 +14,6 @@ namespace Zmq {
  */
 ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(std::shared_ptr<ZmqClientProcess> process, Settings &settings) :
     TrackingAlgorithm(settings),
-    m_isTracking(false),
     m_tools(std::make_shared<QFrame>()),
     m_process(process),
     m_events(this) {
