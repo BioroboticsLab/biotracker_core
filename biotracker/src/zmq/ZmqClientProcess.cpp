@@ -159,7 +159,6 @@ void ZmqClientProcess::sendValue(SendValueChangedMessage &message, EventHandler 
 
 /**
  * Send all the parts of the message, then return
- * @param message
  */
 void ZmqClientProcess::sendMessage(GenericSendMessage &message) {
     const std::vector<ZmqMessage> messageParts = message.get();
@@ -190,7 +189,6 @@ void recvThatMat(cv::Mat &m) {
 
 /**
  * Receive all events, when the END-Event is send, this function returns
- * @param handler
  */
 void ZmqClientProcess::listenToEvents(EventHandler &handler) {
     recvString func = &recvThisString;
@@ -199,7 +197,6 @@ void ZmqClientProcess::listenToEvents(EventHandler &handler) {
 
 /**
  * Receive the message that is specified by the ReceiverMessage
- * @param message
  */
 void ZmqClientProcess::requestResults(GenericReceiveMessage &message) {
     recvString func = &recvThisString;

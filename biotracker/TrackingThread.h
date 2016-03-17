@@ -67,15 +67,12 @@ class TrackingThread : public QThread {
 
     /**
      * @brief paint
-     * @param device
-     * @param painter
      */
     void paint(const size_t, const size_t, QPainter &painter, BioTracker::Core::PanZoomState &z,
                TrackingAlgorithm::View const &);
 
     /**
      * Checks if the thread is in the rendering stage right now
-     * @return
      */
     bool isRendering() const;
 
@@ -226,7 +223,6 @@ class TrackingThread : public QThread {
     /**
      * @brief trackerSelected
      * Notify the application that the tracker has changed
-     * @param tracker
      */
     void trackerSelected(std::shared_ptr<TrackingAlgorithm> tracker);
 

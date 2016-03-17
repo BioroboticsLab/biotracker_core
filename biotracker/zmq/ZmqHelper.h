@@ -24,8 +24,6 @@ namespace Zmq {
 /**
  * @brief recv_string
  *    receives a string from the given socket
- * @param socket
- * @return
  */
 inline QString recv_string(void *socket) {
     zmq_msg_t msg;
@@ -47,9 +45,6 @@ inline QString recv_string(void *socket) {
 /**
  * @brief send_string
  *   sends a string to the given socket
- * @param socket
- * @param str
- * @param flags
  */
 inline void send_string(void *socket, QString str, int flags=0) {
     zmq_send(socket, str.toUtf8().constData(), str.length(), flags);
@@ -58,8 +53,6 @@ inline void send_string(void *socket, QString str, int flags=0) {
 /**
  * @brief recv_mat
  *    receives a cv::Mat from the given socket
- * @param socket
- * @param mat
  */
 inline void recv_mat(void *socket, cv::Mat &mat) {
     QString temp_shape = recv_string(socket);

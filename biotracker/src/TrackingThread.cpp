@@ -199,6 +199,7 @@ void TrackingThread::tick(const double fps) {
 void TrackingThread::setFrameNumber(size_t frameNumber) {
     m_renderMutex.lock();
     if (m_imageStream->setFrameNumber(frameNumber)) {
+        MutexLocker trackerLock(m_trackerMutex);
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(frameNumber);
         }
@@ -208,6 +209,7 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
 }
 void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
+        MutexLocker trackerLock(m_trackerMutex);
         if (m_tracker) {
             m_tracker->setCurrentFrameNumber(m_imageStream->currentFrameNumber());
         }

@@ -76,8 +76,6 @@ class BioTrackerApp : public QObject {
 
     /**
      * @brief paint
-     * @param device
-     * @param painter
      */
     void paint(const size_t, const size_t, QPainter &painter, PanZoomState,
                TrackingAlgorithm::View const & = TrackingAlgorithm::OriginalView);
@@ -114,7 +112,6 @@ class BioTrackerApp : public QObject {
 
     /**
      * @brief setMaxSpeed
-     * @param enabled
      */
     void setMaxSpeed(bool enabled);
 
@@ -138,7 +135,7 @@ class BioTrackerApp : public QObject {
 
     /**
      * @brief setTrackingAlgorithm
-     * @param TrackingAlgorithm the selected algorithm
+     * @param trackingAlgorithm the selected algorithm
      */
     void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
     void setTrackingAlgorithm(std::string const &trackerName);
@@ -174,14 +171,12 @@ class BioTrackerApp : public QObject {
     /**
      * @brief trackerSelectedFromTrackingThread
      * forward
-     * @param a
      */
     void trackerSelectedFromTrackingThread(std::shared_ptr<TrackingAlgorithm> a);
 
     /**
      * @brief loadModulesInPath
      *      Dynamically load all modules in path.
-     * @param path
      */
     void loadModulesInPath(const boost::filesystem::path &path);
 
@@ -218,7 +213,6 @@ class BioTrackerApp : public QObject {
     /**
      * @brief trackerSelected
      * Gets thrown when a new Tracker is selected
-     * @param trackingAlgorithm
      */
     void trackerSelected(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 

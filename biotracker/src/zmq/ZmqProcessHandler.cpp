@@ -7,7 +7,6 @@ namespace Zmq {
 /**
   CTOR
  * @brief ZmqProcessHandler::ZmqProcessHandler
- * @param parent
  */
 ZmqProcessHandler::ZmqProcessHandler():
     m_context(zmq_ctx_new()) {

@@ -124,8 +124,6 @@ class GenericReceiveMessage {
     /**
      * @brief receive
      * A message part is received and must be processed
-     * @param m
-     * @return true -> keep receiving, false -> stop receiving
      */
     virtual void receive(recvString receiveStr, recvMat recvMat) = 0;
 };

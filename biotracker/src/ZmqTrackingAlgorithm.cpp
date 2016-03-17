@@ -11,8 +11,6 @@ namespace Zmq {
 
 /**
  * @brief ZmqTrackingAlgorithm::ZmqTrackingAlgorithm
- * @param process
- * @param settings
  */
 ZmqTrackingAlgorithm::ZmqTrackingAlgorithm(std::shared_ptr<ZmqClientProcess> process, Settings &settings) :
     TrackingAlgorithm(settings),

@@ -19,7 +19,6 @@ namespace ScreenHelper {
  * @param h height of the videoview
  * @param window OUT parameter
  * @param viewport OUT parameter
- * @return
  */
 inline float calculate_viewport(
     const int im_w, const int im_h,
@@ -76,11 +75,6 @@ inline float calculate_viewport(
  * @brief getImDimsInScreenCoords
  * Calculates the actual dimension of the image with all zoom, pan and
  * viewport transformations applied
- * @param zoomState
- * @param im_w
- * @param im_h
- * @param w
- * @param h
  * @return a rectangle that represents the position and dimension of the
  * image in the videoview element
  */
@@ -109,13 +103,6 @@ inline QRect getImDimsInScreenCoords(
 
 /**
  * @brief imageToScreenCoords
- * @param zoomState
- * @param im_w
- * @param im_h
- * @param w
- * @param h
- * @param poi
- * @return
  */
 inline QPoint imageToScreenCoords(
     const PanZoomState zoomState,
@@ -136,13 +123,11 @@ inline QPoint imageToScreenCoords(
 /**
  * @brief screenToImageCoords
  * Translate the window coordinates to the actual image coords
- * @param zoomState
  * @param im_w image width
  * @param im_h image height
  * @param w width of the videoview
  * @param h height of the videoview
  * @param poi Point in Screen Coords
- * @return
  */
 inline QPoint screenToImageCoords(
     const BioTracker::Core::PanZoomState zoomState,
@@ -172,14 +157,10 @@ inline QPoint screenToImageCoords(
  * @brief zoomTo
  * Modifies the panzoomstate so that the cursor (zoomCenter) will point to the same
  * location in the image as prior to the zoom
- * @param state
  * @param im_w width of the image (in px)
  * @param im_h height of the image (in px)
  * @param w width of the videoview element
  * @param h height of the videoview element
- * @param deltaZoom
- * @param zoomCenter
- * @return
  */
 inline PanZoomState zoomTo(
     PanZoomState state,
