@@ -178,7 +178,8 @@ class ImageStreamVideo : public ImageStream {
     explicit ImageStreamVideo(const boost::filesystem::path &filename)
         : m_capture(filename.string())
         , m_num_frames(static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)))
-        , m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
+        , m_fps(m_capture.get(CV_CAP_PROP_FPS))
+        , m_fileName(filename.string()) {
         if (!boost::filesystem::exists(filename)) {
             throw file_not_found("Could not find file " + filename.string());
         }
@@ -200,7 +201,7 @@ class ImageStreamVideo : public ImageStream {
         return m_fps;
     }
     virtual std::string currentFilename() const override {
-        return "test"; // TODO impl
+        return m_fileName;
     }
 
   private:
@@ -225,6 +226,7 @@ class ImageStreamVideo : public ImageStream {
     cv::VideoCapture m_capture;
     const size_t     m_num_frames;
     const double     m_fps;
+    const std::string m_fileName;
 };
 
 
