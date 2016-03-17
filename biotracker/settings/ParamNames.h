@@ -5,15 +5,13 @@
 #include <boost/filesystem.hpp>
 
 #include <QDir>
+#include <QStandardPaths>
 
 namespace ConfigParam {
-static const boost::filesystem::path HOME_PATH = boost::filesystem::path(
-            QDir::toNativeSeparators(QDir::homePath()).toStdString());
-#ifdef _WIN32
-static const boost::filesystem::path BASE_PATH = HOME_PATH / "BioTracker";
-#else
-static const boost::filesystem::path BASE_PATH = HOME_PATH / ".biotracker";
-#endif
+static const boost::filesystem::path CONFIG_PATH = boost::filesystem::path(
+            QDir::toNativeSeparators(
+                QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)).toStdString());
+static const boost::filesystem::path BASE_PATH          = CONFIG_PATH / "BioTracker";
 static const boost::filesystem::path CONFIGURATION_FILE = BASE_PATH / "config.json";
 static const boost::filesystem::path GEOMETRY_FILE      = BASE_PATH / "geometry.cfg";
 static const boost::filesystem::path STATE_FILE         = BASE_PATH / "state.cfg";
