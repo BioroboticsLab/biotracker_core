@@ -1,4 +1,5 @@
-# BioTracker
+# BioTracker [![Build Status](http://willi.imp.fu-berlin.de/job/Build%20Biotracker%20Ubuntu/badge/icon)](http://willi.imp.fu-berlin.de/job/Build%20Biotracker%20Ubuntu/)
+
 The BioTracker is an open-source video tracking framework for the analysis of animal behavior.
 It allows users to apply various tracking algorithms on images, videos and camera streams.
 This repository contains the core functionality of the BioTracker application that can be embedded in other applications.
