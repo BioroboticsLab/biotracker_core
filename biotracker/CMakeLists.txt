@@ -28,13 +28,13 @@ target_include_directories(${CPM_LIB_TARGET_NAME} PUBLIC
 # automatic copy of required dlls to install prefix for windows
 if(WIN32)
 	set(APPS "\${CMAKE_INSTALL_PREFIX}/BioTracker.exe")
-	install(TARGETS BioTracker
+	install(TARGETS ${CPM_LIB_TARGET_NAME}
 		BUNDLE DESTINATION . COMPONENT Runtime
 		RUNTIME DESTINATION . COMPONENT Runtime)
 
 	set(PLUGINS "")
 	file(TO_CMAKE_PATH ${OpenCV_DIR} OpenCV_DIR)
-	set(LIBRARY_DIRS "${OpenCV_DIR} ${Qt5Core_DIR} ${Qt5Gui_DIR} ${Qt5OpenGL_DIR} ${Qt5Widgets_DIR}")
+    set(LIBRARY_DIRS "${OpenCV_DIR} ${Qt5Core_DIR} ${Qt5Gui_DIR} ${Qt5OpenGL_DIR} ${Qt5Widgets_DIR} ${ZMQ_DIR}")
 	install(CODE "
 	  include(BundleUtilities)
 	  fixup_bundle(\"${APPS}\" \"\${PLUGINS}\" \"${LIBRARY_DIRS}\")
