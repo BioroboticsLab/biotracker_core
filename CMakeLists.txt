@@ -74,39 +74,16 @@ set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
 
 # FIND ZMQ
-if (ZMQ_LIBS AND ZMQ_INCLUDES)
-    set(ZMQ_FOUND TRUE)
-else (ZMQ_LIB AND ZMQ_INCLUDE)
-    find_path(ZMQ_INCLUDE NAMES zmq.h PATHS /usr/include /usr/local/include)
-    find_library(ZMQ_LIB NAMES zmq PATHS /usr/lib /usr/local/lib)
+find_path ( ZMQ_INCLUDE_DIR zmq.h )
+find_library ( ZMQ_LIBRARY NAMES zmq )
 
-    set (ZMQ_INCLUDES ${ZMQ_INCLUDE})
+set ( ZMQ_LIBRARIES ${ZMQ_LIBRARY} )
+set ( ZMQ_INCLUDE_DIRS ${ZMQ_INCLUDE_DIR} )
 
-    if (ZMQ_LIB)
-        set (ZMQ_LIBS ${ZMQ_LIBS} ${ZMQ_LIB})
-    endif (ZMQ_LIB)
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(ZMQ DEFAULT_MSG ZMQ_LIBS ZMQ_INCLUDES)
-
-endif (ZMQ_LIBS AND ZMQ_INCLUDES)
-
-# FIND ZMQ
-if (ZMQ_LIBS AND ZMQ_INCLUDES)
-    set(ZMQ_FOUND TRUE)
-else (ZMQ_LIB AND ZMQ_INCLUDE)
-    find_path(ZMQ_INCLUDE NAMES zmq.h PATHS /usr/include /usr/local/include)
-    find_library(ZMQ_LIB NAMES zmq PATHS /usr/lib /usr/local/lib)
-
-    set (ZMQ_INCLUDES ${ZMQ_INCLUDE})
-
-    if (ZMQ_LIB)
-        set (ZMQ_LIBS ${ZMQ_LIBS} ${ZMQ_LIB})
-    endif (ZMQ_LIB)
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(ZMQ DEFAULT_MSG ZMQ_LIBS ZMQ_INCLUDES)
-
-endif (ZMQ_LIBS AND ZMQ_INCLUDES)
-
+include ( FindPackageHandleStandardArgs )
+# handle the QUIETLY and REQUIRED arguments and set ZMQ_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args ( ZMQ DEFAULT_MSG ZMQ_LIBRARY ZMQ_INCLUDE_DIR )
 
 # Qt options
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
