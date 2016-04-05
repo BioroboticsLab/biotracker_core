@@ -92,6 +92,9 @@ add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(-DQT_NO_KEYWORDS)
 CPM_ExportAdditionalDefinition(-DQT_NO_KEYWORDS)
 
+# Disable warnings
+add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+
 # include external dependecies as SYSTEM headers to prevent warnings from
 # external files. unfortunately, this has no effect when using MSVC.
 include_directories(
@@ -100,6 +103,7 @@ include_directories(
     SYSTEM ${OpenCV_INCLUDE_DIRS}
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
     SYSTEM ${ZMQ_INCLUDES}
+    SYSTEM ${BOOST_LIBRARYDIR}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
