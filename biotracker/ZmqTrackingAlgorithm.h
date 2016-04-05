@@ -37,11 +37,11 @@ class ZmqTrackingAlgorithm : public TrackingAlgorithm {
 
     virtual ~ZmqTrackingAlgorithm() override;
 
-    void track(ulong frameNumber, const cv::Mat &frame) override;
+    void track(size_t frameNumber, const cv::Mat &frame) override;
 
-    void paint(ulong frameNbr, ProxyMat &, const View &) override;
+    void paint(size_t frameNbr, ProxyMat &, const View &) override;
 
-    void paintOverlay(ulong frameNbr, QPainter *, const View &) override;
+    void paintOverlay(size_t frameNbr, QPainter *, const View &) override;
 
     QPointer<QWidget> getToolsWidget() override;
 

@@ -162,7 +162,7 @@ void ZmqClientProcess::sendValue(SendValueChangedMessage &message, EventHandler 
  */
 void ZmqClientProcess::sendMessage(GenericSendMessage &message) {
     const std::vector<ZmqMessage> messageParts = message.get();
-    const int size = messageParts.size();
+    const int size = (int)messageParts.size();
     for (int i = 0; i < size; i++) {
         int flag = 0;
         if (i < (size - 1)) {

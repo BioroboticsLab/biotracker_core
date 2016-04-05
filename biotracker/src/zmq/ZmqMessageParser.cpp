@@ -142,7 +142,7 @@ void EventHandler::receive(BioTracker::Core::Zmq::recvString receiveStr) {
                 Q_EMIT notifyGUI(message.toStdString(), mtype);
             } else if (eventParts[0] == EVENT_JUMP_TO_FRAME) {
                 const size_t frame = eventParts[1].toInt();
-                Q_EMIT jumpToFrame(frame);
+                Q_EMIT jumpToFrame((int)frame);
             } else if (eventParts[0] == EVENT_PLAY_PAUSE) {
                 if (eventParts[1] == EVENT_MSG_FALSE) {
                     Q_EMIT pausePlayback(false);

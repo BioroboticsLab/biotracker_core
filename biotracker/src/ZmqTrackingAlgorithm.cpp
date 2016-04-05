@@ -34,17 +34,17 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
     shutdown();
 }
 
-void ZmqTrackingAlgorithm::track(ulong frameNumber, const cv::Mat &frame) {
+void ZmqTrackingAlgorithm::track(size_t frameNumber, const cv::Mat &frame) {
     SendTrackMessage message(frame, frameNumber);
     m_process->send(message, m_events);
 }
 
-void ZmqTrackingAlgorithm::paint(ulong, ProxyMat &m, const View &v) {
+void ZmqTrackingAlgorithm::paint(size_t, ProxyMat &m, const View &v) {
     SendPaintMessage message(99, v.name, m.getMat());
     m_process->send(message, m_events);
 }
 
-void ZmqTrackingAlgorithm::paintOverlay(ulong, QPainter *p, const View &v) {
+void ZmqTrackingAlgorithm::paintOverlay(size_t, QPainter *p, const View &v) {
     SendPaintOverlayMessage message(v.name, p);
     m_process->send(message, m_events);
 }

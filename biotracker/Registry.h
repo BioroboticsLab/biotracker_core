@@ -78,7 +78,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     void newTracker(const TrackerType type);
 
   private:
-    friend class Singleton<Registry>;
+    template <class Registry> friend class Singleton;
 
     map_string_type_t m_typeByString;
     map_type_string_t m_stringByType;
