@@ -37,6 +37,9 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::registerViewsFromTrackingThread);
     QObject::connect(&m_trackingThread, &Core::TrackingThread::requestPaint,
                      this, &BioTrackerApp::requestPaintFromTrackingThread);
+
+    QObject::connect(&m_registry, &Core::Registry::trackerIsAlreadyLoaded,
+                     this, &BioTrackerApp::trackerIsAlreadyLoadedFromRegistry);
 }
 
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
@@ -171,6 +174,12 @@ void BioTracker::Core::BioTrackerApp::registerViewsFromTrackingThread(const std:
 
 void BioTracker::Core::BioTrackerApp::requestPaintFromTrackingThread() {
     Q_EMIT requestPaint();
+}
+
+void BioTracker::Core::BioTrackerApp::trackerIsAlreadyLoadedFromRegistry(const std::string name) {
+    std::stringstream ss;
+    ss << "Tracker " << name << " is already loaded!";
+    Q_EMIT notify(ss.str(), MessageType::FAIL);
 }
 
 } // Core

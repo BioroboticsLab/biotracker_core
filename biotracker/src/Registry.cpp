@@ -21,16 +21,19 @@ Registry::Registry() {
 bool Registry::registerTrackerType(std::string name,
                                    std::shared_ptr<NewTrackerFactory> f) {
     if (m_typeByString.find(name) != m_typeByString.end()) {
-        throw std::invalid_argument("Tracker with same name already registered");
+        //throw std::invalid_argument("Tracker with same name already registered");
+        Q_EMIT trackerIsAlreadyLoaded(name);
+        return false;
+    } else {
+        const TrackerType type = getNextId();
+        m_typeByString.emplace(name, type);
+        m_stringByType.emplace(type, name);
+        m_trackerByType.emplace(type, f);
+
+        Q_EMIT newTracker(type);
+
+        return true;
     }
-    const TrackerType type = getNextId();
-    m_typeByString.emplace(name, type);
-    m_stringByType.emplace(type, name);
-    m_trackerByType.emplace(type, f);
-
-    Q_EMIT newTracker(type);
-
-    return true;
 }
 
 void Registry::loadTrackerLibrary(const boost::filesystem::path &path) {

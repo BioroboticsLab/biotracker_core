@@ -152,6 +152,8 @@ class BioTrackerApp : public QObject {
     void notifyFromTrackingThread(const std::string &message,
                                   const MessageType type);
 
+    void trackerIsAlreadyLoadedFromRegistry(const std::string name);
+
     /**
      * @brief notify
      *      Status messages for the user interface
