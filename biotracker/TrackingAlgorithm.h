@@ -118,6 +118,13 @@ class TrackingAlgorithm : public QObject {
      */
     virtual void postConnect() {}
 
+    /**
+     * @brief inputChanged
+     * gets called when the input system changes (e.g. a new video is loaded)
+     */
+    virtual void inputChanged() {}
+
+
     void loadObjects(std::vector<TrackedObject> const &objects);
     void loadObjects(std::vector<TrackedObject> &&objects);
     std::vector<TrackedObject> const &getObjects();
