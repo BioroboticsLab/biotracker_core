@@ -5,6 +5,10 @@ if (POLICY CMP0020)
 endif(POLICY CMP0020)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+# add custom cmake packages
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 project(biotracker_core)
 
 #-----------------------------------------------------------------------
@@ -69,21 +73,10 @@ find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets 5.4 REQUIRED)
 find_package(Qt5OpenGL 5.4 REQUIRED)
 find_package(Threads REQUIRED)
+find_package(ZMQ REQUIRED)
 
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
-
-# FIND ZMQ
-find_path ( ZMQ_INCLUDE_DIR zmq.h )
-find_library ( ZMQ_LIBRARY NAMES zmq )
-
-set ( ZMQ_LIBRARIES ${ZMQ_LIBRARY} )
-set ( ZMQ_INCLUDE_DIRS ${ZMQ_INCLUDE_DIR} )
-
-include ( FindPackageHandleStandardArgs )
-# handle the QUIETLY and REQUIRED arguments and set ZMQ_FOUND to TRUE
-# if all listed variables are TRUE
-find_package_handle_standard_args ( ZMQ DEFAULT_MSG ZMQ_LIBRARY ZMQ_INCLUDE_DIR )
 
 # Qt options
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -99,11 +92,11 @@ add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 # external files. unfortunately, this has no effect when using MSVC.
 include_directories(
     ${PROJECT_SOURCE_DIR}
-    SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
     SYSTEM ${OpenCV_INCLUDE_DIRS}
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
-    SYSTEM ${ZMQ_INCLUDES}
-    SYSTEM ${BOOST_LIBRARYDIR}
+    SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
+    SYSTEM ${Boost_INCLUDE_DIRS}
+    SYSTEM ${ZMQ_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
