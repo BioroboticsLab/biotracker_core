@@ -212,7 +212,7 @@ void TrackingThread::tick(const double fps) {
 
     if (!m_ignoreFilenameChanged) {
         // notify the tracker that the filename has changed.
-        // This event will must not occure when the camera
+        // This event will not occure when the camera
         // is used, otherwise it should be fired whenever a
         // new file is selected (video vs. set of images)
         if (m_lastFilename.compare(fileName) != 0) {
