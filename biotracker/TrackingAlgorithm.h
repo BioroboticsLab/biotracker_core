@@ -121,9 +121,19 @@ class TrackingAlgorithm : public QObject {
     /**
      * @brief inputChanged
      * gets called when the input system changes (e.g. a new video is loaded)
+     * When a set of images is loaded, this funtion is only triggered once
+     * at the first image that is loaded.
      */
     virtual void inputChanged() {}
 
+    /**
+     * @brief onFileChanged
+     * This slot is triggered once when a video is loaded, or each time
+     * a new picture from a set im images is loaded. This slot is never
+     * triggered when the camera is selected.
+     * @param filename
+     */
+    virtual void onFileChanged(std::string) {}
 
     void loadObjects(std::vector<TrackedObject> const &objects);
     void loadObjects(std::vector<TrackedObject> &&objects);

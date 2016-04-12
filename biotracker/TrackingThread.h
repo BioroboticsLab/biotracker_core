@@ -116,6 +116,13 @@ class TrackingThread : public QThread {
     bool m_isRendering;
     bool m_somethingIsLoaded;
 
+    // flag to determine if the 'filenamechanged' event should
+    // occur or not
+    bool m_ignoreFilenameChanged;
+
+    // needed to figure out if the filename has changed or not
+    std::string m_lastFilename;
+
     //defines whether to use pictures as source or a video
     TrackerStatus m_status;
 
