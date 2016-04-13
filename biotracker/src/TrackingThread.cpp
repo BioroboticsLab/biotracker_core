@@ -268,8 +268,8 @@ void TrackingThread::doTracking() {
         return;
     }
     try {
-        m_tracker->track(m_imageStream->currentFrameNumber(),
-                         m_imageStream->currentFrame());
+        m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
+                                   m_imageStream->currentFrame());
     } catch (const std::exception &err) {
         Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
                          std::string(err.what()), MessageType::FAIL);

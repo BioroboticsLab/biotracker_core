@@ -69,9 +69,21 @@ class TrackingAlgorithm : public QObject {
     static const View OriginalView;
 
     /**
-    * This function tracks the provided object list within the provided frame.
-    */
-    virtual void track(size_t frameNumber, const cv::Mat &frame) = 0;
+     * @brief attemptTracking
+     * tries to track the given frame. However, when tracking was disabled on this object
+     * this function will not execute the tracking.
+     * @param frameNbr
+     * @param frame
+     * @return True, when successfully tracked, otherwise False
+     */
+    bool attemptTracking(size_t frameNbr, const cv::Mat &frame) {
+        if (isTrackingActivated()) {
+            track(frameNbr, frame);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
     * paint will be called by "VideoViews" paintEvent method
@@ -138,6 +150,14 @@ class TrackingAlgorithm : public QObject {
     void loadObjects(std::vector<TrackedObject> const &objects);
     void loadObjects(std::vector<TrackedObject> &&objects);
     std::vector<TrackedObject> const &getObjects();
+
+    void setTracking(bool shouldTrack) {
+        m_doTracking = shouldTrack;
+    }
+
+    bool isTrackingActivated() const {
+        return m_doTracking;
+    }
 
     boost::optional<Algorithm::Type> getType() const {
         return m_type;
@@ -234,6 +254,11 @@ class TrackingAlgorithm : public QObject {
         return m_videoMode;
     }
 
+    /**
+    * This function tracks the provided object list within the provided frame.
+    */
+    virtual void track(size_t frameNumber, const cv::Mat &frame) = 0;
+
     bool event(QEvent *event) override;
 
     /**
@@ -278,6 +303,7 @@ class TrackingAlgorithm : public QObject {
     size_t m_videoFps = -1;
 
   private:
+    bool m_doTracking; // determines if the tracker should track or only paint
     int m_currentFrameNumber;
     int m_maxFrameNumber;
     float m_currentZoomLevel;

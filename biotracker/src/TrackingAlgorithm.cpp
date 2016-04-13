@@ -6,6 +6,7 @@ namespace Core {
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
     : QObject()
     , m_settings(settings)
+    , m_doTracking(true)
     , m_currentFrameNumber(0)
     , m_currentZoomLevel(0.0f)
     , m_videoMode(GuiParam::VideoMode::Init)
