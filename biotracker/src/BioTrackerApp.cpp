@@ -182,5 +182,13 @@ void BioTracker::Core::BioTrackerApp::trackerIsAlreadyLoadedFromRegistry(const s
     Q_EMIT notify(ss.str(), MessageType::FAIL);
 }
 
+void BioTracker::Core::BioTrackerApp::enableTracking() {
+    m_trackingThread.enableTracking();
+}
+
+void BioTracker::Core::BioTrackerApp::disableTracking() {
+    m_trackingThread.disableTracking();
+}
+
 } // Core
 } // BioTracker

@@ -27,6 +27,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_playing(false),
     m_playOnce(false),
     m_somethingIsLoaded(false),
+    m_isTrackingEnabled(true),
     m_status(TrackerStatus::NothingLoaded),
     m_fps(30),
     m_maxSpeed(false),
@@ -381,6 +382,10 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
             m_tracker->onFileChanged(m_imageStream->currentFilename());
             m_lastFilename = m_imageStream->currentFilename();
         }
+
+        if (!m_isTrackingEnabled) {
+            m_tracker->setTracking(false);
+        }
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
 
@@ -483,6 +488,20 @@ void BioTracker::Core::TrackingThread::requestPauseFromTracker(bool pause) {
         setPause();
     } else {
         setPlay();
+    }
+}
+
+void BioTracker::Core::TrackingThread::enableTracking() {
+    m_isTrackingEnabled = true;
+    if (m_tracker) {
+        m_tracker->setTracking(true);
+    }
+}
+
+void BioTracker::Core::TrackingThread::disableTracking() {
+    m_isTrackingEnabled = false;
+    if (m_tracker) {
+        m_tracker->setTracking(false);
     }
 }
 
