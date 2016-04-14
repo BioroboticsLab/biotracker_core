@@ -88,6 +88,19 @@ class TrackingThread : public QThread {
     void togglePlaying();
 
     /**
+     * @brief enableTracking
+     * enable the tracker to actually track data.
+     */
+    void enableTracking();
+
+    /**
+     * @brief enableTracking
+     * sets the tracker to be disabled. Only the draw-functions
+     * will be called
+     */
+    void disableTracking();
+
+    /**
     * @return  current fps setting
     */
     double getFps() const;
@@ -115,6 +128,18 @@ class TrackingThread : public QThread {
     bool m_playOnce;
     bool m_isRendering;
     bool m_somethingIsLoaded;
+
+    // flag is needed so that we can enable/disable tracking
+    // regardless of the loaded tracker. A tracker most not even
+    // be loaded.
+    bool m_isTrackingEnabled;
+
+    // flag to determine if the 'filenamechanged' event should
+    // occur or not
+    bool m_ignoreFilenameChanged;
+
+    // needed to figure out if the filename has changed or not
+    std::string m_lastFilename;
 
     //defines whether to use pictures as source or a video
     TrackerStatus m_status;

@@ -6,12 +6,16 @@ namespace BioTracker {
 namespace Core {
 
 TrackedObject::TrackedObject(size_t id)
-    : _id(id) {
+    : _id(id),
+      m_maximumFrameNumber(0) {
 }
 
 void TrackedObject::add(const size_t framenumber,
                         std::shared_ptr<ObjectModel> object) {
     _objectsByFrame[framenumber] = object;
+    if (framenumber > m_maximumFrameNumber) {
+        m_maximumFrameNumber = framenumber;
+    }
 }
 
 void TrackedObject::push_back(std::shared_ptr<ObjectModel> object) {
@@ -43,6 +47,10 @@ boost::optional<size_t> TrackedObject::getLastFrameNumber() const {
     } else {
         return _objectsByFrame.rbegin()->first;
     }
+}
+
+size_t TrackedObject::maximumFrameNumber() const {
+    return m_maximumFrameNumber;
 }
 
 }

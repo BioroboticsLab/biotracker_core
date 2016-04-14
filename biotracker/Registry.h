@@ -76,6 +76,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
 
   Q_SIGNALS:
     void newTracker(const TrackerType type);
+    void trackerIsAlreadyLoaded(const std::string name);
 
   private:
     friend class Util::Singleton<Registry>;

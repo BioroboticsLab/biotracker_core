@@ -79,6 +79,16 @@ class BioTrackerApp : public QObject {
     void pause();
 
     /**
+     * @brief enableTracking: trackers will paint and track
+     */
+    void enableTracking();
+
+    /**
+     * @brief disableTracking: trackers will paint but not track
+     */
+    void disableTracking();
+
+    /**
      * @brief paint
      */
     void paint(const size_t, const size_t, QPainter &painter, PanZoomState,
@@ -155,6 +165,8 @@ class BioTrackerApp : public QObject {
      */
     void notifyFromTrackingThread(const std::string &message,
                                   const MessageType type);
+
+    void trackerIsAlreadyLoadedFromRegistry(const std::string name);
 
     /**
      * @brief notify

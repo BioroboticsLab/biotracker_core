@@ -68,8 +68,11 @@ class TrackedObject {
         return _objectsByFrame.find(frameNumber) != _objectsByFrame.end();
     }
 
+    size_t maximumFrameNumber() const;
+
   private:
     size_t _id;
+    size_t m_maximumFrameNumber;
     std::map<size_t, std::shared_ptr<ObjectModel>> _objectsByFrame;
 
     friend class cereal::access;

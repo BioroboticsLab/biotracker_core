@@ -27,6 +27,7 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_playing(false),
     m_playOnce(false),
     m_somethingIsLoaded(false),
+    m_isTrackingEnabled(true),
     m_status(TrackerStatus::NothingLoaded),
     m_fps(30),
     m_maxSpeed(false),
@@ -54,8 +55,14 @@ void TrackingThread::loadFromSettings() {
     }
 
     m_fps = m_imageStream->fps();
-
+    m_ignoreFilenameChanged = false;
     Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames(), m_fps);
+    if (m_tracker && m_somethingIsLoaded &&
+            m_lastFilename.compare(filenameStr) != 0) {
+        m_tracker->inputChanged();
+        m_tracker->onFileChanged(filenameStr);
+        m_lastFilename = filenameStr;
+    }
 
     std::string note = "opened file: " + filenameStr + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
@@ -75,18 +82,27 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     }
 
     m_fps = m_imageStream->fps();
+    m_ignoreFilenameChanged = false;
 
     m_settings.setParam(CaptureParam::CAP_VIDEO_FILE, filename.string());
 
     std::string note = filename.string() + " (#frames: "
                        + QString::number(m_imageStream->numFrames()).toStdString() + ")";
     Q_EMIT fileOpened(filename.string(), m_imageStream->numFrames(), m_fps);
+    if (m_tracker) {
+        m_tracker->inputChanged();
+        if (m_somethingIsLoaded && m_lastFilename.compare(filename.string()) != 0) {
+            m_tracker->onFileChanged(filename.string());
+            m_lastFilename = filename.string();
+        }
+    }
     Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
                                   &&filenames) {
     m_fps = 1;
+    m_ignoreFilenameChanged = false;
     m_imageStream = make_ImageStreamPictures(std::move(filenames));
     if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
@@ -102,6 +118,14 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         playOnce();
         Q_EMIT fileOpened(m_imageStream->currentFilename(), m_imageStream->numFrames(),
                           m_fps);
+        if (m_tracker) {
+            m_tracker->inputChanged();
+            if (m_somethingIsLoaded
+                    && m_lastFilename.compare(m_imageStream->currentFilename()) != 0) {
+                m_tracker->onFileChanged(m_imageStream->currentFilename());
+                m_lastFilename = m_imageStream->currentFilename();
+            }
+        }
     }
 }
 
@@ -117,6 +141,7 @@ void TrackingThread::openCamera(int device) {
     }
     m_status = TrackerStatus::Running;
     m_fps = m_imageStream->fps();
+    m_ignoreFilenameChanged = true; // this is not very pretty..
     std::string note = "open camera " + QString::number(device).toStdString();
     Q_EMIT notifyGUI(note, MessageType::NOTIFICATION);
     m_somethingIsLoaded = true;
@@ -185,6 +210,20 @@ void TrackingThread::run() {
 void TrackingThread::tick(const double fps) {
     m_renderMutex.lock();
     std::string fileName = m_imageStream->currentFilename();
+
+    if (!m_ignoreFilenameChanged) {
+        // notify the tracker that the filename has changed.
+        // This event will not occure when the camera
+        // is used, otherwise it should be fired whenever a
+        // new file is selected (video vs. set of images)
+        if (m_lastFilename.compare(fileName) != 0) {
+            if (m_tracker) {
+                m_tracker->onFileChanged(fileName);
+            }
+            m_lastFilename = fileName;
+        }
+    }
+
     doTracking();
     const size_t currentFrame = m_imageStream->currentFrameNumber();
     if (m_playing) {
@@ -230,8 +269,8 @@ void TrackingThread::doTracking() {
         return;
     }
     try {
-        m_tracker->track(m_imageStream->currentFrameNumber(),
-                         m_imageStream->currentFrame());
+        m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
+                                   m_imageStream->currentFrame());
     } catch (const std::exception &err) {
         Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
                          std::string(err.what()), MessageType::FAIL);
@@ -339,6 +378,14 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::pausePlayback,
                          this, &TrackingThread::requestPauseFromTracker);
         m_tracker.get()->postConnect();
+        if (!m_ignoreFilenameChanged && m_somethingIsLoaded) {
+            m_tracker->onFileChanged(m_imageStream->currentFilename());
+            m_lastFilename = m_imageStream->currentFilename();
+        }
+
+        if (!m_isTrackingEnabled) {
+            m_tracker->setTracking(false);
+        }
     }
     Q_EMIT trackerSelected(trackingAlgorithm);
 
@@ -441,6 +488,20 @@ void BioTracker::Core::TrackingThread::requestPauseFromTracker(bool pause) {
         setPause();
     } else {
         setPlay();
+    }
+}
+
+void BioTracker::Core::TrackingThread::enableTracking() {
+    m_isTrackingEnabled = true;
+    if (m_tracker) {
+        m_tracker->setTracking(true);
+    }
+}
+
+void BioTracker::Core::TrackingThread::disableTracking() {
+    m_isTrackingEnabled = false;
+    if (m_tracker) {
+        m_tracker->setTracking(false);
     }
 }
 
