@@ -35,7 +35,7 @@ ZmqTrackingAlgorithm::~ZmqTrackingAlgorithm() {
 }
 
 void ZmqTrackingAlgorithm::track(size_t frameNumber, const cv::Mat &frame) {
-    SendTrackMessage message(frame, frameNumber);
+    SendTrackMessage message(frame, static_cast<ulong>(frameNumber));
     m_process->send(message, m_events);
 }
 
