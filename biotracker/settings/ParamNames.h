@@ -45,6 +45,7 @@ static const std::string SHORTCUT_PLAY      = "GUIPARAM.SHORTCUT_PLAY";
 static const std::string SHORTCUT_NEXT      = "GUIPARAM.SHORTCUT_NEXT";
 static const std::string SHORTCUT_PREV      = "GUIPARAM.SHORTCUT_PREV";
 static const std::string SHORTCUT_ZOOM      = "GUIPARAM.SHORTCUT_ZOOM";
+static const std::string SHORTCUT_TRACKING      = "GUIPARAM.SHORTCUT_TRACKING";
 
 static const std::string PAUSED_AT_FRAME    = "GUIPARAM.PAUSED_AT_FRAME";
 }
