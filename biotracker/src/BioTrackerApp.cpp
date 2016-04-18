@@ -51,7 +51,7 @@ void BioTrackerApp::openImages(std::vector<boost::filesystem::path> paths) {
 }
 
 void BioTrackerApp::openCamera(int device) {
-    m_trackingThread.openCamera(device);
+    m_trackingThread.loadCamera(device);
 }
 
 void BioTrackerApp::play() {

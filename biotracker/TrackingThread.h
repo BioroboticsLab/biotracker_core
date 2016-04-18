@@ -53,7 +53,7 @@ class TrackingThread : public QThread {
     /**
      * Opens a video device.
      */
-    void openCamera(int device);
+    void loadCamera(int device);
 
     /**
      * Pause video plaing.

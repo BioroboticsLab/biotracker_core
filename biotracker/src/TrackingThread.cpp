@@ -97,6 +97,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         }
     }
     Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
+    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
@@ -127,24 +128,40 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
             }
         }
     }
+    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
-void TrackingThread::openCamera(int device) {
+void TrackingThread::loadCamera(int device) {
+    // Need to clear _imageStream var because reopening the same camera again will result
+    // in an error otherwise (e.g. when you press stop and play again)
+    if (m_imageStream->type() == MediaType::Camera) {
+        m_imageStream = make_ImageStreamNoMedia();
+    }
     m_imageStream = make_ImageStreamCamera(device);
     if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
-        std::string errorMsg = "unable to open camera " + QString::number(
-                                   device).toStdString();
+        std::string errorMsg = "unable to open camera " + QString::number(device).toStdString();
         Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
         m_status = TrackerStatus::Invalid;
         return;
     }
-    m_status = TrackerStatus::Running;
+
     m_fps = m_imageStream->fps();
-    m_ignoreFilenameChanged = true; // this is not very pretty..
+    m_settings.setParam(CaptureParam::CAP_CAMERA_ID, device);
+    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
     std::string note = "open camera " + QString::number(device).toStdString();
     Q_EMIT notifyGUI(note, MessageType::NOTIFICATION);
-    m_somethingIsLoaded = true;
+
+    playOnce();
+    std::string filename = m_imageStream->currentFilename();
+    Q_EMIT fileOpened(filename, m_imageStream->numFrames(), m_fps);
+    if (m_tracker) {
+        m_tracker->inputChanged();
+        if (m_somethingIsLoaded && m_lastFilename.compare(filename) != 0) {
+            m_tracker->onFileChanged(filename);
+            m_lastFilename = filename;
+        }
+    }
 }
 
 void TrackingThread::run() {

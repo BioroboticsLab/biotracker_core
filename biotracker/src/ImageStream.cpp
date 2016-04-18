@@ -242,7 +242,7 @@ class ImageStreamCamera : public ImageStream {
      */
     explicit ImageStreamCamera(int device_id)
         : m_capture(device_id)
-        , m_fps(30) {
+        , m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
         if (! m_capture.isOpened()) {
             throw device_open_error(":(");
         }
@@ -255,7 +255,7 @@ class ImageStreamCamera : public ImageStream {
         return GuiParam::MediaType::Camera;
     }
     virtual size_t numFrames() const override {
-        return 100;
+        return 10000;
     }
     virtual double fps() const override {
         return m_fps;
@@ -274,7 +274,9 @@ class ImageStreamCamera : public ImageStream {
     }
 
     virtual bool setFrameNumber_impl(size_t) override {
-        throw std::runtime_error("setFrameNumber not available for ImageStreamCamera");
+//        throw std::runtime_error("setFrameNumber not available for ImageStreamCamera");
+        this->nextFrame_impl();
+        return true;
     }
 
     cv::VideoCapture m_capture;
