@@ -240,7 +240,7 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
     if (m_imageStream->setFrameNumber(frameNumber)) {
         MutexLocker trackerLock(m_trackerMutex);
         if (m_tracker) {
-            m_tracker->setCurrentFrameNumber((int)frameNumber);
+            m_tracker->setCurrentFrameNumber(static_cast<int>(frameNumber));
         }
         playOnce();
     }
@@ -250,7 +250,7 @@ void TrackingThread::nextFrame() {
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
         MutexLocker trackerLock(m_trackerMutex);
         if (m_tracker) {
-            m_tracker->setCurrentFrameNumber((int)m_imageStream->currentFrameNumber());
+            m_tracker->setCurrentFrameNumber(static_cast<int>(m_imageStream->currentFrameNumber()));
         }
     } else {
         m_playing = false;
@@ -400,7 +400,7 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
 
     // clear background
     painter.setBrush(QColor(0, 0, 0));
-    painter.drawRect(QRect(0, 0, (int)w, (int)h));
+    painter.drawRect(QRect(0, 0, static_cast<int>(w), static_cast<int>(h)));
     painter.setBrush(QColor(0, 0, 0, 0));
 
     m_paintMutex.lock();
@@ -433,7 +433,10 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         const float viewport_skew = ScreenHelper::calculate_viewport(
                                         m_texture.width(),
                                         m_texture.height(),
-                                        (int)w, (int)h, window, viewport
+                                        static_cast<int>(w),
+                                        static_cast<int>(h),
+                                        window,
+                                        viewport
                                     );
 
         painter.setWindow(window);
