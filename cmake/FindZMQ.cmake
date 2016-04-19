@@ -14,6 +14,7 @@ ENDIF (ZMQ_LIBRARIES AND ZMQ_INCLUDE_DIR)
  
 FIND_PATH(ZMQ_INCLUDE_DIR zmq.h zmq.hpp
     $ENV{ZMQ_DIR}/include
+    $ENV{ZMQ_INCLUDE_DIR}
     /usr/include
     /usr/local/include
     /usr/local/include/zmq
@@ -21,6 +22,7 @@ FIND_PATH(ZMQ_INCLUDE_DIR zmq.h zmq.hpp
  
 FIND_LIBRARY(ZMQ_LIBRARY NAMES libzmq-v120-mt-gd-4_0_4.lib zmq PATHS
     $ENV{ZMQ_DIR}/lib
+    $ENV{ZMQ_LIBRARY_DIR}
     /usr/lib       
     /usr/local/lib
     /usr/local/lib/zmq
