@@ -100,6 +100,10 @@ include_directories(
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
+link_directories(
+    ${Boost_LIBRARY_DIRS}
+)
+
 add_subdirectory(biotracker)
 add_subdirectory(doc)
 
