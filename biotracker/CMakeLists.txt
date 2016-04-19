@@ -30,11 +30,6 @@ target_include_directories(${CPM_LIB_TARGET_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    # disable warning 4715 on visual studio (boost)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4715")
-endif()
-
 # add files to source groups to preserve folder structure in visual studio
 # adapted from: http://goo.gl/Xde41i
 
