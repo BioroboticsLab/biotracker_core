@@ -12,8 +12,7 @@ IF (ZMQ_LIBRARIES AND ZMQ_INCLUDE_DIR)
     SET(ZMQ_FIND_QUIETLY TRUE) # Already in cache, be silent
 ENDIF (ZMQ_LIBRARIES AND ZMQ_INCLUDE_DIR)
  
- 
-FIND_PATH(ZMQ_INCLUDE_DIR zmq.hpp
+FIND_PATH(ZMQ_INCLUDE_DIR zmq.h zmq.hpp
     $ENV{ZMQ_DIR}/include
     /usr/include
     /usr/local/include
