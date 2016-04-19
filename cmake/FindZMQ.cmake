@@ -19,22 +19,27 @@ FIND_PATH(ZMQ_INCLUDE_DIR zmq.h zmq.hpp
     /usr/local/include
     /usr/local/include/zmq
 )
- 
-FIND_LIBRARY(ZMQ_LIBRARY NAMES libzmq-v120-mt-gd-4_0_4.lib zmq PATHS
+
+foreach (directory
     $ENV{ZMQ_DIR}/lib
     $ENV{ZMQ_LIBRARY_DIR}
     /usr/lib       
     /usr/local/lib
     /usr/local/lib/zmq
     /usr/lib/x86_64-linux-gnu
-)
-
+    )
+    file(GLOB zmq ${directory}/libzmq-v*.lib)
+    IF (zmq AND NOT ZMQ_LIBRARY)
+        SET(ZMQ_LIBRARY ${zmq})
+    ENDIF (zmq AND NOT ZMQ_LIBRARY)
+endforeach(directory)
 # handle the QUIETLY and REQUIRED arguments and set ZMQ_FOUND to TRUE
 # if all listed variables are TRUE
 include ( FindPackageHandleStandardArgs )
 find_package_handle_standard_args ( ZMQ DEFAULT_MSG ZMQ_LIBRARY ZMQ_INCLUDE_DIR )
 
 IF (ZMQ_FOUND)
+    SET(ZMQ_LIBRARY ${ZMQ_LIBRARY} CACHE STRING "ZMQ library path." FORCE)
     SET(ZMQ_LIBRARIES ${ZMQ_LIBRARY})
     SET(ZMQ_INCLUDE_DIRS ${ZMQ_INCLUDE_DIR})
     MESSAGE(STATUS "Found these zmq libs: ${ZMQ_LIBRARIES}")
