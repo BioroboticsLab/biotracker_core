@@ -226,14 +226,14 @@ void TrackingThread::tick(const double fps) {
 
     doTracking();
     const size_t currentFrame = m_imageStream->currentFrameNumber();
+    if (m_playing) {
+        nextFrame();
+    }
     m_renderMutex.unlock();
     m_paintMutex.lock();
     Q_EMIT frameCalculated(currentFrame, fileName, fps);
     m_paintMutex.unlock();
 
-    if (m_playing) {
-        nextFrame();
-    }
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
@@ -261,27 +261,25 @@ void TrackingThread::nextFrame() {
 
 void TrackingThread::doTracking() {
     MutexLocker trackerLock(m_trackerMutex);
-    if (!m_tracker) {
-        return;
+    if (m_tracker) {
+        // do nothing if we aint got a frame
+        if (m_imageStream->currentFrameIsEmpty()) {
+            return;
+        }
+        try {
+            m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
+                                       m_imageStream->currentFrame());
+        } catch (const std::exception &err) {
+            Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
+                             std::string(err.what()), MessageType::FAIL);
+        }
     }
 
-    // do nothing if we aint got a frame
-    if (m_imageStream->currentFrameIsEmpty()) {
-        return;
-    }
-    try {
-        m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
-                                   m_imageStream->currentFrame());
-
-        // we need to store the last tracked framenumber to use this value
-        // in the paint methods. We MUST NOT use "m_imageStream->currentFrameNumber()"
-        // in the paint methods as the value might be one off due to multithreading!
-        // !!! (We cannot guarenty when "nextFrame" is called) !!!
-        m_lastTrackedFrameNumber = m_imageStream->currentFrameNumber();
-    } catch (const std::exception &err) {
-        Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
-                         std::string(err.what()), MessageType::FAIL);
-    }
+    // we need to store the last tracked framenumber to use this value
+    // in the paint methods. We MUST NOT use "m_imageStream->currentFrameNumber()"
+    // in the paint methods as the value might be one off due to multithreading!
+    // !!! (We cannot guarenty when "nextFrame" is called) !!!
+    m_lastTrackedFrameNumber = m_imageStream->currentFrameNumber();
 }
 
 size_t TrackingThread::getVideoLength() const {
