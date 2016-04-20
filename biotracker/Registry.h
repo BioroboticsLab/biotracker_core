@@ -10,7 +10,6 @@
 #include "TrackingAlgorithm.h"
 #include "util/stdext.h"
 #include "util/singleton.h"
-#include "ZmqTrackingAlgorithm.h"
 
 namespace BioTracker {
 namespace Core {

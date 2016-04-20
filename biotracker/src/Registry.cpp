@@ -8,6 +8,7 @@
 #include "Exceptions.h"
 #include "biotracker/zmq/ZmqProcessHandler.h"
 #include "biotracker/zmq/ZmqClientProcess.h"
+#include "biotracker/ZmqTrackingAlgorithm.h"
 
 namespace BioTracker {
 namespace Core {
