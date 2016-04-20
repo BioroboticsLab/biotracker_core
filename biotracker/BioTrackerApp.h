@@ -15,7 +15,6 @@
 #include "settings/Settings.h"
 #include "TrackerStatus.h"
 #include "PanZoomState.h"
-#include "zmq/ZmqProcessHandler.h"
 
 namespace BioTracker {
 namespace Core {
