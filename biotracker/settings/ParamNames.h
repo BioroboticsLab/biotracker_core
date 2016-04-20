@@ -60,6 +60,7 @@ namespace CaptureParam {
 static const std::string CAP_VIDEO_FILE      = "CAPTUREPARAM.CAP_VIDEO_FILE";
 static const std::string CAP_SCREENSHOT_PATH =
     "CAPTUREPARAM.CAP_SCREENSHOT_PATH";
+static const std::string CAP_CAMERA_ID       = "CAPTUREPARAM.CAP_CAMERA_ID";
 
 // Video paths
 static const std::string ENABLE_RECORD_RAW        =
