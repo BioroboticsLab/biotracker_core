@@ -263,15 +263,14 @@ void TrackingThread::doTracking() {
     MutexLocker trackerLock(m_trackerMutex);
     if (m_tracker) {
         // do nothing if we aint got a frame
-        if (m_imageStream->currentFrameIsEmpty()) {
-            return;
-        }
-        try {
-            m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
-                                       m_imageStream->currentFrame());
-        } catch (const std::exception &err) {
-            Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
-                             std::string(err.what()), MessageType::FAIL);
+        if (!m_imageStream->currentFrameIsEmpty()) {
+            try {
+                m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
+                                           m_imageStream->currentFrame());
+            } catch (const std::exception &err) {
+                Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
+                                 std::string(err.what()), MessageType::FAIL);
+            }
         }
     }
 
