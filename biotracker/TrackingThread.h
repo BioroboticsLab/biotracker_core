@@ -123,6 +123,7 @@ class TrackingThread : public QThread {
     std::mutex m_renderMutex;
     std::condition_variable m_conditionVariable;
     size_t m_lastFrameNumber;
+    size_t m_lastTrackedFrameNumber; // the last frame number that was tracked
 
     bool m_playing;
     bool m_playOnce;

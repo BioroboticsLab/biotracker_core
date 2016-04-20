@@ -226,13 +226,14 @@ void TrackingThread::tick(const double fps) {
 
     doTracking();
     const size_t currentFrame = m_imageStream->currentFrameNumber();
-    if (m_playing) {
-        nextFrame();
-    }
     m_renderMutex.unlock();
     m_paintMutex.lock();
     Q_EMIT frameCalculated(currentFrame, fileName, fps);
     m_paintMutex.unlock();
+
+    if (m_playing) {
+        nextFrame();
+    }
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
@@ -271,6 +272,12 @@ void TrackingThread::doTracking() {
     try {
         m_tracker->attemptTracking(m_imageStream->currentFrameNumber(),
                                    m_imageStream->currentFrame());
+
+        // we need to store the last tracked framenumber to use this value
+        // in the paint methods. We MUST NOT use "m_imageStream->currentFrameNumber()"
+        // in the paint methods as the value might be one off due to multithreading!
+        // !!! (We cannot guarenty when "nextFrame" is called) !!!
+        m_lastTrackedFrameNumber = m_imageStream->currentFrameNumber();
     } catch (const std::exception &err) {
         Q_EMIT notifyGUI("critical error in selected tracking algorithm: " +
                          std::string(err.what()), MessageType::FAIL);
@@ -303,7 +310,7 @@ void TrackingThread::keyboardEvent(QKeyEvent *event) {
 }
 
 size_t TrackingThread::getFrameNumber() const {
-    return m_imageStream->currentFrameNumber();
+    return m_lastTrackedFrameNumber;
 }
 
 void TrackingThread::setPause() {
@@ -411,13 +418,13 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         {
             MutexLocker trackerLock(m_trackerMutex);
             if (m_tracker) {
-                m_tracker.get()->paint(m_imageStream->currentFrameNumber(), proxy, v);
+                m_tracker.get()->paint(m_lastTrackedFrameNumber, proxy, v);
             }
         }
 
-        if (proxy.isModified() || (m_lastFrameNumber != m_imageStream->currentFrameNumber())) {
+        if (proxy.isModified() || (m_lastFrameNumber != m_lastTrackedFrameNumber)) {
             m_texture.set(proxy.getMat());
-            m_lastFrameNumber = m_imageStream->currentFrameNumber();
+            m_lastFrameNumber = m_lastTrackedFrameNumber;
         }
 
         // We use setWindow and setViewport to fit the video into the
@@ -459,7 +466,7 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         {
             MutexLocker trackerLock(m_trackerMutex);
             if (m_tracker) {
-                m_tracker.get()->paintOverlay(m_imageStream->currentFrameNumber(), &painter, v);
+                m_tracker.get()->paintOverlay(m_lastTrackedFrameNumber, &painter, v);
             }
         }
         paintDone();
