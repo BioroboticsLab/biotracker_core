@@ -1,12 +1,8 @@
 #pragma once
 
 #include <QString>
-#include <QRect>
-#include <QPainter>
-#include <QPoint>
-#include <zmq.h>
+#include <QStringList>
 #include <boost/filesystem/operations.hpp>
-#include <opencv2/opencv.hpp>
 
 namespace BioTracker {
 namespace Core {
