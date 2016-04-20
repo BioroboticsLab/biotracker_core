@@ -10,6 +10,11 @@ add_library(${CPM_LIB_TARGET_NAME} SHARED ${BIOTRACKER_CORE_LIB_TYPE}
     ${src} ${hdr} ${UI_RESOURCES} ${UI_HEADERS}
 )
 
+MESSAGE( STATUS "OpenCV_LIBS: " ${OpenCV_LIBS} )
+MESSAGE( STATUS "Boost_LIBRARIES: " ${Boost_LIBRARIES} )
+MESSAGE( STATUS "CPM_LIBRARIES: " ${CPM_LIBRARIES} )
+MESSAGE( STATUS "ZMQ_LIBRARIES: " ${ZMQ_LIBRARIES} )
+
 target_link_libraries(${CPM_LIB_TARGET_NAME}
     Qt5::Widgets
     Qt5::OpenGL
@@ -18,42 +23,12 @@ target_link_libraries(${CPM_LIB_TARGET_NAME}
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${CPM_LIBRARIES}
-    ${ZMQ_LIBS}
+    ${ZMQ_LIBRARIES}
 )
 
 target_include_directories(${CPM_LIB_TARGET_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-# automatic copy of required dlls to install prefix for windows
-if(WIN32)
-	set(APPS "\${CMAKE_INSTALL_PREFIX}/BioTracker.exe")
-	install(TARGETS BioTracker
-		BUNDLE DESTINATION . COMPONENT Runtime
-		RUNTIME DESTINATION . COMPONENT Runtime)
-
-	set(PLUGINS "")
-	file(TO_CMAKE_PATH ${OpenCV_DIR} OpenCV_DIR)
-	set(LIBRARY_DIRS "${OpenCV_DIR} ${Qt5Core_DIR} ${Qt5Gui_DIR} ${Qt5OpenGL_DIR} ${Qt5Widgets_DIR}")
-	install(CODE "
-	  include(BundleUtilities)
-	  fixup_bundle(\"${APPS}\" \"\${PLUGINS}\" \"${LIBRARY_DIRS}\")
-	  " COMPONENT Runtime)
-	install(FILES
-	  ${Qt5Core_DIR}/../../../plugins/platforms/qwindows.dll
-	  DESTINATION "${CMAKE_INSTALL_PREFIX}/platforms"
-	)
-	
-	include(GetGitRevisionDescription)
-	get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-	string(SUBSTRING ${GIT_SHA1} 0 7 GIT_SHA1)
-	string(TIMESTAMP timestamp "%Y%m%d")
-	
-	set(CPACK_PACKAGE_FILE_NAME "BioTracker-${timestamp}-${GIT_SHA1}")
-	set(CPACK_GENERATOR "ZIP")
-	
-	include(CPACK)
-endif()
 
 # add files to source groups to preserve folder structure in visual studio
 # adapted from: http://goo.gl/Xde41i

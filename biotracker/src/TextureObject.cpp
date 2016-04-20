@@ -42,7 +42,7 @@ void TextureObject::set(cv::Mat const &img) {
                     m_img.data,
                     m_img.cols,
                     m_img.rows,
-                    m_img.step,
+                    static_cast<int>(m_img.step),
                     QImage::Format_RGB888
                 );
 }

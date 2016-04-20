@@ -79,7 +79,7 @@ class Registry : public QObject, public Util::Singleton<Registry> {
     void trackerIsAlreadyLoaded(const std::string name);
 
   private:
-    friend class Singleton<Registry>;
+    friend class Util::Singleton<Registry>;
 
     map_string_type_t m_typeByString;
     map_type_string_t m_stringByType;

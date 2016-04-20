@@ -23,7 +23,7 @@ ZmqInfoFile::ZmqInfoFile(const boost::filesystem::path &path) {
     QString name = QString::fromStdString(path.stem().string());
     QString path_folder = QString::fromStdString(path.string());
     const int last = path_folder.length() - 1;
-    const int first = last - path.filename().string().length();
+    const int first = last - static_cast<int>(path.filename().string().length());
     path_folder = path_folder.remove(first, last);
 
     QString program;

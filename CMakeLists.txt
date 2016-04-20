@@ -5,6 +5,10 @@ if (POLICY CMP0020)
 endif(POLICY CMP0020)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+# add custom cmake packages
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 project(biotracker_core)
 
 #-----------------------------------------------------------------------
@@ -69,44 +73,10 @@ find_package(OpenGL REQUIRED)
 find_package(Qt5Widgets 5.4 REQUIRED)
 find_package(Qt5OpenGL 5.4 REQUIRED)
 find_package(Threads REQUIRED)
+find_package(ZMQ REQUIRED)
 
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost COMPONENTS filesystem serialization system REQUIRED)
-
-# FIND ZMQ
-if (ZMQ_LIBS AND ZMQ_INCLUDES)
-    set(ZMQ_FOUND TRUE)
-else (ZMQ_LIB AND ZMQ_INCLUDE)
-    find_path(ZMQ_INCLUDE NAMES zmq.h PATHS /usr/include /usr/local/include)
-    find_library(ZMQ_LIB NAMES zmq PATHS /usr/lib /usr/local/lib)
-
-    set (ZMQ_INCLUDES ${ZMQ_INCLUDE})
-
-    if (ZMQ_LIB)
-        set (ZMQ_LIBS ${ZMQ_LIBS} ${ZMQ_LIB})
-    endif (ZMQ_LIB)
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(ZMQ DEFAULT_MSG ZMQ_LIBS ZMQ_INCLUDES)
-
-endif (ZMQ_LIBS AND ZMQ_INCLUDES)
-
-# FIND ZMQ
-if (ZMQ_LIBS AND ZMQ_INCLUDES)
-    set(ZMQ_FOUND TRUE)
-else (ZMQ_LIB AND ZMQ_INCLUDE)
-    find_path(ZMQ_INCLUDE NAMES zmq.h PATHS /usr/include /usr/local/include)
-    find_library(ZMQ_LIB NAMES zmq PATHS /usr/lib /usr/local/lib)
-
-    set (ZMQ_INCLUDES ${ZMQ_INCLUDE})
-
-    if (ZMQ_LIB)
-        set (ZMQ_LIBS ${ZMQ_LIBS} ${ZMQ_LIB})
-    endif (ZMQ_LIB)
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(ZMQ DEFAULT_MSG ZMQ_LIBS ZMQ_INCLUDES)
-
-endif (ZMQ_LIBS AND ZMQ_INCLUDES)
-
 
 # Qt options
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -115,15 +85,23 @@ add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(-DQT_NO_KEYWORDS)
 CPM_ExportAdditionalDefinition(-DQT_NO_KEYWORDS)
 
+# Disable warnings
+add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+
 # include external dependecies as SYSTEM headers to prevent warnings from
 # external files. unfortunately, this has no effect when using MSVC.
 include_directories(
     ${PROJECT_SOURCE_DIR}
-    SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
     SYSTEM ${OpenCV_INCLUDE_DIRS}
     SYSTEM ${Qt5OpenGL_INCLUDE_DIRS}
-    SYSTEM ${ZMQ_INCLUDES}
+    SYSTEM ${Qt5Widgets_INCLUDE_DIRS}
+    SYSTEM ${Boost_INCLUDE_DIRS}
+    SYSTEM ${ZMQ_INCLUDE_DIRS}
     SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/
+)
+
+link_directories(
+    ${Boost_LIBRARY_DIRS}
 )
 
 add_subdirectory(biotracker)
