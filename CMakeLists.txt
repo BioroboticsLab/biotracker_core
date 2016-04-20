@@ -4,6 +4,11 @@ if (POLICY CMP0020)
 	cmake_policy (SET CMP0020 NEW)
 endif(POLICY CMP0020)
 
+# Do not try to resolve simple strings as if they were variables.
+if (POLICY CMP0054)
+    cmake_policy (SET CMP0054 NEW)
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # add custom cmake packages
