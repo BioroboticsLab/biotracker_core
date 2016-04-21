@@ -4,10 +4,12 @@
 #include <string>    // std::string
 #include <stdexcept> // std::invalid_argument
 
+#include "util/platform.h"
+
 namespace BioTracker {
 namespace Util {
 
-std::string escape_non_ascii(const std::string &s) {
+std::string BIOTRACKER_DLLEXPORT escape_non_ascii(const std::string &s) {
     std::string result;
     for (const auto c : s) {
         // MSB is set --> not a valid ASCII character --> escape
@@ -29,7 +31,7 @@ std::string escape_non_ascii(const std::string &s) {
 }
 
 
-std::string unescape_non_ascii(const std::string &s) {
+std::string BIOTRACKER_DLLEXPORT unescape_non_ascii(const std::string &s) {
 
     const auto advance = [&s](std::string::const_iterator &it) {
         if (++it == s.cend()) {
@@ -78,7 +80,7 @@ std::string unescape_non_ascii(const std::string &s) {
     return result;
 }
 
-std::string stem_filename(const std::string &s) {
+std::string BIOTRACKER_DLLEXPORT stem_filename(const std::string &s) {
     boost::filesystem::path p(s);
     return p.stem().string();
 }

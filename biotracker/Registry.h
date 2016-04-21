@@ -6,6 +6,7 @@
 
 #include <QObject>
 
+#include "util/platform.h"
 #include "zmq/ZmqInfoFile.h"
 #include "TrackingAlgorithm.h"
 #include "util/stdext.h"
@@ -22,12 +23,12 @@ static const TrackerType NoTracking = 0;
 // construct on first use idiom
 TrackerType getNextId();
 
-struct NewTrackerFactory {
+struct BIOTRACKER_DLLEXPORT NewTrackerFactory {
     virtual std::shared_ptr<TrackingAlgorithm> operator()(Settings &settings) const = 0;
     virtual ~NewTrackerFactory() {}
 };
 
-class Registry : public QObject, public Util::Singleton<Registry> {
+class BIOTRACKER_DLLEXPORT Registry : public QObject, public Util::Singleton<Registry> {
     Q_OBJECT
   public:
     typedef std::map<const TrackerType, std::shared_ptr<NewTrackerFactory>>
