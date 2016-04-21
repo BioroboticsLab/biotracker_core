@@ -40,33 +40,31 @@ TrackingThread::~TrackingThread(void) {
 }
 
 void TrackingThread::loadFromSettings() {
-    std::string filenameStr = m_settings.getValueOfParam<std::string>
-                              (CaptureParam::CAP_VIDEO_FILE);
-    boost::filesystem::path filename {filenameStr};
-    m_imageStream = make_ImageStreamVideo(filename);
-    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
-        // could not open video
-        std::string errorMsg = "unable to open file " + filename.string();
-        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
-        m_status = TrackerStatus::Invalid;
-        return;
+    // Determine which media type was used the last time
+    boost::optional<uint8_t> mediaTypeOpt = m_settings.maybeGetValueOfParam<uint8_t>(GuiParam::MEDIA_TYPE);
+    GuiParam::MediaType mediaType = mediaTypeOpt ? static_cast<GuiParam::MediaType>(*mediaTypeOpt) :
+                                    GuiParam::MediaType::NoMedia;
+
+    if (mediaType == GuiParam::MediaType::Video) {
+        boost::optional<std::string> filenameStr = m_settings.maybeGetValueOfParam<std::string>(CaptureParam::CAP_VIDEO_FILE);
+        // Abort, because filename string was not set (just to prevent manipulated config files)
+        if (!filenameStr) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            return;
+        }
+        boost::filesystem::path filename {*filenameStr};
+        loadVideo(filename);
+    } else if (mediaType == GuiParam::MediaType::Camera) {
+        boost::optional<int> camIdOpt = m_settings.maybeGetValueOfParam<int>(CaptureParam::CAP_CAMERA_ID);
+        int camId = camIdOpt ? *camIdOpt : -1;
+        loadCamera(camId);
+    } else if (mediaType == GuiParam::MediaType::Images) {
+        // Currently, image paths are not saved in settings
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
     } else {
-        playOnce();
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
     }
 
-    m_fps = m_imageStream->fps();
-    m_ignoreFilenameChanged = false;
-    Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames(), m_fps);
-    if (m_tracker && m_somethingIsLoaded &&
-            m_lastFilename.compare(filenameStr) != 0) {
-        m_tracker->inputChanged();
-        m_tracker->onFileChanged(filenameStr);
-        m_lastFilename = filenameStr;
-    }
-
-    std::string note = "opened file: " + filenameStr + " (#frames: "
-                       + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
@@ -78,6 +76,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         m_status = TrackerStatus::Invalid;
         return;
     } else {
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
         playOnce();
     }
 
@@ -97,7 +96,6 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         }
     }
     Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
-    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
@@ -116,9 +114,11 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         m_status = TrackerStatus::Invalid;
         return;
     } else {
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
         playOnce();
         Q_EMIT fileOpened(m_imageStream->currentFilename(), m_imageStream->numFrames(),
                           m_fps);
+
         if (m_tracker) {
             m_tracker->inputChanged();
             if (m_somethingIsLoaded
@@ -128,7 +128,6 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
             }
         }
     }
-    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
 void TrackingThread::loadCamera(int device) {

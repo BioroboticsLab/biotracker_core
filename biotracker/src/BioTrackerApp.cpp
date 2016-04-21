@@ -17,6 +17,7 @@ BioTrackerApp::BioTrackerApp()
     loadModulesInPath(ConfigParam::MODULE_PATH);
 
     m_trackingThread.start();
+    m_trackingThread.loadFromSettings();
 }
 
 BioTrackerApp::~BioTrackerApp() {
