@@ -12,6 +12,7 @@
 #include <QPointer>
 #include <QMouseEvent>
 
+#include "util/platform.h"
 #include "settings/Messages.h"
 #include "settings/ParamNames.h"
 #include "serialization/TrackedObject.h"
@@ -55,14 +56,14 @@ class ProxyMat {
     boost::optional<cv::Mat> m_modifiedMat;
 };
 
-class TrackingAlgorithm : public QObject {
+class BIOTRACKER_DLLEXPORT TrackingAlgorithm : public QObject {
     Q_OBJECT
 
   public:
     TrackingAlgorithm(Settings &settings);
     virtual ~TrackingAlgorithm() override;
 
-    struct View {
+    struct BIOTRACKER_DLLEXPORT View {
         std::string name;
     };
 

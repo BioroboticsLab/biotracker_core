@@ -92,6 +92,8 @@ CPM_ExportAdditionalDefinition(-DQT_NO_KEYWORDS)
 
 # Disable warnings
 add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+# Specify that we want to export symbols to a DLL (as opposed to importing them from a DLL).
+add_definitions(-DBUILD_BIOTRACKER_DLL)
 
 # include external dependecies as SYSTEM headers to prevent warnings from
 # external files. unfortunately, this has no effect when using MSVC.

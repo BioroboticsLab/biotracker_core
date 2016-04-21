@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 
+#include "util/platform.h"
 #include "TrackingThread.h"
 #include "ImageStream.h"
 #include "Registry.h"
@@ -16,11 +17,12 @@
 #include "TrackerStatus.h"
 #include "PanZoomState.h"
 
+
 namespace BioTracker {
 namespace Core {
 
 /* Used to be Facade */
-class BioTrackerApp : public QObject {
+class BIOTRACKER_DLLEXPORT BioTrackerApp : public QObject {
   public:
     Q_OBJECT
   public:
