@@ -17,7 +17,6 @@ BioTrackerApp::BioTrackerApp()
     loadModulesInPath(ConfigParam::MODULE_PATH);
 
     m_trackingThread.start();
-    m_trackingThread.loadFromSettings();
 }
 
 BioTrackerApp::~BioTrackerApp() {
@@ -41,6 +40,10 @@ void BioTrackerApp::initConnects() {
 
     QObject::connect(&m_registry, &Core::Registry::trackerIsAlreadyLoaded,
                      this, &BioTrackerApp::trackerIsAlreadyLoadedFromRegistry);
+}
+
+void BioTrackerApp::openMedumBySetting() {
+    m_trackingThread.loadFromSettings();
 }
 
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
