@@ -1,6 +1,7 @@
 #include "TrackingThread.h"
 
 #include <iostream>
+#include <sstream>
 
 #include <chrono>
 #include <thread>
@@ -59,8 +60,27 @@ void TrackingThread::loadFromSettings() {
         int camId = camIdOpt ? *camIdOpt : -1;
         loadCamera(camId);
     } else if (mediaType == GuiParam::MediaType::Images) {
-        // Currently, image paths are not saved in settings
-        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+        boost::optional<std::string> filenamesStrOpt = m_settings.maybeGetValueOfParam<std::string>
+                (PictureParam::PICTURE_FILES);
+
+        if (!filenamesStrOpt) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            return;
+        }
+        std::string filenamesStr = *filenamesStrOpt;
+
+        // Split string of paths into a vector a paths
+        // source: http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+        std::vector<boost::filesystem::path> filenames;
+        std::string delimiter = ";";
+        size_t pos = 0;
+        std::string token;
+        while ((pos = filenamesStr.find(delimiter)) != std::string::npos) {
+            token = filenamesStr.substr(0, pos);
+            filenames.push_back(boost::filesystem::path(token));
+            filenamesStr.erase(0, pos + delimiter.length());
+        }
+        loadPictures(std::move(filenames));
     } else {
         m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
     }
@@ -102,6 +122,17 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
                                   &&filenames) {
     m_fps = 1;
     m_ignoreFilenameChanged = false;
+
+    // Convert filenames into one string for settings. This is done here, because move may clear the vector with filenames.
+    std::stringstream filenamesStr;
+    if (!filenames.empty()) {
+        filenamesStr << filenames[0].string();
+        for (uint32_t i = 1; i < filenames.size(); i++) {
+            filenamesStr << ';';
+            filenamesStr << filenames[i].string();
+        }
+    }
+
     m_imageStream = make_ImageStreamPictures(std::move(filenames));
     if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
@@ -119,6 +150,7 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         Q_EMIT fileOpened(m_imageStream->currentFilename(), m_imageStream->numFrames(),
                           m_fps);
 
+        m_settings.setParam(PictureParam::PICTURE_FILES, filenamesStr.str());
         if (m_tracker) {
             m_tracker->inputChanged();
             if (m_somethingIsLoaded
