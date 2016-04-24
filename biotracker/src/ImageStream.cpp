@@ -134,6 +134,10 @@ class ImageStreamPictures : public ImageStream {
   public:
     explicit ImageStreamPictures(std::vector<boost::filesystem::path> picture_files)
         : m_picture_files(std::move(picture_files)) {
+        if (m_picture_files.empty()) {
+            throw file_not_found("Could not find any picture files");
+        }
+
         // load first image
         if (this->numFrames() > 0) {
             this->setFrameNumber_impl(0);
@@ -244,7 +248,7 @@ class ImageStreamCamera : public ImageStream {
         : m_capture(device_id)
         , m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
         if (! m_capture.isOpened()) {
-            throw device_open_error(":(");
+            throw device_open_error("Could not open camera " + std::to_string(device_id));
         }
         // load first image
         if (this->numFrames() > 0) {

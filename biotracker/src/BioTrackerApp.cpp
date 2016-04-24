@@ -42,6 +42,10 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::trackerIsAlreadyLoadedFromRegistry);
 }
 
+void BioTrackerApp::openMediumBySetting() {
+    m_trackingThread.loadFromSettings();
+}
+
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
     m_trackingThread.loadVideo(path);
 }

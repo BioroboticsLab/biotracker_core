@@ -1,6 +1,7 @@
 #include "TrackingThread.h"
 
 #include <iostream>
+#include <sstream>
 
 #include <chrono>
 #include <thread>
@@ -10,6 +11,7 @@
 #include "settings/Messages.h"
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
+#include "Exceptions.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
@@ -40,33 +42,66 @@ TrackingThread::~TrackingThread(void) {
 }
 
 void TrackingThread::loadFromSettings() {
-    std::string filenameStr = m_settings.getValueOfParam<std::string>
-                              (CaptureParam::CAP_VIDEO_FILE);
-    boost::filesystem::path filename {filenameStr};
-    m_imageStream = make_ImageStreamVideo(filename);
-    if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
-        // could not open video
-        std::string errorMsg = "unable to open file " + filename.string();
-        Q_EMIT notifyGUI(errorMsg, MessageType::FAIL);
-        m_status = TrackerStatus::Invalid;
-        return;
+    // Determine which media type was used the last time
+    boost::optional<uint8_t> mediaTypeOpt = m_settings.maybeGetValueOfParam<uint8_t>(GuiParam::MEDIA_TYPE);
+    GuiParam::MediaType mediaType = mediaTypeOpt ? static_cast<GuiParam::MediaType>(*mediaTypeOpt) :
+                                    GuiParam::MediaType::NoMedia;
+
+    if (mediaType == GuiParam::MediaType::Video) {
+        boost::optional<std::string> filenameStr = m_settings.maybeGetValueOfParam<std::string>(CaptureParam::CAP_VIDEO_FILE);
+        // Abort, because filename string was not set (just to prevent manipulated config files)
+        if (!filenameStr) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            return;
+        }
+        boost::filesystem::path filename {*filenameStr};
+        try {
+            loadVideo(filename);
+        } catch (file_not_found &e) {
+            // Preventing segfault when video file vanished
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
+    } else if (mediaType == GuiParam::MediaType::Camera) {
+        boost::optional<int> camIdOpt = m_settings.maybeGetValueOfParam<int>(CaptureParam::CAP_CAMERA_ID);
+        int camId = camIdOpt ? *camIdOpt : -1;
+        try {
+            loadCamera(camId);
+        } catch (device_open_error e) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
+    } else if (mediaType == GuiParam::MediaType::Images) {
+        boost::optional<std::string> filenamesStrOpt = m_settings.maybeGetValueOfParam<std::string>
+                (PictureParam::PICTURE_FILES);
+
+        if (!filenamesStrOpt) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            return;
+        }
+        std::string filenamesStr = *filenamesStrOpt;
+
+        // Split string of paths into a vector a paths
+        // source: http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+        std::vector<boost::filesystem::path> filenames;
+        std::string delimiter = ";";
+        size_t pos = 0;
+        std::string token;
+        while ((pos = filenamesStr.find(delimiter)) != std::string::npos) {
+            token = filenamesStr.substr(0, pos);
+            filenames.push_back(boost::filesystem::path(token));
+            filenamesStr.erase(0, pos + delimiter.length());
+        }
+        try {
+            loadPictures(std::move(filenames));
+        } catch (file_not_found e) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
     } else {
-        playOnce();
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
     }
 
-    m_fps = m_imageStream->fps();
-    m_ignoreFilenameChanged = false;
-    Q_EMIT fileOpened(filenameStr, m_imageStream->numFrames(), m_fps);
-    if (m_tracker && m_somethingIsLoaded &&
-            m_lastFilename.compare(filenameStr) != 0) {
-        m_tracker->inputChanged();
-        m_tracker->onFileChanged(filenameStr);
-        m_lastFilename = filenameStr;
-    }
-
-    std::string note = "opened file: " + filenameStr + " (#frames: "
-                       + QString::number(m_imageStream->numFrames()).toStdString() + ")";
-    Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
@@ -78,6 +113,7 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         m_status = TrackerStatus::Invalid;
         return;
     } else {
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
         playOnce();
     }
 
@@ -97,13 +133,23 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
         }
     }
     Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
-    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
                                   &&filenames) {
     m_fps = 1;
     m_ignoreFilenameChanged = false;
+
+    // Convert filenames into one string for settings. This is done here, because move may clear the vector with filenames.
+    std::stringstream filenamesStr;
+    if (!filenames.empty()) {
+        filenamesStr << filenames[0].string();
+        for (uint32_t i = 1; i < filenames.size(); i++) {
+            filenamesStr << ';';
+            filenamesStr << filenames[i].string();
+        }
+    }
+
     m_imageStream = make_ImageStreamPictures(std::move(filenames));
     if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
         // could not open video
@@ -116,9 +162,12 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
         m_status = TrackerStatus::Invalid;
         return;
     } else {
+        m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
         playOnce();
         Q_EMIT fileOpened(m_imageStream->currentFilename(), m_imageStream->numFrames(),
                           m_fps);
+
+        m_settings.setParam(PictureParam::PICTURE_FILES, filenamesStr.str());
         if (m_tracker) {
             m_tracker->inputChanged();
             if (m_somethingIsLoaded
@@ -128,7 +177,6 @@ void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
             }
         }
     }
-    m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
 void TrackingThread::loadCamera(int device) {
