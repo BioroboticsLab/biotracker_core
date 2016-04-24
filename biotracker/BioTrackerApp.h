@@ -52,7 +52,7 @@ class BIOTRACKER_DLLEXPORT BioTrackerApp : public QObject {
      * @throw boost::filesystem_error
      * @brief openMediaBySetting opens a medium (camera, images or video) which has been storen in the settings
      */
-    void openMedumBySetting();
+    void openMediumBySetting();
 
     /**
      * @throw boost::filesystem_error

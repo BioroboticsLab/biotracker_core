@@ -11,6 +11,7 @@
 #include "settings/Messages.h"
 #include "settings/Settings.h"
 #include "settings/ParamNames.h"
+#include "Exceptions.h"
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
@@ -54,11 +55,22 @@ void TrackingThread::loadFromSettings() {
             return;
         }
         boost::filesystem::path filename {*filenameStr};
-        loadVideo(filename);
+        try {
+            loadVideo(filename);
+        } catch (file_not_found &e) {
+            // Preventing segfault when video file vanished
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
     } else if (mediaType == GuiParam::MediaType::Camera) {
         boost::optional<int> camIdOpt = m_settings.maybeGetValueOfParam<int>(CaptureParam::CAP_CAMERA_ID);
         int camId = camIdOpt ? *camIdOpt : -1;
-        loadCamera(camId);
+        try {
+            loadCamera(camId);
+        } catch (device_open_error e) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
     } else if (mediaType == GuiParam::MediaType::Images) {
         boost::optional<std::string> filenamesStrOpt = m_settings.maybeGetValueOfParam<std::string>
                 (PictureParam::PICTURE_FILES);
@@ -80,7 +92,12 @@ void TrackingThread::loadFromSettings() {
             filenames.push_back(boost::filesystem::path(token));
             filenamesStr.erase(0, pos + delimiter.length());
         }
-        loadPictures(std::move(filenames));
+        try {
+            loadPictures(std::move(filenames));
+        } catch (file_not_found e) {
+            m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
+            Q_EMIT notifyGUI(e.what(), MessageType::FAIL);
+        }
     } else {
         m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(GuiParam::MediaType::NoMedia));
     }

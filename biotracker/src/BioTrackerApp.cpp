@@ -42,7 +42,7 @@ void BioTrackerApp::initConnects() {
                      this, &BioTrackerApp::trackerIsAlreadyLoadedFromRegistry);
 }
 
-void BioTrackerApp::openMedumBySetting() {
+void BioTrackerApp::openMediumBySetting() {
     m_trackingThread.loadFromSettings();
 }
 
