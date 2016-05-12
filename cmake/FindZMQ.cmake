@@ -32,8 +32,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
             SET(ZMQ_LIBRARY ${zmq})
         ENDIF (zmq AND NOT ZMQ_LIBRARY)
     endforeach(directory)
-else()
-    FIND_LIBRARY(ZMQ_LIBRARY NAMES zmq PATHS
+endif()
+# If we are either on non-windows OR the custom windows search failed, try the normal one.
+if (NOT ZMQ_LIBRARY)
+    FIND_LIBRARY(ZMQ_LIBRARY NAMES zmq libzmq PATHS
         $ENV{ZMQ_DIR}/lib
         $ENV{ZMQ_LIBRARY_DIR}
         /usr/lib
