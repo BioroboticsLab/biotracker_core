@@ -3,6 +3,8 @@
 #include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
 
+#include "util/platform.h"
+
 namespace BioTracker {
 namespace Core {
 
@@ -10,7 +12,7 @@ namespace Core {
 * class representing the object/animal
 * which is to be tracked
 */
-class ObjectModel {
+class BIOTRACKER_DLLEXPORT ObjectModel {
   public:
     virtual ~ObjectModel() = 0;
 };

@@ -11,13 +11,14 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
 
+#include "util/platform.h"
 #include "ObjectModel.h"
 #include "types.hpp"
 
 namespace BioTracker {
 namespace Core {
 
-class TrackedObject {
+class BIOTRACKER_DLLEXPORT TrackedObject {
   public:
     TrackedObject(size_t id);
     //TODO: check if default ctor is really necessary for cereal
@@ -73,8 +74,17 @@ class TrackedObject {
   private:
     size_t _id;
     size_t m_maximumFrameNumber;
-    std::map<size_t, std::shared_ptr<ObjectModel>> _objectsByFrame;
 
+#ifdef _MSC_VER
+    // Disable DLL export warning for this member. This is only possible
+    // because the member is private and can not be accessed directly when using the DLL anyway.
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
+#endif
+    std::map<size_t, std::shared_ptr<ObjectModel>> _objectsByFrame ;
+#ifdef _MSC_VER
+#  pragma warning( pop )
+#endif
     friend class cereal::access;
     template <class Archive>
     void serialize(Archive &ar) {
