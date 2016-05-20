@@ -418,6 +418,10 @@ void TrackingThread::setMaxSpeed(bool enabled) {
 
 void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
         BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
+    // We must aquire the rendering mutex because otherwise we might land in
+    // a race-condition with the tick() function, which tries to advance the current frame.
+    // This problem happens when panning/zooming a video while playing it.
+    m_renderMutex.lock();
 
     // clear background
     painter.setBrush(QColor(0, 0, 0));
@@ -489,6 +493,7 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
         paintDone();
     }
     m_paintMutex.unlock();
+    m_renderMutex.unlock();
 }
 
 void BioTracker::Core::TrackingThread::registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views) {
