@@ -94,7 +94,7 @@ class TrackingThread : public QThread {
     void enableTracking();
 
     /**
-     * @brief enableTracking
+     * @brief disableTracking
      * sets the tracker to be disabled. Only the draw-functions
      * will be called
      */
@@ -114,6 +114,21 @@ class TrackingThread : public QThread {
     void mouseEvent(QMouseEvent *event);
     void mouseWheelEvent(QWheelEvent *event);
     void keyboardEvent(QKeyEvent *event);
+
+    /**
+     * calls the tracked 'loadTrackedObjects' function
+     */
+    void loadTrackedObjects(std::vector<TrackedObject> const &objects);
+    void loadTrackedObjects(std::vector<TrackedObject> &&objects);
+    /**
+     * @return current trajectories
+     */
+    boost::optional<std::vector<TrackedObject> const &> getTrackedObjects();
+
+    /**
+     * @return type of current tracker
+     */
+    boost::optional<Algorithm::Type> getTrackerType() ;
 
   private:
     std::unique_ptr<ImageStream> m_imageStream;

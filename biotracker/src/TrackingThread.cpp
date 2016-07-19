@@ -323,6 +323,37 @@ void TrackingThread::keyboardEvent(QKeyEvent *event) {
     }
 }
 
+
+void TrackingThread::loadTrackedObjects(std::vector<TrackedObject> const &objects) {
+    MutexLocker lock(m_trackerMutex);
+    if (m_tracker) {
+        m_tracker.get()->loadObjects(objects);
+    }
+}
+void TrackingThread::loadTrackedObjects(std::vector<TrackedObject> &&objects) {
+    MutexLocker lock(m_trackerMutex);
+    if (m_tracker) {
+        m_tracker.get()->loadObjects(objects);
+    }
+}
+
+boost::optional<std::vector<TrackedObject> const &> TrackingThread::getTrackedObjects() {
+    MutexLocker lock(m_trackerMutex);
+    if (m_tracker) {
+        return m_tracker.get()->getObjects();
+    }
+    return boost::none;
+}
+
+
+boost::optional<Algorithm::Type> TrackingThread::getTrackerType() {
+    MutexLocker lock(m_trackerMutex);
+    if (m_tracker) {
+        return m_tracker.get()->getType();
+    }
+    return boost::none;
+}
+
 size_t TrackingThread::getFrameNumber() const {
     return m_lastTrackedFrameNumber;
 }
