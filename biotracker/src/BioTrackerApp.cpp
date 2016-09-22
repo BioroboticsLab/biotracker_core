@@ -9,6 +9,19 @@
 namespace BioTracker {
 namespace Core {
 
+/**
+ * The consturctor instantiates m_settings.
+ * m_settings BioTrackerApp::m_settings is the BioTracker setting class BioTracker::Core::Settings.
+ * The default constructor of BioTracker::Core::Settings is used to instantiate m_settings.
+ *
+ * A registry Registry::getInstance() for loading and registering new tracker
+ * from a shared library is called by the constructor. In the whole BioTracker only one registry is
+ * allowed. Therefore the registry was designt as a singleton BioTracker::Util::Singleton.
+ *
+ * BioTrackerApp constructor also calles for a Registry. The Registry is a singleton and
+ * used for loading and registering new tracker from shared libraries.
+ * In the constructor
+ */
 BioTrackerApp::BioTrackerApp()
     : m_settings()
     , m_registry(Registry::getInstance())
@@ -24,24 +37,43 @@ BioTrackerApp::~BioTrackerApp() {
     m_trackingThread.wait();
 }
 
+/**
+ * So far there are six connections between the BioTrackerApp and the TrackingThread and one connection to the
+ * Registry.
+ *
+ *
+ */
 void BioTrackerApp::initConnects() {
+
+    /** @code{.cpp} */
     QObject::connect(&m_trackingThread, &Core::TrackingThread::frameCalculated,
                      this, &BioTrackerApp::frameCalculatedFromTrackingThread);
+
     QObject::connect(&m_trackingThread, &Core::TrackingThread::notifyGUI,
                      this, &BioTrackerApp::notifyFromTrackingThread);
+
     QObject::connect(&m_trackingThread, &Core::TrackingThread::fileOpened,
                      this, &BioTrackerApp::fileOpenedFromTrackingThread);
+
     QObject::connect(&m_trackingThread, &Core::TrackingThread::trackerSelected,
                      this, &BioTrackerApp::trackerSelectedFromTrackingThread);
+
     QObject::connect(&m_trackingThread, &Core::TrackingThread::registerViews,
                      this, &BioTrackerApp::registerViewsFromTrackingThread);
+
     QObject::connect(&m_trackingThread, &Core::TrackingThread::requestPaint,
                      this, &BioTrackerApp::requestPaintFromTrackingThread);
 
     QObject::connect(&m_registry, &Core::Registry::trackerIsAlreadyLoaded,
                      this, &BioTrackerApp::trackerIsAlreadyLoadedFromRegistry);
+    /**  @endcode */
 }
 
+/**
+ * BioTrackerApp calls the loadVideo function of TrackingThread::loadVideo().
+ * TrackingThread will stored the file path as a parameter of Settings.
+ * Only video formats supported by OpenCV can be used with the BioTracker
+ */
 void BioTrackerApp::openVideo(const boost::filesystem::path &path) {
     m_trackingThread.loadVideo(path);
 }
@@ -131,16 +163,12 @@ void BioTrackerApp::notifyFromTrackingThread(const std::string &message,
     Q_EMIT notify(message, type);
 }
 
-/**
- * @brief BioTrackerApp::frameCalculatedFromTrackingThread
- * @param frameNumber the number of the last frame that was calculated
- * @param filename
- * @param currentFps, when -1, then the stream is not playing but the user clicked next
- */
+
 void BioTrackerApp::frameCalculatedFromTrackingThread(const size_t frameNumber,
         const std::string filename, const double currentFps) {
     Q_EMIT frameCalculated(frameNumber, filename, currentFps);
 }
+
 
 void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path) {
     if (!boost::filesystem::is_directory(path)) {
@@ -150,7 +178,7 @@ void BioTrackerApp::loadModulesInPath(const boost::filesystem::path &path) {
     for (auto &p : boost::make_iterator_range(boost::filesystem::directory_iterator(path), {})) {
         std::vector<std::string> parts;
         boost::split(parts, p.path().string(), boost::is_any_of("."));
-        /* expect filename to be of form: name.tracker.ext */
+        /** @note expect filename to be of form: name.tracker.ext */
         if (parts.size() >= 3) {
             getRegistry().loadTrackerLibrary(p);
         }
