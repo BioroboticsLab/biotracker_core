@@ -1,4 +1,5 @@
 #include "TextureObject.h"
+#include "util/QtOcv.h"
 
 namespace BioTracker {
 namespace Core {
@@ -38,13 +39,7 @@ void TextureObject::set(cv::Mat const &img) {
         m_img = img;
     }
 
-    m_texture = QImage(
-                    m_img.data,
-                    m_img.cols,
-                    m_img.rows,
-                    static_cast<int>(m_img.step),
-                    QImage::Format_RGB888
-                );
+    m_texture = QtOcv::mat2Image(m_img);
 }
 
 
