@@ -1,13 +1,13 @@
-#include "Playing.h"
+#include "PStatePlay.h"
 #include "BioTracker3Player.h"
 
-Playing::Playing(BioTracker3Player *player, IModel *textureObject,
-                 std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStatePlay::PStatePlay(BioTracker3Player *player, IModel *textureObject,
+                       std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
     IPlayerState(player, textureObject, imageStream) {
 
 }
 
-void Playing::doIt() {
+void PStatePlay::operate() {
     m_ImageStream->nextFrame();
 
     dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(m_TextureObjectModel)->set(m_ImageStream->currentFrame());
@@ -17,18 +17,18 @@ void Playing::doIt() {
     Q_EMIT emitNextState(IPlayerState::STATE_PLAY);
 }
 
-bool Playing::stateOfPlay() {
+bool PStatePlay::stateOfPlay() {
     return true;
 }
 
-bool Playing::stateOfRew() {
+bool PStatePlay::stateOfRew() {
     return false;
 }
 
-bool Playing::stateOfStepForward() {
+bool PStatePlay::stateOfStepForward() {
     return false;
 }
 
-bool Playing::stateOfStop() {
+bool PStatePlay::stateOfStop() {
     return true;
 }
