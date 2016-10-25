@@ -3,6 +3,7 @@
 namespace BioTracker {
 namespace Core {
 
+
 TrackingAlgorithm::TrackingAlgorithm(Settings &settings)
     : QObject()
     , m_settings(settings)
@@ -74,6 +75,7 @@ boost::optional<cv::Mat> TrackingAlgorithm::getCurrentImageCopy() const {
         return boost::optional<cv::Mat>();
     }
 }
+
 
 const TrackingAlgorithm::View TrackingAlgorithm::OriginalView {"Original"};
 

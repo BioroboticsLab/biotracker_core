@@ -7,6 +7,7 @@ class IModel : public QObject {
     Q_OBJECT
   public:
     explicit IModel(QObject *parent = 0);
+    ~IModel();
 
   Q_SIGNALS:
 

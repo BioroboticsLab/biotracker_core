@@ -3,7 +3,7 @@
 #include <cereal/cereal.hpp>
 #include <cereal/access.hpp>
 
-#include "util/platform.h"
+#include "biotracker/util/platform.h"
 
 namespace BioTracker {
 namespace Core {

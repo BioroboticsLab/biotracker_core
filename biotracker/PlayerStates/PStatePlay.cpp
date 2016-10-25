@@ -1,5 +1,5 @@
 #include "PStatePlay.h"
-#include "BioTracker3Player.h"
+#include "Model/BioTracker3Player.h"
 
 PStatePlay::PStatePlay(BioTracker3Player *player, IModel *textureObject,
                        std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
@@ -8,27 +8,25 @@ PStatePlay::PStatePlay(BioTracker3Player *player, IModel *textureObject,
 }
 
 void PStatePlay::operate() {
-    m_ImageStream->nextFrame();
 
-    dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(m_TextureObjectModel)->set(m_ImageStream->currentFrame());
+    bool isLastFrame = m_ImageStream->lastFrame();
+    IPlayerState::PLAYER_STATES nextState = IPlayerState::STATE_INITIAL;
 
-    Q_EMIT m_Player->notifyView();
+    if (!isLastFrame) {
+        m_ImageStream->nextFrame();
+        dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(m_TextureObjectModel)->set(m_ImageStream->currentFrame());
+        nextState = IPlayerState::STATE_PLAY;
+    } else {
+        nextState = IPlayerState::STATE_INITIAL_STREAM;
+    }
 
-    Q_EMIT emitNextState(IPlayerState::STATE_PLAY);
-}
+    Q_EMIT emitStateOfPlay(true);
+    Q_EMIT emitStateOfStepForward(false);
+    Q_EMIT emitStateOfStepBackward(false);
+    Q_EMIT emitStateOfStop(true);
+    Q_EMIT emitStateOfPause(true);
 
-bool PStatePlay::stateOfPlay() {
-    return true;
-}
+    Q_EMIT emitNextState(nextState);
 
-bool PStatePlay::stateOfRew() {
-    return false;
-}
-
-bool PStatePlay::stateOfStepForward() {
-    return false;
-}
-
-bool PStatePlay::stateOfStop() {
-    return true;
+    Q_EMIT emitOperationDone();
 }

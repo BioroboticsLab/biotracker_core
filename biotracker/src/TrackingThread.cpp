@@ -13,6 +13,7 @@
 
 #include <QCoreApplication>
 #include <QtOpenGL/qgl.h>
+#include <QDebug>
 
 #include <biotracker/util/ScreenHelper.h>
 #include <QPainter>
@@ -33,13 +34,19 @@ TrackingThread::TrackingThread(Settings &settings) :
     m_maxSpeed(false),
     m_mediaType(MediaType::NoMedia),
     m_settings(settings) {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread() get called from?: "<<QThread::currentThreadId();
     Interpreter::Interpreter p;
+
+    //loadFromSettings();
 }
 
 TrackingThread::~TrackingThread(void) {
 }
 
 void TrackingThread::loadFromSettings() {
+
     std::string filenameStr = m_settings.getValueOfParam<std::string>
                               (CaptureParam::CAP_VIDEO_FILE);
     boost::filesystem::path filename {filenameStr};
@@ -69,6 +76,12 @@ void TrackingThread::loadFromSettings() {
     Q_EMIT notifyGUI(note, MessageType::FILE_OPEN);
 }
 
+
+
+/**
+ * and sa
+ *
+ */
 void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     m_imageStream = make_ImageStreamVideo(filename);
     if (m_imageStream->type() == GuiParam::MediaType::NoMedia) {
@@ -100,6 +113,11 @@ void TrackingThread::loadVideo(const boost::filesystem::path &filename) {
     m_settings.setParam<uint8_t>(GuiParam::MEDIA_TYPE, static_cast<uint8_t>(m_imageStream->type()));
 }
 
+
+/**
+ * @todo find out what TrackingThread::loadPictures() function is doing.
+ *
+ */
 void TrackingThread::loadPictures(std::vector<boost::filesystem::path>
                                   &&filenames) {
     m_fps = 1;
@@ -164,7 +182,56 @@ void TrackingThread::loadCamera(int device) {
     }
 }
 
+/**
+ * @details
+ * RE_Sophis 10.8.1
+ * -# Sobald TrackingThread::run() aufgerufen wird, wir eine Thread gestartet.
+ *
+ * -# Sobald TrackingThread::run() aufgerufen wurde, wechseld der Zustand von
+ * TrackingThread zu FirstLoop.
+ *
+ * -# Sobald TrackingThread::run() aufgerufen wurde, beginnt eine Endlosschlaufe.
+ *  -# Sobald die Endlosschlaufe beginnt, wird ein std::mutex erstellt, der den Thread blockiert.
+ *  -# TrackingThread wartet solange mit der Fortführung, bis vom MainThread das Signal m_conditionVariable.notify_all()
+ * gesendet wird. Diesen Aufruf machen aus dem Main Thread die Methoden setPlay(), playOnce() und paintDone()
+ *  -# Soblad TrackingThread nicht mehr wartet, wechselt er in den Zustand IsRendering m_isRendering.
+ *  -# Falls TreckingThread im Zustand PlayOnce m_playOnce ist und nicht gleichzeitig im Zustand Playing m_playing,
+ * erhält er den Zustand IgnoreFps.
+ *  -# Soblad der Zustand für IgnoreFps gesetzt wurde, verlässt TrackingThread den Zustand m_playOnce.
+ *  -# Falls der ImageStream m_imageStream einen vorhergehenden Frame besitzt, wechselt TrackingThread
+ * in den Zustand Pause setPause().
+ *  -# Falls der TrackingThread im Zustand FirstLoop ist, wird die aktuelle Systemzeit in der Variable "t" gespeichert.
+ *  -# Sobald die Prüfung auf den Zustand FirstLoop beendet ist, verlässt TrackingThread den
+ * Zustand FirstLoop.
+ *  -# Es wird die differenze zwischen der aktuellen Systemzeit und der gespeicherten Systemzeit aus dem Zustand FirstLoop
+ * gebildet und in der Variable dur gespeichert.
+ *
+ *  -# Falls die Zeitdifferenz in der Variable "dur" kleiner ist als die Fps des Inputfiles,
+ * wird in der Variable "RunningFps" die Fps des Inputfiles gepeichert.
+ *  -# Falls die Zeitdifferenz in der Variable "dur" kleiner ist als die Fps in "target_dur" des Inputfiles,
+ * wird von "target_dur" diese Differenz abgezogen.****
+ *  -# Falls die Zeitdifferenz in der Variable "dur" größer ist als die Fps des Inputfiles,
+ * wird in der Variable "RunningFps" die Zeit aus "dur" in der Einheit Fps gespeichert.
+ *  -# Falls TrackingThread im Zustand MaxSpeed m_maxSpeed ist, wird in die Variable "RunningFps"
+ * die Zeit aus "dur" in der Einheit Fps gespeichert.
+ *  -# Falls TrackingThread im Zustand IgnoreFps wird die Variable "RunningFps" mit dem Wert
+ * -1 gespeichert.
+ *  -# Es wird die Methode tick TrackingThread::tick(RunningFps) aufgerufen und die Variable
+ * RunningFps übergeben.
+ *  -# Sobald die Methode tick TrackingThread::tick() beendet ist, wird der Thread für die
+ * Dauer von "target_dur" (Differenz aus ****) in den Zustand Sleeping versetzt.
+ *
+ *  -# Soblad TrackingThread den Zustand Sleeping verlässt, wird die aktuelle Systemzeit in "t" gespeichert.
+ *  -# Soblad die Systemzeit gespeichert wurde, wird der Thread durch den Mutex entsperrt.
+ *  -# Soblad der Thread entsperrt ist, beginnt die Endlosschalufe wieder.
+ *
+ *
+ */
 void TrackingThread::run() {
+
+    // Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::run() get called from?: "<<QThread::currentThreadId();
+
     std::chrono::system_clock::time_point t;
     bool firstLoop = true;
     bool ignoreFps = false;
@@ -192,10 +259,13 @@ void TrackingThread::run() {
         }
         firstLoop = false;
 
+
+
         std::chrono::microseconds target_dur(static_cast<int>(1000000. / m_fps));
         std::chrono::microseconds dur =
             std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::system_clock::now() - t);
+
         if (!m_maxSpeed) {
             if (dur <= target_dur) {
                 target_dur -= dur;
@@ -217,6 +287,12 @@ void TrackingThread::run() {
 
         tick(runningFps);
 
+        /**
+         * This part makes shure the tracking TrackingAlgorithm
+         * runns with not more then the currently defined fsp.
+         *
+         * @satisfy{@req{1536}}
+         */
         std::this_thread::sleep_for(target_dur);
         t = std::chrono::system_clock::now();
 
@@ -224,7 +300,12 @@ void TrackingThread::run() {
     }
 }
 
+
 void TrackingThread::tick(const double fps) {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::tick() get called from?: "<<QThread::currentThreadId();
+
     m_renderMutex.lock();
     std::string fileName = m_imageStream->currentFilename();
 
@@ -233,6 +314,7 @@ void TrackingThread::tick(const double fps) {
         // This event will not occure when the camera
         // is used, otherwise it should be fired whenever a
         // new file is selected (video vs. set of images)
+        // compare returns 0 if the the strings a equal!!!
         if (m_lastFilename.compare(fileName) != 0) {
             if (m_tracker) {
                 m_tracker->onFileChanged(fileName);
@@ -254,6 +336,10 @@ void TrackingThread::tick(const double fps) {
 }
 
 void TrackingThread::setFrameNumber(size_t frameNumber) {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::setFrameNumber() get called from?: "<<QThread::currentThreadId();
+
     m_renderMutex.lock();
     if (m_imageStream->setFrameNumber(frameNumber)) {
         MutexLocker trackerLock(m_trackerMutex);
@@ -264,7 +350,13 @@ void TrackingThread::setFrameNumber(size_t frameNumber) {
     }
     m_renderMutex.unlock();
 }
+
+
 void TrackingThread::nextFrame() {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::nextFrame() get called from?: "<<QThread::currentThreadId();
+
     if (m_imageStream->nextFrame()) { // increments the frame number if possible
         MutexLocker trackerLock(m_trackerMutex);
         if (m_tracker) {
@@ -276,7 +368,12 @@ void TrackingThread::nextFrame() {
     }
 }
 
+
 void TrackingThread::doTracking() {
+
+    // Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::doTracking() get called from?: "<<QThread::currentThreadId();
+
     MutexLocker trackerLock(m_trackerMutex);
     if (m_tracker) {
         // do nothing if we aint got a frame
@@ -353,7 +450,12 @@ void TrackingThread::togglePlaying() {
     }
 }
 
+
 void TrackingThread::playOnce() {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::playOnce() get called from?: "<<QThread::currentThreadId();
+
     m_status = TrackerStatus::Paused;
     m_playOnce = true;
     m_somethingIsLoaded = true;
@@ -377,17 +479,26 @@ void TrackingThread::setFps(double fps) {
     m_fps = fps;
 }
 
+
 void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
         trackingAlgorithm) {
+
     {
+        /** @satisfy{@req{1537-4}} */
         MutexLocker lock(m_trackerMutex);
 
+        /** @satisfy{@req{1537-1}} */
         if (m_tracker) {
             m_tracker.get()->disconnect();
         }
 
         m_tracker = trackingAlgorithm;
         // connect the tracker
+        /**
+         * @todo The connecting should be encapsulated in a separate function.
+         *
+         * @satisfy{@req{1537-2}}
+         */
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::registerViews,
                          this, &TrackingThread::registerViewsFromTracker);
         QObject::connect(m_tracker.get(), &TrackingAlgorithm::update,
@@ -408,6 +519,7 @@ void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
             m_tracker->setTracking(false);
         }
     }
+    /** @satisfy{@req{1537-3}} */
     Q_EMIT trackerSelected(trackingAlgorithm);
 
 }
@@ -418,6 +530,11 @@ void TrackingThread::setMaxSpeed(bool enabled) {
 
 void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPainter &painter,
         BioTracker::Core::PanZoomState &zoom, TrackingAlgorithm::View const &v) {
+
+    /// Easy to see in which thread this function runs.
+    // qDebug()<<"TrackingThread::paint() get called from?: "<<QThread::currentThreadId();
+
+
     // We must aquire the rendering mutex because otherwise we might land in
     // a race-condition with the tick() function, which tries to advance the current frame.
     // This problem happens when panning/zooming a video while playing it.
@@ -478,7 +595,8 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
             )
         );
 
-        // TODO only paint that part that is visible
+        /** @todo only paint that part that is visible */
+        // hier wird das Bild in das GL Widget geladen!!! Yeah
         painter.drawImage(
             QRectF(0, 0 , m_texture.width(), m_texture.height()),
             m_texture.get(),
@@ -499,6 +617,7 @@ void BioTracker::Core::TrackingThread::paint(const size_t w, const size_t h, QPa
 void BioTracker::Core::TrackingThread::registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views) {
     Q_EMIT registerViews(views);
 }
+
 
 void BioTracker::Core::TrackingThread::requestPaintFromTracker() {
     Q_EMIT requestPaint();

@@ -1,4 +1,5 @@
 #include "PStateInitial.h"
+#include "Model/BioTracker3Player.h"
 
 PStateInitial::PStateInitial(BioTracker3Player *player, IModel *textureObject,
                              std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
@@ -7,21 +8,14 @@ PStateInitial::PStateInitial(BioTracker3Player *player, IModel *textureObject,
 }
 
 void PStateInitial::operate() {
-    Q_EMIT notifyView();
-}
 
-bool PStateInitial::stateOfPlay() {
-    return false;
-}
+    Q_EMIT emitStateOfPlay(false);
+    Q_EMIT emitStateOfStepForward(false);
+    Q_EMIT emitStateOfStepBackward(false);
+    Q_EMIT emitStateOfStop(false);
+    Q_EMIT emitStateOfPause(false);
 
-bool PStateInitial::stateOfRew() {
-    return false;
-}
+    Q_EMIT emitNextState(IPlayerState::STATE_WAIT);
 
-bool PStateInitial::stateOfStepForward() {
-    return false;
-}
-
-bool PStateInitial::stateOfStop() {
-    return false;
+    Q_EMIT emitOperationDone();
 }

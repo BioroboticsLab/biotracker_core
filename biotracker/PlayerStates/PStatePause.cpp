@@ -1,5 +1,5 @@
 #include "PStatePause.h"
-#include "BioTracker3Player.h"
+#include "Model/BioTracker3Player.h"
 
 PStatePause::PStatePause(BioTracker3Player *player, IModel *textureObject,
                          std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
@@ -13,15 +13,11 @@ void PStatePause::operate() {
 //    bool xBack = m_Player->getStateOfStepBack();
 //    bool xStop = m_Player->getStateOfStop();
 
-//    Q_EMIT stateOfPlay(false);
-//    Q_EMIT stateOfStepForward(false);
-//    Q_EMIT stateOfStepBackward(false);
-//    Q_EMIT stateOfStop(false);
+    Q_EMIT emitStateOfPlay(true);
+    Q_EMIT emitStateOfStepForward(true);
+    Q_EMIT emitStateOfStepBackward(true);
+    Q_EMIT emitStateOfStop(true);
+    Q_EMIT emitStateOfPause(false);
 
-//    m_Player-> setStateOfPlay(xPlay);
-//    m_Player-> setStateOfStepForward(xForw);
-//    m_Player-> setStateOfStepBackward(xBack);
-//    m_Player-> setStateOfStop(xStop);
-
-    Q_EMIT m_Player->notifyView();
+    Q_EMIT emitOperationDone();
 }

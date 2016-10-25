@@ -21,6 +21,66 @@
 namespace BioTracker {
 namespace Core {
 
+/**
+ *@page TARequirements Requirements TrackingAlgorithm [13xx and 14xx]
+ *
+ * -# @anchor REQ_1311 REQ-1311 <BR>
+ * @copybrief TrackingAlgorithm::TrackingAlgorithm()
+ * <BR> - TrackingAlgorithm::TrackingAlgorithm()
+ *
+ * -# @anchor REQ_1312 REQ-1312 <BR>
+ * @copybrief TrackingAlgorithm::View
+ * <BR> - TrackingAlgorithm::View und siehe auch
+ * <BR> - TrackingAlgorithm::OriginalView
+ *
+ * -# @anchor REQ_1313 REQ-1313 <BR>
+ * @copybrief TrackingAlgorithm::attemptTracking()
+ * <BR> - TrackingAlgorithm::attemptTracking()
+ *
+ * -# @anchor REQ_1314 REQ-1314 <BR>
+ * @copybrief TrackingAlgorithm::paint()
+ * <BR> - TrackingAlgorithm::paint()
+ *
+ * -# @anchor REQ_1315 REQ-1315 <BR>
+ * @copybrief TrackingAlgorithm::paintOverlay()
+ * <BR> - TrackingAlgorithm::paintOverlay()
+ *
+ * -# @anchor REQ_1316 REQ-1316 <BR>
+ * @copybrief TrackingAlgorithm::getToolsWidget()
+ * <BR> - TrackingAlgorithm::getToolsWidget()
+ *
+ * -# @anchor REQ_1317 REQ-1317 <BR>
+ * @copybrief TrackingAlgorithm::grabbedKeys()
+ * <BR> - TrackingAlgorithm::grabbedKeys()
+ *
+ * -# @anchor REQ_1318 REQ-1318 <BR>
+ * @copybrief TrackingAlgorithm::prepareSave()
+ * <BR> - TrackingAlgorithm::prepareSave()
+ *
+ * -# @anchor REQ_1319 REQ-1319 <BR>
+ * @copybrief TrackingAlgorithm::postLoad()
+ * <BR> - TrackingAlgorithm::postLoad()
+ *
+ * -# @anchor REQ_1320 REQ-1320 <BR>
+ * @copybrief TrackingAlgorithm::postConnect()
+ * <BR> - TrackingAlgorithm::postConnect()
+ *
+ * -# @anchor REQ_1321 REQ-1321 <BR>
+ * @copybrief TrackingAlgorithm::inputChanged()
+ * <BR> - TrackingAlgorithm::inputChanged()
+ *
+ * -# @anchor REQ_1322 REQ-1322 <BR>
+ * @copybrief TrackingAlgorithm::onFileChanged()
+ * <BR> - TrackingAlgorithm::onFileChanged()
+ *
+ * @section TAsreq Satisfied Requirements 13xx
+ *
+ *
+ * @section TAureq Unsatisfied Requirements 14xx
+ *
+ *
+ */
+
 class Settings;
 
 namespace Algorithm {
@@ -60,22 +120,42 @@ class BIOTRACKER_DLLEXPORT TrackingAlgorithm : public QObject {
     Q_OBJECT
 
   public:
+
+    /**
+     * @brief @req{1311} Wenn TrackingAlgorithm initialisiert wird,
+     * <br> - hat er die Fähigkeit ein Objekt vom Typ Settings zu speichern.
+     * <br> - ist sein Status doTracking.
+     * <br> - ist die aktuelle FrameNumber 0.
+     * <br> - ist das aktuelle ZoomLevel 0.
+     * <br> - ist der VideoMode GuiParam::VideoMode::Init
+     * <br> - erstellt er automatisch ein QWidget m_tools für seine spezifischen GUIControlls.
+     * @param settings
+     */
     TrackingAlgorithm(Settings &settings);
     virtual ~TrackingAlgorithm() override;
 
+    /**
+     * @brief @req{1312} TrackingAlgorithm beinhalten ein Struct mit dem Namen View. Dies wird
+     * beinhalten den String "Original", der zur GUI übertragen wird und auf seinem Weg nichts macht.
+     */
     struct BIOTRACKER_DLLEXPORT View {
         std::string name;
     };
 
+    /**
+     * @brief @req{1312} OriginalView: Hier ist fest der String "Original" codiert. Warum?
+     */
     static const View OriginalView;
 
     /**
-     * @brief attemptTracking
-     * tries to track the given frame. However, when tracking was disabled on this object
-     * this function will not execute the tracking.
+     * @brief @req{1313} TrackingAlgorithm versucht die Methode track TrackingAlgorithm::track()
+     * aufzurufen. Dies geschieht nur, sein Status TrackingAlgorithm::isTrackingActivated() ist.
+     * Wenn nicht, bricht die Funktion ab. (nicht so gut implementiert, da es mehrere returns gibt.
+     * Wenn track() nicht erfolgreich beendet wird, gibt TrackingAlgorithm::attemptTracking()
+     * dennoch true zurück!!! ACHTUNG !!! das passt nicht!
      * @param frameNbr
      * @param frame
-     * @return True, when successfully tracked, otherwise False
+     * @return True, when successfully tracked, otherwise False <-- Diese Aussage ist falsch!
      */
     bool attemptTracking(size_t frameNbr, const cv::Mat &frame) {
         if (isTrackingActivated()) {
@@ -87,66 +167,94 @@ class BIOTRACKER_DLLEXPORT TrackingAlgorithm : public QObject {
     }
 
     /**
-    * paint will be called by "VideoViews" paintEvent method
+    * @brief @req{1314} TrackingAlgorithm bietet dem Programmierer die Möglichkeit
+    * mit der Funktion TrackingAlgorithm::paint() direkt die aktuelle ProxyMat zu manipulieren.
+    * <br> --> dies trifft nicht zu! "paint will be called by "VideoViews" paintEvent method
     * so any picture manipulation stuff goes in here.
     * QPainter paints stuff onto "VideoViews" current picture
-    * without touching it
+    * without touching it"
+    * <br> Wozu dient die View const & = OriginalView ?
     */
     virtual void paint(size_t, ProxyMat &, View const & = OriginalView) {}
 
+    /**
+     * @brief @req{1315} TrackingAlgorithm zeichnet auf einen QPainter, der vom
+     * VideoView die BioTrackerApp::paint(), den TrackingThread::paint() zum
+     * TrackingAlgorithm::paintOverlay()
+     * durchgereicht wird. Dies verstößt gegen MVC (Entwurfsmuster S.525). Die View darf nicht
+     * seine Daten in das Model geben.
+     * <br> Wozu dient die View const & = OriginalView ?
+     */
     virtual void paintOverlay(size_t, QPainter *, View const & = OriginalView) {}
 
     /**
-    * getToolsFrame() will be called once at start up
-    * to create a widget for gui with all
-    * buttons needed for interaction
+    * @brief @req{1316} TrackingAlgorithm bietet dem Programmierer die Möglichkeit ein
+    * QWidget zu spezielle für die Bedürfnisse des Trackers zu gestalten.
+    * <br> - Außerdem bietet TrackingAlgorithm die Möglichkeit dieses QWidget
+    * abzurufen (z.B. von der GUI)
     */
     virtual QPointer<QWidget> getToolsWidget();
 
     /**
-     * @brief grabbedKeys() has to return a set of all keys that the
-     * algorithms needs access to. All KeyEvents with keys in the set will
-     * be forwarded to the algorithm
+     * @brief @req{1317} TrackingAlgorithm bietet dem Programmierer die Möglichkeit
+     * ein Set mit KeyEvents zu definieren. !!! Dies wird nirgendwo benutzt !!!
+     * Siehe dazu auch TrackingAlgorithm::keyPressEvent(). In den Trackern
+     * BeeDance und LucasKanade wird diese Funktionalität in der Methode keyPressEvent();
+     * abgebildet. !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      * @return const reference to the set of keys
      */
     virtual std::set<Qt::Key> const &grabbedKeys() const;
 
     /**
-     * @brief prepareSave() is called once before the serialization of
+     * @brief @req{1318} prepareSave(); is called once before the serialization of
      * m_trackedObjects. It should store or discard all temporary values
      * that are related to tracked Objects.
+     * <br> wurde zwar deklariert wird aber !! nirgendwo aufgerufen !! !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      */
     virtual void prepareSave() {}
 
     /**
-     * @brief postLoad() is called once after the tracked objects are
+     * @brief @req{1319} postLoad() is called once after the tracked objects are
      * loaded from serialized data. It should do any postprocessing required.
+     * <br> wurde zwar deklariert wird aber !! nirgendwo aufgerufen !! !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      */
     virtual void postLoad() {}
 
     /**
-     * @brief postConnect() is called once after the tracking algorithm has
+     * @brief @req{1320} postConnect() is called once after the tracking algorithm has
      * been initialized and the signals have been connected. It can be used
      * to emit signals that only need to be emitted during object initialization.
+     * <br> wurde zwar deklariert wird aber !! nirgendwo aufgerufen !! !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      */
     virtual void postConnect() {}
 
     /**
-     * @brief inputChanged
+     * @brief @req{1321} inputChanged
      * gets called when the input system changes (e.g. a new video is loaded)
      * When a set of images is loaded, this funtion is only triggered once
      * at the first image that is loaded.
+     * <br> inputChanged(); wird in TrackingThread mehrfach (4x) aufgerufen. Diese Methode
+     * wurde aber nur von LucasKanade implementiert. !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      */
     virtual void inputChanged() {}
 
     /**
-     * @brief onFileChanged
+     * @brief @req{1322} onFileChanged();
      * This slot is triggered once when a video is loaded, or each time
      * a new picture from a set im images is loaded. This slot is never
      * triggered when the camera is selected.
+     * <br> wird in TrackingThread 6x aufgerufen. Sie wird jedoch in keinem Tracker
+     * benutzt. !! Es ist wohl nicht klar, welchen
+     * UseCase diese Methode abdeckt !!
      * @param filename
      */
     virtual void onFileChanged(std::string) {}
+
 
     void loadObjects(std::vector<TrackedObject> const &objects);
     void loadObjects(std::vector<TrackedObject> &&objects);
@@ -230,6 +338,11 @@ class BIOTRACKER_DLLEXPORT TrackingAlgorithm : public QObject {
     */
     void update();
 
+    /**
+     * @bug Signals are automatically generated by the moc and
+     * must not be implemented in the .cpp file. They can never have
+     * return types (i.e. use void). http://doc.qt.io/qt-4.8/signalsandslots.html
+     */
     cv::Mat requestCurrentScreen();
 
     void forceTracking();
@@ -295,6 +408,7 @@ class BIOTRACKER_DLLEXPORT TrackingAlgorithm : public QObject {
 
 
     /**
+    *
     * will receive QKeyEvent as soon
     * as any keyboard key from 'grabbedKeys()' is pressed in video view
     */

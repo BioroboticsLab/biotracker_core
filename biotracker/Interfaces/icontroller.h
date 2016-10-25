@@ -3,34 +3,27 @@
 
 #include <QObject>
 #include "../biotracker_gui/biotracker/BioTracker3MainWindow.h"
-#include "iview.h"
+#include "IViewWidget.h"
 #include "imodel.h"
+#include "QMap"
 
 class IController : public QObject {
     Q_OBJECT
   public:
     explicit IController(QObject *parent = 0);
-    void registerMainBioTrackerWindow(BioTracker3MainWindow *w);
 
+    virtual void createApplication() = 0;
     IController *getController();
 
   protected:
-    void addView(IView *view);
-    void addModel(IModel *model);
-    IModel *getModel(int n);
-    IView *getView(int n);
-    BioTracker3MainWindow *getMainWindow();
-
-  Q_SIGNALS:
-
-  public Q_SLOTS:
+    void addView(QString name, IView *view);
+    void addModel(QString name, IModel *model);
+    IModel *getModel(QString name);
+    IView *getView(QString name);
 
   private:
-    // MVC
-    BioTracker3MainWindow *mMainWindow;
-    QList<IView *> *mViews;
-    QList<IModel *> *mModels;
-
+    QMap<QString, IView *> *mViews;
+    QMap<QString, IModel *> *mModels;
 };
 
 #endif // ICONTROLLER_H

@@ -5,8 +5,8 @@
 
 #include "Interfaces/imodel.h"
 
-#include "BioTracker3ImageStream.h"
-#include "BioTracker3TextureObject.h"
+#include "Model/BioTracker3ImageStream.h"
+#include "Model/BioTracker3TextureObject.h"
 
 class BioTracker3Player;
 class IPlayerState : public IModel {
@@ -14,22 +14,26 @@ class IPlayerState : public IModel {
   public:
     explicit IPlayerState(BioTracker3Player *player, IModel *textureObjectModel,
                           std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
-    enum PLAYER_STATES {STATE_INITIAL, STATE_VIDEO_INITIAL, STATE_PLAY, STATE_VIDEO_STEPNEXT};
+    enum PLAYER_STATES {STATE_INITIAL, STATE_INITIAL_STREAM, STATE_PLAY, STATE_STEP_FORW,
+                        STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT
+                       };
     Q_ENUM(PLAYER_STATES)
 
-    void changeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
   public Q_SLOTS:
-    virtual void doIt();
+    void changeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
-  public:
-    virtual bool stateOfPlay();
-    virtual bool stateOfStepForward();
-    virtual bool stateOfRew();
-    virtual bool stateOfStop();
+    virtual void operate();
 
   Q_SIGNALS:
+    void emitStateOfPlay(bool);
+    void emitStateOfStepForward(bool);
+    void emitStateOfStepBackward(bool);
+    void emitStateOfStop(bool);
+    void emitStateOfPause(bool);
+
     void emitNextState(IPlayerState::PLAYER_STATES);
+    void emitOperationDone();
 
   protected:
     BioTracker3Player *m_Player;

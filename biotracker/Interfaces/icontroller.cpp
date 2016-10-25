@@ -1,36 +1,26 @@
 #include "icontroller.h"
 
 IController::IController(QObject *parent) : QObject(parent) {
-    mViews = new QList<IView *>;
-    mModels = new QList<IModel *>;
-}
-
-void IController::registerMainBioTrackerWindow(BioTracker3MainWindow *w) {
-    mMainWindow = w;
-    mMainWindow->addController(this);
-    mMainWindow->show();
+    mViews = new QMap<QString, IView *>;
+    mModels = new QMap<QString, IModel *>;
 }
 
 IController *IController::getController() {
     return this;
 }
 
-void IController::addView(IView *view) {
-    mViews->append(view);
+void IController::addView(QString name, IView *view) {
+    mViews->insert(name, view);
 }
 
-void IController::addModel(IModel *model) {
-    mModels->append(model);
+void IController::addModel(QString name, IModel *model) {
+    mModels->insert(name, model);
 }
 
-IModel *IController::getModel(int n) {
-    return mModels->at(n);
+IModel *IController::getModel(QString name) {
+    return mModels->value(name);
 }
 
-IView *IController::getView(int n) {
-    return mViews->at(n);
-}
-
-BioTracker3MainWindow *IController::getMainWindow() {
-    return mMainWindow;
+IView *IController::getView(QString name) {
+    return mViews->value(name);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "boost/optional.hpp"
+
 namespace BioTracker {
 namespace Core {
 

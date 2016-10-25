@@ -8,12 +8,9 @@ class PStateStepForw : public IPlayerState {
     PStateStepForw(BioTracker3Player *player, IModel *textureObject,
                    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
-    void operate();
-
-    bool stateOfPlay();
-    bool stateOfRew();
-    bool stateOfStepForward();
-    bool stateOfStop();
+    // IPlayerState interface
+  public Q_SLOTS:
+    void operate() override;
 };
 
 #endif // PSTATESTEPFORW_H

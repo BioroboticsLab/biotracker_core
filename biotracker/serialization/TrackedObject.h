@@ -11,7 +11,7 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "util/platform.h"
+#include "biotracker/util/platform.h"
 #include "ObjectModel.h"
 #include "types.hpp"
 
