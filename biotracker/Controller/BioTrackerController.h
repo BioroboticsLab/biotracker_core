@@ -31,6 +31,8 @@ class BioTrackerController : public IController {
     void stop();
     void pause();
 
+    IModel *getPlayer();
+
   private:
     void createApplication();
     void createBioTrackerPlayer();
@@ -49,9 +51,6 @@ class BioTrackerController : public IController {
   public Q_SLOTS:
     void handlePlayerOperation();
 
-    void handleTrackerResult(BioTracker3TrackedObject trackedObject);
-
-
 
   private:
     BioTracker::Core::Settings m_Settings;
@@ -67,8 +66,9 @@ class BioTrackerController : public IController {
     QMetaEnum m_Enum = QMetaEnum::fromType<VIEWS>();
 
     BioTrackerTrackingAlgorithm m_TrackingAlgorithm;
-    BioTracker3TrackedObject m_TrackedObject;
     QThread m_TrackingThread;
+
+    IController *m_TrackingController;
 };
 
 #endif // BIOTRACKERCONTROLLER_H

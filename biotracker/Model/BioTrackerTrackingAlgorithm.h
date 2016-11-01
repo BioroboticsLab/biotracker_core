@@ -2,24 +2,34 @@
 #define BIOTRACKERTRACKINGALGORITHM_H
 #include "Interfaces/imodel.h"
 
-#include "BioTracker3ProxyMat.h"
-#include "serialization/BioTracker3TrackedObject.h"
+#include "BioTracker3TextureObject.h"
+
+#include "Interfaces/ITrackingAlgorithm.h"
+#include "Model/TrackedComponents/TrackedElement.h"
+#include "Model/TrackedComponents/TrackedObject.h"
 
 #include <boost/optional.hpp>
 
 #include <opencv2/opencv.hpp>
 
 
-class BioTrackerTrackingAlgorithm {
-
+class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
+{
+    Q_OBJECT
   public:
-    BioTrackerTrackingAlgorithm();
+    BioTrackerTrackingAlgorithm(QObject *parent = 0, ITrackedComponentFactory *factory = 0);
 
+    void setTextureModel(IModel *model);    
+
+    // ITrackingAlgorithm interface
   public Q_SLOTS:
-    void doTracking(const cv::Mat &frame, size_t frameNumber);
+    void doTracking(cv::Mat image) override;
 
-  Q_SIGNALS:
-    void emitTrackingDone(BioTracker3TrackedObject trackedObject);
+
+private:
+    BioTracker::Core::BioTracker3TextureObject *m_TextureObject;
+
+    TrackedElement *m_TrackedElement;
 };
 
 #endif // BIOTRACKERTRACKINGALGORITHM_H

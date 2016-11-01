@@ -28,5 +28,7 @@ void PStatePlay::operate() {
 
     Q_EMIT emitNextState(nextState);
 
+    Q_EMIT m_Player->emitTrackThisImage(m_ImageStream->currentFrame());
+
     Q_EMIT emitOperationDone();
 }

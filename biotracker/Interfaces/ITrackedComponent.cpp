@@ -1,5 +1,12 @@
 #include "ITrackedComponent.h"
 
-ITrackedComponent::ITrackedComponent() {
+ITrackedComponent::ITrackedComponent(QObject *parent) :
+    IModel(parent)
+{
+
+}
+
+void ITrackedComponent::operate()
+{
 
 }

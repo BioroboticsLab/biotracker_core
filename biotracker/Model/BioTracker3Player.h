@@ -10,8 +10,8 @@
 #include "QMap"
 #include "QThread"
 
-#include "../biotracker_gui/biotracker/BioTracker3VideoControllWidget.h"
-#include "../biotracker_gui/biotracker/BioTracker3VideoView.h"
+#include "../BioTrackerGui/biotracker/View/BioTracker3VideoControllWidget.h"
+#include "../BioTrackerGui/biotracker/View/BioTracker3VideoView.h"
 
 #include "Interfaces/IPlayerState.h"
 

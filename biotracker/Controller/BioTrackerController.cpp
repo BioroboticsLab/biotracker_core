@@ -3,15 +3,20 @@
 #include "Model/BioTrackerTrackingAlgorithm.h"
 #include "Model/BioTracker3TextureObject.h"
 
-#include "../biotracker_gui/biotracker/BioTracker3VideoControllWidget.h"
-#include "../biotracker_gui/biotracker/BioTracker3VideoView.h"
+#include "../BioTrackerGui/biotracker/View/BioTracker3VideoControllWidget.h"
+#include "../BioTrackerGui/biotracker/View/BioTracker3VideoView.h"
+
+#include "biotracker/Controller/TrackerController.h"
 
 
 BioTrackerController::BioTrackerController() :
-    m_TextureObjectModel(new BioTracker::Core::BioTracker3TextureObject())
+    m_TextureObjectModel(new BioTracker::Core::BioTracker3TextureObject()),
+    m_TrackingController(new TrackerController())
 
 {
     createApplication();
+    m_TrackingController->createApplication();
+    dynamic_cast<TrackerController *>(m_TrackingController)->addPlayerController(this);
 }
 
 void BioTrackerController::createApplication() {
@@ -51,6 +56,11 @@ void BioTrackerController::stop() {
 void BioTrackerController::pause() {
     Q_EMIT s_Pause();
     Q_EMIT s_Operate();
+}
+
+IModel *BioTrackerController::getPlayer()
+{
+    return m_Player;
 }
 
 void BioTrackerController::createBioTrackerPlayer() {
@@ -94,8 +104,4 @@ void BioTrackerController::createTrackingAlgorithm() {
 
 void BioTrackerController::handlePlayerOperation() {
     Q_EMIT s_Operate();
-}
-
-void BioTrackerController::handleTrackerResult(BioTracker3TrackedObject trackedObject) {
-
 }

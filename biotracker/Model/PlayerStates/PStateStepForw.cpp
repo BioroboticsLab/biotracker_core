@@ -28,5 +28,7 @@ void PStateStepForw::operate() {
 
     Q_EMIT emitNextState(IPlayerState::STATE_WAIT);
 
+    Q_EMIT m_Player->emitTrackThisImage(m_ImageStream->currentFrame());
+
     Q_EMIT emitOperationDone();
 }

@@ -2,7 +2,7 @@
 #define ICONTROLLER_H
 
 #include <QObject>
-#include "../biotracker_gui/biotracker/BioTracker3MainWindow.h"
+#include "../BioTrackerGui/biotracker/View/BioTracker3MainWindow.h"
 #include "IViewWidget.h"
 #include "imodel.h"
 #include "QMap"
