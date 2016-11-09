@@ -6,7 +6,7 @@
 
 class IViewMainWindow : public QMainWindow, public IView {
   public:
-    IViewMainWindow(QWidget *parent = 0, IController *controller = 0);
+    IViewMainWindow(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
     ~IViewMainWindow();
 
   private:

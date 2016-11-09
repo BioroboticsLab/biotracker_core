@@ -1,26 +1,63 @@
 #include "icontroller.h"
+#include "IBioTrackerContext.h"
 
-IController::IController(QObject *parent) : QObject(parent) {
-    mViews = new QMap<QString, IView *>;
-    mModels = new QMap<QString, IModel *>;
+
+IController::IController(QObject *parent, IBioTrackerContext *context) : QObject(parent),
+    m_BioTrackerContext(context)
+{
+
 }
 
-IController *IController::getController() {
-    return this;
+IBioTrackerContext *IController::getBioTrackerContext()
+{
+    return m_BioTrackerContext;
 }
 
-void IController::addView(QString name, IView *view) {
-    mViews->insert(name, view);
+void IController::createModel()
+{
+
 }
 
-void IController::addModel(QString name, IModel *model) {
-    mModels->insert(name, model);
+void IController::createView()
+{
+
 }
 
-IModel *IController::getModel(QString name) {
-    return mModels->value(name);
+void IController::connectModelController()
+{
+
 }
 
-IView *IController::getView(QString name) {
-    return mViews->value(name);
+void IController::createComponents()
+{
+    createModel();
+    createView();
+    connectModelController();
+    connectModelView();
+}
+
+void IController::connectViewToMainWindow(IController *controller)
+{
+
+}
+
+void IController::connectToOtherController(IController *controller)
+{
+
+}
+
+void IController::addView(IView *view) {
+    m_View = view;
+}
+
+void IController::addModel(IModel *model) {
+    m_Model = model;
+}
+
+IModel *IController::getModel() {
+    return m_Model;
+}
+
+IView *IController::getView() {
+    return m_View;
 }

@@ -6,7 +6,7 @@
 class IController;
 class IView {
   public:
-    IView(IController *controller = 0);
+    IView(IController *controller = 0, IModel *model = 0);
     virtual ~IView() = 0;
 
     virtual void setNewModel(IModel *model) = 0;
@@ -18,8 +18,9 @@ class IView {
     IModel *getModel();
 
   private:
-    IModel *mModel;
     IController *mController;
+    IModel *mModel;
+
 };
 
 #endif // IVIEW_H

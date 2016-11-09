@@ -2,12 +2,15 @@
 #include "Model/BioTracker3Player.h"
 
 
-PStateWait::PStateWait(BioTracker3Player *player, IModel *textureObject,
+PStateWait::PStateWait(BioTracker3Player *player,
                        std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
-    IPlayerState(player, textureObject, imageStream) {
+    IPlayerState(player, imageStream) {
 
 }
 
 void PStateWait::operate() {
-    Q_EMIT emitOperationDone();
+
+ //   Q_EMIT emitStateDone();
+
+    // Just Wait
 }

@@ -1,31 +1,36 @@
 #include "PStateStepBack.h"
 #include "Model/BioTracker3Player.h"
 
-PStateStepBack::PStateStepBack(BioTracker3Player *player, IModel *textureObject,
+PStateStepBack::PStateStepBack(BioTracker3Player *player,
                                std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
-    IPlayerState(player, textureObject, imageStream)  {
+    IPlayerState(player, imageStream)  {
 
 }
 
 void PStateStepBack::operate() {
+
+    m_Play = true;
+    m_Forw = true;
+    m_Stop = true;
+    m_Paus = false;
+
+
     if (m_ImageStream->previousFrame()) {
-        dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(m_TextureObjectModel)->set(m_ImageStream->currentFrame());
+        m_Mat = m_ImageStream->currentFrame();
+        m_FrameNumber = m_ImageStream->currentFrameNumber();
     }
 
     bool stateBack = false;
-    if (m_ImageStream->currentFrameNumber() <= 0) {
+    if (m_FrameNumber <= 0) {
         stateBack = false;
     } else {
         stateBack = true;
     }
 
-    Q_EMIT emitStateOfPlay(true);
-    Q_EMIT emitStateOfStepForward(true);
-    Q_EMIT emitStateOfStepBackward(stateBack);
-    Q_EMIT emitStateOfStop(true);
-    Q_EMIT emitStateOfPause(false);
+    m_Back = stateBack;
 
-    Q_EMIT emitNextState(IPlayerState::STATE_WAIT);
+//    Q_EMIT emitStateDone();
 
-    Q_EMIT emitOperationDone();
+//    m_Player->setNextState(IPlayerState::STATE_WAIT);
+
 }

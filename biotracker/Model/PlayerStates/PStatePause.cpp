@@ -1,23 +1,24 @@
 #include "PStatePause.h"
 #include "Model/BioTracker3Player.h"
 
-PStatePause::PStatePause(BioTracker3Player *player, IModel *textureObject,
+PStatePause::PStatePause(BioTracker3Player *player,
                          std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
-    IPlayerState(player, textureObject, imageStream) {
+    IPlayerState(player, imageStream) {
 
 }
 
 void PStatePause::operate() {
-//    bool xPlay = m_Player->getStateOfPlay();
-//    bool xForw = m_Player->getStateOfStepForward();
-//    bool xBack = m_Player->getStateOfStepBack();
-//    bool xStop = m_Player->getStateOfStop();
 
-    Q_EMIT emitStateOfPlay(true);
-    Q_EMIT emitStateOfStepForward(true);
-    Q_EMIT emitStateOfStepBackward(true);
-    Q_EMIT emitStateOfStop(true);
-    Q_EMIT emitStateOfPause(false);
+    m_Play = true;
+    m_Forw = true;
+    m_Back = true;
+    m_Stop = true;
+    m_Paus = false;
 
-    Q_EMIT emitOperationDone();
+    m_Mat = m_ImageStream->currentFrame();
+    m_FrameNumber = m_ImageStream->currentFrameNumber();
+
+  //  Q_EMIT emitStateDone();
+
+//    m_Player->setNextState(IPlayerState::STATE_WAIT);
 }

@@ -9,9 +9,10 @@
 #include "QString"
 #include "QMap"
 #include "QThread"
+#include "opencv2/core/core.hpp"
 
-#include "../BioTrackerGui/biotracker/View/BioTracker3VideoControllWidget.h"
-#include "../BioTrackerGui/biotracker/View/BioTracker3VideoView.h"
+#include "../biotracker_gui/biotracker/View/BioTracker3VideoControllWidget.h"
+#include "../biotracker_gui/biotracker/View/BioTracker3VideoView.h"
 
 #include "Interfaces/IPlayerState.h"
 
@@ -19,62 +20,60 @@
 class BioTracker3Player : public IModel {
     Q_OBJECT
   public:
-    explicit BioTracker3Player(BioTracker::Core::BioTracker3TextureObject *textureObject);
+    explicit BioTracker3Player(QObject *parent = 0);
 
-    void operate();
+    void runPlayerOperation();
 
-    // Interface for the States
-    bool getStateOfStepForward();
-    bool getStateOfPlay();
-    bool getStateOfStepBack();
-    bool getStateOfStop();
-    bool getStateOfPause();
-
-    IModel *getStateModel();
-
-
-  public Q_SLOTS:
-
-    void setStateOfStepForward(bool xState);
-    void setStateOfStepBackward(bool xState);
-    void setStateOfPlay(bool xState);
-    void setStateOfStop(bool xState);
-    void setStateOfPause(bool xState);
-
-
-    void loadVideo(QString str);
-    void nextFrame();
-    void prevFrame();
-    void play();
-    void stop();
-    void pause();
 
     void setNextState(IPlayerState::PLAYER_STATES state);
-    void setCurrentState(IPlayerState::PLAYER_STATES state);
 
-    void handelStateDone();
+  public Q_SLOTS:
+    void receiveLoadImageStreamCommand(QString fileDir);
+    void receivePrevFrameCommand();
+    void receiveNextFramCommand();
+    void receivePauseCommand();
+    void receiveStopCommand();
+    void receivePlayCommand();
+
+    void receiveStateDone();
+
 
   Q_SIGNALS:
-    void emitChangeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
-    void emitStateChangeDone();
+    void emitMediaType(GuiParam::MediaType type);
+    void emitTotalNumbFrames(size_t num);
+    void emitCurrentFrameNumber(size_t num);
+    void emitFPS(double fps);
+    void emitCurrentFileName(QString name);
+    void emitCurrentFrame(cv::Mat mat);
+    void emitVideoControllsStates(QVector<bool> states);
 
-    void emitTrackThisImage(cv::Mat image);
+    void emitPlayerOperationDone();
+
+  private:
+    void updatePlayerParameter();
+    void emitSignals();
+
 
   private:
     IPlayerState *m_CurrentPlayerState;
-
-
     QThread m_StateThread;
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *> m_States;
-
-    IModel *m_TextureObjectModel;
     std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> m_ImageStream;
 
-    bool m_StateOfStepForward;
-    bool m_StateOfStepBack;
-    bool m_StateOfPlay;
-    bool m_StateOfStop;
-    bool m_StateOfPause;
+    GuiParam::MediaType m_MediaType;
+    size_t m_TotalNumbFrames;
+    size_t m_CurrentFrameNumber;
+    double m_fps;
+    QString m_CurrentFilename;
+    cv::Mat m_CurrentFrame;
+    QVector<bool> m_VideoControllsStates;
+
+    bool m_Play;
+    bool m_Forw;
+    bool m_Back;
+    bool m_Stop;
+    bool m_Paus;
 };
+
 
 #endif // BIOTRACKER3PLAYER_H

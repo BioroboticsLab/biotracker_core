@@ -5,8 +5,7 @@
 
 class PStateInitial : public IPlayerState {
   public:
-    PStateInitial(BioTracker3Player *player, IModel *textureObject,
-                  std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    PStateInitial(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

@@ -5,8 +5,7 @@
 
 class PStateStepForw : public IPlayerState {
   public:
-    PStateStepForw(BioTracker3Player *player, IModel *textureObject,
-                   std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    PStateStepForw(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

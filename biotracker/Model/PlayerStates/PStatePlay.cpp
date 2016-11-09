@@ -1,34 +1,43 @@
 #include "PStatePlay.h"
 #include "Model/BioTracker3Player.h"
+#include "QTimer"
 
-PStatePlay::PStatePlay(BioTracker3Player *player, IModel *textureObject,
+PStatePlay::PStatePlay(BioTracker3Player *player,
                        std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
-    IPlayerState(player, textureObject, imageStream) {
+    IPlayerState(player, imageStream) {
 
 }
 
 void PStatePlay::operate() {
+
+//    QTimer *timer = new QTimer(this);
+
+//    timer->start(1000);
+
+//    while(timer->isActive());
+
+
+    m_Play = true;
+    m_Forw = false;
+    m_Back = false;
+    m_Stop = true;
+    m_Paus = true;
 
     bool isLastFrame = m_ImageStream->lastFrame();
     IPlayerState::PLAYER_STATES nextState = IPlayerState::STATE_INITIAL;
 
     if (!isLastFrame) {
         m_ImageStream->nextFrame();
-        dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(m_TextureObjectModel)->set(m_ImageStream->currentFrame());
+        m_Mat = m_ImageStream->currentFrame();
+        m_FrameNumber = m_ImageStream->currentFrameNumber();
         nextState = IPlayerState::STATE_PLAY;
-    } else {
+    }
+    else {
         nextState = IPlayerState::STATE_INITIAL_STREAM;
     }
 
-    Q_EMIT emitStateOfPlay(true);
-    Q_EMIT emitStateOfStepForward(false);
-    Q_EMIT emitStateOfStepBackward(false);
-    Q_EMIT emitStateOfStop(true);
-    Q_EMIT emitStateOfPause(true);
 
-    Q_EMIT emitNextState(nextState);
+    m_Player->setNextState(nextState);
 
-    Q_EMIT m_Player->emitTrackThisImage(m_ImageStream->currentFrame());
-
-    Q_EMIT emitOperationDone();
+//    Q_EMIT emitStateDone();
 }

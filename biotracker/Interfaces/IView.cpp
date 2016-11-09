@@ -1,8 +1,10 @@
 #include "IView.h"
 #include "Interfaces/icontroller.h"
 
-IView::IView(IController *controller):
-    mController(controller) {
+IView::IView(IController *controller, IModel *model):
+    mController(controller),
+    mModel(model)
+{
 
 }
 

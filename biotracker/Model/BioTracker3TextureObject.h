@@ -6,14 +6,10 @@
 #include <opencv2/opencv.hpp>
 #include "QImage"
 
-namespace BioTracker {
-namespace Core {
-
-
 class BioTracker3TextureObject : public IModel {
     Q_OBJECT
   public:
-    explicit BioTracker3TextureObject();
+    explicit BioTracker3TextureObject(QObject *parent = 0);
 
     void set(cv::Mat const &img);
 
@@ -31,9 +27,5 @@ class BioTracker3TextureObject : public IModel {
     cv::Mat m_img;
     QImage m_texture;
 };
-
-
-}
-}
 
 #endif // BIOTRACKER3TEXTUREOBJECT_H

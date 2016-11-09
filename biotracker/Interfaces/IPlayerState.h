@@ -12,35 +12,43 @@ class BioTracker3Player;
 class IPlayerState : public IModel {
     Q_OBJECT
   public:
-    explicit IPlayerState(BioTracker3Player *player, IModel *textureObjectModel,
-                          std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    explicit IPlayerState(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
     enum PLAYER_STATES {STATE_INITIAL, STATE_INITIAL_STREAM, STATE_PLAY, STATE_STEP_FORW,
                         STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT
                        };
     Q_ENUM(PLAYER_STATES)
 
 
-  public Q_SLOTS:
+  public:
     void changeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
 
-    virtual void operate();
+    virtual void operate() = 0;
 
-  Q_SIGNALS:
-    void emitStateOfPlay(bool);
-    void emitStateOfStepForward(bool);
-    void emitStateOfStepBackward(bool);
-    void emitStateOfStop(bool);
-    void emitStateOfPause(bool);
+    bool getStateForPlay();
+    bool getStateForForward();
+    bool getStateForBackward();
+    bool getStateForStop();
+    bool getStateForPause();
+    cv::Mat getCurrentFrame();
+    size_t getCurrentFrameNumber();
 
-    void emitNextState(IPlayerState::PLAYER_STATES);
-    void emitOperationDone();
+Q_SIGNALS:
+    void emitStateDone();
 
   protected:
     BioTracker3Player *m_Player;
-
-    BioTracker::Core::BioTracker3TextureObject *m_TextureObjectModel;
-
     std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> m_ImageStream;
+
+    bool m_Play;
+    bool m_Forw;
+    bool m_Back;
+    bool m_Stop;
+    bool m_Paus;
+
+    cv::Mat m_Mat;
+    size_t m_FrameNumber;
+
+
 };
 
 #endif // IPLAYERSTATE_H

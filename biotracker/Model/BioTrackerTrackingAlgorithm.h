@@ -27,7 +27,7 @@ class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
 
 
 private:
-    BioTracker::Core::BioTracker3TextureObject *m_TextureObject;
+    BioTracker3TextureObject *m_TextureObject;
 
     TrackedElement *m_TrackedElement;
 };

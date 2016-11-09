@@ -8,7 +8,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(QObject *parent, ITrack
 
 void BioTrackerTrackingAlgorithm::setTextureModel(IModel *model)
 {
-    m_TextureObject = dynamic_cast<BioTracker::Core::BioTracker3TextureObject *>(model);
+    m_TextureObject = dynamic_cast<BioTracker3TextureObject *>(model);
 }
 
 void BioTrackerTrackingAlgorithm::doTracking(cv::Mat image)

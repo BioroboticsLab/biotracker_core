@@ -1,16 +1,14 @@
 #include "BioTracker3TextureObject.h"
 
-
-namespace BioTracker {
-namespace Core {
-
-BioTracker3TextureObject::BioTracker3TextureObject() {
+BioTracker3TextureObject::BioTracker3TextureObject(QObject *parent) :
+    IModel(parent)
+{
     // OpenCV's coordinate system originates in the upper left corner.
     // OpenGL originates in the lower left. Thus the image has to be flipped vertically
     m_texture = QImage(1, 1, QImage::Format_RGB888);
 }
 
-void BioTracker::Core::BioTracker3TextureObject::set(const cv::Mat &img) {
+void BioTracker3TextureObject::set(const cv::Mat &img) {
     if (img.channels() == 3) {
         img.convertTo(img, CV_8UC3);
         cv::cvtColor(img, m_img, CV_BGR2RGB);
@@ -48,7 +46,4 @@ void BioTracker::Core::BioTracker3TextureObject::set(const cv::Mat &img) {
                 );
 
     Q_EMIT notifyView();
-}
-
-}
 }

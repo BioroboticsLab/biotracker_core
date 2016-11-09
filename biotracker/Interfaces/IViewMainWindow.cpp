@@ -1,8 +1,8 @@
 #include "IViewMainWindow.h"
 
-IViewMainWindow::IViewMainWindow(QWidget *parent, IController *controller) :
+IViewMainWindow::IViewMainWindow(QWidget *parent, IController *controller, IModel *model) :
     QMainWindow(parent),
-    IView(controller) {
+    IView(controller, model) {
 
 }
 
