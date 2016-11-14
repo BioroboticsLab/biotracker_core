@@ -2,8 +2,9 @@
 #include "IBioTrackerContext.h"
 
 
-IController::IController(QObject *parent, IBioTrackerContext *context) : QObject(parent),
-    m_BioTrackerContext(context)
+IController::IController(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) : QObject(parent),
+    m_BioTrackerContext(context),
+    m_ControllerType(ctr)
 {
 
 }
@@ -34,6 +35,7 @@ void IController::createComponents()
     createView();
     connectModelController();
     connectModelView();
+    callAnOtherController();
 }
 
 void IController::connectViewToMainWindow(IController *controller)
@@ -42,6 +44,11 @@ void IController::connectViewToMainWindow(IController *controller)
 }
 
 void IController::connectToOtherController(IController *controller)
+{
+
+}
+
+void IController::callAnOtherController()
 {
 
 }
@@ -60,4 +67,9 @@ IModel *IController::getModel() {
 
 IView *IController::getView() {
     return m_View;
+}
+
+ENUMS::CONTROLLERTYPE IController::getControllerType()
+{
+    return m_ControllerType;
 }

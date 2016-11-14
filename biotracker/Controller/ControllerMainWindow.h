@@ -7,7 +7,7 @@ class ControllerMainWindow : public IController
 {
     Q_OBJECT
 public:
-    ControllerMainWindow(QObject *parent = 0, IBioTrackerContext *context = 0);
+    ControllerMainWindow(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
     void loadVideo(QString str);
 

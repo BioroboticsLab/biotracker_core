@@ -1,7 +1,8 @@
 #include "BioTracker3TextureObject.h"
 
-BioTracker3TextureObject::BioTracker3TextureObject(QObject *parent) :
-    IModel(parent)
+BioTracker3TextureObject::BioTracker3TextureObject(QObject *parent, QString name) :
+    IModel(parent),
+    m_Name(name)
 {
     // OpenCV's coordinate system originates in the upper left corner.
     // OpenGL originates in the lower left. Thus the image has to be flipped vertically
@@ -46,4 +47,9 @@ void BioTracker3TextureObject::set(const cv::Mat &img) {
                 );
 
     Q_EMIT notifyView();
+}
+
+QString BioTracker3TextureObject::getName()
+{
+    return m_Name;
 }

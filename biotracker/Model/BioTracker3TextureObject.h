@@ -5,13 +5,15 @@
 
 #include <opencv2/opencv.hpp>
 #include "QImage"
+#include "QString"
 
 class BioTracker3TextureObject : public IModel {
     Q_OBJECT
   public:
-    explicit BioTracker3TextureObject(QObject *parent = 0);
+    explicit BioTracker3TextureObject(QObject *parent = 0, QString name = "NoName");
 
     void set(cv::Mat const &img);
+    QString getName();
 
     QImage const &get() const {
         return m_texture;
@@ -24,6 +26,7 @@ class BioTracker3TextureObject : public IModel {
     }
 
   private:
+    QString m_Name;
     cv::Mat m_img;
     QImage m_texture;
 };

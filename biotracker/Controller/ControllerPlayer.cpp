@@ -1,11 +1,10 @@
 #include "ControllerPlayer.h"
-#include "Model/BioTracker3Player.h"
 #include "../biotracker_gui/biotracker/View/BioTracker3VideoControllWidget.h"
 #include "../biotracker_gui/biotracker/View/BioTracker3MainWindow.h"
 #include "Controller/ControllerTextureObject.h"
 
-ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context) :
-    IController(parent, context)
+ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
+    IController(parent, context, ctr)
 {
     m_PlayerThread = new QThread(this);
 }
@@ -37,6 +36,14 @@ void ControllerPlayer::pause() {
     Q_EMIT emitPauseCommand();
 }
 
+void ControllerPlayer::changeImageView(QString str)
+{
+    IController *ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+    ControllerTextureObject *ctrTexture = dynamic_cast<ControllerTextureObject *>(ctrA);
+
+    ctrTexture->changeTextureModel(str);
+}
+
 void ControllerPlayer::connectViewToMainWindow(IController *controller)
 {
     IView *view = controller->getView();
@@ -45,6 +52,11 @@ void ControllerPlayer::connectViewToMainWindow(IController *controller)
 }
 
 void ControllerPlayer::connectToOtherController(IController *controller)
+{
+
+}
+
+void ControllerPlayer::callAnOtherController()
 {
 
 }
@@ -97,7 +109,7 @@ void ControllerPlayer::handlePlayerResult()
 
 void ControllerPlayer::handleNewCvMat(cv::Mat mat)
 {
-    ControllerTextureObject *ctr = dynamic_cast<ControllerTextureObject *> (m_BioTrackerContext->getController("TextureObjectController"));
+    ControllerTextureObject *ctr = dynamic_cast<ControllerTextureObject *> (m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT));
     BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(m_Model);
 //    ctr->setCvMat(player->setCvMat(mat));
     // hier übergang zum texture object controller

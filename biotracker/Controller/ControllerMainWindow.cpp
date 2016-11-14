@@ -4,15 +4,15 @@
 #include "Controller/ControllerStrategies/MainGUIApplication.h"
 #include "Controller/ControllerPlayer.h"
 
-ControllerMainWindow::ControllerMainWindow(QObject *parent, IBioTrackerContext *context) :
-    IController(parent, context)
+ControllerMainWindow::ControllerMainWindow(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
+    IController(parent, context, ctr)
 {
 
 }
 
 void ControllerMainWindow::loadVideo(QString str)
 {
-    IController *ctr = m_BioTrackerContext->getController("PlayerController");
+    IController *ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     dynamic_cast<ControllerPlayer *>(ctr)->loadImageStream(str);
 }
 

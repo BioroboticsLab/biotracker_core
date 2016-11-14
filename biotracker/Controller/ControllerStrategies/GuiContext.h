@@ -7,6 +7,7 @@
 class GuiContext : public IBioTrackerContext
 {
     Q_OBJECT
+
 public:
     GuiContext(QObject *parent = 0);
 
@@ -14,13 +15,6 @@ public:
 protected:
     void createAppController() override;
     void connectController() override;
-
-private:
-    IController *m_MainWindowController;
-    IController *m_TextureObjectController;
-    IController *m_PlayerController;
-    IController *m_TrackerController;
-    IController *m_TrackedComponentController;
 
 };
 

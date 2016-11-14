@@ -113,7 +113,7 @@ void BioTracker3Player::emitSignals()
     Q_EMIT emitMediaType(m_MediaType);
     Q_EMIT emitTotalNumbFrames(m_TotalNumbFrames);
     Q_EMIT emitCurrentFileName(m_CurrentFilename);
-    Q_EMIT emitCurrentFrame(m_CurrentFrame);
+    Q_EMIT emitCurrentFrame(m_CurrentFrame, m_NameOfCvMat);
     Q_EMIT emitCurrentFrameNumber(m_CurrentFrameNumber);
     Q_EMIT emitFPS(m_fps);
 

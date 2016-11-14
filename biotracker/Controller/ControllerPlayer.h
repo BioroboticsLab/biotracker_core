@@ -3,12 +3,14 @@
 
 #include "QThread"
 #include "Interfaces/icontroller.h"
+#include "Model/BioTracker3Player.h"
+
 
 class ControllerPlayer : public IController
 {
     Q_OBJECT
 public:
-    ControllerPlayer(QObject *parent = 0, IBioTrackerContext *context = 0);
+    ControllerPlayer(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
     void loadImageStream(QString str);
 
@@ -18,10 +20,14 @@ public:
     void stop();
     void pause();
 
+
+    void changeImageView(QString str);
+
     // IController interface
 public:
     void connectViewToMainWindow(IController *controller) override;
     void connectToOtherController(IController *controller) override;
+    void callAnOtherController() override;
 
 protected:
     void createModel() override;

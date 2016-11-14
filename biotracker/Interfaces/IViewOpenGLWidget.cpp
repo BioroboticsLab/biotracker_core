@@ -3,19 +3,25 @@
 IViewOpenGLWidget::IViewOpenGLWidget(QWidget *parent, IController *controller, IModel *model) :
     QOpenGLWidget(parent),
     IView(controller) {
-    setModel(model);
+    setNewModel(model);
 }
 
 IViewOpenGLWidget::~IViewOpenGLWidget() {
 
 }
 
-void IViewOpenGLWidget::setNewModel(IModel *model) {
+void IViewOpenGLWidget::setNewModel(IModel *model) {    
+    if (getModel() != nullptr) {
+        QObject::disconnect(getModel(), 0, this, 0);
+    }
+
     setModel(model);
 
     if (getModel() != nullptr) {
         connectModelView();
     }
+
+    update();
 }
 
 void IViewOpenGLWidget::connectModelView() {

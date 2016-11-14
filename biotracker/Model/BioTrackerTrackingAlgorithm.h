@@ -19,7 +19,8 @@ class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
   public:
     BioTrackerTrackingAlgorithm(QObject *parent = 0, ITrackedComponentFactory *factory = 0);
 
-    void setTextureModel(IModel *model);    
+Q_SIGNALS:
+    void emitCvMatA(cv::Mat image, QString name);
 
     // ITrackingAlgorithm interface
   public Q_SLOTS:
@@ -27,8 +28,6 @@ class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
 
 
 private:
-    BioTracker3TextureObject *m_TextureObject;
-
     TrackedElement *m_TrackedElement;
 };
 

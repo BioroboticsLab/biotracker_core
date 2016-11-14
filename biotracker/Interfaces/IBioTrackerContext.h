@@ -4,6 +4,7 @@
 #include <QObject>
 #include "QMap"
 #include "QString"
+#include "Interfaces/ENUMS.h"
 
 class IController;
 class IBioTrackerContext : public QObject
@@ -14,13 +15,15 @@ public:
 
     void createApplication();
 
-    IController * getController(QString ctrName);
+    IController * requestController(ENUMS::CONTROLLERTYPE ctrtype);
 
 protected:
     virtual void createAppController();
     virtual void connectController();
+
+    void addController(IController * ctr);
 protected:
-    QMap<QString, IController *> m_ControllersMap;
+    QMap<ENUMS::CONTROLLERTYPE, IController *> m_ControllersMap;
 
 
 };

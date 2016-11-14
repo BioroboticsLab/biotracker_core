@@ -19,17 +19,17 @@ void IBioTrackerContext::createAppController()
 
 }
 
-IController *IBioTrackerContext::getController(QString ctrName)
+IController *IBioTrackerContext::requestController(ENUMS::CONTROLLERTYPE ctrtype)
 {
-    IController *ctr = 0;
-    if (m_ControllersMap.contains(ctrName)) {
-        ctr = m_ControllersMap.value(ctrName);
-    }
-
-    return ctr;
+    return m_ControllersMap.value(ctrtype);
 }
 
 void IBioTrackerContext::connectController()
 {
 
+}
+
+void IBioTrackerContext::addController(IController *ctr)
+{
+    m_ControllersMap.insert(ctr->getControllerType(), ctr);
 }
