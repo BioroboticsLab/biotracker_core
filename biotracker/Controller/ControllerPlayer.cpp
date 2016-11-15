@@ -44,21 +44,11 @@ void ControllerPlayer::changeImageView(QString str)
     ctrTexture->changeTextureModel(str);
 }
 
-void ControllerPlayer::connectViewToMainWindow(IController *controller)
+void ControllerPlayer::connectController()
 {
-    IView *view = controller->getView();
-    static_cast<BioTracker3MainWindow *>(view)->addVideoControllWidget(m_View);
-
-}
-
-void ControllerPlayer::connectToOtherController(IController *controller)
-{
-
-}
-
-void ControllerPlayer::callAnOtherController()
-{
-
+    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    BioTracker3MainWindow *mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
+    mainWin->addVideoControllWidget(m_View);
 }
 
 void ControllerPlayer::createModel()
@@ -87,18 +77,12 @@ void ControllerPlayer::connectModelController()
     QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &BioTracker3Player::receivePlayCommand);
     QObject::connect(this, &ControllerPlayer::emitPrevFrameCommand, player, &BioTracker3Player::receivePrevFrameCommand);
     QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &BioTracker3Player::receiveStopCommand);
-}
 
-void ControllerPlayer::connectModelView()
-{
-    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(m_Model);
-    BioTracker3VideoControllWidget *widget = dynamic_cast<BioTracker3VideoControllWidget *>(m_View);
 
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, widget, &BioTracker3VideoControllWidget::receiveCurrentFrameNumber);
-    QObject::connect(player, &BioTracker3Player::emitFPS, widget, &BioTracker3VideoControllWidget::receiveFPS);
-    QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, widget, &BioTracker3VideoControllWidget::receiveTotalNumbFrames);
-    QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, widget, &BioTracker3VideoControllWidget::receiveVideoControllsStates);
-
+    QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber);
+    QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS);
+    QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames);
+    QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates);
 }
 
 void ControllerPlayer::handlePlayerResult()
@@ -107,10 +91,30 @@ void ControllerPlayer::handlePlayerResult()
     player->runPlayerOperation();
 }
 
-void ControllerPlayer::handleNewCvMat(cv::Mat mat)
+void ControllerPlayer::receiveCurrentFrameNumber(size_t num)
 {
-    ControllerTextureObject *ctr = dynamic_cast<ControllerTextureObject *> (m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT));
-    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(m_Model);
-//    ctr->setCvMat(player->setCvMat(mat));
-    // hier übergang zum texture object controller
+    BioTracker3VideoControllWidget *widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+
+    widget->setCurrentFrameNumber(num);
+}
+
+void ControllerPlayer::receiveFPS(double fps)
+{
+    BioTracker3VideoControllWidget *widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+
+    widget->setFPS(fps);
+}
+
+void ControllerPlayer::receiveTotalNumbFrames(size_t num)
+{
+    BioTracker3VideoControllWidget *widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+
+    widget->setTotalNumbFrames(num);
+}
+
+void ControllerPlayer::receiveVideoControllsStates(QVector<bool> states)
+{
+    BioTracker3VideoControllWidget *widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+
+    widget->setVideoControllsStates(states);
 }

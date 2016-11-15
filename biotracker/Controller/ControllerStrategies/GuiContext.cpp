@@ -34,13 +34,6 @@ void GuiContext::createAppController()
 
 void GuiContext::connectController()
 {
-    // comment
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLAYER)->connectViewToMainWindow(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::MAINWINDOW));
-    // comment
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT)->connectViewToMainWindow(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::MAINWINDOW));
-    // comment
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT)->connectToOtherController(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLAYER));
-
 
 
 }

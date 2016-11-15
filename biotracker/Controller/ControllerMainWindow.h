@@ -11,18 +11,13 @@ public:
 
     void loadVideo(QString str);
 
-    // IController interface
-public:
-    void connectViewToMainWindow(IController *controller) override;
 
+    // IController interface
 protected:
     void createModel() override;
     void createView() override;
-
-    // IController interface
-protected:
     void connectModelController() override;
-    void connectModelView() override;
+    void connectController() override;
 };
 
 #endif // CONTROLLERMAINWINDOW_H

@@ -25,15 +25,12 @@ public:
 
     // IController interface
 public:
-    void connectViewToMainWindow(IController *controller) override;
-    void connectToOtherController(IController *controller) override;
-    void callAnOtherController() override;
+    void connectController() override;
 
 protected:
     void createModel() override;
     void createView() override;
     void connectModelController() override;
-    void connectModelView() override;
 
 Q_SIGNALS:
   void emitLoadImageStream(QString str);
@@ -48,7 +45,11 @@ Q_SIGNALS:
 
 public Q_SLOTS:
   void handlePlayerResult();
-  void handleNewCvMat(cv::Mat mat);
+
+  void receiveCurrentFrameNumber(size_t num);
+  void receiveFPS(double fps);
+  void receiveTotalNumbFrames(size_t num);
+  void receiveVideoControllsStates(QVector<bool> states);
 
 private:
     QThread *m_PlayerThread;

@@ -14,43 +14,12 @@ IBioTrackerContext *IController::getBioTrackerContext()
     return m_BioTrackerContext;
 }
 
-void IController::createModel()
-{
-
-}
-
-void IController::createView()
-{
-
-}
-
-void IController::connectModelController()
-{
-
-}
-
 void IController::createComponents()
 {
     createModel();
     createView();
     connectModelController();
-    connectModelView();
-    callAnOtherController();
-}
-
-void IController::connectViewToMainWindow(IController *controller)
-{
-
-}
-
-void IController::connectToOtherController(IController *controller)
-{
-
-}
-
-void IController::callAnOtherController()
-{
-
+    connectController();
 }
 
 void IController::addView(IView *view) {

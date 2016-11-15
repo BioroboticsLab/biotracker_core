@@ -16,29 +16,21 @@ class IController : public QObject {
 
     void createComponents();
 
-    virtual void connectViewToMainWindow(IController *controller);
-    virtual void connectToOtherController(IController *controller);
-
-    virtual void callAnOtherController();
-
     void addView(IView *view);
     void addModel(IModel *model);
     IModel *getModel();
     IView *getView();
 
     ENUMS::CONTROLLERTYPE getControllerType();
-
     IBioTrackerContext *getBioTrackerContext();
 
 protected:
     virtual void createModel() = 0;
     virtual void createView() = 0;
     virtual void connectModelController() = 0;
-    virtual void connectModelView() = 0;
+    virtual void connectController() = 0;
 
 protected:
-    IController *m_partnerController;
-
     IBioTrackerContext *m_BioTrackerContext;
 
     IView *m_View;

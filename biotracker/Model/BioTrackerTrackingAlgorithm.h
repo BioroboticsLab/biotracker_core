@@ -6,7 +6,7 @@
 
 #include "Interfaces/ITrackingAlgorithm.h"
 #include "Model/TrackedComponents/TrackedElement.h"
-#include "Model/TrackedComponents/TrackedObject.h"
+#include "Model/TrackedComponents/TrackedTrajectory.h"
 
 #include <boost/optional.hpp>
 

@@ -22,25 +22,19 @@ void ControllerTextureObject::changeTextureModel(QString name)
     changeTextureView(m_Model);
 }
 
-void ControllerTextureObject::connectViewToMainWindow(IController *controller)
+void ControllerTextureObject::connectController()
 {
-    IView *view = controller->getView();
-    static_cast<BioTracker3MainWindow *>(view)->addVideoView(m_View);
-}
+    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    BioTracker3MainWindow *mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
+    mainWin->addVideoView(m_View);
 
-void ControllerTextureObject::connectToOtherController(IController *controller)
-{
-    ControllerPlayer *ctr = dynamic_cast<ControllerPlayer *>(controller);
-    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(ctr->getModel());
 
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerTextureObject::receiveCvMat);
-
-}
-
-void ControllerTextureObject::callAnOtherController()
-{
     IController *ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     ControllerPlayer *ctrPlayer = dynamic_cast<ControllerPlayer *>(ctr);
+
+    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(ctrPlayer->getModel());
+    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerTextureObject::receiveCvMat);
+
 
     BioTracker3VideoControllWidget *videoView = dynamic_cast<BioTracker3VideoControllWidget *> (ctrPlayer->getView());
     videoView->setVideoViewComboboxModel(m_TextureViewNamesModel);
@@ -67,11 +61,6 @@ void ControllerTextureObject::createView()
 }
 
 void ControllerTextureObject::connectModelController()
-{
-
-}
-
-void ControllerTextureObject::connectModelView()
 {
 
 }

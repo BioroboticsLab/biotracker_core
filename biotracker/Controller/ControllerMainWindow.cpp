@@ -16,11 +16,6 @@ void ControllerMainWindow::loadVideo(QString str)
     dynamic_cast<ControllerPlayer *>(ctr)->loadImageStream(str);
 }
 
-void ControllerMainWindow::connectViewToMainWindow(IController *controller)
-{
-    m_partnerController = controller;
-}
-
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow
@@ -40,7 +35,7 @@ void ControllerMainWindow::connectModelController()
 
 }
 
-void ControllerMainWindow::connectModelView()
+void ControllerMainWindow::connectController()
 {
 
 }

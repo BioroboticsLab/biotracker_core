@@ -20,9 +20,7 @@ public:
 
     // IController interface
 public:
-    void connectViewToMainWindow(IController *controller) override;
-    void connectToOtherController(IController *controller) override;
-    void callAnOtherController() override;
+    void connectController() override;
 
 public Q_SLOTS:
     void receiveCvMat(cv::Mat mat, QString name);
@@ -34,7 +32,6 @@ protected:
     void createModel() override;
     void createView() override;
     void connectModelController() override;
-    void connectModelView() override;
 
 private:
     void checkIfTextureModelExists(QString name);

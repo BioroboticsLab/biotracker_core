@@ -8,22 +8,7 @@ ControllerTrackingAlgorithm::ControllerTrackingAlgorithm(QObject *parent, IBioTr
 
 }
 
-void ControllerTrackingAlgorithm::connectViewToMainWindow(IController *controller)
-{
-    IView *view = controller->getView();
-  //  static_cast<BioTracker3MainWindow *>(view)->addVideoView(m_View);
-}
-
-void ControllerTrackingAlgorithm::connectToOtherController(IController *controller)
-{
-//    ControllerPlayer *ctr = dynamic_cast<ControllerPlayer *>(controller);
-//    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(ctr->getModel());
-
-//    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerTextureObject::receiveCvMat);
-
-}
-
-void ControllerTrackingAlgorithm::callAnOtherController()
+void ControllerTrackingAlgorithm::connectController()
 {
     IController *ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject *ctrTexture = dynamic_cast<ControllerTextureObject *>(ctrA);
@@ -52,11 +37,6 @@ void ControllerTrackingAlgorithm::createView()
 }
 
 void ControllerTrackingAlgorithm::connectModelController()
-{
-
-}
-
-void ControllerTrackingAlgorithm::connectModelView()
 {
 
 }

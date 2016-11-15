@@ -12,16 +12,12 @@ public:
 
     // IController interface
 public:
-    void connectViewToMainWindow(IController *controller) override;
-    void connectToOtherController(IController *controller) override;
-
-    void callAnOtherController() override;
+    void connectController() override;
 
 protected:
     void createModel() override;
     void createView() override;
     void connectModelController() override;
-    void connectModelView() override;
 
 Q_SIGNALS:
     void emitCvMatA(cv::Mat mat, QString name);
