@@ -1,10 +1,11 @@
 #ifndef TRACKEDELEMENT_H
 #define TRACKEDELEMENT_H
 
+#include "QGraphicsItem"
 #include "Interfaces/ITrackedComponent.h"
 #include "QString"
 
-class TrackedElement : public ITrackedComponent
+class TrackedElement : public ITrackedComponent, public QGraphicsItem
 {
     Q_OBJECT
 
@@ -27,6 +28,17 @@ private:
     QString name;
     int x;
     int y;
+
+    bool pressed;
+
+    // QGraphicsItem interface
+public:
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+protected:
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // TRACKEDELEMENT_H

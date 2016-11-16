@@ -1,5 +1,8 @@
 #include "TrackedElement.h"
 #include "QDebug"
+#include "QRect"
+#include "QBrush"
+#include "QPainter"
 
 TrackedElement::TrackedElement(QObject *parent, QString name) :
     ITrackedComponent(parent),
@@ -7,6 +10,7 @@ TrackedElement::TrackedElement(QObject *parent, QString name) :
 {
     x = 0;
     y = 0;
+    pressed = false;
 }
 
 QString TrackedElement::getName()
@@ -37,4 +41,41 @@ int TrackedElement::getY()
 void TrackedElement::operate()
 {
     qDebug() << "I am TrackedElement " <<  name;
+}
+
+QRectF TrackedElement::boundingRect() const
+{
+    return QRectF(0,0,100,100);
+}
+
+void TrackedElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    QRectF rec = boundingRect();
+    QBrush brush (Qt::blue);
+
+    if(pressed)
+    {
+        brush.setColor(Qt::red);
+    }
+    else
+    {
+        brush.setColor(Qt::green);
+    }
+
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+}
+
+void TrackedElement::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    pressed = false;
+    update();
+    QGraphicsItem::mouseReleaseEvent(event);
+}
+
+void TrackedElement::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    pressed = true;
+    update();
+    QGraphicsItem::mousePressEvent(event);
 }
