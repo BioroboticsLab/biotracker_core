@@ -2,7 +2,7 @@
 #define GUICONTEXT_H
 
 #include "Interfaces/IBioTrackerContext.h"
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 
 class GuiContext : public IBioTrackerContext
 {

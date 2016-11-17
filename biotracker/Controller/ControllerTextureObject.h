@@ -1,7 +1,7 @@
 #ifndef CONTROLLERTEXTUREOBJECT_H
 #define CONTROLLERTEXTUREOBJECT_H
 
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 #include "opencv2/core/core.hpp"
 #include "QString"
 #include "Model/BioTracker3TextureObject.h"
@@ -17,6 +17,8 @@ public:
     ControllerTextureObject(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
     void changeTextureModel(QString name);
+
+    void addTextureElementView(IView *view);
 
     // IController interface
 public:

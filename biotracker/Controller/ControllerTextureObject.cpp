@@ -22,6 +22,11 @@ void ControllerTextureObject::changeTextureModel(QString name)
     changeTextureView(m_Model);
 }
 
+void ControllerTextureObject::addTextureElementView(IView *view)
+{
+    //dynamic_cast<BioTracker3VideoView *>(m_View)->addTrackedElementView(view);
+}
+
 void ControllerTextureObject::connectController()
 {
     IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);

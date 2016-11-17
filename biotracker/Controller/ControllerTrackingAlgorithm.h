@@ -1,7 +1,7 @@
 #ifndef CONTROLLERTRACKINGALGORITHM_H
 #define CONTROLLERTRACKINGALGORITHM_H
 
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 #include "Model/BioTrackerTrackingAlgorithm.h"
 
 class ControllerTrackingAlgorithm : public IController

@@ -1,7 +1,7 @@
 #ifndef PSTATEWAIT_H
 #define PSTATEWAIT_H
 
-#include "Interfaces/IPlayerState.h"
+#include "Interfaces/IStates/IPlayerState.h"
 
 
 class PStateWait : public IPlayerState {

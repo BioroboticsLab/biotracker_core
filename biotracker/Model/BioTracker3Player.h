@@ -2,7 +2,8 @@
 #define BIOTRACKER3PLAYER_H
 
 #include <QObject>
-#include "Interfaces/imodel.h"
+#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/imodel.h"
 
 #include "BioTracker3ImageStream.h"
 #include <memory>
@@ -14,7 +15,7 @@
 #include "../biotracker_gui/biotracker/View/BioTracker3VideoControllWidget.h"
 #include "../biotracker_gui/biotracker/View/BioTracker3VideoView.h"
 
-#include "Interfaces/IPlayerState.h"
+#include "Interfaces/IStates/IPlayerState.h"
 
 
 class BioTracker3Player : public IModel {

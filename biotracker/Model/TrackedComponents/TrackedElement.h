@@ -2,10 +2,10 @@
 #define TRACKEDELEMENT_H
 
 #include "QGraphicsItem"
-#include "Interfaces/ITrackedComponent.h"
+#include "Interfaces/IModel/ITrackedComponent.h"
 #include "QString"
 
-class TrackedElement : public ITrackedComponent, public QGraphicsItem
+class TrackedElement : public ITrackedComponent
 {
     Q_OBJECT
 
@@ -16,9 +16,12 @@ class TrackedElement : public ITrackedComponent, public QGraphicsItem
 
     void setX(int val);
     void setY(int val);
+    void pressed();
+    void notPressed();
 
     int getX();
     int getY();
+    bool getPressedStatus();
 
     // ITrackedComponent interface
 public:
@@ -29,16 +32,7 @@ private:
     int x;
     int y;
 
-    bool pressed;
-
-    // QGraphicsItem interface
-public:
-    QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
-protected:
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    bool mPressed;
 };
 
 #endif // TRACKEDELEMENT_H

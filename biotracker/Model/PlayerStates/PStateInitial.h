@@ -1,7 +1,7 @@
 #ifndef PSTATEINITIAL_H
 #define PSTATEINITIAL_H
 
-#include "Interfaces/IPlayerState.h"
+#include "Interfaces/IStates/IPlayerState.h"
 
 class PStateInitial : public IPlayerState {
   public:

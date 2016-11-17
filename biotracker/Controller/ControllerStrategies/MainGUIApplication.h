@@ -1,7 +1,7 @@
 #ifndef MAINGUIAPPLICATION_H
 #define MAINGUIAPPLICATION_H
 
-#include "Interfaces/IControllerStrategy.h"
+#include "Interfaces/IController/IControllerStrategy.h"
 #include "biotracker/Model/BioTracker3TextureObject.h"
 
 class MainGUIApplication : public IControllerStrategy

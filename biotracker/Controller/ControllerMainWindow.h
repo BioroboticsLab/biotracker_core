@@ -1,7 +1,7 @@
 #ifndef CONTROLLERMAINWINDOW_H
 #define CONTROLLERMAINWINDOW_H
 
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 
 class ControllerMainWindow : public IController
 {

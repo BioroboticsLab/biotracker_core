@@ -2,7 +2,7 @@
 #define CONTROLLERPLAYER_H
 
 #include "QThread"
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 #include "Model/BioTracker3Player.h"
 
 

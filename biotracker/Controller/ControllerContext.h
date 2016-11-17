@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "Interfaces/icontroller.h"
+#include "Interfaces/IController/icontroller.h"
 
 class ControllerContext
 {

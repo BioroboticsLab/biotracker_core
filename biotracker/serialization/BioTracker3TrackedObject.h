@@ -15,9 +15,9 @@
 #include "biotracker/util/platform.h"
 #include "types.hpp"
 
-#include "Interfaces/IObject.h"
+#include "Interfaces/IModel/IObject.h"
 
-#include "Interfaces/imodel.h"
+#include "Interfaces/IModel/imodel.h"
 
 
 class BIOTRACKER_DLLEXPORT BioTracker3TrackedObject
