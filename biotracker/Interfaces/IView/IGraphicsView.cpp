@@ -1,7 +1,7 @@
 #include "IGraphicsView.h"
 
-IGraphicsView::IGraphicsView(QObject *parent, IController *controller, IModel *model) :
-    QGraphicsScene(parent),
+IGraphicsView::IGraphicsView(QWidget *parent, IController *controller, IModel *model) :
+    QGraphicsView(parent),
     IView(controller, model)
 {
 
