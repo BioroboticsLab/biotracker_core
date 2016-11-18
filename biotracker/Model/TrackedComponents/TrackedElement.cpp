@@ -21,21 +21,28 @@ QString TrackedElement::getName()
 void TrackedElement::setX(int val)
 {
     x = val;
+    Q_EMIT notifyView();
+
 }
 
 void TrackedElement::setY(int val)
 {
     y = val;
+    Q_EMIT notifyView();
+
 }
 
 void TrackedElement::pressed()
 {
     mPressed = true;
+    Q_EMIT notifyView();
+
 }
 
 void TrackedElement::notPressed()
 {
     mPressed = false;
+    Q_EMIT notifyView();
 }
 
 int TrackedElement::getX()

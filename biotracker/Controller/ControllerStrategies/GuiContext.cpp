@@ -27,18 +27,18 @@ GuiContext::GuiContext(QObject *parent) :
 
 void GuiContext::createAppController()
 {
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::MAINWINDOW)->createComponents();
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLAYER)->createComponents();
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT)->createComponents();
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::TRACKING)->createComponents();
-    m_ControllersMap.value(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW)->createComponents();
-
-
-
+    QMap<ENUMS::CONTROLLERTYPE, IController *>::iterator i;
+    for (i = m_ControllersMap.begin(); i != m_ControllersMap.end(); ++i)
+    {
+        i.value()->createComponents();
+    }
 }
 
 void GuiContext::connectController()
 {
-
-
+    QMap<ENUMS::CONTROLLERTYPE, IController *>::iterator i;
+    for (i = m_ControllersMap.begin(); i != m_ControllersMap.end(); ++i)
+    {
+        i.value()->connectComponents();
+    }
 }

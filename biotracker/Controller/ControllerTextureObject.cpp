@@ -1,8 +1,10 @@
 #include "ControllerTextureObject.h"
 #include "../biotracker_gui/biotracker/View/BioTracker3VideoView.h"
 #include "../biotracker_gui/biotracker/View/BioTracker3MainWindow.h"
+#include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerPlayer.h"
 #include "Model/BioTracker3Player.h"
+#include "../biotracker_gui/biotracker/View/TextureObjectView.h"
 
 ControllerTextureObject::ControllerTextureObject(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -29,9 +31,9 @@ void ControllerTextureObject::addTextureElementView(IView *view)
 
 void ControllerTextureObject::connectController()
 {
-    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    BioTracker3MainWindow *mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
-    mainWin->addVideoView(m_View);
+//    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+//    BioTracker3MainWindow *mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
+//    mainWin->addVideoView(m_View);
 
 
     IController *ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
@@ -43,6 +45,15 @@ void ControllerTextureObject::connectController()
 
     BioTracker3VideoControllWidget *videoView = dynamic_cast<BioTracker3VideoControllWidget *> (ctrPlayer->getView());
     videoView->setVideoViewComboboxModel(m_TextureViewNamesModel);
+
+
+    IController *ctrG = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+    ControllerGraphicScene *ctrGraphics = dynamic_cast<ControllerGraphicScene *>(ctrG);
+    QGraphicsPixmapItem *item = dynamic_cast<QGraphicsPixmapItem *>(m_View);
+
+    ctrGraphics->addTextureObject(item);
+
+
 }
 
 void ControllerTextureObject::receiveCvMat(cv::Mat mat, QString name)
@@ -62,7 +73,9 @@ void ControllerTextureObject::createModel()
 
 void ControllerTextureObject::createView()
 {
-    m_View = new BioTracker3VideoView(0, this, m_Model);
+    m_View = new TextureObjectView(this, this, m_Model);
+    // this is the gl widget
+  //  m_View = new BioTracker3VideoView(0, this, m_Model);
 }
 
 void ControllerTextureObject::connectModelController()
