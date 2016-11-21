@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>resources/arrow-back.png</file>
+        <file>resources/arrow-forward1.png</file>
+        <file>resources/arrows-skip-back.png</file>
+        <file>resources/arrows-skip-forward.png</file>
+        <file>resources/fullscreen.png</file>
+        <file>resources/panZoom.png</file>
+        <file>resources/pause-sign.png</file>
+        <file>resources/screenshot.png</file>
+        <file>resources/stop.png</file>
+    </qresource>
+</RCC>
