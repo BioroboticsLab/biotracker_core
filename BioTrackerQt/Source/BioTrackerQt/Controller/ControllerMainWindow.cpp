@@ -24,7 +24,14 @@ void ControllerMainWindow::loadTracker(QString str)
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files)
 {
+    QPointer< IController > ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    qobject_cast<ControllerPlayer *>(ctr)->loadPictures(files);
+}
 
+void ControllerMainWindow::loadCameraDevice(int i)
+{
+    QPointer< IController > ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    qobject_cast<ControllerPlayer *>(ctr)->loadCameraDevice(i);
 }
 
 void ControllerMainWindow::createModel()

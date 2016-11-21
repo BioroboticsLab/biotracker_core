@@ -101,3 +101,8 @@ void BioTracker3MainWindow::on_actionOpen_Camera_triggered()
 
     m_CameraDevice->show();
 }
+
+void BioTracker3MainWindow::receiveSelectedCameraDevice(int i)
+{
+    qobject_cast<ControllerMainWindow *> (getController())->loadCameraDevice(i);
+}

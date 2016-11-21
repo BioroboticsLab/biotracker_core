@@ -21,6 +21,8 @@ void CameraDevice::on_buttonBox_accepted()
 {
     int i = ui->comboBox->currentIndex();
 
+    Q_EMIT emitSelectedCameraDevice(i);
+
     this->close();
 }
 
@@ -60,4 +62,9 @@ void CameraDevice::startCamera(int i)
         camera->start();
     }
 
+}
+
+void CameraDevice::on_buttonBox_rejected()
+{
+    this->close();
 }

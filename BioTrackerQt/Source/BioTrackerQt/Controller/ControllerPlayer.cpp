@@ -9,6 +9,12 @@ ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context,
     m_PlayerThread = new QThread(this);
 }
 
+ControllerPlayer::~ControllerPlayer()
+{
+    m_PlayerThread->quit();
+    m_PlayerThread->wait();
+}
+
 void ControllerPlayer::loadVideoStream(QString str) {
     // Save the path to the video file in Settings
     //m_Settings.setParam(CaptureParam::CAP_VIDEO_FILE, boost::filesystem::path(str.toStdString()));
@@ -19,6 +25,11 @@ void ControllerPlayer::loadVideoStream(QString str) {
 void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files)
 {
     Q_EMIT emitLoadPictures(files);
+}
+
+void ControllerPlayer::loadCameraDevice(int i)
+{
+    Q_EMIT emitLoadCameraDevice(i);
 }
 
 void ControllerPlayer::nextFrame() {
@@ -58,7 +69,8 @@ void ControllerPlayer::connectController()
 
 void ControllerPlayer::createModel()
 {
-    m_Model = new BioTracker3Player( this );
+    // Do net set a Parent in order to run the Player in the QThread!
+    m_Model = new BioTracker3Player(  );
     m_Model->moveToThread(m_PlayerThread);
     m_PlayerThread->start();
 }
@@ -75,10 +87,13 @@ void ControllerPlayer::connectModelController()
 {
     QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(m_Model);
 
-    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::handlePlayerResult);
-
-
+    //Load ImageStream
     QObject::connect(this, &ControllerPlayer::emitLoadVideoStream, player, &BioTracker3Player::receiveLoadVideoCommand);
+    QObject::connect(this, &ControllerPlayer::emitLoadCameraDevice, player, &BioTracker3Player::receiveLoadCameraDevice);
+    QObject::connect(this, &ControllerPlayer::emitLoadPictures, player, &BioTracker3Player::receiveLoadPictures);
+
+
+    // Controll the Player
     QObject::connect(this, &ControllerPlayer::emitNextFrameCommand, player, &BioTracker3Player::receiveNextFramCommand);
     QObject::connect(this, &ControllerPlayer::emitPauseCommand, player, &BioTracker3Player::receivePauseCommand);
     QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &BioTracker3Player::receivePlayCommand);
@@ -86,10 +101,13 @@ void ControllerPlayer::connectModelController()
     QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &BioTracker3Player::receiveStopCommand);
 
 
+    // Handel Player results
     QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber);
     QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS);
     QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames);
     QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates);
+    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::handlePlayerResult);
+
 }
 
 void ControllerPlayer::handlePlayerResult()

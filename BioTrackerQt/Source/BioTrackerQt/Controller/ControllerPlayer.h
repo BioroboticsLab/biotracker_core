@@ -12,9 +12,11 @@ class ControllerPlayer : public IController
     Q_OBJECT
 public:
     ControllerPlayer(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+    ~ControllerPlayer();
 
     void loadVideoStream(QString str);
     void loadPictures(std::vector<boost::filesystem::path> files);
+    void loadCameraDevice(int i);
 
     void nextFrame();
     void prevFrame();
@@ -37,6 +39,7 @@ protected:
 Q_SIGNALS:
   void emitLoadVideoStream(QString str);
   void emitLoadPictures(std::vector<boost::filesystem::path> files);
+  void emitLoadCameraDevice(int i);
   void emitNextFrameCommand();
   void emitPrevFrameCommand();
   void emitPlayCommand();

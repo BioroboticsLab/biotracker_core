@@ -16,6 +16,7 @@
 #include "View/BioTracker3VideoView.h"
 
 #include "Interfaces/IStates/IPlayerState.h"
+#include "QSharedPointer"
 
 
 class BioTracker3Player : public IModel {
@@ -30,6 +31,9 @@ class BioTracker3Player : public IModel {
 
   public Q_SLOTS:
     void receiveLoadVideoCommand(QString fileDir);
+    void receiveLoadPictures(std::vector<boost::filesystem::path> files);
+    void receiveLoadCameraDevice(int i);
+
     void receivePrevFrameCommand();
     void receiveNextFramCommand();
     void receivePauseCommand();

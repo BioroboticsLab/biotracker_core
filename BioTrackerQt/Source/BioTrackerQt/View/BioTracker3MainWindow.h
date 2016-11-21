@@ -40,6 +40,8 @@ private Q_SLOTS:
 
     void on_actionOpen_Camera_triggered();
 
+    void receiveSelectedCameraDevice(int i);
+
 private:
     Ui::BioTracker3MainWindow *ui;
 

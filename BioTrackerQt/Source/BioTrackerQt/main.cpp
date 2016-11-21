@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<cv::Mat>("cv::Mat");
     qRegisterMetaType<std::size_t>("std::size_t");
     qRegisterMetaType<size_t>("size_t");
+    qRegisterMetaType<std::vector<boost::filesystem::path>>("std::vector<boost::filesystem::path>");
 
 
 

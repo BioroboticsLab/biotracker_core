@@ -13,6 +13,7 @@ public:
     void loadVideo(QString str);
     void loadTracker(QString str);
     void loadPictures(std::vector<boost::filesystem::path> files);
+    void loadCameraDevice(int i);
 
 
     // IController interface

@@ -95,7 +95,6 @@ SOURCES += main.cpp\
     src/util/CvHelper.cpp \
     src/util/stringTools.cpp \
     Model/PluginLoader.cpp \
-    View/CameraDeviceSelect.cpp \
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp
 
@@ -169,13 +168,11 @@ HEADERS  += BioTracker3App.h \
     Exceptions.h \
     PanZoomState.h \
     Model/PluginLoader.h \
-    View/CameraDeviceSelect.h \
     View/CameraDevice.h \
     Controller/null_Controller.h
 
 FORMS    += View/BioTracker3MainWindow.ui \
     View/BioTracker3VideoControllWidget.ui \
-    View/CameraDeviceSelect.ui \
     View/CameraDevice.ui
 
 RESOURCES += \

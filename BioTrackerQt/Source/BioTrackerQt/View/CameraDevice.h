@@ -19,10 +19,15 @@ public:
     explicit CameraDevice(QWidget *parent = 0);
     ~CameraDevice();
 
-private slots:
+private Q_SLOTS:
     void on_buttonBox_accepted();
 
     void on_comboBox_currentIndexChanged(int index);
+
+    void on_buttonBox_rejected();
+
+Q_SIGNALS:
+    void emitSelectedCameraDevice(int i);
 
 private:
     void listAllCameras();
