@@ -67,7 +67,7 @@ void BioTracker3Player::receiveLoadPictures(std::vector<boost::filesystem::path>
 
 void BioTracker3Player::receiveLoadCameraDevice(int i)
 {
-
+   //
 }
 
 void BioTracker3Player::receivePrevFrameCommand()
