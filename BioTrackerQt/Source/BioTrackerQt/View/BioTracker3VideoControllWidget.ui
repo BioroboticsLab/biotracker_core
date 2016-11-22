@@ -96,15 +96,14 @@
          <string>Previous Frame</string>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/Images/resources/arrows-skip-back.png);
-image: url(:/Images/resources/arrows-skip-back.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/arrows-skip-back.png</normaloff>:/BioTracker/resources/arrows-skip-back.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/arrows-skip-back.png</normaloff>:/Images/resources/arrows-skip-back.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -123,15 +122,14 @@ image: url(:/Images/resources/arrows-skip-back.png);</string>
          <string>Play</string>
         </property>
         <property name="styleSheet">
-         <string notr="true">image: url(:/Images/resources/arrow-forward1.png);
-background-image: url(:/Images/resources/arrow-forward1.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/arrow-forward1.png</normaloff>:/BioTracker/resources/arrow-forward1.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/arrow-forward1.png</normaloff>:/Images/resources/arrow-forward1.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -153,15 +151,14 @@ background-image: url(:/Images/resources/arrow-forward1.png);</string>
          <string/>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/Images/resources/stop.png);
-image: url(:/Images/resources/stop.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/stop.png</normaloff>:/BioTracker/resources/stop.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/stop.png</normaloff>:/Images/resources/stop.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -183,15 +180,14 @@ image: url(:/Images/resources/stop.png);</string>
          <string/>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/Images/resources/arrows-skip-forward.png);
-image: url(:/Images/resources/arrows-skip-forward.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/arrows-skip-forward.png</normaloff>:/BioTracker/resources/arrows-skip-forward.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/arrows-skip-forward.png</normaloff>:/Images/resources/arrows-skip-forward.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -221,15 +217,14 @@ image: url(:/Images/resources/arrows-skip-forward.png);</string>
          <string/>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/Images/resources/screenshot.png);
-image: url(:/Images/resources/screenshot.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/screenshot.png</normaloff>:/BioTracker/resources/screenshot.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/screenshot.png</normaloff>:/Images/resources/screenshot.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -348,15 +343,14 @@ image: url(:/Images/resources/screenshot.png);</string>
          <string>Pan/Zoom Mode</string>
         </property>
         <property name="styleSheet">
-         <string notr="true">image: url(:/Images/resources/panZoom.png);
-background-image: url(:/Images/resources/panZoom.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/BioTracker/resources/panZoom.png</normaloff>:/BioTracker/resources/panZoom.png</iconset>
+         <iconset resource="../guiresources.qrc">
+          <normaloff>:/Images/resources/panZoom.png</normaloff>:/Images/resources/panZoom.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -516,6 +510,8 @@ background-image: url(:/Images/resources/panZoom.png);</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../guiresources.qrc"/>
+ </resources>
  <connections/>
 </ui>

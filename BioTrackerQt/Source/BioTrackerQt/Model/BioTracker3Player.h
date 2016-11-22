@@ -24,12 +24,11 @@ class BioTracker3Player : public IModel {
   public:
     explicit BioTracker3Player(QObject *parent = 0);
 
-    void runPlayerOperation();
-
-
     void setNextState(IPlayerState::PLAYER_STATES state);
 
-  public Q_SLOTS:
+  public Q_SLOTS:    
+    void runPlayerOperation();
+
     void receiveLoadVideoCommand(QString fileDir);
     void receiveLoadPictures(std::vector<boost::filesystem::path> files);
     void receiveLoadCameraDevice(int i);
@@ -61,6 +60,7 @@ class BioTracker3Player : public IModel {
 
   private:
     IPlayerState *m_CurrentPlayerState;
+    IPlayerState *m_NextPlayerState;
     QThread m_StateThread;
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *> m_States;
     std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> m_ImageStream;

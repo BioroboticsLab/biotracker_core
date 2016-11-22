@@ -10,9 +10,9 @@ BioTracker3VideoControllWidget::BioTracker3VideoControllWidget(QWidget *parent, 
 {
     ui->setupUi(this);
 
-    m_iconPause.addFile(QStringLiteral(":/BioTracker/resources/pause-sign.png"),
+    m_iconPause.addFile(QStringLiteral("qrc:/Images/resources/pause-sign.png"),
                         QSize(), QIcon::Normal, QIcon::Off);
-    m_iconPlay.addFile(QStringLiteral(":/BioTracker/resources/arrow-forward1.png"),
+    m_iconPlay.addFile(QStringLiteral("qrc:/Images/resources/arrow-forward1.png"),
                        QSize(), QIcon::Normal, QIcon::Off);
 }
 
@@ -43,10 +43,10 @@ void BioTracker3VideoControllWidget::getNotified()
 
 
     if (m_Paus) {
-        ui->button_playPause->setIcon(m_iconPause);
+        ui->button_playPause->setIcon(QIcon(":/Images/resources/pause-sign.png"));
     }
     else {
-        ui->button_playPause->setIcon(m_iconPlay);
+        ui->button_playPause->setIcon(QIcon(":/Images/resources/arrow-forward1.png"));
     }
 }
 

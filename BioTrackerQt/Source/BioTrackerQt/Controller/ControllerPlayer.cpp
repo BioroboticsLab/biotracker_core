@@ -102,18 +102,25 @@ void ControllerPlayer::connectModelController()
 
 
     // Handel Player results
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber);
-    QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS);
-    QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames);
-    QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates);
-    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::handlePlayerResult);
+    QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
 
+    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone);
+
+    QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &BioTracker3Player::runPlayerOperation);
 }
 
-void ControllerPlayer::handlePlayerResult()
+void ControllerPlayer::receiveRunPlayerOperationCommand()
 {
     QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(m_Model);
     player->runPlayerOperation();
+}
+
+void ControllerPlayer::receivePlayerOperationDone()
+{
+    Q_EMIT emitRunPlayerOperation();
 }
 
 void ControllerPlayer::receiveCurrentFrameNumber(size_t num)

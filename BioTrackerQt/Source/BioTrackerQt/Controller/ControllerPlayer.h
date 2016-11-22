@@ -50,7 +50,8 @@ Q_SIGNALS:
 
 
 public Q_SLOTS:
-  void handlePlayerResult();
+  void receiveRunPlayerOperationCommand();
+  void receivePlayerOperationDone();
 
   void receiveCurrentFrameNumber(size_t num);
   void receiveFPS(double fps);

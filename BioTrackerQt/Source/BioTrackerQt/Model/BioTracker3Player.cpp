@@ -29,11 +29,16 @@ BioTracker3Player::BioTracker3Player(QObject *parent) :
 
 void BioTracker3Player::runPlayerOperation() {
 
-    m_CurrentPlayerState->operate();
+    if(m_NextPlayerState != m_States.value(IPlayerState::PLAYER_STATES::STATE_WAIT)) {
 
-    updatePlayerParameter();
+        m_CurrentPlayerState = m_NextPlayerState;
 
-    emitSignals();
+        m_CurrentPlayerState->operate();
+        updatePlayerParameter();
+        emitSignals();
+
+    }
+
 }
 
 void BioTracker3Player::receiveLoadVideoCommand(QString fileDir)
@@ -50,6 +55,7 @@ void BioTracker3Player::receiveLoadVideoCommand(QString fileDir)
     }
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
+
 }
 
 void BioTracker3Player::receiveLoadPictures(std::vector<boost::filesystem::path> files)
@@ -139,7 +145,7 @@ void BioTracker3Player::emitSignals()
 }
 
 void BioTracker3Player::setNextState(IPlayerState::PLAYER_STATES state) {
-    m_CurrentPlayerState = m_States.value(state);
+    m_NextPlayerState = m_States.value(state);
 
     Q_EMIT emitPlayerOperationDone();
 

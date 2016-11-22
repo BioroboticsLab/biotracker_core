@@ -25,5 +25,5 @@ void PStateInitialStream::operate() {
 
     //Q_EMIT emitStateDone();
 
-//    m_Player->setNextState(IPlayerState::STATE_WAIT);
+    m_Player->setNextState(IPlayerState::STATE_WAIT);
 }
