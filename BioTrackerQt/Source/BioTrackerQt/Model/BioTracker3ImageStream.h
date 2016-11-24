@@ -7,6 +7,7 @@
 #include <string>                       // std::string
 #include <boost/filesystem.hpp>
 #include <QObject>
+#include "QSharedPointer"
 
 #include "settings/ParamNames.h" // GUIPARAM::MediaType
 
@@ -62,7 +63,7 @@ class BioTracker3ImageStream : public QObject {
      * returns the current frame.
      * - if the current frame position is invalid or an error occurred, an empty image is returned.
      */
-    const cv::Mat &currentFrame() const;
+    QSharedPointer<cv::Mat> currentFrame() const;
 
     /**
      * sets the current frame number and updates the current frame.
@@ -91,7 +92,7 @@ class BioTracker3ImageStream : public QObject {
     /**
      * sets the image returned by this->currentFrame();
      */
-    void set_current_frame(const cv::Mat &img);
+    void set_current_frame(cv::Mat &img);
 
   private:
     /**
@@ -117,7 +118,7 @@ class BioTracker3ImageStream : public QObject {
      */
     virtual bool previousFrame_impl();
 
-    cv::Mat m_current_frame;
+    QSharedPointer<cv::Mat> m_current_frame;
     size_t  m_current_frame_number;
 };
 

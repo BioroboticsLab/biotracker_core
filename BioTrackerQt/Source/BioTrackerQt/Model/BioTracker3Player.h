@@ -48,7 +48,7 @@ class BioTracker3Player : public IModel {
     void emitCurrentFrameNumber(size_t num);
     void emitFPS(double fps);
     void emitCurrentFileName(QString name);
-    void emitCurrentFrame(cv::Mat mat, QString name);
+    void emitCurrentFrame(cv::Mat *mat, QString name);
     void emitVideoControllsStates(QVector<bool> states);
 
     void emitPlayerOperationDone();
@@ -70,7 +70,7 @@ class BioTracker3Player : public IModel {
     size_t m_CurrentFrameNumber;
     double m_fps;
     QString m_CurrentFilename;
-    cv::Mat m_CurrentFrame;
+    QPointer<cv::Mat> m_CurrentFrame;
     QVector<bool> m_VideoControllsStates;
 
     bool m_Play;

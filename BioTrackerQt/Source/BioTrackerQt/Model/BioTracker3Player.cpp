@@ -71,9 +71,16 @@ void BioTracker3Player::receiveLoadPictures(std::vector<boost::filesystem::path>
 
 }
 
-void BioTracker3Player::receiveLoadCameraDevice(int i)
+void BioTracker3Player::receiveLoadCameraDevice(int x)
 {
-   //
+    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
+
+    QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
+    for (i = m_States.begin(); i != m_States.end(); i++) {
+        i.value()->changeImageStream(stream);
+    }
+
+    setNextState(IPlayerState::STATE_INITIAL_STREAM);
 }
 
 void BioTracker3Player::receivePrevFrameCommand()

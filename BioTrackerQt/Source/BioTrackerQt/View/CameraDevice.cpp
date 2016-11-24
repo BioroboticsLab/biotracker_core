@@ -9,12 +9,15 @@ CameraDevice::CameraDevice(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     listAllCameras();
 }
 
 CameraDevice::~CameraDevice()
 {
     delete ui;
+    camera->stop();
 }
 
 void CameraDevice::on_buttonBox_accepted()

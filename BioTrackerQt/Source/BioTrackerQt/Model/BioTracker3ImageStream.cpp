@@ -5,12 +5,13 @@
 #include <stdexcept>  // std::invalid_argument
 
 #include "Exceptions.h"
+#include "QSharedPointer"
 
 namespace BioTracker {
 namespace Core {
 
 BioTracker3ImageStream::BioTracker3ImageStream(QObject *parent) : QObject(parent),
-    m_current_frame(cv::Size(0,0), CV_8UC3),
+    m_current_frame(new cv::Mat(cv::Size(0,0), CV_8UC3)),
     m_current_frame_number(0) {
 
 }
@@ -19,7 +20,7 @@ size_t BioTracker3ImageStream::currentFrameNumber() const {
     return m_current_frame_number;
 }
 
-const cv::Mat &BioTracker3ImageStream::currentFrame() const {
+QSharedPointer<cv::Mat> BioTracker3ImageStream::currentFrame() const {
     return m_current_frame;
 }
 
@@ -51,7 +52,7 @@ bool BioTracker3ImageStream::end() const {
 }
 
 bool BioTracker3ImageStream::currentFrameIsEmpty() const {
-    return this->currentFrame().empty();
+    return this->currentFrame().isNull();
 }
 
 bool BioTracker3ImageStream::nextFrame() {
@@ -78,8 +79,8 @@ bool BioTracker3ImageStream::previousFrame() {
     }
 }
 
-void BioTracker3ImageStream::set_current_frame(const cv::Mat &img) {
-    m_current_frame = img;
+void BioTracker3ImageStream::set_current_frame(cv::Mat &img) {
+    m_current_frame = new cv::Mat(*img);
 }
 
 void BioTracker3ImageStream::clearImage() {

@@ -20,11 +20,11 @@ class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
     BioTrackerTrackingAlgorithm(QObject *parent = 0, ITrackedComponentFactory *factory = 0);
 
 Q_SIGNALS:
-    void emitCvMatA(cv::Mat image, QString name);
+    void emitCvMatA(cv::Mat *image, QString name);
 
     // ITrackingAlgorithm interface
   public Q_SLOTS:
-    void doTracking(cv::Mat image) override;
+    void doTracking(cv::Mat *image) override;
 
 
 private:

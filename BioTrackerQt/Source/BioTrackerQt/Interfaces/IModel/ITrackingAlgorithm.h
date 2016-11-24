@@ -12,7 +12,7 @@ class ITrackingAlgorithm :public IModel {
   public:
     ITrackingAlgorithm(QObject *parent = 0);
 
-    virtual void doTracking(cv::Mat image) = 0;
+    virtual void doTracking(cv::Mat *image) = 0;
 
     void setTrackedComponentFactory(ITrackedComponentFactory *factory);
     void setTrackedComponent(ITrackedComponent *trackedComponent);

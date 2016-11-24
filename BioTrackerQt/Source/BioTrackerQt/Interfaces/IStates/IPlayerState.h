@@ -2,6 +2,7 @@
 #define IPLAYERSTATE_H
 
 #include <QObject>
+#include "QPointer"
 
 #include "Interfaces/IModel/imodel.h"
 
@@ -29,7 +30,7 @@ class IPlayerState : public IModel {
     bool getStateForBackward();
     bool getStateForStop();
     bool getStateForPause();
-    cv::Mat getCurrentFrame();
+    QSharedPointer<cv::Mat> getCurrentFrame();
     size_t getCurrentFrameNumber();
 
 Q_SIGNALS:
@@ -45,7 +46,7 @@ Q_SIGNALS:
     bool m_Stop;
     bool m_Paus;
 
-    cv::Mat m_Mat;
+    QSharedPointer<cv::Mat> m_Mat;
     size_t m_FrameNumber;
 
 

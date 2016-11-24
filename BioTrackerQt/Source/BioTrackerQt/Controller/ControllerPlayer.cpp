@@ -112,12 +112,6 @@ void ControllerPlayer::connectModelController()
     QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &BioTracker3Player::runPlayerOperation);
 }
 
-void ControllerPlayer::receiveRunPlayerOperationCommand()
-{
-    QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(m_Model);
-    player->runPlayerOperation();
-}
-
 void ControllerPlayer::receivePlayerOperationDone()
 {
     Q_EMIT emitRunPlayerOperation();

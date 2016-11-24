@@ -35,7 +35,7 @@ bool IPlayerState::getStateForPause()
     return m_Paus;
 }
 
-cv::Mat IPlayerState::getCurrentFrame()
+QSharedPointer<cv::Mat> IPlayerState::getCurrentFrame()
 {
     return m_Mat;
 }

@@ -56,11 +56,11 @@ void ControllerTextureObject::connectController()
 
 }
 
-void ControllerTextureObject::receiveCvMat(cv::Mat mat, QString name)
+void ControllerTextureObject::receiveCvMat(cv::Mat *mat, QString name)
 {
     checkIfTextureModelExists(name);
 
-    m_TextureObjects.value(name)->set(mat);
+    m_TextureObjects.value(name)->set(*mat);
 
 }
 

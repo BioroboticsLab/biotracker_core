@@ -20,10 +20,10 @@ protected:
     void connectModelController() override;
 
 Q_SIGNALS:
-    void emitCvMatA(cv::Mat mat, QString name);
+    void emitCvMatA(cv::Mat *mat, QString name);
 
 public Q_SLOTS:
-    void receiveCvMatA(cv::Mat mat, QString name);
+    void receiveCvMatA(cv::Mat *mat, QString name);
 };
 
 #endif // CONTROLLERTRACKINGALGORITHM_H

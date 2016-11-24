@@ -41,7 +41,7 @@ void ControllerTrackingAlgorithm::connectModelController()
 
 }
 
-void ControllerTrackingAlgorithm::receiveCvMatA(cv::Mat mat, QString name)
+void ControllerTrackingAlgorithm::receiveCvMatA(cv::Mat *mat, QString name)
 {
     Q_EMIT emitCvMatA(mat, name);
 }

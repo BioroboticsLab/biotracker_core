@@ -15,7 +15,7 @@ void PStateInitial::operate() {
     m_Stop = false;
     m_Paus = false;
 
-    m_Mat = cv::Mat(320, 240, CV_8UC3, cv::Scalar(0,0,0));
+    //m_Mat = new cv::Mat(320, 320, CV_32F);
     m_FrameNumber = 0;
 
   //  Q_EMIT emitStateDone();

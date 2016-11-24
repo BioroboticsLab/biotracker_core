@@ -6,7 +6,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(QObject *parent, ITrack
     setTrackedComponentFactory(factory);
 }
 
-void BioTrackerTrackingAlgorithm::doTracking(cv::Mat image)
+void BioTrackerTrackingAlgorithm::doTracking(cv::Mat *image)
 {
     cv::Mat mat;
     cv::applyColorMap(image, mat, cv::COLORMAP_JET);

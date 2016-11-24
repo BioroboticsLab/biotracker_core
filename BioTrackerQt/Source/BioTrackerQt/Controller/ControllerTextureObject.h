@@ -26,7 +26,7 @@ public:
     void connectController() override;
 
 public Q_SLOTS:
-    void receiveCvMat(cv::Mat mat, QString name);
+    void receiveCvMat(cv::Mat *mat, QString name);
 
 Q_SIGNALS:
     void emitNameOfTextureObject(QString name);

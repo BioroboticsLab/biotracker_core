@@ -16,7 +16,7 @@ void PStateStepBack::operate() {
 
 
     if (m_ImageStream->previousFrame()) {
-        m_Mat = m_ImageStream->currentFrame();
+        m_Mat =m_ImageStream->currentFrame();
         m_FrameNumber = m_ImageStream->currentFrameNumber();
     }
 
