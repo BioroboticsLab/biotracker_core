@@ -267,7 +267,7 @@ QImage mat2Image_shared(const cv::Mat &mat, QImage::Format formatHint) {
         }
     }
 
-    QImage img(mat.data, mat.cols, mat.rows, mat.step, formatHint);
+    QImage img(mat.data, mat.cols, mat.rows, static_cast<int>(mat.step), formatHint);
 
     //Should we add directly support for user-customed-colorTable?
     if (formatHint == QImage::Format_Indexed8) {
