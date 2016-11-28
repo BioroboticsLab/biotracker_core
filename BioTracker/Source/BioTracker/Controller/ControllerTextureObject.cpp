@@ -36,7 +36,7 @@ void ControllerTextureObject::connectController()
 //    mainWin->addVideoView(m_View);
 
 
-    QPointer< IController > ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctr);
 
     QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(ctrPlayer->getModel());
@@ -47,7 +47,7 @@ void ControllerTextureObject::connectController()
     videoView->setVideoViewComboboxModel(m_TextureViewNamesModel);
 
 
-    QPointer< IController > ctrG = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+    IController * ctrG = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
     QPointer< ControllerGraphicScene > ctrGraphics = qobject_cast<ControllerGraphicScene *>(ctrG);
     QGraphicsPixmapItem *item = dynamic_cast<QGraphicsPixmapItem *>(m_View);
 

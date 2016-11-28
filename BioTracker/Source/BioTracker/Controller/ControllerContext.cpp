@@ -18,5 +18,5 @@ void ControllerContext::setBioTrackerController(IController *controller)
 
 IController *ControllerContext::getBioTrackerController()
 {
-    return m_Controller.data();
+    return m_Controller;
 }

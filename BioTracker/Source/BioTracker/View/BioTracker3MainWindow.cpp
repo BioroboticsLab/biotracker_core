@@ -60,7 +60,7 @@ void BioTracker3MainWindow::on_actionLoad_Tracker_triggered()
                              "Open BioTracker Tracking Plugin", "", pluginFilter);
 
     if (!filename.isEmpty()) {
-        qobject_cast<ControllerMainWindow *> (getController())->loadVideo(filename);
+        qobject_cast<ControllerMainWindow *> (getController())->loadTracker(filename);
     }
 }
 

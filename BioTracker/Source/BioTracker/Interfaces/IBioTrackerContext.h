@@ -6,6 +6,10 @@
 #include "QString"
 #include "Interfaces/ENUMS.h"
 
+#include "QPluginLoader"
+//#include "Interfaces/IBioTrackerTrackingInterface.h"
+
+class IBioTrackerTrackingInterface;
 class IController;
 class IBioTrackerContext : public QObject
 {
@@ -14,6 +18,8 @@ public:
     IBioTrackerContext(QObject *parent = 0);
 
     void createApplication();
+
+    bool loadBioTrackerPlugin(QString str);
 
     IController * requestController(ENUMS::CONTROLLERTYPE ctrtype);
 
@@ -24,6 +30,10 @@ protected:
     void addController(IController * ctr);
 protected:
     QMap<ENUMS::CONTROLLERTYPE, IController *> m_ControllersMap;
+
+    IBioTrackerTrackingInterface *m_PluginController;
+
+    QPluginLoader *m_PluginLoader;
 
 
 };

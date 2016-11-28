@@ -4,6 +4,7 @@
 #include "Interfaces/IController/icontroller.h"
 #include "Model/BioTrackerTrackingAlgorithm.h"
 
+
 class ControllerTrackingAlgorithm : public IController
 {
     Q_OBJECT
@@ -24,6 +25,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void receiveCvMatA(std::shared_ptr<cv::Mat> mat, QString name);
+
 };
 
 #endif // CONTROLLERTRACKINGALGORITHM_H

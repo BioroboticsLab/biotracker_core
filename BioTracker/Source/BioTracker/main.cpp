@@ -1,6 +1,10 @@
 #include <QApplication>
 #include "BioTracker3App.h"
 #include "GuiContext.h"
+#include "opencv2/core/core.hpp"
+#include <boost/filesystem.hpp>
+#include "QVector"
+
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);

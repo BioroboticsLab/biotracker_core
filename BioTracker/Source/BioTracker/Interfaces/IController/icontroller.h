@@ -2,13 +2,16 @@
 #define ICONTROLLER_H
 
 #include <QObject>
-#include "View/BioTracker3MainWindow.h"
-#include "Interfaces/IView/IViewWidget.h"
-#include "Interfaces/IModel/imodel.h"
 #include "QMap"
+#include "QPointer"
+
+#include <boost/filesystem.hpp>
+
+#include "Interfaces/IView/IView.h"
+#include "Interfaces/IModel/imodel.h"
 #include "Interfaces/IBioTrackerContext.h"
 #include "Interfaces/ENUMS.h"
-#include "QPointer"
+
 
 class IController : public QObject {
     Q_OBJECT
@@ -36,10 +39,14 @@ protected:
     QPointer< IBioTrackerContext > m_BioTrackerContext;
 
     IView *m_View;
-    QPointer< IModel > m_Model;
+    QPointer<IModel> m_Model;
 
     ENUMS::CONTROLLERTYPE m_ControllerType;
 
 };
+
+#define IController_iid "de.fu-berlin.mi.biorobotics.IController"
+
+Q_DECLARE_INTERFACE(IController, IController_iid)
 
 #endif // ICONTROLLER_H

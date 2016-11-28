@@ -27,7 +27,7 @@ private:
     QPointer< TrackedElementView > m_ElementView;
     IView *m_GraphicsView;
 
-    QPointer< IModel > m_Element;
+    IModel *m_Element;
     QPointer< IModel > m_NullModel;
 };
 

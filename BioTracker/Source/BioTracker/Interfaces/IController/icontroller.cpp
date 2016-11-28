@@ -1,6 +1,4 @@
 #include "icontroller.h"
-#include "Interfaces/IController/icontroller.h"
-#include "Interfaces/IBioTrackerContext.h"
 
 
 IController::IController(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) : QObject(parent),

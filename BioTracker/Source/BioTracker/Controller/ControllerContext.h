@@ -18,7 +18,7 @@ public:
     IController *getBioTrackerController();
 
 private:
-    QPointer<IController> m_Controller;
+    IController *m_Controller;
 };
 
 #endif // CONTROLLERCONTEXT_H

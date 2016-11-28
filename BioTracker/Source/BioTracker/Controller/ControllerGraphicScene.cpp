@@ -2,6 +2,7 @@
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "View/GraphicsView.h"
 #include "Model/null_Model.h"
+#include "View/BioTracker3MainWindow.h"
 
 ControllerGraphicScene::ControllerGraphicScene(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -42,7 +43,7 @@ void ControllerGraphicScene::connectModelController()
 
 void ControllerGraphicScene::connectController()
 {
-        QPointer< IController > ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+        IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
         QPointer< BioTracker3MainWindow > mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
         mainWin->addVideoView(m_View);
 }

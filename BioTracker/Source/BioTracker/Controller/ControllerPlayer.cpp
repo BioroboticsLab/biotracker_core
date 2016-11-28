@@ -54,7 +54,7 @@ void ControllerPlayer::pause() {
 
 void ControllerPlayer::changeImageView(QString str)
 {
-    QPointer< IController > ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject *>(ctr);
 
     ctrTextureObject->changeTextureModel(str);
@@ -62,7 +62,7 @@ void ControllerPlayer::changeImageView(QString str)
 
 void ControllerPlayer::connectController()
 {
-    QPointer< IController > ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< BioTracker3MainWindow > mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
 }
@@ -77,7 +77,7 @@ void ControllerPlayer::createModel()
 
 void ControllerPlayer::createView()
 {
-    QPointer< IController > ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< BioTracker3MainWindow > mainWindow = dynamic_cast<BioTracker3MainWindow *>(ctr->getView());
 
     m_View = new BioTracker3VideoControllWidget(mainWindow, this, m_Model);

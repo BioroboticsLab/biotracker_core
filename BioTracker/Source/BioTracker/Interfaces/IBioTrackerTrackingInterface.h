@@ -22,6 +22,8 @@ public:
     virtual ENUMS::CONTROLLERTYPE getControllerType() = 0;
     virtual IBioTrackerContext *getBioTrackerContext() = 0;
 
+    virtual void addBioTrackerContext(IBioTrackerContext *context) = 0;
+
 protected:
     virtual void createModel() = 0;
     virtual void createView() = 0;
@@ -32,6 +34,6 @@ protected:
 
 #define BioTrackerTrackingInterface_iid "de.fu-berlin.mi.biorobotics.BioTrackerTrackingInterface"
 
-Q_DECLARE_INTERFACE(BioTracker, BioTrackerTrackingInterface_iid)
+Q_DECLARE_INTERFACE(IBioTrackerTrackingInterface, BioTrackerTrackingInterface_iid)
 
 #endif // IBIOTRACKERTRACKINGPLUGIN_H

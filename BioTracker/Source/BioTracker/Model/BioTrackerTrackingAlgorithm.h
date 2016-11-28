@@ -17,7 +17,7 @@ class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
 {
     Q_OBJECT
   public:
-    BioTrackerTrackingAlgorithm(QObject *parent = 0, ITrackedComponentFactory *factory = 0);
+    BioTrackerTrackingAlgorithm(/*QObject *parent = 0, ITrackedComponentFactory *factory = 0*/);
 
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
