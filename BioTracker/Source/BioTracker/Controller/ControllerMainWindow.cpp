@@ -3,8 +3,7 @@
 #include "Model/null_Model.h"
 //#include "Controller/ControllerStrategies/MainGUIApplication.h"
 #include "Controller/ControllerPlayer.h"
-
-#include "Interfaces/IBioTrackerTrackingInterface.h"
+#include "GuiContext.h"
 
 #include "QPluginLoader"
 
@@ -23,7 +22,8 @@ void ControllerMainWindow::loadVideo(QString str)
 
 void ControllerMainWindow::loadTracker(QString str)
 {
-    m_BioTrackerContext->loadBioTrackerPlugin(str);
+    qobject_cast<GuiContext *>(m_BioTrackerContext)->loadBioTrackerPlugin(str);
+
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files)

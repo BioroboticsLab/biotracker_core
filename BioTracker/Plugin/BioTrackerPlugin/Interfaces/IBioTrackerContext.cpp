@@ -16,7 +16,6 @@ void IBioTrackerContext::createApplication()
     connectController();
 }
 
-
 void IBioTrackerContext::createAppController()
 {
 

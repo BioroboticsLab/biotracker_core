@@ -97,7 +97,8 @@ SOURCES += main.cpp\
     Model/PluginLoader.cpp \
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
-    Controller/ControllerBioTracker.cpp
+    Controller/ControllerBioTracker.cpp \
+    Controller/ControllerPlugin.cpp
 
 HEADERS  += BioTracker3App.h \
     Interfaces/IBioTrackerContext.h \
@@ -172,7 +173,8 @@ HEADERS  += BioTracker3App.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
     Controller/ControllerBioTracker.h \
-    Interfaces/IBioTrackerTrackingInterface.h
+    Interfaces/IBioTrackerPlugin.h \
+    Controller/ControllerPlugin.h
 
 FORMS    += View/BioTracker3MainWindow.ui \
     View/BioTracker3VideoControllWidget.ui \

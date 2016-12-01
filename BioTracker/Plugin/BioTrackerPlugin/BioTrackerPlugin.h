@@ -3,61 +3,45 @@
 
 #include "QObject"
 #include "biotrackerplugin_global.h"
+#include "opencv2/core/core.hpp"
+#include "Interfaces/IBioTrackerContext.h"
 
-#include "Interfaces/IBioTrackerTrackingInterface.h"
+#include "../../Source/BioTracker/Interfaces/IBioTrackerPlugin.h"
 
 
 #include "QPointer"
-#include "Interfaces/IView/IView.h"
-#include "Interfaces/IModel/imodel.h"
-#include "Interfaces/IBioTrackerContext.h"
-#include "Interfaces/ENUMS.h"
+#include "memory"
 
-class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public QObject, IBioTrackerTrackingInterface
+class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public QObject, IBioTrackerPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
-    Q_INTERFACES(IBioTrackerTrackingInterface)
+    Q_INTERFACES(IBioTrackerPlugin)
 
 public:
     BioTrackerPlugin();
 
 
-    // IBioTrackerTrackingInterface interface
+    // IBioTrackerPlugin interface
 public:
-    void createComponents() override;
-    void connectComponents() override;
-    void addView(IView *view) override;
-    void addModel(IModel *model) override;
-    IModel *getModel() override;
-    IView *getView() override;
-    ENUMS::CONTROLLERTYPE getControllerType() override;
-    IBioTrackerContext *getBioTrackerContext() override;
-
-
-protected:
-    void createModel() override;
-    void createView() override;
-    void connectModelController() override;
-    void connectController() override;
-
-Q_SIGNALS:
-    void emitCvMatA(std::shared_ptr<cv::Mat> mat, QString name);
-
-public Q_SLOTS:
-    void receiveCvMatA(std::shared_ptr<cv::Mat> mat, QString name);
+    void createPlugin() override;
 
 private:
-    QPointer< IBioTrackerContext > m_BioTrackerContext;
+    void connectInterfaces() override;
 
-    IView *m_View;
-    IModel *m_Model;
+private:
+    IController *m_TrackerController;
 
-    ENUMS::CONTROLLERTYPE m_ControllerType;
 
-    // IBioTrackerTrackingInterface interface
-public:
-    void addBioTrackerContext(IBioTrackerContext *context) override;
+    // IBioTrackerPlugin interface
+signals:
+    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) override;
+
+public slots:
+    void receiveCvMat(std::shared_ptr<cv::Mat> mat) override;
+
+private slots:
+    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) override;
 };
 
 #endif // BIOTRACKERPLUGIN_H

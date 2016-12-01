@@ -40,7 +40,7 @@ void ControllerTextureObject::connectController()
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctr);
 
     QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(ctrPlayer->getModel());
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerTextureObject::receiveCvMat);
+    QObject::connect(player, SIGNAL(emitCurrentFrame(std::shared_ptr<cv::Mat>, QString)), this, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
 
 
     QPointer< BioTracker3VideoControllWidget > videoView = dynamic_cast<BioTracker3VideoControllWidget *> (ctrPlayer->getView());

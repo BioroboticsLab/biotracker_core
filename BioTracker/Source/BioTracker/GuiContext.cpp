@@ -3,13 +3,15 @@
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerTextureObject.h"
 #include "Controller/ControllerTrackingAlgorithm.h"
+#include "Controller/ControllerPlugin.h"
 #include "Model/BioTracker3Player.h"
 #include "Model/BioTracker3TextureObject.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "QPointer"
 
-#include "Interfaces/IBioTrackerTrackingInterface.h"
+#include "QDebug"
+
 
 GuiContext::GuiContext(QObject *parent) :
     IBioTrackerContext(parent)
@@ -19,13 +21,22 @@ GuiContext::GuiContext(QObject *parent) :
     QPointer< IController > TextureObjectController = new ControllerTextureObject(this, this, ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
 //    QPointer< IController > TrackingAlgoController = new ControllerTrackingAlgorithm(this, this, ENUMS::CONTROLLERTYPE::TRACKING);
     QPointer< IController > GraphicsViewController = new ControllerGraphicScene(this, this, ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+    QPointer< IController > PluginController = new ControllerPlugin(this, this, ENUMS::CONTROLLERTYPE::PLUGIN);
+
+
 
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::MAINWINDOW, MainWindowController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::PLAYER, PlayerController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT, TextureObjectController);
 //    m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKING, TrackingAlgoController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW, GraphicsViewController);
+    m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::PLUGIN, PluginController);
 
+}
+
+bool GuiContext::loadBioTrackerPlugin(QString str)
+{
+    qobject_cast<ControllerPlugin*> (m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLUGIN))->loadPlugin(str);
 }
 
 void GuiContext::createAppController()

@@ -1,8 +1,8 @@
 #ifndef BIOTRACKERTRACKINGALGORITHM_H
 #define BIOTRACKERTRACKINGALGORITHM_H
-#include "Interfaces/IModel/imodel.h"
 
-#include "BioTracker3TextureObject.h"
+
+#include "Interfaces/IModel/imodel.h"
 
 #include "Interfaces/IModel/ITrackingAlgorithm.h"
 #include "Model/TrackedComponents/TrackedElement.h"

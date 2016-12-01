@@ -4,6 +4,8 @@
 #include "Interfaces/IBioTrackerContext.h"
 #include "Interfaces/IController/icontroller.h"
 
+
+
 class GuiContext : public IBioTrackerContext
 {
     Q_OBJECT
@@ -11,11 +13,13 @@ class GuiContext : public IBioTrackerContext
 public:
     GuiContext(QObject *parent = 0);
 
+
+    bool loadBioTrackerPlugin(QString str);
+
     // IBioTrackerContext interface
 protected:
     void createAppController() override;
     void connectController() override;
-
 };
 
 #endif // GUICONTEXT_H

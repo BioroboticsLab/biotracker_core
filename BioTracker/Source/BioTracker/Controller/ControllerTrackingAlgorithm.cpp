@@ -21,7 +21,7 @@ void ControllerTrackingAlgorithm::connectController()
     BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(model);
 
     BioTrackerTrackingAlgorithm *alg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, alg, &BioTrackerTrackingAlgorithm::doTracking);
+    QObject::connect(player, SIGNAL(emitCurrentFrame(std::shared_ptr<cv::Mat>)), alg, SLOT(doTracking(std::shared_ptr<cv::Mat>)));
 
     QObject::connect(alg, &BioTrackerTrackingAlgorithm::emitCvMatA, ctrTexture, &ControllerTextureObject::receiveCvMat);
 }

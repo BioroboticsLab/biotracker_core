@@ -1,8 +1,6 @@
 #include "BioTrackerPlugin.h"
 
-#include "Controller/ControllerTextureObject.h"
-#include "Controller/ControllerPlayer.h"
-
+#include "Controller/ControllerTrackingAlgorithm.h"
 
 BioTrackerPlugin::BioTrackerPlugin()
 {
@@ -13,86 +11,33 @@ Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 #endif // QT_VERSION < 0x050000
 
 
-void BioTrackerPlugin::createComponents()
+void BioTrackerPlugin::createPlugin()
 {
-    createModel();
-    createView();
-    connectModelController();
+
+    m_TrackerController = new ControllerTrackingAlgorithm(this, 0, ENUMS::CONTROLLERTYPE::TRACKING);
+
+    m_TrackerController->createComponents();
+    m_TrackerController->connectComponents();
+
+    connectInterfaces();
+
 }
 
-void BioTrackerPlugin::connectComponents()
+void BioTrackerPlugin::connectInterfaces()
 {
-    connectController();
+    ControllerTrackingAlgorithm *ctrAlg = qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController);
+    QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
+
+    //QObject::connect(qobject_cast< ControllerPlugin *>(m_PluginController), &ControllerPlugin::emitCvMat, this, &BioTrackerPlugin::receiveCvMat );
+    //QObject::connect(this, &BioTrackerPlugin::emitCvMat, qobject_cast< ControllerPlugin *>(m_PluginController), &ControllerPlugin::receiveCvMatFromPlugin );
 }
 
-void BioTrackerPlugin::addView(IView *view)
+void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat)
 {
-    m_View = view;
+    qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->doTracking(mat);
 }
 
-void BioTrackerPlugin::addModel(IModel *model)
+void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name)
 {
-    m_Model = model;
-}
-
-IModel *BioTrackerPlugin::getModel()
-{
-    return m_Model;
-}
-
-IView *BioTrackerPlugin::getView()
-{
-    return m_View;
-}
-
-ENUMS::CONTROLLERTYPE BioTrackerPlugin::getControllerType()
-{
-    return ENUMS::CONTROLLERTYPE::TRACKING;
-}
-
-IBioTrackerContext *BioTrackerPlugin::getBioTrackerContext()
-{
-    return m_BioTrackerContext;
-}
-
-void BioTrackerPlugin::createModel()
-{
-    m_Model = new BioTrackerTrackingAlgorithm();
-}
-
-void BioTrackerPlugin::createView()
-{
-}
-
-void BioTrackerPlugin::connectModelController()
-{
-}
-
-void BioTrackerPlugin::connectController()
-{
-//    IController *ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-//    ControllerTextureObject *ctrTexture = dynamic_cast<ControllerTextureObject *>(ctrA);
-//    QObject::connect(this, &BioTrackerPlugin::emitCvMatA, ctrTexture, &ControllerTextureObject::receiveCvMat);
-
-
-//    IController *ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
-//    ControllerPlayer *ctrPlayer = dynamic_cast<ControllerPlayer *>(ctrB);
-//    IModel *model = ctrPlayer->getModel();
-//    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(model);
-
-//    BioTrackerTrackingAlgorithm *alg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
-//    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, alg, &BioTrackerTrackingAlgorithm::doTracking);
-
-//    QObject::connect(alg, &BioTrackerTrackingAlgorithm::emitCvMatA, ctrTexture, &ControllerTextureObject::receiveCvMat);
-}
-
-void BioTrackerPlugin::receiveCvMatA(std::shared_ptr<cv::Mat> mat, QString name)
-{
-    Q_EMIT emitCvMatA(mat, name);
-}
-
-
-void BioTrackerPlugin::addBioTrackerContext(IBioTrackerContext *context)
-{
-    m_BioTrackerContext = context;
+    Q_EMIT emitCvMat(mat, name);
 }
