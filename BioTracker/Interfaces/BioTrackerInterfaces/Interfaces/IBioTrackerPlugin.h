@@ -1,12 +1,15 @@
 #ifndef IBIOTRACKERPLUGIN_H
 #define IBIOTRACKERPLUGIN_H
 
+#include "QObject"
+
 #include "Interfaces/IController/icontroller.h"
 #include "opencv2/core/core.hpp"
 #include "memory"
 
-class IBioTrackerPlugin
+class IBioTrackerPlugin : public QObject
 {
+    Q_OBJECT
 public:
     ~IBioTrackerPlugin() {}
 
