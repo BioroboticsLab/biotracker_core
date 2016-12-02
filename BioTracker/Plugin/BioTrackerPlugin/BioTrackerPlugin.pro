@@ -10,20 +10,12 @@ TEMPLATE = lib
 CONFIG  += plugin
 TARGET   = $$qtLibraryTarget(IBioTrackerPlugin)
 
+INCLUDEPATH += ../../Interfaces/BioTrackerInterfaces/
+LIBS += /home/andreas/Documents/biotracker_core/BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
+
 DEFINES += BIOTRACKERPLUGIN_LIBRARY
 
 SOURCES += BioTrackerPlugin.cpp \
-    Interfaces/IController/icontroller.cpp \
-    Interfaces/IModel/imodel.cpp \
-    Interfaces/IModel/ITrackedComponent.cpp \
-    Interfaces/IModel/ITrackedComponentFactory.cpp \
-    Interfaces/IModel/ITrackedTrajectory.cpp \
-    Interfaces/IModel/ITrackingAlgorithm.cpp \
-    Interfaces/IView/IGraphicsView.cpp \
-    Interfaces/IView/IView.cpp \
-    Interfaces/IView/IViewGraphicsScene.cpp \
-    Interfaces/IView/IViewTrackedComponent.cpp \
-    Interfaces/IBioTrackerContext.cpp \
     Model/TrackedComponents/TrackedComponentFactory.cpp \
     Model/TrackedComponents/TrackedElement.cpp \
     Model/TrackedComponents/TrackedTrajectory.cpp \
@@ -35,18 +27,6 @@ SOURCES += BioTrackerPlugin.cpp \
 
 HEADERS += BioTrackerPlugin.h\
         biotrackerplugin_global.h \
-    Interfaces/IController/icontroller.h \
-    Interfaces/IModel/imodel.h \
-    Interfaces/IModel/ITrackedComponent.h \
-    Interfaces/IModel/ITrackedComponentFactory.h \
-    Interfaces/IModel/ITrackedTrajectory.h \
-    Interfaces/IModel/ITrackingAlgorithm.h \
-    Interfaces/IView/IGraphicsView.h \
-    Interfaces/IView/IView.h \
-    Interfaces/IView/IViewGraphicsScene.h \
-    Interfaces/IView/IViewTrackedComponent.h \
-    Interfaces/ENUMS.h \
-    Interfaces/IBioTrackerContext.h \
     Model/TrackedComponents/TrackedComponentFactory.h \
     Model/TrackedComponents/TrackedElement.h \
     Model/TrackedComponents/TrackedTrajectory.h \

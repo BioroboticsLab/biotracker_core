@@ -2,7 +2,7 @@
 #include "ui_BioTracker3VideoControllWidget.h"
 #include "Controller/ControllerPlayer.h"
 
-#include "Interfaces/IStates/IPlayerState.h"
+#include "IStates/IPlayerState.h"
 
 BioTracker3VideoControllWidget::BioTracker3VideoControllWidget(QWidget *parent, IController *controller, IModel *model) :
     IViewWidget(parent, controller, model),

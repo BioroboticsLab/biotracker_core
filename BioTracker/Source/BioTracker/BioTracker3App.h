@@ -6,6 +6,7 @@
 #include "Interfaces/IBioTrackerContext.h"
 #include "QPointer"
 
+
 class BioTracker3App : public QObject
 {
     Q_OBJECT

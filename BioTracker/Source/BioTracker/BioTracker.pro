@@ -35,10 +35,13 @@ LIBS += -L/usr/local/lib \
 -lopencv_legacy \
 -lopencv_flann
 
+INCLUDEPATH += ../../Interfaces/BioTrackerInterfaces/
+LIBS += /home/andreas/Documents/biotracker_core/BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
+
+
 
 SOURCES += main.cpp\
     BioTracker3App.cpp \
-    Interfaces/IBioTrackerContext.cpp \
     GuiContext.cpp \
     Controller/ControllerContext.cpp \
     Controller/ControllerGraphicScene.cpp \
@@ -47,23 +50,6 @@ SOURCES += main.cpp\
     Controller/ControllerTextureObject.cpp \
     Controller/ControllerTrackedComponent.cpp \
     Controller/ControllerTrackingAlgorithm.cpp \
-    Interfaces/IController/icontroller.cpp \
-    Interfaces/IController/IControllerStrategy.cpp \
-    Interfaces/IModel/imodel.cpp \
-    Interfaces/IModel/IObject.cpp \
-    Interfaces/IModel/ITrackedComponent.cpp \
-    Interfaces/IModel/ITrackedComponentFactory.cpp \
-    Interfaces/IModel/ITrackedTrajectory.cpp \
-    Interfaces/IModel/ITrackingAlgorithm.cpp \
-    Interfaces/IStates/IPlayerState.cpp \
-    Interfaces/IView/IGraphicsPixmapItem.cpp \
-    Interfaces/IView/IGraphicsView.cpp \
-    Interfaces/IView/IView.cpp \
-    Interfaces/IView/IViewGraphicsScene.cpp \
-    Interfaces/IView/IViewMainWindow.cpp \
-    Interfaces/IView/IViewOpenGLWidget.cpp \
-    Interfaces/IView/IViewTrackedComponent.cpp \
-    Interfaces/IView/IViewWidget.cpp \
     Model/PlayerStates/PStateInitial.cpp \
     Model/PlayerStates/PStateInitialStream.cpp \
     Model/PlayerStates/PStatePause.cpp \
@@ -98,10 +84,10 @@ SOURCES += main.cpp\
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
     Controller/ControllerBioTracker.cpp \
-    Controller/ControllerPlugin.cpp
+    Controller/ControllerPlugin.cpp \
+    IStates/IPlayerState.cpp
 
 HEADERS  += BioTracker3App.h \
-    Interfaces/IBioTrackerContext.h \
     GuiContext.h \
     Controller/ControllerContext.h \
     Controller/ControllerGraphicScene.h \
@@ -110,24 +96,6 @@ HEADERS  += BioTracker3App.h \
     Controller/ControllerTextureObject.h \
     Controller/ControllerTrackedComponent.h \
     Controller/ControllerTrackingAlgorithm.h \
-    Interfaces/IController/icontroller.h \
-    Interfaces/IController/IControllerStrategy.h \
-    Interfaces/IModel/imodel.h \
-    Interfaces/IModel/IObject.h \
-    Interfaces/IModel/ITrackedComponent.h \
-    Interfaces/IModel/ITrackedComponentFactory.h \
-    Interfaces/IModel/ITrackedTrajectory.h \
-    Interfaces/IModel/ITrackingAlgorithm.h \
-    Interfaces/IStates/IPlayerState.h \
-    Interfaces/IView/IGraphicsPixmapItem.h \
-    Interfaces/IView/IGraphicsView.h \
-    Interfaces/IView/IView.h \
-    Interfaces/IView/IViewGraphicsScene.h \
-    Interfaces/IView/IViewMainWindow.h \
-    Interfaces/IView/IViewOpenGLWidget.h \
-    Interfaces/IView/IViewTrackedComponent.h \
-    Interfaces/IView/IViewWidget.h \
-    Interfaces/ENUMS.h \
     Model/PlayerStates/PStateInitial.h \
     Model/PlayerStates/PStateInitialStream.h \
     Model/PlayerStates/PStatePause.h \
@@ -173,8 +141,8 @@ HEADERS  += BioTracker3App.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
     Controller/ControllerBioTracker.h \
-    Interfaces/IBioTrackerPlugin.h \
-    Controller/ControllerPlugin.h
+    Controller/ControllerPlugin.h \
+    IStates/IPlayerState.h
 
 FORMS    += View/BioTracker3MainWindow.ui \
     View/BioTracker3VideoControllWidget.ui \

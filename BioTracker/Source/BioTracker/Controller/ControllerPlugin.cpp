@@ -66,6 +66,8 @@ void ControllerPlugin::connectPlugin()
     IController * ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject *ctrTexture = qobject_cast<ControllerTextureObject *>(ctrB);
 
+    QObject *obj = dynamic_cast<QObject *>(m_BioTrackerPlugin);
+
     QObject::connect(dynamic_cast<QObject*> (m_BioTrackerPlugin), SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>,QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
     QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerPlugin::receiveCurrentFrame);

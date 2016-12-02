@@ -1,7 +1,7 @@
 #ifndef PSTATESTEPBACK_H
 #define PSTATESTEPBACK_H
 
-#include "Interfaces/IStates/IPlayerState.h"
+#include "IStates/IPlayerState.h"
 
 
 class PStateStepBack : public IPlayerState {

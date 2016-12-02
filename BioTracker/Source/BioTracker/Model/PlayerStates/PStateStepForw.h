@@ -1,7 +1,7 @@
 #ifndef PSTATESTEPFORW_H
 #define PSTATESTEPFORW_H
 
-#include "Interfaces/IStates/IPlayerState.h"
+#include "IStates/IPlayerState.h"
 
 class PStateStepForw : public IPlayerState {
   public:

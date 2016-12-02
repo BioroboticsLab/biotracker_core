@@ -6,7 +6,7 @@
 #include "opencv2/core/core.hpp"
 #include "Interfaces/IBioTrackerContext.h"
 
-#include "../../Source/BioTracker/Interfaces/IBioTrackerPlugin.h"
+#include "Interfaces/IBioTrackerPlugin.h"
 
 
 #include "QPointer"

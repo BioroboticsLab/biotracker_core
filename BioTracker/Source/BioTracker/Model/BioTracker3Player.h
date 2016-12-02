@@ -15,7 +15,7 @@
 #include "View/BioTracker3VideoControllWidget.h"
 #include "View/BioTracker3VideoView.h"
 
-#include "Interfaces/IStates/IPlayerState.h"
+#include "IStates/IPlayerState.h"
 #include "QSharedPointer"
 
 

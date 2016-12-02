@@ -1,7 +1,7 @@
 #ifndef PSTATEPAUSE_H
 #define PSTATEPAUSE_H
 
-#include "Interfaces/IStates/IPlayerState.h"
+#include "IStates/IPlayerState.h"
 
 
 class PStatePause : public IPlayerState {

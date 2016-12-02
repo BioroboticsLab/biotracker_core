@@ -3,7 +3,6 @@
 
 #include "Interfaces/IController/icontroller.h"
 #include "Interfaces/IBioTrackerPlugin.h"
-
 #include "QPluginLoader"
 
 class ControllerPlugin : public IController
