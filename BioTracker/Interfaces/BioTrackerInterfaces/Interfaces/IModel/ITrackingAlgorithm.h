@@ -12,7 +12,7 @@ class ITrackingAlgorithm :public IModel {
   public:
     ITrackingAlgorithm(QObject *parent = 0);
 
-    virtual void doTracking(std::shared_ptr<cv::Mat> image) = 0;
+    virtual void doTracking(std::shared_ptr<cv::Mat> image, uint frameNumber) = 0;
 
 signals:
     void emitTrackingDone();
