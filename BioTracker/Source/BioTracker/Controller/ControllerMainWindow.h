@@ -3,6 +3,7 @@
 
 #include "Interfaces/IController/icontroller.h"
 #include "QPointer"
+#include "QStringListModel"
 
 class ControllerMainWindow : public IController
 {
@@ -14,6 +15,9 @@ public:
     void loadTracker(QString str);
     void loadPictures(std::vector<boost::filesystem::path> files);
     void loadCameraDevice(int i);
+    void activeTracking();
+    void deactiveTrackring();
+    void setTrackerList(QStringListModel *trackerList);
 
 
     // IController interface

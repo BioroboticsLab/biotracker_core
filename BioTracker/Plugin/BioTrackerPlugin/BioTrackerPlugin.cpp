@@ -28,8 +28,7 @@ void BioTrackerPlugin::connectInterfaces()
     ControllerTrackingAlgorithm *ctrAlg = qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController);
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
 
-    //QObject::connect(qobject_cast< ControllerPlugin *>(m_PluginController), &ControllerPlugin::emitCvMat, this, &BioTrackerPlugin::receiveCvMat );
-    //QObject::connect(this, &BioTrackerPlugin::emitCvMat, qobject_cast< ControllerPlugin *>(m_PluginController), &ControllerPlugin::receiveCvMatFromPlugin );
+    QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
 }
 
 void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat)
@@ -40,4 +39,9 @@ void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat)
 void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name)
 {
     Q_EMIT emitCvMat(mat, name);
+}
+
+void BioTrackerPlugin::receiveTrackingDone()
+{
+    Q_EMIT emitTrackingDone();
 }

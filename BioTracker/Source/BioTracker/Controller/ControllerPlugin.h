@@ -3,7 +3,7 @@
 
 #include "Interfaces/IController/icontroller.h"
 #include "Interfaces/IBioTrackerPlugin.h"
-#include "QPluginLoader"
+
 
 class ControllerPlugin : public IController
 {
@@ -11,7 +11,7 @@ class ControllerPlugin : public IController
 public:
     ControllerPlugin(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
-    void loadPlugin(QString str);
+    void loadPluginFromFileName(QString str);
 
     // IController interface
 protected:
@@ -20,17 +20,20 @@ protected:
     void connectModelController() override;
     void connectController() override;
 
+    void createPlugin();
+
     void connectPlugin();
     void disconnectPlugin();
 
 private Q_SLOTS:
     void receiveCurrentFrame(std::shared_ptr<cv::Mat> mat);
+    void receiveTrackingDone();
 
 private:
-
     IBioTrackerPlugin *m_BioTrackerPlugin;
 
-    QPluginLoader *m_PluginLoader;
+
+
 };
 
 #endif // CONTROLLERPLUGIN_H

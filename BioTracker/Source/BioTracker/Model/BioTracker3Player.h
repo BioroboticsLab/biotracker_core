@@ -32,6 +32,8 @@ class BioTracker3Player : public IModel {
     void receiveLoadVideoCommand(QString fileDir);
     void receiveLoadPictures(std::vector<boost::filesystem::path> files);
     void receiveLoadCameraDevice(int i);
+    void receiveActivateTracking();
+    void receiveDeaktivateTracking();
 
     void receivePrevFrameCommand();
     void receiveNextFramCommand();
@@ -40,6 +42,8 @@ class BioTracker3Player : public IModel {
     void receivePlayCommand();
 
     void receiveStateDone();
+
+    void receiveTrackingDone();
 
 
   Q_SIGNALS:
@@ -51,6 +55,8 @@ class BioTracker3Player : public IModel {
     void emitCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name);
     void emitCurrentFrame(std::shared_ptr<cv::Mat> mat);
     void emitVideoControllsStates(QVector<bool> states);
+
+    void emitTrackingIsActiveState(bool state);
 
     void emitPlayerOperationDone();
 
@@ -79,6 +85,8 @@ class BioTracker3Player : public IModel {
     bool m_Back;
     bool m_Stop;
     bool m_Paus;
+
+    bool m_IsTrackingActive;
 
     QString m_NameOfCvMat = "Original";
 };

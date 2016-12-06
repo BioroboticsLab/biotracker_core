@@ -20,6 +20,7 @@ private:
 
 Q_SIGNALS:
     virtual void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) = 0;
+    virtual void emitTrackingDone() = 0;
 
 public Q_SLOTS:
     virtual void receiveCvMat(std::shared_ptr<cv::Mat> mat) = 0;

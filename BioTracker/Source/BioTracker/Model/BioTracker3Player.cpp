@@ -83,6 +83,16 @@ void BioTracker3Player::receiveLoadCameraDevice(int x)
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
 }
 
+void BioTracker3Player::receiveActivateTracking()
+{
+    m_IsTrackingActive = true;
+}
+
+void BioTracker3Player::receiveDeaktivateTracking()
+{
+    m_IsTrackingActive = false;
+}
+
 void BioTracker3Player::receivePrevFrameCommand()
 {
     setNextState(IPlayerState::STATE_STEP_BACK);
@@ -110,6 +120,11 @@ void BioTracker3Player::receivePlayCommand()
 
 void BioTracker3Player::receiveStateDone()
 {
+}
+
+void BioTracker3Player::receiveTrackingDone()
+{
+
 }
 
 
@@ -147,6 +162,8 @@ void BioTracker3Player::emitSignals()
     Q_EMIT emitCurrentFrameStr(m_CurrentFrame, m_NameOfCvMat);
     Q_EMIT emitCurrentFrameNumber(m_CurrentFrameNumber);
     Q_EMIT emitFPS(m_fps);
+
+    Q_EMIT emitTrackingIsActiveState(m_IsTrackingActive);
 
     Q_EMIT emitCurrentFrame(m_CurrentFrame);
 

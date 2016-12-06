@@ -16,6 +16,13 @@ BioTracker3MainWindow::BioTracker3MainWindow(QWidget *parent, IController *contr
     ui(new Ui::BioTracker3MainWindow)
 {
     ui->setupUi(this);
+
+    if(ui->checkBox_TrackingActivated->isChecked()) {
+        qobject_cast<ControllerMainWindow *> (getController())->activeTracking();
+    }
+    else {
+        qobject_cast<ControllerMainWindow *> (getController())->deactiveTrackring();
+    }
 }
 
 BioTracker3MainWindow::~BioTracker3MainWindow()
@@ -38,6 +45,11 @@ void BioTracker3MainWindow::addVideoView(IView *videoView)
     // gl widget
     //dynamic_cast<BioTracker3VideoView *>(videoView)->setParent(ui->trackingArea);
     //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
+}
+
+void BioTracker3MainWindow::setTrackerList(QStringListModel *trackerList)
+{
+    ui->comboBox_TrackerSelect->setModel(trackerList);
 }
 
 void BioTracker3MainWindow::on_actionOpen_Video_triggered()
@@ -107,5 +119,10 @@ void BioTracker3MainWindow::on_actionOpen_Camera_triggered()
 void BioTracker3MainWindow::receiveSelectedCameraDevice(int i)
 {
     qobject_cast<ControllerMainWindow *> (getController())->loadCameraDevice(i);
+
+}
+
+void BioTracker3MainWindow::on_checkBox_clicked(bool checked)
+{
 
 }

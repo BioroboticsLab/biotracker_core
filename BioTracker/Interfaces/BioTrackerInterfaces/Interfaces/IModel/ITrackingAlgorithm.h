@@ -14,6 +14,9 @@ class ITrackingAlgorithm :public IModel {
 
     virtual void doTracking(std::shared_ptr<cv::Mat> image) = 0;
 
+signals:
+    void emitTrackingDone();
+
 //    void setTrackedComponentFactory(ITrackedComponentFactory *factory);
 //    void setTrackedComponent(ITrackedComponent *trackedComponent);
 

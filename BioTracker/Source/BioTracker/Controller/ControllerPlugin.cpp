@@ -3,6 +3,7 @@
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerTextureObject.h"
 #include "QDebug"
+#include "Model/PluginLoader.h"
 
 ControllerPlugin::ControllerPlugin(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -10,35 +11,16 @@ ControllerPlugin::ControllerPlugin(QObject *parent, IBioTrackerContext *context,
 
 }
 
-void ControllerPlugin::loadPlugin(QString str)
+void ControllerPlugin::loadPluginFromFileName(QString str)
 {
-    if(m_PluginLoader->isLoaded()) {
-        disconnectPlugin();
-        m_PluginLoader->unload();
-    }
-
-    m_PluginLoader->setFileName(str);
-
-    bool x = QLibrary::isLibrary(str);
-
-    QObject *plugin = m_PluginLoader->instance();
-    QString sb = m_PluginLoader->errorString();
-    qDebug() << sb;
-
-    if (plugin) {
-        m_BioTrackerPlugin = qobject_cast<IBioTrackerPlugin *>(plugin);
-        if (m_BioTrackerPlugin) {
-            m_BioTrackerPlugin->createPlugin();
-
-            connectPlugin();
-        }
-    }
+    PluginLoader *loader = qobject_cast<PluginLoader *>(m_Model);
+    if( loader->loadPluginFromFilename(str))
+        createPlugin();
 }
-
 
 void ControllerPlugin::createModel()
 {
-    m_PluginLoader = new QPluginLoader(this);
+    m_Model = new PluginLoader(this);
 }
 
 void ControllerPlugin::createView()
@@ -52,6 +34,14 @@ void ControllerPlugin::connectModelController()
 void ControllerPlugin::connectController()
 {
 
+}
+
+void ControllerPlugin::createPlugin()
+{
+    m_BioTrackerPlugin = qobject_cast<PluginLoader *>(m_Model)->getPluginInstance();
+    m_BioTrackerPlugin->createPlugin();
+
+    connectPlugin();
 }
 
 void ControllerPlugin::connectPlugin()
@@ -68,9 +58,10 @@ void ControllerPlugin::connectPlugin()
 
     QObject *obj = dynamic_cast<QObject *>(m_BioTrackerPlugin);
 
-    QObject::connect(dynamic_cast<QObject*> (m_BioTrackerPlugin), SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>,QString)),
+    QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>,QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
     QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerPlugin::receiveCurrentFrame);
+    QObject::connect(obj, SIGNAL(emitTrackingDone()), ctrPlayer, SLOT(receiveTrackingOperationDone()));
 }
 
 void ControllerPlugin::disconnectPlugin()
@@ -96,4 +87,9 @@ void ControllerPlugin::disconnectPlugin()
 void ControllerPlugin::receiveCurrentFrame(std::shared_ptr<cv::Mat> mat)
 {
     m_BioTrackerPlugin->receiveCvMat(mat);
+}
+
+void ControllerPlugin::receiveTrackingDone()
+{
+
 }

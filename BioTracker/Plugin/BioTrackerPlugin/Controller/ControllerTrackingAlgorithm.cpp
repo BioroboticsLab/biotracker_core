@@ -41,11 +41,18 @@ void ControllerTrackingAlgorithm::createView()
 
 void ControllerTrackingAlgorithm::connectModelController()
 {
-    QObject::connect(qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model), &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);
+    BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
+    QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);
+    QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitTrackingDone, this, &ControllerTrackingAlgorithm::receiveTrackingDone);
 
 }
 
 void ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name)
 {
     Q_EMIT emitCvMat(mat, name);
+}
+
+void ControllerTrackingAlgorithm::receiveTrackingDone()
+{
+    Q_EMIT emitTrackingDone();
 }

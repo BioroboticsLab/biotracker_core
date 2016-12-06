@@ -83,7 +83,6 @@ SOURCES += main.cpp\
     Model/PluginLoader.cpp \
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
-    Controller/ControllerBioTracker.cpp \
     Controller/ControllerPlugin.cpp \
     IStates/IPlayerState.cpp
 
@@ -140,7 +139,6 @@ HEADERS  += BioTracker3App.h \
     Model/PluginLoader.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
-    Controller/ControllerBioTracker.h \
     Controller/ControllerPlugin.h \
     IStates/IPlayerState.h
 

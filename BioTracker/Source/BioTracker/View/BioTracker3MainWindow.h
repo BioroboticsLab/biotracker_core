@@ -8,6 +8,7 @@
 #include "BioTracker3VideoView.h"
 #include "CameraDevice.h"
 #include "QPointer"
+#include "QStringListModel"
 
 namespace Ui {
 class BioTracker3MainWindow;
@@ -25,6 +26,8 @@ public:
     void addVideoControllWidget(IView *widget);
     void addVideoView(IView *videoView);
 
+    void setTrackerList(QStringListModel *trackerList);
+
 private Q_SLOTS:
     void on_actionOpen_Video_triggered();
 
@@ -41,6 +44,8 @@ private Q_SLOTS:
     void on_actionOpen_Camera_triggered();
 
     void receiveSelectedCameraDevice(int i);
+
+    void on_checkBox_clicked(bool checked);
 
 private:
     Ui::BioTracker3MainWindow *ui;

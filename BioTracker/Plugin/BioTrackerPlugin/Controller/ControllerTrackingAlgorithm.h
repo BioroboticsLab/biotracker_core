@@ -25,9 +25,11 @@ protected:
 
 Q_SIGNALS:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+    void emitTrackingDone();
 
 private Q_SLOTS:
     void receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name);
+    void receiveTrackingDone();
 };
 
 #endif // CONTROLLERTRACKINGALGORITHM_H

@@ -18,6 +18,8 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> image)
         str[s] = QChar('A' + char(qrand() % ('Z' - 'A')));
     }
 
+    Q_EMIT emitTrackingDone();
+
 //    m_TrackedElement = dynamic_cast<TrackedElement *>(m_TrackedComponentFactory->getNewTrackedElement());
 //    m_TrackedElement->setObjectName(str);
 

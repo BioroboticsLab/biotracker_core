@@ -18,7 +18,15 @@ class IController : public QObject {
   public:
     explicit IController(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
+    /**
+     * @brief Stores the current zoom and pan offsets. While panning, panState stores the last mouse cursor position.
+     */
     void createComponents();
+
+    /**
+     * @brief connectComponents
+     * bal bal blabla
+     */
     void connectComponents();
 
     void addView(IView *view);
@@ -44,9 +52,5 @@ protected:
     ENUMS::CONTROLLERTYPE m_ControllerType;
 
 };
-
-#define IController_iid "de.fu-berlin.mi.biorobotics.IController"
-
-Q_DECLARE_INTERFACE(IController, IController_iid)
 
 #endif // ICONTROLLER_H

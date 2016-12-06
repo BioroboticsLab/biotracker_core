@@ -60,6 +60,16 @@ void ControllerPlayer::changeImageView(QString str)
     ctrTextureObject->changeTextureModel(str);
 }
 
+void ControllerPlayer::setTrackingActivated()
+{
+    m_TrackingIsActive = true;
+}
+
+void ControllerPlayer::setTrackingDeactivated()
+{
+    m_TrackingIsActive = false;
+}
+
 void ControllerPlayer::connectController()
 {
     IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
@@ -92,6 +102,10 @@ void ControllerPlayer::connectModelController()
     QObject::connect(this, &ControllerPlayer::emitLoadCameraDevice, player, &BioTracker3Player::receiveLoadCameraDevice);
     QObject::connect(this, &ControllerPlayer::emitLoadPictures, player, &BioTracker3Player::receiveLoadPictures);
 
+    // Set TrackingActive
+    QObject::connect(this, &ControllerPlayer::emitActivateTracking, player, &BioTracker3Player::receiveActivateTracking);
+    QObject::connect(this, &ControllerPlayer::emitDeactivateTracking, player, &BioTracker3Player::receiveDeaktivateTracking);
+
 
     // Controll the Player
     QObject::connect(this, &ControllerPlayer::emitNextFrameCommand, player, &BioTracker3Player::receiveNextFramCommand);
@@ -107,14 +121,24 @@ void ControllerPlayer::connectModelController()
     QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
     QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
 
-    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone);
+    QObject::connect(player, &BioTracker3Player::emitTrackingIsActiveState, this, &ControllerPlayer::receiveTrackingIsActiveState, Qt::BlockingQueuedConnection);
+
+    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone, Qt::BlockingQueuedConnection);
 
     QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &BioTracker3Player::runPlayerOperation);
 }
 
 void ControllerPlayer::receivePlayerOperationDone()
 {
-    Q_EMIT emitRunPlayerOperation();
+    if(! m_TrackingIsActive)
+        Q_EMIT emitRunPlayerOperation();
+}
+
+void ControllerPlayer::receiveTrackingOperationDone()
+{
+    if(m_TrackingIsActive)
+        Q_EMIT emitRunPlayerOperation();
+
 }
 
 void ControllerPlayer::receiveCurrentFrameNumber(size_t num)
@@ -143,4 +167,9 @@ void ControllerPlayer::receiveVideoControllsStates(QVector<bool> states)
     QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
 
     widget->setVideoControllsStates(states);
+}
+
+void ControllerPlayer::receiveTrackingIsActiveState(bool state)
+{
+    m_TrackingIsActive = state;
 }

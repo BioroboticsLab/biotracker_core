@@ -26,6 +26,8 @@ public:
 
 
     void changeImageView(QString str);
+    void setTrackingActivated();
+    void setTrackingDeactivated();
 
     // IController interface
 public:
@@ -40,6 +42,10 @@ Q_SIGNALS:
   void emitLoadVideoStream(QString str);
   void emitLoadPictures(std::vector<boost::filesystem::path> files);
   void emitLoadCameraDevice(int i);
+  void emitActivateTracking();
+  void emitDeactivateTracking();
+
+
   void emitNextFrameCommand();
   void emitPrevFrameCommand();
   void emitPlayCommand();
@@ -51,16 +57,20 @@ Q_SIGNALS:
 
 public Q_SLOTS:
   void receivePlayerOperationDone();
+  void receiveTrackingOperationDone();
 
   void receiveCurrentFrameNumber(size_t num);
   void receiveFPS(double fps);
   void receiveTotalNumbFrames(size_t num);
   void receiveVideoControllsStates(QVector<bool> states);
+  void receiveTrackingIsActiveState(bool state);
 
 private:
     QPointer< QThread > m_PlayerThread;
 
     QPointer< IModel > m_Player;
+
+    bool m_TrackingIsActive;
 };
 
 #endif // CONTROLLERPLAYER_H

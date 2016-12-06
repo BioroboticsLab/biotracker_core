@@ -38,6 +38,21 @@ void ControllerMainWindow::loadCameraDevice(int i)
     qobject_cast<ControllerPlayer *>(ctr)->loadCameraDevice(i);
 }
 
+void ControllerMainWindow::activeTracking()
+{
+
+}
+
+void ControllerMainWindow::deactiveTrackring()
+{
+
+}
+
+void ControllerMainWindow::setTrackerList(QStringListModel *trackerList)
+{
+    dynamic_cast<BioTracker3MainWindow*>(m_View)->setTrackerList(trackerList);
+}
+
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow

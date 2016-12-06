@@ -20,27 +20,27 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin
 public:
     BioTrackerPlugin();
 
-
     // IBioTrackerPlugin interface
 public:
-    void createPlugin() override;
+    void createPlugin();
 
 private:
-    void connectInterfaces() override;
+    void connectInterfaces();
+
+signals:
+    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+    void emitTrackingDone();
+
+public slots:
+    void receiveCvMat(std::shared_ptr<cv::Mat> mat);
+
+private slots:
+    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
+    void receiveTrackingDone();
+
 
 private:
     IController *m_TrackerController;
-
-
-    // IBioTrackerPlugin interface
-signals:
-    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) override;
-
-public slots:
-    void receiveCvMat(std::shared_ptr<cv::Mat> mat) override;
-
-private slots:
-    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) override;
 };
 
 #endif // BIOTRACKERPLUGIN_H
