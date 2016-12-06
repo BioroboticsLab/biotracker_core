@@ -27,6 +27,7 @@ private:
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 };
 
 #endif // TRACKEDELEMENTVIEW_H

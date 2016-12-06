@@ -64,3 +64,4 @@ void TrackedElementView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
     QGraphicsObject::hoverLeaveEvent(event);
 }
+

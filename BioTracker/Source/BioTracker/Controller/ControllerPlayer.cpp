@@ -120,6 +120,7 @@ void ControllerPlayer::connectModelController()
     QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS, Qt::BlockingQueuedConnection);
     QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
     QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &BioTracker3Player::emitCurrentFrameStr, this, &ControllerPlayer::receiveCurrentFrameStr, Qt::BlockingQueuedConnection);
 
     QObject::connect(player, &BioTracker3Player::emitTrackingIsActiveState, this, &ControllerPlayer::receiveTrackingIsActiveState, Qt::BlockingQueuedConnection);
 
@@ -146,6 +147,12 @@ void ControllerPlayer::receiveCurrentFrameNumber(size_t num)
     QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
 
     widget->setCurrentFrameNumber(num);
+}
+
+void ControllerPlayer::receiveCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name)
+{
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+    qobject_cast<ControllerTextureObject *>(ctr)->receiveCvMat(mat, name);
 }
 
 void ControllerPlayer::receiveFPS(double fps)

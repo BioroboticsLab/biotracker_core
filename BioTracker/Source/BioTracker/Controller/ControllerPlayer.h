@@ -60,6 +60,7 @@ public Q_SLOTS:
   void receiveTrackingOperationDone();
 
   void receiveCurrentFrameNumber(size_t num);
+  void receiveCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name);
   void receiveFPS(double fps);
   void receiveTotalNumbFrames(size_t num);
   void receiveVideoControllsStates(QVector<bool> states);

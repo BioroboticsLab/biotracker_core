@@ -39,10 +39,6 @@ void ControllerTextureObject::connectController()
     IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctr);
 
-    QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(ctrPlayer->getModel());
-    QObject::connect(player, SIGNAL(emitCurrentFrame(std::shared_ptr<cv::Mat>, QString)), this, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
-
-
     QPointer< BioTracker3VideoControllWidget > videoView = dynamic_cast<BioTracker3VideoControllWidget *> (ctrPlayer->getView());
     videoView->setVideoViewComboboxModel(m_TextureViewNamesModel);
 
