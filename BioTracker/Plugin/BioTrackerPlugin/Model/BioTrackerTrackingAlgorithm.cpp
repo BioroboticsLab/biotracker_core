@@ -5,7 +5,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm()
 //    setTrackedComponentFactory(factory);
 }
 
-void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> image)
+void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> image, uint framenumber)
 {
     std::shared_ptr<cv::Mat> mat(new cv::Mat);
     cv::applyColorMap(*image.get(), *mat.get(), cv::COLORMAP_JET);

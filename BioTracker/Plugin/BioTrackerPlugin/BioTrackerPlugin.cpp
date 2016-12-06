@@ -31,9 +31,9 @@ void BioTrackerPlugin::connectInterfaces()
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
 }
 
-void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat)
+void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat, uint frameNumber)
 {
-    qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->doTracking(mat);
+    qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->doTracking(mat, frameNumber);
 }
 
 void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name)

@@ -11,9 +11,9 @@ void ControllerTrackingAlgorithm::connectController()
 
 }
 
-void ControllerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> mat)
+void ControllerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> mat, uint number)
 {
-    qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->doTracking(mat);
+    qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->doTracking(mat, number);
 }
 
 void ControllerTrackingAlgorithm::createModel()

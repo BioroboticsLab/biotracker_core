@@ -165,7 +165,7 @@ void BioTracker3Player::emitSignals()
 
     Q_EMIT emitTrackingIsActiveState(m_IsTrackingActive);
 
-    Q_EMIT emitCurrentFrame(m_CurrentFrame);
+    Q_EMIT emitCurrentFrame(m_CurrentFrame, m_CurrentFrameNumber);
 
     Q_EMIT notifyView();
 }

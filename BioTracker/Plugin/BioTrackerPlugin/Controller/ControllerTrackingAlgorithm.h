@@ -16,7 +16,7 @@ public:
 public:
     void connectController() override;
 
-    void doTracking(std::shared_ptr<cv::Mat> mat);
+    void doTracking(std::shared_ptr<cv::Mat> mat, uint number);
 
 protected:
     void createModel() override;

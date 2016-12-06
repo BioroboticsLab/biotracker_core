@@ -24,11 +24,12 @@ Q_SIGNALS:
 
     // ITrackingAlgorithm interface
   public Q_SLOTS:
-    void doTracking(std::shared_ptr<cv::Mat> image) override;
+    void doTracking(std::shared_ptr<cv::Mat> image, uint frameNumber) override;
 
 
 private:
     TrackedElement *m_TrackedElement;
+
 };
 
 #endif // BIOTRACKERTRACKINGALGORITHM_H

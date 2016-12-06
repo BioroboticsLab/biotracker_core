@@ -26,7 +26,7 @@ protected:
     void disconnectPlugin();
 
 private Q_SLOTS:
-    void receiveCurrentFrame(std::shared_ptr<cv::Mat> mat);
+    void receiveCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number);
     void receiveTrackingDone();
 
 private:

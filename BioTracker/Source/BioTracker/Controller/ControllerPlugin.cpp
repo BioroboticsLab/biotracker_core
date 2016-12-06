@@ -84,9 +84,9 @@ void ControllerPlugin::disconnectPlugin()
 
 }
 
-void ControllerPlugin::receiveCurrentFrame(std::shared_ptr<cv::Mat> mat)
+void ControllerPlugin::receiveCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number)
 {
-    m_BioTrackerPlugin->receiveCvMat(mat);
+    m_BioTrackerPlugin->receiveCvMat(mat, number);
 }
 
 void ControllerPlugin::receiveTrackingDone()

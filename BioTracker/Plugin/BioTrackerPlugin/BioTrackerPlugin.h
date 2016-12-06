@@ -32,7 +32,7 @@ signals:
     void emitTrackingDone();
 
 public slots:
-    void receiveCvMat(std::shared_ptr<cv::Mat> mat);
+    void receiveCvMat(std::shared_ptr<cv::Mat> mat, uint frameNumber);
 
 private slots:
     void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
