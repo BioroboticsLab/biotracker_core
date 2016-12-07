@@ -1,9 +1,9 @@
 #include "PStatePlay.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 #include "QTimer"
 
-PStatePlay::PStatePlay(BioTracker3Player *player,
-                       std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStatePlay::PStatePlay(MediaPlayer *player,
+                       std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream) {
 
 }

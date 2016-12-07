@@ -5,23 +5,23 @@
 #include "Interfaces/IView/IViewMainWindow.h"
 
 // delete
-#include "BioTracker3VideoView.h"
+#include "GLVideoView.h"
 #include "CameraDevice.h"
 #include "QPointer"
 #include "QStringListModel"
 
 namespace Ui {
-class BioTracker3MainWindow;
+class MainWindow;
 }
 
 class IController;
-class BioTracker3MainWindow : public IViewMainWindow
+class MainWindow : public IViewMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit BioTracker3MainWindow(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
-    ~BioTracker3MainWindow();
+    explicit MainWindow(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+    ~MainWindow();
 
     void addVideoControllWidget(IView *widget);
     void addVideoView(IView *videoView);
@@ -48,7 +48,7 @@ private Q_SLOTS:
     void on_checkBox_clicked(bool checked);
 
 private:
-    Ui::BioTracker3MainWindow *ui;
+    Ui::MainWindow *ui;
 
 
     QPointer< CameraDevice > m_CameraDevice;

@@ -3,7 +3,6 @@
 
 #include "Interfaces/IController/IController.h"
 #include "QGraphicsObject"
-#include "View/TrackedElementView.h"
 #include "QPointer"
 
 
@@ -24,7 +23,6 @@ protected:
     void connectControllerToController() override;
 
 private:
-    QPointer< TrackedElementView > m_ElementView;
     IView *m_GraphicsView;
 
     IModel *m_Element;

@@ -3,7 +3,7 @@
 
 #include "QThread"
 #include "Interfaces/IController/IController.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 #include "QPointer"
 
 

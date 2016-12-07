@@ -1,9 +1,9 @@
 #include "ControllerTextureObject.h"
-#include "View/BioTracker3VideoView.h"
-#include "View/BioTracker3MainWindow.h"
+#include "View/GLVideoView.h"
+#include "View/MainWindow.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerPlayer.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 #include "View/TextureObjectView.h"
 
 ControllerTextureObject::ControllerTextureObject(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -24,11 +24,6 @@ void ControllerTextureObject::changeTextureModel(QString name)
     changeTextureView(m_Model);
 }
 
-void ControllerTextureObject::addTextureElementView(IView *view)
-{
-    //dynamic_cast<BioTracker3VideoView *>(m_View)->addTrackedElementView(view);
-}
-
 void ControllerTextureObject::connectControllerToController()
 {
 //    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
@@ -39,7 +34,7 @@ void ControllerTextureObject::connectControllerToController()
     IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctr);
 
-    QPointer< BioTracker3VideoControllWidget > videoView = dynamic_cast<BioTracker3VideoControllWidget *> (ctrPlayer->getView());
+    QPointer< VideoControllWidget > videoView = dynamic_cast<VideoControllWidget *> (ctrPlayer->getView());
     videoView->setVideoViewComboboxModel(m_TextureViewNamesModel);
 
 
@@ -100,7 +95,7 @@ void ControllerTextureObject::checkIfTextureModelExists(QString name)
 
 void ControllerTextureObject::createNewTextureObjectModel(QString name)
 {    
-    BioTracker3TextureObject *newTextureModel = new BioTracker3TextureObject(this, name);
+    TextureObject *newTextureModel = new TextureObject(this, name);
     m_TextureObjects.insert(name, newTextureModel);
     m_TextureViewNames.append(name);
     m_TextureViewNamesModel->setStringList(m_TextureViewNames);

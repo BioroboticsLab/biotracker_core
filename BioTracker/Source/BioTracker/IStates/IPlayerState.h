@@ -6,14 +6,14 @@
 
 #include "Interfaces/IModel/IModel.h"
 
-#include "Model/BioTracker3ImageStream.h"
-#include "Model/BioTracker3TextureObject.h"
+#include "Model/ImageStream.h"
+#include "Model/TextureObject.h"
 
-class BioTracker3Player;
+class MediaPlayer;
 class IPlayerState : public IModel {
     Q_OBJECT
   public:
-    explicit IPlayerState(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    explicit IPlayerState(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
     enum PLAYER_STATES {STATE_INITIAL, STATE_INITIAL_STREAM, STATE_PLAY, STATE_STEP_FORW,
                         STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT
                        };
@@ -21,7 +21,7 @@ class IPlayerState : public IModel {
 
 
   public:
-    void changeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    void changeImageStream(std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     virtual void operate() = 0;
 
@@ -37,8 +37,8 @@ Q_SIGNALS:
     void emitStateDone();
 
   protected:
-    BioTracker3Player *m_Player;
-    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> m_ImageStream;
+    MediaPlayer *m_Player;
+    std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
     bool m_Play;
     bool m_Forw;

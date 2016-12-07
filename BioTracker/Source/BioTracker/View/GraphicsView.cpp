@@ -10,6 +10,8 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 
     this->show();
 
+//    m_GraphicsScene->addItem(m_BackgroundImage);
+
 }
 
 void GraphicsView::addGraphicsItem(QGraphicsItem *item)
@@ -21,6 +23,7 @@ void GraphicsView::addGraphicsItem(QGraphicsItem *item)
 
 void GraphicsView::addPixmapItem(QGraphicsItem *item)
 {
+    m_BackgroundImage = item;
     m_GraphicsScene->addItem(item);
 
     update();

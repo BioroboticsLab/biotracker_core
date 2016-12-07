@@ -1,4 +1,4 @@
-#include "BioTracker3Player.h"
+#include "MediaPlayer.h"
 
 #include "PlayerStates/PStatePlay.h"
 #include "PlayerStates/PStateInitialStream.h"
@@ -8,7 +8,7 @@
 #include "PlayerStates/PStateStepBack.h"
 #include "PlayerStates/PStateWait.h"
 
-BioTracker3Player::BioTracker3Player(QObject *parent) :
+MediaPlayer::MediaPlayer(QObject *parent) :
     IModel(parent),
     m_ImageStream(BioTracker::Core::make_ImageStream3NoMedia()) {
 
@@ -22,12 +22,12 @@ BioTracker3Player::BioTracker3Player(QObject *parent) :
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); ++i)
-        QObject::connect(i.value(), &IPlayerState::emitStateDone, this, &BioTracker3Player::receiveStateDone);
+        QObject::connect(i.value(), &IPlayerState::emitStateDone, this, &MediaPlayer::receiveStateDone);
 
     setNextState(IPlayerState::PLAYER_STATES::STATE_INITIAL);
 }
 
-void BioTracker3Player::runPlayerOperation() {
+void MediaPlayer::runPlayerOperation() {
 
     if(m_NextPlayerState != m_States.value(IPlayerState::PLAYER_STATES::STATE_WAIT)) {
 
@@ -41,13 +41,13 @@ void BioTracker3Player::runPlayerOperation() {
 
 }
 
-void BioTracker3Player::receiveLoadVideoCommand(QString fileDir)
+void MediaPlayer::receiveLoadVideoCommand(QString fileDir)
 {
     std::string filenameStr = fileDir.toStdString();
 
     boost::filesystem::path filename {filenameStr};
 
-    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> stream(BioTracker::Core::make_ImageStream3Video(filename));
+    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Video(filename));
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -58,9 +58,9 @@ void BioTracker3Player::receiveLoadVideoCommand(QString fileDir)
 
 }
 
-void BioTracker3Player::receiveLoadPictures(std::vector<boost::filesystem::path> files)
+void MediaPlayer::receiveLoadPictures(std::vector<boost::filesystem::path> files)
 {
-    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> stream(BioTracker::Core::make_ImageStream3Pictures(files));
+    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Pictures(files));
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -71,9 +71,9 @@ void BioTracker3Player::receiveLoadPictures(std::vector<boost::filesystem::path>
 
 }
 
-void BioTracker3Player::receiveLoadCameraDevice(int x)
+void MediaPlayer::receiveLoadCameraDevice(int x)
 {
-    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
+    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -83,52 +83,52 @@ void BioTracker3Player::receiveLoadCameraDevice(int x)
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
 }
 
-void BioTracker3Player::receiveActivateTracking()
+void MediaPlayer::receiveActivateTracking()
 {
     m_IsTrackingActive = true;
 }
 
-void BioTracker3Player::receiveDeaktivateTracking()
+void MediaPlayer::receiveDeaktivateTracking()
 {
     m_IsTrackingActive = false;
 }
 
-void BioTracker3Player::receivePrevFrameCommand()
+void MediaPlayer::receivePrevFrameCommand()
 {
     setNextState(IPlayerState::STATE_STEP_BACK);
 }
 
-void BioTracker3Player::receiveNextFramCommand()
+void MediaPlayer::receiveNextFramCommand()
 {
     setNextState(IPlayerState::STATE_STEP_FORW);
 }
 
-void BioTracker3Player::receivePauseCommand()
+void MediaPlayer::receivePauseCommand()
 {
     setNextState(IPlayerState::STATE_PAUSE);
 }
 
-void BioTracker3Player::receiveStopCommand()
+void MediaPlayer::receiveStopCommand()
 {
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
 }
 
-void BioTracker3Player::receivePlayCommand()
+void MediaPlayer::receivePlayCommand()
 {
     setNextState(IPlayerState::STATE_PLAY);
 }
 
-void BioTracker3Player::receiveStateDone()
+void MediaPlayer::receiveStateDone()
 {
 }
 
-void BioTracker3Player::receiveTrackingDone()
+void MediaPlayer::receiveTrackingDone()
 {
 
 }
 
 
-void BioTracker3Player::updatePlayerParameter()
+void MediaPlayer::updatePlayerParameter()
 {
     m_MediaType = m_ImageStream->type();
     m_TotalNumbFrames = m_ImageStream->numFrames();
@@ -152,7 +152,7 @@ void BioTracker3Player::updatePlayerParameter()
 
 }
 
-void BioTracker3Player::emitSignals()
+void MediaPlayer::emitSignals()
 {
 
     Q_EMIT emitVideoControllsStates(m_VideoControllsStates);
@@ -170,7 +170,7 @@ void BioTracker3Player::emitSignals()
     Q_EMIT notifyView();
 }
 
-void BioTracker3Player::setNextState(IPlayerState::PLAYER_STATES state) {
+void MediaPlayer::setNextState(IPlayerState::PLAYER_STATES state) {
     m_NextPlayerState = m_States.value(state);
 
     Q_EMIT emitPlayerOperationDone();

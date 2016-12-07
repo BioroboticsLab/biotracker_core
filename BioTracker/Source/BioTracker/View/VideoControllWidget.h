@@ -10,16 +10,16 @@
 
 
 namespace Ui {
-class BioTracker3VideoControllWidget;
+class VideoControllWidget;
 }
 
-class BioTracker3VideoControllWidget : public IViewWidget
+class VideoControllWidget : public IViewWidget
 {
     Q_OBJECT
 
 public:
-    explicit BioTracker3VideoControllWidget(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
-    ~BioTracker3VideoControllWidget();
+    explicit VideoControllWidget(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+    ~VideoControllWidget();
 
     void setSelectedView(QString str);
 
@@ -50,7 +50,7 @@ private Q_SLOTS:
 
 
 private:
-    Ui::BioTracker3VideoControllWidget *ui;
+    Ui::VideoControllWidget *ui;
 
     QIcon m_iconPause;
     QIcon m_iconPlay;

@@ -4,7 +4,7 @@
 
 #include "Interfaces/IModel/IModel.h"
 
-#include "Interfaces/IModel/ITrackingAlgorithm.h"
+#include "Interfaces/IModel/IModelTrackingAlgorithm.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 

@@ -7,10 +7,10 @@
 #include "QImage"
 #include "QString"
 
-class BioTracker3TextureObject : public IModel {
+class TextureObject : public IModel {
     Q_OBJECT
   public:
-    explicit BioTracker3TextureObject(QObject *parent = 0, QString name = "NoName");
+    explicit TextureObject(QObject *parent = 0, QString name = "NoName");
 
     void set(cv::Mat const &img);
     QString getName();

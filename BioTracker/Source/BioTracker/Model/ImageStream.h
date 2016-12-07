@@ -14,10 +14,10 @@
 namespace BioTracker {
 namespace Core {
 
-class BioTracker3ImageStream : public QObject {
+class ImageStream : public QObject {
     Q_OBJECT
   public:
-    explicit BioTracker3ImageStream(QObject *parent = 0);
+    explicit ImageStream(QObject *parent = 0);
 
     /**
          * @return the stream's MediaType i.e. "Video", "Images", "NoMedia"
@@ -86,7 +86,7 @@ class BioTracker3ImageStream : public QObject {
      */
     bool previousFrame();
 
-    virtual ~BioTracker3ImageStream();
+    virtual ~ImageStream();
 
   protected:
     /**
@@ -122,15 +122,15 @@ class BioTracker3ImageStream : public QObject {
     size_t  m_current_frame_number;
 };
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3NoMedia();
+std::shared_ptr<ImageStream> make_ImageStream3NoMedia();
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Pictures(
+std::shared_ptr<ImageStream> make_ImageStream3Pictures(
     std::vector<boost::filesystem::path> filenames);
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Video(const boost::filesystem::path
+std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
         &filename);
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Camera(int device);
+std::shared_ptr<ImageStream> make_ImageStream3Camera(int device);
 
 }
 }

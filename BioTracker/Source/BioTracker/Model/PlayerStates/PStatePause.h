@@ -6,7 +6,7 @@
 
 class PStatePause : public IPlayerState {
   public:
-    PStatePause(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    PStatePause(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

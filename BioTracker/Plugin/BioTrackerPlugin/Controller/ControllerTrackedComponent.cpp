@@ -1,7 +1,6 @@
 #include "ControllerTrackedComponent.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "View/TrackedElementView.h"
-#include "Controller/ControllerTextureObject.h"
 
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -21,9 +20,7 @@ void ControllerTrackedComponent::connectModelToController()
 
 void ControllerTrackedComponent::connectControllerToController()
 {
-    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-    ControllerTextureObject *texture = dynamic_cast<ControllerTextureObject *>(ctrM);
-    texture->addTextureElementView(m_View);
+
 }
 
 void ControllerTrackedComponent::createModel()

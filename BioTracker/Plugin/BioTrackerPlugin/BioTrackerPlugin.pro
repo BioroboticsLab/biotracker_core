@@ -22,7 +22,9 @@ SOURCES += BioTrackerPlugin.cpp \
     Model/BioTrackerTrackingAlgorithm.cpp \
     Model/null_Model.cpp \
     Controller/ControllerTrackingAlgorithm.cpp \
-    Controller/null_Controller.cpp
+    Controller/null_Controller.cpp \
+    Controller/ControllerTrackedComponent.cpp \
+    View/TrackedElementView.cpp
 
 
 HEADERS += BioTrackerPlugin.h\
@@ -33,7 +35,9 @@ HEADERS += BioTrackerPlugin.h\
     Model/BioTrackerTrackingAlgorithm.h \
     Model/null_Model.h \
     Controller/ControllerTrackingAlgorithm.h \
-    Controller/null_Controller.h
+    Controller/null_Controller.h \
+    Controller/ControllerTrackedComponent.h \
+    View/TrackedElementView.h
 
 
 unix {

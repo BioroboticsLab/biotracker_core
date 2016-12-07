@@ -50,7 +50,7 @@ void ControllerPlugin::connectPlugin()
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctrA);
 
     IModel *model = ctrPlayer->getModel();
-    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(model);
+    MediaPlayer *player = dynamic_cast<MediaPlayer *>(model);
 
 
     IController * ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
@@ -60,7 +60,7 @@ void ControllerPlugin::connectPlugin()
 
     QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>,QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrame, this, &ControllerPlugin::receiveCurrentFrame);
+    QObject::connect(player, &MediaPlayer::emitCurrentFrame, this, &ControllerPlugin::receiveCurrentFrame);
     QObject::connect(obj, SIGNAL(emitTrackingDone()), ctrPlayer, SLOT(receiveTrackingOperationDone()));
 }
 
@@ -70,7 +70,7 @@ void ControllerPlugin::disconnectPlugin()
     QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer *>(ctrA);
 
     IModel *model = ctrPlayer->getModel();
-    BioTracker3Player *player = dynamic_cast<BioTracker3Player *>(model);
+    MediaPlayer *player = dynamic_cast<MediaPlayer *>(model);
 
 
     IController * ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);

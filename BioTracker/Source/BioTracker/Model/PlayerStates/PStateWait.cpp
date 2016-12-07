@@ -1,9 +1,9 @@
 #include "PStateWait.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 
 
-PStateWait::PStateWait(BioTracker3Player *player,
-                       std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStateWait::PStateWait(MediaPlayer *player,
+                       std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream) {
 
 }

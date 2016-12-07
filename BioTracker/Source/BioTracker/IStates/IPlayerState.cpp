@@ -1,10 +1,10 @@
 #include "IPlayerState.h"
 
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 
 #include "opencv2/core/core.hpp"
 
-IPlayerState::IPlayerState(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+IPlayerState::IPlayerState(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     m_Player(player),
     m_ImageStream(imageStream) {
 
@@ -45,7 +45,7 @@ size_t IPlayerState::getCurrentFrameNumber()
     return m_FrameNumber;
 }
 
-void IPlayerState::changeImageStream(std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) {
+void IPlayerState::changeImageStream(std::shared_ptr<BioTracker::Core::ImageStream> imageStream) {
     m_ImageStream.reset();
     m_ImageStream = imageStream;
 }

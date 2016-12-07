@@ -3,7 +3,7 @@
 #include <util/ScreenHelper.h>
 #include "Interfaces/IController/IController.h"
 
-#include "Model/BioTracker3TextureObject.h"
+#include "Model/TextureObject.h"
 
 TrackedImageView::TrackedImageView(QWidget *parent, IController *controller, IModel *model):
     IViewOpenGLWidget(parent, controller, model)
@@ -18,7 +18,7 @@ TrackedImageView::~TrackedImageView()
 
 void TrackedImageView::paintGL()
 {
-    BioTracker3TextureObject *textureObject = dynamic_cast<BioTracker3TextureObject *>(getModel());
+    TextureObject *textureObject = dynamic_cast<TextureObject *>(getModel());
     QImage img = textureObject->get();
 
 

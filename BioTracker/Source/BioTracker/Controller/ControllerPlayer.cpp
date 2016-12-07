@@ -1,6 +1,6 @@
 #include "ControllerPlayer.h"
-#include "View/BioTracker3VideoControllWidget.h"
-#include "View/BioTracker3MainWindow.h"
+#include "View/VideoControllWidget.h"
+#include "View/MainWindow.h"
 #include "Controller/ControllerTextureObject.h"
 
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -73,14 +73,14 @@ void ControllerPlayer::setTrackingDeactivated()
 void ControllerPlayer::connectControllerToController()
 {
     IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    QPointer< BioTracker3MainWindow > mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
+    QPointer< MainWindow > mainWin = dynamic_cast<MainWindow *>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
 }
 
 void ControllerPlayer::createModel()
 {
     // Do net set a Parent in order to run the Player in the QThread!
-    m_Model = new BioTracker3Player(  );
+    m_Model = new MediaPlayer(  );
     m_Model->moveToThread(m_PlayerThread);
     m_PlayerThread->start();
 }
@@ -88,45 +88,45 @@ void ControllerPlayer::createModel()
 void ControllerPlayer::createView()
 {
     IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    QPointer< BioTracker3MainWindow > mainWindow = dynamic_cast<BioTracker3MainWindow *>(ctr->getView());
+    QPointer< MainWindow > mainWindow = dynamic_cast<MainWindow *>(ctr->getView());
 
-    m_View = new BioTracker3VideoControllWidget(mainWindow, this, m_Model);
+    m_View = new VideoControllWidget(mainWindow, this, m_Model);
 }
 
 void ControllerPlayer::connectModelToController()
 {
-    QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(m_Model);
+    QPointer< MediaPlayer > player = qobject_cast<MediaPlayer *>(m_Model);
 
     //Load ImageStream
-    QObject::connect(this, &ControllerPlayer::emitLoadVideoStream, player, &BioTracker3Player::receiveLoadVideoCommand);
-    QObject::connect(this, &ControllerPlayer::emitLoadCameraDevice, player, &BioTracker3Player::receiveLoadCameraDevice);
-    QObject::connect(this, &ControllerPlayer::emitLoadPictures, player, &BioTracker3Player::receiveLoadPictures);
+    QObject::connect(this, &ControllerPlayer::emitLoadVideoStream, player, &MediaPlayer::receiveLoadVideoCommand);
+    QObject::connect(this, &ControllerPlayer::emitLoadCameraDevice, player, &MediaPlayer::receiveLoadCameraDevice);
+    QObject::connect(this, &ControllerPlayer::emitLoadPictures, player, &MediaPlayer::receiveLoadPictures);
 
     // Set TrackingActive
-    QObject::connect(this, &ControllerPlayer::emitActivateTracking, player, &BioTracker3Player::receiveActivateTracking);
-    QObject::connect(this, &ControllerPlayer::emitDeactivateTracking, player, &BioTracker3Player::receiveDeaktivateTracking);
+    QObject::connect(this, &ControllerPlayer::emitActivateTracking, player, &MediaPlayer::receiveActivateTracking);
+    QObject::connect(this, &ControllerPlayer::emitDeactivateTracking, player, &MediaPlayer::receiveDeaktivateTracking);
 
 
     // Controll the Player
-    QObject::connect(this, &ControllerPlayer::emitNextFrameCommand, player, &BioTracker3Player::receiveNextFramCommand);
-    QObject::connect(this, &ControllerPlayer::emitPauseCommand, player, &BioTracker3Player::receivePauseCommand);
-    QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &BioTracker3Player::receivePlayCommand);
-    QObject::connect(this, &ControllerPlayer::emitPrevFrameCommand, player, &BioTracker3Player::receivePrevFrameCommand);
-    QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &BioTracker3Player::receiveStopCommand);
+    QObject::connect(this, &ControllerPlayer::emitNextFrameCommand, player, &MediaPlayer::receiveNextFramCommand);
+    QObject::connect(this, &ControllerPlayer::emitPauseCommand, player, &MediaPlayer::receivePauseCommand);
+    QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &MediaPlayer::receivePlayCommand);
+    QObject::connect(this, &ControllerPlayer::emitPrevFrameCommand, player, &MediaPlayer::receivePrevFrameCommand);
+    QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &MediaPlayer::receiveStopCommand);
 
 
     // Handel Player results
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &BioTracker3Player::emitFPS, this, &ControllerPlayer::receiveFPS, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &BioTracker3Player::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &BioTracker3Player::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &BioTracker3Player::emitCurrentFrameStr, this, &ControllerPlayer::receiveCurrentFrameStr, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitFPS, this, &ControllerPlayer::receiveFPS, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitCurrentFrameStr, this, &ControllerPlayer::receiveCurrentFrameStr, Qt::BlockingQueuedConnection);
 
-    QObject::connect(player, &BioTracker3Player::emitTrackingIsActiveState, this, &ControllerPlayer::receiveTrackingIsActiveState, Qt::BlockingQueuedConnection);
+    QObject::connect(player, &MediaPlayer::emitTrackingIsActiveState, this, &ControllerPlayer::receiveTrackingIsActiveState, Qt::BlockingQueuedConnection);
 
-    QObject::connect(player, &BioTracker3Player::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone);
+    QObject::connect(player, &MediaPlayer::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone);
 
-    QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &BioTracker3Player::runPlayerOperation);
+    QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &MediaPlayer::runPlayerOperation);
 }
 
 void ControllerPlayer::receivePlayerOperationDone()
@@ -144,7 +144,7 @@ void ControllerPlayer::receiveTrackingOperationDone()
 
 void ControllerPlayer::receiveCurrentFrameNumber(size_t num)
 {
-    QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
 
     widget->setCurrentFrameNumber(num);
 }
@@ -157,21 +157,21 @@ void ControllerPlayer::receiveCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QStr
 
 void ControllerPlayer::receiveFPS(double fps)
 {
-    QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
 
     widget->setFPS(fps);
 }
 
 void ControllerPlayer::receiveTotalNumbFrames(size_t num)
 {
-    QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
 
     widget->setTotalNumbFrames(num);
 }
 
 void ControllerPlayer::receiveVideoControllsStates(QVector<bool> states)
 {
-    QPointer< BioTracker3VideoControllWidget > widget = static_cast<BioTracker3VideoControllWidget *>(m_View);
+    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
 
     widget->setVideoControllsStates(states);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BioTracker3VideoControllWidget</class>
- <widget class="QWidget" name="BioTracker3VideoControllWidget">
+ <class>VideoControllWidget</class>
+ <widget class="QWidget" name="VideoControllWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

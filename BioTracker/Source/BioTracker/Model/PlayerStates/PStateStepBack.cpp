@@ -1,8 +1,8 @@
 #include "PStateStepBack.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 
-PStateStepBack::PStateStepBack(BioTracker3Player *player,
-                               std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStateStepBack::PStateStepBack(MediaPlayer *player,
+                               std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream)  {
 
 }

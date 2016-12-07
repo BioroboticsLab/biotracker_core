@@ -1,5 +1,5 @@
 #include "ControllerMainWindow.h"
-#include "View/BioTracker3MainWindow.h"
+#include "View/MainWindow.h"
 #include "Model/null_Model.h"
 //#include "Controller/ControllerStrategies/MainGUIApplication.h"
 #include "Controller/ControllerPlayer.h"
@@ -50,7 +50,7 @@ void ControllerMainWindow::deactiveTrackring()
 
 void ControllerMainWindow::setTrackerList(QStringListModel *trackerList)
 {
-    dynamic_cast<BioTracker3MainWindow*>(m_View)->setTrackerList(trackerList);
+    dynamic_cast<MainWindow*>(m_View)->setTrackerList(trackerList);
 }
 
 void ControllerMainWindow::createModel()
@@ -61,10 +61,10 @@ void ControllerMainWindow::createModel()
 
 void ControllerMainWindow::createView()
 {
-    m_View = dynamic_cast<IView *> (new BioTracker3MainWindow(0, this, m_Model));
+    m_View = dynamic_cast<IView *> (new MainWindow(0, this, m_Model));
 
 
-    static_cast<BioTracker3MainWindow *>(m_View)->show();
+    static_cast<MainWindow *>(m_View)->show();
 }
 
 void ControllerMainWindow::connectModelToController()

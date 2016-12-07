@@ -6,7 +6,7 @@
 
 class PStateWait : public IPlayerState {
   public:
-    PStateWait(BioTracker3Player *player, std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream);
+    PStateWait(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

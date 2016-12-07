@@ -1,12 +1,12 @@
-#include "BioTracker3VideoControllWidget.h"
-#include "ui_BioTracker3VideoControllWidget.h"
+#include "VideoControllWidget.h"
+#include "ui_VideoControllWidget.h"
 #include "Controller/ControllerPlayer.h"
 
 #include "IStates/IPlayerState.h"
 
-BioTracker3VideoControllWidget::BioTracker3VideoControllWidget(QWidget *parent, IController *controller, IModel *model) :
+VideoControllWidget::VideoControllWidget(QWidget *parent, IController *controller, IModel *model) :
     IViewWidget(parent, controller, model),
-    ui(new Ui::BioTracker3VideoControllWidget)
+    ui(new Ui::VideoControllWidget)
 {
     ui->setupUi(this);
 
@@ -16,12 +16,12 @@ BioTracker3VideoControllWidget::BioTracker3VideoControllWidget(QWidget *parent, 
                        QSize(), QIcon::Normal, QIcon::Off);
 }
 
-BioTracker3VideoControllWidget::~BioTracker3VideoControllWidget()
+VideoControllWidget::~VideoControllWidget()
 {
     delete ui;
 }
 
-void BioTracker3VideoControllWidget::setSelectedView(QString str)
+void VideoControllWidget::setSelectedView(QString str)
 {
     if (!ui->comboBoxSelectedView->findText(str)) {
         ui->comboBoxSelectedView->addItem(str);
@@ -29,12 +29,12 @@ void BioTracker3VideoControllWidget::setSelectedView(QString str)
     ui->comboBoxSelectedView->setCurrentText(str);
 }
 
-void BioTracker3VideoControllWidget::setVideoViewComboboxModel(QStringListModel *comboboxModel)
+void VideoControllWidget::setVideoViewComboboxModel(QStringListModel *comboboxModel)
 {
     ui->comboBoxSelectedView->setModel(comboboxModel);
 }
 
-void BioTracker3VideoControllWidget::getNotified()
+void VideoControllWidget::getNotified()
 {
     ui->button_nextFrame->setEnabled(m_Forw);
     ui->button_playPause->setEnabled(m_Play);
@@ -50,23 +50,23 @@ void BioTracker3VideoControllWidget::getNotified()
     }
 }
 
-void BioTracker3VideoControllWidget::setTotalNumbFrames(size_t numb)
+void VideoControllWidget::setTotalNumbFrames(size_t numb)
 {
     m_TotalNumbFrames = numb;
 }
 
-void BioTracker3VideoControllWidget::setCurrentFrameNumber(size_t numb)
+void VideoControllWidget::setCurrentFrameNumber(size_t numb)
 {
     m_CurrentFrameNumber = numb;
     ui->frame_num_edit->setText(QString::number(m_CurrentFrameNumber));
 }
 
-void BioTracker3VideoControllWidget::setFPS(double fps)
+void VideoControllWidget::setFPS(double fps)
 {
     ui->fps_label->setText(QString::number(fps));
 }
 
-void BioTracker3VideoControllWidget::setVideoControllsStates(QVector<bool> states)
+void VideoControllWidget::setVideoControllsStates(QVector<bool> states)
 {
 
     m_Back = states.at(0);
@@ -77,13 +77,13 @@ void BioTracker3VideoControllWidget::setVideoControllsStates(QVector<bool> state
 
 }
 
-void BioTracker3VideoControllWidget::on_button_nextFrame_clicked()
+void VideoControllWidget::on_button_nextFrame_clicked()
 {
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
     controller->nextFrame();
 }
 
-void BioTracker3VideoControllWidget::on_button_playPause_clicked()
+void VideoControllWidget::on_button_playPause_clicked()
 {
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
 
@@ -95,35 +95,35 @@ void BioTracker3VideoControllWidget::on_button_playPause_clicked()
     }
 }
 
-void BioTracker3VideoControllWidget::on_button_stop_clicked()
+void VideoControllWidget::on_button_stop_clicked()
 {
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
     controller->stop();
 }
 
-void BioTracker3VideoControllWidget::on_button_previousFrame_clicked()
+void VideoControllWidget::on_button_previousFrame_clicked()
 {
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
     controller->prevFrame();
 }
 
-void BioTracker3VideoControllWidget::on_sld_video_sliderMoved(int position)
+void VideoControllWidget::on_sld_video_sliderMoved(int position)
 {
 
 }
 
-void BioTracker3VideoControllWidget::on_DurationChanged(int position)
+void VideoControllWidget::on_DurationChanged(int position)
 {
 
 }
 
-void BioTracker3VideoControllWidget::on_PositionChanged(int position)
+void VideoControllWidget::on_PositionChanged(int position)
 {
 
 }
 
 
-void BioTracker3VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString &arg1)
+void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString &arg1)
 {
     QString name = arg1;
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());

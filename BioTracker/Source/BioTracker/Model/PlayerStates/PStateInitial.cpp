@@ -1,8 +1,8 @@
 #include "PStateInitial.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 
-PStateInitial::PStateInitial(BioTracker3Player *player,
-                             std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStateInitial::PStateInitial(MediaPlayer *player,
+                             std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream) {
     operate();
 }

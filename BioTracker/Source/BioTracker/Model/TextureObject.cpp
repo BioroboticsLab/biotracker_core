@@ -1,6 +1,6 @@
-#include "BioTracker3TextureObject.h"
+#include "TextureObject.h"
 
-BioTracker3TextureObject::BioTracker3TextureObject(QObject *parent, QString name) :
+TextureObject::TextureObject(QObject *parent, QString name) :
     IModel(parent),
     m_Name(name)
 {
@@ -9,7 +9,7 @@ BioTracker3TextureObject::BioTracker3TextureObject(QObject *parent, QString name
     m_texture = QImage(1, 1, QImage::Format_RGB888);
 }
 
-void BioTracker3TextureObject::set(const cv::Mat &img) {
+void TextureObject::set(const cv::Mat &img) {
     if (img.channels() == 3) {
         img.convertTo(img, CV_8UC3);
         cv::cvtColor(img, m_img, CV_BGR2RGB);
@@ -49,7 +49,7 @@ void BioTracker3TextureObject::set(const cv::Mat &img) {
     Q_EMIT notifyView();
 }
 
-QString BioTracker3TextureObject::getName()
+QString TextureObject::getName()
 {
     return m_Name;
 }

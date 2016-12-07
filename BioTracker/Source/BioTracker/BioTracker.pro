@@ -47,8 +47,6 @@ SOURCES += main.cpp\
     Controller/ControllerMainWindow.cpp \
     Controller/ControllerPlayer.cpp \
     Controller/ControllerTextureObject.cpp \
-    Controller/ControllerTrackedComponent.cpp \
-    Controller/ControllerTrackingAlgorithm.cpp \
     Model/PlayerStates/PStateInitial.cpp \
     Model/PlayerStates/PStateInitialStream.cpp \
     Model/PlayerStates/PStatePause.cpp \
@@ -56,22 +54,10 @@ SOURCES += main.cpp\
     Model/PlayerStates/PStateStepBack.cpp \
     Model/PlayerStates/PStateStepForw.cpp \
     Model/PlayerStates/PStateWait.cpp \
-    Model/TrackedComponents/TrackedComponentFactory.cpp \
-    Model/TrackedComponents/TrackedElement.cpp \
-    Model/TrackedComponents/TrackedTrajectory.cpp \
-    Model/BioTracker3ImageStream.cpp \
-    Model/BioTracker3Player.cpp \
     Model/BioTracker3ProxyMat.cpp \
-    Model/BioTracker3TextureObject.cpp \
-    Model/BioTrackerTrackingAlgorithm.cpp \
     Model/null_Model.cpp \
-    View/BioTracker3MainWindow.cpp \
-    View/BioTracker3VideoControllWidget.cpp \
-    View/BioTracker3VideoView.cpp \
     View/GraphicsScene.cpp \
     View/GraphicsView.cpp \
-    View/TextureObjectView.cpp \
-    View/TrackedElementView.cpp \
     View/TrackedImageView.cpp \
     src/settings/Settings.cpp \
     src/settings/StringTranslator.cpp \
@@ -83,7 +69,14 @@ SOURCES += main.cpp\
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
     Controller/ControllerPlugin.cpp \
-    IStates/IPlayerState.cpp
+    IStates/IPlayerState.cpp \
+    View/MainWindow.cpp \
+    View/VideoControllWidget.cpp \
+    View/GLVideoView.cpp \
+    Model/ImageStream.cpp \
+    Model/MediaPlayer.cpp \
+    Model/TextureObject.cpp \
+    View/TextureObjectView.cpp
 
 HEADERS  += BioTracker3App.h \
     GuiContext.h \
@@ -91,8 +84,6 @@ HEADERS  += BioTracker3App.h \
     Controller/ControllerMainWindow.h \
     Controller/ControllerPlayer.h \
     Controller/ControllerTextureObject.h \
-    Controller/ControllerTrackedComponent.h \
-    Controller/ControllerTrackingAlgorithm.h \
     Model/PlayerStates/PStateInitial.h \
     Model/PlayerStates/PStateInitialStream.h \
     Model/PlayerStates/PStatePause.h \
@@ -100,22 +91,10 @@ HEADERS  += BioTracker3App.h \
     Model/PlayerStates/PStateStepBack.h \
     Model/PlayerStates/PStateStepForw.h \
     Model/PlayerStates/PStateWait.h \
-    Model/TrackedComponents/TrackedComponentFactory.h \
-    Model/TrackedComponents/TrackedElement.h \
-    Model/TrackedComponents/TrackedTrajectory.h \
-    Model/BioTracker3ImageStream.h \
-    Model/BioTracker3Player.h \
     Model/BioTracker3ProxyMat.h \
-    Model/BioTracker3TextureObject.h \
-    Model/BioTrackerTrackingAlgorithm.h \
     Model/null_Model.h \
-    View/BioTracker3MainWindow.h \
-    View/BioTracker3VideoControllWidget.h \
-    View/BioTracker3VideoView.h \
     View/GraphicsScene.h \
     View/GraphicsView.h \
-    View/TextureObjectView.h \
-    View/TrackedElementView.h \
     View/TrackedImageView.h \
     settings/Messages.h \
     settings/ParamNames.h \
@@ -132,17 +111,25 @@ HEADERS  += BioTracker3App.h \
     util/singleton.h \
     util/stdext.h \
     util/stringTools.h \
-    Exceptions.h \
-    PanZoomState.h \
     Model/PluginLoader.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
     Controller/ControllerPlugin.h \
-    IStates/IPlayerState.h
+    IStates/IPlayerState.h \
+    View/MainWindow.h \
+    View/VideoControllWidget.h \
+    View/GLVideoView.h \
+    Model/ImageStream.h \
+    Model/MediaPlayer.h \
+    Model/TextureObject.h \
+    settings/Exceptions.h \
+    settings/PanZoomState.h \
+    View/TextureObjectView.h
 
-FORMS    += View/BioTracker3MainWindow.ui \
-    View/BioTracker3VideoControllWidget.ui \
-    View/CameraDevice.ui
+FORMS    += \
+    View/CameraDevice.ui \
+    View/MainWindow.ui \
+    View/VideoControllWidget.ui
 
 RESOURCES += \
     guiresources.qrc

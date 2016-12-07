@@ -4,7 +4,7 @@
 #include "Interfaces/IController/IController.h"
 #include "opencv2/core/core.hpp"
 #include "QString"
-#include "Model/BioTracker3TextureObject.h"
+#include "Model/TextureObject.h"
 
 #include "QStringList"
 #include "QStringListModel"
@@ -18,8 +18,6 @@ public:
     ControllerTextureObject(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
     void changeTextureModel(QString name);
-
-    void addTextureElementView(IView *view);
 
     // IController interface
 public:
@@ -42,7 +40,7 @@ private:
     void changeTextureView(IModel *model);
 
 private:
-    QMap<QString, QPointer< BioTracker3TextureObject > > m_TextureObjects;
+    QMap<QString, QPointer< TextureObject > > m_TextureObjects;
 
     QString m_DefaultTextureName = "No View";
 

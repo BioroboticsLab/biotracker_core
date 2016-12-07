@@ -1,30 +1,30 @@
-#include "BioTracker3ImageStream.h"
+#include "ImageStream.h"
 
 #include "util/stdext.h"
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
-#include "Exceptions.h"
+#include "settings/Exceptions.h"
 #include "QSharedPointer"
 
 namespace BioTracker {
 namespace Core {
 
-BioTracker3ImageStream::BioTracker3ImageStream(QObject *parent) : QObject(parent),
+ImageStream::ImageStream(QObject *parent) : QObject(parent),
     m_current_frame(new cv::Mat(cv::Size(0,0), CV_8UC3)),
     m_current_frame_number(0) {
 
 }
 
-size_t BioTracker3ImageStream::currentFrameNumber() const {
+size_t ImageStream::currentFrameNumber() const {
     return m_current_frame_number;
 }
 
-std::shared_ptr<cv::Mat> BioTracker3ImageStream::currentFrame() const {
+std::shared_ptr<cv::Mat> ImageStream::currentFrame() const {
     return m_current_frame;
 }
 
-bool BioTracker3ImageStream::setFrameNumber(size_t frame_number) {
+bool ImageStream::setFrameNumber(size_t frame_number) {
     // valid new frame number
     if (frame_number < this->numFrames()) {
         // skip update if frame number doesn't change
@@ -43,19 +43,19 @@ bool BioTracker3ImageStream::setFrameNumber(size_t frame_number) {
     }
 }
 
-bool BioTracker3ImageStream::lastFrame() const {
+bool ImageStream::lastFrame() const {
     return this->currentFrameNumber() + 1 == this->numFrames();
 }
 
-bool BioTracker3ImageStream::end() const {
+bool ImageStream::end() const {
     return this->currentFrameNumber() >= this->numFrames();
 }
 
-bool BioTracker3ImageStream::currentFrameIsEmpty() const {
+bool ImageStream::currentFrameIsEmpty() const {
     return this->currentFrame()->empty();
 }
 
-bool BioTracker3ImageStream::nextFrame() {
+bool ImageStream::nextFrame() {
     const size_t new_frame_number = this->currentFrameNumber() + 1;
     if (new_frame_number < this->numFrames()) {
         const bool success = this->nextFrame_impl();
@@ -67,7 +67,7 @@ bool BioTracker3ImageStream::nextFrame() {
     }
 }
 
-bool BioTracker3ImageStream::previousFrame() {
+bool ImageStream::previousFrame() {
     if (this->currentFrameNumber() > 0) {
         const size_t new_frame_numer = this->currentFrameNumber() - 1;
         const bool success = this->previousFrame_impl();
@@ -79,35 +79,35 @@ bool BioTracker3ImageStream::previousFrame() {
     }
 }
 
-void BioTracker3ImageStream::set_current_frame(std::shared_ptr<cv::Mat> img) {
+void ImageStream::set_current_frame(std::shared_ptr<cv::Mat> img) {
     m_current_frame.swap(img);
 
 }
 
-void BioTracker3ImageStream::clearImage() {
+void ImageStream::clearImage() {
     m_current_frame.reset();
     m_current_frame_number = this->numFrames();
 }
 
-bool BioTracker3ImageStream::nextFrame_impl() {
+bool ImageStream::nextFrame_impl() {
     assert(this->currentFrameNumber() + 1 < this->numFrames());
     const size_t new_frame_number = this->currentFrameNumber() + 1;
     return this->setFrameNumber_impl(new_frame_number);
 }
 
-bool BioTracker3ImageStream::previousFrame_impl() {
+bool ImageStream::previousFrame_impl() {
     assert(this->currentFrameNumber() > 0);
     const size_t new_frame_number = this->currentFrameNumber() - 1;
     return this->setFrameNumber_impl(new_frame_number);
 }
 
-BioTracker3ImageStream::~BioTracker3ImageStream() = default;
+ImageStream::~ImageStream() = default;
 
 
 /*********************************************************/
 
 
-class ImageStream3NoMedia : public BioTracker3ImageStream {
+class ImageStream3NoMedia : public ImageStream {
   public:
     explicit ImageStream3NoMedia() = default;
     virtual GuiParam::MediaType type() const override {
@@ -133,7 +133,7 @@ class ImageStream3NoMedia : public BioTracker3ImageStream {
 /*********************************************************/
 
 
-class ImageStream3Pictures : public BioTracker3ImageStream {
+class ImageStream3Pictures : public ImageStream {
   public:
     explicit ImageStream3Pictures(std::vector<boost::filesystem::path> picture_files)
         : m_picture_files(std::move(picture_files)) {
@@ -170,7 +170,7 @@ class ImageStream3Pictures : public BioTracker3ImageStream {
 /*********************************************************/
 
 
-class ImageStream3Video : public BioTracker3ImageStream {
+class ImageStream3Video : public ImageStream {
   public:
     /**
      * @throw file_not_found when the file does not exists
@@ -236,7 +236,7 @@ class ImageStream3Video : public BioTracker3ImageStream {
 
 /*********************************************************/
 
-class ImageStream3Camera : public BioTracker3ImageStream {
+class ImageStream3Camera : public ImageStream {
   public:
     /**
      * @throw file_not_found when device does not exists
@@ -291,16 +291,16 @@ class ImageStream3Camera : public BioTracker3ImageStream {
 /*********************************************************/
 
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3NoMedia() {
+std::shared_ptr<ImageStream> make_ImageStream3NoMedia() {
     return std::make_shared<ImageStream3NoMedia>();
 }
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Pictures(
+std::shared_ptr<ImageStream> make_ImageStream3Pictures(
     std::vector<boost::filesystem::path> filenames) {
     return std::make_shared<ImageStream3Pictures>(std::move(filenames));
 }
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Video(const boost::filesystem::path
+std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
         &filename) {
     try {
         return std::make_shared<ImageStream3Video>(filename);
@@ -309,7 +309,7 @@ std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Video(const boost::file
     }
 }
 
-std::shared_ptr<BioTracker3ImageStream> make_ImageStream3Camera(int device) {
+std::shared_ptr<ImageStream> make_ImageStream3Camera(int device) {
     try {
         return std::make_shared<ImageStream3Camera>(device);
     } catch (const device_open_error &) {

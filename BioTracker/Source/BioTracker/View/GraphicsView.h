@@ -17,12 +17,15 @@ public:
 public Q_SLOTS:
     void getNotified() override;
 
-private:
-    QGraphicsScene *m_GraphicsScene;
-
     // QWidget interface
 protected:
     void wheelEvent(QWheelEvent *event) override;
+
+private:
+    QGraphicsScene *m_GraphicsScene;
+
+    QGraphicsItem *m_BackgroundImage;
+
 };
 
 #endif // GRAPHICSVIEW_H

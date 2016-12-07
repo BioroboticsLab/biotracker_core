@@ -1,5 +1,5 @@
 #include "TextureObjectView.h"
-#include "Model/BioTracker3TextureObject.h"
+#include "Model/TextureObject.h"
 
 
 TextureObjectView::TextureObjectView(QObject *parent, IController *controller, IModel *model) :
@@ -10,7 +10,7 @@ TextureObjectView::TextureObjectView(QObject *parent, IController *controller, I
 
 void TextureObjectView::getNotified()
 {
-    BioTracker3TextureObject *texture = dynamic_cast<BioTracker3TextureObject *>(getModel());
+    TextureObject *texture = dynamic_cast<TextureObject *>(getModel());
     QPixmap pma;
     pma.convertFromImage(texture->get());
     setPixmap(pma);

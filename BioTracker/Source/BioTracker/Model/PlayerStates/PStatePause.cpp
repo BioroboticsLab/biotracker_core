@@ -1,8 +1,8 @@
 #include "PStatePause.h"
-#include "Model/BioTracker3Player.h"
+#include "Model/MediaPlayer.h"
 
-PStatePause::PStatePause(BioTracker3Player *player,
-                         std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> imageStream) :
+PStatePause::PStatePause(MediaPlayer *player,
+                         std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream) {
 
 }

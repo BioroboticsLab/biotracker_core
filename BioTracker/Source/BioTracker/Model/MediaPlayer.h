@@ -5,24 +5,24 @@
 #include "Interfaces/IModel/IModel.h"
 #include "Interfaces/IModel/IModel.h"
 
-#include "BioTracker3ImageStream.h"
+#include "ImageStream.h"
 #include <memory>
 #include "QString"
 #include "QMap"
 #include "QThread"
 #include "opencv2/core/core.hpp"
 
-#include "View/BioTracker3VideoControllWidget.h"
-#include "View/BioTracker3VideoView.h"
+#include "View/VideoControllWidget.h"
+#include "View/GLVideoView.h"
 
 #include "IStates/IPlayerState.h"
 #include "QSharedPointer"
 
 
-class BioTracker3Player : public IModel {
+class MediaPlayer : public IModel {
     Q_OBJECT
   public:
-    explicit BioTracker3Player(QObject *parent = 0);
+    explicit MediaPlayer(QObject *parent = 0);
 
     void setNextState(IPlayerState::PLAYER_STATES state);
 
@@ -70,7 +70,7 @@ class BioTracker3Player : public IModel {
     IPlayerState *m_NextPlayerState;
     QThread m_StateThread;
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *> m_States;
-    std::shared_ptr<BioTracker::Core::BioTracker3ImageStream> m_ImageStream;
+    std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
     GuiParam::MediaType m_MediaType;
     size_t m_TotalNumbFrames;

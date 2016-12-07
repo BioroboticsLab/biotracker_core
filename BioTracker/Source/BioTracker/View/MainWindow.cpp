@@ -1,8 +1,8 @@
-#include "BioTracker3MainWindow.h"
-#include "ui_BioTracker3MainWindow.h"
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 #include "Controller/ControllerMainWindow.h"
-#include "BioTracker3VideoControllWidget.h"
+#include "VideoControllWidget.h"
 #include "qfiledialog.h"
 #include "QLayout"
 
@@ -11,9 +11,9 @@
 
 
 
-BioTracker3MainWindow::BioTracker3MainWindow(QWidget *parent, IController *controller, IModel *model) :
+MainWindow::MainWindow(QWidget *parent, IController *controller, IModel *model) :
     IViewMainWindow(parent, controller, model),
-    ui(new Ui::BioTracker3MainWindow)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -25,19 +25,19 @@ BioTracker3MainWindow::BioTracker3MainWindow(QWidget *parent, IController *contr
     }
 }
 
-BioTracker3MainWindow::~BioTracker3MainWindow()
+MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void BioTracker3MainWindow::addVideoControllWidget(IView *widget)
+void MainWindow::addVideoControllWidget(IView *widget)
 {
     QLayout *layout = new QGridLayout(this);
     layout->addWidget(dynamic_cast<QWidget *>(widget));
     ui->videoControls->setLayout(layout);
 }
 
-void BioTracker3MainWindow::addVideoView(IView *videoView)
+void MainWindow::addVideoView(IView *videoView)
 {
     GraphicsView *graphView = dynamic_cast<GraphicsView *>(videoView);
     graphView->setParent(ui->trackingArea);
@@ -47,12 +47,12 @@ void BioTracker3MainWindow::addVideoView(IView *videoView)
     //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
 }
 
-void BioTracker3MainWindow::setTrackerList(QStringListModel *trackerList)
+void MainWindow::setTrackerList(QStringListModel *trackerList)
 {
     ui->comboBox_TrackerSelect->setModel(trackerList);
 }
 
-void BioTracker3MainWindow::on_actionOpen_Video_triggered()
+void MainWindow::on_actionOpen_Video_triggered()
 {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
 
@@ -64,7 +64,7 @@ void BioTracker3MainWindow::on_actionOpen_Video_triggered()
     }
 }
 
-void BioTracker3MainWindow::on_actionLoad_Tracker_triggered()
+void MainWindow::on_actionLoad_Tracker_triggered()
 {
     static const QString pluginFilter("BioTracker Tracking Plugin files (*.so *.dll *.dylib)");
 
@@ -76,7 +76,7 @@ void BioTracker3MainWindow::on_actionLoad_Tracker_triggered()
     }
 }
 
-void BioTracker3MainWindow::on_actionOpen_Picture_triggered()
+void MainWindow::on_actionOpen_Picture_triggered()
 {
     static const QString imageFilter(
         "image files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)");
@@ -92,37 +92,37 @@ void BioTracker3MainWindow::on_actionOpen_Picture_triggered()
     }
 }
 
-void BioTracker3MainWindow::on_actionLoad_tracking_data_triggered()
+void MainWindow::on_actionLoad_tracking_data_triggered()
 {
 
 }
 
-void BioTracker3MainWindow::on_actionSave_tracking_data_triggered()
+void MainWindow::on_actionSave_tracking_data_triggered()
 {
 
 }
 
-void BioTracker3MainWindow::on_actionQuit_triggered()
+void MainWindow::on_actionQuit_triggered()
 {
 
 }
 
-void BioTracker3MainWindow::on_actionOpen_Camera_triggered()
+void MainWindow::on_actionOpen_Camera_triggered()
 {
     m_CameraDevice = new CameraDevice();
 
     m_CameraDevice->show();
 
-    QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &BioTracker3MainWindow::receiveSelectedCameraDevice);
+    QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
 }
 
-void BioTracker3MainWindow::receiveSelectedCameraDevice(int i)
+void MainWindow::receiveSelectedCameraDevice(int i)
 {
     qobject_cast<ControllerMainWindow *> (getController())->loadCameraDevice(i);
 
 }
 
-void BioTracker3MainWindow::on_checkBox_clicked(bool checked)
+void MainWindow::on_checkBox_clicked(bool checked)
 {
 
 }

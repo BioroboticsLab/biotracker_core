@@ -5,13 +5,13 @@
 
 #include "QPainter"
 #include "Interfaces/IView/IViewWidget.h"
-#include "Model/BioTracker3TextureObject.h"
+#include "Model/TextureObject.h"
 
-class BioTracker3VideoView: public IViewOpenGLWidget
+class GLVideoView: public IViewOpenGLWidget
 {
 public:
-    BioTracker3VideoView(QWidget *parent, IController *controller = 0, IModel *model = 0);
-    ~BioTracker3VideoView();
+    GLVideoView(QWidget *parent, IController *controller = 0, IModel *model = 0);
+    ~GLVideoView();
 
 private:
     void paintGL() override;
