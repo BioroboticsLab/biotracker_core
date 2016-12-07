@@ -4,7 +4,7 @@
 #include <QObject>
 #include "QPointer"
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include "Model/BioTracker3ImageStream.h"
 #include "Model/BioTracker3TextureObject.h"

@@ -3,7 +3,7 @@
 
 #include "QObject"
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "opencv2/core/core.hpp"
 #include "memory"
 

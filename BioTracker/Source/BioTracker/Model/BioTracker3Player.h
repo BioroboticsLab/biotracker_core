@@ -2,8 +2,8 @@
 #define BIOTRACKER3PLAYER_H
 
 #include <QObject>
-#include "Interfaces/IModel/imodel.h"
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include "BioTracker3ImageStream.h"
 #include <memory>

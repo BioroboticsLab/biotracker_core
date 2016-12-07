@@ -35,15 +35,14 @@ LIBS += -L/usr/local/lib \
 -lopencv_legacy \
 -lopencv_flann
 
-INCLUDEPATH += ../../Interfaces/BioTrackerInterfaces/
-LIBS += /home/andreas/Documents/biotracker_core/BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
+#INCLUDEPATH += ../../Interfaces/BioTrackerInterfaces/
+#LIBS += /home/andreas/Documents/biotracker_core/BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
 
 
 
 SOURCES += main.cpp\
     BioTracker3App.cpp \
     GuiContext.cpp \
-    Controller/ControllerContext.cpp \
     Controller/ControllerGraphicScene.cpp \
     Controller/ControllerMainWindow.cpp \
     Controller/ControllerPlayer.cpp \
@@ -88,7 +87,6 @@ SOURCES += main.cpp\
 
 HEADERS  += BioTracker3App.h \
     GuiContext.h \
-    Controller/ControllerContext.h \
     Controller/ControllerGraphicScene.h \
     Controller/ControllerMainWindow.h \
     Controller/ControllerPlayer.h \
@@ -149,3 +147,18 @@ FORMS    += View/BioTracker3MainWindow.ui \
 RESOURCES += \
     guiresources.qrc
 
+
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/ -lBioTrackerInterfaces
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/ -lBioTrackerInterfaces
+else:unix: LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/ -lBioTrackerInterfaces
+
+INCLUDEPATH += $$PWD/../../Interfaces/BioTrackerInterfaces
+DEPENDPATH += $$PWD/../../Interfaces/BioTrackerInterfaces
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/libBioTrackerInterfaces.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/libBioTrackerInterfaces.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/BioTrackerInterfaces.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/BioTrackerInterfaces.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a

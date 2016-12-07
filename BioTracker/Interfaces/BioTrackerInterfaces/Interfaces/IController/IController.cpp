@@ -1,4 +1,4 @@
-#include "icontroller.h"
+#include "IController.h"
 
 
 IController::IController(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) : QObject(parent),
@@ -13,16 +13,21 @@ IBioTrackerContext *IController::getBioTrackerContext()
     return m_BioTrackerContext.data();
 }
 
+void IController::connectModelToController()
+{
+
+}
+
 void IController::createComponents()
 {
     createModel();
     createView();
-    connectModelController();
+    connectModelToController();
 }
 
 void IController::connectComponents()
 {
-    connectController();
+    connectControllerToController();
 }
 
 void IController::addView(IView *view) {

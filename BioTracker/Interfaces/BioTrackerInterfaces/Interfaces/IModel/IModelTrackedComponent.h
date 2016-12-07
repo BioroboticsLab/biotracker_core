@@ -1,14 +1,14 @@
 #ifndef ITRACKEDCOMPONENT_H
 #define ITRACKEDCOMPONENT_H
 
-#include "imodel.h"
+#include "IModel.h"
 
-class ITrackedComponent : public IModel
+class IModelTrackedComponent : public IModel
 {
     Q_OBJECT
 
   public:
-    ITrackedComponent(QObject *parent = 0);
+    IModelTrackedComponent(QObject *parent = 0);
 
     virtual void operate();
 };

@@ -8,7 +8,7 @@
 #include <boost/filesystem.hpp>
 
 #include "Interfaces/IView/IView.h"
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 #include "Interfaces/IBioTrackerContext.h"
 #include "Interfaces/ENUMS.h"
 
@@ -40,8 +40,8 @@ class IController : public QObject {
 protected:
     virtual void createModel() = 0;
     virtual void createView() = 0;
-    virtual void connectModelController() = 0;
-    virtual void connectController() = 0;
+    virtual void connectModelToController() = 0;
+    virtual void connectControllerToController() = 0;
 
 protected:
     QPointer< IBioTrackerContext > m_BioTrackerContext;

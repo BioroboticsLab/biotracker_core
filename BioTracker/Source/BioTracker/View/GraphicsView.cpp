@@ -3,7 +3,7 @@
 #include "QWheelEvent"
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
-    IGraphicsView(parent, controller, model)
+    IViewGraphicsView(parent, controller, model)
 {
     m_GraphicsScene = new QGraphicsScene();
     this->setScene(m_GraphicsScene);

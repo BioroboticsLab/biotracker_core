@@ -5,11 +5,11 @@
 #include "QObject"
 #include "QGraphicsPixmapItem"
 
-class IGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem, public IView
+class IViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem, public IView
 {
     Q_OBJECT
 public:
-    IGraphicsPixmapItem(QObject *parent = 0, IController *controller = 0, IModel *model = 0);
+    IViewGraphicsPixmapItem(QObject *parent = 0, IController *controller = 0, IModel *model = 0);
 
     // IView interface
 public:

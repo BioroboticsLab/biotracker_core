@@ -1,7 +1,7 @@
 #ifndef IVIEW_H
 #define IVIEW_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 class IController;
 class IView {

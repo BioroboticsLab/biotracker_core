@@ -1,7 +1,7 @@
 #ifndef BIOTRACKER3PROXYMAT_H
 #define BIOTRACKER3PROXYMAT_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include <boost/optional.hpp>
 

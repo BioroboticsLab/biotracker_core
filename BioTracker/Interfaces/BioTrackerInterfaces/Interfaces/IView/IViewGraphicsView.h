@@ -4,11 +4,11 @@
 #include "QGraphicsView"
 #include "IView.h"
 
-class IGraphicsView : public QGraphicsView, public IView
+class IViewGraphicsView : public QGraphicsView, public IView
 {
     Q_OBJECT
 public:
-    IGraphicsView(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+    IViewGraphicsView(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
 
     // IView interface
 public:

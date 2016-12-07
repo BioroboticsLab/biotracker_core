@@ -3,7 +3,7 @@
 
 
 TextureObjectView::TextureObjectView(QObject *parent, IController *controller, IModel *model) :
-    IGraphicsPixmapItem(parent, controller, model)
+    IViewGraphicsPixmapItem(parent, controller, model)
 {
     setZValue(-1);
 }

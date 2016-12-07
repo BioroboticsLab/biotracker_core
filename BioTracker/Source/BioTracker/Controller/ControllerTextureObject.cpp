@@ -29,7 +29,7 @@ void ControllerTextureObject::addTextureElementView(IView *view)
     //dynamic_cast<BioTracker3VideoView *>(m_View)->addTrackedElementView(view);
 }
 
-void ControllerTextureObject::connectController()
+void ControllerTextureObject::connectControllerToController()
 {
 //    IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 //    BioTracker3MainWindow *mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
@@ -74,7 +74,7 @@ void ControllerTextureObject::createView()
   //  m_View = new BioTracker3VideoView(0, this, m_Model);
 }
 
-void ControllerTextureObject::connectModelController()
+void ControllerTextureObject::connectModelToController()
 {
 
 }

@@ -1,5 +1,5 @@
 #include "IView.h"
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 
 IView::IView(IController *controller, IModel *model):
     mController(controller),

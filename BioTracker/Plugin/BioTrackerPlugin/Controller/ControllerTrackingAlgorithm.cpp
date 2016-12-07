@@ -6,7 +6,7 @@ ControllerTrackingAlgorithm::ControllerTrackingAlgorithm(QObject *parent, IBioTr
 
 }
 
-void ControllerTrackingAlgorithm::connectController()
+void ControllerTrackingAlgorithm::connectControllerToController()
 {
 
 }
@@ -26,7 +26,7 @@ void ControllerTrackingAlgorithm::createView()
 
 }
 
-void ControllerTrackingAlgorithm::connectModelController()
+void ControllerTrackingAlgorithm::connectModelToController()
 {
     BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);

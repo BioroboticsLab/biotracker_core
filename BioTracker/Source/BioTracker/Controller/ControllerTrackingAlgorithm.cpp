@@ -8,7 +8,7 @@ ControllerTrackingAlgorithm::ControllerTrackingAlgorithm(QObject *parent, IBioTr
 
 }
 
-void ControllerTrackingAlgorithm::connectController()
+void ControllerTrackingAlgorithm::connectControllerToController()
 {
     IController *ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject *ctrTexture = dynamic_cast<ControllerTextureObject *>(ctrA);
@@ -36,7 +36,7 @@ void ControllerTrackingAlgorithm::createView()
 
 }
 
-void ControllerTrackingAlgorithm::connectModelController()
+void ControllerTrackingAlgorithm::connectModelToController()
 {
 
 }

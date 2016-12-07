@@ -1,9 +1,9 @@
 #ifndef TEXTUREOBJECTVIEW_H
 #define TEXTUREOBJECTVIEW_H
 
-#include "Interfaces/IView/IGraphicsPixmapItem.h"
+#include "Interfaces/IView/IViewGraphicsPixmapItem.h"
 
-class TextureObjectView : public IGraphicsPixmapItem
+class TextureObjectView : public IViewGraphicsPixmapItem
 {
     Q_OBJECT
 public:

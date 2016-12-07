@@ -1,7 +1,7 @@
 #ifndef NULL_MODEL_H
 #define NULL_MODEL_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 class null_Model : public IModel
 {

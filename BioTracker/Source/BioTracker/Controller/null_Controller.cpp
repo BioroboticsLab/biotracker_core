@@ -15,12 +15,12 @@ void null_Controller::createView()
 
 }
 
-void null_Controller::connectModelController()
+void null_Controller::connectModelToController()
 {
 
 }
 
-void null_Controller::connectController()
+void null_Controller::connectControllerToController()
 {
 
 }

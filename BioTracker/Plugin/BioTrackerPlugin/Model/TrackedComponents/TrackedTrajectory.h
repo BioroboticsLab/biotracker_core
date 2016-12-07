@@ -1,12 +1,12 @@
 #ifndef TRACKEDOTRAJECTORY_H
 #define TRACKEDOTRAJECTORY_H
 
-#include "Interfaces/IModel/ITrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "QList"
 #include "QString"
 
 
-class TrackedTrajectory : public ITrackedTrajectory {
+class TrackedTrajectory : public IModelTrackedTrajectory {
     Q_OBJECT
 
   public:
@@ -18,13 +18,13 @@ public:
 
     // ITrackedObject interface
 public:
-    void add(ITrackedComponent *comp) override;
-    void remove(ITrackedComponent *comp) override;
-    ITrackedComponent *getChild(int index) override;
+    void add(IModelTrackedComponent *comp) override;
+    void remove(IModelTrackedComponent *comp) override;
+    IModelTrackedComponent *getChild(int index) override;
     int numberOfChildrean();
 
 private:
-    QList<ITrackedComponent*> m_TrackedComponents;
+    QList<IModelTrackedComponent*> m_TrackedComponents;
 
     QString name;
 };

@@ -36,12 +36,12 @@ void ControllerGraphicScene::createView()
     addGraphicsItem(m_ElementView);
 }
 
-void ControllerGraphicScene::connectModelController()
+void ControllerGraphicScene::connectModelToController()
 {
 
 }
 
-void ControllerGraphicScene::connectController()
+void ControllerGraphicScene::connectControllerToController()
 {
         IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
         QPointer< BioTracker3MainWindow > mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());

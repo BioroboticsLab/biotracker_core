@@ -10,34 +10,26 @@ TARGET = BioTrackerInterfaces
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES += Interfaces/IController/icontroller.cpp \
-    Interfaces/IController/IControllerStrategy.cpp \
-    Interfaces/IModel/imodel.cpp \
+SOURCES += \
     Interfaces/IModel/IObject.cpp \
-    Interfaces/IModel/ITrackedComponent.cpp \
-    Interfaces/IModel/ITrackedComponentFactory.cpp \
-    Interfaces/IModel/ITrackedTrajectory.cpp \
-    Interfaces/IModel/ITrackingAlgorithm.cpp \
-    Interfaces/IView/IGraphicsPixmapItem.cpp \
-    Interfaces/IView/IGraphicsView.cpp \
     Interfaces/IView/IView.cpp \
     Interfaces/IView/IViewGraphicsScene.cpp \
     Interfaces/IView/IViewMainWindow.cpp \
     Interfaces/IView/IViewOpenGLWidget.cpp \
     Interfaces/IView/IViewTrackedComponent.cpp \
     Interfaces/IView/IViewWidget.cpp \
-    Interfaces/IBioTrackerContext.cpp
+    Interfaces/IBioTrackerContext.cpp \
+    Interfaces/IController/IController.cpp \
+    Interfaces/IModel/IModel.cpp \
+    Interfaces/IView/IViewGraphicsPixmapItem.cpp \
+    Interfaces/IView/IViewGraphicsView.cpp \
+    Interfaces/IModel/IModelTrackedComponent.cpp \
+    Interfaces/IModel/IModelTrackedComponentFactory.cpp \
+    Interfaces/IModel/IModelTrackedTrajectory.cpp \
+    Interfaces/IModel/IModelTrackingAlgorithm.cpp
 
-HEADERS += Interfaces/IController/icontroller.h \
-    Interfaces/IController/IControllerStrategy.h \
-    Interfaces/IModel/imodel.h \
+HEADERS += \
     Interfaces/IModel/IObject.h \
-    Interfaces/IModel/ITrackedComponent.h \
-    Interfaces/IModel/ITrackedComponentFactory.h \
-    Interfaces/IModel/ITrackedTrajectory.h \
-    Interfaces/IModel/ITrackingAlgorithm.h \
-    Interfaces/IView/IGraphicsPixmapItem.h \
-    Interfaces/IView/IGraphicsView.h \
     Interfaces/IView/IView.h \
     Interfaces/IView/IViewGraphicsScene.h \
     Interfaces/IView/IViewMainWindow.h \
@@ -46,7 +38,15 @@ HEADERS += Interfaces/IController/icontroller.h \
     Interfaces/IView/IViewWidget.h \
     Interfaces/ENUMS.h \
     Interfaces/IBioTrackerContext.h \
-    Interfaces/IBioTrackerPlugin.h
+    Interfaces/IBioTrackerPlugin.h \
+    Interfaces/IController/IController.h \
+    Interfaces/IModel/IModel.h \
+    Interfaces/IView/IViewGraphicsPixmapItem.h \
+    Interfaces/IView/IViewGraphicsView.h \
+    Interfaces/IModel/IModelTrackedComponent.h \
+    Interfaces/IModel/IModelTrackedComponentFactory.h \
+    Interfaces/IModel/IModelTrackedTrajectory.h \
+    Interfaces/IModel/IModelTrackingAlgorithm.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

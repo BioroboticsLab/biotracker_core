@@ -1,7 +1,7 @@
 #ifndef NULL_CONTROLLER_H
 #define NULL_CONTROLLER_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 class null_Controller : public IController
 {
 public:
@@ -11,8 +11,8 @@ public:
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
-    void connectController() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
 };
 
 #endif // NULL_CONTROLLER_H

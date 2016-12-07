@@ -2,7 +2,7 @@
 #define GUICONTEXT_H
 
 #include "Interfaces/IBioTrackerContext.h"
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 
 
 

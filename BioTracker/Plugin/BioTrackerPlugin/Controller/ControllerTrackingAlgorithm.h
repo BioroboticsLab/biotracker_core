@@ -1,7 +1,7 @@
 #ifndef CONTROLLERTRACKINGALGORITHM_H
 #define CONTROLLERTRACKINGALGORITHM_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "Model/BioTrackerTrackingAlgorithm.h"
 #include "Interfaces/IBioTrackerContext.h"
 
@@ -14,14 +14,14 @@ public:
 
     // IController interface
 public:
-    void connectController() override;
+    void connectControllerToController() override;
 
     void doTracking(std::shared_ptr<cv::Mat> mat, uint number);
 
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
+    void connectModelToController() override;
 
 Q_SIGNALS:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);

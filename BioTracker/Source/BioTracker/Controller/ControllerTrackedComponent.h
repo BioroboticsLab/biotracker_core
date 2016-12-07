@@ -1,7 +1,7 @@
 #ifndef CONTROLLERTRACKEDCOMPONENT_H
 #define CONTROLLERTRACKEDCOMPONENT_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 
 class ControllerTrackedComponent : public IController
 {
@@ -12,8 +12,8 @@ public:
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
-    void connectController() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
 };
 
 #endif // CONTROLLERTRACKEDCOMPONENT_H

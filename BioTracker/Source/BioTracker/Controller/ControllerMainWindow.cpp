@@ -67,12 +67,12 @@ void ControllerMainWindow::createView()
     static_cast<BioTracker3MainWindow *>(m_View)->show();
 }
 
-void ControllerMainWindow::connectModelController()
+void ControllerMainWindow::connectModelToController()
 {
 
 }
 
-void ControllerMainWindow::connectController()
+void ControllerMainWindow::connectControllerToController()
 {
 
 }

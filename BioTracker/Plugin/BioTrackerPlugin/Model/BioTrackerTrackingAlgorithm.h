@@ -2,7 +2,7 @@
 #define BIOTRACKERTRACKINGALGORITHM_H
 
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include "Interfaces/IModel/ITrackingAlgorithm.h"
 #include "Model/TrackedComponents/TrackedElement.h"
@@ -13,7 +13,7 @@
 #include <opencv2/opencv.hpp>
 
 
-class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
+class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
     Q_OBJECT
   public:

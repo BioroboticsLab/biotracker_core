@@ -1,7 +1,7 @@
 #ifndef CONTROLLERGRAPHICSCENE_H
 #define CONTROLLERGRAPHICSCENE_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "QGraphicsObject"
 #include "View/TrackedElementView.h"
 #include "QPointer"
@@ -20,8 +20,8 @@ public:
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
-    void connectController() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
 
 private:
     QPointer< TrackedElementView > m_ElementView;

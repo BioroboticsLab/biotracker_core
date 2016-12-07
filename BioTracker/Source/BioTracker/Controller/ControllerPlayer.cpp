@@ -70,7 +70,7 @@ void ControllerPlayer::setTrackingDeactivated()
     m_TrackingIsActive = false;
 }
 
-void ControllerPlayer::connectController()
+void ControllerPlayer::connectControllerToController()
 {
     IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< BioTracker3MainWindow > mainWin = dynamic_cast<BioTracker3MainWindow *>(ctrM->getView());
@@ -93,7 +93,7 @@ void ControllerPlayer::createView()
     m_View = new BioTracker3VideoControllWidget(mainWindow, this, m_Model);
 }
 
-void ControllerPlayer::connectModelController()
+void ControllerPlayer::connectModelToController()
 {
     QPointer< BioTracker3Player > player = qobject_cast<BioTracker3Player *>(m_Model);
 

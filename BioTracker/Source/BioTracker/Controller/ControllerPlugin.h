@@ -1,7 +1,7 @@
 #ifndef CONTROLLERPLUGIN_H
 #define CONTROLLERPLUGIN_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "Interfaces/IBioTrackerPlugin.h"
 
 
@@ -17,8 +17,8 @@ public:
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
-    void connectController() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
 
     void createPlugin();
 

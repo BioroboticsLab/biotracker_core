@@ -1,7 +1,7 @@
 #ifndef CONTROLLERTEXTUREOBJECT_H
 #define CONTROLLERTEXTUREOBJECT_H
 
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "opencv2/core/core.hpp"
 #include "QString"
 #include "Model/BioTracker3TextureObject.h"
@@ -23,7 +23,7 @@ public:
 
     // IController interface
 public:
-    void connectController() override;
+    void connectControllerToController() override;
 
 public Q_SLOTS:
     void receiveCvMat(std::shared_ptr<cv::Mat> mat, QString name);
@@ -34,7 +34,7 @@ Q_SIGNALS:
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
+    void connectModelToController() override;
 
 private:
     void checkIfTextureModelExists(QString name);

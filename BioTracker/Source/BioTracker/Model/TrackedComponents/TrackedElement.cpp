@@ -5,7 +5,7 @@
 #include "QPainter"
 
 TrackedElement::TrackedElement(QObject *parent, QString name) :
-    ITrackedComponent(parent),
+    IModelTrackedComponent(parent),
     name(name)
 {
     x = 100;

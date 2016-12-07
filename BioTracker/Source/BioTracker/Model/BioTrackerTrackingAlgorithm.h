@@ -1,10 +1,10 @@
 #ifndef BIOTRACKERTRACKINGALGORITHM_H
 #define BIOTRACKERTRACKINGALGORITHM_H
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include "BioTracker3TextureObject.h"
 
-#include "Interfaces/IModel/ITrackingAlgorithm.h"
+#include "Interfaces/IModel/IModelTrackingAlgorithm.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 
@@ -13,7 +13,7 @@
 #include <opencv2/opencv.hpp>
 
 
-class BioTrackerTrackingAlgorithm : public ITrackingAlgorithm
+class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
     Q_OBJECT
   public:

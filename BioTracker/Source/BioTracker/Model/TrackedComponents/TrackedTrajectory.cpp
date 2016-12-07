@@ -3,7 +3,7 @@
 #include "TrackedElement.h"
 
 TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
-    ITrackedTrajectory(parent),
+    IModelTrackedTrajectory(parent),
     name(name)
 {
 
@@ -19,17 +19,17 @@ void TrackedTrajectory::operate()
     qDebug() << "========================   End   =========================";
 }
 
-void TrackedTrajectory::add(ITrackedComponent *comp)
+void TrackedTrajectory::add(IModelTrackedComponent *comp)
 {
     m_TrackedComponents.append(comp);
 }
 
-void TrackedTrajectory::remove(ITrackedComponent *comp)
+void TrackedTrajectory::remove(IModelTrackedComponent *comp)
 {
     m_TrackedComponents.removeOne(comp);
 }
 
-ITrackedComponent* TrackedTrajectory::getChild(int index)
+IModelTrackedComponent* TrackedTrajectory::getChild(int index)
 {
     return m_TrackedComponents.at(index);
 }

@@ -1,7 +1,7 @@
 #ifndef PLUGINLOADER_H
 #define PLUGINLOADER_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 #include "QPluginLoader"
 #include "QStringListModel"
 #include "Interfaces/IBioTrackerPlugin.h"

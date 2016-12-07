@@ -13,12 +13,12 @@ TrackedComponentFactory::~TrackedComponentFactory()
 
 }
 
-ITrackedComponent *TrackedComponentFactory::createTrackedElement()
+IModelTrackedComponent *TrackedComponentFactory::createTrackedElement()
 {
     return new TrackedElement(this, "n.a.");
 }
 
-ITrackedComponent *TrackedComponentFactory::createTrackedObject()
+IModelTrackedComponent *TrackedComponentFactory::createTrackedObject()
 {
     return new TrackedTrajectory();
 }

@@ -1,7 +1,7 @@
 #ifndef IOBJECT_H
 #define IOBJECT_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include <cereal/cereal.hpp>
 #include <cereal/access.hpp>

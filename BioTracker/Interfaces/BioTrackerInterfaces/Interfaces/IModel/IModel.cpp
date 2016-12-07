@@ -1,4 +1,4 @@
-#include "imodel.h"
+#include "IModel.h"
 
 IModel::IModel(QObject *parent) : QObject(parent) {
 

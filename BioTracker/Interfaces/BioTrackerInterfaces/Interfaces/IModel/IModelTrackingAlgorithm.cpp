@@ -1,6 +1,6 @@
-#include "ITrackingAlgorithm.h"
+#include "IModelTrackingAlgorithm.h"
 
-ITrackingAlgorithm::ITrackingAlgorithm(QObject *parent) :
+IModelTrackingAlgorithm::IModelTrackingAlgorithm(QObject *parent) :
     IModel(parent)
 {
 

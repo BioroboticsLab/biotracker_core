@@ -27,11 +27,11 @@ void ControllerPlugin::createView()
 {
 }
 
-void ControllerPlugin::connectModelController()
+void ControllerPlugin::connectModelToController()
 {
 }
 
-void ControllerPlugin::connectController()
+void ControllerPlugin::connectControllerToController()
 {
 
 }

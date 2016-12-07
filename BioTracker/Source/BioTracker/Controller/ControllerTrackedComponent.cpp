@@ -14,12 +14,12 @@ void ControllerTrackedComponent::createView()
     m_View = new TrackedElementView(0, this, m_Model);
 }
 
-void ControllerTrackedComponent::connectModelController()
+void ControllerTrackedComponent::connectModelToController()
 {
 
 }
 
-void ControllerTrackedComponent::connectController()
+void ControllerTrackedComponent::connectControllerToController()
 {
     IController *ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject *texture = dynamic_cast<ControllerTextureObject *>(ctrM);

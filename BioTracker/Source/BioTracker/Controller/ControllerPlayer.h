@@ -2,7 +2,7 @@
 #define CONTROLLERPLAYER_H
 
 #include "QThread"
-#include "Interfaces/IController/icontroller.h"
+#include "Interfaces/IController/IController.h"
 #include "Model/BioTracker3Player.h"
 #include "QPointer"
 
@@ -31,12 +31,12 @@ public:
 
     // IController interface
 public:
-    void connectController() override;
+    void connectControllerToController() override;
 
 protected:
     void createModel() override;
     void createView() override;
-    void connectModelController() override;
+    void connectModelToController() override;
 
 Q_SIGNALS:
   void emitLoadVideoStream(QString str);

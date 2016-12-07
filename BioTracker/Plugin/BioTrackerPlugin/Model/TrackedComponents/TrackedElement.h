@@ -2,10 +2,10 @@
 #define TRACKEDELEMENT_H
 
 #include "QGraphicsItem"
-#include "Interfaces/IModel/ITrackedComponent.h"
+#include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
 
-class TrackedElement : public ITrackedComponent
+class TrackedElement : public IModelTrackedComponent
 {
     Q_OBJECT
 

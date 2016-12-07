@@ -1,9 +1,9 @@
 #ifndef TRACKEDCOMPONENTFACTORY_H
 #define TRACKEDCOMPONENTFACTORY_H
 
-#include "Interfaces/IModel/ITrackedComponentFactory.h"
+#include "Interfaces/IModel/IModelTrackedComponentFactory.h"
 
-class TrackedComponentFactory : public ITrackedComponentFactory
+class TrackedComponentFactory : public IModelTrackedComponentFactory
 {
     Q_OBJECT
 public:
@@ -12,8 +12,8 @@ public:
 
     // ITrackedComponentFactory interface
 protected:
-    ITrackedComponent *createTrackedElement() override;
-    ITrackedComponent *createTrackedObject() override;
+    IModelTrackedComponent *createTrackedElement() override;
+    IModelTrackedComponent *createTrackedObject() override;
 };
 
 #endif // TRACKEDOBJECTFACTORY_H

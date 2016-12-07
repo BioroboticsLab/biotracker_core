@@ -1,10 +1,10 @@
 #ifndef GRAPHICSVIEW_H
 #define GRAPHICSVIEW_H
 
-#include "Interfaces/IView/IGraphicsView.h"
+#include "Interfaces/IView/IViewGraphicsView.h"
 #include "QGraphicsScene"
 
-class GraphicsView : public IGraphicsView
+class GraphicsView : public IViewGraphicsView
 {
     Q_OBJECT
 public:

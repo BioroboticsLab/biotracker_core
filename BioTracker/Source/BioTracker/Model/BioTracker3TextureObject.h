@@ -1,7 +1,7 @@
 #ifndef BIOTRACKER3TEXTUREOBJECT_H
 #define BIOTRACKER3TEXTUREOBJECT_H
 
-#include "Interfaces/IModel/imodel.h"
+#include "Interfaces/IModel/IModel.h"
 
 #include <opencv2/opencv.hpp>
 #include "QImage"
