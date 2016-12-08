@@ -2,7 +2,7 @@
 
 #include <QRect>              // QRect
 #include <QPoint>             // QPoint
-#include "settings/PanZoomState.h"
+#include "PanZoomState.h"
 #include "math.h"
 
 /**

@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QMessageBox>
 
-#include "settings/Exceptions.h"
+#include "Exceptions.h"
 #include "settings/Messages.h"
 
 namespace BioTracker {

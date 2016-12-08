@@ -4,7 +4,7 @@
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 
-#include "settings/Exceptions.h"
+#include "Exceptions.h"
 #include "QSharedPointer"
 
 namespace BioTracker {

@@ -35,10 +35,6 @@ LIBS += -L/usr/local/lib \
 -lopencv_legacy \
 -lopencv_flann
 
-#INCLUDEPATH += ../../Interfaces/BioTrackerInterfaces/
-#LIBS += /home/andreas/Documents/biotracker_core/BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
-
-
 
 SOURCES += main.cpp\
     BioTracker3App.cpp \
@@ -59,12 +55,6 @@ SOURCES += main.cpp\
     View/GraphicsScene.cpp \
     View/GraphicsView.cpp \
     View/TrackedImageView.cpp \
-    src/settings/Settings.cpp \
-    src/settings/StringTranslator.cpp \
-    src/settings/SystemCompatibilityCheck.cpp \
-    src/util/imagePreProcessor/ImagePreProcessor.cpp \
-    src/util/CvHelper.cpp \
-    src/util/stringTools.cpp \
     Model/PluginLoader.cpp \
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
@@ -96,21 +86,6 @@ HEADERS  += BioTracker3App.h \
     View/GraphicsScene.h \
     View/GraphicsView.h \
     View/TrackedImageView.h \
-    settings/Messages.h \
-    settings/ParamNames.h \
-    settings/Settings.h \
-    settings/StringTranslator.h \
-    settings/SystemCompatibilityCheck.h \
-    util/imagePreProcessor/IImageProcessor.h \
-    util/imagePreProcessor/ImagePreProcessor.h \
-    util/CvHelper.h \
-    util/MutexWrapper.h \
-    util/platform.h \
-    util/QtRaiiWrapper.hpp \
-    util/ScreenHelper.h \
-    util/singleton.h \
-    util/stdext.h \
-    util/stringTools.h \
     Model/PluginLoader.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
@@ -122,8 +97,6 @@ HEADERS  += BioTracker3App.h \
     Model/ImageStream.h \
     Model/MediaPlayer.h \
     Model/TextureObject.h \
-    settings/Exceptions.h \
-    settings/PanZoomState.h \
     View/TextureObjectView.h
 
 FORMS    += \
@@ -136,7 +109,7 @@ RESOURCES += \
 
 
 
-
+# Include the BioTrackerInterfaces Library
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/ -lBioTrackerInterfaces
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/ -lBioTrackerInterfaces
 else:unix: LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/ -lBioTrackerInterfaces
@@ -149,3 +122,19 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Inter
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/BioTrackerInterfaces.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/BioTrackerInterfaces.lib
 else:unix: PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
+
+
+# Include the BioTrackerUtils Library
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/release/ -lBioTrackerUtils
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/debug/ -lBioTrackerUtils
+else:unix: LIBS += -L$$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/ -lBioTrackerUtils
+
+INCLUDEPATH += $$PWD/../../Utils/BioTrackerUtils
+DEPENDPATH += $$PWD/../../Utils/BioTrackerUtils
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/release/libBioTrackerUtils.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/debug/libBioTrackerUtils.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/release/BioTrackerUtils.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/debug/BioTrackerUtils.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../Utils/build-BioTrackerUtils-Desktop-Debug/libBioTrackerUtils.a

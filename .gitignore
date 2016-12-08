@@ -1,6 +1,7 @@
 BioTracker/Plugin/build/
 BioTracker/Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/
-BioTracker/Source/build/
+BioTracker/CoreApp/build/
+BioTracker/Utils/build-BioTrackerUtils-Desktop-Debug/
 GeneratedFiles/
 CMakeLists.txt.user
 desktop.ini
