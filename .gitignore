@@ -43,3 +43,4 @@ doxygen_sqlite3.db
 
 # astyle original files
 *.orig
+*.user
