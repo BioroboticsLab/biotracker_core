@@ -5,7 +5,14 @@
 #include "QList"
 #include "QString"
 
-
+/**
+ * This class inherits from the IModelTrackedComponent class and is therefor part of the Composite Pattern.
+ * This class represents the Composite class as it is stated by the GoF.
+ * This class is responsibility for the handling of Leaf objects.
+ * Internaly this class uses a QList for storing Leaf object.
+ *
+ * Objects of this class can have a QObject as parent and as it appears in this example have a name.
+ */
 class TrackedTrajectory : public IModelTrackedTrajectory {
     Q_OBJECT
 

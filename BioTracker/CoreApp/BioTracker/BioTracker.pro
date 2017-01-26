@@ -110,18 +110,18 @@ RESOURCES += \
 
 
 # Include the BioTrackerInterfaces Library
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/ -lBioTrackerInterfaces
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/ -lBioTrackerInterfaces
-else:unix: LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/ -lBioTrackerInterfaces
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/release/ -lBioTrackerInterfaces
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/debug/ -lBioTrackerInterfaces
+else:unix: LIBS += -L$$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/ -lBioTrackerInterfaces
 
 INCLUDEPATH += $$PWD/../../Interfaces/BioTrackerInterfaces
 DEPENDPATH += $$PWD/../../Interfaces/BioTrackerInterfaces
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/libBioTrackerInterfaces.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/libBioTrackerInterfaces.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/release/BioTrackerInterfaces.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/debug/BioTrackerInterfaces.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-BioTracker-Debug/libBioTrackerInterfaces.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/release/libBioTrackerInterfaces.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/debug/libBioTrackerInterfaces.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/release/BioTrackerInterfaces.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/debug/BioTrackerInterfaces.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../Interfaces/build-BioTrackerInterfaces-Desktop-Debug/libBioTrackerInterfaces.a
 
 
 # Include the BioTrackerUtils Library

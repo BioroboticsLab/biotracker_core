@@ -7,8 +7,13 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm()
 
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> image, uint framenumber)
 {
+    int i = 10;
+    int y = 15;
+    int z = i + y;
+
     std::shared_ptr<cv::Mat> mat(new cv::Mat);
     cv::applyColorMap(*image.get(), *mat.get(), cv::COLORMAP_JET);
+
 
     Q_EMIT emitCvMatA(mat, QString("tracker"));
 
