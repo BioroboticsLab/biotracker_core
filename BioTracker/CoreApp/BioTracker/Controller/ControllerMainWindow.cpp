@@ -53,6 +53,11 @@ void ControllerMainWindow::setTrackerList(QStringListModel *trackerList)
     dynamic_cast<MainWindow*>(m_View)->setTrackerList(trackerList);
 }
 
+void ControllerMainWindow::setTrackerParamterWidget(IView *widget)
+{
+    dynamic_cast<MainWindow*>(m_View)->addTrackerParameterView(widget);
+}
+
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow

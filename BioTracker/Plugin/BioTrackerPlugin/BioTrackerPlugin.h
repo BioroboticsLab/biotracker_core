@@ -21,6 +21,8 @@ public:
     BioTrackerPlugin();
 
     // IBioTrackerPlugin interface
+    IView *getTrackerParameterWidget();
+
 public:
     void createPlugin();
 
@@ -41,6 +43,7 @@ private slots:
 
 private:
     IController *m_TrackerController;
+
 };
 
 #endif // BIOTRACKERPLUGIN_H

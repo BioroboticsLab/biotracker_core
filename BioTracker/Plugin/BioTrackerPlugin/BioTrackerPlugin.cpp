@@ -6,6 +6,11 @@ BioTrackerPlugin::BioTrackerPlugin()
 {
 }
 
+IView *BioTrackerPlugin::getTrackerParameterWidget()
+{
+    return qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->getTrackingParameterWidget();
+}
+
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 #endif // QT_VERSION < 0x050000

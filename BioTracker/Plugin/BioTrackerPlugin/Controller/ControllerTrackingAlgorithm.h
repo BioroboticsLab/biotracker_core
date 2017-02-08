@@ -18,6 +18,8 @@ public:
 
     void doTracking(std::shared_ptr<cv::Mat> mat, uint number);
 
+    IView *getTrackingParameterWidget();
+
 protected:
     void createModel() override;
     void createView() override;
@@ -30,6 +32,10 @@ Q_SIGNALS:
 private Q_SLOTS:
     void receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name);
     void receiveTrackingDone();
+
+
+private:
+    IModel* m_TrackingParameter;
 };
 
 #endif // CONTROLLERTRACKINGALGORITHM_H

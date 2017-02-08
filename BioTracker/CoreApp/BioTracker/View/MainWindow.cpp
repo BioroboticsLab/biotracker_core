@@ -47,6 +47,14 @@ void MainWindow::addVideoView(IView *videoView)
     //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
 }
 
+void MainWindow::addTrackerParameterView(IView *parameter)
+{
+    dynamic_cast<QWidget*>(parameter)->setParent(this);
+
+    ui->scrollArea->setWidget(dynamic_cast<QWidget *>(parameter));
+    ui->scrollArea->setWidgetResizable(true);
+}
+
 void MainWindow::setTrackerList(QStringListModel *trackerList)
 {
     ui->comboBox_TrackerSelect->setModel(trackerList);

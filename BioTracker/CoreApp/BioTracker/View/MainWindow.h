@@ -25,7 +25,7 @@ public:
 
     void addVideoControllWidget(IView *widget);
     void addVideoView(IView *videoView);
-
+    void addTrackerParameterView(IView *parameter);
     void setTrackerList(QStringListModel *trackerList);
 
 private Q_SLOTS:

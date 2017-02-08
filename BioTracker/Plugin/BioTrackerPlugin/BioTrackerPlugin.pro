@@ -38,7 +38,9 @@ SOURCES += BioTrackerPlugin.cpp \
     Controller/ControllerTrackingAlgorithm.cpp \
     Controller/null_Controller.cpp \
     Controller/ControllerTrackedComponent.cpp \
-    View/TrackedElementView.cpp
+    View/TrackedElementView.cpp \
+    Model/TrackerParameter.cpp \
+    View/TrackerParameterView.cpp
 
 
 HEADERS += BioTrackerPlugin.h\
@@ -51,7 +53,9 @@ HEADERS += BioTrackerPlugin.h\
     Controller/ControllerTrackingAlgorithm.h \
     Controller/null_Controller.h \
     Controller/ControllerTrackedComponent.h \
-    View/TrackedElementView.h
+    View/TrackedElementView.h \
+    Model/TrackerParameter.h \
+    View/TrackerParameterView.h
 
 
 unix {
@@ -61,3 +65,6 @@ unix {
 
 DISTFILES += \
     BioTrackerPlugin.json
+
+FORMS += \
+    View/TrackerParameterView.ui

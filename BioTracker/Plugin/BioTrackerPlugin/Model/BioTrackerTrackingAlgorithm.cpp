@@ -1,7 +1,8 @@
 #include "BioTrackerTrackingAlgorithm.h"
 
-BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm()
+BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter)
 {
+    m_TrackingParameter = parameter;
 //    setTrackedComponentFactory(factory);
 }
 

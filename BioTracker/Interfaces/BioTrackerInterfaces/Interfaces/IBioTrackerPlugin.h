@@ -15,6 +15,8 @@ public:
 
     virtual void createPlugin() = 0;
 
+    virtual IView *getTrackerParameterWidget() = 0;
+
 private:
     virtual void connectInterfaces() = 0;
 

@@ -18,10 +18,14 @@ void ControllerPlugin::loadPluginFromFileName(QString str)
     if( loader->loadPluginFromFilename(str)) {
         createPlugin();
 
+        // Add Plugin name to Main Window
         IController * ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
         QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow *>(ctrA);
 
         ctrMainWindow->setTrackerList(qobject_cast<PluginLoader *>(m_Model)->getPluginMetaData());
+
+        //Add Tracker Parameter to Main Window
+        ctrMainWindow->setTrackerParamterWidget(m_BioTrackerPlugin->getTrackerParameterWidget());
 
     }
 }
