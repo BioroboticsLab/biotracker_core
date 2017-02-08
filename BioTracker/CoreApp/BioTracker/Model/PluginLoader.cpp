@@ -5,6 +5,9 @@ PluginLoader::PluginLoader(QObject *parent) :
     IModel(parent)
 {
     m_PluginLoader = new QPluginLoader(this);
+
+    m_PluginListModel = new QStringListModel();
+    m_PluginListModel->setStringList(m_PluginList);
 }
 
 bool PluginLoader::loadPluginFromFilename(QString filename)
@@ -21,6 +24,9 @@ bool PluginLoader::loadPluginFromFilename(QString filename)
     if( isLib ) {
 
             m_PluginLoader->setFileName(filename);
+
+            readMetaDataFromPlugin();
+
             retval = true;
     }
     else {
@@ -35,4 +41,19 @@ bool PluginLoader::loadPluginFromFilename(QString filename)
 IBioTrackerPlugin *PluginLoader::getPluginInstance()
 {
     return qobject_cast<IBioTrackerPlugin *>(m_PluginLoader->instance());
+}
+
+QStringListModel *PluginLoader::getPluginMetaData()
+{
+    return m_PluginListModel;
+}
+
+void PluginLoader::readMetaDataFromPlugin()
+{
+    QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
+    QJsonObject metaObj = pluginMeda.toObject();
+    QString mstring = metaObj.value("name").toString();
+
+    m_PluginList.append(mstring);
+    m_PluginListModel->setStringList(m_PluginList);
 }

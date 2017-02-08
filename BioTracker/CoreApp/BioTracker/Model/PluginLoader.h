@@ -16,12 +16,16 @@ public:
     bool loadPluginFromFilename(QString filename);
     IBioTrackerPlugin *getPluginInstance();
 
+    QStringListModel *getPluginMetaData();
+
 private:
+
+    void readMetaDataFromPlugin();
 
     QPluginLoader *m_PluginLoader;
 
     QStringList m_PluginList;
-    QStringListModel m_PluginListModel;
+    QStringListModel *m_PluginListModel;
 };
 
 #endif // PLUGINLOADER_H

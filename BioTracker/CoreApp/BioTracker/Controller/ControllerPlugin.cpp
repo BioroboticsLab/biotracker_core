@@ -2,6 +2,7 @@
 
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerTextureObject.h"
+#include "ControllerMainWindow.h"
 #include "QDebug"
 #include "Model/PluginLoader.h"
 
@@ -14,8 +15,15 @@ ControllerPlugin::ControllerPlugin(QObject *parent, IBioTrackerContext *context,
 void ControllerPlugin::loadPluginFromFileName(QString str)
 {
     PluginLoader *loader = qobject_cast<PluginLoader *>(m_Model);
-    if( loader->loadPluginFromFilename(str))
+    if( loader->loadPluginFromFilename(str)) {
         createPlugin();
+
+        IController * ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+        QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow *>(ctrA);
+
+        ctrMainWindow->setTrackerList(qobject_cast<PluginLoader *>(m_Model)->getPluginMetaData());
+
+    }
 }
 
 void ControllerPlugin::createModel()
