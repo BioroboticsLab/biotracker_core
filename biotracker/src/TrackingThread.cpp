@@ -408,8 +408,7 @@ void TrackingThread::setFps(double fps) {
     m_fps = fps;
 }
 
-void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm>
-        trackingAlgorithm) {
+void TrackingThread::setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm) {
     {
         MutexLocker lock(m_trackerMutex);
 

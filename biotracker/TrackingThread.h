@@ -23,7 +23,7 @@ namespace Core {
 
 class Settings;
 
-class TrackingThread : public QThread {
+class BIOTRACKER_DLLEXPORT TrackingThread : public QThread {
   public:
     Q_OBJECT
   public:
@@ -227,7 +227,7 @@ class TrackingThread : public QThread {
     */
     void setMaxSpeed(bool enabled);
 
-    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> TrackingAlgorithm);
+    void setTrackingAlgorithm(std::shared_ptr<TrackingAlgorithm> trackingAlgorithm);
 
     void registerViewsFromTracker(const std::vector<TrackingAlgorithm::View> views);
 

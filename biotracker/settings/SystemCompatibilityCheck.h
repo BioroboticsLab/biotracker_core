@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util/platform.h"
+#include "../util/platform.h"
 
 namespace SystemCompatibilityCheck {
 /**
