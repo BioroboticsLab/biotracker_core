@@ -6,6 +6,7 @@
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {
+	m_TrackingIsActive = false; //TODO is this correct?
     m_PlayerThread = new QThread(this);
 }
 
@@ -131,6 +132,9 @@ void ControllerPlayer::connectModelToController()
 
 void ControllerPlayer::receivePlayerOperationDone()
 {
+	//TODO Andi This is a major issue: Without adding the next line the video will not go on windows.
+	//To me it seems some variables are initialized wrong (due to compiler specs / default init instead of zero init in >VS2013)
+	//m_TrackingIsActive = false;
     if(! m_TrackingIsActive)
         Q_EMIT emitRunPlayerOperation();
 }

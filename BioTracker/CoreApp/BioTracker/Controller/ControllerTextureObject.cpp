@@ -6,6 +6,8 @@
 #include "Model/MediaPlayer.h"
 #include "View/TextureObjectView.h"
 
+//TODO hauke optimization here?
+
 ControllerTextureObject::ControllerTextureObject(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {

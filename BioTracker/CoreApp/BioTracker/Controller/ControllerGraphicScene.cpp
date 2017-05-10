@@ -7,7 +7,8 @@
 ControllerGraphicScene::ControllerGraphicScene(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {
-
+	m_Element = NULL; //TODO Andi init properly!
+	m_GraphicsView = NULL; //TODO Andi init properly! 
 }
 
 void ControllerGraphicScene::addGraphicsItem(QGraphicsItem *item)

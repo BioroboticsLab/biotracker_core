@@ -1,7 +1,7 @@
 #ifndef BIOTRACKER3MAINWINDOW_H
 #define BIOTRACKER3MAINWINDOW_H
 
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 #include "Interfaces/IView/IViewMainWindow.h"
 
 // delete

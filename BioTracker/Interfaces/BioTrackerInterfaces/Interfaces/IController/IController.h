@@ -5,8 +5,6 @@
 #include "QMap"
 #include "QPointer"
 
-#include <boost/filesystem.hpp>
-
 #include "Interfaces/IView/IView.h"
 #include "Interfaces/IModel/IModel.h"
 #include "Interfaces/IBioTrackerContext.h"

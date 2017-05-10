@@ -9,7 +9,7 @@
 ControllerPlugin::ControllerPlugin(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {
-
+	m_BioTrackerPlugin = NULL;//TODO Andi init properly!
 }
 
 void ControllerPlugin::loadPluginFromFileName(QString str)
@@ -98,7 +98,9 @@ void ControllerPlugin::disconnectPlugin()
 
 void ControllerPlugin::receiveCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number)
 {
-    m_BioTrackerPlugin->receiveCvMat(mat, number);
+	//TODO Andi nullmat...
+	if (mat != NULL)
+		m_BioTrackerPlugin->receiveCvMat(mat, number);
 }
 
 void ControllerPlugin::receiveTrackingDone()

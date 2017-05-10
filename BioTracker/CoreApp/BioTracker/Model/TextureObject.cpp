@@ -10,6 +10,10 @@ TextureObject::TextureObject(QObject *parent, QString name) :
 }
 
 void TextureObject::set(const cv::Mat &img) {
+	//TODO Andi this cv::Mat is null sometimes when using the camera!?
+	if (&img == NULL)
+		return;
+
     if (img.channels() == 3) {
         img.convertTo(img, CV_8UC3);
         cv::cvtColor(img, m_img, CV_BGR2RGB);

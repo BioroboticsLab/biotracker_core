@@ -4,6 +4,8 @@
 #include "Interfaces/IController/IController.h"
 #include "QPointer"
 #include "QStringListModel"
+#include "QString"
+#include <boost/filesystem.hpp>
 
 class ControllerMainWindow : public IController
 {

@@ -35,7 +35,8 @@ GuiContext::GuiContext(QObject *parent) :
 bool GuiContext::loadBioTrackerPlugin(QString str)
 {
     qobject_cast<ControllerPlugin*> (m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLUGIN))->loadPluginFromFileName(str);
-}
+	return false; //TODO: This should return something sensible...
+} 
 
 void GuiContext::createAppController()
 {

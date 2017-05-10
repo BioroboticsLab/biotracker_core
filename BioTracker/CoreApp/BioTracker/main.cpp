@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     BioTracker3App bioTracker3(&app);
     GuiContext context(&bioTracker3);
     bioTracker3.setBioTrackerContext(&context);
-    bioTracker3.runBioTracker();
+	bioTracker3.runBioTracker();
 
     app.exec();
 }

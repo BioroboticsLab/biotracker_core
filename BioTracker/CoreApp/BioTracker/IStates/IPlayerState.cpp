@@ -8,6 +8,12 @@ IPlayerState::IPlayerState(MediaPlayer *player, std::shared_ptr<BioTracker::Core
     m_Player(player),
     m_ImageStream(imageStream) {
 
+	m_Play = false;
+	m_Forw = false;
+	m_Back = false;
+	m_Stop = false;
+	m_Paus = false;
+	m_FrameNumber = 0; //TODO Andi init these properly
 }
 
 bool IPlayerState::getStateForPlay()

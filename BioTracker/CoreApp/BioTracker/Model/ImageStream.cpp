@@ -3,8 +3,10 @@
 #include "util/stdext.h"
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
+#include <chrono>
+#include <thread>
 
-#include "Exceptions.h"
+#include "util/Exceptions.h"
 #include "QSharedPointer"
 
 namespace BioTracker {
@@ -247,6 +249,20 @@ class ImageStream3Camera : public ImageStream {
     explicit ImageStream3Camera(int device_id)
         : m_capture(device_id)
         , m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
+		// Give the camera some extra time to get ready:
+		// Somehow opening it on first try sometimes does not succeed.
+		// Workaround: http://stackoverflow.com/questions/22019064/unable-to-read-frames-from-videocapture-from-secondary-webcam-with-opencv?rq=1
+		// So, stubbornly try it a few times until it works.
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		int fails = 0;
+		while (!m_capture.isOpened() && fails < 10) {
+			m_capture.open(device_id);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			m_capture.set(CV_CAP_PROP_FRAME_WIDTH, 1024);
+			m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, 1024);
+			fails++;
+		}
+		
         if (! m_capture.isOpened()) {
             throw device_open_error(":(");
         }

@@ -8,8 +8,6 @@
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 
-#include <boost/optional.hpp>
-
 #include <opencv2/opencv.hpp>
 
 
@@ -31,6 +29,8 @@ private:
     TrackedElement *m_TrackedElement;
 
     IModel* m_TrackingParameter;
+	
+	int inr;
 };
 
 #endif // BIOTRACKERTRACKINGALGORITHM_H
