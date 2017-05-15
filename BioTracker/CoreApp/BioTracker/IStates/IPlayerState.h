@@ -33,6 +33,8 @@ class IPlayerState : public IModel {
     std::shared_ptr<cv::Mat> getCurrentFrame();
     size_t getCurrentFrameNumber();
 
+    size_t getTotalNumberOfFrames();
+
 Q_SIGNALS:
     void emitStateDone();
 
@@ -45,6 +47,7 @@ Q_SIGNALS:
     bool m_Back;
     bool m_Stop;
     bool m_Paus;
+    size_t m_TotalNumbFrames;
 
     std::shared_ptr<cv::Mat> m_Mat;
     size_t m_FrameNumber;

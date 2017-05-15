@@ -40,12 +40,14 @@ void ControllerMainWindow::loadCameraDevice(int i)
 
 void ControllerMainWindow::activeTracking()
 {
-
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    qobject_cast<ControllerPlayer *>(ctr)->setTrackingActivated();
 }
 
 void ControllerMainWindow::deactiveTrackring()
 {
-
+    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    qobject_cast<ControllerPlayer *>(ctr)->setTrackingDeactivated();
 }
 
 void ControllerMainWindow::setTrackerList(QStringListModel *trackerList)

@@ -45,6 +45,11 @@ size_t IPlayerState::getCurrentFrameNumber()
     return m_FrameNumber;
 }
 
+size_t IPlayerState::getTotalNumberOfFrames()
+{
+    return m_TotalNumbFrames;
+}
+
 void IPlayerState::changeImageStream(std::shared_ptr<BioTracker::Core::ImageStream> imageStream) {
     m_ImageStream.reset();
     m_ImageStream = imageStream;

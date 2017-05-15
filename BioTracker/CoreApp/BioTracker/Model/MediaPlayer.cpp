@@ -130,9 +130,6 @@ void MediaPlayer::receiveTrackingDone()
 
 void MediaPlayer::updatePlayerParameter()
 {
-    m_MediaType = m_ImageStream->type();
-    m_TotalNumbFrames = m_ImageStream->numFrames();
-    m_fps = m_ImageStream->fps();
     m_CurrentFilename = QString::fromStdString( m_ImageStream->currentFilename() );
 
     m_Back = m_CurrentPlayerState->getStateForBackward();
@@ -142,6 +139,9 @@ void MediaPlayer::updatePlayerParameter()
     m_Stop = m_CurrentPlayerState->getStateForStop();
     m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
     m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();
+
+    if(m_CurrentPlayerState == m_States.value(IPlayerState::PLAYER_STATES::STATE_INITIAL_STREAM))
+        m_TotalNumbFrames = m_CurrentPlayerState->getTotalNumberOfFrames();
 
     m_VideoControllsStates.clear();
     m_VideoControllsStates.append(m_Back);

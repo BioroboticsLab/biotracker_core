@@ -16,9 +16,9 @@ TARGET = BioTracker
 TEMPLATE = app
 
 LIBS += -L/usr/include/boost -lboost_system
-LIBS += -L/usr/include/boost  -lboost_chrono
-LIBS += -L/usr/include/boost  -lboost_thread
-LIBS += -L/usr/include/boost  -lboost_timer
+#LIBS += -L/usr/include/boost  -lboost_chrono
+#LIBS += -L/usr/include/boost  -lboost_thread
+#LIBS += -L/usr/include/boost  -lboost_timer
 LIBS += -L/usr/include/boost  -lboost_filesystem
 
 INCLUDEPATH += /usr/local/include/opencv

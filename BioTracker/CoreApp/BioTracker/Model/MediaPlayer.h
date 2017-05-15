@@ -86,6 +86,8 @@ class MediaPlayer : public IModel {
     bool m_Stop;
     bool m_Paus;
 
+    int m_NumberOfFrames;
+
     bool m_IsTrackingActive;
 
     QString m_NameOfCvMat = "Original";

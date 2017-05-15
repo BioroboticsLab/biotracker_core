@@ -14,6 +14,8 @@ VideoControllWidget::VideoControllWidget(QWidget *parent, IController *controlle
                         QSize(), QIcon::Normal, QIcon::Off);
     m_iconPlay.addFile(QStringLiteral("qrc:/Images/resources/arrow-forward1.png"),
                        QSize(), QIcon::Normal, QIcon::Off);
+
+    ui->sld_video->setMinimum(0);
 }
 
 VideoControllWidget::~VideoControllWidget()
@@ -48,22 +50,31 @@ void VideoControllWidget::getNotified()
     else {
         ui->button_playPause->setIcon(QIcon(":/Images/resources/arrow-forward1.png"));
     }
+
+    ui->frame_num_edit->setText(QString::number(m_CurrentFrameNumber));
+    int currentFrameNr = m_CurrentFrameNumber;
+    ui->sld_video->setValue(currentFrameNr);
+    ui->fps_label->setText(QString::number(m_fps));
+
+
 }
 
 void VideoControllWidget::setTotalNumbFrames(size_t numb)
 {
+    ui->sld_video->setEnabled(true);
     m_TotalNumbFrames = numb;
+    ui->sld_video->setMaximum(m_TotalNumbFrames);
+
 }
 
 void VideoControllWidget::setCurrentFrameNumber(size_t numb)
 {
     m_CurrentFrameNumber = numb;
-    ui->frame_num_edit->setText(QString::number(m_CurrentFrameNumber));
 }
 
 void VideoControllWidget::setFPS(double fps)
 {
-    ui->fps_label->setText(QString::number(fps));
+    m_fps = fps;
 }
 
 void VideoControllWidget::setVideoControllsStates(QVector<bool> states)

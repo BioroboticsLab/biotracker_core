@@ -3,6 +3,10 @@
 
 #include "Interfaces/IView/IViewTrackedComponent.h"
 
+/**
+ * This class is an example of how a TrackedElementView could be visualized.
+ * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
+ */
 class TrackedElementView : public IViewTrackedComponent
 {
     Q_OBJECT

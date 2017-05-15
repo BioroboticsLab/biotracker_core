@@ -21,6 +21,8 @@ void PStateInitialStream::operate() {
     if (xval) {
         m_Mat = m_ImageStream->currentFrame();
         m_FrameNumber = m_ImageStream->currentFrameNumber();
+
+        m_TotalNumbFrames = m_ImageStream->numFrames();
     }
 
     //Q_EMIT emitStateDone();

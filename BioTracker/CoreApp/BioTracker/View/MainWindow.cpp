@@ -134,3 +134,12 @@ void MainWindow::on_checkBox_clicked(bool checked)
 {
 
 }
+
+void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1)
+{
+    if(arg1 == Qt::Checked)
+    qobject_cast<ControllerMainWindow *> (getController())->activeTracking();
+
+    if(arg1 == Qt::Unchecked)
+    qobject_cast<ControllerMainWindow *> (getController())->deactiveTrackring();
+}

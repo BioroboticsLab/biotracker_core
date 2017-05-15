@@ -47,6 +47,8 @@ private Q_SLOTS:
 
     void on_checkBox_clicked(bool checked);
 
+    void on_checkBox_TrackingActivated_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 
