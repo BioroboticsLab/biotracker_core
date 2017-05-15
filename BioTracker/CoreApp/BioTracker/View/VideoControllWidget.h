@@ -35,7 +35,6 @@ public Q_SLOTS:
     void getNotified();
 
 private Q_SLOTS:
-    void on_sld_video_sliderMoved(int position);
     void on_DurationChanged(int position);
     void on_PositionChanged(int position);
     void on_button_nextFrame_clicked();
@@ -48,6 +47,10 @@ private Q_SLOTS:
 
     void on_comboBoxSelectedView_currentTextChanged(const QString &arg1);
 
+
+    void on_sld_video_sliderReleased();
+
+    void on_sld_video_sliderMoved(int position);
 
 private:
     Ui::VideoControllWidget *ui;

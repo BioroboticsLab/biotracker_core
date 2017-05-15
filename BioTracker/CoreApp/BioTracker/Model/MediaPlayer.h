@@ -41,6 +41,8 @@ class MediaPlayer : public IModel {
     void receiveStopCommand();
     void receivePlayCommand();
 
+    void receiveGoToFrame(int frame);
+
     void receiveStateDone();
 
     void receiveTrackingDone();

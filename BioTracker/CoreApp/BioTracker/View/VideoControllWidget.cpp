@@ -118,11 +118,6 @@ void VideoControllWidget::on_button_previousFrame_clicked()
     controller->prevFrame();
 }
 
-void VideoControllWidget::on_sld_video_sliderMoved(int position)
-{
-
-}
-
 void VideoControllWidget::on_DurationChanged(int position)
 {
 
@@ -140,4 +135,19 @@ void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QStri
     ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
 
     controller->changeImageView(name);
+}
+
+void VideoControllWidget::on_sld_video_sliderReleased()
+{
+    int position = ui->sld_video->value();
+    ControllerPlayer *controller = dynamic_cast<ControllerPlayer *>(getController());
+    controller->setGoToFrame(position);
+}
+
+/**
+ * If the video slider is moved, this function sets the value to the current frame number lable
+ */
+void VideoControllWidget::on_sld_video_sliderMoved(int position)
+{
+        ui->frame_num_edit->setText(QString::number(position));
 }

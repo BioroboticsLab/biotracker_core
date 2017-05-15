@@ -66,7 +66,8 @@ SOURCES += main.cpp\
     Model/ImageStream.cpp \
     Model/MediaPlayer.cpp \
     Model/TextureObject.cpp \
-    View/TextureObjectView.cpp
+    View/TextureObjectView.cpp \
+    Model/PlayerStates/PStateGoToFrame.cpp
 
 HEADERS  += BioTracker3App.h \
     GuiContext.h \
@@ -97,7 +98,8 @@ HEADERS  += BioTracker3App.h \
     Model/ImageStream.h \
     Model/MediaPlayer.h \
     Model/TextureObject.h \
-    View/TextureObjectView.h
+    View/TextureObjectView.h \
+    Model/PlayerStates/PStateGoToFrame.h
 
 FORMS    += \
     View/CameraDevice.ui \

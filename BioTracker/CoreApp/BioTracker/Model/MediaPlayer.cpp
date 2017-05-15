@@ -7,6 +7,7 @@
 #include "PlayerStates/PStatePause.h"
 #include "PlayerStates/PStateStepBack.h"
 #include "PlayerStates/PStateWait.h"
+#include "PlayerStates/PStateGoToFrame.h"
 
 MediaPlayer::MediaPlayer(QObject *parent) :
     IModel(parent),
@@ -19,6 +20,7 @@ MediaPlayer::MediaPlayer(QObject *parent) :
     m_States.insert(IPlayerState::PLAYER_STATES::STATE_PAUSE, (new PStatePause(this,m_ImageStream)));
     m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_BACK, (new PStateStepBack(this, m_ImageStream)));
     m_States.insert(IPlayerState::PLAYER_STATES::STATE_WAIT, (new PStateWait(this, m_ImageStream)));
+    m_States.insert(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME, (new PStateGoToFrame(this, m_ImageStream)));
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); ++i)
@@ -116,6 +118,13 @@ void MediaPlayer::receiveStopCommand()
 void MediaPlayer::receivePlayCommand()
 {
     setNextState(IPlayerState::STATE_PLAY);
+}
+
+void MediaPlayer::receiveGoToFrame(int frame)
+{
+    PStateGoToFrame *state = dynamic_cast<PStateGoToFrame *> (m_States.value(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME));
+    state->setFrameNumber(frame);
+    setNextState(IPlayerState::STATE_GOTOFRAME);
 }
 
 void MediaPlayer::receiveStateDone()

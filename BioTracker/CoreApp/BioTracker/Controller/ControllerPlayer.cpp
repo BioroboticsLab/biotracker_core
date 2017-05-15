@@ -52,6 +52,11 @@ void ControllerPlayer::pause() {
     Q_EMIT emitPauseCommand();
 }
 
+void ControllerPlayer::setGoToFrame(int frame)
+{
+    Q_EMIT emitGoToFrame(frame);
+}
+
 void ControllerPlayer::changeImageView(QString str)
 {
     IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
@@ -113,6 +118,7 @@ void ControllerPlayer::connectModelToController()
     QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &MediaPlayer::receivePlayCommand);
     QObject::connect(this, &ControllerPlayer::emitPrevFrameCommand, player, &MediaPlayer::receivePrevFrameCommand);
     QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &MediaPlayer::receiveStopCommand);
+    QObject::connect(this, &ControllerPlayer::emitGoToFrame, player, &MediaPlayer::receiveGoToFrame);
 
 
     // Handel Player results

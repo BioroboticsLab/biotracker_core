@@ -15,7 +15,7 @@ class IPlayerState : public IModel {
   public:
     explicit IPlayerState(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
     enum PLAYER_STATES {STATE_INITIAL, STATE_INITIAL_STREAM, STATE_PLAY, STATE_STEP_FORW,
-                        STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT
+                        STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT, STATE_GOTOFRAME
                        };
     Q_ENUM(PLAYER_STATES)
 

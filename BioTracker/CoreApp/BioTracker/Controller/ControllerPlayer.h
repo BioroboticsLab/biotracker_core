@@ -24,6 +24,8 @@ public:
     void stop();
     void pause();
 
+    void setGoToFrame(int frame);
+
 
     void changeImageView(QString str);
     void setTrackingActivated();
@@ -45,6 +47,7 @@ Q_SIGNALS:
   void emitActivateTracking();
   void emitDeactivateTracking();
 
+  void emitGoToFrame(int frame);
 
   void emitNextFrameCommand();
   void emitPrevFrameCommand();
