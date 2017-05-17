@@ -3,7 +3,7 @@
 #include "View/MainWindow.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerPlayer.h"
-#include "Model/MediaPlayer.h"
+#include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 #include "View/TextureObjectView.h"
 
 ControllerTextureObject::ControllerTextureObject(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :

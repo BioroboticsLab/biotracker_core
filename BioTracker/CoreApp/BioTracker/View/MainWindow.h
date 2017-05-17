@@ -15,20 +15,19 @@ class MainWindow;
 }
 
 class IController;
-class MainWindow : public IViewMainWindow
-{
+class MainWindow : public IViewMainWindow {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+  public:
+    explicit MainWindow(QWidget* parent = 0, IController* controller = 0, IModel* model = 0);
     ~MainWindow();
 
-    void addVideoControllWidget(IView *widget);
-    void addVideoView(IView *videoView);
-    void addTrackerParameterView(IView *parameter);
-    void setTrackerList(QStringListModel *trackerList);
+    void addVideoControllWidget(IView* widget);
+    void addVideoView(IView* videoView);
+    void addTrackerParameterView(IView* parameter);
+    void setTrackerList(QStringListModel* trackerList);
 
-private Q_SLOTS:
+  private Q_SLOTS:
     void on_actionOpen_Video_triggered();
 
     void on_actionLoad_Tracker_triggered();
@@ -45,12 +44,10 @@ private Q_SLOTS:
 
     void receiveSelectedCameraDevice(int i);
 
-    void on_checkBox_clicked(bool checked);
-
     void on_checkBox_TrackingActivated_stateChanged(int arg1);
 
-private:
-    Ui::MainWindow *ui;
+  private:
+    Ui::MainWindow* ui;
 
 
     QPointer< CameraDevice > m_CameraDevice;

@@ -1,189 +1,134 @@
 #include "MediaPlayer.h"
 
-#include "PlayerStates/PStatePlay.h"
-#include "PlayerStates/PStateInitialStream.h"
-#include "PlayerStates/PStateStepForw.h"
-#include "PlayerStates/PStateInitial.h"
-#include "PlayerStates/PStatePause.h"
-#include "PlayerStates/PStateStepBack.h"
-#include "PlayerStates/PStateWait.h"
-#include "PlayerStates/PStateGoToFrame.h"
+MediaPlayer::MediaPlayer(QObject* parent) :
+    IModel(parent) {
+    // Initialize PlayerStateMachine and a Thread for the Player
+    //    // Do not set a Parent for MediaPlayerStateMachine in order to run the Player in the QThread!
 
-MediaPlayer::MediaPlayer(QObject *parent) :
-    IModel(parent),
-    m_ImageStream(BioTracker::Core::make_ImageStream3NoMedia()) {
+    m_PlayerThread = new QThread(this);
+    m_Player = new MediaPlayerStateMachine();
 
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL, (new PStateInitial(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL_STREAM, (new PStateInitialStream(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_FORW, (new PStateStepForw(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_PLAY, (new PStatePlay(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_PAUSE, (new PStatePause(this,m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_BACK, (new PStateStepBack(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_WAIT, (new PStateWait(this, m_ImageStream)));
-    m_States.insert(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME, (new PStateGoToFrame(this, m_ImageStream)));
+    // Connect MediaPlayer with PlayerStateMachine
 
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
-    for (i = m_States.begin(); i != m_States.end(); ++i)
-        QObject::connect(i.value(), &IPlayerState::emitStateDone, this, &MediaPlayer::receiveStateDone);
+    // Load ImageStreams in StateMachine
+    QObject::connect(this, &MediaPlayer::loadVideoStream, m_Player, &MediaPlayerStateMachine::receiveLoadVideoCommand);
+    QObject::connect(this, &MediaPlayer::loadCameraDevice, m_Player, &MediaPlayerStateMachine::receiveLoadCameraDevice);
+    QObject::connect(this, &MediaPlayer::loadPictures, m_Player, &MediaPlayerStateMachine::receiveLoadPictures);
 
-    setNextState(IPlayerState::PLAYER_STATES::STATE_INITIAL);
+    // Controll the Player
+    QObject::connect(this, &MediaPlayer::nextFrameCommand, m_Player, &MediaPlayerStateMachine::receiveNextFramCommand);
+    QObject::connect(this, &MediaPlayer::pauseCommand, m_Player, &MediaPlayerStateMachine::receivePauseCommand);
+    QObject::connect(this, &MediaPlayer::playCommand, m_Player, &MediaPlayerStateMachine::receivePlayCommand);
+    QObject::connect(this, &MediaPlayer::prevFrameCommand, m_Player, &MediaPlayerStateMachine::receivePrevFrameCommand);
+    QObject::connect(this, &MediaPlayer::stopCommand, m_Player, &MediaPlayerStateMachine::receiveStopCommand);
+    QObject::connect(this, &MediaPlayer::goToFrame, m_Player, &MediaPlayerStateMachine::receiveGoToFrame);
+
+    // Handel PlayerStateMachine results
+    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+
+    // Handle next state operation
+    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone);
+    QObject::connect(this, &MediaPlayer::runPlayerOperation, m_Player, &MediaPlayerStateMachine::receiveRunPlayerOperation);
+
+    // Move the PlayerStateMachine to the Thread
+    m_Player->moveToThread(m_PlayerThread);
+
+    // Start the Thread
+    m_PlayerThread->start();
 }
 
-void MediaPlayer::runPlayerOperation() {
-
-    if(m_NextPlayerState != m_States.value(IPlayerState::PLAYER_STATES::STATE_WAIT)) {
-
-        m_CurrentPlayerState = m_NextPlayerState;
-
-        m_CurrentPlayerState->operate();
-        updatePlayerParameter();
-        emitSignals();
-
-    }
-
+MediaPlayer::~MediaPlayer() {
+    m_PlayerThread->quit();
+    m_PlayerThread->wait();
 }
 
-void MediaPlayer::receiveLoadVideoCommand(QString fileDir)
-{
-    std::string filenameStr = fileDir.toStdString();
-
-    boost::filesystem::path filename {filenameStr};
-
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Video(filename));
-
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
-    for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
-    }
-
-    setNextState(IPlayerState::STATE_INITIAL_STREAM);
-
+void MediaPlayer::setTrackingActive() {
+    m_TrackingIsActive = true;
 }
 
-void MediaPlayer::receiveLoadPictures(std::vector<boost::filesystem::path> files)
-{
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Pictures(files));
-
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
-    for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
-    }
-
-    setNextState(IPlayerState::STATE_INITIAL_STREAM);
-
+void MediaPlayer::setTrackingDeactive() {
+    m_TrackingIsActive = false;
 }
 
-void MediaPlayer::receiveLoadCameraDevice(int x)
-{
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
-
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;
-    for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
-    }
-
-    setNextState(IPlayerState::STATE_INITIAL_STREAM);
+bool MediaPlayer::getPlayState() {
+    return m_Play;
 }
 
-void MediaPlayer::receiveActivateTracking()
-{
-    m_IsTrackingActive = true;
+bool MediaPlayer::getForwardState() {
+    return m_Forw;
 }
 
-void MediaPlayer::receiveDeaktivateTracking()
-{
-    m_IsTrackingActive = false;
+bool MediaPlayer::getBackwardState() {
+    return m_Back;
 }
 
-void MediaPlayer::receivePrevFrameCommand()
-{
-    setNextState(IPlayerState::STATE_STEP_BACK);
+bool MediaPlayer::getStopState() {
+    return m_Stop;
 }
 
-void MediaPlayer::receiveNextFramCommand()
-{
-    setNextState(IPlayerState::STATE_STEP_FORW);
+bool MediaPlayer::getPauseState() {
+    return m_Paus;
 }
 
-void MediaPlayer::receivePauseCommand()
-{
-    setNextState(IPlayerState::STATE_PAUSE);
+bool MediaPlayer::getTrackingState() {
+    return m_TrackingIsActive;
 }
 
-void MediaPlayer::receiveStopCommand()
-{
-    setNextState(IPlayerState::STATE_INITIAL_STREAM);
+size_t MediaPlayer::getTotalNumberOfFrames() {
+    return m_TotalNumbFrames;
 }
 
-void MediaPlayer::receivePlayCommand()
-{
-    setNextState(IPlayerState::STATE_PLAY);
+size_t MediaPlayer::getCurrentFrameNumber() {
+    return m_CurrentFrameNumber;
 }
 
-void MediaPlayer::receiveGoToFrame(int frame)
-{
-    PStateGoToFrame *state = dynamic_cast<PStateGoToFrame *> (m_States.value(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME));
-    state->setFrameNumber(frame);
-    setNextState(IPlayerState::STATE_GOTOFRAME);
+double MediaPlayer::getFpsOfSourceFile() {
+    return m_fpsOfSourceFile;
 }
 
-void MediaPlayer::receiveStateDone()
-{
+double MediaPlayer::getCurrentFPS() {
+    return m_currentFPS;
 }
 
-void MediaPlayer::receiveTrackingDone()
-{
-
+QString MediaPlayer::getCurrentFileName() {
+    return m_CurrentFilename;
 }
 
-
-void MediaPlayer::updatePlayerParameter()
-{
-    m_CurrentFilename = QString::fromStdString( m_ImageStream->currentFilename() );
-
-    m_Back = m_CurrentPlayerState->getStateForBackward();
-    m_Forw = m_CurrentPlayerState->getStateForForward();
-    m_Paus = m_CurrentPlayerState->getStateForPause();
-    m_Play = m_CurrentPlayerState->getStateForPlay();
-    m_Stop = m_CurrentPlayerState->getStateForStop();
-    m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
-    m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();
-
-    if(m_CurrentPlayerState == m_States.value(IPlayerState::PLAYER_STATES::STATE_INITIAL_STREAM))
-        m_TotalNumbFrames = m_CurrentPlayerState->getTotalNumberOfFrames();
-
-    m_VideoControllsStates.clear();
-    m_VideoControllsStates.append(m_Back);
-    m_VideoControllsStates.append(m_Forw);
-    m_VideoControllsStates.append(m_Paus);
-    m_VideoControllsStates.append(m_Play);
-    m_VideoControllsStates.append(m_Stop);
-
+std::shared_ptr<cv::Mat> MediaPlayer::getCurrentFrame() {
+    return m_CurrentFrame;
 }
 
-void MediaPlayer::emitSignals()
-{
+void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
-    Q_EMIT emitVideoControllsStates(m_VideoControllsStates);
-    Q_EMIT emitMediaType(m_MediaType);
-    Q_EMIT emitTotalNumbFrames(m_TotalNumbFrames);
-    Q_EMIT emitCurrentFileName(m_CurrentFilename);
-    Q_EMIT emitCurrentFrameStr(m_CurrentFrame, m_NameOfCvMat);
-    Q_EMIT emitCurrentFrameNumber(m_CurrentFrameNumber);
-    Q_EMIT emitFPS(m_fps);
+    m_Back = param->m_Back;
+    m_Paus = param->m_Paus;
+    m_Play = param->m_Play;
+    m_Stop = param->m_Stop;
+    m_Forw = param->m_Forw;
 
-    Q_EMIT emitTrackingIsActiveState(m_IsTrackingActive);
+    m_CurrentFilename = param->m_CurrentFilename;
+    m_CurrentFrame = param->m_CurrentFrame;
+    m_CurrentFrameNumber = param->m_CurrentFrameNumber;
+    m_fpsOfSourceFile = param->m_fpsSourceVideo;
+    m_TotalNumbFrames = param->m_TotalNumbFrames;
 
-    Q_EMIT emitCurrentFrame(m_CurrentFrame, m_CurrentFrameNumber);
+    m_CurrentFrame = param->m_CurrentFrame;
 
+    Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
+
+    if(m_TrackingIsActive)
+        Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
     Q_EMIT notifyView();
 }
 
-void MediaPlayer::setNextState(IPlayerState::PLAYER_STATES state) {
-    m_NextPlayerState = m_States.value(state);
 
-    Q_EMIT emitPlayerOperationDone();
-
+void MediaPlayer::receivePlayerOperationDone() {
+    //if(! m_TrackingIsActive)
+    Q_EMIT runPlayerOperation();
 }
 
+void MediaPlayer::receiveTrackingOperationDone() {
+    if(m_TrackingIsActive)
+        Q_EMIT runPlayerOperation();
 
+}

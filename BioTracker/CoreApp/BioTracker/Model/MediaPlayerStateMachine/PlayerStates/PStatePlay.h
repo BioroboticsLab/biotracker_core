@@ -6,7 +6,7 @@
 
 class PStatePlay : public IPlayerState {
   public:
-    PStatePlay(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
+    PStatePlay(MediaPlayerStateMachine *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

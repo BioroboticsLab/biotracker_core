@@ -9,11 +9,19 @@
 #include "Model/ImageStream.h"
 #include "Model/TextureObject.h"
 
-class MediaPlayer;
+struct stateParameters {
+    bool m_Play;
+    bool m_Forw;
+    bool m_Back;
+    bool m_Stop;
+    bool m_Paus;
+};
+
+class MediaPlayerStateMachine;
 class IPlayerState : public IModel {
     Q_OBJECT
   public:
-    explicit IPlayerState(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
+    explicit IPlayerState(MediaPlayerStateMachine* player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
     enum PLAYER_STATES {STATE_INITIAL, STATE_INITIAL_STREAM, STATE_PLAY, STATE_STEP_FORW,
                         STATE_STEP_BACK, STATE_PAUSE, STATE_WAIT, STATE_GOTOFRAME
                        };
@@ -25,34 +33,21 @@ class IPlayerState : public IModel {
 
     virtual void operate() = 0;
 
-    bool getStateForPlay();
-    bool getStateForForward();
-    bool getStateForBackward();
-    bool getStateForStop();
-    bool getStateForPause();
+    stateParameters getStateParameters();
+    QString getCurrentFileName();
     std::shared_ptr<cv::Mat> getCurrentFrame();
     size_t getCurrentFrameNumber();
 
-    size_t getTotalNumberOfFrames();
-
-Q_SIGNALS:
-    void emitStateDone();
-
   protected:
-    MediaPlayer *m_Player;
+    MediaPlayerStateMachine* m_Player;
     std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
-    bool m_Play;
-    bool m_Forw;
-    bool m_Back;
-    bool m_Stop;
-    bool m_Paus;
-    size_t m_TotalNumbFrames;
+    stateParameters m_StateParameters;
 
     std::shared_ptr<cv::Mat> m_Mat;
     size_t m_FrameNumber;
 
-
+    QString m_currentFileName;
 };
 
 #endif // IPLAYERSTATE_H

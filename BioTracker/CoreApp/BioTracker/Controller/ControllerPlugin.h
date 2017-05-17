@@ -5,16 +5,16 @@
 #include "Interfaces/IBioTrackerPlugin.h"
 
 
-class ControllerPlugin : public IController
-{
+class ControllerPlugin : public IController {
     Q_OBJECT
-public:
-    ControllerPlugin(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+  public:
+    ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
     void loadPluginFromFileName(QString str);
+    void sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number);
 
     // IController interface
-protected:
+  protected:
     void createModel() override;
     void createView() override;
     void connectModelToController() override;
@@ -25,12 +25,11 @@ protected:
     void connectPlugin();
     void disconnectPlugin();
 
-private Q_SLOTS:
-    void receiveCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number);
+  private Q_SLOTS:
     void receiveTrackingDone();
 
-private:
-    IBioTrackerPlugin *m_BioTrackerPlugin;
+  private:
+    IBioTrackerPlugin* m_BioTrackerPlugin;
 
 
 

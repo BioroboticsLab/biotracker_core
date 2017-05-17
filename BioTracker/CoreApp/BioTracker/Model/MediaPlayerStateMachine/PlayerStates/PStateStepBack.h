@@ -6,7 +6,7 @@
 
 class PStateStepBack : public IPlayerState {
   public:
-    PStateStepBack(MediaPlayer *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
+    PStateStepBack(MediaPlayerStateMachine *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
   public Q_SLOTS:

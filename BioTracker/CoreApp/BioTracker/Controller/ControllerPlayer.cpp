@@ -2,187 +2,103 @@
 #include "View/VideoControllWidget.h"
 #include "View/MainWindow.h"
 #include "Controller/ControllerTextureObject.h"
+#include "Controller/ControllerPlugin.h"
 
-ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
-    IController(parent, context, ctr)
-{
-    m_PlayerThread = new QThread(this);
+ControllerPlayer::ControllerPlayer(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
+    IController(parent, context, ctr) {
 }
 
-ControllerPlayer::~ControllerPlayer()
-{
-    m_PlayerThread->quit();
-    m_PlayerThread->wait();
+ControllerPlayer::~ControllerPlayer() {
+
 }
 
 void ControllerPlayer::loadVideoStream(QString str) {
-    // Save the path to the video file in Settings
-    //m_Settings.setParam(CaptureParam::CAP_VIDEO_FILE, boost::filesystem::path(str.toStdString()));
 
-    Q_EMIT emitLoadVideoStream(str);
+    qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(str);
 }
 
-void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files)
-{
-    Q_EMIT emitLoadPictures(files);
+void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) {
+    qobject_cast<MediaPlayer*>(m_Model)->loadPictures(files);
 }
 
-void ControllerPlayer::loadCameraDevice(int i)
-{
-    Q_EMIT emitLoadCameraDevice(i);
+void ControllerPlayer::loadCameraDevice(int i) {
+    qobject_cast<MediaPlayer*>(m_Model)->loadCameraDevice(i);
 }
 
 void ControllerPlayer::nextFrame() {
-    Q_EMIT emitNextFrameCommand();
+    qobject_cast<MediaPlayer*>(m_Model)->nextFrameCommand();
 }
 
 void ControllerPlayer::prevFrame() {
-    Q_EMIT emitPrevFrameCommand();
+    qobject_cast<MediaPlayer*>(m_Model)->prevFrameCommand();
 }
 
 void ControllerPlayer::play() {
-    Q_EMIT emitPlayCommand();
+    qobject_cast<MediaPlayer*>(m_Model)->playCommand();
 }
 
 void ControllerPlayer::stop() {
-    Q_EMIT emitStopCommand();
+    qobject_cast<MediaPlayer*>(m_Model)->stopCommand();
 }
 
 void ControllerPlayer::pause() {
-    Q_EMIT emitPauseCommand();
+    qobject_cast<MediaPlayer*>(m_Model)->pauseCommand();
 }
 
-void ControllerPlayer::setGoToFrame(int frame)
-{
-    Q_EMIT emitGoToFrame(frame);
+void ControllerPlayer::setGoToFrame(int frame) {
+    qobject_cast<MediaPlayer*>(m_Model)->goToFrame(frame);
 }
 
-void ControllerPlayer::changeImageView(QString str)
-{
-    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-    QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject *>(ctr);
+void ControllerPlayer::receiveRenderImage(std::shared_ptr<cv::Mat> mat, QString name) {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+    QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject*>(ctr);
+
+    ctrTextureObject->receiveCvMat(mat, name);
+
+}
+
+void ControllerPlayer::receiveImageToTracker(std::shared_ptr<cv::Mat> mat, uint number) {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
+    QPointer< ControllerPlugin > ctrPlugin = qobject_cast<ControllerPlugin*>(ctr);
+
+    ctrPlugin->sendCurrentFrameToPlugin(mat, number);
+}
+
+void ControllerPlayer::changeImageView(QString str) {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+    QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject*>(ctr);
 
     ctrTextureObject->changeTextureModel(str);
 }
 
-void ControllerPlayer::setTrackingActivated()
-{
-    m_TrackingIsActive = true;
+void ControllerPlayer::setTrackingActivated() {
+    qobject_cast<MediaPlayer*>(m_Model)->setTrackingActive();
 }
 
-void ControllerPlayer::setTrackingDeactivated()
-{
-    m_TrackingIsActive = false;
+void ControllerPlayer::setTrackingDeactivated() {
+    qobject_cast<MediaPlayer*>(m_Model)->setTrackingDeactive();
 }
 
-void ControllerPlayer::connectControllerToController()
-{
-    IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    QPointer< MainWindow > mainWin = dynamic_cast<MainWindow *>(ctrM->getView());
+void ControllerPlayer::connectControllerToController() {
+    IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
 }
 
-void ControllerPlayer::createModel()
-{
-    // Do net set a Parent in order to run the Player in the QThread!
-    m_Model = new MediaPlayer(  );
-    m_Model->moveToThread(m_PlayerThread);
-    m_PlayerThread->start();
+void ControllerPlayer::createModel() {
+    m_Model = new MediaPlayer(this);
 }
 
-void ControllerPlayer::createView()
-{
-    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    QPointer< MainWindow > mainWindow = dynamic_cast<MainWindow *>(ctr->getView());
+void ControllerPlayer::createView() {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    QPointer< MainWindow > mainWindow = dynamic_cast<MainWindow*>(ctr->getView());
 
     m_View = new VideoControllWidget(mainWindow, this, m_Model);
 }
 
-void ControllerPlayer::connectModelToController()
-{
-    QPointer< MediaPlayer > player = qobject_cast<MediaPlayer *>(m_Model);
+void ControllerPlayer::connectModelToController() {
 
-    //Load ImageStream
-    QObject::connect(this, &ControllerPlayer::emitLoadVideoStream, player, &MediaPlayer::receiveLoadVideoCommand);
-    QObject::connect(this, &ControllerPlayer::emitLoadCameraDevice, player, &MediaPlayer::receiveLoadCameraDevice);
-    QObject::connect(this, &ControllerPlayer::emitLoadPictures, player, &MediaPlayer::receiveLoadPictures);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::renderCurrentImage, this, &ControllerPlayer::receiveRenderImage);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
 
-    // Set TrackingActive
-    QObject::connect(this, &ControllerPlayer::emitActivateTracking, player, &MediaPlayer::receiveActivateTracking);
-    QObject::connect(this, &ControllerPlayer::emitDeactivateTracking, player, &MediaPlayer::receiveDeaktivateTracking);
-
-
-    // Controll the Player
-    QObject::connect(this, &ControllerPlayer::emitNextFrameCommand, player, &MediaPlayer::receiveNextFramCommand);
-    QObject::connect(this, &ControllerPlayer::emitPauseCommand, player, &MediaPlayer::receivePauseCommand);
-    QObject::connect(this, &ControllerPlayer::emitPlayCommand, player, &MediaPlayer::receivePlayCommand);
-    QObject::connect(this, &ControllerPlayer::emitPrevFrameCommand, player, &MediaPlayer::receivePrevFrameCommand);
-    QObject::connect(this, &ControllerPlayer::emitStopCommand, player, &MediaPlayer::receiveStopCommand);
-    QObject::connect(this, &ControllerPlayer::emitGoToFrame, player, &MediaPlayer::receiveGoToFrame);
-
-
-    // Handel Player results
-    QObject::connect(player, &MediaPlayer::emitCurrentFrameNumber, this, &ControllerPlayer::receiveCurrentFrameNumber, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &MediaPlayer::emitFPS, this, &ControllerPlayer::receiveFPS, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &MediaPlayer::emitTotalNumbFrames, this, &ControllerPlayer::receiveTotalNumbFrames, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &MediaPlayer::emitVideoControllsStates, this, &ControllerPlayer::receiveVideoControllsStates, Qt::BlockingQueuedConnection);
-    QObject::connect(player, &MediaPlayer::emitCurrentFrameStr, this, &ControllerPlayer::receiveCurrentFrameStr, Qt::BlockingQueuedConnection);
-
-    QObject::connect(player, &MediaPlayer::emitTrackingIsActiveState, this, &ControllerPlayer::receiveTrackingIsActiveState, Qt::BlockingQueuedConnection);
-
-    QObject::connect(player, &MediaPlayer::emitPlayerOperationDone, this, &ControllerPlayer::receivePlayerOperationDone);
-
-    QObject::connect(this, &ControllerPlayer::emitRunPlayerOperation, player, &MediaPlayer::runPlayerOperation);
-}
-
-void ControllerPlayer::receivePlayerOperationDone()
-{
-    if(! m_TrackingIsActive)
-        Q_EMIT emitRunPlayerOperation();
-}
-
-void ControllerPlayer::receiveTrackingOperationDone()
-{
-    if(m_TrackingIsActive)
-        Q_EMIT emitRunPlayerOperation();
-
-}
-
-void ControllerPlayer::receiveCurrentFrameNumber(size_t num)
-{
-    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
-
-    widget->setCurrentFrameNumber(num);
-}
-
-void ControllerPlayer::receiveCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name)
-{
-    IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-    qobject_cast<ControllerTextureObject *>(ctr)->receiveCvMat(mat, name);
-}
-
-void ControllerPlayer::receiveFPS(double fps)
-{
-    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
-
-    widget->setFPS(fps);
-}
-
-void ControllerPlayer::receiveTotalNumbFrames(size_t num)
-{
-    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
-
-    widget->setTotalNumbFrames(num);
-}
-
-void ControllerPlayer::receiveVideoControllsStates(QVector<bool> states)
-{
-    QPointer< VideoControllWidget > widget = static_cast<VideoControllWidget *>(m_View);
-
-    widget->setVideoControllsStates(states);
-}
-
-void ControllerPlayer::receiveTrackingIsActiveState(bool state)
-{
-    m_TrackingIsActive = state;
 }

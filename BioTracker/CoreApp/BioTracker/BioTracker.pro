@@ -43,13 +43,6 @@ SOURCES += main.cpp\
     Controller/ControllerMainWindow.cpp \
     Controller/ControllerPlayer.cpp \
     Controller/ControllerTextureObject.cpp \
-    Model/PlayerStates/PStateInitial.cpp \
-    Model/PlayerStates/PStateInitialStream.cpp \
-    Model/PlayerStates/PStatePause.cpp \
-    Model/PlayerStates/PStatePlay.cpp \
-    Model/PlayerStates/PStateStepBack.cpp \
-    Model/PlayerStates/PStateStepForw.cpp \
-    Model/PlayerStates/PStateWait.cpp \
     Model/BioTracker3ProxyMat.cpp \
     Model/null_Model.cpp \
     View/GraphicsScene.cpp \
@@ -59,15 +52,23 @@ SOURCES += main.cpp\
     View/CameraDevice.cpp \
     Controller/null_Controller.cpp \
     Controller/ControllerPlugin.cpp \
-    IStates/IPlayerState.cpp \
     View/MainWindow.cpp \
     View/VideoControllWidget.cpp \
     View/GLVideoView.cpp \
     Model/ImageStream.cpp \
-    Model/MediaPlayer.cpp \
     Model/TextureObject.cpp \
     View/TextureObjectView.cpp \
-    Model/PlayerStates/PStateGoToFrame.cpp
+    IStates/IPlayerState.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateGoToFrame.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateInitial.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateInitialStream.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStatePause.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStatePlay.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateStepBack.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateStepForw.cpp \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateWait.cpp \
+    Model/MediaPlayerStateMachine/MediaPlayerStateMachine.cpp \
+    Model/MediaPlayer.cpp
 
 HEADERS  += BioTracker3App.h \
     GuiContext.h \
@@ -75,13 +76,6 @@ HEADERS  += BioTracker3App.h \
     Controller/ControllerMainWindow.h \
     Controller/ControllerPlayer.h \
     Controller/ControllerTextureObject.h \
-    Model/PlayerStates/PStateInitial.h \
-    Model/PlayerStates/PStateInitialStream.h \
-    Model/PlayerStates/PStatePause.h \
-    Model/PlayerStates/PStatePlay.h \
-    Model/PlayerStates/PStateStepBack.h \
-    Model/PlayerStates/PStateStepForw.h \
-    Model/PlayerStates/PStateWait.h \
     Model/BioTracker3ProxyMat.h \
     Model/null_Model.h \
     View/GraphicsScene.h \
@@ -91,15 +85,24 @@ HEADERS  += BioTracker3App.h \
     View/CameraDevice.h \
     Controller/null_Controller.h \
     Controller/ControllerPlugin.h \
-    IStates/IPlayerState.h \
     View/MainWindow.h \
     View/VideoControllWidget.h \
     View/GLVideoView.h \
     Model/ImageStream.h \
-    Model/MediaPlayer.h \
     Model/TextureObject.h \
     View/TextureObjectView.h \
-    Model/PlayerStates/PStateGoToFrame.h
+    IStates/IPlayerState.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateGoToFrame.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateInitial.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateInitialStream.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStatePause.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStatePlay.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateStepBack.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateStepForw.h \
+    Model/MediaPlayerStateMachine/PlayerStates/PStateWait.h \
+    Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h \
+    Model/MediaPlayer.h \
+    Model/MediaPlayerStateMachine/PlayerParameters.h
 
 FORMS    += \
     View/CameraDevice.ui \

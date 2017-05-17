@@ -1,86 +1,80 @@
-#ifndef BIOTRACKER3PLAYER_H
-#define BIOTRACKER3PLAYER_H
+#ifndef MEDIAPLAYER_H
+#define MEDIAPLAYER_H
 
-#include <QObject>
 #include "Interfaces/IModel/IModel.h"
-#include "Interfaces/IModel/IModel.h"
-
-#include "ImageStream.h"
-#include <memory>
-#include "QString"
-#include "QMap"
 #include "QThread"
-#include "opencv2/core/core.hpp"
-
-#include "View/VideoControllWidget.h"
-#include "View/GLVideoView.h"
-
-#include "IStates/IPlayerState.h"
-#include "QSharedPointer"
-
+#include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 
 class MediaPlayer : public IModel {
     Q_OBJECT
   public:
-    explicit MediaPlayer(QObject *parent = 0);
-
-    void setNextState(IPlayerState::PLAYER_STATES state);
-
-  public Q_SLOTS:    
-    void runPlayerOperation();
-
-    void receiveLoadVideoCommand(QString fileDir);
-    void receiveLoadPictures(std::vector<boost::filesystem::path> files);
-    void receiveLoadCameraDevice(int i);
-    void receiveActivateTracking();
-    void receiveDeaktivateTracking();
-
-    void receivePrevFrameCommand();
-    void receiveNextFramCommand();
-    void receivePauseCommand();
-    void receiveStopCommand();
-    void receivePlayCommand();
-
-    void receiveGoToFrame(int frame);
-
-    void receiveStateDone();
-
-    void receiveTrackingDone();
-
+    MediaPlayer(QObject* parent = 0);
+    ~MediaPlayer();
 
   Q_SIGNALS:
-    void emitMediaType(GuiParam::MediaType type);
-    void emitTotalNumbFrames(size_t num);
-    void emitCurrentFrameNumber(size_t num);
-    void emitFPS(double fps);
-    void emitCurrentFileName(QString name);
-    void emitCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number);
-    void emitVideoControllsStates(QVector<bool> states);
+    /**
+    * @brief loadVideoStream triggers the receiveVideoStream slot of the class MediaPlayerStateMachine
+    * @param str is a QString with the Path to the video file
+    */
+    void loadVideoStream(QString str);
+    void loadPictures(std::vector<boost::filesystem::path> files);
+    void loadCameraDevice(int i);
 
-    void emitTrackingIsActiveState(bool state);
+    void goToFrame(int frame);
+    void nextFrameCommand();
+    void prevFrameCommand();
+    void playCommand();
+    void stopCommand();
+    void pauseCommand();
 
-    void emitPlayerOperationDone();
+    void runPlayerOperation();
+
+    void renderCurrentImage(std::shared_ptr<cv::Mat> mat, QString name);
+    void trackCurrentImage(std::shared_ptr<cv::Mat> mat, uint number);
+
+
+  public:
+    void setTrackingActive();
+    void setTrackingDeactive();
+
+    bool getPlayState();
+    bool getForwardState();
+    bool getBackwardState();
+    bool getStopState();
+    bool getPauseState();
+
+    bool getTrackingState();
+
+    size_t getTotalNumberOfFrames();
+    size_t getCurrentFrameNumber();
+    double getFpsOfSourceFile();
+    double getCurrentFPS();
+    QString getCurrentFileName();
+    std::shared_ptr<cv::Mat> getCurrentFrame();
+
+
+  public Q_SLOTS:
+    void receivePlayerParameters(playerParameters* param);
+
+    void receivePlayerOperationDone();
+    void receiveTrackingOperationDone();
+
 
   private:
-    void updatePlayerParameter();
-    void emitSignals();
+    QPointer< QThread > m_PlayerThread;
+    QPointer< MediaPlayerStateMachine > m_Player;
 
+    IPlayerState* m_CurrentPlayerState;
+    IPlayerState* m_NextPlayerState;
 
-  private:
-    IPlayerState *m_CurrentPlayerState;
-    IPlayerState *m_NextPlayerState;
-    QThread m_StateThread;
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *> m_States;
-    std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
+    QMap<IPlayerState::PLAYER_STATES, IPlayerState*> m_States;
 
-    GuiParam::MediaType m_MediaType;
     size_t m_TotalNumbFrames;
     size_t m_CurrentFrameNumber;
-    double m_fps;
+    double m_fpsOfSourceFile;
+    double m_currentFPS;
     QString m_CurrentFilename;
     std::shared_ptr<cv::Mat> m_CurrentFrame;
-    QVector<bool> m_VideoControllsStates;
 
     bool m_Play;
     bool m_Forw;
@@ -88,12 +82,11 @@ class MediaPlayer : public IModel {
     bool m_Stop;
     bool m_Paus;
 
-    int m_NumberOfFrames;
 
-    bool m_IsTrackingActive;
+    bool m_TrackingIsActive;
+
 
     QString m_NameOfCvMat = "Original";
 };
 
-
-#endif // BIOTRACKER3PLAYER_H
+#endif // MEDIAPLAYER_H

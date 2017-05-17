@@ -11,38 +11,35 @@
 #include "QPointer"
 #include "memory"
 
-class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin
-{
+class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
     Q_INTERFACES(IBioTrackerPlugin)
 
-public:
+  public:
     BioTrackerPlugin();
 
     // IBioTrackerPlugin interface
-    IView *getTrackerParameterWidget();
+    IView* getTrackerParameterWidget();
 
-public:
+  public:
     void createPlugin();
+    void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
 
-private:
+  private:
     void connectInterfaces();
 
-signals:
+  signals:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
     void emitTrackingDone();
 
-public slots:
-    void receiveCvMat(std::shared_ptr<cv::Mat> mat, uint frameNumber);
-
-private slots:
+  private slots:
     void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
     void receiveTrackingDone();
 
 
-private:
-    IController *m_TrackerController;
+  private:
+    IController* m_TrackerController;
 
 };
 
