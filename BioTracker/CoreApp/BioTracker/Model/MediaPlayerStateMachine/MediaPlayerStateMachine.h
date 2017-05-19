@@ -1,3 +1,11 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
+
 #ifndef BIOTRACKER3PLAYER_H
 #define BIOTRACKER3PLAYER_H
 
@@ -18,15 +26,23 @@
 
 #include "PlayerParameters.h"
 
-
+/**
+ * The MediaPlayerStateMachine class is an IModel class and is responsible for the executing and setting Player Stats. The instance of this class runns in a separate Thread.
+ */
 class MediaPlayerStateMachine : public IModel {
     Q_OBJECT
   public:
     explicit MediaPlayerStateMachine(QObject* parent = 0);
 
+    /**
+     * This method can be called by the MediaPlayer class and by any State which is part of the MediaPlayerStateMachine.
+     */
     void setNextState(IPlayerState::PLAYER_STATES state);
 
   public Q_SLOTS:
+    /**
+     * This SLOT is called by the MediaPlayer class. If this slot is triggered the next state will be executed.
+     */
     void receiveRunPlayerOperation();
 
     void receiveLoadVideoCommand(QString fileDir);
@@ -41,7 +57,13 @@ class MediaPlayerStateMachine : public IModel {
     void receiveGoToFrame(int frame);
 
   Q_SIGNALS:
+    /**
+     * After each state execution this SIGNAL is emmited and received by the MediaPlayer class. The parameter playerParameters contains all information that was changed during the execution of the current state.
+     */
     void emitPlayerParameters(playerParameters* parameters);
+    /**
+     * When the state operation got finished, this SIGNAL is emmited and received by the MediaPlayer class.
+     */
     void emitPlayerOperationDone();
 
   private:

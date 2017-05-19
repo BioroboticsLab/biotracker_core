@@ -12,7 +12,8 @@
 #include "Interfaces/IBioTrackerPlugin.h"
 
 /**
- * The ControllerPlugin class is responsible for loading, connecting and manageing BioTracker Plugins.
+ * This is the controller class of the Plugin Loader Component. This component is responsible for loading and managing BioTracker Plugins
+ * The ControllerPlugin class is responsible for loading and connecting to BioTracker Plugins.
  */
 class ControllerPlugin : public IController {
     Q_OBJECT

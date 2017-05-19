@@ -1,3 +1,10 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** Origin of this class is BioTracker in version 2.
+  **
+  ****************************************************************************/
+
 #ifndef BIOTRACKER3IMAGESTREAM_H
 #define BIOTRACKER3IMAGESTREAM_H
 
@@ -14,10 +21,13 @@
 namespace BioTracker {
 namespace Core {
 
+/**
+ * The ImageStream class was part of BioTracker version 2. It is responsible for generation ImageStreams from files or camera devices.
+ */
 class ImageStream : public QObject {
     Q_OBJECT
   public:
-    explicit ImageStream(QObject *parent = 0);
+    explicit ImageStream(QObject* parent = 0);
 
     /**
          * @return the stream's MediaType i.e. "Video", "Images", "NoMedia"
@@ -128,7 +138,7 @@ std::shared_ptr<ImageStream> make_ImageStream3Pictures(
     std::vector<boost::filesystem::path> filenames);
 
 std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
-        &filename);
+                                                    &filename);
 
 std::shared_ptr<ImageStream> make_ImageStream3Camera(int device);
 

@@ -1,3 +1,11 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
+
 #ifndef IPLAYERSTATE_H
 #define IPLAYERSTATE_H
 
@@ -9,6 +17,10 @@
 #include "Model/ImageStream.h"
 #include "Model/TextureObject.h"
 
+/**
+ * The stateParameters struct represents the possible stats for the VideoControll buttons in the MainWindow widget.
+ * If a value is true, the button will be available to the user. If a value is false, the button is deactivated in the MainWindow.
+ */
 struct stateParameters {
     bool m_Play;
     bool m_Forw;
@@ -18,6 +30,15 @@ struct stateParameters {
 };
 
 class MediaPlayerStateMachine;
+/**
+ * The IPlayerState class is the interface for all states of the MediaPlayerStateMachine.
+ * This class is responsible for manipulating ImageStreams with its method operate().
+ * If new states are required simply create them and add a name for the state to the
+ * ENUMERATION PLAYER_STATES.
+ *
+ * Any State class is able to set its following state in the MediaPlayerStateMachine.
+ *
+ */
 class IPlayerState : public IModel {
     Q_OBJECT
   public:
@@ -29,13 +50,31 @@ class IPlayerState : public IModel {
 
 
   public:
+    /**
+     * If the user changes the Image Source all states will be informed throught this method.
+     */
     void changeImageStream(std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
+    /**
+     * Must be implemented by any state. Implement here the ImageStream manipulation.
+     */
     virtual void operate() = 0;
 
+    /**
+     * Returns the State Parameters for the ImageStream controlls in the VideoViewWidget.
+     */
     stateParameters getStateParameters();
+    /**
+     * Returns the current filename of the ImageStream.
+     */
     QString getCurrentFileName();
+    /**
+     * Returns the current cv::Mat of the ImageStream.
+     */
     std::shared_ptr<cv::Mat> getCurrentFrame();
+    /**
+     * Returns the current frame number of the ImageStream.
+     */
     size_t getCurrentFrameNumber();
 
   protected:

@@ -1,6 +1,16 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
 #ifndef PLAYERPARAMETERS_H
 #define PLAYERPARAMETERS_H
 
+/**
+ * The playerParameters struct holds all data types of the current MediaPlayer state.
+ */
 struct playerParameters {
 
     // PlayerStates

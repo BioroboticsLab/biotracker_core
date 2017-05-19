@@ -123,11 +123,13 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
 
 void MediaPlayer::receivePlayerOperationDone() {
-    //if(! m_TrackingIsActive)
-    Q_EMIT runPlayerOperation();
+    // Only emit this SIGNL when tracking is not active
+    if(! m_TrackingIsActive)
+        Q_EMIT runPlayerOperation();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {
+    // Only emit this SIGNAL when tracking is active
     if(m_TrackingIsActive)
         Q_EMIT runPlayerOperation();
 

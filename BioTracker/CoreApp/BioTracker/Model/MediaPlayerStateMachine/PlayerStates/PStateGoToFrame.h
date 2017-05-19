@@ -1,22 +1,34 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
+
 #ifndef PSTATEGOTOFRAME_H
 #define PSTATEGOTOFRAME_H
 
 #include "IStates/IPlayerState.h"
 
-
-class PStateGoToFrame : public IPlayerState
-{
-public:
-    PStateGoToFrame(MediaPlayerStateMachine *player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
+/**
+ * This State is responsible for jumping to a spezific frame number in the ImageStream. The following state will be STATE_WAIT
+ */
+class PStateGoToFrame : public IPlayerState {
+  public:
+    PStateGoToFrame(MediaPlayerStateMachine* player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
-public Q_SLOTS:
-  void operate() override;
+  public Q_SLOTS:
+    void operate() override;
 
-public:
-  void setFrameNumber(int frame);
+  public:
+    /**
+     * This function sets the next frame number.
+     */
+    void setFrameNumber(int frame);
 
-private:
+  private:
     int m_GoToFrameNumber;
 };
 
