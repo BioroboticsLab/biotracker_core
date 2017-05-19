@@ -47,6 +47,14 @@ void MainWindow::setTrackerList(QStringListModel* trackerList) {
     ui->comboBox_TrackerSelect->setModel(trackerList);
 }
 
+void MainWindow::activeTrackingCheckBox() {
+    ui->checkBox_TrackingActivated->setEnabled(true);
+}
+
+void MainWindow::deactivateTrackingCheckBox() {
+    ui->checkBox_TrackingActivated->setEnabled(false);
+}
+
 void MainWindow::on_actionOpen_Video_triggered() {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
 

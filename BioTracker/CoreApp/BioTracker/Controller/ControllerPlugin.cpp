@@ -9,6 +9,16 @@
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr) {
 
+
+    m_TrackingThread = new QThread(this);
+    m_TrackingThread->start();
+
+}
+
+ControllerPlugin::~ControllerPlugin() {
+    m_TrackingThread->quit();
+    m_TrackingThread->wait();
+
 }
 
 void ControllerPlugin::loadPluginFromFileName(QString str) {
@@ -25,6 +35,8 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
         //Add Tracker Parameter to Main Window
         ctrMainWindow->setTrackerParamterWidget(m_BioTrackerPlugin->getTrackerParameterWidget());
 
+        ctrMainWindow->activeTrackingCheckBox();
+
     }
 }
 
@@ -40,11 +52,18 @@ void ControllerPlugin::connectModelToController() {
 
 void ControllerPlugin::connectControllerToController() {
 
+    // Add Plugin name to Main Window
+    IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
+
+    ctrMainWindow->deactiveTrackringCheckBox();
 }
 
 void ControllerPlugin::createPlugin() {
     m_BioTrackerPlugin = qobject_cast<PluginLoader*>(m_Model)->getPluginInstance();
     m_BioTrackerPlugin->createPlugin();
+
+    m_BioTrackerPlugin->moveToThread(m_TrackingThread);
 
     connectPlugin();
 }

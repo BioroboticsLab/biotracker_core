@@ -2,6 +2,8 @@
 
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
+
+    m_TrackingIsActive = false;
     // Initialize PlayerStateMachine and a Thread for the Player
     //    // Do not set a Parent for MediaPlayerStateMachine in order to run the Player in the QThread!
 
@@ -124,8 +126,19 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
-    if(! m_TrackingIsActive)
-        Q_EMIT runPlayerOperation();
+    //if(! m_TrackingIsActive)
+
+
+
+    end = std::chrono::steady_clock::now();
+    std::cout << "Printing took "
+              << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
+              << "us.\n";
+
+
+    Q_EMIT runPlayerOperation();
+
+    start = std::chrono::steady_clock::now();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {

@@ -37,7 +37,11 @@ class PluginLoader : public IModel {
      */
     QStringListModel* getPluginMetaData();
 
+    bool getIsPluginLoaded();
+
   private:
+
+    bool m_isPluginLoaded;
 
     void readMetaDataFromPlugin();
 
@@ -45,6 +49,7 @@ class PluginLoader : public IModel {
 
     QStringList m_PluginList;
     QStringListModel* m_PluginListModel;
+
 };
 
 #endif // PLUGINLOADER_H

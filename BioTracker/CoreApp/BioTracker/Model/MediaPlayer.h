@@ -13,6 +13,9 @@
 #include "QThread"
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 
+#include <ctime>
+#include <chrono>
+
 /**
  * The MediaPlayer class is an IModel class an part of the MediaPlayer component. This class creats a MediaPlayerStateMachine object and moves it to a QThread.
  * The MediaPlayer class controlls and represents the results of the MediaPlayerStateMachine. The communication between a MediaPlayer object and a MediaPlayerStateMachine object is done by
@@ -145,6 +148,10 @@ class MediaPlayer : public IModel {
 
 
     QString m_NameOfCvMat = "Original";
+
+
+    std::chrono::steady_clock::time_point start;
+    std::chrono::steady_clock::time_point end;
 };
 
 #endif // MEDIAPLAYER_H

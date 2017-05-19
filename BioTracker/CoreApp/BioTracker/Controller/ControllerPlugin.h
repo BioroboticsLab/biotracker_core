@@ -10,6 +10,7 @@
 
 #include "Interfaces/IController/IController.h"
 #include "Interfaces/IBioTrackerPlugin.h"
+#include "QThread"
 
 /**
  * This is the controller class of the Plugin Loader Component. This component is responsible for loading and managing BioTracker Plugins
@@ -19,6 +20,7 @@ class ControllerPlugin : public IController {
     Q_OBJECT
   public:
     ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+    ~ControllerPlugin();
 
     /**
      * (This function
@@ -52,6 +54,9 @@ class ControllerPlugin : public IController {
 
   private:
     IBioTrackerPlugin* m_BioTrackerPlugin;
+
+
+    QPointer< QThread >  m_TrackingThread;
 
 
 

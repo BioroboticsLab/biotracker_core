@@ -27,6 +27,9 @@ class MainWindow : public IViewMainWindow {
     void addTrackerParameterView(IView* parameter);
     void setTrackerList(QStringListModel* trackerList);
 
+    void activeTrackingCheckBox();
+    void deactivateTrackingCheckBox();
+
   private Q_SLOTS:
     void on_actionOpen_Video_triggered();
 

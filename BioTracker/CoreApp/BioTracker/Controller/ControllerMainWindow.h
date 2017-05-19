@@ -55,6 +55,9 @@ class ControllerMainWindow : public IController {
      */
     void setTrackerParamterWidget(IView* widget);
 
+    void deactiveTrackringCheckBox();
+    void activeTrackingCheckBox();
+
 
     // IController interface
   protected:
