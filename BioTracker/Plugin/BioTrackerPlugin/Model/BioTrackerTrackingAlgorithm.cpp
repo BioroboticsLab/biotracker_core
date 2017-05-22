@@ -3,26 +3,11 @@
 #include "fish/NN2dMapper.h"
 #include "TrackedComponents\TrackedComponentFactory.h"
 
-/* void createTrajectories(int count, TrackedTrajectory* all) {
-	//This should be done using a factory, right?
-
-	for (int i = 0; i < count; i++) {
-		TrackedTrajectory *t = new TrackedTrajectory();
-		TrackedElement *e = new TrackedElement(t, "n.a.", i);
-		e->setId(i);
-		t->add(e);
-		all->add(t);
-	}
-}*/
-
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
 {
 	m_TrackingParameter = (TrackerParameter*)parameter;
 	m_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
-	//createTrajectories(2, m_TrackedTrajectoryMajor);
 	m_frameCount = 0;
-	//fs1.open("PrcBenchPre.txt", std::fstream::in | std::fstream::out | std::fstream::app);
-	//fs2.open("PrcBenchPost.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 }
 
 std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
@@ -41,15 +26,6 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
-
-	/*
-	auto now = std::chrono::system_clock::now();
-	auto now_ns = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto epoch = now_ns.time_since_epoch();
-	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-	ulong duration = value.count();
-	fs1 << framenumber << "," << duration << std::endl;*/
-
 	_ipp.m_TrackingParameter = m_TrackingParameter;
 
 	//Do the preprocessing
@@ -82,20 +58,14 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	}
 
 	//Draw stuff into the output
-	std::shared_ptr<cv::Mat> rumgekritzel = std::make_shared<cv::Mat>();
+	/*std::shared_ptr<cv::Mat> rumgekritzel = std::make_shared<cv::Mat>();
 	cvtColor(*dilated, *rumgekritzel, CV_GRAY2BGR);
 	for (int i = 0; i < blobs.size(); i++) {
 		cv::circle(*rumgekritzel, blobs[i].posPx(), 15, cv::Scalar(0, 255, 0), 3);
-	}
+	}*/
 
-	/* now = std::chrono::system_clock::now();
-	 now_ns = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	 epoch = now_ns.time_since_epoch();
-	 value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-	 duration = value.count();
-	fs2 << framenumber << "," << duration << std::endl;
-	*/
-	Q_EMIT emitCvMatA(rumgekritzel, QString("Drawing"));
+
+	Q_EMIT emitCvMatA(dilated, QString("Processed"));
 
 	m_frameCount++;
 	Q_EMIT emitTrackingDone();

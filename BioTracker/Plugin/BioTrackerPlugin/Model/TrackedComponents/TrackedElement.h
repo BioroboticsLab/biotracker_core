@@ -7,10 +7,10 @@
 #include "fish\pose\FishPose.h"
 
 /**
- * This class is an example of how a Tracked Element could be defined.
+ * This class is an example of how a TrackedComponent could be defined.
  * This class inherits from the IModelTrackedComponent class and is therefor part of the Composite Pattern.
- * This class represents the Leaf class as stated by the GoF.
- * Objects of this class can have a QObject as parent and as it appears in this example have a name.
+ * This class represents the Leaf class in the Composite Pattern.
+ * Objects of this class have a QObject as parent.
  */
 class TrackedElement : public IModelTrackedComponent
 {

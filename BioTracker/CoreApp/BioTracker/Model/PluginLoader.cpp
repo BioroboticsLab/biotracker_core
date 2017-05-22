@@ -1,17 +1,17 @@
 #include "PluginLoader.h"
 #include "QDebug"
 
-PluginLoader::PluginLoader(QObject *parent) :
-    IModel(parent)
-{
+PluginLoader::PluginLoader(QObject* parent) :
+    IModel(parent) {
+
+    m_isPluginLoaded = false;
     m_PluginLoader = new QPluginLoader(this);
 
     m_PluginListModel = new QStringListModel();
     m_PluginListModel->setStringList(m_PluginList);
 }
 
-bool PluginLoader::loadPluginFromFilename(QString filename)
-{
+bool PluginLoader::loadPluginFromFilename(QString filename) {
     bool retval = false;
 
     if(m_PluginLoader->isLoaded()) {
@@ -23,33 +23,35 @@ bool PluginLoader::loadPluginFromFilename(QString filename)
 
     if( isLib ) {
 
-            m_PluginLoader->setFileName(filename);
+        m_PluginLoader->setFileName(filename);
 
-            readMetaDataFromPlugin();
+        readMetaDataFromPlugin();
 
-            retval = true;
-    }
-    else {
-            retval = false;
+        retval = true;
+    } else {
+        retval = false;
     }
 
     qDebug() << m_PluginLoader->fileName();
 
+    m_isPluginLoaded = retval;
+
     return retval;
 }
 
-IBioTrackerPlugin *PluginLoader::getPluginInstance()
-{
-    return qobject_cast<IBioTrackerPlugin *>(m_PluginLoader->instance());
+IBioTrackerPlugin* PluginLoader::getPluginInstance() {
+    return qobject_cast<IBioTrackerPlugin*>(m_PluginLoader->instance());
 }
 
-QStringListModel *PluginLoader::getPluginMetaData()
-{
+QStringListModel* PluginLoader::getPluginMetaData() {
     return m_PluginListModel;
 }
 
-void PluginLoader::readMetaDataFromPlugin()
-{
+bool PluginLoader::getIsPluginLoaded() {
+    return m_isPluginLoaded;
+}
+
+void PluginLoader::readMetaDataFromPlugin() {
     QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
     QJsonObject metaObj = pluginMeda.toObject();
     QString mstring = metaObj.value("name").toString();

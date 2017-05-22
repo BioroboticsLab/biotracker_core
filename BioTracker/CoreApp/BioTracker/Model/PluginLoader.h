@@ -1,3 +1,10 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
 #ifndef PLUGINLOADER_H
 #define PLUGINLOADER_H
 
@@ -7,25 +14,42 @@
 #include "Interfaces/IBioTrackerPlugin.h"
 #include "QPointer"
 
-class PluginLoader : public IModel
-{
+/**
+ * The PluginLoader class is a IModel class. It is responsible for managing BioTracker Plugins. It can load them and it sends a list of all loaded Plugin names to the a selection box in the MainWindow.
+ */
+class PluginLoader : public IModel {
     Q_OBJECT
-public:
-    explicit PluginLoader(QObject *parent = 0);
+  public:
+    explicit PluginLoader(QObject* parent = 0);
 
+    /**
+     * Loads a BioTracker Plugin from a filpaht. It returns true if the Plugin could be loaded, otherwise false.
+     */
     bool loadPluginFromFilename(QString filename);
-    IBioTrackerPlugin *getPluginInstance();
 
-    QStringListModel *getPluginMetaData();
+    /**
+     * Returns the Instance of the BioTracker Plugin.
+     */
+    IBioTrackerPlugin* getPluginInstance();
 
-private:
+    /**
+     * Returns a QStrinListModel with the names of all loaded Plugins.
+     */
+    QStringListModel* getPluginMetaData();
+
+    bool getIsPluginLoaded();
+
+  private:
+
+    bool m_isPluginLoaded;
 
     void readMetaDataFromPlugin();
 
-    QPluginLoader *m_PluginLoader;
+    QPluginLoader* m_PluginLoader;
 
     QStringList m_PluginList;
-    QStringListModel *m_PluginListModel;
+    QStringListModel* m_PluginListModel;
+
 };
 
 #endif // PLUGINLOADER_H

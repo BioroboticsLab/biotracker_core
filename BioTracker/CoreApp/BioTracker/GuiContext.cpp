@@ -3,7 +3,7 @@
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerTextureObject.h"
 #include "Controller/ControllerPlugin.h"
-#include "Model/MediaPlayer.h"
+#include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 #include "Model/TextureObject.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "QPointer"
@@ -32,10 +32,9 @@ GuiContext::GuiContext(QObject *parent) :
 
 }
 
-bool GuiContext::loadBioTrackerPlugin(QString str)
+void GuiContext::loadBioTrackerPlugin(QString str)
 {
     qobject_cast<ControllerPlugin*> (m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLUGIN))->loadPluginFromFileName(str);
-	return false; //TODO: This should return something sensible...
 } 
 
 void GuiContext::createAppController()

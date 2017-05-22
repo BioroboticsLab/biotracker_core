@@ -1,84 +1,141 @@
-#ifndef BIOTRACKER3PLAYER_H
-#define BIOTRACKER3PLAYER_H
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
 
-#include <QObject>
-#include "Interfaces/IModel/IModel.h"
-#include "Interfaces/IModel/IModel.h"
 
-#include "ImageStream.h"
-#include <memory>
-#include "QString"
-#include "QMap"
+#ifndef MEDIAPLAYER_H
+#define MEDIAPLAYER_H
+
+#include "Interfaces/IModel/IModel.h"
 #include "QThread"
-#include "opencv2/core/core.hpp"
+#include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 
-#include "View/VideoControllWidget.h"
-#include "View/GLVideoView.h"
+#include <ctime>
+#include <chrono>
 
-#include "IStates/IPlayerState.h"
-#include "QSharedPointer"
-
-
+/**
+ * The MediaPlayer class is an IModel class an part of the MediaPlayer component. This class creats a MediaPlayerStateMachine object and moves it to a QThread.
+ * The MediaPlayer class controlls and represents the results of the MediaPlayerStateMachine. The communication between a MediaPlayer object and a MediaPlayerStateMachine object is done by
+ * Qts SIGNALS and SLOTS. This is due to the fact that SIGNALS and SLTOS are thread safe. A disadvantage is that SIGNALS and SLOTS are slower then normal function calls.
+ *
+ * The constructor of this class is responsible for connecting to the MediaPlayerStateMachine.
+ */
 class MediaPlayer : public IModel {
     Q_OBJECT
   public:
-    explicit MediaPlayer(QObject *parent = 0);
-
-    void setNextState(IPlayerState::PLAYER_STATES state);
-
-  public Q_SLOTS:    
-    void runPlayerOperation();
-
-    void receiveLoadVideoCommand(QString fileDir);
-    void receiveLoadPictures(std::vector<boost::filesystem::path> files);
-    void receiveLoadCameraDevice(int i);
-    void receiveActivateTracking();
-    void receiveDeaktivateTracking();
-
-    void receivePrevFrameCommand();
-    void receiveNextFramCommand();
-    void receivePauseCommand();
-    void receiveStopCommand();
-    void receivePlayCommand();
-
-    void receiveStateDone();
-
-    void receiveTrackingDone();
-
+    MediaPlayer(QObject* parent = 0);
+    ~MediaPlayer();
 
   Q_SIGNALS:
-    void emitMediaType(GuiParam::MediaType type);
-    void emitTotalNumbFrames(size_t num);
-    void emitCurrentFrameNumber(size_t num);
-    void emitFPS(double fps);
-    void emitCurrentFileName(QString name);
-    void emitCurrentFrameStr(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitCurrentFrame(std::shared_ptr<cv::Mat> mat, uint number);
-    void emitVideoControllsStates(QVector<bool> states);
+    /**
+    * Emit the path to a video stream. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void loadVideoStream(QString str);
+    /**
+    * Emit the path to pictures. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void loadPictures(std::vector<boost::filesystem::path> files);
+    /**
+    * Emit the camera device number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void loadCameraDevice(int i);
 
-    void emitTrackingIsActiveState(bool state);
+    /**
+    * Emit a frame number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void goToFrame(int frame);
+    /**
+    * Emit the next frame command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void nextFrameCommand();
+    /**
+    * Emit previous frame command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void prevFrameCommand();
+    /**
+    * Emit the play command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void playCommand();
+    /**
+    * Emit stop command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void stopCommand();
+    /**
+    * Emit the pause command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    */
+    void pauseCommand();
 
-    void emitPlayerOperationDone();
+    /**
+     * This SIGNAL will be emmited if a state operation should be executed. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+     */
+    void runPlayerOperation();
+
+    /**
+     * This SIGNAL will send a cv::Mat and a name to the MediaPlayer controller class. This controller will give the data to the TextureObject component.
+     */
+    void renderCurrentImage(std::shared_ptr<cv::Mat> mat, QString name);
+    /**
+     * This SIGNAL is only emmited if Tracking Is Active. The PluginLoader component will receive the cv::Mat and the current frame number.
+     */
+    void trackCurrentImage(std::shared_ptr<cv::Mat> mat, uint number);
+
+
+  public:
+    void setTrackingActive();
+    void setTrackingDeactive();
+
+    bool getPlayState();
+    bool getForwardState();
+    bool getBackwardState();
+    bool getStopState();
+    bool getPauseState();
+
+    bool getTrackingState();
+
+    size_t getTotalNumberOfFrames();
+    size_t getCurrentFrameNumber();
+    double getFpsOfSourceFile();
+    double getCurrentFPS();
+    QString getCurrentFileName();
+    std::shared_ptr<cv::Mat> getCurrentFrame();
+
+
+  public Q_SLOTS:
+    /**
+     * MediaPlayer will receive the current playerParameters from the MediaPlayerStateMachine.
+     */
+    void receivePlayerParameters(playerParameters* param);
+
+    /**
+     * If the MediaPlayerStateMachine is finished with executing the current state it will trigger this SLOT.
+     */
+    void receivePlayerOperationDone();
+
+    /**
+     * If a BioTracker Plugin is done with executing its tracking algorithm this SLOT will be triggerd. As soon as this SLOT is triggered, the MediaPlayerStateMachine will be
+     * advised to execute the next state.
+     */
+    void receiveTrackingOperationDone();
+
 
   private:
-    void updatePlayerParameter();
-    void emitSignals();
+    QPointer< QThread > m_PlayerThread;
+    QPointer< MediaPlayerStateMachine > m_Player;
 
+    IPlayerState* m_CurrentPlayerState;
+    IPlayerState* m_NextPlayerState;
 
-  private:
-    IPlayerState *m_CurrentPlayerState;
-    IPlayerState *m_NextPlayerState;
-    QThread m_StateThread;
-    QMap<IPlayerState::PLAYER_STATES, IPlayerState *> m_States;
-    std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
+    QMap<IPlayerState::PLAYER_STATES, IPlayerState*> m_States;
 
-    GuiParam::MediaType m_MediaType;
     size_t m_TotalNumbFrames;
     size_t m_CurrentFrameNumber;
-    double m_fps;
+    double m_fpsOfSourceFile;
+    double m_currentFPS;
     QString m_CurrentFilename;
     std::shared_ptr<cv::Mat> m_CurrentFrame;
-    QVector<bool> m_VideoControllsStates;
 
     bool m_Play;
     bool m_Forw;
@@ -86,10 +143,15 @@ class MediaPlayer : public IModel {
     bool m_Stop;
     bool m_Paus;
 
-    bool m_IsTrackingActive;
+
+    bool m_TrackingIsActive;
+
 
     QString m_NameOfCvMat = "Original";
+
+
+    std::chrono::steady_clock::time_point start;
+    std::chrono::steady_clock::time_point end;
 };
 
-
-#endif // BIOTRACKER3PLAYER_H
+#endif // MEDIAPLAYER_H

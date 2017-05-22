@@ -1,30 +1,69 @@
+/****************************************************************************
+  **
+  ** This file is part of the BioTracker Framework
+  ** by Andreas Jörg
+  **
+  ****************************************************************************/
+
 #ifndef CONTROLLERMAINWINDOW_H
 #define CONTROLLERMAINWINDOW_H
 
 #include "Interfaces/IController/IController.h"
 #include "QPointer"
 #include "QStringListModel"
-#include "QString"
-#include <boost/filesystem.hpp>
+#include "boost\filesystem.hpp"
+#include <vector>
 
-class ControllerMainWindow : public IController
-{
+/**
+ * The ControllerMainWindow class controlls the IView class MainWindow.
+ * All user interactions done through the MainWindow class are delegated to the controllers of the component that concerns them.
+ * Other components can place their IView Widgets on the MainWindow.
+ */
+class ControllerMainWindow : public IController {
     Q_OBJECT
-public:
-    ControllerMainWindow(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+  public:
+    ControllerMainWindow(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 
+    /**
+     * Receives the a string containing the video file path from the MainWindow class. The string is then given to the ControllerPlayer class of the MediaPlayer-Component.
+     */
     void loadVideo(QString str);
+    /**
+     * Receives the a string containing the Plugin file path from the MainWindow class. The string is then given to the BioTrackerContext class which will hand it over to the ControllerPlugin class.
+     */
     void loadTracker(QString str);
+    /**
+     * Receives the a string containing the pictures file path from the MainWindow class. The string is then given to the ControllerPlayer class of the MediaPlayer-Component.
+     */
     void loadPictures(std::vector<boost::filesystem::path> files);
+    /**
+     * Receives the a string containing the camera device number from the MainWindow class. The string is then given to the ControllerPlayer class of the MediaPlayer-Component.
+     */
     void loadCameraDevice(int i);
+    /**
+     * Receives the command for activating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
+     */
     void activeTracking();
+    /**
+     * Receives the command for deactivating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
+     */
     void deactiveTrackring();
-    void setTrackerList(QStringListModel *trackerList);
+    /**
+     * Receives a QStringListModel with the names of all currently loades BioTracker Plugins from the ControllerPlugin class.
+     */
+    void setTrackerList(QStringListModel* trackerList);
+    /**
+     * Embeds the Parameter Widget devined in the BioTracker Plugins into the MainWindow Widget.
+     */
     void setTrackerParamterWidget(IView* widget);
 	void setTrackerElementsWidget(IView *widget);
 
+    void deactiveTrackringCheckBox();
+    void activeTrackingCheckBox();
+
+
     // IController interface
-protected:
+  protected:
     void createModel() override;
     void createView() override;
     void connectModelToController() override;

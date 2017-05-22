@@ -15,7 +15,7 @@ public:
     GuiContext(QObject *parent = 0);
 
 
-    bool loadBioTrackerPlugin(QString str);
+    void loadBioTrackerPlugin(QString str);
 
     // IBioTrackerContext interface
 protected:

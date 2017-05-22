@@ -3,9 +3,10 @@
 
 #include "IModel.h"
 /**
- * This is the common interface for all TrackedComponents.
- * It is part of the Composite Pattern and translates to the abstract Component class as stated by the GoF.
- * A TrackedComponent can have a QObject as parent and it
+ * This is the common interface for all TrackedComponents (IModelTrackedTrajectory and any leaf class).
+ * It is part of the Composite Pattern and is the equivalent to the abstract Component class.
+ * This class is derived from IModel from the Model-View-Controller structure.
+ * A TrackedComponent has a QObject as parent and it
  * has a methode called operate() that needs to be implemented
  * by all derivatives of this interface class.
  */

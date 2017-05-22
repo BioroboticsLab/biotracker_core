@@ -4,9 +4,9 @@
 #include "opencv2/core/core.hpp"
 #include <boost/filesystem.hpp>
 #include "QVector"
+#include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     /// NOTE edit by Andi
@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<std::vector<boost::filesystem::path>>("std::vector<boost::filesystem::path>");
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
+    qRegisterMetaType<playerParameters*>("playerParameters*");
 
 
 

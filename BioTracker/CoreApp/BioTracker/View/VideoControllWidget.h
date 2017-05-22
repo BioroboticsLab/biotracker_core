@@ -13,17 +13,16 @@ namespace Ui {
 class VideoControllWidget;
 }
 
-class VideoControllWidget : public IViewWidget
-{
+class VideoControllWidget : public IViewWidget {
     Q_OBJECT
 
-public:
-    explicit VideoControllWidget(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+  public:
+    explicit VideoControllWidget(QWidget* parent = 0, IController* controller = 0, IModel* model = 0);
     ~VideoControllWidget();
 
     void setSelectedView(QString str);
 
-    void setVideoViewComboboxModel(QStringListModel *comboboxModel);
+    void setVideoViewComboboxModel(QStringListModel* comboboxModel);
 
     void setTotalNumbFrames(size_t numb);
     void setCurrentFrameNumber(size_t numb);
@@ -31,11 +30,10 @@ public:
     void setVideoControllsStates(QVector<bool> states);
 
 
-public Q_SLOTS:
+  public Q_SLOTS:
     void getNotified();
 
-private Q_SLOTS:
-    void on_sld_video_sliderMoved(int position);
+  private Q_SLOTS:
     void on_DurationChanged(int position);
     void on_PositionChanged(int position);
     void on_button_nextFrame_clicked();
@@ -46,24 +44,22 @@ private Q_SLOTS:
     void on_button_previousFrame_clicked();
 
 
-    void on_comboBoxSelectedView_currentTextChanged(const QString &arg1);
+    void on_comboBoxSelectedView_currentTextChanged(const QString& arg1);
 
 
-private:
-    Ui::VideoControllWidget *ui;
+    void on_sld_video_sliderReleased();
+
+    void on_sld_video_sliderMoved(int position);
+
+  private:
+    Ui::VideoControllWidget* ui;
 
     QIcon m_iconPause;
     QIcon m_iconPlay;
 
-    bool m_Play;
-    bool m_Forw;
-    bool m_Back;
-    bool m_Stop;
-    bool m_Paus;
-
     size_t m_TotalNumbFrames;
-    size_t m_CurrentFrameNumber;
-    double m_fps;
+
+    bool m_Paus;
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H

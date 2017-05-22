@@ -5,10 +5,10 @@
 
 /**
  * This interface class derives from IModelTrackedComponent.
- * Its purpose is to define the interface for a Composite class that takes the responsibility
- * for adding, deleting and returning child objects.
- * This class is part of the Composite Pattern and translates to the abstract Composite class
- * as stated by the GoF.
+ * This class is part of the Composite Pattern and represents the the abstract Composite class.
+ * Its purpose is to define the responsibility
+ * for adding, deleting and returning leaf objects.
+ *
  *
  * Its the Plugin Developers full responsibility to choos an internal data structure. This could be e.g. Map, List or Vector.
  */

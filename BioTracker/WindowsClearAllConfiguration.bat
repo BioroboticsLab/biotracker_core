@@ -27,6 +27,14 @@ DEL *.vcxproj.filters
 DEL *.vcxproj.user
 DEL *.vcxproj
 DEL cmake_install.cmake
+CD Debug 
+DEL *.cpp
+DEL *.h
+CD ..
+CD Release
+DEL *.cpp
+DEL *.h
+CD ..
 RMDIR /S /Q Biotracker_interfaces.dir
 RMDIR /S /Q Biotracker_interfaces_autogen
 RMDIR /S /Q CMakeFiles

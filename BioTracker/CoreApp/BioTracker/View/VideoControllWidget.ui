@@ -2,11 +2,14 @@
 <ui version="4.0">
  <class>VideoControllWidget</class>
  <widget class="QWidget" name="VideoControllWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>775</width>
+    <width>787</width>
     <height>193</height>
    </rect>
   </property>
@@ -200,7 +203,7 @@
       <item>
        <widget class="QPushButton" name="button_screenshot">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="font">
          <font>
@@ -392,7 +395,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>slow</string>

@@ -4,13 +4,11 @@
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
 
-BioTrackerPlugin::BioTrackerPlugin()
-{
+BioTrackerPlugin::BioTrackerPlugin() {
 }
 
-IView *BioTrackerPlugin::getTrackerParameterWidget()
-{
-	return qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->getTrackingParameterWidget();
+IView* BioTrackerPlugin::getTrackerParameterWidget() {
+    return qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->getTrackingParameterWidget();
 }
 IView *BioTrackerPlugin::getTrackerElementsWidget()
 {
@@ -22,8 +20,7 @@ Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 #endif // QT_VERSION < 0x050000
 
 
-void BioTrackerPlugin::createPlugin()
-{
+void BioTrackerPlugin::createPlugin() {
 	m_PluginContext = new PluginContext();
 	m_PluginContext->createApplication();
 
@@ -37,25 +34,21 @@ void BioTrackerPlugin::createPlugin()
 
 }
 
-void BioTrackerPlugin::connectInterfaces()
-{
-    ControllerTrackingAlgorithm *ctrAlg = qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController);
+void BioTrackerPlugin::connectInterfaces() {
+    ControllerTrackingAlgorithm* ctrAlg = qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController);
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
 
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
 }
 
-void BioTrackerPlugin::receiveCvMat(std::shared_ptr<cv::Mat> mat, uint frameNumber)
-{
-    qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->doTracking(mat, frameNumber);
+void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {
+    qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->doTracking(mat, frameNumber);
 }
 
-void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name)
-{
+void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) {
     Q_EMIT emitCvMat(mat, name);
 }
 
-void BioTrackerPlugin::receiveTrackingDone()
-{
+void BioTrackerPlugin::receiveTrackingDone() {
     Q_EMIT emitTrackingDone();
 }
