@@ -126,11 +126,11 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
-    //if(! m_TrackingIsActive)
+    if(! m_TrackingIsActive)
 
 
 
-    end = std::chrono::steady_clock::now();
+        end = std::chrono::steady_clock::now();
     std::cout << "Printing took "
               << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
               << "us.\n";
