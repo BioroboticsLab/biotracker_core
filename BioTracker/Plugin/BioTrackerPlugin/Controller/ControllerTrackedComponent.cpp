@@ -1,5 +1,6 @@
 #include "ControllerTrackedComponent.h"
 #include "Model/TrackedComponents/TrackedElement.h"
+#include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "View/TrackedElementView.h"
 
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -23,12 +24,27 @@ void ControllerTrackedComponent::connectControllerToController()
 
 }
 
+void createTrajectories(int count, TrackedTrajectory* all) {
+	//This should be done using a factory, right?
+
+	for (int i = 0; i < count; i++) {
+		TrackedTrajectory *t = new TrackedTrajectory();
+		TrackedElement *e = new TrackedElement(t, "n.a.", i);
+		e->setId(i);
+		t->add(e);
+		all->add(t);
+	}
+}
+
 void ControllerTrackedComponent::createModel()
 {
-    TrackedElement *elem = new TrackedElement(this, "Hallo");
-    elem->setX(70);
-    elem->setY(90);
+	TrackedTrajectory *t = new TrackedTrajectory(this, "All");
+	createTrajectories(2, t);
+	m_Model = t;
+}
 
-    m_Model = elem;
 
+IView *ControllerTrackedComponent::getTrackingElementsWidget()
+{
+	return m_View;
 }

@@ -58,6 +58,12 @@ void ControllerMainWindow::setTrackerParamterWidget(IView *widget)
     dynamic_cast<MainWindow*>(m_View)->addTrackerParameterView(widget);
 }
 
+void ControllerMainWindow::setTrackerElementsWidget(IView *widget) //MARKER
+{
+	//TODO HAUKE attach this widget to the gvw to achieve auto-painting
+	dynamic_cast<MainWindow*>(m_View)->addTrackerElementsView(widget);
+}
+
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow

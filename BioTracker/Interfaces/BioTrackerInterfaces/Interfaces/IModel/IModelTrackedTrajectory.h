@@ -33,9 +33,14 @@ public:
     virtual void remove(IModelTrackedComponent *comp) = 0;
 
     /**
-     * This shloud simply returns a child object by an index.
+     * This should simply return a child object by an index.
      */
     virtual IModelTrackedComponent* getChild(int index)  = 0;
+
+	/**
+	* This shoudd simply return a last child object (highest index).
+	*/
+	virtual IModelTrackedComponent *getLastChild() = 0;
 
     // ITrackedComponent interface
 public:

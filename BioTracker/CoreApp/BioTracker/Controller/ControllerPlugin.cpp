@@ -27,6 +27,8 @@ void ControllerPlugin::loadPluginFromFileName(QString str)
         //Add Tracker Parameter to Main Window
         ctrMainWindow->setTrackerParamterWidget(m_BioTrackerPlugin->getTrackerParameterWidget());
 
+		//Add Tracker tracked components (Elements) to Main Window
+		ctrMainWindow->setTrackerElementsWidget(m_BioTrackerPlugin->getTrackerElementsWidget()); //MARKER
     }
 }
 

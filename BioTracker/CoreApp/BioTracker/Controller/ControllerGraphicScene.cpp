@@ -34,7 +34,7 @@ void ControllerGraphicScene::createView()
     m_View = new GraphicsView(0, this, m_NullModel);
    // m_ElementView = new TrackedElementView(0, this, m_Element);
 
-   // addGraphicsItem(m_ElementView);
+   //addGraphicsItem(m_ElementView);
 }
 
 void ControllerGraphicScene::connectModelToController()

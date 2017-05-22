@@ -36,6 +36,7 @@ private Q_SLOTS:
 
 private:
     IModel* m_TrackingParameter;
+	IModel *m_TrackedTrajectoryMajor;
 };
 
 #endif // CONTROLLERTRACKINGALGORITHM_H

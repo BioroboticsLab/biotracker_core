@@ -28,6 +28,7 @@ public:
     void add(IModelTrackedComponent *comp) override;
     void remove(IModelTrackedComponent *comp) override;
     IModelTrackedComponent *getChild(int index) override;
+	IModelTrackedComponent *getLastChild() override;
     int numberOfChildrean();
 
 private:

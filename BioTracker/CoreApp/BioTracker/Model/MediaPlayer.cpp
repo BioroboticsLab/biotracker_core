@@ -76,7 +76,6 @@ void MediaPlayer::receiveLoadPictures(std::vector<boost::filesystem::path> files
 void MediaPlayer::receiveLoadCameraDevice(int x)
 {
 	//TODO Andi What about errors? What happens, when the camera can't be opened? Where goes my debug?
-	//What is the default init for the camera? Mine always inits to 640x480px, which is not the max, default or current setting.
     std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState *>::iterator i;

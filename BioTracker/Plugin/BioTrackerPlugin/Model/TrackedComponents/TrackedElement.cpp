@@ -4,63 +4,50 @@
 #include "QBrush"
 #include "QPainter"
 
-TrackedElement::TrackedElement(QObject *parent, QString name) :
+TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
     IModelTrackedComponent(parent),
-    name(name)
+    _name(name),
+	_id(id)
 {
-    x = 100;
-    y = 80;
-    mPressed = false;
+    _pressed = false;
 }
 
 QString TrackedElement::getName()
 {
-    return name;
+    return _name;
 }
 
-void TrackedElement::setX(int val)
+void TrackedElement::setFishPose(FishPose p)
 {
-    x = val;
-    Q_EMIT notifyView();
-
-}
-
-void TrackedElement::setY(int val)
-{
-    y = val;
+    _pose = p;
     Q_EMIT notifyView();
 
 }
 
 void TrackedElement::pressed()
 {
-    mPressed = true;
+	_pressed = true;
     Q_EMIT notifyView();
 
 }
 
 void TrackedElement::notPressed()
 {
-    mPressed = false;
+	_pressed = false;
     Q_EMIT notifyView();
 }
 
-int TrackedElement::getX()
+FishPose TrackedElement::getFishPose()
 {
-    return x;
-}
-
-int TrackedElement::getY()
-{
-    return y;
+    return _pose;
 }
 
 bool TrackedElement::getPressedStatus()
 {
-    return mPressed;
+    return _pressed;
 }
 
 void TrackedElement::operate()
 {
-    qDebug() << "I am TrackedElement " <<  name;
+    qDebug() << "I am TrackedElement " <<  _name;
 }

@@ -12,6 +12,7 @@ public:
 
     void addGraphicsItem(QGraphicsItem *item);
     void addPixmapItem(QGraphicsItem *item);
+	QGraphicsScene *m_GraphicsScene;//MARKER
 
     // IGraphicsView interface
 public Q_SLOTS:
@@ -22,7 +23,6 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    QGraphicsScene *m_GraphicsScene;
 
     QGraphicsItem *m_BackgroundImage;
 

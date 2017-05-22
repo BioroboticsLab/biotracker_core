@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "QCamera"
+#include <QCamera>
 #include "QCameraViewfinder"
 #include "QPointer"
 

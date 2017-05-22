@@ -9,6 +9,7 @@
 #include "CameraDevice.h"
 #include "QPointer"
 #include "QStringListModel"
+#include "View/GraphicsView.h"//MARKER
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,7 @@ public:
 
     void addVideoControllWidget(IView *widget);
     void addVideoView(IView *videoView);
+	void addTrackerElementsView(IView *elemView);
     void addTrackerParameterView(IView *parameter);
     void setTrackerList(QStringListModel *trackerList);
 
@@ -49,7 +51,7 @@ private Q_SLOTS:
 
 private:
     Ui::MainWindow *ui;
-
+	GraphicsView *m_graphView;//MARKER
 
     QPointer< CameraDevice > m_CameraDevice;
 };

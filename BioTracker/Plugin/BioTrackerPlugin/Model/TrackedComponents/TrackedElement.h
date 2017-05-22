@@ -4,6 +4,7 @@
 #include "QGraphicsItem"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
+#include "fish\pose\FishPose.h"
 
 /**
  * This class is an example of how a Tracked Element could be defined.
@@ -16,17 +17,18 @@ class TrackedElement : public IModelTrackedComponent
     Q_OBJECT
 
   public:
-    TrackedElement(QObject *parent = 0, QString name = "n.a.");
+    TrackedElement(QObject *parent = 0, QString name = "n.a.", int id=0);
 
     QString getName();
 
-    void setX(int val);
-    void setY(int val);
+    void setFishPose(FishPose p);
+	void setId(int val) { _id = val; };
+
     void pressed();
     void notPressed();
 
-    int getX();
-    int getY();
+	FishPose getFishPose();
+	int getId() { return _id; };
     bool getPressedStatus();
 
     // ITrackedComponent interface
@@ -34,11 +36,11 @@ public:
     void operate();
 
 private:
-    QString name;
-    int x;
-    int y;
+    QString _name;
+	FishPose _pose;
+	int _id;
 
-    bool mPressed;
+    bool _pressed;
 };
 
 #endif // TRACKEDELEMENT_H

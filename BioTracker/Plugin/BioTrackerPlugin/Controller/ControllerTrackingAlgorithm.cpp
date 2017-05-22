@@ -1,4 +1,5 @@
 #include "ControllerTrackingAlgorithm.h"
+#include "ControllerTrackedComponent.h"
 
 #include "Model/TrackerParameter.h"
 #include "View/TrackerParameterView.h"
@@ -6,12 +7,15 @@
 ControllerTrackingAlgorithm::ControllerTrackingAlgorithm(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {
-
+	m_BioTrackerContext = context;
 }
 
 void ControllerTrackingAlgorithm::connectControllerToController()
 {
+	IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
+	QPointer< ControllerTrackedComponent > ctrComponent = qobject_cast<ControllerTrackedComponent *>(ctr);
 
+	m_TrackedTrajectoryMajor = ctrComponent->getModel();
 }
 
 void ControllerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> mat, uint number)
@@ -26,8 +30,10 @@ IView *ControllerTrackingAlgorithm::getTrackingParameterWidget()
 
 void ControllerTrackingAlgorithm::createModel()
 {
-    m_TrackingParameter = new TrackerParameter(this);
-    m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter);
+	connectControllerToController();
+
+	m_TrackingParameter = new TrackerParameter(this);
+    m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter, m_TrackedTrajectoryMajor);
 }
 
 void ControllerTrackingAlgorithm::createView()

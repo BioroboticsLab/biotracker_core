@@ -48,6 +48,7 @@ Q_SIGNALS:
 
     std::shared_ptr<cv::Mat> m_Mat;
     size_t m_FrameNumber;
+	std::fstream fs;
 
 
 };

@@ -8,6 +8,7 @@
 
 #include "View/GraphicsView.h"
 
+#include "QGraphicsObject"//MARKER
 
 
 
@@ -39,15 +40,23 @@ void MainWindow::addVideoControllWidget(IView *widget)
 
 void MainWindow::addVideoView(IView *videoView)
 {
-    GraphicsView *graphView = dynamic_cast<GraphicsView *>(videoView);
-    graphView->setParent(ui->trackingArea);
-    ui->videoViewLayout->addWidget(graphView);
+    m_graphView = dynamic_cast<GraphicsView *>(videoView);
+    m_graphView->setParent(ui->trackingArea);
+    ui->videoViewLayout->addWidget(m_graphView);
     // gl widget
     //dynamic_cast<BioTracker3VideoView *>(videoView)->setParent(ui->trackingArea);
     //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
 }
 
-void MainWindow::addTrackerParameterView(IView *parameter)
+void MainWindow::addTrackerElementsView(IView *elemView)
+{
+	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
+	graphObj->setParent(ui->trackingArea); //MARKER
+	m_graphView->addGraphicsItem(graphObj);
+	//ui->videoViewLayout->addWidget(graphView);
+}
+
+void MainWindow::addTrackerParameterView(IView *parameter) //MARKER
 {
     dynamic_cast<QWidget*>(parameter)->setParent(this);
 

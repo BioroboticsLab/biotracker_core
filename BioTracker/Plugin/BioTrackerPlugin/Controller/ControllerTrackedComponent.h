@@ -5,8 +5,11 @@
 
 class ControllerTrackedComponent : public IController
 {
+	Q_OBJECT
 public:
     ControllerTrackedComponent(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::COMPONENT);
+
+	IView *getTrackingElementsWidget();
 
     // IController interface
 protected:

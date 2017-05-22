@@ -1,6 +1,8 @@
 #include "BioTrackerPlugin.h"
+#include "PluginContext.h"
 
 #include "Controller/ControllerTrackingAlgorithm.h"
+#include "Controller/ControllerTrackedComponent.h"
 
 BioTrackerPlugin::BioTrackerPlugin()
 {
@@ -8,7 +10,11 @@ BioTrackerPlugin::BioTrackerPlugin()
 
 IView *BioTrackerPlugin::getTrackerParameterWidget()
 {
-    return qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->getTrackingParameterWidget();
+	return qobject_cast<ControllerTrackingAlgorithm *> (m_TrackerController)->getTrackingParameterWidget();
+}
+IView *BioTrackerPlugin::getTrackerElementsWidget()
+{
+	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getTrackingElementsWidget();
 }
 
 #if QT_VERSION < 0x050000
@@ -18,11 +24,14 @@ Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 
 void BioTrackerPlugin::createPlugin()
 {
+	m_PluginContext = new PluginContext();
+	m_PluginContext->createApplication();
 
-    m_TrackerController = new ControllerTrackingAlgorithm(this, 0, ENUMS::CONTROLLERTYPE::TRACKING);
+	IController * ctr = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
+	m_ComponentController = qobject_cast<ControllerTrackedComponent *>(ctr);
 
-    m_TrackerController->createComponents();
-    m_TrackerController->connectComponents();
+	IController * ctr2 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::TRACKING);
+	m_TrackerController = qobject_cast<ControllerTrackingAlgorithm *>(ctr2);
 
     connectInterfaces();
 

@@ -21,7 +21,7 @@ public:
     void deactiveTrackring();
     void setTrackerList(QStringListModel *trackerList);
     void setTrackerParamterWidget(IView* widget);
-
+	void setTrackerElementsWidget(IView *widget);
 
     // IController interface
 protected:

@@ -1,5 +1,6 @@
 #include "TrackedElementView.h"
 #include "Model/TrackedComponents/TrackedElement.h"
+#include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "QBrush"
 #include "QPainter"
 
@@ -20,24 +21,31 @@ QRectF TrackedElementView::boundingRect() const
 
 void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
+	TrackedTrajectory *all = dynamic_cast<TrackedTrajectory *>(getModel());
+	if (!all)
+		return;
 
-    QRectF rec = boundingRect();
+	for (int i = 0; i < all->numberOfChildrean(); i++) {
+		TrackedTrajectory *t = (TrackedTrajectory *)all->getChild(i);
+		TrackedElement *elem = (TrackedElement *)t->getLastChild();
+		int x = elem->getFishPose().position_cm().x;
+		int y = elem->getFishPose().position_cm().y;
+		QRectF rec = QRectF(x, y, 20, 20);
 
-    QBrush brush(Qt::blue);
+		QBrush brush(Qt::blue);
 
-    if(elem->getPressedStatus())
-    {
-        brush.setColor(Qt::red);
-    }
-    else
-    {
-        brush.setColor(Qt::green);
-    }
+		if (elem->getPressedStatus())
+		{
+			brush.setColor(Qt::red);
+		}
+		else
+		{
+			brush.setColor(Qt::green);
+		}
 
-    painter->fillRect(rec,brush);
-    painter->drawRect(rec);
-
+		painter->fillRect(rec, brush);
+		painter->drawRect(rec);
+	}
 }
 
 void TrackedElementView::getNotified()
@@ -47,21 +55,23 @@ void TrackedElementView::getNotified()
 
 void TrackedElementView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+	/*
     TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
 
     elem->pressed();
     update();
 
-    QGraphicsObject::hoverEnterEvent(event);
+    QGraphicsObject::hoverEnterEvent(event);*/
 }
 
 void TrackedElementView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+	/*
     TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
 
     elem->notPressed();
     update();
 
-    QGraphicsObject::hoverLeaveEvent(event);
+    QGraphicsObject::hoverLeaveEvent(event);*/
 }
 

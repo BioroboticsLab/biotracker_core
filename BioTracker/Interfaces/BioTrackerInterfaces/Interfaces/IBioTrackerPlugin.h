@@ -15,7 +15,8 @@ public:
 
     virtual void createPlugin() = 0;
 
-    virtual IView *getTrackerParameterWidget() = 0;
+	virtual IView *getTrackerParameterWidget() = 0;
+	virtual IView *getTrackerElementsWidget() = 0; //MARKER
 
 private:
     virtual void connectInterfaces() = 0;

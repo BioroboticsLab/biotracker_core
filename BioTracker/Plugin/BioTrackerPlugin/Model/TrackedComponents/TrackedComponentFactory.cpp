@@ -20,5 +20,8 @@ IModelTrackedComponent *TrackedComponentFactory::createTrackedElement()
 
 IModelTrackedComponent *TrackedComponentFactory::createTrackedObject()
 {
-    return new TrackedTrajectory();
+	TrackedTrajectory *t	= new TrackedTrajectory();
+	TrackedElement *e		= new TrackedElement(this, "n.a.", 0);
+	t->add(e);
+	return t;
 }

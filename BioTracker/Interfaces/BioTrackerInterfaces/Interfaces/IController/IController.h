@@ -44,7 +44,7 @@ protected:
 protected:
     QPointer< IBioTrackerContext > m_BioTrackerContext;
 
-    IView *m_View;
+	IView *m_View;
     QPointer<IModel> m_Model;
 
     ENUMS::CONTROLLERTYPE m_ControllerType;

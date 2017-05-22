@@ -31,7 +31,12 @@ void TrackedTrajectory::remove(IModelTrackedComponent *comp)
 
 IModelTrackedComponent* TrackedTrajectory::getChild(int index)
 {
-    return m_TrackedComponents.at(index);
+	return m_TrackedComponents.at(index);
+}
+
+IModelTrackedComponent* TrackedTrajectory::getLastChild()
+{
+	return m_TrackedComponents.at(m_TrackedComponents.size()-1);
 }
 
 int TrackedTrajectory::numberOfChildrean()
