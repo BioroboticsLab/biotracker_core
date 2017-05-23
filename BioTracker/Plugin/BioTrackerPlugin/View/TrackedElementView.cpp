@@ -30,6 +30,8 @@ void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 		TrackedElement *elem = (TrackedElement *)t->getLastChild();
 		int x = elem->getFishPose().position_cm().x;
 		int y = elem->getFishPose().position_cm().y;
+		int w = 40;
+		int h = 40;
 		QRectF rec = QRectF(x, y, 20, 20);
 
 		QBrush brush(Qt::blue);
@@ -43,8 +45,16 @@ void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 			brush.setColor(Qt::green);
 		}
 
-		painter->fillRect(rec, brush);
-		painter->drawRect(rec);
+		painter->setBrush(brush);
+		painter->drawEllipse(x-w/2, y-h/2, w, h);
+
+
+		painter->setPen(QPen(Qt::yellow, 5));
+		QLineF angleline;
+		angleline.setP1(QPointF(x, y));
+		angleline.setAngle(elem->getFishPose().orientation_deg());
+		angleline.setLength(80);
+		painter->drawLine(angleline);
 	}
 }
 

@@ -1,6 +1,5 @@
 #include "BioTrackerTrackingAlgorithm.h"
 #include <future>
-#include "fish/NN2dMapper.h"
 #include "TrackedComponents\TrackedComponentFactory.h"
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
@@ -8,6 +7,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 	m_TrackingParameter = (TrackerParameter*)parameter;
 	m_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
 	m_frameCount = 0;
+	_nn2d = new NN2dMapper(m_TrackedTrajectoryMajor);
 }
 
 std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
@@ -38,9 +38,8 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	_bd.setMinBlobSize(m_TrackingParameter->getMinBlobSize());
 	std::vector<BlobPose> blobs = _bd.getPoses(*dilated, *greyMat);
 
-	NN2dMapper nn2d;
 	std::vector<FishPose> fish = getLastPositionsAsPose();
-	std::tuple<std::vector<FishPose>, std::vector<float>> poses = nn2d.getNewPoses(fish, blobs);
+	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(fish, blobs);
 
 	//Insert new poses into data structure
 	if (std::get<0>(poses).size() == m_TrackedTrajectoryMajor->numberOfChildrean()) { //TODO hardcoded

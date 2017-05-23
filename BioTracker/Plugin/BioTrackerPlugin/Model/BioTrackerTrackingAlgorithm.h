@@ -13,6 +13,7 @@
 #include "imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "fish/Fish.h"
+#include "fish/NN2dMapper.h"
 
 
 class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
@@ -39,10 +40,9 @@ private:
 	ImagePreProcessor _ipp;
 	BlobsDetector _bd;
 	std::vector<Fish> m_fishList;
+	NN2dMapper *_nn2d;
 
 	int m_frameCount;
-	std::fstream fs1;
-	std::fstream fs2;
 
 	// background subtraction
 	cv::Ptr<cv::BackgroundSubtractorMOG2> _pMOG;
