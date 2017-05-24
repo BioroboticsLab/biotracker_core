@@ -4,6 +4,8 @@
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
 
+#include "View\TrackedElementView.h"
+
 BioTrackerPlugin::BioTrackerPlugin() {
 }
 
@@ -39,6 +41,11 @@ void BioTrackerPlugin::connectInterfaces() {
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
 
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
+
+	//TODO Hauke I'm not sure if these are the correct partners
+	//BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_TrackerController->getModel());
+	//TrackedElementView *view = (TrackedElementView *)(m_ComponentController->getView());
+	//QObject::connect(view, &TrackedElementView::emitUpdateCornersChanged, trackingAlg, &BioTrackerTrackingAlgorithm::updateCorner);
 }
 
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {

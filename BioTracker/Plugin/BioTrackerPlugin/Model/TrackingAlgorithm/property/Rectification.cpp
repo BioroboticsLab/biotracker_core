@@ -19,10 +19,26 @@ void Rectification::init(double areaHeight_cm, double areaWidth_cm,
 	setupRecitification(frameDisplayWidthPx, frameDisplayHeightPx, camCaptureWidth_px, camCaptureHeight_px);
 }
 
-void Rectification::initRecitification(double areaHeight_cm, double areaWidth_cm, std::vector<cv::Point> areaCoordinates)
+void Rectification::initRecitification(double areaHeight_cm, double areaWidth_cm, TrackedTrajectory* dmodel)//, std::vector<cv::Point> areaCoordinates
 {
-	setArea(areaCoordinates);
+	//setArea(areaCoordinates);
+	_dataModelM = dmodel;
+	setArea();
 	setDimension(areaWidth_cm, areaHeight_cm);
+}
+
+void Rectification::setArea()
+{
+	std::vector<cv::Point> corners;
+	for (int i = 0; i < _dataModelM->numberOfChildrean(); i++) {
+		TrackingRectElement *t = dynamic_cast<TrackingRectElement *>(_dataModelM->getChild(i));
+		if (t) {
+
+			corners.push_back(cv::Point(t->getX(), t->getY()));
+		}
+	}
+
+	setArea(corners);
 }
 
 void Rectification::setupRecitification(int frameDisplayWidthPx, int frameDisplayHeightPx, int camImageWidth, int camImageHeight)

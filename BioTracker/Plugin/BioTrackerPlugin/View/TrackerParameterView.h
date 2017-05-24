@@ -17,8 +17,13 @@ public:
     ~TrackerParameterView();
 
 private slots:
-    void on_pushButton_clicked();
-
+	void on_pushButton_clicked();
+	void on_pushButtonResetBackground_clicked();
+	void on_pushButtonNoFish_clicked();
+	void on_comboBoxSendImage_currentIndexChanged(int v);
+	void on_checkBoxNetwork_stateChanged(int v);
+	void on_checkBoxBackground_stateChanged(int v);
+	
 private:
     Ui::TrackerParameterView *ui;
 

@@ -1,5 +1,6 @@
 #include "ControllerTrackedComponent.h"
 #include "Model/TrackedComponents/TrackedElement.h"
+#include "Model/TrackedComponents/TrackingRectElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "View/TrackedElementView.h"
 
@@ -21,7 +22,6 @@ void ControllerTrackedComponent::connectModelToController()
 
 void ControllerTrackedComponent::connectControllerToController()
 {
-
 }
 
 void createTrajectories(int count, TrackedTrajectory* all) {
@@ -39,7 +39,27 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 void ControllerTrackedComponent::createModel()
 {
 	TrackedTrajectory *t = new TrackedTrajectory(this, "All");
+	
+	//Add default trajectories
 	createTrajectories(2, t);
+
+	//Add rect corners for rectification
+	TrackingRectElement *c1 = new TrackingRectElement(this, "", 0);
+	c1->setX(100);
+	c1->setY(100);
+	t->add(c1);
+	c1 = new TrackingRectElement(this, "", 1);
+	c1->setX(100);
+	c1->setY(1000);
+	t->add(c1);
+	c1 = new TrackingRectElement(this, "", 2);
+	c1->setX(1000);
+	c1->setY(1000);
+	t->add(c1);
+	c1 = new TrackingRectElement(this, "", 3);
+	c1->setX(1000);
+	c1->setY(100);
+	t->add(c1);
 	m_Model = t;
 }
 

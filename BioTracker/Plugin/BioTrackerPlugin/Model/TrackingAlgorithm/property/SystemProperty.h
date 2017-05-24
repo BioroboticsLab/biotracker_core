@@ -9,8 +9,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QString>
 
-#include "property/ParamNames.h"
-#include "property/Param.h"
+#include "Model/TrackingAlgorithm/property/ParamNames.h"
+#include "Model/TrackingAlgorithm/property/Param.h"
 
 class SystemProperty
 {
@@ -28,7 +28,7 @@ public:
 	*/
 	~SystemProperty() {}
 
-	static const int DISPLAYWINDOWWIDTH = 640;
+	static const int DISPLAYWINDOWWIDTH = 640; //TODO IMPORTANT EVIL!
 	static const int DISPLAYWINDOWHEIGHT = 480;
 
 private:

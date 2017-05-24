@@ -1,8 +1,8 @@
 #pragma once
 
-#include "imageProcessor/detector/IDetector.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/IDetector.h"
 
-#include "imageProcessor/detector/contour/ContourPose.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/contour/ContourPose.h"
 
 class ContoursDetector : public IDetector<ContourPose>
 {

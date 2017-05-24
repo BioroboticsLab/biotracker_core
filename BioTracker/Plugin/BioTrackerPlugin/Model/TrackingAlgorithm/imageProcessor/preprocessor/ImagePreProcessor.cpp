@@ -190,12 +190,6 @@ std::map<std::string, std::shared_ptr<cv::Mat>> ImagePreProcessor::preProcess(st
 	// 4. step: dilate the image
 	*dilatedImage = dilate(*erodedImage);
 
-	/*
-	Q_EMIT emitCvMatA(m_backgroundImage, QString("Background"));
-	Q_EMIT emitCvMatA(m_foregroundImage, QString("Foreground"));
-	Q_EMIT emitCvMatA(binarizedImage, QString("Binarized"));
-	Q_EMIT emitCvMatA(erodedImage, QString("Eroded"));
-	Q_EMIT emitCvMatA(dilatedImage, QString("Dilated"));*/
 	std::map<std::string, std::shared_ptr<cv::Mat>> all;
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Greyscale"), greyMat));
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Background"), m_backgroundImage));

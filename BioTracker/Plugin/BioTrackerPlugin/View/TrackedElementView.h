@@ -20,16 +20,24 @@ public:
 
     // IViewTrackedComponent interface
 public Q_SLOTS:
-    void getNotified() override;
+	void getNotified() override;
+
+public Q_SIGNAL:
+	void emitUpdateCornersChanged(int id, int relX, int relY);
 
 private:
     QRectF m_boundingRect;
 
-
+	std::map<int, std::shared_ptr<QGraphicsRectItem>> _rectification;
+	QGraphicsItem *_watchingDrag;
+	int _dragX;
+	int _dragY;
 
     // QGraphicsItem interface
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+	bool sceneEventFilter(QGraphicsItem * watched, QEvent * event) override;
+	bool eventFilter(QObject * target, QEvent * event) override;
+	void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 };

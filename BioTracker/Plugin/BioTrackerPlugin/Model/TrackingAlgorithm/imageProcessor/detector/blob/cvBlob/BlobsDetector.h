@@ -1,9 +1,9 @@
 #pragma once
 
-#include "imageProcessor/detector/IDetector.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/IDetector.h"
 
-#include "imageProcessor/detector/blob/BlobPose.h"
-#include "imageProcessor/cvblobs/BlobResult.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/blob/BlobPose.h"
+#include "Model/TrackingAlgorithm/imageProcessor/cvblobs/BlobResult.h"
 
 class BlobsDetector : public IDetector<BlobPose>
 {

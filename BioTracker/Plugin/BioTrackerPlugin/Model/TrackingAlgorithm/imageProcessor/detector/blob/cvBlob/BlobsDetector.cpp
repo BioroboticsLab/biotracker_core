@@ -43,11 +43,11 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 		cv::Point blobPose_px = cv::Point(x, y);		
 
 		// apply homography
-		cv::Point2f blobPose_cm = blobPose_px;//Rectification::instance().pxToCm(blobPose_px);
+		cv::Point2f blobPose_cm = Rectification::instance().pxToCm(blobPose_px);
 
 		// ignore blobs outside the tracking area
-		//if (!Rectification::instance().inArea(blobPose_cm))
-		//	continue;
+		if (!Rectification::instance().inArea(blobPose_cm))
+			continue;
 		//TODO Important Fix up rectification!
 
 		float blobPose_angle_deg = currentBlob->GetEllipse().angle;

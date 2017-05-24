@@ -1,10 +1,9 @@
 #pragma once
 
-#include "imageProcessor/detector/IDetector.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/IDetector.h"
 
-#include "imageProcessor/detector/blob/BlobPose.h"
-//#include "vendor/opencvblobslib/library/BlobResult.h"
-#include "imageProcessor/cvblobs/BlobResult.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/blob/BlobPose.h"
+#include "Model/TrackingAlgorithm/imageProcessor/cvblobs/BlobResult.h"
 
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"

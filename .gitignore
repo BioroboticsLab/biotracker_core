@@ -78,3 +78,6 @@ CMakeFiles
 /BioTracker/Plugin/BioTrackerPlugin/BioTrackerPlugin.pro.user.b485f2d
 /BioTracker/CoreApp/BioTracker/BioTracker.pro.user.b485f2d
 /BioTracker/Plugin/BioTrackerPlugin/BioTrackerPlugin.pro.user.b485f2d
+/BioTracker/x64/Debug/ALL_BUILD/*.cache
+/BioTracker/x64/Release/ALL_BUILD/*.cache
+/BioTracker/CoreApp/BioTracker/TrackingOutput.txt

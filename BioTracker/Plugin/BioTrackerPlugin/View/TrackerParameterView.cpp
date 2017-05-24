@@ -1,13 +1,15 @@
 #include "TrackerParameterView.h"
 #include "ui_TrackerParameterView.h"
 
+#include <iostream>
+
 TrackerParameterView::TrackerParameterView(QWidget *parent, IController *controller, IModel *model) :
     IViewWidget(parent, controller, model),
     ui(new Ui::TrackerParameterView)
 {
     ui->setupUi(this);
 
-	ui->lineEdit->setValidator(new QIntValidator(this));
+	//ui->lineEdit->setValidator(new QIntValidator(this));
 	ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
 	ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
 	ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
@@ -15,9 +17,9 @@ TrackerParameterView::TrackerParameterView(QWidget *parent, IController *control
 	ui->lineEdit_6_MogThresh->setValidator(new QIntValidator(this));
 	ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
 	ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
+	ui->lineEditNoFish->setValidator(new QIntValidator(this));
 
-	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));
-	
+	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));	
 	
     getNotified();
 }
@@ -27,9 +29,36 @@ TrackerParameterView::~TrackerParameterView()
     delete ui;
 }
 
+
+void TrackerParameterView::on_pushButtonResetBackground_clicked() {
+	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
+	parameter->setResetBackground(true);
+}
+
+void TrackerParameterView::on_comboBoxSendImage_currentIndexChanged(int v) {
+	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
+	parameter->setSendImage(v);
+}
+
+void TrackerParameterView::on_checkBoxNetwork_stateChanged(int v) {
+	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
+	parameter->setDoNetwork(v);
+}
+
+void TrackerParameterView::on_checkBoxBackground_stateChanged(int v) {
+	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
+	parameter->setDoBackground(v);
+}
+
+void TrackerParameterView::on_pushButtonNoFish_clicked() {
+	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
+	int noFish = ui->lineEditNoFish->text().toInt();
+	parameter->setNoFish(noFish);
+}
+
 void TrackerParameterView::on_pushButton_clicked()
 {
-	int threshold = ui->lineEdit->text().toInt();
+	//int threshold = ui->lineEdit->text().toInt();
 	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
 	//parameter->setThreshold(threshold);
 
@@ -40,18 +69,18 @@ void TrackerParameterView::on_pushButton_clicked()
 	int setmog2VarThresh = ui->lineEdit_6_MogThresh->text().toInt();
 	int setMinBlobSize = ui->lineEdit_8_MinBlob->text().toInt();
 	int setMaxBlobSize = ui->lineEdit_9MaxBlob->text().toInt();
-	
+		
 	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->text().toDouble();
 
-	parameter->setAll(threshold, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh, 
+	parameter->setAll(0, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh, 
 		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize);
 }
 
 void TrackerParameterView::getNotified()
 {
     TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-	int threshold = parameter->getThreshold();
-	ui->lineEdit->setText(QString::number(threshold));
+	//int threshold = parameter->getThreshold();
+	//ui->lineEdit->setText(QString::number(threshold));
 
 	int val = parameter->getBinarizationThreshold();
 	ui->lineEdit_2_binThresh->setText(QString::number(val));

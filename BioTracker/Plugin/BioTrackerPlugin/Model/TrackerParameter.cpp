@@ -12,6 +12,11 @@ TrackerParameter::TrackerParameter(QObject *parent) :
 	m_mog2BackgroundRatio = 0.05;
 	m_MinBlobSize = 40;
 	m_MaxBlobSize = 999999;
+	m_doBackground = true;
+	m_doNetwork = false;
+	m_sendImage = 0; //Send no image
+	m_resetBackground = false;
+	m_noFish = 2;
 
     Q_EMIT notifyView();
 }

@@ -12,8 +12,15 @@ float dif(float a, float b) {
 NN2dMapper::NN2dMapper(TrackedTrajectory *tree) {
 	_tree = tree;
 
-	for (int i=0; i<_tree->numberOfChildrean(); i++)
-		_mapLastConfidentAngle.insert(std::pair<int, float>(i, std::numeric_limits<float>::quiet_NaN()));
+	//Looks kinda complicated but is a rather simple thing:
+	//For every true trajectory below the tree's root (which are in fact, fish trajectories in out case)
+	//we want to arr a last confident angle to the map.
+	for (int i = 0; i < _tree->numberOfChildrean(); i++)
+	{
+		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_tree->getChild(i));
+		if (t)
+			_mapLastConfidentAngle.insert(std::pair<int, float>(i, std::numeric_limits<float>::quiet_NaN()));
+	}
 }
 
 std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(const std::vector<FishPose> &fishPoses, std::vector<BlobPose> blobPoses) {

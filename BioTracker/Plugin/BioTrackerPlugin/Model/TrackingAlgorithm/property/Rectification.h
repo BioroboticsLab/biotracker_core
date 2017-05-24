@@ -3,6 +3,8 @@
 #include <opencv2/opencv.hpp>
 #include <QtCore/QList>
 #include <QtCore/QPoint>
+#include "Model\TrackedComponents\TrackedTrajectory.h"
+#include "Model\TrackedComponents\TrackingRectElement.h"
 
 /**
  *	Rectification class normalizing the tracking image
@@ -43,6 +45,8 @@ public:
 	int captureWidth_px() const { return _camCaptureWidth_px; }
 	int captureHeight_px() const { return _camCaptureHeight_px; }
 
+	void setDataModel(TrackedTrajectory* t);
+
 	bool inArea(cv::Point2f point_cm) const;
 
 	/**
@@ -66,6 +70,9 @@ public:
 	 * @return: void.
 	 */
 	void setArea(std::vector<cv::Point> areaCoordinates) { _areaCoordinates = areaCoordinates; }
+	
+	//infers the area coordinates from the data model
+	void setArea();
 	void resetAreaCoordinates();
 
 	/**
@@ -78,7 +85,7 @@ public:
 
 	void setCamImageSize(cv::Size size) { _camCaptureWidth_px = size.width; _camCaptureHeight_px = size.height; }
 
-	void initRecitification(double areaHeight_cm, double areaWidth_cm, std::vector<cv::Point> areaCoordinates);
+	void initRecitification(double areaHeight_cm, double areaWidth_cm, TrackedTrajectory* dmodel);
 	void setupRecitification(int frameDisplayWidthPx, int frameDisplayHeightPx, int camImageWidth, int camImageHeight);
 
 	std::vector<cv::Point> area() const { return _areaCoordinates; }
@@ -97,6 +104,9 @@ public:
 	cv::Mat   getSortedPoints();
 
 private: 
+	//Holds the actual corner points below it's root
+	TrackedTrajectory *_dataModelM;
+
 	std::vector<cv::Point> _areaCoordinates;
 	std::vector<cv::Point2f> _rectifiedAreaCoordinates;
 

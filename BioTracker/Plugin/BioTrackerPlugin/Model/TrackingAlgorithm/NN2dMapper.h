@@ -3,10 +3,10 @@
 #include <cv.h>
 #include <highgui.h>
 #include <chrono>
-#include <fish\pose\FishPose.h>
+#include "Model/TrackedComponents/pose/FishPose.h"
 #include <Model\TrackedComponents\TrackedElement.h>
 #include <Model\TrackedComponents\TrackedTrajectory.h>
-#include "imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
+#include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 
 class NN2dMapper
 {

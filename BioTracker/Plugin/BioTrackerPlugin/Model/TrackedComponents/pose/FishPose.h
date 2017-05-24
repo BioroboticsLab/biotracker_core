@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fish/pose/IPose.h"
+#include "Model\TrackedComponents\pose\IPose.h"
 #include <time.h>
 #include <opencv2/opencv.hpp>
 

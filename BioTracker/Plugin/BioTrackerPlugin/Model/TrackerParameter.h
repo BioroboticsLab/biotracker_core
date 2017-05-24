@@ -60,6 +60,36 @@ public:
 		Q_EMIT notifyView();
 	};
 
+	bool getDoBackground() { return m_doBackground; };
+	void setDoBackground(bool x) {
+		m_doBackground = x;
+		Q_EMIT notifyView();
+	};
+
+	bool getDoNetwork() { return m_doNetwork; };
+	void setDoNetwork(bool x) {
+		m_doNetwork = x;
+		Q_EMIT notifyView();
+	};
+
+	int getSendImage() { return m_sendImage; };
+	void setSendImage(int x) {
+		m_sendImage = x;
+		Q_EMIT notifyView();
+	};
+
+	bool getResetBackground() { return m_resetBackground; };
+	void setResetBackground(bool x) {
+		m_resetBackground = x;
+		Q_EMIT notifyView();
+	};
+
+	int getNoFish() { return m_noFish; };
+	void setNoFish(int x) {
+		m_noFish = x;
+		Q_EMIT notifyView();
+	};
+
 
 	void setAll(
 		int Threshold,
@@ -96,6 +126,12 @@ private:
 	double m_mog2BackgroundRatio;
 	int m_MinBlobSize;
 	int m_MaxBlobSize;
+
+	bool m_doNetwork;
+	bool m_doBackground;
+	int m_sendImage;
+	bool m_resetBackground;
+	int m_noFish;
 };
 
 #endif // TRACKERPARAMETER_H
