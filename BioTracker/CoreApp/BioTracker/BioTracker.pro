@@ -24,6 +24,8 @@ LIBS += -L/usr/include/boost  -lboost_filesystem
 
 INCLUDEPATH += /usr/local/include/opencv
 LIBS += -L/usr/local/lib \
+-lopencv_imgcodecs\
+-lopencv_videoio\
 -lopencv_core \
 -lopencv_imgproc \
 -lopencv_highgui \

@@ -50,7 +50,7 @@ public:
     * @param: value, the reference return value.
     * @return the value of the variable.
     */
-    template<typename T> T get(const std::string attrName, T &value = T);
+    template<typename T> T get(const std::string attrName, T &value);
 
 	/**
     * This dynamic generic Setter-function sets the value for a provided variable.

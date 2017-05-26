@@ -3,8 +3,8 @@
 #include <cv.h>
 #include <highgui.h>
 #include <chrono>
-#include <fish\pose\FishPose.h>
-#include <Model\TrackedComponents\TrackedElement.h>
+#include <fish/pose/FishPose.h>
+#include <Model/TrackedComponents/TrackedElement.h>
 #include "imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 
 class NN2dMapper
@@ -26,7 +26,7 @@ public:
 	 * @param: fishPoses, a fish pose list need for mapping.
 	 * @return: a mapped fish list.
 	 */
-	std::vector<TrackedElement> map(std::vector<TrackedElement> fishes, std::vector<FishPose> fishPoses, cv::Mat& frame = cv::Mat(), std::deque<cv::Mat>& oldFrames = std::deque<cv::Mat>());
+        std::vector<TrackedElement> map(std::vector<TrackedElement> fishes, std::vector<FishPose> fishPoses, const cv::Mat& frame = cv::Mat(), const std::deque<cv::Mat>& oldFrames = std::deque<cv::Mat>());
 
 protected:
 
@@ -39,7 +39,7 @@ protected:
 	 * @param: oldImgs, a list of old images.
 	 * @return: the remapped fish list.
 	 */
-	std::vector<TrackedElement> remap(std::vector<int> problemFishIds, std::vector<TrackedElement> mappedFishList, std::vector<TrackedElement> oldFishList, cv::Mat& frame = cv::Mat(), std::deque<cv::Mat>& oldFrames = std::deque<cv::Mat>());
+        std::vector<TrackedElement> remap(std::vector<int> problemFishIds, std::vector<TrackedElement> mappedFishList, std::vector<TrackedElement> oldFishList, const cv::Mat& frame = cv::Mat(), const std::deque<cv::Mat>& oldFrames = std::deque<cv::Mat>());
 
 	/**
 	 * Verify the mapping, whether a certain cretia accept the right mapping.
@@ -63,7 +63,7 @@ protected:
 	* @param: fishPoses, all possible available poses.
 	* @return: the nearest pose.
 	*/
-	int NN2dMapper::getNearestIndexFromFishPoses(TrackedElement fish, std::vector<FishPose> fishPoses);
+        int getNearestIndexFromFishPoses(TrackedElement fish, std::vector<FishPose> fishPoses);
 
 	/**
 	 * This function is a recursive function, which tries to find the really nearest fish

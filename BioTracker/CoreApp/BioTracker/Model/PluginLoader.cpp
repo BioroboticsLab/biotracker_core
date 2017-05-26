@@ -25,9 +25,13 @@ bool PluginLoader::loadPluginFromFilename(QString filename) {
 
         m_PluginLoader->setFileName(filename);
 
+        retval = m_PluginLoader->load();
+
+        qDebug() << m_PluginLoader->errorString();
+
         readMetaDataFromPlugin();
 
-        retval = true;
+
     } else {
         retval = false;
     }

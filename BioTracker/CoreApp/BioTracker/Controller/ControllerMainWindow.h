@@ -11,7 +11,7 @@
 #include "Interfaces/IController/IController.h"
 #include "QPointer"
 #include "QStringListModel"
-#include "boost\filesystem.hpp"
+#include "boost/filesystem.hpp"
 #include <vector>
 
 /**
@@ -56,7 +56,7 @@ class ControllerMainWindow : public IController {
      * Embeds the Parameter Widget devined in the BioTracker Plugins into the MainWindow Widget.
      */
     void setTrackerParamterWidget(IView* widget);
-	void setTrackerElementsWidget(IView *widget);
+    void setTrackerElementsWidget(IView* widget);
 
     void deactiveTrackringCheckBox();
     void activeTrackingCheckBox();
