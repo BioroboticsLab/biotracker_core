@@ -210,7 +210,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	for (int i=start+1; i<t->numberOfChildrean(); i++)
 	{
 		TrackedElement* ecur = (TrackedElement*)t->getChild(i);
-		cv::Point2f &currentPoint = ecur->getFishPose().position_cm();
+		cv::Point2f currentPoint = ecur->getFishPose().position_cm();
 		const cv::Point2f oneStepDerivative = nextPoint - currentPoint;
 
 		positionDerivative += currentWeight * oneStepDerivative;

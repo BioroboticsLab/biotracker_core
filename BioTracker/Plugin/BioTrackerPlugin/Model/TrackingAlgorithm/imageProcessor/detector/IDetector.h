@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Model/TrackedComponents/pose/FishPose.h"
-#include "Model/TrackingAlgorithm/property/SystemProperty.h"
+//#include "Model/TrackingAlgorithm/property/SystemProperty.h"
 #include "Model/TrackingAlgorithm/property/Rectification.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/BlobPose.h"
 

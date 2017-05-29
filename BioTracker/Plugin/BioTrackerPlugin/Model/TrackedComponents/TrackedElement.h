@@ -4,7 +4,7 @@
 #include "QGraphicsItem"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
-#include "Model\TrackedComponents\pose\FishPose.h"
+#include "Model/TrackedComponents/pose/FishPose.h"
 
 /**
  * This class is an example of how a TrackedComponent could be defined.
