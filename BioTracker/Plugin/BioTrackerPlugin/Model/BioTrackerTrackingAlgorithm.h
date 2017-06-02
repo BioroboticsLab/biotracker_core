@@ -32,6 +32,7 @@ public Q_SLOTS:
 
 private:
 	std::vector<FishPose> getLastPositionsAsPose();
+	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
 

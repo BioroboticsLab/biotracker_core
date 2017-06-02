@@ -15,11 +15,14 @@ NN2dMapper::NN2dMapper(TrackedTrajectory *tree) {
 	//Looks kinda complicated but is a rather simple thing:
 	//For every true trajectory below the tree's root (which are in fact, fish trajectories in out case)
 	//we want to arr a last confident angle to the map.
+	int cid = 0;
 	for (int i = 0; i < _tree->numberOfChildrean(); i++)
 	{
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_tree->getChild(i));
-		if (t)
-			_mapLastConfidentAngle.insert(std::pair<int, float>(i, std::numeric_limits<float>::quiet_NaN()));
+		if (t){
+			_mapLastConfidentAngle.insert(std::pair<int, float>(cid, std::numeric_limits<float>::quiet_NaN()));
+			cid++;
+		}
 	}
 }
 
@@ -192,10 +195,22 @@ bool NN2dMapper::correctAngle(int trackid, FishPose &pose)
 	return false;
 }
 
+TrackedTrajectory* getChildOfType(TrackedTrajectory* tree, int tid) {
+	int cid = 0;
+	for (int i = 0; i < tree->numberOfChildrean(); i++) {
+		TrackedTrajectory* t = dynamic_cast<TrackedTrajectory*>(tree->getChild(i));
+		if (t && cid==tid) {
+			return t;
+		}else if (t)
+			cid++;
+	}
+	return 0;
+}
+
 float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 {
 	//Get corresponding trajectory
-	TrackedTrajectory* t = (TrackedTrajectory*)_tree->getChild(trackid);
+	TrackedTrajectory* t = getChildOfType((TrackedTrajectory*)_tree, trackid);
 
 	// can't give estimate if not enough poses available
 	if (t->numberOfChildrean() < 3) return std::numeric_limits<float>::quiet_NaN();

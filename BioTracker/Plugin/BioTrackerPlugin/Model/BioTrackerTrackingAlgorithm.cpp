@@ -46,6 +46,29 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 	return last;
 }
 
+void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
+
+	std::vector<FishPose> last;
+	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
+		if (t) {
+			t->clear();
+			if (!_TrackedTrajectoryMajor->remove(t)) {
+				std::cout << "ERROR: Could not remove trajectory." << std::endl;
+			}
+			i = -1;
+		}
+	}
+
+	for (int i = 0; i < noFish; i++) {
+		TrackedTrajectory *t = new TrackedTrajectory();
+		TrackedElement *e = new TrackedElement(t, "n.a.", i);
+		e->setId(i);
+		t->add(e);
+		_TrackedTrajectoryMajor->add(t);
+	}
+}
+
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
 	_ipp.m_TrackingParameter = _TrackingParameter;
@@ -54,6 +77,8 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//The user changed the # of fish. Reset the history and start over!
 	if (_noFish != _TrackingParameter->getNoFish()) {
 		_noFish = _TrackingParameter->getNoFish(); 
+		resetFishHistory(_noFish);
+		_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	}
 
 	//Do the preprocessing
@@ -83,20 +108,19 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
 	//Insert new poses into data structure
 	//if (std::get<0>(poses).size() == _TrackedTrajectoryMajor->numberOfChildrean()) { //TODO hardcoded
-		for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
-			TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
-			if (t) {
-
-				TrackedElement *e = new TrackedElement(t, "n.a.", i);
-				e->setFishPose(std::get<0>(poses)[i]);
-				t->add(e);
-
-				_ofs << i << "," << std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch()).count()
-					<< std::get<0>(poses)[i].position_cm().x << "," << std::get<0>(poses)[i].position_cm().y << ","
-					<< std::get<0>(poses)[i].orientation_deg() << "," << std::get<0>(poses)[i].orientation_rad() << ",";
-
-			}
+	int trajNumber = 0;
+	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
+		if (t) {
+			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
+			e->setFishPose(std::get<0>(poses)[trajNumber]);
+			t->add(e);
+			_ofs << i << "," << std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch()).count()
+				<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
+				<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
+			trajNumber++;
 		}
+	}
 	//}
 	//else {
 	//	std::cout << "Error: did not track expected size! Size is: " << std::get<1>(poses).size() << std::endl;

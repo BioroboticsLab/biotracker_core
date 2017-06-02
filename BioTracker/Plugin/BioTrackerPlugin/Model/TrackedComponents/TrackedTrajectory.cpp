@@ -24,9 +24,14 @@ void TrackedTrajectory::add(IModelTrackedComponent *comp)
     m_TrackedComponents.append(comp);
 }
 
-void TrackedTrajectory::remove(IModelTrackedComponent *comp)
+bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
 {
-    m_TrackedComponents.removeOne(comp);
+	return m_TrackedComponents.removeOne(comp);
+}
+
+void TrackedTrajectory::clear()
+{
+	m_TrackedComponents.clear();
 }
 
 IModelTrackedComponent* TrackedTrajectory::getChild(int index)

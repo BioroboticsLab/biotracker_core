@@ -27,10 +27,15 @@ public:
      */
     virtual void add(IModelTrackedComponent *comp) = 0;
 
-    /**
-     * This methode must be implemented by all derivatives. Its functionality shall be a mechanism for removing Leaf components from this structure.
-     */
-    virtual void remove(IModelTrackedComponent *comp) = 0;
+	/**
+	* This methode must be implemented by all derivatives. Its functionality shall be a mechanism for removing Leaf components from this structure.
+	*/
+	virtual bool remove(IModelTrackedComponent *comp) = 0;
+
+	/**
+	* This methode must be implemented by all derivatives. Its functionality shall be a mechanism for removing all Leaf components from this structure.
+	*/
+	virtual void clear() = 0;
 
     /**
      * This should simply return a child object by an index.

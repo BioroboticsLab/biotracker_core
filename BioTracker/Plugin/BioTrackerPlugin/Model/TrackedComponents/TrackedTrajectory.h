@@ -26,7 +26,8 @@ public:
     // ITrackedObject interface
 public:
     void add(IModelTrackedComponent *comp) override;
-    void remove(IModelTrackedComponent *comp) override;
+	bool remove(IModelTrackedComponent *comp) override;
+	void clear() override;
     IModelTrackedComponent *getChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
     int numberOfChildrean();
