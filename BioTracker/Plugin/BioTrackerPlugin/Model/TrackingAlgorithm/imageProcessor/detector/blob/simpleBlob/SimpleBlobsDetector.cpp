@@ -15,8 +15,8 @@ void SimpleBlobsDetector::initParams()
 
 	_params.filterByArea = true;
 	// blobs bigger than the provided blob size
-	_params.minArea = SystemProperty::instance().getValueOfParam<double>(TRACKERPARAM::MIN_BLOB_SIZE);
-	_params.maxArea = SystemProperty::instance().getValueOfParam<double>(TRACKERPARAM::MAX_BLOB_SIZE);
+	_params.minArea = 1;//SystemProperty::instance().getValueOfParam<double>(TRACKERPARAM::MIN_BLOB_SIZE);
+	_params.maxArea = 999999;//SystemProperty::instance().getValueOfParam<double>(TRACKERPARAM::MAX_BLOB_SIZE);
 
 	//_params.filterByConvexity = true;	
 	//_params.minConvexity = SystemProperty::instance().getValueOfParam<double>(TRACKERPARAM::MIN_BLOB_SIZE);
@@ -94,13 +94,13 @@ std::vector<BlobPose> SimpleBlobsDetector::getPoses(cv::Mat& binarized_image_mat
 
 void SimpleBlobsDetector::setDouble(std::string spec_param, double value)
 {	
-	if(spec_param.compare(TRACKERPARAM::MIN_BLOB_SIZE) == 0) {
+	if(spec_param.compare("1") == 0) { //TRACKERPARAM::MIN_BLOB_SIZE
 		_params.minArea = value;
 	} else {
 		std::cout << "SimpleBlobsDetector::Warning - Parameter: " << spec_param << " not found!" << std::endl;
 	}
 
-	if(spec_param.compare(TRACKERPARAM::MAX_BLOB_SIZE) == 0) {
+	if(spec_param.compare("999999") == 0) { //TRACKERPARAM::MAX_BLOB_SIZE
 		_params.maxArea = value;
 	} else {
 		std::cout << "SimpleBlobsDetector::Warning - Parameter: " << spec_param << " not found!" << std::endl;

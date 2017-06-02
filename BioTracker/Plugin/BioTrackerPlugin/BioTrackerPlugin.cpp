@@ -4,7 +4,7 @@
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
 
-#include "View\TrackedElementView.h"
+#include "View/TrackedElementView.h"
 
 BioTrackerPlugin::BioTrackerPlugin() {
 }

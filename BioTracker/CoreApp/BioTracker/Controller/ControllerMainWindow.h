@@ -11,7 +11,7 @@
 #include "Interfaces/IController/IController.h"
 #include "QPointer"
 #include "QStringListModel"
-#include "boost\filesystem.hpp"
+#include "boost/filesystem.hpp"
 #include <vector>
 
 /**

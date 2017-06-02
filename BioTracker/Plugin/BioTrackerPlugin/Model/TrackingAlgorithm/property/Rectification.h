@@ -3,8 +3,8 @@
 #include <opencv2/opencv.hpp>
 #include <QtCore/QList>
 #include <QtCore/QPoint>
-#include "Model\TrackedComponents\TrackedTrajectory.h"
-#include "Model\TrackedComponents\TrackingRectElement.h"
+#include "Model/TrackedComponents/TrackedTrajectory.h"
+#include "Model/TrackedComponents/TrackingRectElement.h"
 
 /**
  *	Rectification class normalizing the tracking image

@@ -1,9 +1,9 @@
 #include "BioTrackerTrackingAlgorithm.h"
 #include <future>
-#include "TrackedComponents\TrackedComponentFactory.h"
+#include "TrackedComponents/TrackedComponentFactory.h"
 #include <chrono>
 
-#include "Model\TrackedComponents\TrackingRectElement.h"
+#include "Model/TrackedComponents/TrackingRectElement.h"
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
 {

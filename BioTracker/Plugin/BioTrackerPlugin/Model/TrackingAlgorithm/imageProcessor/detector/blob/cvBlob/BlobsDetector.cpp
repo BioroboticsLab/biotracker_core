@@ -25,9 +25,13 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 	std::vector<BlobPose> blobPoses;
 
 	IplImage iplBinImage(processedImage);
+	IplImage *img = 0;
+	if (_mask)
+		img = new IplImage(*_mask);
 
 	CBlob *currentBlob;
-	CBlobResult blobs(&iplBinImage, (_mask ? &IplImage(*_mask) : nullptr), 0);
+	CBlobResult blobs(&iplBinImage, img, 0);
+	delete img;
 
 	// filter the blobs by size criteria
 	filterBlobsBySize(blobs);	
@@ -70,10 +74,10 @@ std::vector<BlobPose> BlobsDetector::getPoses(cv::Mat& processedImage, cv::Mat& 
 
 void BlobsDetector::setDouble(std::string spec_param, double value)
 {	
-	if(spec_param.compare(TRACKERPARAM::MIN_BLOB_SIZE) == 0) {
+	if(spec_param.compare("1") == 0) {
 		this->setMinBlobSize(value);
 	}
-	else if (spec_param.compare(TRACKERPARAM::MAX_BLOB_SIZE) == 0) {
+	else if (spec_param.compare("999999") == 0) {
 		this->setMaxBlobSize(value);
 	}
 	else {

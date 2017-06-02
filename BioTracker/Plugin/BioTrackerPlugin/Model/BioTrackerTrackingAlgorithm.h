@@ -13,6 +13,8 @@
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "Model/TrackingAlgorithm/imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
+#include <iostream>
+#include <fstream>
 
 
 class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm

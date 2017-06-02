@@ -1,8 +1,9 @@
 #include "IDetector.h"
 
 #include "helper/CvHelper.h"
+template <typename T>
 
-std::vector<FishPose> IDetector<BlobPose>::convertBlobPosesToFishPoses(std::vector<BlobPose> blobPoses)
+std::vector<FishPose> IDetector<T>::convertBlobPosesToFishPoses(std::vector<BlobPose> blobPoses)
 {
 	std::vector<FishPose> fishPoses;
 	fishPoses.reserve(blobPoses.size());

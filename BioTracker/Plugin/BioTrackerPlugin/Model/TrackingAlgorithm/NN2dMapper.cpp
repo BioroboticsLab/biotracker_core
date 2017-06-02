@@ -23,6 +23,15 @@ NN2dMapper::NN2dMapper(TrackedTrajectory *tree) {
 	}
 }
 
+// Functor to compare by the Mth element, as per https://stackoverflow.com/questions/23030267/custom-sorting-a-vector-of-tuples
+struct TupleCompare
+{
+	bool operator()(std::tuple<float, FishPose> a, std::tuple<float, FishPose> b) const {
+		return std::get<0>(a) > std::get<0>(b);
+	}
+
+};
+
 std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(const std::vector<FishPose> &fishPoses, std::vector<BlobPose> blobPoses) {
 	/* The algorithm seems kinda inefficient, as there is many fish*blobs and fish*fish loops.
 	 * But as N is expected to be pretty small (<10 for fish, <20 for blobs) this seems feasible.
@@ -30,54 +39,51 @@ std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(co
 	std::vector<FishPose> blobs = convertBlobPosesToFishPoses(blobPoses);
 	int sizeF = fishPoses.size(); 
 	int sizeB = blobs.size();
-	std::vector<std::vector<float>> propMap;
+	std::vector<std::vector<std::tuple<float, FishPose>>> propMap;
 	
-	//Create propability matrix
+	//Create propability matrix and sort it
 	for (int i = 0; i < sizeF ; i++) {
-		std::vector<float> currentFish;
+		std::vector<std::tuple<float, FishPose>> currentFish;
 		for (int j = 0; j < sizeB ; j++) {
-			currentFish.push_back(FishPose::calculateProbabilityOfIdentity(fishPoses[i], blobs[j]));
+			currentFish.push_back(std::tuple<float, FishPose>(FishPose::calculateProbabilityOfIdentity(fishPoses[i], blobs[j]), blobs[j]));
 		}
+		std::sort(begin(currentFish), end(currentFish), TupleCompare());
 		propMap.push_back(currentFish);
 	}
 
-	//Walk through all the fish and find the respective best propability
-	std::vector<float> bestMatchesProps;
-	std::vector<FishPose> bestMatchesPoses;
-	for (int i = 0; i < sizeF; i++) {
-		float bestMatch = 0;
-		FishPose bestMatchPose;
-		for (int j = 0; j < propMap[i].size(); j++) {
-			if (propMap[i][j] > bestMatch) {
-				bestMatch = propMap[i][j];
-				bestMatchPose = blobs[j];
-			}
-		}
-		bestMatchesProps.push_back(bestMatch);
-		bestMatchesPoses.push_back(bestMatchPose);
-	}
-
-	//ok, now we got the most likely pose for each fish at the next time step. 
-	//Buuuut, what if two fish are matched to the same pose?
-	//Idea is simple: The better match gets the new pose, the other one simply keeps his old pose.
-	//Bassically be we use bestMatchesPoses as a NxN matrix and walk through every field.
-	//Actually we only need half the matrix, excluding the diagonal line. So that's why i<j.
-	//TODO: Maybe use the 2nd best match?
-	for (int i = 0; i < bestMatchesPoses.size(); i++) {
-		for (int j = 0; j < bestMatchesPoses.size(); j++) {
-			if (i < j) {
-				if (bestMatchesPoses[i] == bestMatchesPoses[j] && bestMatchesProps[i] <= bestMatchesProps[j]) {
-					bestMatchesPoses[i] = fishPoses[i];
-					bestMatchesProps[i] = 100; //I guess props are in [0..1], but who cares at this point?
-				} 
-				else if (bestMatchesPoses[i] == bestMatchesPoses[j] && bestMatchesProps[i] > bestMatchesProps[j]) {
-					bestMatchesPoses[j] = fishPoses[j];
-					bestMatchesProps[j] = 100; 
+	//I'm sorry for the goto/inefficient loop. But usually we will not have more than a 
+	//hand full (<6) of blobs to walk through, so it's not worth the optimizing.
+	retry:
+	for (int i = 0; i < propMap.size(); i++) {
+		for (int j = 0; j < propMap.size(); j++) {
+			//Is this 
+			if (!propMap[i].empty() && !propMap[j].empty() && i!=j) {
+				//Reads: If same blob, but i has higher props than j
+				bool samePose = std::get<1>(propMap[i][0]) == std::get<1>(propMap[j][0]);
+				bool propLess = std::get<0>(propMap[i][0]) <= std::get<0>(propMap[j][0]);
+				if (samePose && propLess) {
+					//...then remove the 0'th element from j and try again.
+					propMap[i].erase(propMap[i].begin());
+					goto retry;
 				}
 			}
 		}
 	}
 
+
+	std::vector<float> bestMatchesProps;
+	std::vector<FishPose> bestMatchesPoses;
+	for (int i = 0; i < propMap.size(); i++) {
+		if (propMap[i].size() > 0) {
+			bestMatchesProps.push_back(std::get<0>(propMap[i][0]));
+			bestMatchesPoses.push_back(std::get<1>(propMap[i][0]));
+		}
+		else {
+			bestMatchesPoses.push_back(fishPoses[i]);
+			bestMatchesProps.push_back(100);
+		}
+	}
+	
 	for (int i = 0; i < bestMatchesPoses.size(); i++) {
 		if (!(bestMatchesPoses[i] == fishPoses[i])) {
 			bool angleConfident = correctAngle(i, bestMatchesPoses[i]);
@@ -210,7 +216,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	for (int i=start+1; i<t->numberOfChildrean(); i++)
 	{
 		TrackedElement* ecur = (TrackedElement*)t->getChild(i);
-		cv::Point2f &currentPoint = ecur->getFishPose().position_cm();
+		cv::Point2f currentPoint = ecur->getFishPose().position_cm();
 		const cv::Point2f oneStepDerivative = nextPoint - currentPoint;
 
 		positionDerivative += currentWeight * oneStepDerivative;

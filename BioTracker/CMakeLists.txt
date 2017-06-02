@@ -21,8 +21,10 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 REQUIRED Core Gui Xml Network Widgets Opengl Multimedia MultimediaWidgets PATHS $ENV{QT_DIR_CMAKE})
+find_package(OpenGL REQUIRED)
+find_package(Qt5 REQUIRED Core Gui Xml Network Widgets OpenGL Multimedia MultimediaWidgets)
 find_package(OpenCV REQUIRED PATHS $ENV{CV_DIR_CMAKE})
+find_package(Boost REQUIRED system filesystem chrono thread timer)
 
 #Building for x64
 IF(CMAKE_CL_64)
@@ -37,9 +39,9 @@ ELSE()
 ENDIF()
 
 # Somehow this is required on Windows. TODO: if linux...
-set(_qt5_module_paths ${_qt5_module_paths}\\..\\..\\)
-set(_qt5_root_dir ${_qt5_root_dir}\\..\\..\\)
-set(_qt5_install_prefix ${_qt5_install_prefix}\\..\\..\\)
+#set(_qt5_module_paths ${_qt5_module_paths}\\..\\..\\)
+#set(_qt5_root_dir ${_qt5_root_dir}\\..\\..\\)
+#set(_qt5_install_prefix ${_qt5_install_prefix}\\..\\..\\)
  
 
 add_subdirectory(CoreApp/BioTracker)

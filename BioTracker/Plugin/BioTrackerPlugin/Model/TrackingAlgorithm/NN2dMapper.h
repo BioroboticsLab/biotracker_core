@@ -4,8 +4,8 @@
 #include <highgui.h>
 #include <chrono>
 #include "Model/TrackedComponents/pose/FishPose.h"
-#include <Model\TrackedComponents\TrackedElement.h>
-#include <Model\TrackedComponents\TrackedTrajectory.h>
+#include <Model/TrackedComponents/TrackedElement.h>
+#include <Model/TrackedComponents/TrackedTrajectory.h>
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 
 class NN2dMapper

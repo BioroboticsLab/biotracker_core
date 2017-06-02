@@ -2,7 +2,7 @@
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackingRectElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
-#include "Model\TrackingAlgorithm\property\Rectification.h"
+#include "Model/TrackingAlgorithm/property/Rectification.h"
 #include "QBrush"
 #include "QPainter"
 #include <QGraphicsSceneHoverEvent>
