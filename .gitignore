@@ -81,3 +81,8 @@ CMakeFiles
 /BioTracker/x64/Debug/ALL_BUILD/*.cache
 /BioTracker/x64/Release/ALL_BUILD/*.cache
 /BioTracker/CoreApp/BioTracker/TrackingOutput.txt
+/BioTracker/CoreApp/BioTracker/ui_CameraDevice.h
+/BioTracker/CoreApp/BioTracker/ui_MainWindow.h
+/BioTracker/CoreApp/BioTracker/ui_VideoControllWidget.h
+/BioTracker/Plugin/BioTrackerPlugin/ui_TrackerParameterView.h
+/BioTracker/Utils/build-BioTrackerUtils-Desktop-Debug/*.o
