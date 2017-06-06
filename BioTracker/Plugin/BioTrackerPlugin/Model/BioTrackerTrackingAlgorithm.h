@@ -16,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "Network/TcpListener.h"
 
 class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
@@ -31,12 +32,18 @@ public Q_SLOTS:
 	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
 
 private:
+	void BioTrackerTrackingAlgorithm::refreshPolygon();
+
 	std::vector<FishPose> getLastPositionsAsPose();
 	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
 
 	TrackerParameter* _TrackingParameter;
+
+
+	TcpListener* _listener;
+	std::vector<cv::Point2f> _polygon_cm;
 
 	ImagePreProcessor _ipp;
 	BlobsDetector _bd;

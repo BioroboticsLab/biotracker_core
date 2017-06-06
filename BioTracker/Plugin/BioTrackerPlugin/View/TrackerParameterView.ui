@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>479</height>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -197,23 +197,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBoxNetwork">
-           <property name="text">
-            <string>Listen on Network (Not implemented)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxBackground">
-           <property name="text">
-            <string>Do backroung Subtraction</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="pushButtonResetBackground">
            <property name="text">
             <string>Reset Background</string>
@@ -248,7 +231,6 @@
         </layout>
        </item>
       </layout>
-      <zorder></zorder>
       <zorder></zorder>
      </widget>
      <widget class="QWidget" name="tab_2">

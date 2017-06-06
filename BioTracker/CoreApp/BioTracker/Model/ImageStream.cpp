@@ -83,7 +83,6 @@ bool ImageStream::previousFrame() {
 
 void ImageStream::set_current_frame(std::shared_ptr<cv::Mat> img) {
     m_current_frame.swap(img);
-
 }
 
 void ImageStream::clearImage() {
@@ -191,6 +190,7 @@ class ImageStream3Video : public ImageStream {
         if (! m_capture.isOpened()) {
             throw video_open_error(":(");
         }
+
         // load first image
         if (this->numFrames() > 0) {
             this->nextFrame_impl();
@@ -258,7 +258,7 @@ class ImageStream3Camera : public ImageStream {
 		while (!m_capture.isOpened() && fails < 10) {
 			m_capture.open(device_id);
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			m_capture.set(CV_CAP_PROP_FRAME_WIDTH, 1024);
+			m_capture.set(CV_CAP_PROP_FRAME_WIDTH, 1024); //TODO hardcoded video dimensions
 			m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, 1024);
 			fails++;
 		}

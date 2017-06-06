@@ -23,6 +23,12 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		_ofs << "ID,time(ns),x,y,ADeg,ARad,";
 	}
 	_ofs << std::endl;
+
+	refreshPolygon();
+
+	_listener = new TcpListener(this);
+	_listener->listen(QHostAddress::Any, 54444);//port
+	QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 }
 /*
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
@@ -69,6 +75,26 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 	}
 }
 
+void BioTrackerTrackingAlgorithm::refreshPolygon() {
+
+	std::vector<cv::Point2f> polygon;
+	std::vector<cv::Point2f> polygon_cm;
+
+	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+		TrackingRectElement *te = dynamic_cast<TrackingRectElement *>(_TrackedTrajectoryMajor->getChild(i));
+		if (te) {
+			polygon.push_back(cv::Point(te->getX(), te->getY()));
+		}
+	}
+
+	for (auto vertex = polygon.cbegin(); vertex != polygon.cend(); ++vertex)
+	{
+		polygon_cm.push_back(Rectification::instance().pxToCm(*vertex));
+	}
+
+	_polygon_cm = polygon_cm;
+}
+
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
 	_ipp.m_TrackingParameter = _TrackingParameter;
@@ -107,7 +133,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(fish, blobs);
 
 	//Insert new poses into data structure
-	//if (std::get<0>(poses).size() == _TrackedTrajectoryMajor->numberOfChildrean()) { //TODO hardcoded
 	int trajNumber = 0;
 	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
@@ -115,17 +140,17 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
 			t->add(e);
-			_ofs << i << "," << std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch()).count()
+			_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count()
 				<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
 				<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
 			trajNumber++;
 		}
 	}
-	//}
-	//else {
-	//	std::cout << "Error: did not track expected size! Size is: " << std::get<1>(poses).size() << std::endl;
-	//}
-	_ofs << std::endl; //TODO extra module
+	_ofs << std::endl; //TODO extra module!
+
+	//Send forth new positions to the robotracker
+	//refreshPolygon();
+	_listener->sendPositions(framenumber, std::get<0>(poses), std::vector<cv::Point2f>(), start);
 
 	//Send forth whatever the user selected
 	switch (_TrackingParameter->getSendImage()) {
@@ -148,13 +173,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		Q_EMIT emitCvMatA(sendImage, QString("Foreground"));
 		break;
 	}
-
-	//Draw stuff into the output
-	/*std::shared_ptr<cv::Mat> rumgekritzel = std::make_shared<cv::Mat>();
-	cvtColor(*dilated, *rumgekritzel, CV_GRAY2BGR);
-	for (int i = 0; i < blobs.size(); i++) {
-		cv::circle(*rumgekritzel, blobs[i].posPx(), 15, cv::Scalar(0, 255, 0), 3);
-	}*/
 
 
 	Q_EMIT emitTrackingDone();

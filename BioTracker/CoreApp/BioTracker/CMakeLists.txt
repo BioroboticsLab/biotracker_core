@@ -6,7 +6,6 @@ set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
 	${CMAKE_SOURCE_DIR}/Interfaces/BioTrackerInterfaces/
 	${CMAKE_SOURCE_DIR}/Utils/BioTrackerUtils
-#	E:/Software/Libraries/boost_1_64_0_VS14.1
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS} 
 	${Qt5Core_INCLUDE_DIRS}
@@ -34,13 +33,7 @@ set(LIBS
     Biotracker_plugin
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
-    ${QTLIBS} 
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_filesystem-vc140-mt-gd-1_64.lib
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_system-vc140-mt-gd-1_64.lib
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_chrono-vc140-mt-gd-1_64.lib
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_thread-vc140-mt-gd-1_64.lib
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_timer-vc140-mt-gd-1_64.lib
-#	E:\Software\Libraries\boost_1_64_0_VS14.0\lib64-msvc-14.0\libboost_exception-vc140-mt-gd-1_64.lib
+    ${QTLIBS}
 	)
 
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)

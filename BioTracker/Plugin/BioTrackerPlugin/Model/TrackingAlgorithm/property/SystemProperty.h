@@ -47,5 +47,5 @@ public:
 
 	
 private:
-	std::vector<Param> _params;
+	//std::vector<Param> _params;
 };
