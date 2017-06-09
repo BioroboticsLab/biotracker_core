@@ -23,16 +23,34 @@ namespace BioTracker {
 namespace Core {
 
 class Settings {
-  public:
-    /**
-     * The default constructor.
-     */
-    explicit Settings();
+private:
+	std::string _confFile;
 
-    /**
-     * destructor.
-     */
-    ~Settings() = default;
+public:
+
+	/* This is a singleton. Get it using something like:
+	* SettingsIAC *myInstance = SettingsIAC::getInstance();
+	*/
+	Settings(std::string config) {
+		//Setting default file, if unset
+		if (config == "") _confFile = "config.ini";
+		else _confFile = config;
+
+		std::ifstream conf(_confFile.c_str());
+		if (conf.good())
+		{
+			boost::property_tree::read_json(_confFile, _ptree);
+		}
+		else {
+			_ptree = getDefaultParams();
+			boost::property_tree::write_json(_confFile, _ptree);
+		}
+	}
+
+	// C++ 11 style
+	// =======
+	Settings(Settings const&) = delete;
+	void operator=(Settings const&) = delete;
 
     /**
      * Sets the parameter.
@@ -42,7 +60,7 @@ class Settings {
     template <typename T>
     void setParam(std::string const &paramName, T &&paramValue) {
         _ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
-        boost::property_tree::write_json(ConfigParam::CONFIGURATION_FILE.string(), _ptree);
+        boost::property_tree::write_json(_confFile, _ptree);
     }
 
     /**
@@ -59,7 +77,7 @@ class Settings {
             subtree.push_back(std::make_pair("", valuetree));
         }
         _ptree.put_child(paramName, subtree);
-        boost::property_tree::write_json(ConfigParam::CONFIGURATION_FILE.string(), _ptree);
+        boost::property_tree::write_json(_confFile, _ptree);
     }
 
     /**

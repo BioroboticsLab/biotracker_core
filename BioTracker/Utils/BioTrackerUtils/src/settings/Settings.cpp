@@ -8,9 +8,14 @@
 #include "Exceptions.h"
 #include "settings/Messages.h"
 
+
+namespace boost {
+	void throw_exception(std::exception const & e) {};
+}
+
 namespace BioTracker {
 namespace Core {
-
+	/*
 Settings::Settings() {
     if (!boost::filesystem::is_directory(ConfigParam::BASE_PATH)) {
         if (!boost::filesystem::create_directory(ConfigParam::BASE_PATH)) {
@@ -32,12 +37,12 @@ Settings::Settings() {
         boost::property_tree::read_json(ConfigParam::CONFIGURATION_FILE.string(), pt);
         _ptree = pt;
     }
-}
+}*/
 
 const boost::property_tree::ptree Settings::getDefaultParams() {
     boost::property_tree::ptree pt;
 
-    pt.put(TrackerParam::TRACKING_ENABLED, false);
+    //pt.put(TrackerParam::TRACKING_ENABLED, false);
 
     return pt;
 }

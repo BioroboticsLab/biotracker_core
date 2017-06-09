@@ -3,6 +3,8 @@
 
 
 #include "Interfaces/IModel/IModel.h"
+#include "settings/Settings.h"
+#include "Model/TrackingAlgorithm/property/ParamNames.h"
 
 class TrackerParameter : public IModel
 {
@@ -14,6 +16,7 @@ public:
 
     int getThreshold();
 
+	BioTracker::Core::Settings *getSettings() { return _settings; };
 
 	void setBinarizationThreshold(int x);
 	int getBinarizationThreshold();
@@ -87,9 +90,9 @@ public:
 	int getNoFish() { return m_noFish; };
 	void setNoFish(int x) {
 		m_noFish = x;
+		_settings->setParam(FISHTANKPARAM::FISHTANK_FISH_AMOUNT, x);
 		Q_EMIT notifyView();
-	};
-
+	};	
 
 	void setAll(
 		int Threshold,
@@ -111,12 +114,22 @@ public:
 		m_mog2BackgroundRatio = mog2BackgroundRatio;
 		m_MinBlobSize = minBlobSize;
 		m_MaxBlobSize = maxBlobSize;
+		_settings->setParam(TRACKERPARAM::THRESHOLD_BINARIZING, BinarizationThreshold);
+		_settings->setParam(TRACKERPARAM::SIZE_ERODE, SizeErode);
+		_settings->setParam(TRACKERPARAM::SIZE_DILATE, SizeDilate);
+		_settings->setParam(TRACKERPARAM::MIN_BLOB_SIZE, minBlobSize);
+		_settings->setParam(TRACKERPARAM::MAX_BLOB_SIZE, maxBlobSize);
+		_settings->setParam(TRACKERPARAM::BG_MOG2_HISTORY, mog2History);
+		_settings->setParam(TRACKERPARAM::BG_MOG2_VAR_THRESHOLD, mog2VarThresh);
+		_settings->setParam(TRACKERPARAM::BG_MOG2_BACKGROUND_RATIO, mog2BackgroundRatio);
 		Q_EMIT notifyView();
 	};
 
 
 
 private:
+	BioTracker::Core::Settings *_settings;
+
 	int m_Threshold;
 	int m_BinarizationThreshold;
 	int m_SizeErode;
@@ -127,11 +140,15 @@ private:
 	int m_MinBlobSize;
 	int m_MaxBlobSize;
 
-	bool m_doNetwork;
 	bool m_doBackground;
 	int m_sendImage;
 	bool m_resetBackground;
 	int m_noFish;
+
+	int m_areaWidth;
+	int m_areaHeight;
+	int m_networkPort;
+	bool m_doNetwork;
 };
 
 #endif // TRACKERPARAMETER_H

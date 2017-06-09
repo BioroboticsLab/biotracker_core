@@ -81,7 +81,6 @@ public:
 private:
 
 
-	TRACKERPARAM::IMAGE_DISPLAY_TYPE _outputImageType;
 	cv::Mat _outputImage;
 
 	int m_Mog2ShadowDetection = true;

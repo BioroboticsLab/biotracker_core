@@ -71,6 +71,7 @@ void Rectification::setupRecitification(int frameDisplayWidthPx, int frameDispla
 
 	_H = cv::findHomography(areaCoordinates_2f, _rectifiedAreaCoordinates);
 	_H_inv = _H.inv();
+	_isSetup = true;
 }
 
 void Rectification::resetAreaCoordinates()

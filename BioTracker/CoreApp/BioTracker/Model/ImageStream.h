@@ -16,7 +16,7 @@
 #include <QObject>
 #include "QSharedPointer"
 
-#include "util/ParamNames.h" // GUIPARAM::MediaType
+#include "settings/ParamNames.h" // GUIPARAM::MediaType
 
 namespace BioTracker {
 namespace Core {

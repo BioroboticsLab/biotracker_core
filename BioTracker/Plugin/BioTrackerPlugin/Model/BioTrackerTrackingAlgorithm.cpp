@@ -4,18 +4,20 @@
 #include <chrono>
 
 #include "Model/TrackedComponents/TrackingRectElement.h"
+#include "settings/Settings.h"
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
 {
 	_TrackingParameter = (TrackerParameter*)parameter;
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
+	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
 
-	_noFish = _TrackingParameter->getNoFish();
-
-
-	Rectification::instance().initRecitification(80, 80, _TrackedTrajectoryMajor);
-	Rectification::instance().setupRecitification(100,100,2040,2040);
+	Rectification::instance().initRecitification(
+		set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_WIDTH, 80),
+		set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, 80),
+		_TrackedTrajectoryMajor);
+	_noFish = -1;
 
 	//TODO: put this into a module
 	_ofs.open("TrackingOutput.txt", std::ofstream::out);
@@ -24,11 +26,11 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 	}
 	_ofs << std::endl;
 
-	refreshPolygon();
-
-	_listener = new TcpListener(this);
-	_listener->listen(QHostAddress::Any, 54444);//port
-	QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
+	if (_TrackingParameter->getDoNetwork()) {
+		_listener = new TcpListener(this);
+		_listener->listen(QHostAddress::Any, set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444));
+		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
+	}
 }
 /*
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
@@ -100,6 +102,10 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	_ipp.m_TrackingParameter = _TrackingParameter;
 	auto start = std::chrono::high_resolution_clock::now();
 
+	if (!Rectification::instance().isSetup()) {
+		Rectification::instance().setupRecitification(100, 100, p_image->size().width, p_image->size().height);
+	}
+
 	//The user changed the # of fish. Reset the history and start over!
 	if (_noFish != _TrackingParameter->getNoFish()) {
 		_noFish = _TrackingParameter->getNoFish(); 
@@ -148,9 +154,9 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	}
 	_ofs << std::endl; //TODO extra module!
 
-	//Send forth new positions to the robotracker
-	//refreshPolygon();
-	_listener->sendPositions(framenumber, std::get<0>(poses), std::vector<cv::Point2f>(), start);
+	//Send forth new positions to the robotracker, if networking is enabled
+	if (_TrackingParameter->getDoNetwork()) 
+		_listener->sendPositions(framenumber, std::get<0>(poses), std::vector<cv::Point2f>(), start);
 
 	//Send forth whatever the user selected
 	switch (_TrackingParameter->getSendImage()) {

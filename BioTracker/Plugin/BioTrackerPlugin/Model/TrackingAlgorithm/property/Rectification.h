@@ -40,6 +40,8 @@ public:
 		std::vector<cv::Point> areaCoordinates, int camCaptureWidth_px,
 		int camCaptureHeight_px, int frameDisplayWidthPx, int frameDisplayHeightPx);
 
+	bool isSetup() { return _isSetup; };
+
 	double areaWidth_cm() const { return _areaWidth_cm; }
 	double areaHeight_cm() const { return _areaHeight_cm; }
 	int captureWidth_px() const { return _camCaptureWidth_px; }
@@ -124,6 +126,8 @@ private:
 
 	double _areaWidth_cm;
 	double _areaHeight_cm;
+
+	bool _isSetup;
 
 	bool checkValidCoordinates(std::vector<cv::Point> areaCoordinates, int camCaptureHeight_px, int camCaptureWidth_px);
 	

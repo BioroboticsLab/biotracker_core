@@ -10,7 +10,6 @@
 #include <QtCore/QString>
 
 #include "Model/TrackingAlgorithm/property/ParamNames.h"
-#include "Model/TrackingAlgorithm/property/Param.h"
 
 class SystemProperty
 {

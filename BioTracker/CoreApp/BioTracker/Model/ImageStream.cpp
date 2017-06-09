@@ -8,6 +8,7 @@
 
 #include "util/Exceptions.h"
 #include "QSharedPointer"
+#include "settings/Settings.h"
 
 namespace BioTracker {
 namespace Core {
@@ -254,12 +255,21 @@ class ImageStream3Camera : public ImageStream {
 		// Workaround: http://stackoverflow.com/questions/22019064/unable-to-read-frames-from-videocapture-from-secondary-webcam-with-opencv?rq=1
 		// So, stubbornly try it a few times until it works.
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+		Settings set("BiotrackerCore.ini");
+
+		int w = set.getValueOrDefault<int>("BiotrackerCore/CameraWidth", -1);
+		int h = set.getValueOrDefault<int>("BiotrackerCore/CameraHeight", -1);
+		m_fps = set.getValueOrDefault<int>("BiotrackerCore/CameraFPS", -1);
+
 		int fails = 0;
 		while (!m_capture.isOpened() && fails < 10) {
 			m_capture.open(device_id);
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			m_capture.set(CV_CAP_PROP_FRAME_WIDTH, 1024); //TODO hardcoded video dimensions
-			m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, 1024);
+
+			if (w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, w);
+			if (h != -1)     m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, h);
+			if (m_fps != -1) m_capture.set(CV_CAP_PROP_FPS, m_fps);
 			fails++;
 		}
 		
@@ -301,7 +311,7 @@ class ImageStream3Camera : public ImageStream {
     }
 
     cv::VideoCapture m_capture;
-    const double m_fps;
+    double m_fps;
 };
 
 /*********************************************************/

@@ -10,7 +10,7 @@
 class QGraphicsSceneHoverEvent;
 
 TrackedElementView::TrackedElementView(QGraphicsItem *parent, IController *controller, IModel *model) :
-    IViewTrackedComponent(parent, controller, model)
+    IViewTrackedComponent(parent, controller, model) 
 {
     TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
     m_boundingRect = QRectF(0,0, 100, 100);

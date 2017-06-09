@@ -86,3 +86,10 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/ui_VideoControllWidget.h
 /BioTracker/Plugin/BioTrackerPlugin/ui_TrackerParameterView.h
 /BioTracker/Utils/build-BioTrackerUtils-Desktop-Debug/*.o
+/BioTracker/CoreApp/BioTracker/BlobtrackerConfig.ini
+/BioTracker/CoreApp/BioTracker/test.txt
+/BioTracker/CoreApp/BioTracker/test2.txt
+/BioTracker/CoreApp/BioTracker/Release/*.ini
+/BioTracker/CoreApp/BioTracker/Release/TrackingOutput.txt
+/BioTracker/CoreApp/BioTracker/debug/BlobtrackerConfig.ini
+/BioTracker/CoreApp/BioTracker/debug/TrackingOutput.txt
