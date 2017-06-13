@@ -126,7 +126,7 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
 
     m_PlayerParameters->m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
     m_PlayerParameters->m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();
-
+	m_PlayerParameters->m_fpsSourceVideo = m_CurrentPlayerState->m_ImageStream->fps();
 }
 
 void MediaPlayerStateMachine::emitSignals() {

@@ -55,6 +55,20 @@ RMDIR /S /Q CMakeFiles
 RMDIR /S /Q .vs
 CD ../..
 
+CD Plugin/Sampletracker
+DEL *.vcxproj.filters
+DEL *.vcxproj
+DEL *.vcxproj.user
+DEL cmake_install.cmake
+RMDIR /S /Q Sampletracker_manual.dir
+RMDIR /S /Q Sampletracker.dir
+RMDIR /S /Q Sampletracker_autogen
+RMDIR /S /Q Debug
+RMDIR /S /Q Release
+RMDIR /S /Q CMakeFiles
+RMDIR /S /Q .vs
+CD ../..
+
 
 CD Utils/BioTrackerUtils
 DEL *.vcxproj.filters

@@ -77,9 +77,11 @@ class IPlayerState : public IModel {
      */
     size_t getCurrentFrameNumber();
 
+	//TODO: The Media player does not hold a valid imagestream. Hence use the current state's stream to grab details
+	std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
+
   protected:
     MediaPlayerStateMachine* m_Player;
-    std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
     stateParameters m_StateParameters;
 

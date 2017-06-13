@@ -54,7 +54,9 @@ void VideoControllWidget::getNotified() {
     ui->frame_num_edit->setText(QString::number(currentFrameNr));
     ui->sld_video->setValue(currentFrameNr);
 
-    ui->fps_label->setText(QString::number(mediaPlayer->getCurrentFPS()));
+	ui->fps_label->setText(QString::number(mediaPlayer->getFpsOfSourceFile()));
+	double cfps = mediaPlayer->getCurrentFPS();
+	ui->label_currentFpsNum->setText(QString::number(mediaPlayer->getCurrentFPS()));
 
     int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
 

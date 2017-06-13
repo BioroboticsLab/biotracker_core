@@ -14,8 +14,8 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
 
 	Rectification::instance().initRecitification(
-		set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_WIDTH, 80),
-		set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, 80),
+		_TrackingParameter->getAreaWidth(),
+		_TrackingParameter->getAreaHeight(),
 		_TrackedTrajectoryMajor);
 	_noFish = -1;
 
@@ -100,6 +100,18 @@ void BioTrackerTrackingAlgorithm::refreshPolygon() {
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
 	_ipp.m_TrackingParameter = _TrackingParameter;
+
+	//dont do nothing if we ain't got an image
+	if (p_image->empty()) {
+		return;
+	}
+
+	if (_imageX != p_image->size().width || _imageY != p_image->size().height) {
+		_imageX = p_image->size().width;
+		_imageY = p_image->size().height;
+		Q_EMIT emitDimensionUpdate(_imageX, _imageY);
+	}
+
 	auto start = std::chrono::high_resolution_clock::now();
 
 	if (!Rectification::instance().isSetup()) {
@@ -146,7 +158,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
 			t->add(e);
-			_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count()
+			_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count() << ","
 				<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
 				<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
 			trajNumber++;

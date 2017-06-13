@@ -19,6 +19,10 @@ TrackerParameter::TrackerParameter(QObject *parent) :
 	m_doNetwork = _settings->getValueOrDefault(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false);
 	m_networkPort = _settings->getValueOrDefault(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444);
 
+
+	m_areaWidth = _settings->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_WIDTH, 80);
+	m_areaHeight = _settings->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, 80);
+
 	m_Threshold = 12345;
 
 	m_doBackground = true;

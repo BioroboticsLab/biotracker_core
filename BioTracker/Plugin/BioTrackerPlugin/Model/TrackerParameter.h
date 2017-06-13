@@ -92,7 +92,24 @@ public:
 		m_noFish = x;
 		_settings->setParam(FISHTANKPARAM::FISHTANK_FISH_AMOUNT, x);
 		Q_EMIT notifyView();
-	};	
+	};
+
+	int getAreaWidth() { return m_areaWidth; };
+	void setAreaWidth(int x) {
+		m_areaWidth = x;
+		_settings->setParam(FISHTANKPARAM::FISHTANK_AREA_WIDTH, x);
+		Q_EMIT notifyView();
+	};
+
+	int getAreaHeight() { return m_areaHeight; };
+	void setAreaHeight(int x) {
+		m_areaHeight = x;
+		_settings->setParam(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, x);
+		Q_EMIT notifyView();
+	};
+
+
+	
 
 	void setAll(
 		int Threshold,
@@ -103,7 +120,9 @@ public:
 		int mog2VarThresh,
 		double mog2BackgroundRatio,
 		int minBlobSize, 
-		int maxBlobSize)
+		int maxBlobSize,
+		int areaWidth,
+		int areaHeight)
 	{
 		m_Threshold = Threshold;
 		m_BinarizationThreshold = BinarizationThreshold;
@@ -114,6 +133,8 @@ public:
 		m_mog2BackgroundRatio = mog2BackgroundRatio;
 		m_MinBlobSize = minBlobSize;
 		m_MaxBlobSize = maxBlobSize;
+		m_areaWidth = areaWidth;
+		m_areaHeight = areaHeight;
 		_settings->setParam(TRACKERPARAM::THRESHOLD_BINARIZING, BinarizationThreshold);
 		_settings->setParam(TRACKERPARAM::SIZE_ERODE, SizeErode);
 		_settings->setParam(TRACKERPARAM::SIZE_DILATE, SizeDilate);
@@ -122,6 +143,8 @@ public:
 		_settings->setParam(TRACKERPARAM::BG_MOG2_HISTORY, mog2History);
 		_settings->setParam(TRACKERPARAM::BG_MOG2_VAR_THRESHOLD, mog2VarThresh);
 		_settings->setParam(TRACKERPARAM::BG_MOG2_BACKGROUND_RATIO, mog2BackgroundRatio);
+		_settings->setParam(FISHTANKPARAM::FISHTANK_AREA_WIDTH, areaWidth);
+		_settings->setParam(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, areaHeight);
 		Q_EMIT notifyView();
 	};
 

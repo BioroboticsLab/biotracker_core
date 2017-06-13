@@ -21,6 +21,7 @@ public:
     // IViewTrackedComponent interface
 public Q_SLOTS:
 	void getNotified() override;
+	void rcvDimensionUpdate(int x, int y);
 
 public Q_SIGNAL:
 	void emitUpdateCornersChanged(int id, int relX, int relY);

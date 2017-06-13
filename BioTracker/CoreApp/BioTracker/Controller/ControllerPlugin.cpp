@@ -12,7 +12,6 @@ ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context,
 
     m_TrackingThread = new QThread(this);
     m_TrackingThread->start();
-
 }
 
 ControllerPlugin::~ControllerPlugin() {
@@ -106,7 +105,9 @@ void ControllerPlugin::disconnectPlugin() {
 }
 
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
-    m_BioTrackerPlugin->receiveCurrentFrameFromMainApp(mat, number);
+	//Prevent calling the plugin if none is loaded
+	if(m_BioTrackerPlugin)
+		m_BioTrackerPlugin->receiveCurrentFrameFromMainApp(mat, number);
 }
 
 void ControllerPlugin::receiveTrackingDone() {

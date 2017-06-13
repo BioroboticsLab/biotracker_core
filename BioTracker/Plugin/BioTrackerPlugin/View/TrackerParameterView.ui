@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>489</height>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,7 +48,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_areaw"/>
+            <widget class="QLineEdit" name="lineEdit_areaw">
+             <property name="maximumSize">
+              <size>
+               <width>75</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_14">
@@ -64,7 +71,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_areah"/>
+            <widget class="QLineEdit" name="lineEdit_areah">
+             <property name="maximumSize">
+              <size>
+               <width>75</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_15">

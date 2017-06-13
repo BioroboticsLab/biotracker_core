@@ -69,11 +69,13 @@ void TrackerParameterView::on_pushButton_clicked()
 	int setmog2VarThresh = ui->lineEdit_6_MogThresh->text().toInt();
 	int setMinBlobSize = ui->lineEdit_8_MinBlob->text().toInt();
 	int setMaxBlobSize = ui->lineEdit_9MaxBlob->text().toInt();
+	int setAreaW = ui->lineEdit_areaw->text().toInt();
+	int setAreaH = ui->lineEdit_areah->text().toInt();
 		
 	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->text().toDouble();
 
 	parameter->setAll(0, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh, 
-		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize);
+		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize, setAreaW, setAreaH);
 }
 
 void TrackerParameterView::getNotified()
@@ -105,4 +107,10 @@ void TrackerParameterView::getNotified()
 
 	val = parameter->getMaxBlobSize();
 	ui->lineEdit_9MaxBlob->setText(QString::number(val));
+
+	val = parameter->getAreaWidth();
+	ui->lineEdit_areaw->setText(QString::number(val));
+
+	val = parameter->getAreaHeight();
+	ui->lineEdit_areah->setText(QString::number(val));
 }

@@ -24,6 +24,11 @@ TrackedElementView::TrackedElementView(QGraphicsItem *parent, IController *contr
 	//this->installEventFilter(this);
 }
 
+void TrackedElementView::rcvDimensionUpdate(int x, int y) {
+	m_boundingRect = QRectF(0, 0, x, y);
+	update();
+}
+
 QRectF TrackedElementView::boundingRect() const
 {
 

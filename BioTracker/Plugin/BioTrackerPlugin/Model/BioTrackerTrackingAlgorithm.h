@@ -26,6 +26,7 @@ public:
 
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
+	void emitDimensionUpdate(int x, int y);
 
     // ITrackingAlgorithm interface
 public Q_SLOTS:
@@ -55,6 +56,9 @@ private:
 	int _noFish;
 
 	std::ofstream _ofs;
+
+	int _imageX;
+	int _imageY;
 };
 
 #endif // BIOTRACKERTRACKINGALGORITHM_H

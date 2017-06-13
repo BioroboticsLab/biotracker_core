@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'TrackerParameterView.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.2
+** Created by: Qt User Interface Compiler version 5.9.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -205,18 +205,18 @@ public:
 
     void retranslateUi(QWidget *TrackerParameterView)
     {
-        TrackerParameterView->setWindowTitle(QApplication::translate("TrackerParameterView", "Form", 0));
-        label_2->setText(QApplication::translate("TrackerParameterView", "LowH", 0));
-        label_3->setText(QApplication::translate("TrackerParameterView", "HighH", 0));
-        label_4->setText(QApplication::translate("TrackerParameterView", "LowS", 0));
-        label_5->setText(QApplication::translate("TrackerParameterView", "HighS", 0));
-        label_6->setText(QApplication::translate("TrackerParameterView", "LowV", 0));
-        label_7->setText(QApplication::translate("TrackerParameterView", "HighV", 0));
-        pushButton->setText(QApplication::translate("TrackerParameterView", "Set Values", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("TrackerParameterView", "Tracking", 0));
-        label_10->setText(QApplication::translate("TrackerParameterView", "GUI options go here", 0));
-        label_11->setText(QApplication::translate("TrackerParameterView", "E.g. Size of markers", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("TrackerParameterView", "GUI", 0));
+        TrackerParameterView->setWindowTitle(QApplication::translate("TrackerParameterView", "Form", Q_NULLPTR));
+        label_2->setText(QApplication::translate("TrackerParameterView", "LowH", Q_NULLPTR));
+        label_3->setText(QApplication::translate("TrackerParameterView", "HighH", Q_NULLPTR));
+        label_4->setText(QApplication::translate("TrackerParameterView", "LowS", Q_NULLPTR));
+        label_5->setText(QApplication::translate("TrackerParameterView", "HighS", Q_NULLPTR));
+        label_6->setText(QApplication::translate("TrackerParameterView", "LowV", Q_NULLPTR));
+        label_7->setText(QApplication::translate("TrackerParameterView", "HighV", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("TrackerParameterView", "Set Values", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("TrackerParameterView", "Tracking", Q_NULLPTR));
+        label_10->setText(QApplication::translate("TrackerParameterView", "GUI options go here", Q_NULLPTR));
+        label_11->setText(QApplication::translate("TrackerParameterView", "E.g. Size of markers", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("TrackerParameterView", "GUI", Q_NULLPTR));
     } // retranslateUi
 
 };

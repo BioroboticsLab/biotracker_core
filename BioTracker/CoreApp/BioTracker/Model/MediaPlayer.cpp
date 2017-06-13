@@ -2,6 +2,8 @@
 
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
+	m_currentFPS = 0;
+	m_fpsOfSourceFile = 0;
 
     m_TrackingIsActive = false;
     // Initialize PlayerStateMachine and a Thread for the Player
@@ -126,19 +128,16 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
-    if(! m_TrackingIsActive)
-
-
-
-        end = std::chrono::steady_clock::now();
+	end = std::chrono::steady_clock::now();
     std::cout << "Printing took "
               << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
               << "us.\n";
-
+	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+	m_currentFPS = floor(1.0/(double(s)/1000000.0));
 
     Q_EMIT runPlayerOperation();
 
-    start = std::chrono::steady_clock::now();
+	start = std::chrono::steady_clock::now();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {

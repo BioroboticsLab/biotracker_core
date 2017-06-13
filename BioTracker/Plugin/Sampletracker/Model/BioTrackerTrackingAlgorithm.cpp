@@ -25,7 +25,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	}
 
 	if (_imageX != p_image->size().width || _imageY != p_image->size().height) {
-
 		_imageX = p_image->size().width;
 		_imageY = p_image->size().height;
 		Q_EMIT emitDimensionUpdate(_imageX, _imageY);

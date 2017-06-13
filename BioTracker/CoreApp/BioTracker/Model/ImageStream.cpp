@@ -230,7 +230,7 @@ class ImageStream3Video : public ImageStream {
         }
     }
 
-    cv::VideoCapture m_capture;
+	cv::VideoCapture m_capture;
     const size_t     m_num_frames;
     const double     m_fps;
     const std::string m_fileName;

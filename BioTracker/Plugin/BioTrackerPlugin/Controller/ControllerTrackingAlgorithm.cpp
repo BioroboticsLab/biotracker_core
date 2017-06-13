@@ -3,6 +3,7 @@
 
 #include "Model/TrackerParameter.h"
 #include "View/TrackerParameterView.h"
+#include "View/TrackedElementView.h"
 
 ControllerTrackingAlgorithm::ControllerTrackingAlgorithm(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -46,6 +47,12 @@ void ControllerTrackingAlgorithm::connectModelToController()
     BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitTrackingDone, this, &ControllerTrackingAlgorithm::receiveTrackingDone);
+
+	//enable the tracker to send video dimension updates to the view via signal
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
+	IView *v = qobject_cast<ControllerTrackedComponent*>(ctr)->getView();
+	TrackedElementView *v2 = dynamic_cast<TrackedElementView *>(v);
+	QObject::connect(trackingAlg, SIGNAL(emitDimensionUpdate(int, int)), v2, SLOT(rcvDimensionUpdate(int, int)));
 }
 
 void ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name)
