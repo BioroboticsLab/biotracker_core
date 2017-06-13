@@ -192,6 +192,10 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		break;
 	}
 
+	//First the user still wants to see the original image, right?
+	if (framenumber) {
+		Q_EMIT emitChangeDisplayImage("Original");
+	}
 
 	Q_EMIT emitTrackingDone();
 }

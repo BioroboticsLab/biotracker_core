@@ -16,6 +16,7 @@ class IModelTrackingAlgorithm :public IModel {
 
 signals:
     void emitTrackingDone();
+	void emitChangeDisplayImage(QString str);
 
 //    void setTrackedComponentFactory(ITrackedComponentFactory *factory);
 //    void setTrackedComponent(ITrackedComponent *trackedComponent);

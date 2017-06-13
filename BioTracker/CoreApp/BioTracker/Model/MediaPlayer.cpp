@@ -146,3 +146,8 @@ void MediaPlayer::receiveTrackingOperationDone() {
         Q_EMIT runPlayerOperation();
 
 }
+
+void MediaPlayer::receiveChangeDisplayImage(QString str) {
+	int x = 0;
+}
+

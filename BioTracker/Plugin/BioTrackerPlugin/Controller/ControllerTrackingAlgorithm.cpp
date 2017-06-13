@@ -47,6 +47,7 @@ void ControllerTrackingAlgorithm::connectModelToController()
     BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitTrackingDone, this, &ControllerTrackingAlgorithm::receiveTrackingDone);
+	QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitChangeDisplayImage, this, &ControllerTrackingAlgorithm::receiveChangeDisplayImage);
 
 	//enable the tracker to send video dimension updates to the view via signal
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
@@ -63,4 +64,8 @@ void ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm(std::shared_
 void ControllerTrackingAlgorithm::receiveTrackingDone()
 {
     Q_EMIT emitTrackingDone();
+}
+
+void ControllerTrackingAlgorithm::receiveChangeDisplayImage(QString str) {
+	Q_EMIT emitChangeDisplayImage(str);
 }

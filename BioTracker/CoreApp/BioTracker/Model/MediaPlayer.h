@@ -120,6 +120,8 @@ class MediaPlayer : public IModel {
      */
     void receiveTrackingOperationDone();
 
+	void receiveChangeDisplayImage(QString str);
+
 
   private:
     QPointer< QThread > m_PlayerThread;

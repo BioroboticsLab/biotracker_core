@@ -40,12 +40,10 @@ void BioTrackerPlugin::connectInterfaces() {
     ControllerTrackingAlgorithm* ctrAlg = qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController);
     QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
 
-    QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
+	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
 
-	//TODO Hauke I'm not sure if these are the correct partners
-	//BioTrackerTrackingAlgorithm *trackingAlg = qobject_cast<BioTrackerTrackingAlgorithm *>(m_TrackerController->getModel());
-	//TrackedElementView *view = (TrackedElementView *)(m_ComponentController->getView());
-	//QObject::connect(view, &TrackedElementView::emitUpdateCornersChanged, trackingAlg, &BioTrackerTrackingAlgorithm::updateCorner);
+	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
+
 }
 
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {
@@ -59,3 +57,9 @@ void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, 
 void BioTrackerPlugin::receiveTrackingDone() {
     Q_EMIT emitTrackingDone();
 }
+
+void BioTrackerPlugin::receiveChangeDisplayImage(QString str) {
+	Q_EMIT emitChangeDisplayImage(str);
+}
+
+

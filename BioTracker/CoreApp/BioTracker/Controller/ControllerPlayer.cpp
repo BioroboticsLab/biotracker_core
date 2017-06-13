@@ -102,3 +102,9 @@ void ControllerPlayer::connectModelToController() {
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
 
 }
+
+void ControllerPlayer::receiveChangeDisplayImage(QString str) {
+	//IView *m_View
+	VideoControllWidget *w = dynamic_cast<VideoControllWidget*>(m_View);
+	w->setSelectedView(str);
+}

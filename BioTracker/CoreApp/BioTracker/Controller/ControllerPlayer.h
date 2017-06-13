@@ -85,6 +85,7 @@ class ControllerPlayer : public IController {
      */
     void receiveImageToTracker(std::shared_ptr<cv::Mat> mat, uint number);
 
+	void receiveChangeDisplayImage(QString str);
 
   protected:
     void createModel() override;

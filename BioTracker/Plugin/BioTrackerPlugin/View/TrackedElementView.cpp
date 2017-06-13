@@ -18,10 +18,6 @@ TrackedElementView::TrackedElementView(QGraphicsItem *parent, IController *contr
 	setAcceptHoverEvents(true);
 	setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 	_watchingDrag = 0;
-
-
-	
-	//this->installEventFilter(this);
 }
 
 void TrackedElementView::rcvDimensionUpdate(int x, int y) {
