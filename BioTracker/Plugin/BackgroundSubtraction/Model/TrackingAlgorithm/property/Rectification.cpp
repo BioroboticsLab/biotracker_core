@@ -30,7 +30,7 @@ void Rectification::initRecitification(double areaHeight_cm, double areaWidth_cm
 void Rectification::setArea()
 {
 	std::vector<cv::Point> corners;
-	for (int i = 0; i < _dataModelM->numberOfChildrean(); i++) {
+	for (int i = 0; i < _dataModelM->size(); i++) {
 		TrackingRectElement *t = dynamic_cast<TrackingRectElement *>(_dataModelM->getChild(i));
 		if (t) {
 

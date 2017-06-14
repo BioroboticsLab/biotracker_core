@@ -1,5 +1,5 @@
 ##############################################################
-#### Biotracker: Plugin
+#### Biotracker: BackgroundSubtraction
 ##############################################################
 
 set(INCLUDE_DIRS
@@ -40,11 +40,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 
 include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-message("Configuring Biotracker_plugin...")
-set(EXE_NAME Biotracker_plugin)
-file(GLOB_RECURSE Biotracker_plugin RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
+message("Configuring  BackgroundSubtraction...")
+set(EXE_NAME  BackgroundSubtraction.tracker)
+file(GLOB_RECURSE  BackgroundSubtraction RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
 #add_executable(${EXE_NAME} ${Biotracker_plugin} )
-add_library(${EXE_NAME} SHARED ${Biotracker_plugin} )
+add_library(${EXE_NAME} SHARED ${BackgroundSubtraction} )
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility)
 

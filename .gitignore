@@ -1,3 +1,6 @@
+BioTracker/Plugin/LukasKanade
+BioTracker/Plugin/BackgroundSubtraction/BackgroundSubtraction.tracker_autogen
+BioTracker/Plugin/BackgroundSubtraction/BackgroundSubtraction.tracker.dir
 BioTracker/Plugin/build-BioTrackerPlugin-Desktop-Debug/
 BioTracker/Interfaces/build-BioTrackerInterfaces-Desktop-Debug/
 BioTracker/CoreApp/build-BioTracker-Desktop-Debug/

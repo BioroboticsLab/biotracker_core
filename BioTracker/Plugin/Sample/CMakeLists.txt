@@ -40,11 +40,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 
 include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-message("Configuring Biotracker_sampletracker...")
-set(EXE_NAME Biotracker_sampletracker)
-file(GLOB_RECURSE Biotracker_sampletracker RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
-#add_executable(${EXE_NAME} ${Biotracker_sampletracker} )
-add_library(${EXE_NAME} SHARED ${Biotracker_sampletracker} )
+message("Configuring Sample...")
+set(EXE_NAME Sample.tracker)
+file(GLOB_RECURSE Sample RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
+add_library(${EXE_NAME} SHARED ${Sample} )
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility)
 

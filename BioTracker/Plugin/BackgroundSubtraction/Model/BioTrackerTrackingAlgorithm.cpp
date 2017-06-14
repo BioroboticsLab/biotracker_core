@@ -44,7 +44,7 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 	// For every of M Trajectories grab the last (highest index) of TrackedElements.
 	//TODO: If we are tracking somewhere in the middle, this is bad. Do it by id!
 	std::vector<FishPose> last;
-	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
 		if (t) {
 			TrackedElement *e = (TrackedElement *)t->getLastChild();
@@ -57,7 +57,7 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 
 	std::vector<FishPose> last;
-	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
 		if (t) {
 			t->clear();
@@ -82,7 +82,7 @@ void BioTrackerTrackingAlgorithm::refreshPolygon() {
 	std::vector<cv::Point2f> polygon;
 	std::vector<cv::Point2f> polygon_cm;
 
-	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackingRectElement *te = dynamic_cast<TrackingRectElement *>(_TrackedTrajectoryMajor->getChild(i));
 		if (te) {
 			polygon.push_back(cv::Point(te->getX(), te->getY()));
@@ -152,7 +152,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
 	//Insert new poses into data structure
 	int trajNumber = 0;
-	for (int i = 0; i < _TrackedTrajectoryMajor->numberOfChildrean(); i++) {
+	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
 		if (t) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);

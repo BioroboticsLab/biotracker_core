@@ -41,28 +41,42 @@ RMDIR /S /Q CMakeFiles
 RMDIR /S /Q .vs
 CD ../..
 
-CD Plugin/BioTrackerPlugin
+CD Plugin/BackgroundSubtraction
 DEL *.vcxproj.filters
 DEL *.vcxproj
 DEL *.vcxproj.user
 DEL cmake_install.cmake
-RMDIR /S /Q Biotracker_plugin_manual.dir
-RMDIR /S /Q Biotracker_plugin.dir
-RMDIR /S /Q Biotracker_plugin_autogen
+RMDIR /S /Q BackgroundSubtraction.tracker_manual.dir
+RMDIR /S /Q BackgroundSubtraction.tracker.dir
+RMDIR /S /Q BackgroundSubtraction.tracker_autogen
 RMDIR /S /Q Debug
 RMDIR /S /Q Release
 RMDIR /S /Q CMakeFiles
 RMDIR /S /Q .vs
 CD ../..
 
-CD Plugin/Sampletracker
+CD Plugin/Sample
 DEL *.vcxproj.filters
 DEL *.vcxproj
 DEL *.vcxproj.user
 DEL cmake_install.cmake
-RMDIR /S /Q Sampletracker_manual.dir
-RMDIR /S /Q Sampletracker.dir
-RMDIR /S /Q Sampletracker_autogen
+RMDIR /S /Q Sample.tracker_manual.dir
+RMDIR /S /Q Sample.tracker.dir
+RMDIR /S /Q Sample.tracker_autogen
+RMDIR /S /Q Debug
+RMDIR /S /Q Release
+RMDIR /S /Q CMakeFiles
+RMDIR /S /Q .vs
+CD ../..
+
+CD Plugin/LukasKanade
+DEL *.vcxproj.filters
+DEL *.vcxproj
+DEL *.vcxproj.user
+DEL cmake_install.cmake
+RMDIR /S /Q LukasKanade.tracker_manual.dir
+RMDIR /S /Q LukasKanade.tracker.dir
+RMDIR /S /Q LukasKanade.tracker_autogen
 RMDIR /S /Q Debug
 RMDIR /S /Q Release
 RMDIR /S /Q CMakeFiles

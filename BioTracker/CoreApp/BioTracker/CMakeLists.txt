@@ -30,7 +30,7 @@ set(QTLIBS
 set(LIBS 
     Biotracker_interfaces
     Biotracker_utility
-    Biotracker_plugin
+    BackgroundSubtraction
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
     ${QTLIBS}
@@ -46,7 +46,7 @@ set(EXE_NAME Biotracker_core)
 file(GLOB_RECURSE Biotracker_core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
 add_executable(${EXE_NAME} ${Biotracker_core} )
 target_link_libraries(${EXE_NAME} ${LIBS})
-add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility Biotracker_plugin)
+add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction Sample LukasKanade)
 
 
 

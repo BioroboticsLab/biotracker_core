@@ -16,7 +16,7 @@ NN2dMapper::NN2dMapper(TrackedTrajectory *tree) {
 	//For every true trajectory below the tree's root (which are in fact, fish trajectories in out case)
 	//we want to arr a last confident angle to the map.
 	int cid = 0;
-	for (int i = 0; i < _tree->numberOfChildrean(); i++)
+	for (int i = 0; i < _tree->size(); i++)
 	{
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_tree->getChild(i));
 		if (t){
@@ -197,7 +197,7 @@ bool NN2dMapper::correctAngle(int trackid, FishPose &pose)
 
 TrackedTrajectory* getChildOfType(TrackedTrajectory* tree, int tid) {
 	int cid = 0;
-	for (int i = 0; i < tree->numberOfChildrean(); i++) {
+	for (int i = 0; i < tree->size(); i++) {
 		TrackedTrajectory* t = dynamic_cast<TrackedTrajectory*>(tree->getChild(i));
 		if (t && cid==tid) {
 			return t;
@@ -213,10 +213,10 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	TrackedTrajectory* t = getChildOfType((TrackedTrajectory*)_tree, trackid);
 
 	// can't give estimate if not enough poses available
-	if (t->numberOfChildrean() < 3) return std::numeric_limits<float>::quiet_NaN();
+	if (t->size() < 3) return std::numeric_limits<float>::quiet_NaN();
 
 	//std::deque<FishPose>::const_reverse_iterator iter = _histComponents.rbegin();
-	int start = std::max(t->numberOfChildrean()-20, 0);
+	int start = std::max(t->size()-20, 0);
 	TrackedElement* e = (TrackedElement*)t->getChild(start);
 	cv::Point2f nextPoint = e->getFishPose().position_cm();
 	cv::Point2f positionDerivative(0.0f, 0.0f);
@@ -228,7 +228,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	const float falloff = 0.9f;
 	const float falloffMargin = 0.4f;
 
-	for (int i=start+1; i<t->numberOfChildrean(); i++)
+	for (int i=start+1; i<t->size(); i++)
 	{
 		TrackedElement* ecur = (TrackedElement*)t->getChild(i);
 		cv::Point2f currentPoint = ecur->getFishPose().position_cm();

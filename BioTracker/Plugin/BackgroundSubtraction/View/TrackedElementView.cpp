@@ -38,7 +38,7 @@ void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 	if (!all)
 		return;
 
-	for (int i = 0; i < all->numberOfChildrean(); i++) {
+	for (int i = 0; i < all->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(all->getChild(i));
 		if (t) {
 			TrackedElement *elem = (TrackedElement *)t->getLastChild();
@@ -140,7 +140,7 @@ bool TrackedElementView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 					TrackedTrajectory *all = dynamic_cast<TrackedTrajectory *>(getModel());
 					if (!all)
 						return true;
-					for (int i = 0; i < all->numberOfChildrean(); i++) {
+					for (int i = 0; i < all->size(); i++) {
 						TrackingRectElement *r = dynamic_cast<TrackingRectElement *>(all->getChild(i));
 						if (r && r->getId() == it->first) {
 							r->updateXY(nowX - _dragX, nowY - _dragY);
@@ -172,7 +172,7 @@ void TrackedElementView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 	TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(getModel());
 	if (t) {
-		for (int i = 0; i < t->numberOfChildrean(); i++) {
+		for (int i = 0; i < t->size(); i++) {
 			TrackingRectElement *r = dynamic_cast<TrackingRectElement *>(t->getChild(i));
 			if (r) {
 				if (isInRect(r, event_scene_pos)) {
@@ -192,7 +192,7 @@ void TrackedElementView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 	TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(getModel());
 	if (t) {
-		for (int i = 0; i < t->numberOfChildrean(); i++) {
+		for (int i = 0; i < t->size(); i++) {
 			TrackingRectElement *r = dynamic_cast<TrackingRectElement *>(t->getChild(i));
 			if (r) {
 				if (notIsInRect(r, event_scene_pos)) {

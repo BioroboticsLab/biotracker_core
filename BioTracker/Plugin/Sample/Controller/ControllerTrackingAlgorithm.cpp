@@ -68,5 +68,5 @@ void ControllerTrackingAlgorithm::receiveTrackingDone()
 }
 
 void ControllerTrackingAlgorithm::receiveChangeDisplayImage(QString str) {
-	Q_EMIT emitChangeDisplayImage();
+	Q_EMIT emitChangeDisplayImage(str);
 }

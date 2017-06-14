@@ -56,9 +56,10 @@ set(Boost_INCLUDE_DIRS
 
 add_subdirectory(CoreApp/BioTracker)
 add_subdirectory(Interfaces/BioTrackerInterfaces)
-add_subdirectory(Plugin/BioTrackerPlugin)
+add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Utils/BioTrackerUtils)
-add_subdirectory(Plugin/Sampletracker)
+add_subdirectory(Plugin/Sample)
+add_subdirectory(Plugin/LukasKanade)
 
 
 

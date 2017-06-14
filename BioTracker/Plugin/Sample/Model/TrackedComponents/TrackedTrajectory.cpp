@@ -44,7 +44,7 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 	return m_TrackedComponents.at(m_TrackedComponents.size()-1);
 }
 
-int TrackedTrajectory::numberOfChildrean()
+int TrackedTrajectory::size()
 {
     return m_TrackedComponents.size();
 }

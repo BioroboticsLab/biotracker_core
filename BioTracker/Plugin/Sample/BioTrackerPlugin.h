@@ -32,6 +32,7 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
   signals:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
     void emitTrackingDone();
+	void emitChangeDisplayImage(QString str);
 
 private slots:
     void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
