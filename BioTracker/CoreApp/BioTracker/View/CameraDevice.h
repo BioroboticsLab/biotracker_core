@@ -6,6 +6,8 @@
 #include <QCamera>
 #include "QCameraViewfinder"
 #include "QPointer"
+#include "util/types.h"
+#include <opencv2/opencv.hpp>
 
 namespace Ui {
 class CameraDevice;
@@ -22,19 +24,23 @@ public:
 private Q_SLOTS:
     void on_buttonBox_accepted();
 
+	void on_pushButton_clicked();
+
     void on_comboBox_currentIndexChanged(int index);
 
     void on_buttonBox_rejected();
 
 Q_SIGNALS:
-    void emitSelectedCameraDevice(int i);
+    void emitSelectedCameraDevice(CameraConfiguration conf);
 
 private:
+	CameraConfiguration grabUICameraConfiguration();
     void listAllCameras();
     void startCamera(int i);
 
 private:
     Ui::CameraDevice *ui;
+	cv::VideoCapture m_capture;
 
     QPointer< QCamera > camera;
     QPointer< QCameraViewfinder > viewfinder;

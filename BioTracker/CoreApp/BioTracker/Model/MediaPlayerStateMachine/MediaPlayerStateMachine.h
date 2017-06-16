@@ -26,6 +26,8 @@
 
 #include "PlayerParameters.h"
 
+#include "View/CameraDevice.h"
+
 /**
  * The MediaPlayerStateMachine class is an IModel class and is responsible for the executing and setting Player Stats. The instance of this class runns in a separate Thread.
  */
@@ -47,7 +49,7 @@ class MediaPlayerStateMachine : public IModel {
 
     void receiveLoadVideoCommand(QString fileDir);
     void receiveLoadPictures(std::vector<boost::filesystem::path> files);
-    void receiveLoadCameraDevice(int i);
+    void receiveLoadCameraDevice(CameraConfiguration conf);
 
     void receivePrevFrameCommand();
     void receiveNextFramCommand();

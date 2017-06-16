@@ -10,6 +10,7 @@
 #include "Interfaces/IController/IController.h"
 #include "Model/MediaPlayer.h"
 #include "QPointer"
+#include "util/types.h"
 
 /**
  * The ControllerPlayer class it the controller of the MediaPlayer-Component. This controller creates and controlls the IModel class MediaPlayer and the IView class VideoControllWidget.
@@ -31,7 +32,7 @@ class ControllerPlayer : public IController {
     /**
      * Hands over the camera device number to the IModel class MediaPlayer.
      */
-    void loadCameraDevice(int i);
+    void loadCameraDevice(CameraConfiguration conf);
 
     /**
      * Tells the MediaPlayer-Component to hand over the current cv::Mat and the current frame number to the BioTracker Plugin.
@@ -70,6 +71,11 @@ class ControllerPlayer : public IController {
      * If the user changes the ImageView in the comboBox represented in the VideoControllWidget it passes the selected ImageView name to the ControllerTextureObject class of the TextureObject-Component.
      */
     void changeImageView(QString str);
+
+	/**
+	* User clicked record -> record "what the user sees"
+	*/
+	int recordOutput();
 
     // IController interface
   public:

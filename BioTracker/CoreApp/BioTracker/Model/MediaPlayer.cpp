@@ -1,11 +1,15 @@
 #include "MediaPlayer.h"
+#include "util/misc.h"
 
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
 	m_currentFPS = 0;
 	m_fpsOfSourceFile = 0;
+	_imagew = 0;
+	_imageh = 0;
 
     m_TrackingIsActive = false;
+	m_recd = false;
     // Initialize PlayerStateMachine and a Thread for the Player
     //    // Do not set a Parent for MediaPlayerStateMachine in order to run the Player in the QThread!
 
@@ -102,6 +106,23 @@ std::shared_ptr<cv::Mat> MediaPlayer::getCurrentFrame() {
     return m_CurrentFrame;
 }
 
+int MediaPlayer::reopenVideoWriter() {
+	QRectF r = m_gv->sceneRect();
+	if (_imagew != r.width() || _imageh != r.height() || !m_recd) {
+		if (m_videoWriter && m_videoWriter->isOpened())
+			m_videoWriter->release();
+		_imagew = r.width();
+		_imageh = r.height();
+
+		int codec = CV_FOURCC('X', '2', '6', '4');
+		std::string path = getTimeAndDate(".\\ViewCapture", ".avi");
+		m_videoWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./ViewCapture", ".avi"), codec, 30, CvSize(r.width(), r.height()), 1);
+		m_recd = m_videoWriter->isOpened();
+	}
+	return m_recd;
+}
+
+
 void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
     m_Back = param->m_Back;
@@ -122,6 +143,22 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
     if(m_TrackingIsActive)
         Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
+
+	if (m_recd) {
+		reopenVideoWriter();
+		QRectF r = m_gv->sceneRect();
+		QPixmap *pix = new QPixmap(r.size().toSize());
+		QPainter *paint = new QPainter(pix);
+		//gview->render(paint, ir);
+		m_gv->scene()->render(paint);
+		QImage image = pix->toImage();
+		int x = image.format();
+		cv::Mat mat(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine());
+		cv::cvtColor(mat, mat, CV_BGR2RGB);
+		cv::cvtColor(mat, mat, CV_BGR2RGB);
+		m_videoWriter->write(mat);
+	}
+
     Q_EMIT notifyView();
 }
 
@@ -151,3 +188,17 @@ void MediaPlayer::receiveChangeDisplayImage(QString str) {
 	int x = 0;
 }
 
+int MediaPlayer::toggleRecordGraphicsScenes(GraphicsView *gv) {
+
+	if (m_recd) {
+		if (m_videoWriter->isOpened()) {
+			m_videoWriter->release();
+		}
+		m_recd = false;
+	}
+	else {
+		m_gv = gv;
+		reopenVideoWriter();
+	}
+	return m_recd;
+}

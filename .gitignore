@@ -96,3 +96,5 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/Release/TrackingOutput.txt
 /BioTracker/CoreApp/BioTracker/debug/BlobtrackerConfig.ini
 /BioTracker/CoreApp/BioTracker/debug/TrackingOutput.txt
+/BioTracker/CoreApp/BioTracker/BiotrackerCore.ini
+/BioTracker/Plugin/Sample/Sample.tracker.dir/Release/*.cache

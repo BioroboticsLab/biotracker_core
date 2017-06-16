@@ -13,6 +13,7 @@
 #include "QStringListModel"
 #include "boost/filesystem.hpp"
 #include <vector>
+#include "util/types.h"
 
 /**
  * The ControllerMainWindow class controlls the IView class MainWindow.
@@ -39,7 +40,7 @@ class ControllerMainWindow : public IController {
     /**
      * Receives the a string containing the camera device number from the MainWindow class. The string is then given to the ControllerPlayer class of the MediaPlayer-Component.
      */
-    void loadCameraDevice(int i);
+    void loadCameraDevice(CameraConfiguration conf);
     /**
      * Receives the command for activating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
      */

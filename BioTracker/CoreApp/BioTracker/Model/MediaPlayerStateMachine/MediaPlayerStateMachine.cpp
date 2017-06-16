@@ -9,6 +9,8 @@
 #include "PlayerStates/PStateWait.h"
 #include "PlayerStates/PStateGoToFrame.h"
 
+#include "util/types.h"
+
 MediaPlayerStateMachine::MediaPlayerStateMachine(QObject* parent) :
     IModel(parent),
     m_ImageStream(BioTracker::Core::make_ImageStream3NoMedia()) {
@@ -73,8 +75,8 @@ void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem:
 
 }
 
-void MediaPlayerStateMachine::receiveLoadCameraDevice(int x) {
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(x));
+void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) {
+    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(conf));
 
     //   m_PlayerParameters->m_TotalNumbFrames = stream->numFrames();
 

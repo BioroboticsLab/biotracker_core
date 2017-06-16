@@ -9,7 +9,8 @@
 #include "CameraDevice.h"
 #include "QPointer"
 #include "QStringListModel"
-#include "View/GraphicsView.h"//MARKER
+#include "View/GraphicsView.h"
+#include "util/types.h"
 
 namespace Ui {
 class MainWindow;
@@ -47,7 +48,7 @@ class MainWindow : public IViewMainWindow {
 
     void on_actionOpen_Camera_triggered();
 
-    void receiveSelectedCameraDevice(int i);
+    void receiveSelectedCameraDevice(CameraConfiguration conf);
 
     void on_checkBox_TrackingActivated_stateChanged(int arg1);
 

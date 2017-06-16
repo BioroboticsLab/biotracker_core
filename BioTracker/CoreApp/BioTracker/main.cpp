@@ -5,6 +5,7 @@
 #include <boost/filesystem.hpp>
 #include "QVector"
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
+#include "util/types.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -18,6 +19,7 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<std::vector<boost::filesystem::path>>("std::vector<boost::filesystem::path>");
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
     qRegisterMetaType<playerParameters*>("playerParameters*");
+	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
 
 
 

@@ -104,11 +104,30 @@ void VideoControllWidget::on_PositionChanged(int position) {
 }
 
 
-void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {
-    QString name = arg1;
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+void VideoControllWidget::on_pushButton_clicked() { //TODO This is named "pushButton" although I renamed it to button_record!?
+	//QString name = arg1;
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
-    controller->changeImageView(name);
+	int success = controller->recordOutput();
+	if (success == 1) {
+		QPixmap pix(":/Images/resources/recording.png");
+		QIcon icon(pix);
+		ui->pushButton->setIcon(icon);
+		ui->pushButton->setIconSize(QSize(32,32));
+	}
+	else {
+		QPixmap pix(":/Images/resources/record.png");
+		QIcon icon(pix);
+		ui->pushButton->setIcon(icon);
+		ui->pushButton->setIconSize(QSize(32, 32));
+	}
+}
+
+void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {
+	QString name = arg1;
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+
+	controller->changeImageView(name);
 }
 
 void VideoControllWidget::on_sld_video_sliderReleased() {

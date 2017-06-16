@@ -7,8 +7,8 @@
 ControllerGraphicScene::ControllerGraphicScene(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
 {
-	m_Element = NULL; //TODO Andi init properly!
-	m_GraphicsView = NULL; //TODO Andi init properly! 
+	m_Element = NULL;
+	m_GraphicsView = NULL;
 }
 
 void ControllerGraphicScene::addGraphicsItem(QGraphicsItem *item)
@@ -44,7 +44,7 @@ void ControllerGraphicScene::connectModelToController()
 
 void ControllerGraphicScene::connectControllerToController()
 {
-        IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-        QPointer< MainWindow > mainWin = dynamic_cast<MainWindow *>(ctrM->getView());
-        mainWin->addVideoView(m_View);
+	IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+	QPointer< MainWindow > mainWin = dynamic_cast<MainWindow *>(ctrM->getView());
+	mainWin->addVideoView(m_View);
 }

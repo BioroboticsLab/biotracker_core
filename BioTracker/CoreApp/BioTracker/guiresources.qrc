@@ -9,5 +9,7 @@
         <file>resources/pause-sign.png</file>
         <file>resources/screenshot.png</file>
         <file>resources/stop.png</file>
+        <file>resources/record.png</file>
+        <file>resources/recording.png</file>
     </qresource>
 </RCC>

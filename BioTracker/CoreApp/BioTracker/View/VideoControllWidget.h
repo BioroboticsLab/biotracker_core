@@ -38,6 +38,7 @@ class VideoControllWidget : public IViewWidget {
     void on_PositionChanged(int position);
     void on_button_nextFrame_clicked();
     void on_button_playPause_clicked();
+	void on_pushButton_clicked();
 
     void on_button_stop_clicked();
 
@@ -45,7 +46,6 @@ class VideoControllWidget : public IViewWidget {
 
 
     void on_comboBoxSelectedView_currentTextChanged(const QString& arg1);
-
 
     void on_sld_video_sliderReleased();
 

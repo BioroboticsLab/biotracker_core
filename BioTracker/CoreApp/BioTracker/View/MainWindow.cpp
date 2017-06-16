@@ -102,7 +102,23 @@ void MainWindow::on_actionOpen_Picture_triggered() {
 }
 
 void MainWindow::on_actionLoad_tracking_data_triggered() {
+	QRect r = ui->trackingArea->frameRect();
+	QObjectList l = ui->trackingArea->children();
+	uint cnt = l.count();
 
+	QPixmap *pix = new QPixmap(2048,2048);
+	QPainter *paint = new QPainter(pix);
+	for (int i = 0; i < cnt; i++) {
+		GraphicsView *go = dynamic_cast<GraphicsView*>(l.at(i));
+		if (go) {
+			//go->m_GraphicsScene->
+		}
+		QGraphicsItem *go2 = dynamic_cast<QGraphicsObject*>(l.at(i));
+		if (go2) {
+			go2->paint(paint, 0);
+		}
+	}
+	pix->save("test.png");
 }
 
 void MainWindow::on_actionSave_tracking_data_triggered() {
@@ -121,8 +137,8 @@ void MainWindow::on_actionOpen_Camera_triggered() {
     QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
 }
 
-void MainWindow::receiveSelectedCameraDevice(int i) {
-    qobject_cast<ControllerMainWindow*> (getController())->loadCameraDevice(i);
+void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
+    qobject_cast<ControllerMainWindow*> (getController())->loadCameraDevice(conf);
 
 }
 

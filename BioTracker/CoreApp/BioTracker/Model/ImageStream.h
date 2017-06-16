@@ -17,6 +17,7 @@
 #include "QSharedPointer"
 
 #include "settings/ParamNames.h" // GUIPARAM::MediaType
+#include "util/types.h"
 
 namespace BioTracker {
 namespace Core {
@@ -140,7 +141,7 @@ std::shared_ptr<ImageStream> make_ImageStream3Pictures(
 std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
                                                     &filename);
 
-std::shared_ptr<ImageStream> make_ImageStream3Camera(int device);
+std::shared_ptr<ImageStream> make_ImageStream3Camera(CameraConfiguration conf);
 
 }
 }

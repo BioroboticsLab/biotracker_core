@@ -9,6 +9,9 @@
 #include "util/Exceptions.h"
 #include "QSharedPointer"
 #include "settings/Settings.h"
+#include "util/misc.h"
+
+#include "View/CameraDevice.h"
 
 namespace BioTracker {
 namespace Core {
@@ -238,7 +241,6 @@ class ImageStream3Video : public ImageStream {
 
 
 /*********************************************************/
-
 class ImageStream3Camera : public ImageStream {
   public:
     /**
@@ -247,8 +249,8 @@ class ImageStream3Camera : public ImageStream {
      * @brief ImageStreamCamera
      * @param device_id according to the VideoCapture class of OpenCV
      */
-    explicit ImageStream3Camera(int device_id)
-        : m_capture(device_id)
+    explicit ImageStream3Camera(CameraConfiguration conf)
+        : m_capture(conf._id)
         , m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
 		// Give the camera some extra time to get ready:
 		// Somehow opening it on first try sometimes does not succeed.
@@ -260,11 +262,12 @@ class ImageStream3Camera : public ImageStream {
 
 		int w = set.getValueOrDefault<int>("BiotrackerCore/CameraWidth", -1);
 		int h = set.getValueOrDefault<int>("BiotrackerCore/CameraHeight", -1);
-		m_fps = set.getValueOrDefault<int>("BiotrackerCore/CameraFPS", -1);
+		m_fps = set.getValueOrDefault<int>("BiotrackerCore/CameraFPS", 30);
+		m_writeToFile = set.getValueOrDefault<bool>("BiotrackerCore/CameraWriteToFile", true);
 
 		int fails = 0;
-		while (!m_capture.isOpened() && fails < 10) {
-			m_capture.open(device_id);
+		while (!m_capture.isOpened() && fails < 5) {
+			m_capture.open(conf._id);
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 			if (w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, w);
@@ -276,6 +279,19 @@ class ImageStream3Camera : public ImageStream {
         if (! m_capture.isOpened()) {
             throw device_open_error(":(");
         }
+
+		w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
+		h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+		m_fps = m_capture.get(CV_CAP_PROP_FPS);
+
+		if (m_writeToFile) {
+			int codec = CV_FOURCC('X', '2', '6', '4');
+			//int codec = CV_FOURCC('M', 'J', 'P', 'G');
+			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./CameraCapture",".avi"), codec, m_fps, CvSize(w,h), 1);
+			m_writeToFile = vWriter->isOpened();
+			std::cout << "Video is open:" << m_writeToFile << std::endl;
+		}
+
         // load first image
         if (this->numFrames() > 0) {
             this->nextFrame_impl();
@@ -295,12 +311,18 @@ class ImageStream3Camera : public ImageStream {
     }
 
   private:
+	  std::shared_ptr<cv::VideoWriter> vWriter;
+	  bool m_writeToFile;
+
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;
         m_capture.grab();
         m_capture.retrieve(new_frame);
         std::shared_ptr<cv::Mat> mat (new cv::Mat(new_frame));
         this->set_current_frame(mat);
+		if (m_writeToFile) {
+			vWriter->write(new_frame);
+		}
         return ! mat->empty();
     }
 
@@ -335,9 +357,9 @@ std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::pat
     }
 }
 
-std::shared_ptr<ImageStream> make_ImageStream3Camera(int device) {
+std::shared_ptr<ImageStream> make_ImageStream3Camera(CameraConfiguration conf) {
     try {
-        return std::make_shared<ImageStream3Camera>(device);
+        return std::make_shared<ImageStream3Camera>(conf);
     } catch (const device_open_error &) {
         return make_ImageStream3NoMedia();
     }

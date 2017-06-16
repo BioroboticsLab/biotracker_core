@@ -12,9 +12,11 @@
 #include "Interfaces/IModel/IModel.h"
 #include "QThread"
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
+#include "View/GraphicsView.h"
 
 #include <ctime>
 #include <chrono>
+#include "util/types.h"
 
 /**
  * The MediaPlayer class is an IModel class an part of the MediaPlayer component. This class creats a MediaPlayerStateMachine object and moves it to a QThread.
@@ -41,7 +43,7 @@ class MediaPlayer : public IModel {
     /**
     * Emit the camera device number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
     */
-    void loadCameraDevice(int i);
+    void loadCameraDevice(CameraConfiguration conf);
 
     /**
     * Emit a frame number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
@@ -95,6 +97,9 @@ class MediaPlayer : public IModel {
 
     bool getTrackingState();
 
+
+	int toggleRecordGraphicsScenes(GraphicsView * gv);
+
     size_t getTotalNumberOfFrames();
     size_t getCurrentFrameNumber();
     double getFpsOfSourceFile();
@@ -124,6 +129,13 @@ class MediaPlayer : public IModel {
 
 
   private:
+	  /**
+	  * helper function which opens a video. If video size has changed, a new video is opened. 
+	  */
+	int reopenVideoWriter();
+	int _imagew;
+	int _imageh;
+
     QPointer< QThread > m_PlayerThread;
     QPointer< MediaPlayerStateMachine > m_Player;
 
@@ -144,7 +156,10 @@ class MediaPlayer : public IModel {
     bool m_Back;
     bool m_Stop;
     bool m_Paus;
+	bool m_recd;
 
+	std::shared_ptr<cv::VideoWriter> m_videoWriter;
+	GraphicsView *m_gv;
 
     bool m_TrackingIsActive;
 

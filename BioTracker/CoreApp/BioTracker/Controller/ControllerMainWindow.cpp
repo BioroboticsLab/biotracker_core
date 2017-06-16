@@ -6,6 +6,7 @@
 #include "GuiContext.h"
 
 #include "QPluginLoader"
+#include "util/types.h"
 
 
 ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
@@ -28,9 +29,9 @@ void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> fil
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
 }
 
-void ControllerMainWindow::loadCameraDevice(int i) {
+void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
-    qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(i);
+    qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
 }
 
 void ControllerMainWindow::activeTracking() {
@@ -51,9 +52,8 @@ void ControllerMainWindow::setTrackerParamterWidget(IView* widget) {
     dynamic_cast<MainWindow*>(m_View)->addTrackerParameterView(widget);
 }
 
-void ControllerMainWindow::setTrackerElementsWidget(IView *widget) //MARKER
+void ControllerMainWindow::setTrackerElementsWidget(IView *widget)
 {
-	//TODO HAUKE attach this widget to the gvw to achieve auto-painting
 	dynamic_cast<MainWindow*>(m_View)->addTrackerElementsView(widget);
 }
 

@@ -2,6 +2,9 @@
 #include "QTimeLine"
 #include "QWheelEvent"
 
+#include <qpixmap.h>
+#include <QGraphicsItem>
+
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
 {

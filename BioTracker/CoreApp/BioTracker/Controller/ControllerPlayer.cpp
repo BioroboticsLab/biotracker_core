@@ -3,6 +3,8 @@
 #include "View/MainWindow.h"
 #include "Controller/ControllerTextureObject.h"
 #include "Controller/ControllerPlugin.h"
+#include "Controller/ControllerGraphicScene.h"
+#include <QGraphicsItem>
 
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -22,8 +24,8 @@ void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) 
     qobject_cast<MediaPlayer*>(m_Model)->loadPictures(files);
 }
 
-void ControllerPlayer::loadCameraDevice(int i) {
-    qobject_cast<MediaPlayer*>(m_Model)->loadCameraDevice(i);
+void ControllerPlayer::loadCameraDevice(CameraConfiguration conf) {
+    qobject_cast<MediaPlayer*>(m_Model)->loadCameraDevice(conf);
 }
 
 void ControllerPlayer::nextFrame() {
@@ -71,6 +73,17 @@ void ControllerPlayer::changeImageView(QString str) {
     ctrTextureObject->changeTextureModel(str);
 }
 
+int ControllerPlayer::recordOutput() {
+	//IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
+	//QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject*>(ctr);
+	//TextureObject *to = dynamic_cast<TextureObject*>(ctrTextureObject->getModel());
+
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+	QPointer< ControllerGraphicScene > ctrTextureObject = qobject_cast<ControllerGraphicScene*>(ctr);
+
+	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordGraphicsScenes(dynamic_cast <GraphicsView *> (ctrTextureObject->getView()));
+}
+
 void ControllerPlayer::setTrackingActivated() {
     qobject_cast<MediaPlayer*>(m_Model)->setTrackingActive();
 }
@@ -100,7 +113,6 @@ void ControllerPlayer::connectModelToController() {
 
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::renderCurrentImage, this, &ControllerPlayer::receiveRenderImage);
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
-
 }
 
 void ControllerPlayer::receiveChangeDisplayImage(QString str) {

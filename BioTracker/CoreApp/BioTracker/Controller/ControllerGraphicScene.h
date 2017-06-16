@@ -31,7 +31,7 @@ class ControllerGraphicScene : public IController {
     /**
      * This methode adds a IViewGraphicsPixmapItem to the GraphicsView canvas for rendering.
      */
-    void addTextureObject(QGraphicsItem* item);
+	void addTextureObject(QGraphicsItem* item);
 
     // IController interface
   protected:
