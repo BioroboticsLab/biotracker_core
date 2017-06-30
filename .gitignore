@@ -98,3 +98,7 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/debug/TrackingOutput.txt
 /BioTracker/CoreApp/BioTracker/BiotrackerCore.ini
 /BioTracker/Plugin/Sample/Sample.tracker.dir/Release/*.cache
+/BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/include/ui_SettingsWindow.h
+/BioTracker/CoreApp/BioTracker/Release.zip
+/BioTracker/CoreApp/BioTracker/debug/placeholder
+/BioTracker/CoreApp/BioTracker/ui_SettingsWindow.h
