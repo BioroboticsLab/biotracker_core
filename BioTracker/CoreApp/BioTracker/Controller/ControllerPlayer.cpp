@@ -74,14 +74,14 @@ void ControllerPlayer::changeImageView(QString str) {
 }
 
 int ControllerPlayer::recordOutput() {
-	//IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-	//QPointer< ControllerTextureObject > ctrTextureObject = qobject_cast<ControllerTextureObject*>(ctr);
-	//TextureObject *to = dynamic_cast<TextureObject*>(ctrTextureObject->getModel());
-
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
 	QPointer< ControllerGraphicScene > ctrTextureObject = qobject_cast<ControllerGraphicScene*>(ctr);
 
 	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordGraphicsScenes(dynamic_cast <GraphicsView *> (ctrTextureObject->getView()));
+}
+
+int ControllerPlayer::recordInput() {
+	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordImageStream();
 }
 
 void ControllerPlayer::setTrackingActivated() {

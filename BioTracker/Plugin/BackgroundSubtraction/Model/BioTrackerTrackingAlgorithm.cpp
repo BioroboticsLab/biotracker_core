@@ -123,7 +123,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		_noFish = _TrackingParameter->getNoFish(); 
 		resetFishHistory(_noFish);
 		_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
-	}
+	}	
 
 	//Do the preprocessing
 	std::map<std::string, std::shared_ptr<cv::Mat>> images = _ipp.preProcess(p_image);
@@ -173,22 +173,34 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//Send forth whatever the user selected
 	switch (_TrackingParameter->getSendImage()) {
 	case 0: //Send none
+		//sendImage = images.find(std::string("Original"))->second;
+		//Q_EMIT emitCvMatA(sendImage, QString("Original"));
+		Q_EMIT emitChangeDisplayImage("Original");
 		break;
 	case 1:
 		sendImage = images.find(std::string("Binarized"))->second;
 		Q_EMIT emitCvMatA(sendImage, QString("Binarized"));
+		Q_EMIT emitChangeDisplayImage(QString("Binarized"));
 		break;
 	case 2:
 		sendImage = images.find(std::string("Eroded"))->second;
 		Q_EMIT emitCvMatA(sendImage, QString("Eroded"));
+		Q_EMIT emitChangeDisplayImage(QString("Eroded"));
 		break;
 	case 3:
 		sendImage = images.find(std::string("Dilated"))->second;
 		Q_EMIT emitCvMatA(sendImage, QString("Dilated"));
+		Q_EMIT emitChangeDisplayImage(QString("Dilated"));
 		break;
 	case 4:
 		sendImage = images.find(std::string("Foreground"))->second;
 		Q_EMIT emitCvMatA(sendImage, QString("Foreground"));
+		Q_EMIT emitChangeDisplayImage(QString("Foreground"));
+		break;
+	case 5:
+		sendImage = images.find(std::string("Background"))->second;
+		Q_EMIT emitCvMatA(sendImage, QString("Background"));
+		Q_EMIT emitChangeDisplayImage(QString("Background"));
 		break;
 	}
 
@@ -196,6 +208,12 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	if (framenumber==1) {
 		Q_EMIT emitChangeDisplayImage("Original");
 	}
+
+	std::string newSel = _TrackingParameter->getNewSelection();
+	//if (newSel !="") {
+	//	Q_EMIT emitChangeDisplayImage(QString(newSel.c_str()));
+	//	_TrackingParameter->setNewSelection("");
+	//}
 
 	Q_EMIT emitTrackingDone();
 }

@@ -7,10 +7,10 @@
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 #include "util/types.h"
 
+
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    /// NOTE edit by Andi
 
     qRegisterMetaType<cv::Mat>("cv::Mat");
     qRegisterMetaType<std::shared_ptr<cv::Mat>>("std::shared_ptr<cv::Mat>");

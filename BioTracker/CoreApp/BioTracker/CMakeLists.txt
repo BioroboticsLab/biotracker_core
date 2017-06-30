@@ -16,6 +16,7 @@ set(INCLUDE_DIRS
 	${Qt5Multimedia_INCLUDE_DIRS}
 	${Qt5MultimediaWidgets_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${HMNVLibDir}/inc/
 	)
 
 set(QTLIBS 
@@ -30,11 +31,17 @@ set(QTLIBS
 set(LIBS 
     Biotracker_interfaces
     Biotracker_utility
-    BackgroundSubtraction
     ${OpenCV_LIBRARIES}
-    ${Boost_LIBRARIES}
+	${Boost_LIBRARIES}
     ${QTLIBS}
 	)
+	
+IF("${HMNVLibDir}" MATCHES "Not Found")
+ELSE()
+set(LIBS 
+	${LIBS}
+	${HMNVLibDir}/lib/NvEncInterace.lib)
+ENDIF()
 
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)

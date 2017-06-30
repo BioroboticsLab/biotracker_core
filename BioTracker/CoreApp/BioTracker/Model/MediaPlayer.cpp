@@ -1,12 +1,23 @@
 #include "MediaPlayer.h"
 #include "util/misc.h"
 
+
+//Settings related
+#include "util/types.h"
+#include "util/singleton.h"
+#include "settings/Settings.h"
+
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
 	m_currentFPS = 0;
 	m_fpsOfSourceFile = 0;
 	_imagew = 0;
 	_imageh = 0;
+	m_useCuda = false;
+	m_RecI = false;
+	m_RecO = false;
+	m_videoc = std::make_shared<VideoCoder>();
+	m_NameOfCvMat = "Original";
 
     m_TrackingIsActive = false;
 	m_recd = false;
@@ -30,6 +41,8 @@ MediaPlayer::MediaPlayer(QObject* parent) :
     QObject::connect(this, &MediaPlayer::prevFrameCommand, m_Player, &MediaPlayerStateMachine::receivePrevFrameCommand);
     QObject::connect(this, &MediaPlayer::stopCommand, m_Player, &MediaPlayerStateMachine::receiveStopCommand);
     QObject::connect(this, &MediaPlayer::goToFrame, m_Player, &MediaPlayerStateMachine::receiveGoToFrame);
+
+	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
     // Handel PlayerStateMachine results
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
@@ -75,7 +88,15 @@ bool MediaPlayer::getStopState() {
 }
 
 bool MediaPlayer::getPauseState() {
-    return m_Paus;
+	return m_Paus;
+}
+
+bool MediaPlayer::getRecIState() {
+	return m_RecI;
+}
+
+bool MediaPlayer::getRecOState() {
+	return m_RecO;
 }
 
 bool MediaPlayer::getTrackingState() {
@@ -108,20 +129,44 @@ std::shared_ptr<cv::Mat> MediaPlayer::getCurrentFrame() {
 
 int MediaPlayer::reopenVideoWriter() {
 	QRectF r = m_gv->sceneRect();
-	if (_imagew != r.width() || _imageh != r.height() || !m_recd) {
-		if (m_videoWriter && m_videoWriter->isOpened())
-			m_videoWriter->release();
-		_imagew = r.width();
-		_imageh = r.height();
 
-		int codec = CV_FOURCC('X', '2', '6', '4');
-		std::string path = getTimeAndDate(".\\ViewCapture", ".avi");
-		m_videoWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./ViewCapture", ".avi"), codec, 30, CvSize(r.width(), r.height()), 1);
-		m_recd = m_videoWriter->isOpened();
+	if (_imagew != r.width() || _imageh != r.height() || !m_recd) {
+
+		if (m_useCuda) {
+#ifdef WITH_CUDA
+
+			_imagew = r.width();
+			_imageh = r.height();
+			m_videoc = std::make_shared<VideoCoder>();
+			EncodeConfig *cfg = m_videoc->m_nvEncoder->getEncodeConfig();
+			cfg->width = _imagew;
+			cfg->height = _imageh;
+			cfg->fps = 30;
+			cfg->codec = NV_ENC_H264;
+			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_YUV444
+			const std::string f = getTimeAndDate("ViewCapture", ".avi");
+			char* chr = strdup(f.c_str());
+			m_videoc->start();
+			free(chr);
+			m_recd = true;
+#else 
+			std::cout << "Error on recording: Asked to use cudacodec although build is not cuda-enabled. Not recording." << std::endl;
+#endif
+
+		}
+		else {
+			if (m_videoWriter && m_videoWriter->isOpened())
+				m_videoWriter->release();
+			_imagew = r.width();
+			_imageh = r.height();
+
+			int codec = CV_FOURCC('X', '2', '6', '4');
+			m_videoWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./ViewCapture", ".avi"), codec, 30, CvSize(r.width(), r.height()), 1);
+			m_recd = m_videoWriter->isOpened();
+		}
 	}
 	return m_recd;
 }
-
 
 void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
@@ -129,7 +174,9 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     m_Paus = param->m_Paus;
     m_Play = param->m_Play;
     m_Stop = param->m_Stop;
-    m_Forw = param->m_Forw;
+	m_Forw = param->m_Forw;
+	m_RecI = param->m_RecI;
+	m_RecO = param->m_RecO;
 
     m_CurrentFilename = param->m_CurrentFilename;
     m_CurrentFrame = param->m_CurrentFrame;
@@ -144,19 +191,21 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     if(m_TrackingIsActive)
         Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
 
+
 	if (m_recd) {
-		reopenVideoWriter();
-		QRectF r = m_gv->sceneRect();
-		QPixmap *pix = new QPixmap(r.size().toSize());
-		QPainter *paint = new QPainter(pix);
-		//gview->render(paint, ir);
-		m_gv->scene()->render(paint);
-		QImage image = pix->toImage();
-		int x = image.format();
-		cv::Mat mat(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine());
-		cv::cvtColor(mat, mat, CV_BGR2RGB);
-		cv::cvtColor(mat, mat, CV_BGR2RGB);
-		m_videoWriter->write(mat);
+		//reopenVideoWriter(); //4us
+		QRectF r = m_gv->sceneRect(); //0us
+		QPixmap *pix = new QPixmap(r.size().toSize()); //17us
+		QPainter *paint = new QPainter(pix); //21us
+		m_gv->scene()->render(paint); //8544us
+		QImage image = pix->toImage(); //8724us
+		int x = image.format(); //0us
+		std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
+
+		cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
+		cv::cvtColor(*mat, *mat, CV_BGR2RGB);
+		m_videoc->add(mat,1);
+		
 	}
 
     Q_EMIT notifyView();
@@ -188,17 +237,32 @@ void MediaPlayer::receiveChangeDisplayImage(QString str) {
 	int x = 0;
 }
 
+int MediaPlayer::toggleRecordImageStream() {
+	Q_EMIT toggleRecordImageStreamCommand();
+	return 0;
+}
+
 int MediaPlayer::toggleRecordGraphicsScenes(GraphicsView *gv) {
 
-	if (m_recd) {
-		if (m_videoWriter->isOpened()) {
+	m_gv = gv;
+	QRectF r = m_gv->sceneRect(); //0us
+	QSize s = r.size().toSize(); //0us
+	m_recd = m_videoc->toggle(30, s.width(),s.height());
+	/*if (m_recd) {
+		if (m_videoWriter && m_videoWriter->isOpened()) {
 			m_videoWriter->release();
+		}
+		if (m_videoc) {
+			m_videoc->stop();
 		}
 		m_recd = false;
 	}
 	else {
+
+		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+		m_useCuda = set->getValueOrDefault<bool>("UseGPU",false);
 		m_gv = gv;
 		reopenVideoWriter();
-	}
+	}*/
 	return m_recd;
 }

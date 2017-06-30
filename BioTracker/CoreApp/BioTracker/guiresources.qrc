@@ -11,5 +11,7 @@
         <file>resources/stop.png</file>
         <file>resources/record.png</file>
         <file>resources/recording.png</file>
+        <file>resources/recordCam.png</file>
+        <file>resources/recordingCam.png</file>
     </qresource>
 </RCC>

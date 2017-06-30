@@ -48,13 +48,13 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(QString fileDir) {
 
     boost::filesystem::path filename {filenameStr};
 
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Video(filename));
+	m_stream = BioTracker::Core::make_ImageStream3Video(filename);
 
-    m_PlayerParameters->m_TotalNumbFrames = stream->numFrames();
+    m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
+        i.value()->changeImageStream(m_stream);
     }
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
@@ -62,13 +62,13 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(QString fileDir) {
 }
 
 void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem::path> files) {
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Pictures(files));
+    m_stream = BioTracker::Core::make_ImageStream3Pictures(files);
 
-    m_PlayerParameters->m_TotalNumbFrames = stream->numFrames();
+    m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
+        i.value()->changeImageStream(m_stream);
     }
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
@@ -76,13 +76,13 @@ void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem:
 }
 
 void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) {
-    std::shared_ptr<BioTracker::Core::ImageStream> stream(BioTracker::Core::make_ImageStream3Camera(conf));
+	m_stream = BioTracker::Core::make_ImageStream3Camera(conf);
 
     //   m_PlayerParameters->m_TotalNumbFrames = stream->numFrames();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
-        i.value()->changeImageStream(stream);
+        i.value()->changeImageStream(m_stream);
     }
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
@@ -114,6 +114,15 @@ void MediaPlayerStateMachine::receiveGoToFrame(int frame) {
     setNextState(IPlayerState::STATE_GOTOFRAME);
 }
 
+void MediaPlayerStateMachine::receivetoggleRecordImageStream() {
+	if (m_stream)
+		m_PlayerParameters->m_RecI = m_stream->toggleRecord();
+	else
+		m_PlayerParameters->m_RecI = false;
+	emitSignals();
+	return;
+}
+
 void MediaPlayerStateMachine::updatePlayerParameter() {
 
     stateParameters stateParam = m_CurrentPlayerState->getStateParameters();
@@ -122,7 +131,7 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
     m_PlayerParameters->m_Forw = stateParam.m_Forw;
     m_PlayerParameters->m_Paus = stateParam.m_Paus;
     m_PlayerParameters->m_Play = stateParam.m_Play;
-    m_PlayerParameters->m_Stop = stateParam.m_Stop;
+	m_PlayerParameters->m_Stop = stateParam.m_Stop;
 
     m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
 

@@ -14,6 +14,7 @@ CameraDevice::CameraDevice(QWidget *parent) :
 
     this->setAttribute(Qt::WA_DeleteOnClose);
 
+
     listAllCameras();
 }
 
@@ -25,6 +26,7 @@ CameraDevice::~CameraDevice()
 
 CameraConfiguration CameraDevice::grabUICameraConfiguration() {
 	int i = ui->comboBox->currentIndex();
+//	int codec = ui->comboBox_2->currentIndex();
 	std::string sx = ui->lineEdit->text().toStdString();
 	std::string sy = ui->lineEdit_2->text().toStdString();
 	std::string sf = ui->lineEdit_3->text().toStdString();
@@ -32,9 +34,16 @@ CameraConfiguration CameraDevice::grabUICameraConfiguration() {
 	x = (sx == "Default" ? -1 : std::stoi(sx));
 	y = (sx == "Default" ? -1 : std::stoi(sy));
 	f = (sf == "Default" ? -1 : std::stoi(sf));
-	bool record = ui->checkBox->isChecked();
+//	bool record = ui->checkBox->isChecked();
 
-	CameraConfiguration conf(i, x, y, f, record, "FMP4");
+	std::string fourcc;
+//	switch (codec) {
+//	case 0:
+//		fourcc = "X264"; break;
+//	case 1:
+//		fourcc = "X264GPU"; break;
+//	}
+	CameraConfiguration conf(i, x, y, f, false, "");
 	return conf;
 }
 

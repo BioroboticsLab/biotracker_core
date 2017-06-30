@@ -230,31 +230,36 @@
          <item>
           <widget class="QComboBox" name="comboBoxSendImage">
            <property name="currentText">
-            <string>0. None</string>
+            <string>Original</string>
            </property>
            <item>
             <property name="text">
-             <string>0. None</string>
+             <string>Original</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>1. Binarized</string>
+             <string>Binarized</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>2. Eroded</string>
+             <string>Eroded</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>3. Dilated</string>
+             <string>Dilated</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>4. Background Sub</string>
+             <string>Foreground</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Background</string>
             </property>
            </item>
           </widget>

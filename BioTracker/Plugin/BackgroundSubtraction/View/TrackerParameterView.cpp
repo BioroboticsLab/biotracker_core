@@ -29,7 +29,6 @@ TrackerParameterView::~TrackerParameterView()
     delete ui;
 }
 
-
 void TrackerParameterView::on_pushButtonResetBackground_clicked() {
 	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
 	parameter->setResetBackground(true);
@@ -38,6 +37,7 @@ void TrackerParameterView::on_pushButtonResetBackground_clicked() {
 void TrackerParameterView::on_comboBoxSendImage_currentIndexChanged(int v) {
 	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
 	parameter->setSendImage(v);
+	parameter->setNewSelection(ui->comboBoxSendImage->currentText().toStdString());
 }
 
 void TrackerParameterView::on_checkBoxNetwork_stateChanged(int v) {

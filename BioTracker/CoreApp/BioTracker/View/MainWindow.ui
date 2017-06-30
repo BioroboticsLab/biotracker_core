@@ -177,7 +177,14 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuExtras">
+    <property name="title">
+     <string>Extras</string>
+    </property>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuExtras"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetAlgorithm">
    <property name="sizePolicy">
@@ -397,6 +404,11 @@
   <action name="actionOpen_Camera">
    <property name="text">
     <string>Open &amp;Camera...</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

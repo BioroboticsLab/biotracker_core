@@ -108,7 +108,10 @@ public:
 		Q_EMIT notifyView();
 	};
 
-
+	std::string getNewSelection() { return m_newSelection; };
+	void setNewSelection(std::string x) {
+		m_newSelection = x;
+	}
 	
 
 	void setAll(
@@ -172,6 +175,8 @@ private:
 	int m_areaHeight;
 	int m_networkPort;
 	bool m_doNetwork;
+
+	std::string m_newSelection;
 };
 
 #endif // TRACKERPARAMETER_H

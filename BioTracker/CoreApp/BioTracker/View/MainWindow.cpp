@@ -40,11 +40,11 @@ void MainWindow::addVideoView(IView* videoView) {
 void MainWindow::addTrackerElementsView(IView *elemView)
 {
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
-	graphObj->setParent(ui->trackingArea); //MARKER
+	graphObj->setParent(ui->trackingArea);
 	m_graphView->addGraphicsItem(graphObj);
 }
 
-void MainWindow::addTrackerParameterView(IView *parameter) //MARKER
+void MainWindow::addTrackerParameterView(IView *parameter) 
 {
     dynamic_cast<QWidget*>(parameter)->setParent(this);
 
@@ -68,7 +68,7 @@ void MainWindow::on_actionOpen_Video_triggered() {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
 
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open video", "", videoFilter);
+                                                    "Open video", "", videoFilter, 0, QFileDialog::DontUseNativeDialog);
 
     if (!filename.isEmpty()) {
         dynamic_cast<ControllerMainWindow*> (getController())->loadVideo(filename);
@@ -79,7 +79,7 @@ void MainWindow::on_actionLoad_Tracker_triggered() {
     static const QString pluginFilter("BioTracker Tracking Plugin files (*.so *.dll *.dylib)");
 
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open BioTracker Tracking Plugin", "", pluginFilter);
+                                                    "Open BioTracker Tracking Plugin", "", pluginFilter, 0, QFileDialog::DontUseNativeDialog);
 
     if (!filename.isEmpty()) {
         qobject_cast<ControllerMainWindow*> (getController())->loadTracker(filename);
@@ -92,7 +92,7 @@ void MainWindow::on_actionOpen_Picture_triggered() {
 
     std::vector<boost::filesystem::path> files;
     for (QString const& path : QFileDialog::getOpenFileNames(this,
-                                                             "Open image files", "", imageFilter)) {
+                                                             "Open image files", "", imageFilter, 0, QFileDialog::DontUseNativeDialog)) {
         files.push_back(boost::filesystem::path(path.toStdString()));
     }
 
@@ -102,23 +102,7 @@ void MainWindow::on_actionOpen_Picture_triggered() {
 }
 
 void MainWindow::on_actionLoad_tracking_data_triggered() {
-	QRect r = ui->trackingArea->frameRect();
-	QObjectList l = ui->trackingArea->children();
-	uint cnt = l.count();
 
-	QPixmap *pix = new QPixmap(2048,2048);
-	QPainter *paint = new QPainter(pix);
-	for (int i = 0; i < cnt; i++) {
-		GraphicsView *go = dynamic_cast<GraphicsView*>(l.at(i));
-		if (go) {
-			//go->m_GraphicsScene->
-		}
-		QGraphicsItem *go2 = dynamic_cast<QGraphicsObject*>(l.at(i));
-		if (go2) {
-			go2->paint(paint, 0);
-		}
-	}
-	pix->save("test.png");
 }
 
 void MainWindow::on_actionSave_tracking_data_triggered() {
@@ -149,3 +133,16 @@ void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {
     if(arg1 == Qt::Unchecked)
         qobject_cast<ControllerMainWindow*> (getController())->deactiveTrackring();
 }
+
+
+//////////////////////////////////Extras//////////////////////////////
+
+void MainWindow::on_actionSettings_triggered() {
+	m_SettingsWindow = new SettingsWindow();
+
+	m_SettingsWindow->show();
+
+	//QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
+}
+
+

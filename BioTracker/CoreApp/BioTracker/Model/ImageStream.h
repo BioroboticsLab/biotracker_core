@@ -40,6 +40,8 @@ class ImageStream : public QObject {
      */
     virtual size_t numFrames() const = 0;
 
+	virtual bool toggleRecord() = 0;
+
     /**
      * @return the current frame number
      */

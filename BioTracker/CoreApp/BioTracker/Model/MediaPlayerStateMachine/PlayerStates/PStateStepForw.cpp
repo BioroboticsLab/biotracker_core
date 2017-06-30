@@ -10,6 +10,8 @@ PStateStepForw::PStateStepForw(MediaPlayerStateMachine* player,
     m_StateParameters.m_Paus = false;
     m_StateParameters.m_Play = false;
     m_StateParameters.m_Stop = false;
+	m_StateParameters.m_RecI = false;
+	m_StateParameters.m_RecO = false;
 
     m_FrameNumber = 0;
 

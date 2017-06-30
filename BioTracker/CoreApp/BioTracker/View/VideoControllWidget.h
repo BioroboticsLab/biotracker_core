@@ -38,7 +38,8 @@ class VideoControllWidget : public IViewWidget {
     void on_PositionChanged(int position);
     void on_button_nextFrame_clicked();
     void on_button_playPause_clicked();
-	void on_pushButton_clicked();
+	void on_button_record_clicked();
+	void on_button_record_cam_clicked();
 
     void on_button_stop_clicked();
 
@@ -59,7 +60,9 @@ class VideoControllWidget : public IViewWidget {
 
     size_t m_TotalNumbFrames;
 
-    bool m_Paus;
+	bool m_Paus;
+	bool m_RecI;
+	bool m_RecO;
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H

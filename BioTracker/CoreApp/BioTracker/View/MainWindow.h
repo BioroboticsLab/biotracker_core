@@ -11,6 +11,7 @@
 #include "QStringListModel"
 #include "View/GraphicsView.h"
 #include "util/types.h"
+#include "SettingsWindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,7 @@ class MainWindow : public IViewMainWindow {
     void deactivateTrackingCheckBox();
 
   private Q_SLOTS:
+//menu->File
     void on_actionOpen_Video_triggered();
 
     void on_actionLoad_Tracker_triggered();
@@ -48,6 +50,11 @@ class MainWindow : public IViewMainWindow {
 
     void on_actionOpen_Camera_triggered();
 
+//menu->Extras
+	void on_actionSettings_triggered();
+
+//GUI
+
     void receiveSelectedCameraDevice(CameraConfiguration conf);
 
     void on_checkBox_TrackingActivated_stateChanged(int arg1);
@@ -56,7 +63,8 @@ class MainWindow : public IViewMainWindow {
     Ui::MainWindow* ui;
 	GraphicsView *m_graphView;//MARKER
 
-    QPointer< CameraDevice > m_CameraDevice;
+	QPointer< CameraDevice > m_CameraDevice;
+	QPointer< SettingsWindow > m_SettingsWindow;
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

@@ -58,7 +58,7 @@ class ControllerTextureObject : public IController {
   private:
     QMap<QString, QPointer< TextureObject > > m_TextureObjects;
 
-    QString m_DefaultTextureName = "No View";
+    QString m_DefaultTextureName = "Original";
 
     QStringList m_TextureViewNames;
     QPointer< QStringListModel > m_TextureViewNamesModel;

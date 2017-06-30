@@ -10,6 +10,9 @@
 #include "../util/stringTools.h" // (un)escape_non_ascii
 #include "StringTranslator.h"
 #include "ParamNames.h"
+#include <mutex>
+
+#include "util/singleton.h"
 
 namespace {
 template<typename Test, template<typename...> class Ref>
@@ -25,6 +28,7 @@ namespace Core {
 class Settings {
 private:
 	std::string _confFile;
+	std::mutex _m;
 
 public:
 
@@ -32,6 +36,7 @@ public:
 	* SettingsIAC *myInstance = SettingsIAC::getInstance();
 	*/
 	Settings(std::string config) {
+		_m.lock();
 		//Setting default file, if unset
 		if (config == "") _confFile = "config.ini";
 		else _confFile = config;
@@ -45,6 +50,7 @@ public:
 			_ptree = getDefaultParams();
 			boost::property_tree::write_json(_confFile, _ptree);
 		}
+		_m.unlock();
 	}
 
 	// C++ 11 style
@@ -59,8 +65,10 @@ public:
      */
     template <typename T>
     void setParam(std::string const &paramName, T &&paramValue) {
+		//_m.lock();
         _ptree.put(paramName, preprocess_value(std::forward<T>(paramValue)));
         boost::property_tree::write_json(_confFile, _ptree);
+		//_m.unlock();
     }
 
     /**
@@ -70,6 +78,7 @@ public:
      */
     template <typename T>
     void setParam(std::string const &paramName, std::vector<T> &&paramVector) {
+		//_m.lock();
         boost::property_tree::ptree subtree;
         for (T &value : paramVector) {
             boost::property_tree::ptree valuetree;
@@ -78,6 +87,7 @@ public:
         }
         _ptree.put_child(paramName, subtree);
         boost::property_tree::write_json(_confFile, _ptree);
+		//_m.unlock();
     }
 
     /**
@@ -88,7 +98,10 @@ public:
     template <typename T>
     typename std::enable_if<!is_specialization<T, std::vector>::value, T>::type
     getValueOfParam(const std::string &paramName) const {
-        return postprocess_value(_ptree.get<T>(paramName));
+		_m.lock();
+        auto a = postprocess_value(_ptree.get<T>(paramName));
+		_m.unlock();
+		return a;
     }
 
     /**
@@ -102,11 +115,13 @@ public:
     template <typename T>
     typename std::enable_if<is_specialization<T, std::vector>::value, T>::type
     getValueOfParam(const std::string &paramName) const {
+		_m.lock();
         T result;
         for (auto &item : _ptree.get_child(paramName)) {
             result.push_back(postprocess_value(
                                  item.second.get_value<typename T::value_type>()));
         }
+		_m.unlock();
         return result;
     }
 
@@ -117,8 +132,11 @@ public:
      * @return the value of the parameter wrapped in a boost::optional.
      */
     template <typename T>
-    boost::optional<T> maybeGetValueOfParam(const std::string &paramName) const {
-        return _ptree.get_optional<T>(paramName);
+    boost::optional<T> maybeGetValueOfParam(const std::string &paramName) {
+		//_m.lock();
+        auto a = _ptree.get_optional<T>(paramName);
+		//_m.unlock();
+		return a;
     }
 
     /**
@@ -130,13 +148,17 @@ public:
      */
     template <typename T>
     T getValueOrDefault(const std::string &paramName, const T &defaultValue) {
+		_m.lock();
         boost::optional<T> value = maybeGetValueOfParam<T>(paramName);
+		T t;
         if (value) {
-            return value.get();
+            t = value.get();
         } else {
             setParam(paramName, defaultValue);
-            return defaultValue;
+            t = defaultValue;
         }
+		_m.unlock();
+		return t;
     }
 
   private:

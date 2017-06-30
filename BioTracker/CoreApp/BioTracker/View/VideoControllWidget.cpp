@@ -10,6 +10,9 @@ VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controlle
     IViewWidget(parent, controller, model),
     ui(new Ui::VideoControllWidget) {
     ui->setupUi(this);
+	m_RecO = false;
+	m_RecI = false;
+	m_Paus = false;
 
     m_iconPause.addFile(QStringLiteral("qrc:/Images/resources/pause-sign.png"),
                         QSize(), QIcon::Normal, QIcon::Off);
@@ -17,6 +20,9 @@ VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controlle
                        QSize(), QIcon::Normal, QIcon::Off);
 
     ui->sld_video->setMinimum(0);
+	ui->comboBoxSelectedView->setVisible(false);
+	ui->labelView->setVisible(false);
+	this->setSelectedView("Original");
 }
 
 VideoControllWidget::~VideoControllWidget() {
@@ -49,6 +55,14 @@ void VideoControllWidget::getNotified() {
     } else {
         ui->button_playPause->setIcon(QIcon(":/Images/resources/arrow-forward1.png"));
     }
+
+	m_RecI = mediaPlayer->getRecIState();
+	if (m_RecI) {
+		ui->button_record_cam->setIcon(QIcon(":/Images/resources/recordingCam.png"));
+	}
+	else {
+		ui->button_record_cam->setIcon(QIcon(":/Images/resources/recordCam.png"));
+	}
 
     int currentFrameNr = mediaPlayer->getCurrentFrameNumber();
     ui->frame_num_edit->setText(QString::number(currentFrameNr));
@@ -104,7 +118,7 @@ void VideoControllWidget::on_PositionChanged(int position) {
 }
 
 
-void VideoControllWidget::on_pushButton_clicked() { //TODO This is named "pushButton" although I renamed it to button_record!?
+void VideoControllWidget::on_button_record_clicked() {
 	//QString name = arg1;
 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
@@ -112,15 +126,22 @@ void VideoControllWidget::on_pushButton_clicked() { //TODO This is named "pushBu
 	if (success == 1) {
 		QPixmap pix(":/Images/resources/recording.png");
 		QIcon icon(pix);
-		ui->pushButton->setIcon(icon);
-		ui->pushButton->setIconSize(QSize(32,32));
+		ui->button_record->setIcon(icon);
+		ui->button_record->setIconSize(QSize(32,32));
 	}
 	else {
 		QPixmap pix(":/Images/resources/record.png");
 		QIcon icon(pix);
-		ui->pushButton->setIcon(icon);
-		ui->pushButton->setIconSize(QSize(32, 32));
+		ui->button_record->setIcon(icon);
+		ui->button_record->setIconSize(QSize(32, 32));
 	}
+}
+
+void VideoControllWidget::on_button_record_cam_clicked() {
+	//QString name = arg1;
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+
+	int success = controller->recordInput();
 }
 
 void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {

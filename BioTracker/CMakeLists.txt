@@ -21,38 +21,53 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(OpenGL REQUIRED)
-find_package(Qt5 REQUIRED Core Gui Xml Network Widgets OpenGL Multimedia MultimediaWidgets)
-find_package(OpenCV REQUIRED PATHS $ENV{CV_DIR_CMAKE})
-#find_package(Boost REQUIRED system filesystem chrono thread timer)
-
 #Building for x64
 IF(CMAKE_CL_64)
-	find_package(Qt5 REQUIRED Core Gui Xml Network Widgets PATHS $ENV{QT_DIR_CMAKE64})
+	find_package(Qt5 REQUIRED Core Gui Xml Network Widgets OpenGL Multimedia MultimediaWidgets PATHS $ENV{QT_DIR_CMAKE64})
 	find_package(OpenCV REQUIRED PATHS $ENV{CV_DIR_CMAKE64})
 	set (QT_DIR_CMAKE $ENV{QT_DIR_CMAKE64})
 ELSE()
 #Building for x86
-	find_package(Qt5 REQUIRED Core Gui Xml Network Widgets PATHS $ENV{QT_DIR_CMAKE32})
+	find_package(Qt5 REQUIRED Core Gui Xml Network Widgets OpenGL Multimedia MultimediaWidgets PATHS $ENV{QT_DIR_CMAKE32})
 	find_package(OpenCV REQUIRED PATHS $ENV{CV_DIR_CMAKE32})
 	set (QT_DIR_CMAKE $ENV{QT_DIR_CMAKE32})
 ENDIF()
 
-set(Boost_LIBRARIES
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_filesystem-vc140-mt-gd-1_64.lib
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_system-vc140-mt-gd-1_64.lib
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_chrono-vc140-mt-gd-1_64.lib
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_thread-vc140-mt-gd-1_64.lib
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_timer-vc140-mt-gd-1_64.lib
-	E:/Software/Libraries/boost_1_64_0_VS14.0/lib64-msvc-14.0/libboost_exception-vc140-mt-gd-1_64.lib)
-set(Boost_INCLUDE_DIRS
-	E:/Software/Libraries/boost_1_64_0_VS14.0)
+
+set(HMNVLibDir "Not Found" CACHE FILEPATH "")
+IF("${HMNVLibDir}" MATCHES "Not Found")
+ELSE()
+	add_definitions(-DWITH_CUDA)
+ENDif()
+
+IF("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+	find_package(Boost REQUIRED system filesystem chrono thread timer)
+ELSE()
+	#Find_package doesn't seem to work on windows, even when providing a PATHS hint...
+	set(Boost_LIB_DIR $ENV{Boost_LIB_DIR} CACHE FILEPATH "")
+	set(Boost_INCLUDE_DIR $ENV{Boost_INCLUDE_DIR} CACHE FILEPATH "")
+	set(Boost_VERSION_STRING_DEB "-vc140-mt-gd-1_64" CACHE STRING "")
+	set(Boost_VERSION_STRING_REL "-vc140-mt-1_64" CACHE STRING "")
 	
-# Somehow this is required on Windows. TODO: if linux...
-#set(_qt5_module_paths ${_qt5_module_paths}\\..\\..\\)
-#set(_qt5_root_dir ${_qt5_root_dir}\\..\\..\\)
-#set(_qt5_install_prefix ${_qt5_install_prefix}\\..\\..\\)
- 
+	set(Boost_LIBRARIES
+		debug ${Boost_LIB_DIR}/libboost_filesystem${Boost_VERSION_STRING_DEB}.lib
+		debug ${Boost_LIB_DIR}/libboost_system${Boost_VERSION_STRING_DEB}.lib
+		debug ${Boost_LIB_DIR}/libboost_chrono${Boost_VERSION_STRING_DEB}.lib
+		debug ${Boost_LIB_DIR}/libboost_thread${Boost_VERSION_STRING_DEB}.lib
+		debug ${Boost_LIB_DIR}/libboost_timer${Boost_VERSION_STRING_DEB}.lib
+		debug ${Boost_LIB_DIR}/libboost_exception${Boost_VERSION_STRING_DEB}.lib
+		optimized ${Boost_LIB_DIR}/libboost_filesystem${Boost_VERSION_STRING_REL}.lib
+		optimized ${Boost_LIB_DIR}/libboost_system${Boost_VERSION_STRING_REL}.lib
+		optimized ${Boost_LIB_DIR}/libboost_chrono${Boost_VERSION_STRING_REL}.lib
+		optimized ${Boost_LIB_DIR}/libboost_thread${Boost_VERSION_STRING_REL}.lib
+		optimized ${Boost_LIB_DIR}/libboost_timer${Boost_VERSION_STRING_REL}.lib
+		optimized ${Boost_LIB_DIR}/libboost_exception${Boost_VERSION_STRING_REL}.lib)
+	set(Boost_INCLUDE_DIRS
+		${Boost_INCLUDE_DIR})
+ENDIF()
+
+
+
 
 add_subdirectory(CoreApp/BioTracker)
 add_subdirectory(Interfaces/BioTrackerInterfaces)

@@ -12,6 +12,10 @@
 #include "util/misc.h"
 
 #include "View/CameraDevice.h"
+#include "util/types.h"
+#include "util/singleton.h"
+#include "settings/Settings.h"
+#include "util/VideoCoder.h"
 
 namespace BioTracker {
 namespace Core {
@@ -118,9 +122,12 @@ class ImageStream3NoMedia : public ImageStream {
     virtual GuiParam::MediaType type() const override {
         return GuiParam::MediaType::NoMedia;
     }
-    virtual size_t numFrames() const override {
-        return 0;
-    }
+	virtual size_t numFrames() const override {
+		return 0;
+	}
+	virtual bool toggleRecord() override {
+		return false;
+	}
     virtual double fps() const override {
         return 1.0;
     }
@@ -153,6 +160,9 @@ class ImageStream3Pictures : public ImageStream {
     virtual size_t numFrames() const override {
         return m_picture_files.size();
     }
+	virtual bool toggleRecord() override {
+		return false;
+	}
     virtual double fps() const override {
         return 1.0;
     }
@@ -194,6 +204,10 @@ class ImageStream3Video : public ImageStream {
         if (! m_capture.isOpened()) {
             throw video_open_error(":(");
         }
+		m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
+		m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+		m_recording = false;
+		vCoder = std::make_shared<VideoCoder>();
 
         // load first image
         if (this->numFrames() > 0) {
@@ -203,9 +217,17 @@ class ImageStream3Video : public ImageStream {
     virtual GuiParam::MediaType type() const override {
         return GuiParam::MediaType::Video;
     }
-    virtual size_t numFrames() const override {
-        return m_num_frames;
-    }
+	virtual size_t numFrames() const override {
+		return m_num_frames;
+	}
+	virtual bool toggleRecord() override {
+		if (!m_capture.isOpened()) {
+			return false;
+		}
+		m_recording = vCoder->toggle(m_fps, m_w, m_h);
+
+		return m_recording;
+	}
     virtual double fps() const override {
         return m_fps;
     }
@@ -219,6 +241,9 @@ class ImageStream3Video : public ImageStream {
         m_capture >> new_frame;
         std::shared_ptr<cv::Mat> mat(new cv::Mat(new_frame));
         this->set_current_frame(mat);
+		if (m_recording) {
+			if (vCoder) vCoder->add(mat);
+		}
         return ! new_frame.empty();
     }
 
@@ -235,8 +260,12 @@ class ImageStream3Video : public ImageStream {
 
 	cv::VideoCapture m_capture;
     const size_t     m_num_frames;
-    const double     m_fps;
     const std::string m_fileName;
+	std::shared_ptr<VideoCoder> vCoder;
+	double m_fps;
+	double m_w;
+	double m_h;
+	bool m_recording;
 };
 
 
@@ -258,21 +287,18 @@ class ImageStream3Camera : public ImageStream {
 		// So, stubbornly try it a few times until it works.
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-		Settings set("BiotrackerCore.ini");
+		Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 
-		int w = set.getValueOrDefault<int>("BiotrackerCore/CameraWidth", -1);
-		int h = set.getValueOrDefault<int>("BiotrackerCore/CameraHeight", -1);
-		m_fps = set.getValueOrDefault<int>("BiotrackerCore/CameraFPS", 30);
-		m_writeToFile = set.getValueOrDefault<bool>("BiotrackerCore/CameraWriteToFile", true);
+		m_w = conf._width == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraWidth", -1) : conf._width;
+		m_h = conf._height == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraHeight", -1) : conf._height;
+		m_fps = conf._fps == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraFPS", 30) : conf._fps;
+		m_recording = false;
+		vCoder = std::make_shared<VideoCoder>();
 
 		int fails = 0;
 		while (!m_capture.isOpened() && fails < 5) {
 			m_capture.open(conf._id);
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-			if (w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, w);
-			if (h != -1)     m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, h);
-			if (m_fps != -1) m_capture.set(CV_CAP_PROP_FPS, m_fps);
 			fails++;
 		}
 		
@@ -280,17 +306,13 @@ class ImageStream3Camera : public ImageStream {
             throw device_open_error(":(");
         }
 
-		w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
-		h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
-		m_fps = m_capture.get(CV_CAP_PROP_FPS);
+		if (m_w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, m_w);
+		if (m_h != -1)     m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
+		if (m_fps != -1) m_capture.set(CV_CAP_PROP_FPS, m_fps);
 
-		if (m_writeToFile) {
-			int codec = CV_FOURCC('X', '2', '6', '4');
-			//int codec = CV_FOURCC('M', 'J', 'P', 'G');
-			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./CameraCapture",".avi"), codec, m_fps, CvSize(w,h), 1);
-			m_writeToFile = vWriter->isOpened();
-			std::cout << "Video is open:" << m_writeToFile << std::endl;
-		}
+		m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
+		m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+		m_fps = m_capture.get(CV_CAP_PROP_FPS);
 
         // load first image
         if (this->numFrames() > 0) {
@@ -301,8 +323,16 @@ class ImageStream3Camera : public ImageStream {
         return GuiParam::MediaType::Camera;
     }
     virtual size_t numFrames() const override {
-        return 10000;
+        return 10000; //TODO wtf?
     }
+	virtual bool toggleRecord() override {
+		if (!m_capture.isOpened()) {
+			return false;
+		}
+		m_recording = vCoder->toggle(m_fps,m_w,m_h);
+
+		return m_recording;
+	}
     virtual double fps() const override {
         return m_fps;
     }
@@ -311,8 +341,6 @@ class ImageStream3Camera : public ImageStream {
     }
 
   private:
-	  std::shared_ptr<cv::VideoWriter> vWriter;
-	  bool m_writeToFile;
 
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;
@@ -320,8 +348,8 @@ class ImageStream3Camera : public ImageStream {
         m_capture.retrieve(new_frame);
         std::shared_ptr<cv::Mat> mat (new cv::Mat(new_frame));
         this->set_current_frame(mat);
-		if (m_writeToFile) {
-			vWriter->write(new_frame);
+		if (m_recording) {
+			if (vCoder) vCoder->add(mat);
 		}
         return ! mat->empty();
     }
@@ -332,8 +360,12 @@ class ImageStream3Camera : public ImageStream {
         return true;
     }
 
+	std::shared_ptr<VideoCoder> vCoder;
     cv::VideoCapture m_capture;
-    double m_fps;
+	double m_fps;
+	double m_w;
+	double m_h;
+	bool m_recording;
 };
 
 /*********************************************************/

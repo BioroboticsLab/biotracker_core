@@ -58,6 +58,8 @@ class MediaPlayerStateMachine : public IModel {
     void receivePlayCommand();
     void receiveGoToFrame(int frame);
 
+	void receivetoggleRecordImageStream();
+
   Q_SIGNALS:
     /**
      * After each state execution this SIGNAL is emmited and received by the MediaPlayer class. The parameter playerParameters contains all information that was changed during the execution of the current state.
@@ -81,6 +83,7 @@ class MediaPlayerStateMachine : public IModel {
     std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
     playerParameters* m_PlayerParameters;
+	std::shared_ptr<BioTracker::Core::ImageStream> m_stream;
 };
 
 

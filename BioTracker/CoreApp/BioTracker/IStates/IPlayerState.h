@@ -26,7 +26,9 @@ struct stateParameters {
     bool m_Forw;
     bool m_Back;
     bool m_Stop;
-    bool m_Paus;
+	bool m_Paus;
+	bool m_RecI;
+	bool m_RecO;
 };
 
 class MediaPlayerStateMachine;

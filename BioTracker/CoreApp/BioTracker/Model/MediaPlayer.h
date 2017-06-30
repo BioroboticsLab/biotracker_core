@@ -17,6 +17,7 @@
 #include <ctime>
 #include <chrono>
 #include "util/types.h"
+#include "util/VideoCoder.h"
 
 /**
  * The MediaPlayer class is an IModel class an part of the MediaPlayer component. This class creats a MediaPlayerStateMachine object and moves it to a QThread.
@@ -84,6 +85,7 @@ class MediaPlayer : public IModel {
      */
     void trackCurrentImage(std::shared_ptr<cv::Mat> mat, uint number);
 
+	void toggleRecordImageStreamCommand();
 
   public:
     void setTrackingActive();
@@ -94,11 +96,14 @@ class MediaPlayer : public IModel {
     bool getBackwardState();
     bool getStopState();
     bool getPauseState();
+	bool getRecIState();
+	bool getRecOState();
 
     bool getTrackingState();
 
 
 	int toggleRecordGraphicsScenes(GraphicsView * gv);
+	int toggleRecordImageStream();
 
     size_t getTotalNumberOfFrames();
     size_t getCurrentFrameNumber();
@@ -156,14 +161,18 @@ class MediaPlayer : public IModel {
     bool m_Back;
     bool m_Stop;
     bool m_Paus;
+	bool m_RecI;
+	bool m_RecO;
+
+
 	bool m_recd;
 
-	std::shared_ptr<cv::VideoWriter> m_videoWriter;
+	bool m_useCuda;
 	GraphicsView *m_gv;
+	std::shared_ptr<cv::VideoWriter> m_videoWriter;
+	std::shared_ptr<VideoCoder> m_videoc;
 
     bool m_TrackingIsActive;
-
-
     QString m_NameOfCvMat = "Original";
 
 

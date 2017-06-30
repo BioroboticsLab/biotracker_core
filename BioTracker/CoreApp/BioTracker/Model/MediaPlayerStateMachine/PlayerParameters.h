@@ -18,7 +18,9 @@ struct playerParameters {
     bool m_Forw;
     bool m_Back;
     bool m_Stop;
-    bool m_Paus;
+	bool m_Paus;
+	bool m_RecI;
+	bool m_RecO;
 
     // The other information
     size_t m_TotalNumbFrames;

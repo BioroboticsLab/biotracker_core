@@ -1,9 +1,11 @@
 #include "TrackerParameter.h"
+#include "util/singleton.h"
 
 TrackerParameter::TrackerParameter(QObject *parent) :
     IModel(parent)
 {
-	_settings = new BioTracker::Core::Settings(CONFIGPARAM::CONFIG_INI_FILE);
+	_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
+	//_settings = new BioTracker::Core::Settings(CONFIGPARAM::CONFIG_INI_FILE);
 
 	m_BinarizationThreshold = _settings->getValueOrDefault(TRACKERPARAM::THRESHOLD_BINARIZING, 40);
 	m_SizeErode = _settings->getValueOrDefault(TRACKERPARAM::SIZE_ERODE, 8);

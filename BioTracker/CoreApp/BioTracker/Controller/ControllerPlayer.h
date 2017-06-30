@@ -77,6 +77,8 @@ class ControllerPlayer : public IController {
 	*/
 	int recordOutput();
 
+	int recordInput();
+
     // IController interface
   public:
     void connectControllerToController() override;
