@@ -1,6 +1,5 @@
 #include "TrackingRectElement.h"
 
-
 void TrackingRectElement::pressed()
 {
 	_pressed = true;
@@ -12,5 +11,10 @@ void TrackingRectElement::notPressed()
 {
 	_pressed = false;
 	Q_EMIT notifyView();
+}
+
+bool TrackingRectElement::getPressedStatus()
+{
+	return _pressed;
 }
 

@@ -12,6 +12,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
+	_exporter = 0;
 
 	Rectification::instance().initRecitification(
 		_TrackingParameter->getAreaWidth(),
@@ -19,24 +20,20 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		_TrackedTrajectoryMajor);
 	_noFish = -1;
 
-	//TODO: put this into a module
-	_ofs.open("TrackingOutput.txt", std::ofstream::out);
-	for (int i = 0; i < _noFish; i++) {
-		_ofs << "ID,time(ns),x,y,ADeg,ARad,";
-	}
-	_ofs << std::endl;
-
 	if (_TrackingParameter->getDoNetwork()) {
 		_listener = new TcpListener(this);
 		_listener->listen(QHostAddress::Any, set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444));
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 	}
 }
-/*
+
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
 {
-	_ofs.close();
-}*/
+	if (_exporter) {
+		_exporter->close();
+		delete _exporter;
+	}
+}
 
 std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 	//TODO: This seems kinda fragile: I just assume that the tree has this very certain structure:
@@ -95,6 +92,12 @@ void BioTrackerTrackingAlgorithm::refreshPolygon() {
 	}
 
 	_polygon_cm = polygon_cm;
+}
+
+void BioTrackerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {
+	TrackedElement e;
+	exporter->open(_TrackedTrajectoryMajor, (IModelTrackedComponent*)&e);
+	_exporter = exporter;
 }
 
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
@@ -157,14 +160,16 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		if (t) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
+			e->setTime(std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count());
 			t->add(e);
-			_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count() << ","
-				<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
-				<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
+			_exporter->writeLatest();
+			//_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count() << ","
+			//	<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
+			//	<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
 			trajNumber++;
 		}
 	}
-	_ofs << std::endl; //TODO extra module!
+	//_ofs << std::endl; //TODO extra module!
 
 	//Send forth new positions to the robotracker, if networking is enabled
 	if (_TrackingParameter->getDoNetwork()) 

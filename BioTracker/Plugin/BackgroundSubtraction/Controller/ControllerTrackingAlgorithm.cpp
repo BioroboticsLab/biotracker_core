@@ -24,6 +24,10 @@ void ControllerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> mat, uint 
     qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->doTracking(mat, number);
 }
 
+void ControllerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {
+	qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->setDataExporter(exporter);
+}
+
 IView *ControllerTrackingAlgorithm::getTrackingParameterWidget()
 {
     return m_View;

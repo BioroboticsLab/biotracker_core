@@ -33,6 +33,19 @@ ELSE()
 	set (QT_DIR_CMAKE $ENV{QT_DIR_CMAKE32})
 ENDIF()
 
+#This is only useful, if the dependencies don't depend on MSVCP themselves. Leaving this here for later.
+#if(MSVC)
+# We statically link to reduce dependencies
+#foreach(flag_var CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+#    if(${flag_var} MATCHES "/MD")
+#        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+#    endif(${flag_var} MATCHES "/MD")
+#    if(${flag_var} MATCHES "/MDd")
+#        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+#    endif(${flag_var} MATCHES "/MDd")
+#endforeach(flag_var)
+#endif(MSVC)
+
 
 set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 IF("${HMNVLibDir}" MATCHES "Not Found")
@@ -73,8 +86,8 @@ add_subdirectory(CoreApp/BioTracker)
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Utils/BioTrackerUtils)
-add_subdirectory(Plugin/Sample)
-add_subdirectory(Plugin/LukasKanade)
+#add_subdirectory(Plugin/Sample)
+#add_subdirectory(Plugin/LukasKanade)
 
 
 

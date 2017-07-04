@@ -4,6 +4,7 @@
 #include "Interfaces/IController/IController.h"
 #include "Model/BioTrackerTrackingAlgorithm.h"
 #include "Interfaces/IBioTrackerContext.h"
+#include "Interfaces/IModel/IModelDataExporter.h"
 
 
 class ControllerTrackingAlgorithm : public IController
@@ -17,8 +18,10 @@ public:
     void connectControllerToController() override;
 
     void doTracking(std::shared_ptr<cv::Mat> mat, uint number);
+	void setDataExporter(IModelDataExporter *exporter);
 
     IView *getTrackingParameterWidget();
+
 
 protected:
     void createModel() override;

@@ -9,15 +9,43 @@ class TrackingRectElement : public IModelTrackedComponent
 	Q_OBJECT
 
 public:
-	TrackingRectElement(QObject *parent = 0, QString name = "Rect corner", int id = 0) : _id(id), _pressed(false) {
+	TrackingRectElement(QObject *parent = 0, QString name = "Rect corner", int id = 0) : _id(id) {
 		//_rect = std::make_shared<QRectF>(0,0, 20, 20);
 	};
 
 	QString getName() { return "Rect corner"; };
 
-	void setId(int val) { _id = val; };
-	void setX(int val) { _x = val; };
-	void setY(int val) { _y = val; };
+	void  setX(float val) { _x = val; };
+	void  setY(float val) { _y = val; };
+	void  setZ(float z) {};
+	void  setW(float w) {};
+	void  setH(float h) {};
+	void  setRad(float r) {};
+	void  setDeg(float d) {};
+	void  setId(int val) { _id = val; };
+	void  setTime(long t) {};
+	void  setValid(bool v) {};
+
+	float getX() { return _x; };
+	float getY() { return _y; };
+	float getZ() { return 0; };
+	float getW() { return 0; };
+	float getH() { return 0; };
+	float getRad() { return 0; };
+	float getDeg() { return 0; };
+	int   getId() { return _id; };
+	long  getTime() { return 0; };
+	bool  getValid() { return false; };
+
+	float hasX() { return true; };
+	float hasY() { return true; };
+	float hasZ() { return false; };
+	float hasW() { return false; };
+	float hasH() { return false; };
+	float hasRad() { return false; };
+	float hasDeg() { return false; };
+	float hasTime() { return false; };
+
 	void updateXY(int x, int y) {
 		_x = _x + x;
 		_y = _y + y; 
@@ -25,16 +53,7 @@ public:
 
 	void pressed();
 	void notPressed();
-
-	int getId() { return _id; };
-	int getX() { return _x; };
-	int getY() { return _y; };
-	/*std::shared_ptr<QRectF> getRect() {
-		_rect->setX(_x - 10);
-		_rect->setY(_y - 10);
-		return _rect;
-	};*/
-	bool getPressedStatus() { return _pressed; };
+	bool getPressedStatus();
 
 	// ITrackedComponent interface
 public:
@@ -42,10 +61,7 @@ public:
 
 private:
 	int _id;
-	int _x;
-	int _y;
-
-	//std::shared_ptr<QRectF> _rect;
-
+	float _x;
+	float _y;
 	bool _pressed;
 };

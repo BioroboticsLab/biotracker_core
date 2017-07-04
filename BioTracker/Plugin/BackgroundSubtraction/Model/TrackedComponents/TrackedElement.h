@@ -21,16 +21,44 @@ class TrackedElement : public IModelTrackedComponent
 
     QString getName();
 
-    void setFishPose(FishPose p);
-	void setId(int val) { _id = val; };
+	void  setX(float val);
+	void  setY(float val);
+	void  setZ(float z) {};
+	void  setW(float w);
+	void  setH(float h);
+	void  setRad(float r);
+	void  setDeg(float d);
+	void  setId(int val) { _id = val; };
+	void  setTime(long t) { _time = t; };
+	void  setValid(bool v) { _valid = v; };
 
-    void pressed();
-    void notPressed();
+	float getX() { return _x; };
+	float getY() { return _y; };
+	float getZ() { return 0; };
+	float getW() { return _w; };
+	float getH() { return _h; };
+	float getRad() { return _rad; };
+	float getDeg() { return _deg; };
+	int   getId() { return _id; };
+	long  getTime() { return _time; };
+	bool  getValid() { return _valid; };
 
+	float hasX() { return true; };
+	float hasY() { return true; };
+	float hasZ() { return false; };
+	float hasW() { return true; };
+	float hasH() { return true; };
+	float hasRad() { return true; };
+	float hasDeg() { return true; };
+	float hasTime() { return true; };
+
+	void pressed();
+	void notPressed();
+	bool getPressedStatus();
+
+	void setFishPose(FishPose p);
 	FishPose getFishPose();
-	int getId() { return _id; };
-    bool getPressedStatus();
-
+	
     // ITrackedComponent interface
 public:
     void operate();
@@ -38,9 +66,16 @@ public:
 private:
     QString _name;
 	FishPose _pose;
+	float _x;
+	float _y;
+	float _w;
+	float _h;
+	float _deg;
+	float _rad;
 	int _id;
-
-    bool _pressed;
+	long _time;
+	bool _valid;
+	bool _pressed;
 };
 
 #endif // TRACKEDELEMENT_H

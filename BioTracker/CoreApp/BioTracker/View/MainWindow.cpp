@@ -76,7 +76,7 @@ void MainWindow::on_actionOpen_Video_triggered() {
 }
 
 void MainWindow::on_actionLoad_Tracker_triggered() {
-    static const QString pluginFilter("BioTracker Tracking Plugin files (*.so *.dll *.dylib)");
+    static const QString pluginFilter("BioTracker Tracking Plugin files (*.tracker.so *.tracker.dll *.tracker.dylib)");
 
     QString filename = QFileDialog::getOpenFileName(this,
                                                     "Open BioTracker Tracking Plugin", "", pluginFilter, 0, QFileDialog::DontUseNativeDialog);

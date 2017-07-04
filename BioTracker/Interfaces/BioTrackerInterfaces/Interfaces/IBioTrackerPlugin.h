@@ -4,6 +4,7 @@
 #include "QObject"
 
 #include "Interfaces/IController/IController.h"
+#include "Interfaces/IModel/IModelDataExporter.h"
 #include "opencv2/core/core.hpp"
 #include "memory"
 
@@ -16,7 +17,8 @@ public:
     virtual void createPlugin() = 0;
 
 	virtual IView *getTrackerParameterWidget() = 0;
-	virtual IView *getTrackerElementsWidget() = 0; //MARKER
+	virtual IView *getTrackerElementsWidget() = 0;
+	virtual void setDataExporter(IModelDataExporter *exporter) = 0;
 
 private:
     virtual void connectInterfaces() = 0;

@@ -8,13 +8,13 @@
 
 #include <opencv2/opencv.hpp>
 #include "Interfaces/IModel/IModelTrackingAlgorithm.h"
+#include "Interfaces/IModel/IModelDataExporter.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "Model/TrackingAlgorithm/imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
 #include <iostream>
-#include <fstream>
 
 #include "Network/TcpListener.h"
 
@@ -23,6 +23,9 @@ class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
     Q_OBJECT
 public:
     BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory/*QObject *parent = 0, ITrackedComponentFactory *factory = 0*/);
+	~BioTrackerTrackingAlgorithm();
+
+	void setDataExporter(IModelDataExporter *exporter);
 
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
@@ -30,7 +33,7 @@ Q_SIGNALS:
 
     // ITrackingAlgorithm interface
 public Q_SLOTS:
-	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
+	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override; 
 
 private:
 	void BioTrackerTrackingAlgorithm::refreshPolygon();
@@ -41,7 +44,7 @@ private:
     TrackedTrajectory* _TrackedTrajectoryMajor;
 
 	TrackerParameter* _TrackingParameter;
-
+	IModelDataExporter *_exporter;
 
 	TcpListener* _listener;
 	std::vector<cv::Point2f> _polygon_cm;
@@ -55,7 +58,7 @@ private:
 
 	int _noFish;
 
-	std::ofstream _ofs;
+	//std::ofstream _ofs;
 
 	int _imageX;
 	int _imageY;

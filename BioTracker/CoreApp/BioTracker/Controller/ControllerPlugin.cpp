@@ -5,6 +5,9 @@
 #include "ControllerMainWindow.h"
 #include "QDebug"
 #include "Model/PluginLoader.h"
+#include "settings/Settings.h"
+#include "util/types.h"
+#include "Model/DataExporterCSV.h"
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr) {
@@ -24,6 +27,12 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
     PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
     if( loader->loadPluginFromFilename(str)) {
         createPlugin();
+
+		//Grab the codec from config file
+		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+		std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
+		if (exporter == "CSV")
+			m_BioTrackerPlugin->setDataExporter(new DataExporterCSV());
 
         // Add Plugin name to Main Window
         IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
