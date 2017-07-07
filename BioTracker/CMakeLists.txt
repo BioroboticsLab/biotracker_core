@@ -46,13 +46,6 @@ ENDIF()
 #endforeach(flag_var)
 #endif(MSVC)
 
-
-set(HMNVLibDir "Not Found" CACHE FILEPATH "")
-IF("${HMNVLibDir}" MATCHES "Not Found")
-ELSE()
-	add_definitions(-DWITH_CUDA)
-ENDif()
-
 IF("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 	find_package(Boost REQUIRED system filesystem chrono thread timer)
 ELSE()
@@ -82,10 +75,11 @@ ENDIF()
 
 
 
-add_subdirectory(CoreApp/BioTracker)
+#add_subdirectory(CoreApp/BioTracker)
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Utils/BioTrackerUtils)
+add_subdirectory(CoreApp/BioTracker)
 #add_subdirectory(Plugin/Sample)
 #add_subdirectory(Plugin/LukasKanade)
 

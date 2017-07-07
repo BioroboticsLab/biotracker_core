@@ -16,7 +16,7 @@
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
 #include <iostream>
 
-#include "Network/TcpListener.h"
+#include "Model/Network/TcpListener.h"
 
 class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
@@ -36,7 +36,7 @@ public Q_SLOTS:
 	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override; 
 
 private:
-	void BioTrackerTrackingAlgorithm::refreshPolygon();
+	void refreshPolygon();
 
 	std::vector<FishPose> getLastPositionsAsPose();
 	void resetFishHistory(int noFish);

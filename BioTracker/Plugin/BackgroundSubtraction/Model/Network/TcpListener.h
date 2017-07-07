@@ -21,10 +21,10 @@ public:
 public slots:
 	void acceptConnection();
 	void sendPositionsToSocket(std::string packet);
-	std::string TcpListener::sendPositions(int frameNo,
+	std::string sendPositions(int frameNo,
 		const std::vector<FishPose>& poses,
 		const std::vector<cv::Point2f>& polygon,
-		std::chrono::time_point<std::chrono::steady_clock> ts);
+		std::chrono::steady_clock::time_point ts);
 
 private:
 	std::vector<QTcpSocket *> _sockets;

@@ -166,6 +166,7 @@ class MediaPlayer : public IModel {
 
 
 	bool m_recd;
+	bool m_recordScaled;
 
 	bool m_useCuda;
 	GraphicsView *m_gv;

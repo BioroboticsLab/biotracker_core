@@ -20,6 +20,13 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 
 	bool recordScaled = set->getValueOrDefault<bool>(CFG_RECORDSCALEDOUT, false);
 	ui->checkBox_scaledOutput->setChecked(recordScaled);
+
+
+	for (int i = 0; i<exporterList.size(); i++)
+		ui->comboBoxDefaultExporter->addItem(exporterList[i].c_str());
+
+	int exporter = set->getValueOrDefault<int>(CFG_EXPORTER, 0);
+	ui->comboBoxDefaultExporter->setCurrentIndex(exporter);
 }
 
 void SettingsWindow::on_buttonSaveClose_clicked() {
@@ -33,6 +40,9 @@ void SettingsWindow::on_buttonSaveClose_clicked() {
 
 	int codec = ui->comboBoxVideoCodec->currentIndex();
 	set->setParam(CFG_CODEC, codec);
+
+	int exporter = ui->comboBoxDefaultExporter->currentIndex();
+	set->setParam(CFG_EXPORTER, exporter);
 
 	this->close();
 }

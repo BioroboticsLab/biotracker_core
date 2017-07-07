@@ -6,6 +6,9 @@ set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
 	${CMAKE_SOURCE_DIR}/Interfaces/BioTrackerInterfaces/
 	${CMAKE_SOURCE_DIR}/Utils/BioTrackerUtils
+	${CMAKE_SOURCE_DIR}/CoreApp/BioTracker/
+	${PROJECT_BINARY_DIR}/CoreApp/BioTracker/
+    ${CMAKE_CURRENT_BINARY_DIR}
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS} 
 	${Qt5Core_INCLUDE_DIRS}
@@ -53,7 +56,7 @@ set(EXE_NAME Biotracker_core)
 file(GLOB_RECURSE Biotracker_core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
 add_executable(${EXE_NAME} ${Biotracker_core} )
 target_link_libraries(${EXE_NAME} ${LIBS})
-add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction Sample LukasKanade)
+add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction.tracker)
 
 
 

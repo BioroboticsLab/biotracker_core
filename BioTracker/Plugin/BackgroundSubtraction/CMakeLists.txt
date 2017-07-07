@@ -6,6 +6,8 @@ set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
 	${CMAKE_SOURCE_DIR}/Interfaces/BioTrackerInterfaces/
 	${CMAKE_SOURCE_DIR}/Utils/BioTrackerUtils
+	${CMAKE_SOURCE_DIR}/Plugin/BackgroundSubtraction
+	${PROJECT_BINARY_DIR}/Plugin/BackgroundSubtraction/
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS} 
 	${Qt5Core_INCLUDE_DIRS}
@@ -16,6 +18,11 @@ set(INCLUDE_DIRS
 	${Qt5Opengl_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	)
+	
+	get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 
 set(QTLIBS 
     Qt5::Core

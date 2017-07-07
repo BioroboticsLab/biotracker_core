@@ -21,6 +21,7 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 
     m_TrackingIsActive = false;
 	m_recd = false;
+	m_recordScaled = false;
     // Initialize PlayerStateMachine and a Thread for the Player
     //    // Do not set a Parent for MediaPlayerStateMachine in order to run the Player in the QThread!
 
@@ -194,10 +195,21 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
 	if (m_recd) {
 		//reopenVideoWriter(); //4us
-		QRectF r = m_gv->sceneRect(); //0us
-		QPixmap *pix = new QPixmap(r.size().toSize()); //17us
+		QRectF rscene = m_gv->sceneRect(); //0us
+		QRectF rview = m_gv->rect(); //0us
+		QPixmap *pix;
+		if (!m_recordScaled)
+			pix = new QPixmap(rscene.size().toSize()); //17us
+		else
+			pix = new QPixmap(rview.size().toSize()); //17us
+
 		QPainter *paint = new QPainter(pix); //21us
-		m_gv->scene()->render(paint); //8544us
+
+		if(!m_recordScaled)
+			m_gv->scene()->render(paint); //8544us
+		else
+			m_gv->render(paint);// , m_gv->scene()->sceneRect(), QRect());// , Qt::AspectRatioMode::IgnoreAspectRatio);
+
 		QImage image = pix->toImage(); //8724us
 		int x = image.format(); //0us
 		std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
@@ -245,24 +257,15 @@ int MediaPlayer::toggleRecordImageStream() {
 int MediaPlayer::toggleRecordGraphicsScenes(GraphicsView *gv) {
 
 	m_gv = gv;
-	QRectF r = m_gv->sceneRect(); //0us
-	QSize s = r.size().toSize(); //0us
-	m_recd = m_videoc->toggle(30, s.width(),s.height());
-	/*if (m_recd) {
-		if (m_videoWriter && m_videoWriter->isOpened()) {
-			m_videoWriter->release();
-		}
-		if (m_videoc) {
-			m_videoc->stop();
-		}
-		m_recd = false;
-	}
-	else {
-
-		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-		m_useCuda = set->getValueOrDefault<bool>("UseGPU",false);
-		m_gv = gv;
-		reopenVideoWriter();
-	}*/
+	QRectF rscene = m_gv->sceneRect(); //0us
+	QRectF rview = m_gv->rect(); //0us
+	QSize s1 = rscene.size().toSize(); //0us
+	QSize s2 = rview.size().toSize(); //0us
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	m_recordScaled = set->getValueOrDefault<bool>(CFG_RECORDSCALEDOUT, false);
+	if (!m_recordScaled)
+		m_recd = m_videoc->toggle(30, s1.width(), s1.height());
+	else
+		m_recd = m_videoc->toggle(30, s2.width(), s2.height());
 	return m_recd;
 }

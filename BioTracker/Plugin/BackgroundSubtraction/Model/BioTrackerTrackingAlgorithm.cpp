@@ -115,7 +115,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		Q_EMIT emitDimensionUpdate(_imageX, _imageY);
 	}
 
-	auto start = std::chrono::high_resolution_clock::now();
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
 	if (!Rectification::instance().isSetup()) {
 		Rectification::instance().setupRecitification(100, 100, p_image->size().width, p_image->size().height);
@@ -172,8 +172,10 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//_ofs << std::endl; //TODO extra module!
 
 	//Send forth new positions to the robotracker, if networking is enabled
-	if (_TrackingParameter->getDoNetwork()) 
-		_listener->sendPositions(framenumber, std::get<0>(poses), std::vector<cv::Point2f>(), start);
+	if (_TrackingParameter->getDoNetwork()){ 
+		std::vector<FishPose> ps = std::get<0>(poses);
+		_listener->sendPositions(framenumber, ps, std::vector<cv::Point2f>(), start);
+	}
 
 	//Send forth whatever the user selected
 	switch (_TrackingParameter->getSendImage()) {

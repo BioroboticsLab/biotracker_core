@@ -27,7 +27,7 @@ std::string TcpListener::sendPositions(
 	int frameNo,  
 	const std::vector<FishPose>& poses,
 	const std::vector<cv::Point2f>& polygon,
-	std::chrono::time_point<std::chrono::steady_clock> ts)
+	std::chrono::steady_clock::time_point ts)
 {
 	std::stringstream str;
 	str << "frame:" << frameNo << ";";
