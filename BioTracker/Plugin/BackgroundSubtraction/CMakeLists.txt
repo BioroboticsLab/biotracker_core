@@ -18,11 +18,6 @@ set(INCLUDE_DIRS
 	${Qt5Opengl_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	)
-	
-	get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
 
 set(QTLIBS 
     Qt5::Core
