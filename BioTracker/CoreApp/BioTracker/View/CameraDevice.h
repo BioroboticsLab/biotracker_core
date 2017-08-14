@@ -36,7 +36,6 @@ Q_SIGNALS:
 private:
 	CameraConfiguration grabUICameraConfiguration();
     void listAllCameras();
-    void startCamera(int i);
 
 private:
     Ui::CameraDevice *ui;
@@ -46,6 +45,8 @@ private:
     QPointer< QCameraViewfinder > viewfinder;
 
     QList<QCameraInfo> cameras;
+
+	int m_ximeaId;
 };
 
 #endif // CAMERADEVICE_H

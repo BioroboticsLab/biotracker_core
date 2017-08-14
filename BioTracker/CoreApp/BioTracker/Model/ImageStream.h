@@ -107,6 +107,11 @@ class ImageStream : public QObject {
      */
     void set_current_frame(std::shared_ptr<cv::Mat> img);
 
+	/**
+	* The stride of the image stream. Think of it as "use only every n'th frame".
+	*/
+	const size_t m_frame_stride;
+
   private:
     /**
      * empties m_current_frame & sets m_current_frame_number to this->numFrames();
@@ -132,7 +137,7 @@ class ImageStream : public QObject {
     virtual bool previousFrame_impl();
 
     std::shared_ptr<cv::Mat> m_current_frame;
-    size_t  m_current_frame_number;
+	size_t  m_current_frame_number;
 };
 
 std::shared_ptr<ImageStream> make_ImageStream3NoMedia();

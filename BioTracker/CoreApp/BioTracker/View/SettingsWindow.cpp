@@ -27,6 +27,11 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 
 	int exporter = set->getValueOrDefault<int>(CFG_EXPORTER, 0);
 	ui->comboBoxDefaultExporter->setCurrentIndex(exporter);
+
+
+	ui->lineEdit_nthFrame->setValidator(new QIntValidator(this));
+	int stride = set->getValueOrDefault<int>(CFG_INPUT_FRAME_STRIDE, CFG_INPUT_FRAME_STRIDE_VAL);
+	ui->lineEdit_nthFrame->setText(std::to_string(stride).c_str());
 }
 
 void SettingsWindow::on_buttonSaveClose_clicked() {
@@ -43,6 +48,9 @@ void SettingsWindow::on_buttonSaveClose_clicked() {
 
 	int exporter = ui->comboBoxDefaultExporter->currentIndex();
 	set->setParam(CFG_EXPORTER, exporter);
+
+	int stride = (ui->lineEdit_nthFrame->text()).toInt();
+	set->setParam(CFG_INPUT_FRAME_STRIDE, stride);
 
 	this->close();
 }

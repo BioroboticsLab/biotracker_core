@@ -136,7 +136,7 @@ void Worker::run() {
 			if (m_abort) return;
 
 			cv::Mat writeMat;
-			cv::cvtColor(*(mat->_img), writeMat, CV_BGR2YUV);//CV_BGR2YUV_I420
+			cv::cvtColor(*(mat->_img), writeMat, CV_BGR2YUV);//CV_BGR2YUV_I420 //CV_BGR2YUV
 			int chans = writeMat.channels();
 			YuvConverter yc(writeMat, o0, o1, o2);
 			yc.convert();
@@ -165,7 +165,7 @@ int VideoCoder::toggle(int fps, int w, int h) {
 	//Grab the codec from config file
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string codecStr = codecList[set->getValueOrDefault<int>(CFG_CODEC, 0)].second;
-	m_dropFrames = set->getValueOrDefault<bool>(CFG_DROPFRAMES, false);
+	m_dropFrames = set->getValueOrDefault<bool>(CFG_DROPFRAMES, CFG_DROPFRAMES_VAL);
 
 	if (!m_recording)
 	{

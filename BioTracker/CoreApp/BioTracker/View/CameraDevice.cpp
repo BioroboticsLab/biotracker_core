@@ -5,12 +5,14 @@
 #include "util/types.h"
 #include <thread>
 #include <opencv2/opencv.hpp>
+#include "opencv2/highgui/highgui.hpp"
 
 CameraDevice::CameraDevice(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CameraDevice)
 {
     ui->setupUi(this);
+	m_ximeaId = -1;
 
     this->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -21,12 +23,13 @@ CameraDevice::CameraDevice(QWidget *parent) :
 CameraDevice::~CameraDevice()
 {
     delete ui;
-    //camera->stop();
 }
 
 CameraConfiguration CameraDevice::grabUICameraConfiguration() {
-	int i = ui->comboBox->currentIndex();
-//	int codec = ui->comboBox_2->currentIndex();
+	int id = ui->comboBox->currentIndex();
+	if (m_ximeaId == id)
+		id = CV_CAP_XIAPI;
+
 	std::string sx = ui->lineEdit->text().toStdString();
 	std::string sy = ui->lineEdit_2->text().toStdString();
 	std::string sf = ui->lineEdit_3->text().toStdString();
@@ -34,22 +37,13 @@ CameraConfiguration CameraDevice::grabUICameraConfiguration() {
 	x = (sx == "Default" ? -1 : std::stoi(sx));
 	y = (sx == "Default" ? -1 : std::stoi(sy));
 	f = (sf == "Default" ? -1 : std::stoi(sf));
-//	bool record = ui->checkBox->isChecked();
 
-	std::string fourcc;
-//	switch (codec) {
-//	case 0:
-//		fourcc = "X264"; break;
-//	case 1:
-//		fourcc = "X264GPU"; break;
-//	}
-	CameraConfiguration conf(i, x, y, f, false, "");
+	CameraConfiguration conf(id, x, y, f, false, "");
 	return conf;
 }
 
 void CameraDevice::on_buttonBox_accepted()
 {
-    int i = ui->comboBox->currentIndex();
 	CameraConfiguration conf = grabUICameraConfiguration();
     Q_EMIT emitSelectedCameraDevice(conf);
 
@@ -59,7 +53,15 @@ void CameraDevice::on_buttonBox_accepted()
 void CameraDevice::on_pushButton_clicked()
 {
 	int id = ui->comboBox->currentIndex();
-	m_capture.open(id);
+	if (m_ximeaId == id)
+	{
+		m_capture.open(id);
+	}
+	else
+	{
+		id = CV_CAP_XIAPI;
+		m_capture.open(id);
+	}
 	CameraConfiguration conf = grabUICameraConfiguration();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	int fails = 0;
@@ -81,10 +83,10 @@ void CameraDevice::on_pushButton_clicked()
 	else
 	{
 		cv::Mat mat;
-		m_capture.grab();
-		m_capture.retrieve(mat);
-		m_capture.grab();
-		m_capture.retrieve(mat);
+		for (int i = 0; i < 10; i++) {
+			m_capture.grab();
+			m_capture.retrieve(mat);
+		}
 		cv::Mat destination;
 		cv::resize(mat, destination, cv::Size(240, 180));
 		QPixmap image = QPixmap::fromImage(QImage((unsigned char*)destination.data, destination.cols, destination.rows, QImage::Format_RGB888));
@@ -96,7 +98,6 @@ void CameraDevice::on_pushButton_clicked()
 
 void CameraDevice::on_comboBox_currentIndexChanged(int index)
 {
-    //startCamera(index);
 }
 
 void CameraDevice::listAllCameras()
@@ -108,28 +109,14 @@ void CameraDevice::listAllCameras()
         ui->comboBox->addItem(cameraInfo.deviceName());
     }
 
-    //startCamera(0);
-}
-
-void CameraDevice::startCamera(int i)
-{
-    if(!cameras.empty()) {
-
-        camera = new QCamera(cameras.at(i), this);
-        camera->setParent(this);
-
-        viewfinder = new QCameraViewfinder(this);
-        viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-
-
-        QPointer< QGridLayout > layout = new QGridLayout(this);
-        ui->widget->setLayout(layout);
-        layout->addWidget(viewfinder);
-
-        camera->setViewfinder(viewfinder);
-        camera->start();
-    }
-
+	//Try to find ximea cameras
+	cv::VideoCapture cap(CV_CAP_XIAPI);
+	if (cap.isOpened()) {
+		ui->comboBox->addItem("XIMEA default");
+		m_ximeaId = cameras.size();
+		std::cout << "XIMEA props: " << cap.get(CV_CAP_PROP_FRAME_WIDTH) << " " << cap.get(CV_CAP_PROP_FRAME_HEIGHT) << endl;
+		cap.release();
+	}
 }
 
 void CameraDevice::on_buttonBox_rejected()

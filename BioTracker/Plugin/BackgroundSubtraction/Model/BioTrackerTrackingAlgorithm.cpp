@@ -20,7 +20,7 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		_TrackedTrajectoryMajor);
 	_noFish = -1;
 
-	if (_TrackingParameter->getDoNetwork()) {
+	if (set->getValueOrDefault<bool>(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false)) {
 		_listener = new TcpListener(this);
 		_listener->listen(QHostAddress::Any, set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444));
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
