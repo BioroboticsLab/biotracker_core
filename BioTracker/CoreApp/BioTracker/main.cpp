@@ -7,7 +7,6 @@
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 #include "util/types.h"
 
-
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 

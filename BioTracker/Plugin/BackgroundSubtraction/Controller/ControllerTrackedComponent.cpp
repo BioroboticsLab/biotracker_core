@@ -26,13 +26,12 @@ void ControllerTrackedComponent::connectControllerToController()
 
 void createTrajectories(int count, TrackedTrajectory* all) {
 	//This should be done using a factory, right?
-
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
 		t->add(e);
-		all->add(t);
+		all->add(t, i);
 	}
 }
 

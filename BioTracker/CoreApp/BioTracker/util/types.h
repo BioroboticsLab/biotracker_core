@@ -18,6 +18,8 @@
 #define CFG_CAMERA_DEFAULT_H_VAL			-1
 #define CFG_INPUT_FRAME_STRIDE				"BiotrackerCore/FrameStride"
 #define CFG_INPUT_FRAME_STRIDE_VAL			1
+#define CFG_GPU_QP							"BiotrackerCore/GPU_QP"
+#define CFG_GPU_QP_VAL						15
 #endif
 
 

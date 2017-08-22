@@ -32,6 +32,15 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 	ui->lineEdit_nthFrame->setValidator(new QIntValidator(this));
 	int stride = set->getValueOrDefault<int>(CFG_INPUT_FRAME_STRIDE, CFG_INPUT_FRAME_STRIDE_VAL);
 	ui->lineEdit_nthFrame->setText(std::to_string(stride).c_str());
+
+	ui->lineEdit_qp->setValidator(new QIntValidator(this));
+	int qp = set->getValueOrDefault<int>(CFG_GPU_QP, CFG_GPU_QP_VAL);
+	ui->lineEdit_qp->setText(std::to_string(qp).c_str());
+
+#ifndef WITH_CUDA
+	ui->lineEdit_qp->setVisible(false);
+	ui->label_qp->setVisible(false);
+#endif
 }
 
 void SettingsWindow::on_buttonSaveClose_clicked() {
@@ -51,6 +60,9 @@ void SettingsWindow::on_buttonSaveClose_clicked() {
 
 	int stride = (ui->lineEdit_nthFrame->text()).toInt();
 	set->setParam(CFG_INPUT_FRAME_STRIDE, stride);
+
+	int qp = (ui->lineEdit_qp->text()).toInt();
+	set->setParam(CFG_GPU_QP, qp);
 
 	this->close();
 }

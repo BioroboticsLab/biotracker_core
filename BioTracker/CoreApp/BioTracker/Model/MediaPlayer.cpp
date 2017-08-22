@@ -46,7 +46,8 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
     // Handel PlayerStateMachine results
-    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters);
 
     // Handle next state operation
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone);

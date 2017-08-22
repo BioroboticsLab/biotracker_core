@@ -154,6 +154,7 @@ class ImageStream3Pictures : public ImageStream {
 		//Grab the codec from config file
 		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 		m_fps = set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL);
+		std::sort(m_picture_files.begin(), m_picture_files.end());
 
         // load first image
         if (this->numFrames() > 0) {

@@ -8,6 +8,7 @@
 #include "settings/Settings.h"
 #include "util/types.h"
 #include "Model/DataExporterCSV.h"
+#include "ControllerDataExporter.h"
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr) {
@@ -27,12 +28,6 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
     PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
     if( loader->loadPluginFromFilename(str)) {
         createPlugin();
-
-		//Grab the codec from config file
-		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-		std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
-		if (exporter == "CSV")
-			m_BioTrackerPlugin->setDataExporter(new DataExporterCSV());
 
         // Add Plugin name to Main Window
         IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
@@ -85,6 +80,12 @@ void ControllerPlugin::connectPlugin() {
 
     IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject* ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
+
+	IController* ctrData = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+	ControllerDataExporter* ctDataEx = qobject_cast<ControllerDataExporter*>(ctrData);
+
+	IModelDataExporter* asdf = dynamic_cast<IModelDataExporter*>(ctDataEx->getModel());
+	m_BioTrackerPlugin->setDataExporter(asdf);
 
     QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 

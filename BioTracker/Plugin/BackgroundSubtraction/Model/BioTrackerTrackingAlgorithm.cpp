@@ -69,8 +69,8 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 		TrackedTrajectory *t = new TrackedTrajectory();
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
-		t->add(e);
-		_TrackedTrajectoryMajor->add(t);
+		t->add(e, 0);
+		_TrackedTrajectoryMajor->add(t, i);
 	}
 }
 
@@ -160,16 +160,12 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		if (t) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
-			e->setTime(std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count());
-			t->add(e);
-			_exporter->writeLatest();
-			//_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count() << ","
-			//	<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
-			//	<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
+			e->setTime(start);
+			t->add(e, framenumber);
 			trajNumber++;
 		}
 	}
-	//_ofs << std::endl; //TODO extra module!
+	_exporter->write(framenumber);
 
 	//Send forth new positions to the robotracker, if networking is enabled
 	if (_TrackingParameter->getDoNetwork()){ 

@@ -53,7 +53,7 @@ void CameraDevice::on_buttonBox_accepted()
 void CameraDevice::on_pushButton_clicked()
 {
 	int id = ui->comboBox->currentIndex();
-	if (m_ximeaId == id)
+	if (m_ximeaId != id)
 	{
 		m_capture.open(id);
 	}

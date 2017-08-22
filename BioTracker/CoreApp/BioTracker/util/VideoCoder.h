@@ -136,6 +136,7 @@ private:
 	int m_recType;
 	int m_recording;
 	bool m_dropFrames;
+	int m_qp;
 signals:
 	void operate(const QString &);
 };

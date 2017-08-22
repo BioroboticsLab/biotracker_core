@@ -107,7 +107,7 @@ void YuvConverter::convert420()
 			prtM++;
 		}
 	}
-	/*
+	
 	for (y = 0; y < (h / 3 * 1); y++) {
 		for (x = 0; x < w/2; x++) {
 			out2[y * w + x] = (uint8_t)(*prtM);
@@ -115,7 +115,7 @@ void YuvConverter::convert420()
 			out1[y * w + x] = (uint8_t)(*prtM);
 			prtM++;
 		}
-	}*/
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,10 +136,10 @@ void Worker::run() {
 			if (m_abort) return;
 
 			cv::Mat writeMat;
-			cv::cvtColor(*(mat->_img), writeMat, CV_BGR2YUV);//CV_BGR2YUV_I420 //CV_BGR2YUV
+			cv::cvtColor(*(mat->_img), writeMat, CV_BGR2YUV_I420);//CV_BGR2YUV_I420 //CV_BGR2YUV
 			int chans = writeMat.channels();
 			YuvConverter yc(writeMat, o0, o1, o2);
-			yc.convert();
+			yc.convert420();
 			m_nvEncoder->encodeNext();
 		}
 	}
@@ -166,6 +166,7 @@ int VideoCoder::toggle(int fps, int w, int h) {
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string codecStr = codecList[set->getValueOrDefault<int>(CFG_CODEC, 0)].second;
 	m_dropFrames = set->getValueOrDefault<bool>(CFG_DROPFRAMES, CFG_DROPFRAMES_VAL);
+	m_qp = set->getValueOrDefault<int>(CFG_GPU_QP, CFG_GPU_QP_VAL);
 
 	if (!m_recording)
 	{
@@ -188,10 +189,11 @@ int VideoCoder::toggle(int fps, int w, int h) {
 			cfg->width = w;
 			cfg->height = h;
 			cfg->codec = NV_ENC_H264;
-			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_YUV444;//NV_ENC_BUFFER_FORMAT_NV12;//
+			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_YUV444
 			const std::string f = getTimeAndDate("CameraCapture", ".avi");
 			char* chr = strdup(f.c_str());
 			m_nvEncoder->setOutfile(chr);
+			cfg->qp = m_qp;
 			m_recType = 1;
 			int ok = start();
 			free(chr);
