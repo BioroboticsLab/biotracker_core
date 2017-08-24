@@ -29,6 +29,7 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
+		t->setId(i);
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
 		t->add(e);
@@ -50,14 +51,14 @@ void ControllerTrackedComponent::createModel()
 	t->add(c1);
 	c1 = new TrackingRectElement(this, "", 1);
 	c1->setX(100);
-	c1->setY(1000);
+	c1->setY(2040);
 	t->add(c1);
 	c1 = new TrackingRectElement(this, "", 2);
-	c1->setX(1000);
-	c1->setY(1000);
+	c1->setX(2040);
+	c1->setY(2040);
 	t->add(c1);
 	c1 = new TrackingRectElement(this, "", 3);
-	c1->setX(1000);
+	c1->setX(2040);
 	c1->setY(100);
 	t->add(c1);
 	m_Model = t;

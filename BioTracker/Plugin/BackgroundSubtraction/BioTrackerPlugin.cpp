@@ -17,6 +17,11 @@ IView *BioTrackerPlugin::getTrackerElementsWidget()
 	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getTrackingElementsWidget();
 }
 
+// forwards tracked component model to coreApp
+IModel* BioTrackerPlugin::getTrackerComponentModel() {
+	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getModel();
+}
+
 void BioTrackerPlugin::setDataExporter(IModelDataExporter *exporter) {
 	qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->setDataExporter(exporter);
 }
@@ -48,6 +53,7 @@ void BioTrackerPlugin::connectInterfaces() {
 
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
 
+
 }
 
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {
@@ -58,8 +64,8 @@ void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, 
     Q_EMIT emitCvMat(mat, name);
 }
 
-void BioTrackerPlugin::receiveTrackingDone() {
-    Q_EMIT emitTrackingDone();
+void BioTrackerPlugin::receiveTrackingDone(uint framenumber) {
+    Q_EMIT emitTrackingDone(framenumber);
 }
 
 void BioTrackerPlugin::receiveChangeDisplayImage(QString str) {

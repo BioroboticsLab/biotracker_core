@@ -22,6 +22,7 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
     // IBioTrackerPlugin interface
     IView* getTrackerParameterWidget();
 	IView *getTrackerElementsWidget();
+	IModel* getTrackerComponentModel();
 	void setDataExporter(IModelDataExporter *exporter);
 
   public:
@@ -32,12 +33,12 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
     void connectInterfaces();
   signals:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitTrackingDone();
+    void emitTrackingDone(uint framenumber);
 	void emitChangeDisplayImage(QString str);
 
 private slots:
     void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
-    void receiveTrackingDone();
+    void receiveTrackingDone(uint framenumber);
 	void receiveChangeDisplayImage(QString str);
 
 

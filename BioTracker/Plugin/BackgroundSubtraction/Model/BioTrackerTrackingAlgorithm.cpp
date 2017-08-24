@@ -67,6 +67,7 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 
 	for (int i = 0; i < noFish; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
+		t->setId(i);
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
 		t->add(e);
@@ -222,5 +223,5 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//	_TrackingParameter->setNewSelection("");
 	//}
 
-	Q_EMIT emitTrackingDone();
+	Q_EMIT emitTrackingDone(framenumber);
 }

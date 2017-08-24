@@ -7,19 +7,19 @@
 #include "Model/TrackedComponents/pose/FishPose.h"
 
 /**
- * This class is an example of how a TrackedComponent could be defined.
- * This class inherits from the IModelTrackedComponent class and is therefor part of the Composite Pattern.
- * This class represents the Leaf class in the Composite Pattern.
- * Objects of this class have a QObject as parent.
- */
-class TrackedElement : public IModelTrackedComponent
+* This class is an example of how a TrackedComponent could be defined.
+* This class inherits from the IModelTrackedComponent class and is therefor part of the Composite Pattern.
+* This class represents the Leaf class in the Composite Pattern.
+* Objects of this class have a QObject as parent.
+*/
+class TrackedElement : public IModelTrackedPoint
 {
-    Q_OBJECT
+	Q_OBJECT
 
-  public:
-    TrackedElement(QObject *parent = 0, QString name = "n.a.", int id=0);
+public:
+	TrackedElement(QObject *parent = 0, QString name = "n.a.", int id = 0);
 
-    QString getName();
+	QString getName();
 
 	void  setX(float val);
 	void  setY(float val);
@@ -32,13 +32,13 @@ class TrackedElement : public IModelTrackedComponent
 	void  setTime(long t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
 
-	float getX() { return _x; };
-	float getY() { return _y; };
+	float getX();
+	float getY();
 	float getZ() { return 0; };
 	float getW() { return _w; };
 	float getH() { return _h; };
 	float getRad() { return _rad; };
-	float getDeg() { return _deg; };
+	float getDeg();
 	int   getId() { return _id; };
 	long  getTime() { return _time; };
 	bool  getValid() { return _valid; };
@@ -58,13 +58,13 @@ class TrackedElement : public IModelTrackedComponent
 
 	void setFishPose(FishPose p);
 	FishPose getFishPose();
-	
-    // ITrackedComponent interface
+
+	// ITrackedPoint interface
 public:
-    void operate();
+	void operate();
 
 private:
-    QString _name;
+	QString _name;
 	FishPose _pose;
 	float _x;
 	float _y;

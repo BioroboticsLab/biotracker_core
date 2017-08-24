@@ -14,6 +14,10 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	this->setScene(m_GraphicsScene);
 
 	this->show();
+
+	setTransformationAnchor(AnchorUnderMouse);
+	setViewportUpdateMode(FullViewportUpdate);
+
 }
 
 void GraphicsView::addGraphicsItem(QGraphicsItem *item)

@@ -4,7 +4,7 @@
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
 
-class TrackingRectElement : public IModelTrackedComponent
+class TrackingRectElement : public IModelTrackedPoint
 {
 	Q_OBJECT
 

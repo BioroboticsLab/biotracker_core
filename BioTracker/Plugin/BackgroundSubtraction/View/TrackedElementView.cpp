@@ -5,6 +5,7 @@
 #include "Model/TrackingAlgorithm/property/Rectification.h"
 #include "QBrush"
 #include "QPainter"
+#include "QGraphicsScene"
 #include <QGraphicsSceneHoverEvent>
 
 class QGraphicsSceneHoverEvent;
@@ -34,6 +35,10 @@ QRectF TrackedElementView::boundingRect() const
 
 void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	QGraphicsScene *scene = this->scene();
+
+	//scene->setSceneRect(boundingRect());
+
 	TrackedTrajectory *all = dynamic_cast<TrackedTrajectory *>(getModel());
 	if (!all)
 		return;
@@ -52,6 +57,8 @@ void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 			
 			painter->setBrush(brush);
 			painter->drawEllipse(x - w / 2, y - h / 2, w, h);
+
+			//scene->addEllipse(x - w / 2, y - h / 2, w, h);
 
 
 			painter->setPen(QPen(Qt::yellow, 5));
@@ -204,4 +211,5 @@ void TrackedElementView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 	update();
 	QGraphicsObject::hoverEnterEvent(event);*/
 }
+
 

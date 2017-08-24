@@ -18,6 +18,7 @@ public:
 
 	virtual IView *getTrackerParameterWidget() = 0;
 	virtual IView *getTrackerElementsWidget() = 0;
+	virtual IModel *getTrackerComponentModel() = 0;
 	virtual void setDataExporter(IModelDataExporter *exporter) = 0;
 
 private:
@@ -25,7 +26,7 @@ private:
 
 Q_SIGNALS:
     virtual void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) = 0;
-    virtual void emitTrackingDone() = 0;
+    virtual void emitTrackingDone(uint framenumber) = 0;
 	virtual void emitChangeDisplayImage(QString str) = 0;
 
 public Q_SLOTS:

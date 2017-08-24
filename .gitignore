@@ -102,3 +102,11 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/Release.zip
 /BioTracker/CoreApp/BioTracker/debug/placeholder
 /BioTracker/CoreApp/BioTracker/ui_SettingsWindow.h
+/BioTracker/CoreApp/BioTracker/x64/Debug/Biotracker_core_autogen/*.cache
+/BioTracker/CoreApp/BioTracker/x64/Release/Biotracker_core_autogen/*.cache
+/BioTracker/Plugin/BackgroundSubtraction/x64/Debug/BackgroundSubtraction.tracker_autogen/*.cache
+/BioTracker/Interfaces/BioTrackerInterfaces/Biotracker_interfaces_autogen/mocs_compilation.cpp
+/BioTracker/Utils/BioTrackerUtils/Biotracker_utility_autogen/mocs_compilation.cpp
+/BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/EWIEGA46WW/qrc_guiresources.cpp
+/BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/mocs_compilation.cpp
+/BioTracker/CoreApp/BioTracker/Debug/BiotrackerCore.ini

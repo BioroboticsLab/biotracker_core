@@ -2,6 +2,7 @@
 
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerTextureObject.h"
+#include "Controller/ControllerTrackedComponentCore.h"
 #include "ControllerMainWindow.h"
 #include "QDebug"
 #include "Model/PluginLoader.h"
@@ -46,6 +47,17 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		//Add Tracker tracked components (Elements) to Main Window
 		IView *v = m_BioTrackerPlugin->getTrackerElementsWidget();
 		ctrMainWindow->setTrackerElementsWidget(m_BioTrackerPlugin->getTrackerElementsWidget()); //MARKER
+
+
+
+		IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+		QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
+
+		//Add Tracker tracked components model to ControllerTrackedComponentCore
+		ctrTrackedComponentCore->addModel(m_BioTrackerPlugin->getTrackerComponentModel());
+		//Add tracked component view to main window
+		ctrMainWindow->setTrackerElementsWidget(ctrTrackedComponentCore->getTrackingElementsWidgetCore());
+		
     }
 }
 
@@ -86,12 +98,17 @@ void ControllerPlugin::connectPlugin() {
     IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject* ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
 
+	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+	ControllerTrackedComponentCore* ctrCompView = qobject_cast<ControllerTrackedComponentCore*>(ctrC);
+
     QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 
     QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
 	QObject::connect(obj, SIGNAL(emitTrackingDone()), ctrPlayer, SLOT(receiveTrackingOperationDone()));
+
+	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveTrackingOperationDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
 }
