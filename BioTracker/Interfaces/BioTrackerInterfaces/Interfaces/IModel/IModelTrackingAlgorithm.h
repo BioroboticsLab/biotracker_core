@@ -4,9 +4,6 @@
 #include "IModel.h"
 #include "opencv2/core/core.hpp"
 
-//#include "Interfaces/IModel/ITrackedComponentFactory.h"
-//#include "Interfaces/IModel/ITrackedComponent.h"
-
 class IModelTrackingAlgorithm :public IModel {
     Q_OBJECT
   public:
@@ -18,15 +15,7 @@ signals:
     void emitTrackingDone();
 	void emitChangeDisplayImage(QString str);
 
-//    void setTrackedComponentFactory(ITrackedComponentFactory *factory);
-//    void setTrackedComponent(ITrackedComponent *trackedComponent);
 
-//    ITrackedComponentFactory *getTrackedComponentFactory();
-//    ITrackedComponent *getTrackedComponent();
-
-protected:
-//    ITrackedComponentFactory *m_TrackedComponentFactory;
-//    ITrackedComponent *m_TrackedComponent;
 };
 
 #endif // ITRACKINGALGORITHM_H

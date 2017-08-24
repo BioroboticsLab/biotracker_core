@@ -1,5 +1,6 @@
 #include "ControllerTrackingAlgorithm.h"
 #include "ControllerTrackedComponent.h"
+#include "ControllerAreaDescriptor.h"
 
 #include "Model/TrackerParameter.h"
 #include "View/TrackerParameterView.h"
@@ -38,7 +39,10 @@ void ControllerTrackingAlgorithm::createModel()
 	connectControllerToController();
 
 	m_TrackingParameter = new TrackerParameter(this);
-    m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter, m_TrackedTrajectoryMajor);
+
+	IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	QPointer< ControllerAreaDescriptor > ctrArea = qobject_cast<ControllerAreaDescriptor *>(ctr);
+    m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter, m_TrackedTrajectoryMajor, ctrArea->getModel());
 }
 
 void ControllerTrackingAlgorithm::createView()

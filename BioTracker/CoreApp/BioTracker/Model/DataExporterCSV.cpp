@@ -1,6 +1,6 @@
 #include "DataExporterCSV.h"
-
-
+#include "util/types.h"
+#include "util/misc.h"
 
 DataExporterCSV::DataExporterCSV(QObject *parent) :
 	IModelDataExporter(parent)
@@ -26,7 +26,7 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root, IModelTrackedComponent
 		}
 	}
 
-	_ofs.open("TrackingOutput.txt", std::ofstream::out);
+	_ofs.open(getTimeAndDate(CFG_DIR_TRACKS, ".csv"), std::ofstream::out);
 	if(t)
 	_ofs << "ID"
 		<< ",frame No."

@@ -20,6 +20,11 @@
 #define CFG_INPUT_FRAME_STRIDE_VAL			1
 #define CFG_GPU_QP							"BiotrackerCore/GPU_QP"
 #define CFG_GPU_QP_VAL						15
+
+
+#define CFG_DIR_PLUGINS						"./Plugins/"
+#define CFG_DIR_VIDEOS						"./Videos/"
+#define CFG_DIR_TRACKS						"./Tracks/"
 #endif
 
 

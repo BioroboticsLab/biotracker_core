@@ -7,7 +7,7 @@
 namespace CONFIGPARAM
 {
 	// System config
-	const std::string CONFIG_INI_FILE				= "./BlobtrackerConfig.ini";
+	const std::string CONFIG_INI_FILE				= "./BSTrackerConfig.ini";
 }
 
 namespace APPLICATIONPARAM
@@ -18,6 +18,10 @@ namespace APPLICATIONPARAM
 
 namespace TRACKERPARAM
 {
+	const std::string CN_ARENA						= "TRACKERPARAM/CN_CORNERS_ARENA";
+	const std::string CN_APPERTURE					= "TRACKERPARAM/CN_CORNERS_APPERTURE";
+	const std::string CN_APPERTURE_TYPE				= "TRACKERPARAM/CN_CORNERS_APPERTURE_TYPE";
+
 	// Parameter for the opencv BackgroundSubtractorMOG2 class 
 	const std::string BG_MOG2_HISTORY				= "TRACKERPARAM/BG_MOG2_HISTORY";
 	const std::string BG_MOG2_VAR_THRESHOLD			= "TRACKERPARAM/BG_MOG2_VAR_THRESHOLD";

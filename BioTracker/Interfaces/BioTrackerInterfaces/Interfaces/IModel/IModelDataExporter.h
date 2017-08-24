@@ -18,9 +18,11 @@ public:
 	virtual void writeAll() = 0;
 	virtual void close() = 0;
 	void setFps(float fps) { _fps = fps; };
+	void setTitle(std::string title) { _title = title; };
 
 public:
 	IModelTrackedTrajectory *_root;
 	float _fps;
+	std::string _title;
 };
 

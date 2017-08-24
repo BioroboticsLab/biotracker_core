@@ -175,7 +175,7 @@ int VideoCoder::toggle(int fps, int w, int h) {
 		//Check which one to use
 		if (codecStr == "X264") {
 			int codec = CV_FOURCC('X', '2', '6', '4');
-			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./CameraCapture", ".avi"), codec, fps, CvSize(w, h), 1);
+			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate(std::string(CFG_DIR_VIDEOS)+"CameraCapture", ".avi"), codec, fps, CvSize(w, h), 1);
 			m_recording = vWriter->isOpened();
 			std::cout << "Video is open:" << m_recording << std::endl;
 			m_recType = 2;
@@ -190,7 +190,7 @@ int VideoCoder::toggle(int fps, int w, int h) {
 			cfg->height = h;
 			cfg->codec = NV_ENC_H264;
 			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_YUV444
-			const std::string f = getTimeAndDate("CameraCapture", ".avi");
+			const std::string f = getTimeAndDate(std::string(CFG_DIR_VIDEOS) + "CameraCapture", ".avi");
 			char* chr = strdup(f.c_str());
 			m_nvEncoder->setOutfile(chr);
 			cfg->qp = m_qp;

@@ -25,6 +25,7 @@ ImageStream::ImageStream(QObject *parent) : QObject(parent),
     m_current_frame_number(0),
 	m_frame_stride(BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION)->
 		getValueOrDefault<int>(CFG_INPUT_FRAME_STRIDE, CFG_INPUT_FRAME_STRIDE_VAL)){
+	m_title = "No Media";
 }
 
 size_t ImageStream::currentFrameNumber() const {
@@ -33,6 +34,14 @@ size_t ImageStream::currentFrameNumber() const {
 
 std::shared_ptr<cv::Mat> ImageStream::currentFrame() const {
     return m_current_frame;
+}
+
+void ImageStream::setTitle(std::string title) {
+	m_title = title;
+}
+
+std::string ImageStream::getTitle() {
+	return m_title;
 }
 
 bool ImageStream::setFrameNumber(size_t frame_number) {
@@ -165,6 +174,8 @@ class ImageStream3Pictures : public ImageStream {
 			m_h = new_frame->size().height;
 			m_recording = false;
 			vCoder = std::make_shared<VideoCoder>();
+
+			setTitle(m_picture_files[0].stem().string());
         }
 
     }
@@ -242,6 +253,9 @@ class ImageStream3Video : public ImageStream {
         , m_num_frames(static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)))
         , m_fps(m_capture.get(CV_CAP_PROP_FPS))
         , m_fileName(filename.string()) {
+
+		setTitle(filename.stem().string());
+
         if (!boost::filesystem::exists(filename)) {
             throw file_not_found("Could not find file " + filename.string());
         }
@@ -341,6 +355,10 @@ class ImageStream3Camera : public ImageStream {
 		m_fps = conf._fps == -1 ? set->getValueOrDefault<int>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL) : conf._fps;
 		m_recording = false;
 		vCoder = std::make_shared<VideoCoder>();
+
+		setTitle("Camera" + std::to_string(conf._id) + 
+			"_" + std::to_string(conf._width) +
+			"_" + std::to_string(conf._height) + "px");
 
 		int fails = 0;
 		while (!m_capture.isOpened() && fails < 5) {

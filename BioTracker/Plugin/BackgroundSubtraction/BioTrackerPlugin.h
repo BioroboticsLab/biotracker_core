@@ -44,6 +44,7 @@ private slots:
 private:
 	IController *m_TrackerController;
 	IController *m_ComponentController;
+	IController *m_AreaDescrController;
 
 	IBioTrackerContext *m_PluginContext;
 

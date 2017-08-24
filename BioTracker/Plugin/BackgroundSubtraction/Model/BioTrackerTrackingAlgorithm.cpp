@@ -6,10 +6,11 @@
 #include "Model/TrackedComponents/TrackingRectElement.h"
 #include "settings/Settings.h"
 
-BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
+BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory, IModel* areaInfo) : _ipp((TrackerParameter*)parameter)
 {
 	_TrackingParameter = (TrackerParameter*)parameter;
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
+	_AreaInfo = (AreaInfo*)areaInfo;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
 	_exporter = 0;
@@ -25,6 +26,8 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		_listener->listen(QHostAddress::Any, set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444));
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 	}
+
+	_bd.setAreaInfo(_AreaInfo);
 }
 
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
@@ -76,22 +79,6 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 
 void BioTrackerTrackingAlgorithm::refreshPolygon() {
 
-	std::vector<cv::Point2f> polygon;
-	std::vector<cv::Point2f> polygon_cm;
-
-	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
-		TrackingRectElement *te = dynamic_cast<TrackingRectElement *>(_TrackedTrajectoryMajor->getChild(i));
-		if (te) {
-			polygon.push_back(cv::Point(te->getX(), te->getY()));
-		}
-	}
-
-	for (auto vertex = polygon.cbegin(); vertex != polygon.cend(); ++vertex)
-	{
-		polygon_cm.push_back(Rectification::instance().pxToCm(*vertex));
-	}
-
-	_polygon_cm = polygon_cm;
 }
 
 void BioTrackerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {

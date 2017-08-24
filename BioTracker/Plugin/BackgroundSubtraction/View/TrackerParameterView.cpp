@@ -20,7 +20,11 @@ TrackerParameterView::TrackerParameterView(QWidget *parent, IController *control
 	ui->lineEditNoFish->setValidator(new QIntValidator(this));
 
 	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));	
-	
+
+	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
+	int v = _settings->getValueOrDefault<int>(TRACKERPARAM::CN_APPERTURE_TYPE, 0);
+	ui->checkBoxTrackingArea->setChecked(v);
+
     getNotified();
 }
 
@@ -54,6 +58,10 @@ void TrackerParameterView::on_pushButtonNoFish_clicked() {
 	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
 	int noFish = ui->lineEditNoFish->text().toInt();
 	parameter->setNoFish(noFish);
+}
+
+void TrackerParameterView::on_checkBoxTrackingArea_stateChanged(int v) {
+	Q_EMIT trackingAreaType(v);
 }
 
 void TrackerParameterView::on_pushButton_clicked()

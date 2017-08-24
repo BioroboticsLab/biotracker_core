@@ -99,6 +99,15 @@ class ImageStream : public QObject {
      */
     bool previousFrame();
 
+	/**
+	* Gets the title of the current image stream.
+	* A title should represent the identity of a source stream as a string.
+	* E.g. a video "MyTracking.mkv" should yield a name like "MyTracking".
+	*		Streams from Camera No. 1 should yiel "Camera_1" or the like.
+	* Naming conventions are up to the stream implementations.
+	*/
+	std::string getTitle();
+
     virtual ~ImageStream();
 
   protected:
@@ -106,6 +115,16 @@ class ImageStream : public QObject {
      * sets the image returned by this->currentFrame();
      */
     void set_current_frame(std::shared_ptr<cv::Mat> img);
+
+	/**
+	* Sets the title of the current image stream.
+	* A title should represent the identity of a source stream as a string.
+	* E.g. a video "MyTracking.mkv" should yield a name like "MyTracking".
+	*		Streams from Camera No. 1 should yiel "Camera_1" or the like.
+	* Naming conventions are up to the stream implementations. 
+	* The title is set by the stream itself and may not be modified from the outside.
+	*/
+	void ImageStream::setTitle(std::string title);
 
 	/**
 	* The stride of the image stream. Think of it as "use only every n'th frame".
@@ -138,6 +157,7 @@ class ImageStream : public QObject {
 
     std::shared_ptr<cv::Mat> m_current_frame;
 	size_t  m_current_frame_number;
+	std::string m_title;
 };
 
 std::shared_ptr<ImageStream> make_ImageStream3NoMedia();

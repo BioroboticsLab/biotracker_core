@@ -43,7 +43,7 @@ void ControllerTrackedComponent::createModel()
 	createTrajectories(2, t);
 
 	//Add rect corners for rectification
-	TrackingRectElement *c1 = new TrackingRectElement(this, "", 0);
+/*	TrackingRectElement *c1 = new TrackingRectElement(this, "", 0);
 	c1->setX(100);
 	c1->setY(100);
 	t->add(c1);
@@ -58,7 +58,7 @@ void ControllerTrackedComponent::createModel()
 	c1 = new TrackingRectElement(this, "", 3);
 	c1->setX(1000);
 	c1->setY(100);
-	t->add(c1);
+	t->add(c1);*/
 	m_Model = t;
 }
 

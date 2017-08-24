@@ -268,28 +268,14 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxTrackingArea">
+           <property name="text">
+            <string>Tracking area as an ellipse</string>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>GUI</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>GUI options go here</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>E.g. Size of markers</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

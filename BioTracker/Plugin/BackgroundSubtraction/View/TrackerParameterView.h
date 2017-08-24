@@ -23,7 +23,12 @@ private slots:
 	void on_comboBoxSendImage_currentIndexChanged(int v);
 	void on_checkBoxNetwork_stateChanged(int v);
 	void on_checkBoxBackground_stateChanged(int v);
+	void on_checkBoxTrackingArea_stateChanged(int v);
 	
+public:
+	signals:
+	void trackingAreaType(int v);
+
 private:
     Ui::TrackerParameterView *ui;
 
