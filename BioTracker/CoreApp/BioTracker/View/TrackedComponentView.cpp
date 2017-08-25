@@ -67,15 +67,6 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 	painter->drawText(0,200, "Model in core!");
 
-	//for (int i = 0; i < this->childItems().size(); i++) {
-	//	QGraphicsItem* item = dynamic_cast<QGraphicsItem*>(this->childItems()[i]);
-	//	if (item) {
-	//		printf("%i", i);
-
-	//	}
-
-	//}
-	//printf("\n");
 	painter->setBrush(QBrush());
 	painter->drawRect(this->sceneBoundingRect());
 
@@ -351,7 +342,6 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 			}
 		}
 	}
-
 	// check for new trajectories; for each create a new shape
 	if (this->childItems().size() < all->size()) {
 		int childrenCount = this->childItems().size();
@@ -360,11 +350,11 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 			if (trajectory) {
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
 				printf("new shape created: traj-id:%i\n",i, trajectory->getId());
+				printf("all-size:%i\n", all->size());
 			}
 			else {
 				printf("error: no trajectory -> no shape created");
 			}
-			//id's stimmen nicht!!!!! TODO
 
 		}
 	}

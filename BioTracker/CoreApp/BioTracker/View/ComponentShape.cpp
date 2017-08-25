@@ -72,7 +72,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 	if (m_trajectory->size() != 0) {
 
 		//IModelTrackedPoint* component = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
-		IModelTrackedPoint* component = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getLastChild());
+		IModelTrackedPoint* component = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
 		if (component) {
 			if (component->getValid()) {
 				this->setPos(component->getX() - 10, component->getY() - 10);

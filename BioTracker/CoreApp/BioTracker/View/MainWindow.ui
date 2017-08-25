@@ -172,9 +172,6 @@
     <addaction name="separator"/>
     <addaction name="actionLoad_Tracker"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_tracking_data"/>
-    <addaction name="actionSave_tracking_data"/>
-    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuExtras">
@@ -374,6 +371,21 @@
   <action name="actionOpen_Video">
    <property name="text">
     <string>Open &amp;Video...</string>
+   </property>
+   <property name="iconText">
+    <string>Open Video</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Video</string>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="shortcut">
+    <string/>
    </property>
   </action>
   <action name="actionOpen_Picture">

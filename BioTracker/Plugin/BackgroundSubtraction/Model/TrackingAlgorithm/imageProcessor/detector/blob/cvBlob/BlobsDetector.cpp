@@ -50,8 +50,11 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 		cv::Point2f blobPose_cm = Rectification::instance().pxToCm(blobPose_px);
 
 		// ignore blobs outside the tracking area
-		if (!Rectification::instance().inArea(blobPose_cm))
+		//if (!Rectification::instance().inArea(blobPose_cm))
+		//	continue
+		if (!_areaInfo->_apperture->insideElement(blobPose_px))
 			continue;
+
 		//TODO Important Fix up rectification!
 
 		float blobPose_angle_deg = currentBlob->GetEllipse().angle;

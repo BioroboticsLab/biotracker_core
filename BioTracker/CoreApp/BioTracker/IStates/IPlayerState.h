@@ -66,10 +66,14 @@ class IPlayerState : public IModel {
      * Returns the State Parameters for the ImageStream controlls in the VideoViewWidget.
      */
     stateParameters getStateParameters();
-    /**
-     * Returns the current filename of the ImageStream.
-     */
-    QString getCurrentFileName();
+	/**
+	* Returns the current filename of the ImageStream.
+	*/
+	QString getCurrentFileName();
+	/**
+	* Returns the current title of the ImageStream.
+	*/
+	std::string getCurrentTitle() { return m_ImageStream->getTitle(); };
     /**
      * Returns the current cv::Mat of the ImageStream.
      */
@@ -91,7 +95,7 @@ class IPlayerState : public IModel {
     size_t m_FrameNumber;
 	std::fstream fs;
 
-    QString m_currentFileName;
+	QString m_currentFileName;
 };
 
 #endif // IPLAYERSTATE_H

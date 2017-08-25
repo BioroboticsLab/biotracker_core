@@ -218,6 +218,8 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	//std::deque<FishPose>::const_reverse_iterator iter = _histComponents.rbegin();
 	int start = std::max(t->size()-20, 0);
 	TrackedElement* e = (TrackedElement*)t->getChild(start);
+	if (!e)
+		return 0;
 	cv::Point2f nextPoint = e->getFishPose().position_cm();
 	cv::Point2f positionDerivative(0.0f, 0.0f);
 

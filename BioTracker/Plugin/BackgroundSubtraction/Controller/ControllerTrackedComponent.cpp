@@ -26,14 +26,13 @@ void ControllerTrackedComponent::connectControllerToController()
 
 void createTrajectories(int count, TrackedTrajectory* all) {
 	//This should be done using a factory, right?
-
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
 		t->setId(i);
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
 		t->add(e);
-		all->add(t);
+		all->add(t, i);
 	}
 }
 
@@ -45,7 +44,7 @@ void ControllerTrackedComponent::createModel()
 	createTrajectories(2, t);
 
 	//Add rect corners for rectification
-	TrackingRectElement *c1 = new TrackingRectElement(this, "", 0);
+/*	TrackingRectElement *c1 = new TrackingRectElement(this, "", 0);
 	c1->setX(100);
 	c1->setY(100);
 	t->add(c1);
@@ -60,7 +59,7 @@ void ControllerTrackedComponent::createModel()
 	c1 = new TrackingRectElement(this, "", 3);
 	c1->setX(2040);
 	c1->setY(100);
-	t->add(c1);
+	t->add(c1);*/
 	m_Model = t;
 }
 

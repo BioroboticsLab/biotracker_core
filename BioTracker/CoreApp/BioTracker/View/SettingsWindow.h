@@ -33,8 +33,6 @@ Q_SIGNALS:
 	//void emitSelectedCameraDevice(CameraConfiguration conf);
 
 private:
-	
-	//void startCamera(int i);
 
 private:
 	Ui::SettingsForm *ui;

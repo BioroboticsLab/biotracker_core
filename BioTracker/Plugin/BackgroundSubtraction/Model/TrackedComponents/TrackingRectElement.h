@@ -23,7 +23,7 @@ public:
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
-	void  setTime(long t) {};
+	void  setTime(std::chrono::steady_clock::time_point t) {};
 	void  setValid(bool v) {};
 
 	float getX() { return _x; };
@@ -34,17 +34,17 @@ public:
 	float getRad() { return 0; };
 	float getDeg() { return 0; };
 	int   getId() { return _id; };
-	long  getTime() { return 0; };
+	std::chrono::steady_clock::time_point  getTime() { return std::chrono::steady_clock::time_point(); };
 	bool  getValid() { return false; };
 
-	float hasX() { return true; };
-	float hasY() { return true; };
-	float hasZ() { return false; };
-	float hasW() { return false; };
-	float hasH() { return false; };
-	float hasRad() { return false; };
-	float hasDeg() { return false; };
-	float hasTime() { return false; };
+	bool hasX() { return true; };
+	bool hasY() { return true; };
+	bool hasZ() { return false; };
+	bool hasW() { return false; };
+	bool hasH() { return false; };
+	bool hasRad() { return false; };
+	bool hasDeg() { return false; };
+	bool hasTime() { return false; };
 
 	void updateXY(int x, int y) {
 		_x = _x + x;

@@ -22,8 +22,10 @@ namespace Core {
 
 ImageStream::ImageStream(QObject *parent) : QObject(parent),
     m_current_frame(new cv::Mat(cv::Size(0,0), CV_8UC3)),
-    m_current_frame_number(0) {
-
+    m_current_frame_number(0),
+	m_frame_stride(BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION)->
+		getValueOrDefault<int>(CFG_INPUT_FRAME_STRIDE, CFG_INPUT_FRAME_STRIDE_VAL)){
+	m_title = "No Media";
 }
 
 size_t ImageStream::currentFrameNumber() const {
@@ -32,6 +34,14 @@ size_t ImageStream::currentFrameNumber() const {
 
 std::shared_ptr<cv::Mat> ImageStream::currentFrame() const {
     return m_current_frame;
+}
+
+void ImageStream::setTitle(std::string title) {
+	m_title = title;
+}
+
+std::string ImageStream::getTitle() {
+	return m_title;
 }
 
 bool ImageStream::setFrameNumber(size_t frame_number) {
@@ -66,7 +76,7 @@ bool ImageStream::currentFrameIsEmpty() const {
 }
 
 bool ImageStream::nextFrame() {
-    const size_t new_frame_number = this->currentFrameNumber() + 1;
+    const size_t new_frame_number = this->currentFrameNumber() + m_frame_stride;
     if (new_frame_number < this->numFrames()) {
         const bool success = this->nextFrame_impl();
         m_current_frame_number = new_frame_number;
@@ -148,11 +158,26 @@ class ImageStream3NoMedia : public ImageStream {
 class ImageStream3Pictures : public ImageStream {
   public:
     explicit ImageStream3Pictures(std::vector<boost::filesystem::path> picture_files)
-        : m_picture_files(std::move(picture_files)) {
+        : m_picture_files(std::move(picture_files)), m_currentFrame(0){
+
+		//Grab the codec from config file
+		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+		m_fps = set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL);
+		std::sort(m_picture_files.begin(), m_picture_files.end());
+
         // load first image
         if (this->numFrames() > 0) {
             this->setFrameNumber_impl(0);
+			std::string filename = m_picture_files[0].string();
+			std::shared_ptr<cv::Mat> new_frame = std::make_shared<cv::Mat>(cv::imread(filename));
+			m_w = new_frame->size().width;
+			m_h = new_frame->size().height;
+			m_recording = false;
+			vCoder = std::make_shared<VideoCoder>();
+
+			setTitle(m_picture_files[0].stem().string());
         }
+
     }
     virtual GuiParam::MediaType type() const override {
         return GuiParam::MediaType::Images;
@@ -161,10 +186,15 @@ class ImageStream3Pictures : public ImageStream {
         return m_picture_files.size();
     }
 	virtual bool toggleRecord() override {
-		return false;
+		if (this->numFrames() <= 0) {
+			return false;
+		}
+		m_recording = vCoder->toggle(1, m_w, m_h);
+
+		return m_recording;
 	}
     virtual double fps() const override {
-        return 1.0;
+        return m_fps;
     }
     virtual std::string currentFilename() const override {
         assert(currentFrameNumber() < m_picture_files.size());
@@ -172,13 +202,38 @@ class ImageStream3Pictures : public ImageStream {
     }
 
   private:
+	  virtual bool nextFrame_impl() override {
+		  m_currentFrame+= m_frame_stride;
+		  if (this->numFrames() > m_currentFrame) {
+
+			  const std::string &filename = m_picture_files[m_currentFrame].string();
+			  std::shared_ptr<cv::Mat> new_frame = std::make_shared<cv::Mat>(cv::imread(filename));
+			  this->set_current_frame(new_frame);
+			  if (m_recording) {
+				  if (vCoder) vCoder->add(new_frame);
+			  }
+			  return true;
+		  }
+		  return false;
+	  }
+
     virtual bool setFrameNumber_impl(size_t frame_number) override {
         const std::string &filename = m_picture_files[frame_number].string();
-        std::shared_ptr<cv::Mat> new_frame (new cv::Mat(cv::imread(filename)));
+        std::shared_ptr<cv::Mat> new_frame = std::make_shared<cv::Mat>(cv::imread(filename));
         this->set_current_frame(new_frame);
+		m_currentFrame = frame_number;
+		if (m_recording) {
+			if (vCoder) vCoder->add(new_frame);
+		}
         return ! new_frame->empty();
     }
     std::vector<boost::filesystem::path> m_picture_files;
+	std::shared_ptr<VideoCoder> vCoder;
+	double m_w;
+	double m_h;
+	bool m_recording;
+	int m_currentFrame;
+	double m_fps;
 };
 
 
@@ -198,6 +253,9 @@ class ImageStream3Video : public ImageStream {
         , m_num_frames(static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)))
         , m_fps(m_capture.get(CV_CAP_PROP_FPS))
         , m_fileName(filename.string()) {
+
+		setTitle(filename.stem().string());
+
         if (!boost::filesystem::exists(filename)) {
             throw file_not_found("Could not find file " + filename.string());
         }
@@ -238,7 +296,8 @@ class ImageStream3Video : public ImageStream {
   private:
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;
-        m_capture >> new_frame;
+		for (int i=0; i<m_frame_stride; i++)
+			m_capture >> new_frame;
         std::shared_ptr<cv::Mat> mat(new cv::Mat(new_frame));
         this->set_current_frame(mat);
 		if (m_recording) {
@@ -270,6 +329,7 @@ class ImageStream3Video : public ImageStream {
 
 
 /*********************************************************/
+#include <chrono>
 class ImageStream3Camera : public ImageStream {
   public:
     /**
@@ -289,11 +349,16 @@ class ImageStream3Camera : public ImageStream {
 
 		Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 
-		m_w = conf._width == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraWidth", -1) : conf._width;
-		m_h = conf._height == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraHeight", -1) : conf._height;
-		m_fps = conf._fps == -1 ? set->getValueOrDefault<int>("BiotrackerCore/CameraFPS", 30) : conf._fps;
+		std::cout << "\nStarting to record on camera no. " << conf._id << std::endl;
+		m_w = conf._width == -1 ? set->getValueOrDefault<int>(CFG_CAMERA_DEFAULT_W, CFG_CAMERA_DEFAULT_W_VAL) : conf._width;
+		m_h = conf._height == -1 ? set->getValueOrDefault<int>(CFG_CAMERA_DEFAULT_H, CFG_CAMERA_DEFAULT_H_VAL) : conf._height;
+		m_fps = conf._fps == -1 ? set->getValueOrDefault<int>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL) : conf._fps;
 		m_recording = false;
 		vCoder = std::make_shared<VideoCoder>();
+
+		setTitle("Camera" + std::to_string(conf._id) + 
+			"_" + std::to_string(conf._width) +
+			"_" + std::to_string(conf._height) + "px");
 
 		int fails = 0;
 		while (!m_capture.isOpened() && fails < 5) {
@@ -302,7 +367,8 @@ class ImageStream3Camera : public ImageStream {
 			fails++;
 		}
 		
-        if (! m_capture.isOpened()) {
+		if (! m_capture.isOpened()) {
+			std::cout << "Unable to open camera!" << std::endl;
             throw device_open_error(":(");
         }
 
@@ -313,7 +379,7 @@ class ImageStream3Camera : public ImageStream {
 		m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
 		m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 		m_fps = m_capture.get(CV_CAP_PROP_FPS);
-
+		std::cout << "Cam open: " << m_capture.isOpened() << " w/h:" << m_w << "/" << m_h << " fps:" << m_fps << std::endl;
         // load first image
         if (this->numFrames() > 0) {
             this->nextFrame_impl();
@@ -323,7 +389,7 @@ class ImageStream3Camera : public ImageStream {
         return GuiParam::MediaType::Camera;
     }
     virtual size_t numFrames() const override {
-        return 10000; //TODO wtf?
+        return 10000; //TODO
     }
 	virtual bool toggleRecord() override {
 		if (!m_capture.isOpened()) {
@@ -344,8 +410,11 @@ class ImageStream3Camera : public ImageStream {
 
     virtual bool nextFrame_impl() override {
         cv::Mat new_frame;
-        m_capture.grab();
-        m_capture.retrieve(new_frame);
+		
+		for (int i = 0; i < m_frame_stride; i++) {
+			m_capture >> new_frame;
+		}
+
         std::shared_ptr<cv::Mat> mat (new cv::Mat(new_frame));
         this->set_current_frame(mat);
 		if (m_recording) {

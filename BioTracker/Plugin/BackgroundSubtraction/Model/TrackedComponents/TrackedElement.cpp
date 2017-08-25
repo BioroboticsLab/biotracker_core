@@ -11,7 +11,7 @@ TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 {
 	_x = 0;
 	_y = 0;
-	_time = 0;
+	//_time = std::chrono::steady_clock::time_point;
 	_deg = 0;
 	_rad = 0;
 	_valid = false;

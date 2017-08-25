@@ -29,18 +29,6 @@ public Q_SIGNAL:
 private:
     QRectF m_boundingRect;
 
-	std::map<int, std::shared_ptr<QGraphicsRectItem>> _rectification;
-	QGraphicsItem *_watchingDrag;
-	int _dragX;
-	int _dragY;
-
-    // QGraphicsItem interface
-protected:
-	bool sceneEventFilter(QGraphicsItem * watched, QEvent * event) override;
-	bool eventFilter(QObject * target, QEvent * event) override;
-	void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-
 };
 
 #endif // TRACKEDELEMENTVIEW_H

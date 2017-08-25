@@ -123,21 +123,20 @@ public:
 
 	void add(std::shared_ptr<cv::Mat> m, int needsConversion = 0);
 
-private:
-
 	int start();
-
 	void stop();
-
-	std::shared_ptr<Worker> worker;
-
 #ifdef WITH_CUDA
 	std::shared_ptr<EncoderInterface> m_nvEncoder;
 #endif
+
+private:
+
+	std::shared_ptr<Worker> worker;
 	std::shared_ptr<cv::VideoWriter> vWriter;
 	int m_recType;
 	int m_recording;
 	bool m_dropFrames;
+	int m_qp;
 signals:
 	void operate(const QString &);
 };

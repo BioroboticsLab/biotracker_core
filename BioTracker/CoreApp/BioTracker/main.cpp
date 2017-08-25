@@ -7,7 +7,6 @@
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 #include "util/types.h"
 
-
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
@@ -21,9 +20,9 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<playerParameters*>("playerParameters*");
 	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
 
-
-
-    //BioTrackerController mController;
+	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_PLUGINS));
+	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_VIDEOS));
+	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_TRACKS));
 
     BioTracker3App bioTracker3(&app);
     GuiContext context(&bioTracker3);

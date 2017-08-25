@@ -29,7 +29,7 @@ public:
 	void  setRad(float r);
 	void  setDeg(float d);
 	void  setId(int val) { _id = val; };
-	void  setTime(long t) { _time = t; };
+	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
 
 	float getX();
@@ -40,17 +40,17 @@ public:
 	float getRad() { return _rad; };
 	float getDeg();
 	int   getId() { return _id; };
-	long  getTime() { return _time; };
+	std::chrono::steady_clock::time_point  getTime() { return _time; };
 	bool  getValid() { return _valid; };
 
-	float hasX() { return true; };
-	float hasY() { return true; };
-	float hasZ() { return false; };
-	float hasW() { return true; };
-	float hasH() { return true; };
-	float hasRad() { return true; };
-	float hasDeg() { return true; };
-	float hasTime() { return true; };
+	bool hasX() { return true; };
+	bool hasY() { return true; };
+	bool hasZ() { return false; };
+	bool hasW() { return true; };
+	bool hasH() { return true; };
+	bool hasRad() { return true; };
+	bool hasDeg() { return true; };
+	bool hasTime() { return true; };
 
 	void pressed();
 	void notPressed();
@@ -73,7 +73,7 @@ private:
 	float _deg;
 	float _rad;
 	int _id;
-	long _time;
+	std::chrono::steady_clock::time_point _time;
 	bool _valid;
 	bool _pressed;
 };

@@ -65,6 +65,7 @@ class MediaPlayerStateMachine : public IModel {
      * After each state execution this SIGNAL is emmited and received by the MediaPlayer class. The parameter playerParameters contains all information that was changed during the execution of the current state.
      */
     void emitPlayerParameters(playerParameters* parameters);
+
     /**
      * When the state operation got finished, this SIGNAL is emmited and received by the MediaPlayer class.
      */

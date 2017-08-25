@@ -138,39 +138,11 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>mog2 History</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_5_MogHist"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>mog2 Var Threshold</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_6_MogThresh"/>
-           </item>
-          </layout>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>mog2 Background Ratio</string>
+              <string>Background Ratio</string>
              </property>
             </widget>
            </item>
@@ -296,28 +268,14 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxTrackingArea">
+           <property name="text">
+            <string>Tracking area as an ellipse</string>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>GUI</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>GUI options go here</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>E.g. Size of markers</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

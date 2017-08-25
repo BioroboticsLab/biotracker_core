@@ -25,7 +25,7 @@ public:
 
     // ITrackedObject interface
 public:
-    void add(IModelTrackedComponent *comp) override;
+    void add(IModelTrackedComponent *comp, int pos = -1) override;
 	bool remove(IModelTrackedComponent *comp) override;
 	void clear() override;
     IModelTrackedComponent *getChild(int index) override;

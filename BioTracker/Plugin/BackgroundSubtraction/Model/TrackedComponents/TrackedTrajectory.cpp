@@ -19,14 +19,25 @@ void TrackedTrajectory::operate()
     qDebug() << "========================   End   =========================";
 }
 
-void TrackedTrajectory::add(IModelTrackedComponent *comp)
+void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
 {
-    m_TrackedComponents.append(comp);
+	if (pos < 0) {
+		m_TrackedComponents.append(comp);
+	}
+	else if (m_TrackedComponents.size() <= pos) {
+		while (m_TrackedComponents.size() < pos)
+			m_TrackedComponents.append(0);
+
+		m_TrackedComponents.append(comp);
+	}
+	else {
+		m_TrackedComponents[pos] = comp;
+	}
 }
 
 bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
 {
-	return m_TrackedComponents.removeOne(comp);
+	return m_TrackedComponents.removeOne(comp); //Do not actually remove, just invalidate / replace by dummy
 }
 
 void TrackedTrajectory::clear()

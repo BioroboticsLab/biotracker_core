@@ -3,6 +3,7 @@
 
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
+#include "Controller/ControllerAreaDescriptor.h"
 
 #include "View/TrackedElementView.h"
 
@@ -40,6 +41,9 @@ void BioTrackerPlugin::createPlugin() {
 
 	IController * ctr2 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::TRACKING);
 	m_TrackerController = qobject_cast<ControllerTrackingAlgorithm *>(ctr2);
+
+	IController * ctr3 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	m_AreaDescrController = qobject_cast<ControllerAreaDescriptor *>(ctr3);
 
     connectInterfaces();
 
