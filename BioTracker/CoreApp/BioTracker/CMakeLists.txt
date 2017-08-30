@@ -54,7 +54,7 @@ include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 message("Configuring Biotracker_core..." )
 set(EXE_NAME Biotracker_core)
 file(GLOB_RECURSE Biotracker_core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
-add_executable(${EXE_NAME} ${Biotracker_core} )
+add_executable(${EXE_NAME} ${Biotracker_core} guiresources.qrc)
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction.tracker)
 
