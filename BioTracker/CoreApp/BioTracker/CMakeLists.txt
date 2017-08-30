@@ -58,5 +58,6 @@ add_executable(${EXE_NAME} ${Biotracker_core} )
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction.tracker)
 
-
+# Make this target the default target for a MSVC solution.
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${EXE_NAME})
 
