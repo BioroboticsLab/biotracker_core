@@ -15,6 +15,8 @@
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
     IViewMainWindow(parent, controller, model),
     ui(new Ui::MainWindow) {
+	_currentParameterView = 0;
+	_currentElementView = 0;
     ui->setupUi(this);
 }
 
@@ -39,17 +41,37 @@ void MainWindow::addVideoView(IView* videoView) {
 
 void MainWindow::addTrackerElementsView(IView *elemView)
 {
+	if (_currentElementView) {
+		_currentElementView->setParent(0); 
+		//_currentElementView->setVisible(false);
+		m_graphView->removeGraphicsItem(_currentElementView);
+	}
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
 	graphObj->setParent(ui->trackingArea);
+
 	m_graphView->addGraphicsItem(graphObj);
+	_currentElementView = graphObj;
 }
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
+	if (_currentParameterView) {
+		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
+		//dynamic_cast<QWidget*>(_currentParameterView)->setVisible(false);
+		//ui->scrollArea->setWidget(0);
+	}
+
     dynamic_cast<QWidget*>(parameter)->setParent(this);
+	//dynamic_cast<QWidget*>(parameter)->setVisible(true);
 
     ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
     ui->scrollArea->setWidgetResizable(true);
+	_currentParameterView = parameter;
+}
+
+void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
+	QString ct = ui->comboBox_TrackerSelect->currentText();
+	Q_EMIT selectPlugin(ct);
 }
 
 void MainWindow::setTrackerList(QStringListModel* trackerList) {

@@ -6,6 +6,8 @@ set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
 	${CMAKE_SOURCE_DIR}/Interfaces/BioTrackerInterfaces/
 	${CMAKE_SOURCE_DIR}/Utils/BioTrackerUtils
+	${CMAKE_SOURCE_DIR}/Plugin/Sample
+	${PROJECT_BINARY_DIR}/Plugin/Sample/
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS} 
 	${Qt5Core_INCLUDE_DIRS}

@@ -23,6 +23,13 @@ void GraphicsView::addGraphicsItem(QGraphicsItem *item)
 	update();
 }
 
+void GraphicsView::removeGraphicsItem(QGraphicsItem *item)
+{
+	m_GraphicsScene->removeItem(item);
+
+	update();
+}
+
 void GraphicsView::addPixmapItem(QGraphicsItem *item)
 {
 	m_BackgroundImage = item;

@@ -79,15 +79,11 @@ ELSE()
 		${Boost_INCLUDE_DIR})
 ENDIF()
 
-
-
-
-#add_subdirectory(CoreApp/BioTracker)
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
-#add_subdirectory(Plugin/Sample)
+add_subdirectory(Plugin/Sample)
 #add_subdirectory(Plugin/LukasKanade)
 
 

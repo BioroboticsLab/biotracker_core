@@ -59,9 +59,8 @@ class ControllerMainWindow : public IController {
     void setTrackerParamterWidget(IView* widget);
 	void setTrackerElementsWidget(IView *widget);
 
-    void deactiveTrackringCheckBox();
+    void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
-
 
     // IController interface
   protected:
@@ -69,6 +68,9 @@ class ControllerMainWindow : public IController {
     void createView() override;
     void connectModelToController() override;
     void connectControllerToController() override;
+
+	private slots:
+	void rcvSelectPlugin(QString plugin);
 };
 
 #endif // CONTROLLERMAINWINDOW_H

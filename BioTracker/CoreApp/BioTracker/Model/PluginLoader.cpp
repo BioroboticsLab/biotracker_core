@@ -1,5 +1,6 @@
 #include "PluginLoader.h"
 #include "QDebug"
+#include <iostream>
 
 PluginLoader::PluginLoader(QObject* parent) :
     IModel(parent) {
@@ -11,8 +12,9 @@ PluginLoader::PluginLoader(QObject* parent) :
     m_PluginListModel->setStringList(m_PluginList);
 }
 
-bool PluginLoader::loadPluginFromFilename(QString filename) {
+QString PluginLoader::loadPluginFromFilename(QString filename) {
     bool retval = false;
+	QString name = "";
 
     if(m_PluginLoader->isLoaded()) {
 
@@ -25,22 +27,35 @@ bool PluginLoader::loadPluginFromFilename(QString filename) {
 
         m_PluginLoader->setFileName(filename);
 
-        readMetaDataFromPlugin();
+        name = readMetaDataFromPlugin();
+		m_PluginHandlesList.insert(std::pair<QString, QPluginLoader*>(name, m_PluginLoader));
+
+		qDebug() << m_PluginLoader->fileName();
+
+		m_PluginLoader = new QPluginLoader(this);
 
         retval = true;
     } else {
         retval = false;
     }
 
-    qDebug() << m_PluginLoader->fileName();
 
     m_isPluginLoaded = retval;
 
-    return retval;
+	return name;
 }
 
-IBioTrackerPlugin* PluginLoader::getPluginInstance() {
-    return qobject_cast<IBioTrackerPlugin*>(m_PluginLoader->instance());
+IBioTrackerPlugin* PluginLoader::getPluginInstance(QString name) {
+	std::map<QString, QPluginLoader*>::iterator pos = m_PluginHandlesList.find(name);
+	if (pos == m_PluginHandlesList.end()) {
+		//handle the error
+		std::cout << "Could not get plugin instance " << name.toStdString() << std::endl;
+		return 0;
+	}
+	else {
+		QPluginLoader* pl = pos->second;
+		return qobject_cast<IBioTrackerPlugin*>(pl->instance());//(m_PluginLoader->instance());
+	}
 }
 
 QStringListModel* PluginLoader::getPluginMetaData() {
@@ -51,11 +66,12 @@ bool PluginLoader::getIsPluginLoaded() {
     return m_isPluginLoaded;
 }
 
-void PluginLoader::readMetaDataFromPlugin() {
+QString PluginLoader::readMetaDataFromPlugin() {
     QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
     QJsonObject metaObj = pluginMeda.toObject();
     QString mstring = metaObj.value("name").toString();
 
     m_PluginList.append(mstring);
     m_PluginListModel->setStringList(m_PluginList);
+	return mstring;
 }
