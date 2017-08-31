@@ -25,12 +25,12 @@ class PluginLoader : public IModel {
     /**
      * Loads a BioTracker Plugin from a filpaht. It returns true if the Plugin could be loaded, otherwise false.
      */
-    bool loadPluginFromFilename(QString filename);
+	QString loadPluginFromFilename(QString filename);
 
     /**
      * Returns the Instance of the BioTracker Plugin.
      */
-    IBioTrackerPlugin* getPluginInstance();
+    IBioTrackerPlugin* getPluginInstance(QString name);
 
     /**
      * Returns a QStrinListModel with the names of all loaded Plugins.
@@ -43,12 +43,13 @@ class PluginLoader : public IModel {
 
     bool m_isPluginLoaded;
 
-    void readMetaDataFromPlugin();
+    QString readMetaDataFromPlugin();
 
     QPluginLoader* m_PluginLoader;
 
     QStringList m_PluginList;
     QStringListModel* m_PluginListModel;
+	std::map<QString, QPluginLoader*> m_PluginHandlesList;
 
 };
 

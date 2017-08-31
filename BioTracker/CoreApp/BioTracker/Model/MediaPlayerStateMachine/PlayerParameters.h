@@ -24,7 +24,8 @@ struct playerParameters {
 
     // The other information
     size_t m_TotalNumbFrames;
-    QString m_CurrentFilename;
+	QString m_CurrentFilename;
+	std::string m_CurrentTitle;
     size_t m_CurrentFrameNumber;
     std::shared_ptr<cv::Mat> m_CurrentFrame;
     double m_fpsSourceVideo;

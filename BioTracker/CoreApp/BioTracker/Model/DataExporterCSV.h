@@ -13,7 +13,7 @@ public:
 	~DataExporterCSV();
 
 	void open(IModelTrackedTrajectory *root, IModelTrackedComponent *hint = 0, bool append = false, std::string file = "") override;
-	void writeLatest() override;
+	void write(int idx = -1) override;
 	void writeAll() override;
 	void close() override;
 

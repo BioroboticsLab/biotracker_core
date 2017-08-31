@@ -6,10 +6,11 @@
 #include "Model/TrackedComponents/TrackingRectElement.h"
 #include "settings/Settings.h"
 
-BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
+BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory, IModel* areaInfo) : _ipp((TrackerParameter*)parameter)
 {
 	_TrackingParameter = (TrackerParameter*)parameter;
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
+	_AreaInfo = (AreaInfo*)areaInfo;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
 	_exporter = 0;
@@ -20,11 +21,13 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		_TrackedTrajectoryMajor);
 	_noFish = -1;
 
-	if (_TrackingParameter->getDoNetwork()) {
+	if (set->getValueOrDefault<bool>(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false)) {
 		_listener = new TcpListener(this);
 		_listener->listen(QHostAddress::Any, set->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444));
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 	}
+
+	_bd.setAreaInfo(_AreaInfo);
 }
 
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
@@ -69,29 +72,13 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 		TrackedTrajectory *t = new TrackedTrajectory();
 		TrackedElement *e = new TrackedElement(t, "n.a.", i);
 		e->setId(i);
-		t->add(e);
-		_TrackedTrajectoryMajor->add(t);
+		t->add(e, 0);
+		_TrackedTrajectoryMajor->add(t, i);
 	}
 }
 
 void BioTrackerTrackingAlgorithm::refreshPolygon() {
 
-	std::vector<cv::Point2f> polygon;
-	std::vector<cv::Point2f> polygon_cm;
-
-	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
-		TrackingRectElement *te = dynamic_cast<TrackingRectElement *>(_TrackedTrajectoryMajor->getChild(i));
-		if (te) {
-			polygon.push_back(cv::Point(te->getX(), te->getY()));
-		}
-	}
-
-	for (auto vertex = polygon.cbegin(); vertex != polygon.cend(); ++vertex)
-	{
-		polygon_cm.push_back(Rectification::instance().pxToCm(*vertex));
-	}
-
-	_polygon_cm = polygon_cm;
 }
 
 void BioTrackerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {
@@ -160,16 +147,12 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		if (t) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
-			e->setTime(std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count());
-			t->add(e);
-			_exporter->writeLatest();
-			//_ofs << i << "," << std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count() << ","
-			//	<< std::get<0>(poses)[trajNumber].position_cm().x << "," << std::get<0>(poses)[trajNumber].position_cm().y << ","
-			//	<< std::get<0>(poses)[trajNumber].orientation_deg() << "," << std::get<0>(poses)[trajNumber].orientation_rad() << ",";
+			e->setTime(start);
+			t->add(e, framenumber);
 			trajNumber++;
 		}
 	}
-	//_ofs << std::endl; //TODO extra module!
+	_exporter->write(framenumber);
 
 	//Send forth new positions to the robotracker, if networking is enabled
 	if (_TrackingParameter->getDoNetwork()){ 

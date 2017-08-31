@@ -5,27 +5,29 @@
 #include "Model/TrackerParameter.h"
 
 namespace Ui {
-class TrackerParameterView;
+	class TrackerParameterView;
 }
 
-class TrackerParameterView : public IViewWidget
-{
-    Q_OBJECT
+namespace sampleTracker {
 
-public:
-    explicit TrackerParameterView(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
-    ~TrackerParameterView();
+	class TrackerParameterView : public IViewWidget
+	{
+		Q_OBJECT
 
-private slots:
-	void on_pushButton_clicked();
-	
-private:
-    Ui::TrackerParameterView *ui;
+	public:
+		explicit TrackerParameterView(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
+		~TrackerParameterView();
 
-    // IViewWidget interface
-public slots:
+		private slots:
+		void on_pushButton_clicked();
 
-    void getNotified();
-};
+	private:
+		Ui::TrackerParameterView *ui;
 
+		// IViewWidget interface
+		public slots:
+
+		void getNotified();
+	};
+}
 #endif // TRACKERPARAMETERVIEW_H

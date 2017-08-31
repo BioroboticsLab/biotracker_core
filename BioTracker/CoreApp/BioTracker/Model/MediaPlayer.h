@@ -87,6 +87,8 @@ class MediaPlayer : public IModel {
 
 	void toggleRecordImageStreamCommand();
 
+	void fwdPlayerParameters(playerParameters* parameters);
+
   public:
     void setTrackingActive();
     void setTrackingDeactive();

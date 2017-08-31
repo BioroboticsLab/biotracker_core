@@ -11,6 +11,7 @@
 #include "Interfaces/IModel/IModelDataExporter.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
+#include "Model/AreaInfo.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "Model/TrackingAlgorithm/imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
@@ -22,7 +23,7 @@ class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
     Q_OBJECT
 public:
-    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory/*QObject *parent = 0, ITrackedComponentFactory *factory = 0*/);
+    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory, IModel* areaInfo);
 	~BioTrackerTrackingAlgorithm();
 
 	void setDataExporter(IModelDataExporter *exporter);
@@ -42,12 +43,12 @@ private:
 	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
-
 	TrackerParameter* _TrackingParameter;
+	AreaInfo* _AreaInfo;
+
 	IModelDataExporter *_exporter;
 
 	TcpListener* _listener;
-	std::vector<cv::Point2f> _polygon_cm;
 
 	ImagePreProcessor _ipp;
 	BlobsDetector _bd;

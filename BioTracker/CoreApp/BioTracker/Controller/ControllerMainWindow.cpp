@@ -3,6 +3,7 @@
 #include "Model/null_Model.h"
 //#include "Controller/ControllerStrategies/MainGUIApplication.h"
 #include "Controller/ControllerPlayer.h"
+#include "Controller/ControllerPlugin.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -57,7 +58,7 @@ void ControllerMainWindow::setTrackerElementsWidget(IView *widget)
 	dynamic_cast<MainWindow*>(m_View)->addTrackerElementsView(widget);
 }
 
-void ControllerMainWindow::deactiveTrackringCheckBox() {
+void ControllerMainWindow::deactiveTrackingCheckBox() {
     dynamic_cast<MainWindow*>(m_View)->deactivateTrackingCheckBox();
 }
 
@@ -73,15 +74,23 @@ void ControllerMainWindow::createModel()
 
 void ControllerMainWindow::createView() {
     m_View = dynamic_cast<IView*> (new MainWindow(0, this, m_Model));
-
-
     static_cast<MainWindow*>(m_View)->show();
 }
 
 void ControllerMainWindow::connectModelToController() {
 
+	MainWindow *mw = dynamic_cast<MainWindow*> (m_View);
+	QObject::connect(mw, &MainWindow::selectPlugin, this, &ControllerMainWindow::rcvSelectPlugin);
+	
 }
 
 void ControllerMainWindow::connectControllerToController() {
 
 }
+
+void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
+	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
+}
+
+

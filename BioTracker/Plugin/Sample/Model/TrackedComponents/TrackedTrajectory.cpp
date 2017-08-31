@@ -2,49 +2,62 @@
 #include "QDebug"
 #include "TrackedElement.h"
 
-TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
-    IModelTrackedTrajectory(parent),
-    name(name)
-{
+namespace sampleTracker {
+	TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
+		IModelTrackedTrajectory(parent),
+		name(name)
+	{
 
-}
+	}
 
-void TrackedTrajectory::operate()
-{
-    qDebug() << "Printing all TrackedElements in TrackedObject " <<  name;
-    qDebug() << "========================= Begin ==========================";
-    for (int i = 0; i < m_TrackedComponents.size(); ++i) {
-        dynamic_cast<TrackedElement *>(m_TrackedComponents.at(i))->operate();
-    }
-    qDebug() << "========================   End   =========================";
-}
+	void TrackedTrajectory::operate()
+	{
+		qDebug() << "Printing all TrackedElements in TrackedObject " << name;
+		qDebug() << "========================= Begin ==========================";
+		for (int i = 0; i < m_TrackedComponents.size(); ++i) {
+			dynamic_cast<TrackedElement *>(m_TrackedComponents.at(i))->operate();
+		}
+		qDebug() << "========================   End   =========================";
+	}
 
-void TrackedTrajectory::add(IModelTrackedComponent *comp)
-{
-    m_TrackedComponents.append(comp);
-}
+	void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
+	{
+		if (pos < 0) {
+			m_TrackedComponents.append(comp);
+		}
+		else if (m_TrackedComponents.size() <= pos) {
+			while (m_TrackedComponents.size() < pos)
+				m_TrackedComponents.append(0);
 
-bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
-{
-	return m_TrackedComponents.removeOne(comp);
-}
+			m_TrackedComponents.append(comp);
+		}
+		else {
+			m_TrackedComponents[pos] = comp;
+		}
+	}
 
-void TrackedTrajectory::clear()
-{
-	m_TrackedComponents.clear();
-}
+	bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
+	{
+		return m_TrackedComponents.removeOne(comp); //Do not actually remove, just invalidate / replace by dummy
+	}
 
-IModelTrackedComponent* TrackedTrajectory::getChild(int index)
-{
-	return m_TrackedComponents.at(index);
-}
+	void TrackedTrajectory::clear()
+	{
+		m_TrackedComponents.clear();
+	}
 
-IModelTrackedComponent* TrackedTrajectory::getLastChild()
-{
-	return m_TrackedComponents.at(m_TrackedComponents.size()-1);
-}
+	IModelTrackedComponent* TrackedTrajectory::getChild(int index)
+	{
+		return m_TrackedComponents.at(index);
+	}
 
-int TrackedTrajectory::size()
-{
-    return m_TrackedComponents.size();
+	IModelTrackedComponent* TrackedTrajectory::getLastChild()
+	{
+		return m_TrackedComponents.at(m_TrackedComponents.size() - 1);
+	}
+
+	int TrackedTrajectory::size()
+	{
+		return m_TrackedComponents.size();
+	}
 }

@@ -46,7 +46,8 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
     // Handel PlayerStateMachine results
-    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters);
 
     // Handle next state operation
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone);
@@ -144,7 +145,7 @@ int MediaPlayer::reopenVideoWriter() {
 			cfg->height = _imageh;
 			cfg->fps = 30;
 			cfg->codec = NV_ENC_H264;
-			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_YUV444
+			cfg->inputFormat = NV_ENC_BUFFER_FORMAT_NV12;//NV_ENC_BUFFER_FORMAT_YUV444 //NV_ENC_BUFFER_FORMAT_NV12
 			const std::string f = getTimeAndDate("ViewCapture", ".avi");
 			char* chr = strdup(f.c_str());
 			m_videoc->start();
@@ -183,7 +184,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     m_CurrentFrame = param->m_CurrentFrame;
     m_CurrentFrameNumber = param->m_CurrentFrameNumber;
     m_fpsOfSourceFile = param->m_fpsSourceVideo;
-    m_TotalNumbFrames = param->m_TotalNumbFrames;
+	m_TotalNumbFrames = param->m_TotalNumbFrames;
 
     m_CurrentFrame = param->m_CurrentFrame;
 
@@ -227,9 +228,9 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
 	end = std::chrono::steady_clock::now();
-    std::cout << "Printing took "
-              << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
-              << "us.\n";
+    //std::cout << "Printing took "
+    //          << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
+    //          << "us.\n";
 	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	m_currentFPS = floor(1.0/(double(s)/1000000.0));
 

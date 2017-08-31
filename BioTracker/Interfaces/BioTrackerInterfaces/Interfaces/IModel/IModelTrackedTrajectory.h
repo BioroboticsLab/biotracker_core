@@ -25,7 +25,7 @@ public:
     /**
      * This methode must be implemented by all derivatives. Its purpose is to provide a mechanism for adding Leaf components to this structure.
      */
-    virtual void add(IModelTrackedComponent *comp) = 0;
+    virtual void add(IModelTrackedComponent *comp, int pos) = 0;
 
 	/**
 	* This methode must be implemented by all derivatives. Its functionality shall be a mechanism for removing Leaf components from this structure.
@@ -60,7 +60,7 @@ public:
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
-	void  setTime(long t) { _time = t; };
+	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
 
 	float getX() { return 0; };
@@ -71,23 +71,23 @@ public:
 	float getRad() { return 0; };
 	float getDeg() { return 0; };
 	int   getId() { return _id; };
-	long  getTime() { return _time; };
+	std::chrono::steady_clock::time_point  getTime() { return _time; };
 	bool  getValid() { return _valid; };
 
-	float hasX() { return false; };
-	float hasY() { return false; };
-	float hasZ() { return false; };
-	float hasW() { return false; };
-	float hasH() { return false; };
-	float hasRad() { return false; };
-	float hasDeg() { return false; };
-	float hasTime() { return false; };
+	bool hasX() { return false; };
+	bool hasY() { return false; };
+	bool hasZ() { return false; };
+	bool hasW() { return false; };
+	bool hasH() { return false; };
+	bool hasRad() { return false; };
+	bool hasDeg() { return false; };
+	bool hasTime() { return false; };
 
     // ITrackedComponent interface
 public:
     void operate();
 	int _id;
-	long _time;
+	std::chrono::steady_clock::time_point _time;
 	bool _valid;
 };
 

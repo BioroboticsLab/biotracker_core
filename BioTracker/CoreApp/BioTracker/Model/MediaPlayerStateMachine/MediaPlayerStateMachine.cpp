@@ -51,6 +51,7 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(QString fileDir) {
 	m_stream = BioTracker::Core::make_ImageStream3Video(filename);
 
     m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
+	m_PlayerParameters->m_CurrentTitle = m_stream->getTitle();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -59,12 +60,14 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(QString fileDir) {
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
 
+	Q_EMIT emitPlayerParameters(m_PlayerParameters);
 }
 
 void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem::path> files) {
     m_stream = BioTracker::Core::make_ImageStream3Pictures(files);
 
-    m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
+	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
+	m_PlayerParameters->m_CurrentTitle = m_stream->getTitle();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -73,12 +76,14 @@ void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem:
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
 
+	Q_EMIT emitPlayerParameters(m_PlayerParameters);
 }
 
 void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) {
 	m_stream = BioTracker::Core::make_ImageStream3Camera(conf);
 
     //   m_PlayerParameters->m_TotalNumbFrames = stream->numFrames();
+	m_PlayerParameters->m_CurrentTitle = m_stream->getTitle();
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
     for (i = m_States.begin(); i != m_States.end(); i++) {
@@ -86,6 +91,8 @@ void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) 
     }
 
     setNextState(IPlayerState::STATE_INITIAL_STREAM);
+
+	Q_EMIT emitPlayerParameters(m_PlayerParameters);
 }
 
 void MediaPlayerStateMachine::receivePrevFrameCommand() {
@@ -133,7 +140,8 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
     m_PlayerParameters->m_Play = stateParam.m_Play;
 	m_PlayerParameters->m_Stop = stateParam.m_Stop;
 
-    m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
+	m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
+	m_PlayerParameters->m_CurrentTitle = m_CurrentPlayerState->getCurrentTitle();
 
     m_PlayerParameters->m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
     m_PlayerParameters->m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();

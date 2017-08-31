@@ -2,6 +2,9 @@
 #include <iostream>
 
 #include <opencv2/calib3d/calib3d.hpp>
+#include "settings/Settings.h"
+#include "Model/TrackingAlgorithm/property/ParamNames.h"
+#include "util/misc.h"
 
 void Rectification::init(double areaHeight_cm, double areaWidth_cm,
 		std::vector<cv::Point> areaCoordinates, int camCaptureWidth_px,
@@ -27,18 +30,29 @@ void Rectification::initRecitification(double areaHeight_cm, double areaWidth_cm
 	setDimension(areaWidth_cm, areaHeight_cm);
 }
 
+
+void Rectification::setArea(std::vector<cv::Point> areaCoordinates) {
+	_areaCoordinates = areaCoordinates;
+	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
+	_settings->setParam(TRACKERPARAM::CN_ARENA, cvPointsToString(areaCoordinates).c_str());
+}
+void Rectification::setArea(std::vector<QPoint> areaCoordinates) {
+	std::vector<cv::Point> cvAreaCoordinates;
+	for (int i = 0; i < areaCoordinates.size(); i++) {
+		cvAreaCoordinates.push_back(cv::Point(areaCoordinates[i].x(), areaCoordinates[i].y()));
+	}
+	setArea(cvAreaCoordinates);
+}
+
+std::vector<cv::Point> Rectification::getDefaultArena() {
+	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
+	std::string arena = _settings->getValueOrDefault<std::string>(TRACKERPARAM::CN_ARENA, "10,10;10,100;100,100;100,10");
+	return stringToCVPointVec(arena);
+}
+
 void Rectification::setArea()
 {
-	std::vector<cv::Point> corners;
-	for (int i = 0; i < _dataModelM->size(); i++) {
-		TrackingRectElement *t = dynamic_cast<TrackingRectElement *>(_dataModelM->getChild(i));
-		if (t) {
-
-			corners.push_back(cv::Point(t->getX(), t->getY()));
-		}
-	}
-
-	setArea(corners);
+	setArea(getDefaultArena());
 }
 
 void Rectification::setupRecitification(int frameDisplayWidthPx, int frameDisplayHeightPx, int camImageWidth, int camImageHeight)

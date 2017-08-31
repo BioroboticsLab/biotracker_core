@@ -33,6 +33,8 @@ class ControllerPlugin : public IController {
      */
     void sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number);
 
+	void selectPlugin(QString str);
+
     // IController interface
   protected:
     void createModel() override;
@@ -40,7 +42,7 @@ class ControllerPlugin : public IController {
     void connectModelToController() override;
     void connectControllerToController() override;
 
-    void createPlugin();
+    void createPlugin(QString instance);
 
     void connectPlugin();
     void disconnectPlugin();
@@ -53,6 +55,8 @@ class ControllerPlugin : public IController {
     void receiveTrackingDone();
 
   private:
+	void loadPluginsFromPluginSubfolder();
+
     IBioTrackerPlugin* m_BioTrackerPlugin;
 
 

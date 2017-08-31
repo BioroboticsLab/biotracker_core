@@ -71,10 +71,12 @@ public:
 	 * @param: areaCoordinates, the coordinate list of the considered area.
 	 * @return: void.
 	 */
-	void setArea(std::vector<cv::Point> areaCoordinates) { _areaCoordinates = areaCoordinates; }
+	void setArea(std::vector<cv::Point> areaCoordinates);
+	void setArea(std::vector<QPoint> areaCoordinates);
 	
 	//infers the area coordinates from the data model
 	void setArea();
+	std::vector<cv::Point> getDefaultArena();
 	void resetAreaCoordinates();
 
 	/**
