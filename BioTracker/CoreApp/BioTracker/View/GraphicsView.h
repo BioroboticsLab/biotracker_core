@@ -30,6 +30,7 @@ protected:
 
 private:
     QGraphicsItem *m_BackgroundImage;
+	QPoint m_ViewportDragOrigin{ 0, 0 };
 
 Q_SIGNALS:
 	void onMousePressEvent(QMouseEvent *event, QPoint imagePosition);
