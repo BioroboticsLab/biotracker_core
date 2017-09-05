@@ -53,31 +53,12 @@ ELSE()
 	add_definitions(-DWITH_CUDA)
 ENDif()
 
-IF("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-	find_package(Boost REQUIRED system filesystem chrono thread timer)
-ELSE()
-	#Find_package doesn't seem to work on windows, even when providing a PATHS hint...
-	set(Boost_LIB_DIR $ENV{Boost_LIB_DIR} CACHE FILEPATH "")
-	set(Boost_INCLUDE_DIR $ENV{Boost_INCLUDE_DIR} CACHE FILEPATH "")
-	set(Boost_VERSION_STRING_DEB "-vc140-mt-gd-1_64" CACHE STRING "")
-	set(Boost_VERSION_STRING_REL "-vc140-mt-1_64" CACHE STRING "")
-	
-	set(Boost_LIBRARIES
-		debug ${Boost_LIB_DIR}/libboost_filesystem${Boost_VERSION_STRING_DEB}.lib
-		debug ${Boost_LIB_DIR}/libboost_system${Boost_VERSION_STRING_DEB}.lib
-		debug ${Boost_LIB_DIR}/libboost_chrono${Boost_VERSION_STRING_DEB}.lib
-		debug ${Boost_LIB_DIR}/libboost_thread${Boost_VERSION_STRING_DEB}.lib
-		debug ${Boost_LIB_DIR}/libboost_timer${Boost_VERSION_STRING_DEB}.lib
-		debug ${Boost_LIB_DIR}/libboost_exception${Boost_VERSION_STRING_DEB}.lib
-		optimized ${Boost_LIB_DIR}/libboost_filesystem${Boost_VERSION_STRING_REL}.lib
-		optimized ${Boost_LIB_DIR}/libboost_system${Boost_VERSION_STRING_REL}.lib
-		optimized ${Boost_LIB_DIR}/libboost_chrono${Boost_VERSION_STRING_REL}.lib
-		optimized ${Boost_LIB_DIR}/libboost_thread${Boost_VERSION_STRING_REL}.lib
-		optimized ${Boost_LIB_DIR}/libboost_timer${Boost_VERSION_STRING_REL}.lib
-		optimized ${Boost_LIB_DIR}/libboost_exception${Boost_VERSION_STRING_REL}.lib)
-	set(Boost_INCLUDE_DIRS
-		${Boost_INCLUDE_DIR})
-ENDIF()
+if(CMAKE_SYSTEM MATCHES "Windows")
+	set(Boost_USE_STATIC_LIBS   ON)
+	set(Boost_USE_MULTITHREADED ON)
+endif()
+find_package(Boost REQUIRED system filesystem chrono thread timer)
+
 
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
