@@ -1,9 +1,11 @@
 #include "ControllerMainWindow.h"
 #include "View/MainWindow.h"
 #include "Model/null_Model.h"
+#include "Model/Annotations.h"
 //#include "Controller/ControllerStrategies/MainGUIApplication.h"
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerPlugin.h"
+#include "Controller/ControllerAnnotations.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -16,6 +18,7 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 }
 
 void ControllerMainWindow::loadVideo(QString str) {
+	onNewMediumLoaded(str.toStdString());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
 }
@@ -26,11 +29,13 @@ void ControllerMainWindow::loadTracker(QString str) {
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
+	onNewMediumLoaded(files.empty() ? "" : files.front().string());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
 }
 
 void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
+	onNewMediumLoaded();
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
 }
@@ -93,4 +98,10 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
 }
 
-
+void ControllerMainWindow::onNewMediumLoaded(const std::string path)
+{
+	// Prepare annotations and serialize existing ones.
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
+	ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
+	annotationController->reset(path);
+}

@@ -71,6 +71,10 @@ class ControllerMainWindow : public IController {
 
 	private slots:
 	void rcvSelectPlugin(QString plugin);
+
+private:
+	// Internal cleanup callback when a new video or imagestream is loaded.
+	void onNewMediumLoaded(const std::string path="");
 };
 
 #endif // CONTROLLERMAINWINDOW_H

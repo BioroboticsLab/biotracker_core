@@ -7,6 +7,9 @@
 #include "QLayout"
 
 #include "View/GraphicsView.h"
+#include "View/AnnotationsView.h"
+#include "Model/null_Model.h"
+#include "Controller/null_Controller.h"
 
 #include "QGraphicsObject"//MARKER
 

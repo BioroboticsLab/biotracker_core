@@ -1,6 +1,9 @@
 #include "GraphicsView.h"
 #include "QTimeLine"
 #include "QWheelEvent"
+#include "../Controller/ControllerGraphicScene.h"
+
+#include <Model/Annotations.h>
 
 #include <qpixmap.h>
 #include <QGraphicsItem>
@@ -62,4 +65,30 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 			scale(0.9, 0.9);
 		}
 	}
+}
+
+void GraphicsView::keyReleaseEvent(QKeyEvent *event)
+{
+	emit(onKeyReleaseEvent(event));
+}
+
+void GraphicsView::mousePressEvent(QMouseEvent *event)
+{
+	const QPointF imagePosition = mapToScene(event->pos());
+	const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+	emit(onMousePressEvent(event, imagePositionInt));
+}
+
+void GraphicsView::mouseReleaseEvent(QMouseEvent*event)
+{
+	const QPointF imagePosition = mapToScene(event->pos());
+	const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+	emit(onMouseReleaseEvent(event, imagePositionInt));
+}
+
+void GraphicsView::mouseMoveEvent(QMouseEvent*event)
+{
+	const QPointF imagePosition = mapToScene(event->pos());
+	const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+	emit(onMouseMoveEvent(event, imagePositionInt));
 }
