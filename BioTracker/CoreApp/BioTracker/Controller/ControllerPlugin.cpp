@@ -24,11 +24,24 @@ ControllerPlugin::~ControllerPlugin() {
 
 }
 
+void ControllerPlugin::addToPluginList(QString str) {
+
+	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
+	loader->addToPluginList(str);
+
+	// Add Plugin name to Main Window
+	IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
+
+	ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData());
+}
+
 void ControllerPlugin::loadPluginFromFileName(QString str) {
     PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
-	QString pluginName;
-    if( (pluginName = loader->loadPluginFromFilename(str)) != "") {
-        createPlugin(pluginName);
+
+    if(loader->loadPluginFromFilename(str)) {
+
+        createPlugin();
 
         // Add Plugin name to Main Window
         IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
@@ -46,25 +59,10 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 }
 
 void ControllerPlugin::selectPlugin(QString str) {
-
-	m_BioTrackerPlugin = qobject_cast<PluginLoader*>(m_Model)->getPluginInstance(str);
-
-	if (m_BioTrackerPlugin) {
-
-		// Add Plugin name to Main Window
-		IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-		QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
-
-		ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData());
-
-		//Add Tracker Parameter to Main Window
-		IView *param = m_BioTrackerPlugin->getTrackerParameterWidget();
-		ctrMainWindow->setTrackerParamterWidget(param);
-
-		//Add Tracker tracked components (Elements) to Main Window
-		IView *v = m_BioTrackerPlugin->getTrackerElementsWidget();
-		ctrMainWindow->setTrackerElementsWidget(m_BioTrackerPlugin->getTrackerElementsWidget());
-	}
+	if (str.isEmpty())
+		return; 
+	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
+	loadPluginFromFileName(loader->m_PluginMap.find(str)->second);
 }
 
 void ControllerPlugin::createModel() {
@@ -79,6 +77,7 @@ void ControllerPlugin::connectModelToController() {
 
 void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 
+	//////////////
 	QDir d(CFG_DIR_PLUGINS);
 	d.setFilter(QDir::Filter::Files);
 	QStringList nameFilter;
@@ -86,10 +85,7 @@ void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 	foreach(QFileInfo fi, fl) {
 		QString s = fi.absoluteFilePath();
 		std::string asdf = s.toStdString();
-
-		IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-		QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
-		ctrMainWindow->loadTracker(s);
+		addToPluginList(s);
 	}
 } 
 
@@ -104,8 +100,8 @@ void ControllerPlugin::connectControllerToController() {
 	loadPluginsFromPluginSubfolder();
 }
 
-void ControllerPlugin::createPlugin(QString instance) {
-    m_BioTrackerPlugin = qobject_cast<PluginLoader*>(m_Model)->getPluginInstance(instance);
+void ControllerPlugin::createPlugin() {
+    m_BioTrackerPlugin = qobject_cast<PluginLoader*>(m_Model)->getPluginInstance();
     m_BioTrackerPlugin->createPlugin();
 
     m_BioTrackerPlugin->moveToThread(m_TrackingThread);
@@ -133,7 +129,7 @@ void ControllerPlugin::connectPlugin() {
     QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
-	QObject::connect(obj, SIGNAL(emitTrackingDone()), ctrPlayer, SLOT(receiveTrackingOperationDone()));
+	QObject::connect(obj, SIGNAL(emitTrackingDone()), model, SLOT(receiveTrackingOperationDone()));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
 }

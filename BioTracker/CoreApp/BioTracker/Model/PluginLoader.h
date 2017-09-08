@@ -20,36 +20,42 @@
 class PluginLoader : public IModel {
     Q_OBJECT
   public:
-    explicit PluginLoader(QObject* parent = 0);
+	  explicit PluginLoader(QObject* parent = 0);
 
-    /**
-     * Loads a BioTracker Plugin from a filpaht. It returns true if the Plugin could be loaded, otherwise false.
-     */
-	QString loadPluginFromFilename(QString filename);
+	  void addToPluginList(QString p);
 
-    /**
-     * Returns the Instance of the BioTracker Plugin.
-     */
-    IBioTrackerPlugin* getPluginInstance(QString name);
+	  /**
+	  * Loads a BioTracker Plugin from a filpaht. It returns true if the Plugin could be loaded, otherwise false.
+	  */
+	  bool loadPluginFromFilename(QString filename);
 
-    /**
-     * Returns a QStrinListModel with the names of all loaded Plugins.
-     */
-    QStringListModel* getPluginMetaData();
+	  bool loadPluginFromName(QString name);
 
-    bool getIsPluginLoaded();
+	  /**
+	  * Returns the Instance of the BioTracker Plugin.
+	  */
+	  IBioTrackerPlugin* getPluginInstance();
 
-  private:
+	  /**
+	  * Returns a QStrinListModel with the names of all loaded Plugins.
+	  */
+	  QStringListModel* getPluginMetaData();
 
-    bool m_isPluginLoaded;
+	  bool getIsPluginLoaded();
 
-    QString readMetaDataFromPlugin();
+	  std::map<QString, QString> m_PluginMap;
 
-    QPluginLoader* m_PluginLoader;
+private:
 
-    QStringList m_PluginList;
-    QStringListModel* m_PluginListModel;
-	std::map<QString, QPluginLoader*> m_PluginHandlesList;
+	bool m_isPluginLoaded;
+
+	QString readMetaDataFromPlugin();
+
+	QPluginLoader* m_PluginLoader;
+
+	QStringList m_PluginList;
+	QStringListModel* m_PluginListModel;
+
 
 };
 

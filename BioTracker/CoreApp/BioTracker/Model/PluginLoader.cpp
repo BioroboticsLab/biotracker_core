@@ -12,66 +12,102 @@ PluginLoader::PluginLoader(QObject* parent) :
     m_PluginListModel->setStringList(m_PluginList);
 }
 
-QString PluginLoader::loadPluginFromFilename(QString filename) {
-    bool retval = false;
-	QString name = "";
+void PluginLoader::addToPluginList(QString filename) {
 
-    if(m_PluginLoader->isLoaded()) {
+	bool isLib = QLibrary::isLibrary(filename);
 
-        m_PluginLoader->unload();
-    }
+	if (isLib) {
 
-    bool isLib = QLibrary::isLibrary(filename);
-
-    if( isLib ) {
-
-        m_PluginLoader->setFileName(filename);
-
-        name = readMetaDataFromPlugin();
-		m_PluginHandlesList.insert(std::pair<QString, QPluginLoader*>(name, m_PluginLoader));
-
-		qDebug() << m_PluginLoader->fileName();
-
-		m_PluginLoader = new QPluginLoader(this);
-
-        retval = true;
-    } else {
-        retval = false;
-    }
-
-
-    m_isPluginLoaded = retval;
-
-	return name;
-}
-
-IBioTrackerPlugin* PluginLoader::getPluginInstance(QString name) {
-	std::map<QString, QPluginLoader*>::iterator pos = m_PluginHandlesList.find(name);
-	if (pos == m_PluginHandlesList.end()) {
-		//handle the error
-		std::cout << "Could not get plugin instance " << name.toStdString() << std::endl;
-		return 0;
+		QPluginLoader loader;
+		loader.setFileName(filename);
+		QJsonValue pluginMeda(loader.metaData().value("MetaData"));
+		QJsonObject metaObj = pluginMeda.toObject();
+		QString mstring = metaObj.value("name").toString();
+		if (!m_PluginList.contains(mstring))
+			m_PluginList.append(mstring);
+		m_PluginListModel->setStringList(m_PluginList);
+		m_PluginMap.insert(std::pair<QString, QString>(mstring, filename));
 	}
 	else {
-		QPluginLoader* pl = pos->second;
-		return qobject_cast<IBioTrackerPlugin*>(pl->instance());//(m_PluginLoader->instance());
+		std::cout << "Error reading plugin: " << filename.toStdString() << std::endl;
 	}
+}
+
+bool PluginLoader::loadPluginFromFilename(QString filename) {
+	bool retval = false;
+
+	if (m_PluginLoader->isLoaded()) {
+		m_PluginLoader->unload();
+	}
+
+	bool isLib = QLibrary::isLibrary(filename);
+
+	if (isLib) {
+
+		m_PluginLoader->setFileName(filename);
+		QString name = readMetaDataFromPlugin();
+		m_PluginMap.insert(std::pair<QString, QString>(name, filename));
+		retval = true;
+	}
+	else {
+		retval = false;
+	}
+
+	qDebug() << m_PluginLoader->fileName();
+
+	m_isPluginLoaded = retval;
+
+	return retval;
+}
+
+bool PluginLoader::loadPluginFromName(QString name) {
+	bool retval = false;
+
+	if (m_PluginLoader->isLoaded()) {
+		m_PluginLoader->unload();
+	}
+
+	QString filename = m_PluginMap.find(name)->second;
+	bool isLib = QLibrary::isLibrary(filename);
+
+	if (isLib) {
+
+		m_PluginLoader->setFileName(filename);
+		QString name = readMetaDataFromPlugin();
+		m_PluginMap.insert(std::pair<QString, QString>(name, filename));
+		retval = true;
+	}
+	else {
+		retval = false;
+	}
+
+	qDebug() << m_PluginLoader->fileName();
+
+	m_isPluginLoaded = retval;
+
+	return retval;
+}
+
+IBioTrackerPlugin* PluginLoader::getPluginInstance() {
+	return qobject_cast<IBioTrackerPlugin*>(m_PluginLoader->instance());
 }
 
 QStringListModel* PluginLoader::getPluginMetaData() {
-    return m_PluginListModel;
+	return m_PluginListModel;
 }
 
 bool PluginLoader::getIsPluginLoaded() {
-    return m_isPluginLoaded;
+	return m_isPluginLoaded;
 }
 
 QString PluginLoader::readMetaDataFromPlugin() {
-    QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
-    QJsonObject metaObj = pluginMeda.toObject();
-    QString mstring = metaObj.value("name").toString();
+	QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
+	QJsonObject metaObj = pluginMeda.toObject();
+	QString mstring = metaObj.value("name").toString();
 
-    m_PluginList.append(mstring);
-    m_PluginListModel->setStringList(m_PluginList);
+	if (!m_PluginList.contains(mstring))
+		m_PluginList.append(mstring);
+	m_PluginListModel->setStringList(m_PluginList);
 	return mstring;
 }
+
