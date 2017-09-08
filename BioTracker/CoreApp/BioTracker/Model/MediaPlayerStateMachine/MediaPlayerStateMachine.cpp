@@ -147,6 +147,7 @@ void MediaPlayerStateMachine::emitSignals() {
 
 void MediaPlayerStateMachine::setNextState(IPlayerState::PLAYER_STATES state) {
 	m_NextPlayerState = m_States.value(state);
+	m_CurrentPlayerStateLabel = state;
 
 	Q_EMIT emitPlayerOperationDone();
 
