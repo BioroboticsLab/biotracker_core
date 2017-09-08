@@ -8,6 +8,7 @@
 #include "Model/TextureObject.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerDataExporter.h"
+#include "Controller/ControllerAreaDescriptor.h"
 #include "QPointer"
 
 #include "QDebug"
@@ -25,6 +26,8 @@ GuiContext::GuiContext(QObject *parent) :
 	QPointer< IController > DataExportController = new ControllerDataExporter(this, this, ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	
 	QPointer< IController > TrackedComponentCoreController = new ControllerTrackedComponentCore(this, this, ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+//	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+
 
 
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::MAINWINDOW, MainWindowController);
@@ -34,7 +37,9 @@ GuiContext::GuiContext(QObject *parent) :
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW, GraphicsViewController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::PLUGIN, PluginController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::DATAEXPORT, DataExportController);
+	
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE, TrackedComponentCoreController);
+//	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR, AreaDescriptorController);
 
 }
 

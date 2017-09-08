@@ -52,6 +52,8 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		ctrTrackedComponentCore->addModel(m_BioTrackerPlugin->getTrackerComponentModel());
 		//Add tracked component view to main window
 		ctrMainWindow->setTrackerElementsWidget(ctrTrackedComponentCore->getTrackingElementsWidgetCore());
+
+		m_BioTrackerPlugin->sendCorePermissions();
 		
     }
 }
@@ -73,6 +75,7 @@ void ControllerPlugin::connectControllerToController() {
     QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
 
     ctrMainWindow->deactiveTrackringCheckBox();
+
 }
 
 void ControllerPlugin::createPlugin() {
@@ -115,6 +118,8 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveTrackingOperationDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
+
+	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 }
 
 void ControllerPlugin::disconnectPlugin() {

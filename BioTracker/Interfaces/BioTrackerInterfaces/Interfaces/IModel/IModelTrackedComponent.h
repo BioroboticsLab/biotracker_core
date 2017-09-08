@@ -130,4 +130,36 @@ public:
 	virtual void operate();
 };
 
+class IModelTrackedEllipse : public IModelTrackedPoint
+{
+	Q_OBJECT
+
+public:
+	/**
+	* The constructor of the IModelTrackedEllipse class is able to receive a QObject as parent.
+	*/
+	IModelTrackedEllipse(QObject *parent = 0);
+
+	/**
+	* The methode operate() must be implemented by every derivative of this class.
+	*/
+	virtual void operate();
+};
+
+class IModelTrackedRectangle : public IModelTrackedPoint
+{
+	Q_OBJECT
+	
+public:
+	/**
+	* The constructor of the IModelTrackedRectangle class is able to receive a QObject as parent.
+	*/
+	IModelTrackedRectangle(QObject *parent = 0);
+
+	/**
+	* The methode operate() must be implemented by every derivative of this class.
+	*/
+	virtual void operate();
+};
+
 #endif // ITRACKEDCOMPONENT_H

@@ -1,6 +1,9 @@
 #include "ControllerTrackedComponentCore.h"
 #include "Model/null_Model.h"
 #include "View/TrackedComponentView.h"
+#include "settings/Settings.h"
+#include "util/types.h"
+#include "qdebug.h"
 
 ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -23,6 +26,16 @@ void ControllerTrackedComponentCore::connectControllerToController()
 
 }
 
+
+void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
+{
+	if (dynamic_cast<TrackedComponentView*>(m_View)) {
+		dynamic_cast<TrackedComponentView*>(m_View)->setPermission(permission);
+	}
+	else {
+		qDebug() << "no view yet";
+	}
+}
 
 void ControllerTrackedComponentCore::createModel()
 {

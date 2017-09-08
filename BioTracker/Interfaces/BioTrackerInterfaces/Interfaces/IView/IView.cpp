@@ -23,3 +23,7 @@ IController *IView::getController() {
 IModel *IView::getModel() {
     return mModel;
 }
+
+void IView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>) {
+
+}

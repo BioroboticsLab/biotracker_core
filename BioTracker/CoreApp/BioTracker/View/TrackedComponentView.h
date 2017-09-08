@@ -2,6 +2,7 @@
 #define TRACKEDCOMPONENTVIEW_H
 
 #include "Interfaces/IView/IViewTrackedComponent.h"
+#include "Interfaces/ENUMS.h"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
@@ -21,11 +22,16 @@ public:
 	public Q_SLOTS:
 	void getNotified() override;
 	void rcvDimensionUpdate(int x, int y);
+	void addComponent();
 
 	public Q_SIGNAL:
 	void emitUpdateCornersChanged(int id, int relX, int relY);
 	void createChildShapesAtStart();
 	void updateShapes(uint framenumber);
+
+	// IView interface
+
+	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
 private:
 	QRectF m_boundingRect;
@@ -34,6 +40,7 @@ private:
 	QGraphicsItem *_watchingDrag;
 	int _dragX;
 	int _dragY;
+	std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
 
 	// QGraphicsItem interface
 protected:
@@ -43,6 +50,10 @@ protected:
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 	
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
+	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
+
 };
 
 #endif // TRACKEDCOMPONENTVIEW_H

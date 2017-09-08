@@ -2,6 +2,7 @@
 #define IVIEW_H
 
 #include "Interfaces/IModel/IModel.h"
+#include "Interfaces\ENUMS.h"
 
 class IController;
 class IView {
@@ -11,6 +12,7 @@ class IView {
     virtual ~IView() = 0;
 
     virtual void setNewModel(IModel *model) = 0;
+	void setPermission(std::pair < ENUMS::COREPERMISSIONS, bool >);
 
   protected:
     virtual void connectModelView() = 0;

@@ -5,6 +5,9 @@
 #include "Controller/ControllerTrackedComponent.h"
 #include "Controller/ControllerAreaDescriptor.h"
 
+#include "util/singleton.h"
+#include "settings/Settings.h"
+
 #include "View/TrackedElementView.h"
 
 BioTrackerPlugin::BioTrackerPlugin() {
@@ -45,8 +48,7 @@ void BioTrackerPlugin::createPlugin() {
 	IController * ctr3 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 	m_AreaDescrController = qobject_cast<ControllerAreaDescriptor *>(ctr3);
 
-    connectInterfaces();
-
+	connectInterfaces();
 }
 
 void BioTrackerPlugin::connectInterfaces() {
@@ -76,4 +78,20 @@ void BioTrackerPlugin::receiveChangeDisplayImage(QString str) {
 	Q_EMIT emitChangeDisplayImage(str);
 }
 
+void BioTrackerPlugin::sendCorePermissions() {
+	// get plugin settings
+	BioTracker::Core::Settings *pluginSettings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
+
+	// signal permissions
+	bool enableView = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_VIEW, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTVIEW, enableView));
+	bool enableMove = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_MOVE, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, enableMove));
+	bool enableRemove = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_REMOVE, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, enableRemove));
+	bool enableSwap = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_ID_SWAP, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, enableSwap));
+	bool enableAdd = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_ADD, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, enableAdd));
+}
 

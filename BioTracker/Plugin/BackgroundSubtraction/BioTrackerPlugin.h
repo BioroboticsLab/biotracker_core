@@ -12,7 +12,7 @@
 #include "memory"
 
 class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin {
-    Q_OBJECT
+	Q_OBJECT
     Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
     Q_INTERFACES(IBioTrackerPlugin)
 
@@ -28,13 +28,15 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
   public:
     void createPlugin();
     void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+	void sendCorePermissions();
 
   private:
     void connectInterfaces();
-  signals:
+signals:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
     void emitTrackingDone(uint framenumber);
 	void emitChangeDisplayImage(QString str);
+	void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
 private slots:
     void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
@@ -48,6 +50,10 @@ private:
 	IController *m_AreaDescrController;
 
 	IBioTrackerContext *m_PluginContext;
+
+public:
+	QList<ENUMS::COREPERMISSIONS> m_CorePermissions;
+
 
 };
 

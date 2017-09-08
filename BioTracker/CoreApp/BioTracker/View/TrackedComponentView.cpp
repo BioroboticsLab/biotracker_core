@@ -11,6 +11,9 @@
 
 #include "ComponentShape.h"
 #include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "QDebug"
+#include "QMenu"
+#include "QAction"
 
 class QGraphicsSceneHoverEvent;
 
@@ -24,6 +27,11 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 	setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 	_watchingDrag = 0;
 
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTVIEW, true));
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, true));
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, true));
 }
 
 void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
@@ -31,6 +39,7 @@ void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
 	printf("Core: %i, %i", x, y);
 	update();
 }
+
 
 QRectF TrackedComponentView::boundingRect() const
 {
@@ -69,25 +78,6 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 	painter->setBrush(QBrush());
 	painter->drawRect(this->sceneBoundingRect());
-
-
-	//for (int i = 0; i < all->size(); i++) {
-	//	IModelTrackedTrajectory *trajectory = dynamic_cast<IModelTrackedTrajectory *>(all->getChild(i));
-	//	if (trajectory) {
-	//		IModelTrackedPoint *point = (IModelTrackedPoint *)trajectory->getLastChild();
-
-	//		painter->setPen(QPen(Qt::blue, 5));
-	//		QBrush noBrush((Qt::red), Qt::NoBrush);
-	//		painter->setBrush(noBrush);
-
-	//		int x = point->getX();
-	//		int y = point->getY();
-
-	//		int w = 20;
-	//		int h = 20;
-
-	//		painter->drawEllipse(x - w / 2, y - h / 2, w, h);
-
 	//		QLineF angleline;
 	//		angleline.setP1(QPointF(x, y));
 	//		angleline.setAngle(point->getDeg());
@@ -292,6 +282,35 @@ QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVari
 	return QGraphicsItem::itemChange(change, value);
 }
 
+// set permissions, which where send by the plugin
+void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
+{
+	m_permissions.insert(permission);
+	qDebug() << "permission " << permission.first << " set to" << permission.second;
+
+
+	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
+	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW) {
+		this->setVisible(permission.second);
+		return;
+	}
+	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD) {
+		//TODO add component in model and view
+		qDebug() << "TODO add component";
+		return;
+	}
+
+	QGraphicsItem* child;
+	foreach(child, this->childItems()) {
+		ComponentShape* shape = dynamic_cast<ComponentShape*>(child);
+		if (shape) {
+			shape->setPermission(permission);
+		}
+	}
+}
+
+
+// at plugin load, draw each element of initial main trajectory
 void TrackedComponentView::createChildShapesAtStart() {
 	// check if scene is set
 	if (!(this->scene())) {
@@ -360,3 +379,15 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	}
 }
 
+void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
+{
+	QMenu menu;
+	QAction *addComponentAction = menu.addAction("Add Component here", dynamic_cast<TrackedComponentView*>(this), SLOT(addComponent()), Qt::Key_C);
+	QAction *selectedAction = menu.exec(event->screenPos());
+}
+
+void TrackedComponentView::addComponent()
+{
+	//ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
+	qDebug() << "TODO add component";
+}

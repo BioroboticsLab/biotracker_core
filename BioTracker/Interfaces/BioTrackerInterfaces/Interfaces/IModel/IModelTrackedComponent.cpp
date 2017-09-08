@@ -18,12 +18,34 @@ IModelTrackedPolygon::IModelTrackedPolygon(QObject *parent) :
 
 }
 
+IModelTrackedEllipse::IModelTrackedEllipse(QObject *parent) :
+	IModelTrackedPoint(parent)
+{
+
+}
+
+IModelTrackedRectangle::IModelTrackedRectangle(QObject *parent) :
+	IModelTrackedPoint(parent)
+{
+
+}
+
 void IModelTrackedPoint::operate()
 {
 
 }
 
 void IModelTrackedPolygon::operate()
+{
+
+}
+
+void IModelTrackedEllipse::operate()
+{
+
+}
+
+void IModelTrackedRectangle::operate()
 {
 
 }

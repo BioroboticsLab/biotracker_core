@@ -16,6 +16,8 @@ class ControllerTrackedComponentCore : public IController
 	public Q_SLOTS:
 		//this slot gets triggered when the tracking is done, so the core-view updates
 		void receiveTrackingOperationDone(uint framenumber);
+		//gets triggered when plugin sends permissions
+		void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
 		// IController interface
 	protected:
