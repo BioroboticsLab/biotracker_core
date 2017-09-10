@@ -113,7 +113,7 @@ void ControllerPlugin::connectPlugin() {
     QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
                      ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
-	QObject::connect(obj, SIGNAL(emitTrackingDone()), ctrPlayer, SLOT(receiveTrackingOperationDone()));
+	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), model, SLOT(receiveTrackingOperationDone()));
 
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveTrackingOperationDone(uint)));
 
