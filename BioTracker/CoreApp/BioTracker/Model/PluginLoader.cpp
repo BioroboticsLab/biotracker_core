@@ -63,32 +63,8 @@ bool PluginLoader::loadPluginFromFilename(QString filename) {
 }
 
 bool PluginLoader::loadPluginFromName(QString name) {
-	bool retval = false;
-
-	if (m_PluginLoader->isLoaded()) {
-		m_PluginLoader->unload();
-	}
-
 	QString filename = m_PluginMap.find(name)->second;
-	bool isLib = QLibrary::isLibrary(filename);
-
-	if (isLib) {
-
-		m_PluginLoader->setFileName(filename);
-		QString name = readMetaDataFromPlugin();
-		m_currentPluginName = name;
-		m_PluginMap.insert(std::pair<QString, QString>(name, filename));
-		retval = true;
-	}
-	else {
-		retval = false;
-	}
-
-	qDebug() << m_PluginLoader->fileName();
-
-	m_isPluginLoaded = retval;
-
-	return retval;
+	return loadPluginFromFilename(filename);
 }
 
 IBioTrackerPlugin* PluginLoader::getPluginInstance() {
