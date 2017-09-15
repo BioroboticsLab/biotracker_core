@@ -52,7 +52,7 @@ class ControllerMainWindow : public IController {
     /**
      * Receives a QStringListModel with the names of all currently loades BioTracker Plugins from the ControllerPlugin class.
      */
-    void setTrackerList(QStringListModel* trackerList);
+    void setTrackerList(QStringListModel* trackerList, QString current);
     /**
      * Embeds the Parameter Widget devined in the BioTracker Plugins into the MainWindow Widget.
      */

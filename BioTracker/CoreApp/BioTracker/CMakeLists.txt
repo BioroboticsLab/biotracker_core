@@ -45,16 +45,30 @@ set(LIBS
 	${LIBS}
 	${HMNVLibDir}/lib/NvEncInterace.lib)
 ENDIF()
+	
+# Visual studio out-of-source friendly source groups
+set(_plugin_src_root_path ${CMAKE_CURRENT_SOURCE_DIR})
+file(
+    GLOB_RECURSE _plugin_source_list 
+    LIST_DIRECTORIES false
+    "${_plugin_src_root_path}/*.c*"
+    "${_plugin_src_root_path}/*.h*"
+    "${_plugin_src_root_path}/*.ui*"
+)
+foreach(_plugin_source IN ITEMS ${_plugin_source_list})
+    get_filename_component(_plugin_source_path "${_plugin_source}" PATH)
+    file(RELATIVE_PATH _plugin_source_path_rel "${_plugin_src_root_path}" "${_plugin_source_path}")
+    string(REPLACE "/" "\\" _plugin_group_path "${_plugin_source_path_rel}")
+    source_group("${_plugin_group_path}" FILES "${_plugin_source}")
+endforeach()
 
-set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 
 include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 message("Configuring Biotracker_core..." )
 set(EXE_NAME Biotracker_core)
-file(GLOB_RECURSE Biotracker_core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui *.qrc)
-add_executable(${EXE_NAME} ${Biotracker_core} guiresources.qrc)
+add_executable(${EXE_NAME} ${_plugin_source_list} guiresources.qrc)
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction.tracker)
 

@@ -39,7 +39,9 @@ class MediaPlayerStateMachine : public IModel {
     /**
      * This method can be called by the MediaPlayer class and by any State which is part of the MediaPlayerStateMachine.
      */
-    void setNextState(IPlayerState::PLAYER_STATES state);
+	void setNextState(IPlayerState::PLAYER_STATES state);
+
+	IPlayerState::PLAYER_STATES getState();
 
   public Q_SLOTS:
     /**

@@ -105,3 +105,11 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/Tracks
 /BioTracker/CoreApp/BioTracker/BSTrackerConfig.ini
 /BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/EWIEGA46WW/qrc_guiresources.cpp
+/BioTracker/Plugin/Sample/x64/Debug/Sample.tracker_autogen/*.cache
+*.cache
+*.csv
+/BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/mocs_compilation.cpp
+/BioTracker/Interfaces/BioTrackerInterfaces/Biotracker_interfaces_autogen/mocs_compilation.cpp
+/BioTracker/Plugin/Sample/Sample.tracker_autogen/include/ui_TrackerParameterView.h
+/BioTracker/Plugin/Sample/Sample.tracker_autogen/mocs_compilation.cpp
+/BioTracker/Utils/BioTrackerUtils/Biotracker_utility_autogen/mocs_compilation.cpp

@@ -22,12 +22,15 @@ class ControllerPlugin : public IController {
     ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
     ~ControllerPlugin();
 
+	void addToPluginList(QString str);
+
     /**
      * (This function
      * This function delivers a file path of a Plugin to the IModel class PluginLoader. If the Plugin could be loaded,
      * the functions additionally requests the name of the Plugin and sets it as an entry into an IView widget in the MainWindow.
      */
     void loadPluginFromFileName(QString str);
+
     /**
      * This function hands the received cv::Mat pointer and the current frame number to the PluginLoader.
      */
@@ -42,7 +45,7 @@ class ControllerPlugin : public IController {
     void connectModelToController() override;
     void connectControllerToController() override;
 
-    void createPlugin(QString instance);
+    void createPlugin();
 
     void connectPlugin();
     void disconnectPlugin();

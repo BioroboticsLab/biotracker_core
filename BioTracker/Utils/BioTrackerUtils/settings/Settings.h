@@ -13,6 +13,8 @@
 #include <mutex>
 #include "util/singleton.h"
 
+#define GET_CORESETTINGS	BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance
+
 namespace {
 template<typename Test, template<typename...> class Ref>
 struct is_specialization : std::false_type {};

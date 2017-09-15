@@ -37,15 +37,29 @@ set(LIBS
 	
 add_definitions( -DBIOTRACKERPLUGIN_LIBRARY=1 )
 
-set(CMAKE_INCLUDE_CURRENT_DIR OFF)
+# Visual studio out-of-source friendly source groups
+set(_plugin_src_root_path ${CMAKE_CURRENT_SOURCE_DIR})
+file(
+    GLOB_RECURSE _plugin_source_list 
+    LIST_DIRECTORIES false
+    "${_plugin_src_root_path}/*.c*"
+    "${_plugin_src_root_path}/*.h*"
+    "${_plugin_src_root_path}/*.ui*"
+)
+foreach(_plugin_source IN ITEMS ${_plugin_source_list})
+    get_filename_component(_plugin_source_path "${_plugin_source}" PATH)
+    file(RELATIVE_PATH _plugin_source_path_rel "${_plugin_src_root_path}" "${_plugin_source_path}")
+    string(REPLACE "/" "\\" _plugin_group_path "${_plugin_source_path_rel}")
+    source_group("${_plugin_group_path}" FILES "${_plugin_source}")
+endforeach()
+
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 
 include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 message("Configuring Sample...")
 set(EXE_NAME Sample.tracker)
-file(GLOB_RECURSE Sample RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.c *.h *.hpp *.ui)
-add_library(${EXE_NAME} SHARED ${Sample} )
+add_library(${EXE_NAME} SHARED ${_plugin_source_list} )
 target_link_libraries(${EXE_NAME} ${LIBS})
 add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility)
 
