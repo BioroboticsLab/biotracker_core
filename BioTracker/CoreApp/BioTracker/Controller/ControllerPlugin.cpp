@@ -33,7 +33,8 @@ void ControllerPlugin::addToPluginList(QString str) {
 	IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
 
-	ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData());
+	ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData(),
+		qobject_cast<PluginLoader*>(m_Model)->getCurrentPluginName());
 }
 
 void ControllerPlugin::loadPluginFromFileName(QString str) {
@@ -47,14 +48,16 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
         IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
         QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
 
-        ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData());
+        ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData(),
+			qobject_cast<PluginLoader*>(m_Model)->getCurrentPluginName());
 
         //Add Tracker Parameter to Main Window
-        ctrMainWindow->setTrackerParamterWidget(m_BioTrackerPlugin->getTrackerParameterWidget());
+		IView *parms = m_BioTrackerPlugin->getTrackerParameterWidget();
+        ctrMainWindow->setTrackerParamterWidget(parms);
 
 		//Add Tracker tracked components (Elements) to Main Window
-		IView *v = m_BioTrackerPlugin->getTrackerElementsWidget();
-		ctrMainWindow->setTrackerElementsWidget(m_BioTrackerPlugin->getTrackerElementsWidget()); 
+		IView *elems = m_BioTrackerPlugin->getTrackerElementsWidget();
+		ctrMainWindow->setTrackerElementsWidget(elems); 
     }
 }
 
@@ -62,7 +65,9 @@ void ControllerPlugin::selectPlugin(QString str) {
 	if (str.isEmpty())
 		return; 
 	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
-	loadPluginFromFileName(loader->m_PluginMap.find(str)->second);
+
+	if (loader->getCurrentPluginName() != str)
+		loadPluginFromFileName(loader->m_PluginMap.find(str)->second);
 }
 
 void ControllerPlugin::createModel() {
@@ -121,8 +126,8 @@ void ControllerPlugin::connectPlugin() {
 	IController* ctrData = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	ControllerDataExporter* ctDataEx = qobject_cast<ControllerDataExporter*>(ctrData);
 
-	IModelDataExporter* asdf = dynamic_cast<IModelDataExporter*>(ctDataEx->getModel());
-	m_BioTrackerPlugin->setDataExporter(asdf);
+	IModelDataExporter* exp = dynamic_cast<IModelDataExporter*>(ctDataEx->getModel());
+	m_BioTrackerPlugin->setDataExporter(exp);
 
     QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 

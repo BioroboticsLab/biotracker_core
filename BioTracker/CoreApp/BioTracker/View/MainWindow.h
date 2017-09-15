@@ -29,7 +29,7 @@ class MainWindow : public IViewMainWindow {
     void addVideoView(IView* videoView);
     void addTrackerParameterView(IView* parameter);
 	void addTrackerElementsView(IView *elemView);
-    void setTrackerList(QStringListModel* trackerList);
+    void setTrackerList(QStringListModel* trackerList, QString current);
 
     void activeTrackingCheckBox();
     void deactivateTrackingCheckBox();

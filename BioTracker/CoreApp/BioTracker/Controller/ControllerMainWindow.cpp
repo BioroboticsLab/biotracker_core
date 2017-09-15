@@ -45,8 +45,8 @@ void ControllerMainWindow::deactiveTrackring() {
     qobject_cast<ControllerPlayer*>(ctr)->setTrackingDeactivated();
 }
 
-void ControllerMainWindow::setTrackerList(QStringListModel* trackerList) {
-    dynamic_cast<MainWindow*>(m_View)->setTrackerList(trackerList);
+void ControllerMainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
+    dynamic_cast<MainWindow*>(m_View)->setTrackerList(trackerList, current);
 }
 
 void ControllerMainWindow::setTrackerParamterWidget(IView* widget) {

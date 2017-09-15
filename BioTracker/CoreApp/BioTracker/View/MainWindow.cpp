@@ -8,7 +8,7 @@
 
 #include "View/GraphicsView.h"
 
-#include "QGraphicsObject"//MARKER
+#include "QGraphicsObject"
 
 
 
@@ -34,16 +34,12 @@ void MainWindow::addVideoView(IView* videoView) {
 	m_graphView = dynamic_cast<GraphicsView*>(videoView);
 	m_graphView->setParent(ui->trackingArea);
     ui->videoViewLayout->addWidget(m_graphView);
-    // gl widget
-    //dynamic_cast<BioTracker3VideoView *>(videoView)->setParent(ui->trackingArea);
-    //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
 }
 
 void MainWindow::addTrackerElementsView(IView *elemView)
 {
 	if (_currentElementView) {
 		_currentElementView->setParent(0); 
-		//_currentElementView->setVisible(false);
 		m_graphView->removeGraphicsItem(_currentElementView);
 	}
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
@@ -57,15 +53,13 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 {
 	if (_currentParameterView) {
 		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
-		//dynamic_cast<QWidget*>(_currentParameterView)->setVisible(false);
-		//ui->scrollArea->setWidget(0);
 	}
 
-    dynamic_cast<QWidget*>(parameter)->setParent(this);
-	//dynamic_cast<QWidget*>(parameter)->setVisible(true);
+    dynamic_cast<QWidget*>(parameter)->setParent(ui->scrollArea);
+	dynamic_cast<QWidget*>(parameter)->setVisible(true);
 
-    ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
-    ui->scrollArea->setWidgetResizable(true);
+	ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
+	ui->scrollArea->setWidgetResizable(true);
 	_currentParameterView = parameter;
 }
 
@@ -74,8 +68,9 @@ void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
 	Q_EMIT selectPlugin(ct);
 }
 
-void MainWindow::setTrackerList(QStringListModel* trackerList) {
+void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
     ui->comboBox_TrackerSelect->setModel(trackerList);
+	ui->comboBox_TrackerSelect->setCurrentText(current);
 }
 
 void MainWindow::activeTrackingCheckBox() {

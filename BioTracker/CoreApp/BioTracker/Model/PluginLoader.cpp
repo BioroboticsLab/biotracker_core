@@ -6,6 +6,7 @@ PluginLoader::PluginLoader(QObject* parent) :
     IModel(parent) {
 
     m_isPluginLoaded = false;
+	m_currentPluginName = "";
     m_PluginLoader = new QPluginLoader(this);
 
     m_PluginListModel = new QStringListModel();
@@ -46,6 +47,7 @@ bool PluginLoader::loadPluginFromFilename(QString filename) {
 
 		m_PluginLoader->setFileName(filename);
 		QString name = readMetaDataFromPlugin();
+		m_currentPluginName = name;
 		m_PluginMap.insert(std::pair<QString, QString>(name, filename));
 		retval = true;
 	}
@@ -74,6 +76,7 @@ bool PluginLoader::loadPluginFromName(QString name) {
 
 		m_PluginLoader->setFileName(filename);
 		QString name = readMetaDataFromPlugin();
+		m_currentPluginName = name;
 		m_PluginMap.insert(std::pair<QString, QString>(name, filename));
 		retval = true;
 	}
@@ -98,6 +101,10 @@ QStringListModel* PluginLoader::getPluginMetaData() {
 
 bool PluginLoader::getIsPluginLoaded() {
 	return m_isPluginLoaded;
+}
+
+QString PluginLoader::getCurrentPluginName() {
+	return m_currentPluginName;
 }
 
 QString PluginLoader::readMetaDataFromPlugin() {

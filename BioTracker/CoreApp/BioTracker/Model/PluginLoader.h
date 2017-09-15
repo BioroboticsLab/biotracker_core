@@ -42,12 +42,14 @@ class PluginLoader : public IModel {
 	  QStringListModel* getPluginMetaData();
 
 	  bool getIsPluginLoaded();
+	  QString getCurrentPluginName();
 
 	  std::map<QString, QString> m_PluginMap;
 
 private:
 
 	bool m_isPluginLoaded;
+	QString m_currentPluginName;
 
 	QString readMetaDataFromPlugin();
 
