@@ -146,8 +146,8 @@ class MediaPlayer : public IModel {
     QPointer< QThread > m_PlayerThread;
     QPointer< MediaPlayerStateMachine > m_Player;
 
-    IPlayerState* m_CurrentPlayerState;
-    IPlayerState* m_NextPlayerState;
+    //IPlayerState* m_CurrentPlayerState;
+    //IPlayerState* m_NextPlayerState;
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*> m_States;
 
@@ -169,6 +169,7 @@ class MediaPlayer : public IModel {
 
 	bool m_recd;
 	bool m_recordScaled;
+	bool m_trackingSeen;
 
 	bool m_useCuda;
 	GraphicsView *m_gv;

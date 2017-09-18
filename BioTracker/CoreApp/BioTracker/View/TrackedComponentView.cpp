@@ -10,6 +10,7 @@
 #include "QGraphicsEllipseItem"
 
 #include "ComponentShape.h"
+#include "Controller\ControllerTrackedComponentCore.h"
 #include "Interfaces\IModel\IModelTrackedTrajectory.h"
 #include "QDebug"
 #include "QMenu"
@@ -323,7 +324,7 @@ void TrackedComponentView::createChildShapesAtStart() {
 		IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
 		if (trajectory) {
 			//create componentshape for trajectory
-			ComponentShape* ellipse = new ComponentShape(this, trajectory, i);
+			ComponentShape* ellipse = new ComponentShape(this, trajectory, trajectory->getId());
 		}
 
 		IModelTrackedPoint *rect = dynamic_cast<IModelTrackedPoint *>(all->getChild(i));
@@ -351,7 +352,23 @@ void TrackedComponentView::createChildShapesAtStart() {
 void TrackedComponentView::updateShapes(uint framenumber) {
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 
+	//qDebug() << "main:" << all->getId();
 
+	//qDebug() << "all traj id's";
+	//for (int k = 0; k < all->size(); k++) {
+	//	//qDebug() << dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getId();
+	//	if (dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getId() != dynamic_cast<IModelTrackedPoint*>(dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getLastChild())->getId()) {
+	//		qDebug() << "traj and element not same id!!!!!";
+	//	}
+	//}
+	//qDebug() << "all shape traj id's";
+	//for (int l = 0; l < this->childItems().size(); l++) {
+	//	//qDebug() << dynamic_cast<IModelTrackedTrajectory*>(dynamic_cast<ComponentShape*>(this->childItems()[l])->getTrajectory())->getId();
+	//}
+	//qDebug() << "all shape id's";
+	//for (int m = 0; m < this->childItems().size(); m++) {
+	//	//qDebug() << dynamic_cast<ComponentShape*>(this->childItems()[m])->getId();
+	//}
 	//update each shape; shape deletes itself if trajectory is empty or not existant
 	for (int i = 0; i < this->childItems().size(); i++) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
@@ -364,12 +381,15 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	// check for new trajectories; for each create a new shape
 	if (this->childItems().size() < all->size()) {
 		int childrenCount = this->childItems().size();
-		for (int i = 1; i <= (all->size() - childrenCount); i++) {
+		for (int i = all->size() - childrenCount; i > 0; i--) {
 			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(all->size() - i));
-			if (trajectory) {
+			if (trajectory) { 
+
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
-				printf("new shape created: traj-id:%i\n",i, trajectory->getId());
-				printf("all-size:%i\n", all->size());
+				//connectShape(newShape);
+
+				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
+				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
 			}
 			else {
 				printf("error: no trajectory -> no shape created");
@@ -381,13 +401,29 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 
 void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
+	lastClickedPos = event->pos().toPoint();
 	QMenu menu;
-	QAction *addComponentAction = menu.addAction("Add Component here", dynamic_cast<TrackedComponentView*>(this), SLOT(addComponent()), Qt::Key_C);
+	QAction *addComponentAction = menu.addAction("Add Component here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_C);
 	QAction *selectedAction = menu.exec(event->screenPos());
+
 }
 
-void TrackedComponentView::addComponent()
+void TrackedComponentView::addTrajectory()
 {
-	//ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
-	qDebug() << "TODO add component";
+	if (!lastClickedPos.isNull()) {
+		qDebug() << "new Component at position " << lastClickedPos;
+		emitAddTrajectory(lastClickedPos);
+		lastClickedPos = QPoint(0, 0);
+	}
+	else {
+		qDebug() << "could not add new component";
+	}
 }
+
+//void TrackedComponentView::connectShape(ComponentShape* shape) {
+//
+//	ControllerTrackedComponentCore* ctrTrCompView = dynamic_cast<ControllerTrackedComponentCore*>(this->getController());
+//
+//	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrTrCompView, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
+//	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), ctrTrCompView, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
+//}

@@ -26,6 +26,11 @@ class ComponentShape : public QGraphicsObject
 		bool updatePosition(uint framenumber);
 		IModelTrackedTrajectory* getTrajectory();
 		void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+		int getId();
+
+	signals:
+		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 
 	public Q_SLOTS:
 		void changeBrushColor();
@@ -35,10 +40,11 @@ class ComponentShape : public QGraphicsObject
 		void unmarkShape();
 
 	protected:
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+		//QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+		//void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
 		void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
@@ -56,6 +62,7 @@ class ComponentShape : public QGraphicsObject
 		QColor m_brushColor;
 		bool m_marked;
 		int m_penWidth;
+		bool m_dragged;
 };
 
 

@@ -3,20 +3,20 @@
 #include "TrackedElement.h"
 
 TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
-    IModelTrackedTrajectory(parent),
-    name(name)
+	IModelTrackedTrajectory(parent),
+	name(name)
 {
 
 }
 
 void TrackedTrajectory::operate()
 {
-    qDebug() << "Printing all TrackedElements in TrackedObject " <<  name;
-    qDebug() << "========================= Begin ==========================";
-    for (int i = 0; i < m_TrackedComponents.size(); ++i) {
-        dynamic_cast<TrackedElement *>(m_TrackedComponents.at(i))->operate();
-    }
-    qDebug() << "========================   End   =========================";
+	qDebug() << "Printing all TrackedElements in TrackedObject " <<  name;
+	qDebug() << "========================= Begin ==========================";
+	for (int i = 0; i < m_TrackedComponents.size(); ++i) {
+		dynamic_cast<TrackedElement *>(m_TrackedComponents.at(i))->operate();
+	}
+	qDebug() << "========================   End   =========================";
 }
 
 void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
@@ -57,5 +57,5 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 
 int TrackedTrajectory::size()
 {
-    return m_TrackedComponents.size();
+	return m_TrackedComponents.size();
 }

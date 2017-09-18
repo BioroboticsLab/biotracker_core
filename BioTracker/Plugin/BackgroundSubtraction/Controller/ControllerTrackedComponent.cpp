@@ -3,16 +3,17 @@
 #include "Model/TrackedComponents/TrackingRectElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "View/TrackedElementView.h"
+#include "qdebug.h"
 
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
-    IController(parent, context, ctr)
+	IController(parent, context, ctr)
 {
 
 }
 
 void ControllerTrackedComponent::createView()
 {
-    m_View = new TrackedElementView(0, this, m_Model);
+	m_View = new TrackedElementView(0, this, m_Model);
 }
 
 void ControllerTrackedComponent::connectModelToController()
@@ -28,9 +29,9 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 	//This should be done using a factory, right?
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
-		t->setId(i);
-		TrackedElement *e = new TrackedElement(t, "n.a.", i);
-		e->setId(i);
+		//t->setId(i);
+		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
+		//e->setId(i);
 		t->add(e);
 		all->add(t, i);
 	}
@@ -67,4 +68,37 @@ void ControllerTrackedComponent::createModel()
 IView *ControllerTrackedComponent::getTrackingElementsWidget()
 {
 	return m_View;
+}
+
+void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
+{
+	trajectory->setValid(false);
+}
+
+void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
+{
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+	// TODO traj gets new id but element gets only appended -> position = current framenumber
+	TrackedTrajectory* newTraj = new TrackedTrajectory();
+	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());
+	firstElem->setX(position.x());
+	firstElem->setY(position.y());
+	firstElem->setTime(start);
+	newTraj->add(firstElem);
+	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
+	if (allTraj) {
+		allTraj->add(newTraj);
+	}
+}
+
+void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
+{
+
+	//TODO not last child but by id or last active child!
+	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
+	TrackedElement* lastChild = dynamic_cast<TrackedElement*>(traj->getLastChild());
+	lastChild->setX(position.x());
+	lastChild->setY(position.y());
+	qDebug() << "plugin-pos:" << position;
 }

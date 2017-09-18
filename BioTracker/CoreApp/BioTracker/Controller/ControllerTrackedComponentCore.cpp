@@ -4,16 +4,17 @@
 #include "settings/Settings.h"
 #include "util/types.h"
 #include "qdebug.h"
+#include "Interfaces\IModel\IModelTrackedTrajectory.h"
 
 ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
-    IController(parent, context, ctr)
+	IController(parent, context, ctr)
 {
 
 }
 
 void ControllerTrackedComponentCore::createView()
 {
-    //m_View = new TrackedComponentView(0, this, m_Model);
+	//m_View = new TrackedComponentView(0, this, m_Model);
 }
 
 void ControllerTrackedComponentCore::connectModelToController()
@@ -37,6 +38,21 @@ void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERM
 	}
 }
 
+void ControllerTrackedComponentCore::receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory)
+{
+	emitRemoveTrajectory(trajectory);
+}
+
+void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
+{
+	emitAddTrajectory(pos);
+}
+
+void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos)
+{
+	emitMoveElement(trajectory, pos);
+}
+
 void ControllerTrackedComponentCore::createModel()
 {
 	// This controller gets his model (via addModel()) from the corresponding tracked-component-controller when a plugin is loaded
@@ -54,6 +70,7 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	m_Model = model;
 	m_View = new TrackedComponentView(0, this, m_Model);
 
+	QObject::connect(dynamic_cast<TrackedComponentView*>(m_View), SIGNAL(emitAddTrajectory(QPoint)), this, SLOT(receiveAddTrajectory(QPoint)));
 }
 
 void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumber) 

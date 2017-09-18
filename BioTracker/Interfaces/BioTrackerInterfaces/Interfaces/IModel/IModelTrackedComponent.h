@@ -25,7 +25,6 @@ public:
 	* The constructor of the IModelTrackedComponent class is able to receive a QObject as parent.
 	*/
 	IModelTrackedComponent(QObject *parent = 0);
-
 };
 
 /*

@@ -46,10 +46,15 @@ void MainWindow::addTrackerElementsView(IView *elemView)
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
-    dynamic_cast<QWidget*>(parameter)->setParent(this);
+	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
+	pluginParameter->setParent(this);
+	pluginParameter->setStyleSheet("background-color:transparent;");
 
-    ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
-    ui->scrollArea->setWidgetResizable(true);
+	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(1);
+	dynamic_cast<QTabWidget*>(ui->scrollArea)->addTab(pluginParameter, "tracker");
+
+    /*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
+    ui->scrollArea->setWidgetResizable(true);*/
 }
 
 void MainWindow::setTrackerList(QStringListModel* trackerList) {

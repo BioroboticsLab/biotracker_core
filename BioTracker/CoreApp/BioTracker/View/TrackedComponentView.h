@@ -1,8 +1,12 @@
 #ifndef TRACKEDCOMPONENTVIEW_H
 #define TRACKEDCOMPONENTVIEW_H
 
+#pragma once
+
 #include "Interfaces/IView/IViewTrackedComponent.h"
 #include "Interfaces/ENUMS.h"
+#include "QPoint"
+#include "QSignalMapper"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
@@ -17,21 +21,23 @@ public:
 public:
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+	
+	void createChildShapesAtStart();
+	//void connectShape(ComponentShape* shape);
+	
+	// IView interface
+	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+
+signals:
+	void emitUpdateCornersChanged(int id, int relX, int relY);
+	void emitAddTrajectory(QPoint pos);
 
 	// IViewTrackedComponent interface
-	public Q_SLOTS:
+public slots:
 	void getNotified() override;
 	void rcvDimensionUpdate(int x, int y);
-	void addComponent();
-
-	public Q_SIGNAL:
-	void emitUpdateCornersChanged(int id, int relX, int relY);
-	void createChildShapesAtStart();
+	void addTrajectory();
 	void updateShapes(uint framenumber);
-
-	// IView interface
-
-	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
 private:
 	QRectF m_boundingRect;
@@ -41,6 +47,7 @@ private:
 	int _dragX;
 	int _dragY;
 	std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
+	QPoint lastClickedPos;
 
 	// QGraphicsItem interface
 protected:

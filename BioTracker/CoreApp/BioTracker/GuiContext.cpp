@@ -22,10 +22,10 @@ GuiContext::GuiContext(QObject *parent) :
     QPointer< IController > TextureObjectController = new ControllerTextureObject(this, this, ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
 //    QPointer< IController > TrackingAlgoController = new ControllerTrackingAlgorithm(this, this, ENUMS::CONTROLLERTYPE::TRACKING);
     QPointer< IController > GraphicsViewController = new ControllerGraphicScene(this, this, ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+	QPointer< IController > TrackedComponentCoreController = new ControllerTrackedComponentCore(this, this, ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	QPointer< IController > PluginController = new ControllerPlugin(this, this, ENUMS::CONTROLLERTYPE::PLUGIN);
 	QPointer< IController > DataExportController = new ControllerDataExporter(this, this, ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	
-	QPointer< IController > TrackedComponentCoreController = new ControllerTrackedComponentCore(this, this, ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 //	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
 
@@ -35,10 +35,10 @@ GuiContext::GuiContext(QObject *parent) :
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT, TextureObjectController);
 //    m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKING, TrackingAlgoController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW, GraphicsViewController);
+	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE, TrackedComponentCoreController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::PLUGIN, PluginController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::DATAEXPORT, DataExportController);
 	
-	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE, TrackedComponentCoreController);
 //	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR, AreaDescriptorController);
 
 }

@@ -14,18 +14,18 @@
  */
 class IModelTrackedTrajectory : public IModelTrackedComponent
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    /**
-     * The constructor.
-     */
-    IModelTrackedTrajectory(QObject *parent);
+	/**
+	 * The constructor.
+	 */
+	IModelTrackedTrajectory(QObject *parent);
 
-    /**
-     * This methode must be implemented by all derivatives. Its purpose is to provide a mechanism for adding Leaf components to this structure.
-     */
-    virtual void add(IModelTrackedComponent *comp, int pos) = 0;
+	/**
+	 * This methode must be implemented by all derivatives. Its purpose is to provide a mechanism for adding Leaf components to this structure.
+	 */
+	virtual void add(IModelTrackedComponent *comp, int pos) = 0;
 
 	/**
 	* This methode must be implemented by all derivatives. Its functionality shall be a mechanism for removing Leaf components from this structure.
@@ -42,10 +42,10 @@ public:
 	*/
 	virtual int size() = 0;
 
-    /**
-     * This should simply return a child object by an index.
-     */
-    virtual IModelTrackedComponent* getChild(int index)  = 0;
+	/**
+	 * This should simply return a child object by an index.
+	 */
+	virtual IModelTrackedComponent* getChild(int index)  = 0;
 
 	/**
 	* This shoudd simply return a last child object (highest index).
@@ -83,12 +83,15 @@ public:
 	bool hasDeg() { return false; };
 	bool hasTime() { return false; };
 
-    // ITrackedComponent interface
+	// ITrackedComponent interface
 public:
-    void operate();
+	void operate();
 	int _id;
 	std::chrono::steady_clock::time_point _time;
 	bool _valid;
+
+protected:
+	static int nextID;
 };
 
 #endif // ITRACKEDOTRAJECTORY_H

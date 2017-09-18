@@ -14,28 +14,28 @@
  * Objects of this class have a QObject as parent.
  */
 class TrackedTrajectory : public IModelTrackedTrajectory {
-    Q_OBJECT
+	Q_OBJECT
 
   public:
-    TrackedTrajectory(QObject *parent = 0, QString name = "n.a.");
+	TrackedTrajectory(QObject *parent = 0, QString name = "n.a.");
 
-    // ITrackedComponent interface
+	// ITrackedComponent interface
 public:
-    void operate();
+	void operate();
 
-    // ITrackedObject interface
+	// ITrackedObject interface
 public:
-    void add(IModelTrackedComponent *comp, int pos = -1) override;
+	void add(IModelTrackedComponent *comp, int pos = -1) override;
 	bool remove(IModelTrackedComponent *comp) override;
 	void clear() override;
-    IModelTrackedComponent *getChild(int index) override;
+	IModelTrackedComponent *getChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
-    int size() override;
+	int size() override;
 
 private:
-    QList<IModelTrackedComponent*> m_TrackedComponents;
+	QList<IModelTrackedComponent*> m_TrackedComponents;
 
-    QString name;
+	QString name;
 };
 
 #endif // TRACKEDOTRAJECTORY_H

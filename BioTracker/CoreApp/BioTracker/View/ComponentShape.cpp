@@ -3,6 +3,7 @@
 #include "QPainter"
 #include "QMenu"
 #include "QAction"
+#include "QGraphicsScene"
 #include "QGraphicsSceneContextMenuEvent"
 #include "QDebug"
 #include "QColorDialog"
@@ -34,6 +35,8 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 		setFlag(ItemIsSelectable);
 		setFlag(ItemSendsGeometryChanges);
 		setPos(0 - m_w / 2 , 0- m_h / 2);
+		//for draging, disable with permissions
+		setAcceptedMouseButtons(Qt::LeftButton);
 
 }
 
@@ -47,7 +50,8 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
-	painter->setRenderHint(QPainter::Antialiasing);
+	//TODO integrate to expert options
+	//painter->setRenderHint(QPainter::Antialiasing);
 
 	//check if scene is set
 	if (!(this->scene())) {
@@ -147,22 +151,36 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 	qDebug() << "shape permission " << permission.first << "set to " << permission.second;
 }
 
-QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant & value)
+int ComponentShape::getId()
 {
-	return QGraphicsItem::itemChange(change, value);;
+	return m_id;
 }
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
+	setCursor(Qt::ClosedHandCursor);
+	m_dragged = true;
 	update();
 	QGraphicsItem::mousePressEvent(event);
 }
 
 void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
+	setCursor(Qt::ArrowCursor);
+	m_dragged = false;
+	qDebug() << "DROP: " << pos();
+	// signal new position to controller
+	//TODO id-wise
+	emitMoveElement(m_trajectory, pos().toPoint());
+
 	update();
 	QGraphicsItem::mouseReleaseEvent(event);
 }
+
+//QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)
+//{
+//	return false;
+//}
 
 void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
@@ -217,12 +235,13 @@ void ComponentShape::changePenColor()
 bool ComponentShape::removeShape()
 {
 	if (m_removable) {
-		qDebug() << "Deleting shape...";
+		qDebug() << "Removing shape...";
 
 
 		//TODO stop tracking meanwhile to avoid errors
 		//set trajectory invalid 
-		m_trajectory->setValid(false);
+		emitRemoveTrajectory(m_trajectory);
+		//m_trajectory->setValid(false);
 		//hide this shape
 		this->hide();
 	}

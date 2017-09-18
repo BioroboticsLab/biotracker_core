@@ -10,37 +10,46 @@
 
 #include "QPointer"
 #include "memory"
+#include "QPoint"
 
 class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin {
 	Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
-    Q_INTERFACES(IBioTrackerPlugin)
+	Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
+	Q_INTERFACES(IBioTrackerPlugin)
 
   public:
-    BioTrackerPlugin();
+	BioTrackerPlugin();
 
-    // IBioTrackerPlugin interface
-    IView* getTrackerParameterWidget();
+	// IBioTrackerPlugin interface
+	IView* getTrackerParameterWidget();
 	IView *getTrackerElementsWidget();
 	IModel* getTrackerComponentModel();
 	void setDataExporter(IModelDataExporter *exporter);
 
   public:
-    void createPlugin();
-    void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+	void createPlugin();
+	void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
 	void sendCorePermissions();
 
   private:
-    void connectInterfaces();
+	void connectInterfaces();
 signals:
-    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitTrackingDone(uint framenumber);
+	void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+	void emitTrackingDone(uint framenumber);
 	void emitChangeDisplayImage(QString str);
 	void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitAddTrajectory(QPoint pos);
+	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+
+public slots:
+	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void receiveAddTrajectory(QPoint pos);
+	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 
 private slots:
-    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
-    void receiveTrackingDone(uint framenumber);
+	void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
+	void receiveTrackingDone(uint framenumber);
 	void receiveChangeDisplayImage(QString str);
 
 

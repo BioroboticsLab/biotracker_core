@@ -14,7 +14,7 @@ BioTrackerPlugin::BioTrackerPlugin() {
 }
 
 IView* BioTrackerPlugin::getTrackerParameterWidget() {
-    return qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->getTrackingParameterWidget();
+	return qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->getTrackingParameterWidget();
 }
 IView *BioTrackerPlugin::getTrackerElementsWidget()
 {
@@ -52,30 +52,46 @@ void BioTrackerPlugin::createPlugin() {
 }
 
 void BioTrackerPlugin::connectInterfaces() {
-    ControllerTrackingAlgorithm* ctrAlg = qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController);
-    QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
+	ControllerTrackingAlgorithm* ctrAlg = qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController);
+	ControllerTrackedComponent* ctrTrC = qobject_cast<ControllerTrackedComponent*> (m_ComponentController);
+
+	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitCvMat, this, &BioTrackerPlugin::receiveCvMatFromController);
 
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitTrackingDone, this, &BioTrackerPlugin::receiveTrackingDone);
 
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
 
+	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrajectory, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrajectory);
+	QObject::connect(this, &BioTrackerPlugin::emitAddTrajectory, ctrTrC, &ControllerTrackedComponent::receiveAddTrajectory);
+	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement);
 
 }
 
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {
-    qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->doTracking(mat, frameNumber);
+	qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->doTracking(mat, frameNumber);
 }
 
 void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) {
-    Q_EMIT emitCvMat(mat, name);
+	Q_EMIT emitCvMat(mat, name);
 }
 
 void BioTrackerPlugin::receiveTrackingDone(uint framenumber) {
-    Q_EMIT emitTrackingDone(framenumber);
+	Q_EMIT emitTrackingDone(framenumber);
 }
 
 void BioTrackerPlugin::receiveChangeDisplayImage(QString str) {
 	Q_EMIT emitChangeDisplayImage(str);
+}
+
+void BioTrackerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory) {
+	Q_EMIT emitRemoveTrajectory(trajectory);
+}
+void BioTrackerPlugin::receiveAddTrajectory(QPoint pos) {
+	Q_EMIT emitAddTrajectory(pos);
+}
+
+void BioTrackerPlugin::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos) {
+	Q_EMIT emitMoveElement(trajectory, pos);
 }
 
 void BioTrackerPlugin::sendCorePermissions() {
