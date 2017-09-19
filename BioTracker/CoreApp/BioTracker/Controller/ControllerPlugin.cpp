@@ -67,7 +67,7 @@ void ControllerPlugin::selectPlugin(QString str) {
 	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
 
 	if (loader->getCurrentPluginName() != str)
-		loadPluginFromFileName(loader->m_PluginMap.find(str)->second);
+        loadPluginFromFileName(loader->getPluginMap().find(str)->second);
 }
 
 void ControllerPlugin::createModel() {

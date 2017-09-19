@@ -18,7 +18,7 @@ namespace sampleTracker {
 
 		int getThreshold();
 
-		void TrackerParameter::setAll(int a, int b, int c, int d, int e, int f)
+        void setAll(int a, int b, int c, int d, int e, int f)
 		{
 			_lowH = a;
 			_highH = b;

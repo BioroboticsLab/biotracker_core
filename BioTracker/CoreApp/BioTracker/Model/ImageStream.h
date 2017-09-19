@@ -124,7 +124,7 @@ class ImageStream : public QObject {
 	* Naming conventions are up to the stream implementations. 
 	* The title is set by the stream itself and may not be modified from the outside.
 	*/
-	void ImageStream::setTitle(std::string title);
+    void setTitle(std::string title);
 
 	/**
 	* The stride of the image stream. Think of it as "use only every n'th frame".

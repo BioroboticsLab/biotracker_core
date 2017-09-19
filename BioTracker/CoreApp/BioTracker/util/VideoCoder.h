@@ -62,20 +62,19 @@ public:
 	std::list<std::shared_ptr<ImageBuffer>> images;
 	std::mutex _Access;
 
-	void MutexLinkedList::push(std::shared_ptr<ImageBuffer> imbuffer, bool dropFrames = false);
+    void push(std::shared_ptr<ImageBuffer> imbuffer, bool dropFrames = false);
 
-	std::shared_ptr<ImageBuffer> MutexLinkedList::pop();
+    std::shared_ptr<ImageBuffer> pop();
 
-	void MutexLinkedList::clear();
+    void clear();
 
 
 	//Simple function to get the current size of the buffer in elements.
 	//Locks the data structure.
 	virtual int size();
 
-	MutexLinkedList() {};
-
-	~MutexLinkedList() {};
+    MutexLinkedList() {}
+    ~MutexLinkedList() {}
 };
 
 class Worker : public QThread

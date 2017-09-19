@@ -58,6 +58,8 @@ class PluginLoader : public IModel {
 	  // Gets the name of the currently loaded plugin
 	  QString getCurrentPluginName();
 
+      std::map<QString, QString> const& getPluginMap() const;
+
 private:
 
 	std::map<QString, QString> m_PluginMap;
