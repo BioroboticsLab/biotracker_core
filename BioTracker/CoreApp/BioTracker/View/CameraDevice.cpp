@@ -100,13 +100,12 @@ void CameraDevice::on_comboBox_currentIndexChanged(int index)
 {
 }
 
+
 void CameraDevice::listAllCameras()
 {
-    //QCameraInfo cameraInfo(*camera);
-    cameras = QCameraInfo::availableCameras();
+  	cameras = QCameraInfo::availableCameras();
     foreach (const QCameraInfo &cameraInfo, cameras) {
-
-        ui->comboBox->addItem(cameraInfo.deviceName());
+       ui->comboBox->addItem(cameraInfo.description());
     }
 
 	//Try to find ximea cameras
@@ -115,7 +114,6 @@ void CameraDevice::listAllCameras()
 		ui->comboBox->addItem("XIMEA default");
 		m_ximeaId = cameras.size();
 		std::cout << "XIMEA props: " << cap.get(CV_CAP_PROP_FRAME_WIDTH) << " " << cap.get(CV_CAP_PROP_FRAME_HEIGHT) << endl;
-		cap.release();
 	}
 }
 
