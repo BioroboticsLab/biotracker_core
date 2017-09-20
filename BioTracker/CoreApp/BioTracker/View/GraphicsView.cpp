@@ -1,9 +1,13 @@
 #include "GraphicsView.h"
 #include "QTimeLine"
 #include "QWheelEvent"
+#include "../Controller/ControllerGraphicScene.h"
+
+#include <Model/Annotations.h>
 
 #include <qpixmap.h>
 #include <QGraphicsItem>
+#include <QScrollBar>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
@@ -23,6 +27,13 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 void GraphicsView::addGraphicsItem(QGraphicsItem *item)
 {
 	m_GraphicsScene->addItem(item);
+
+	update();
+}
+
+void GraphicsView::removeGraphicsItem(QGraphicsItem *item)
+{
+	m_GraphicsScene->removeItem(item);
 
 	update();
 }
@@ -58,5 +69,62 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 		{
 			scale(0.9, 0.9);
 		}
+	}
+}
+
+void GraphicsView::keyReleaseEvent(QKeyEvent *event)
+{
+	emit(onKeyReleaseEvent(event));
+}
+
+void GraphicsView::mousePressEvent(QMouseEvent *event)
+{
+	// The middle mouse button is not forwarded but handled here.
+	if (event->buttons() & Qt::MidButton)
+	{
+		m_ViewportDragOrigin = event->pos();
+	}
+	else
+	{
+		const QPointF imagePosition = mapToScene(event->pos());
+		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		emit(onMousePressEvent(event, imagePositionInt));
+	}
+}
+
+void GraphicsView::mouseReleaseEvent(QMouseEvent*event)
+{
+	if (!(event->buttons() & Qt::MidButton))
+	{
+		const QPointF imagePosition = mapToScene(event->pos());
+		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		emit(onMouseReleaseEvent(event, imagePositionInt));
+	}
+}
+
+void GraphicsView::mouseMoveEvent(QMouseEvent*event)
+{
+	// The middle mouse button is not forwarded but handled here.
+	if (event->buttons() & Qt::MidButton)
+	{
+		const QPoint currentPosition{ event->pos() };
+		// Ignore position-reset events..
+		if (currentPosition != m_ViewportDragOrigin)
+		{
+			const QPoint currentPositionScene = currentPosition;
+			const QPoint originPositionScene = m_ViewportDragOrigin;
+			const auto offset = currentPositionScene - originPositionScene;
+
+			QGraphicsView::horizontalScrollBar()->setValue(horizontalScrollBar()->value() + offset.x() + 1);
+			QGraphicsView::verticalScrollBar()->setValue(verticalScrollBar()->value() + offset.y() + 1);
+			// Freeze mouse position in place.
+			QCursor::setPos(mapToGlobal(m_ViewportDragOrigin));
+		}
+	}
+	else
+	{
+		const QPointF imagePosition = mapToScene(event->pos());
+		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		emit(onMouseMoveEvent(event, imagePositionInt));
 	}
 }

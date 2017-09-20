@@ -12,39 +12,41 @@
 #include "memory"
 
 class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
-    Q_INTERFACES(IBioTrackerPlugin)
+		Q_OBJECT
+			Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
+			Q_INTERFACES(IBioTrackerPlugin)
 
-  public:
-    BioTrackerPlugin();
+	public:
+		BioTrackerPlugin();
 
-    // IBioTrackerPlugin interface
-    IView* getTrackerParameterWidget();
-	IView *getTrackerElementsWidget();
+		// IBioTrackerPlugin interface
+		IView* getTrackerParameterWidget();
+		IView *getTrackerElementsWidget();
 
-  public:
-    void createPlugin();
-    void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+		void setDataExporter(IModelDataExporter *exporter) { };
+		void sendCorePermissions() { };
 
-  private:
-    void connectInterfaces();
-  signals:
-    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitTrackingDone();
-	void emitChangeDisplayImage(QString str);
+	public:
+		void createPlugin();
+		void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
 
-private slots:
-    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
-    void receiveTrackingDone();
+	private:
+		void connectInterfaces();
+	signals:
+		void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+		void emitTrackingDone();
+		void emitChangeDisplayImage(QString str);
+
+		private slots:
+		void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
+		void receiveTrackingDone();
 
 
-private:
-	IController *m_TrackerController;
-	IController *m_ComponentController;
+	private:
+		IController *m_TrackerController;
+		IController *m_ComponentController;
 
-	IBioTrackerContext *m_PluginContext;
+		IBioTrackerContext *m_PluginContext;
 
 };
-
 #endif // BIOTRACKERPLUGIN_H

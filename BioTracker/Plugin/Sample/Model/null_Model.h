@@ -3,11 +3,12 @@
 
 #include "Interfaces/IModel/IModel.h"
 
-class null_Model : public IModel
-{
-    Q_OBJECT
-public:
-    null_Model();
-};
-
+namespace sampleTracker {
+	class null_Model : public IModel
+	{
+		Q_OBJECT
+	public:
+		null_Model();
+	};
+}
 #endif // NULL_MODEL_H

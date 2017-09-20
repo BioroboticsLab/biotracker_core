@@ -14,29 +14,30 @@
 #include <fstream>
 
 
-class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
-{
-    Q_OBJECT
-public:
-    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory/*QObject *parent = 0, ITrackedComponentFactory *factory = 0*/);
+namespace sampleTracker {
+	class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
+	{
+		Q_OBJECT
+	public:
+		BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory/*QObject *parent = 0, ITrackedComponentFactory *factory = 0*/);
 
-	int _imageX;
-	int _imageY;
+		int _imageX;
+		int _imageY;
 
-Q_SIGNALS:
-    void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
-	void emitDimensionUpdate(int x, int y);
+	Q_SIGNALS:
+		void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
+		void emitDimensionUpdate(int x, int y);
 
-    // ITrackingAlgorithm interface
-public Q_SLOTS:
-	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
+		// ITrackingAlgorithm interface
+		public Q_SLOTS:
+		void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
 
-private:
+	private:
 
-    TrackedTrajectory* _TrackedTrajectoryMajor;
+		TrackedTrajectory* _TrackedTrajectoryMajor;
 
-	TrackerParameter* _TrackingParameter;
+		TrackerParameter* _TrackingParameter;
 
-};
-
+	};
+}
 #endif // BIOTRACKERTRACKINGALGORITHM_H

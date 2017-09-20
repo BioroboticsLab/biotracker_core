@@ -13,7 +13,7 @@
 #include <mutex>
 #include "util/singleton.h"
 
-#define GET_SETTINGS BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>
+#define GET_CORESETTINGS	BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance
 
 namespace {
 template<typename Test, template<typename...> class Ref>

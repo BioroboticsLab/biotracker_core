@@ -33,16 +33,21 @@ class ControllerPlugin : public IController {
 	ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 	~ControllerPlugin();
 
-	/**
-	 * (This function
-	 * This function delivers a file path of a Plugin to the IModel class PluginLoader. If the Plugin could be loaded,
-	 * the functions additionally requests the name of the Plugin and sets it as an entry into an IView widget in the MainWindow.
-	 */
-	void loadPluginFromFileName(QString str);
-	/**
-	 * This function hands the received cv::Mat pointer and the current frame number to the PluginLoader.
-	 */
-	void sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number);
+	void addToPluginList(QString str);
+
+    /**
+     * (This function
+     * This function delivers a file path of a Plugin to the IModel class PluginLoader. If the Plugin could be loaded,
+     * the functions additionally requests the name of the Plugin and sets it as an entry into an IView widget in the MainWindow.
+     */
+    void loadPluginFromFileName(QString str);
+
+    /**
+     * This function hands the received cv::Mat pointer and the current frame number to the PluginLoader.
+     */
+    void sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number);
+
+	void selectPlugin(QString str);
 
 signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -87,7 +92,9 @@ signals:
 
 
   private:
-	IBioTrackerPlugin* m_BioTrackerPlugin;
+	void loadPluginsFromPluginSubfolder();
+
+    IBioTrackerPlugin* m_BioTrackerPlugin;
 
 	QQueue<queueElement> m_editQueue;
 

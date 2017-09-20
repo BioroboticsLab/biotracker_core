@@ -52,16 +52,16 @@ class ControllerMainWindow : public IController {
     /**
      * Receives a QStringListModel with the names of all currently loades BioTracker Plugins from the ControllerPlugin class.
      */
-    void setTrackerList(QStringListModel* trackerList);
+    void setTrackerList(QStringListModel* trackerList, QString current);
     /**
      * Embeds the Parameter Widget devined in the BioTracker Plugins into the MainWindow Widget.
      */
     void setTrackerParamterWidget(IView* widget);
 	void setTrackerElementsWidget(IView *widget);
+	void setCoreElementsWidget(IView* widget);
 
-    void deactiveTrackringCheckBox();
+    void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
-
 
     // IController interface
   protected:
@@ -69,6 +69,13 @@ class ControllerMainWindow : public IController {
     void createView() override;
     void connectModelToController() override;
     void connectControllerToController() override;
+
+	private slots:
+	void rcvSelectPlugin(QString plugin);
+
+private:
+	// Internal cleanup callback when a new video or imagestream is loaded.
+	void onNewMediumLoaded(const std::string path="");
 };
 
 #endif // CONTROLLERMAINWINDOW_H

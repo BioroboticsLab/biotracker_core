@@ -297,7 +297,7 @@ void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>
 	}
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD) {
 		//TODO add component in model and view
-		qDebug() << "TODO add component";
+		qDebug() << "TODO permissions component";
 		return;
 	}
 

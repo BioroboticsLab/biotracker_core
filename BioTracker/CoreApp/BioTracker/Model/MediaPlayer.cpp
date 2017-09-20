@@ -231,7 +231,6 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     Q_EMIT notifyView();
 }
 
-
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
 	end = std::chrono::steady_clock::now();
@@ -241,19 +240,18 @@ void MediaPlayer::receivePlayerOperationDone() {
 	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	m_currentFPS = floor(1.0/(double(s)/1000000.0));
 
-	if (!m_TrackingIsActive || !m_trackingSeen) {
+	if (!m_TrackingIsActive || !m_trackingSeen)
 		Q_EMIT runPlayerOperation();
-	}
 
 	m_trackingSeen = false;
+
 	start = std::chrono::steady_clock::now();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {
-	// Only emit this SIGNAL when tracking is active
-	if (m_TrackingIsActive) {
-	Q_EMIT runPlayerOperation();
-	}
+    // Only emit this SIGNAL when tracking is active
+    if(m_TrackingIsActive)
+        Q_EMIT runPlayerOperation();
 }
 
 void MediaPlayer::receiveChangeDisplayImage(QString str) {

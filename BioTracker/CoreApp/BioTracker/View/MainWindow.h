@@ -29,10 +29,14 @@ class MainWindow : public IViewMainWindow {
     void addVideoView(IView* videoView);
     void addTrackerParameterView(IView* parameter);
 	void addTrackerElementsView(IView *elemView);
-    void setTrackerList(QStringListModel* trackerList);
+	void addCoreElementsView(IView* coreView);
+    void setTrackerList(QStringListModel* trackerList, QString current);
 
     void activeTrackingCheckBox();
     void deactivateTrackingCheckBox();
+
+Q_SIGNALS:
+	void selectPlugin(QString ct);
 
   private Q_SLOTS:
 //menu->File
@@ -50,6 +54,8 @@ class MainWindow : public IViewMainWindow {
 
     void on_actionOpen_Camera_triggered();
 
+	void on_comboBox_TrackerSelect_currentIndexChanged();
+
 //menu->Extras
 	void on_actionSettings_triggered();
 
@@ -61,10 +67,15 @@ class MainWindow : public IViewMainWindow {
 
   private:
     Ui::MainWindow* ui;
-	GraphicsView *m_graphView;//MARKER
+	GraphicsView *m_graphView;
 
 	QPointer< CameraDevice > m_CameraDevice;
 	QPointer< SettingsWindow > m_SettingsWindow;
+
+	IView *_currentParameterView;
+	QGraphicsObject *_currentElementView;
+	QGraphicsObject *_currentCoreView;
+
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

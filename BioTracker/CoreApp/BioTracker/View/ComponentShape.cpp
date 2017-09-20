@@ -158,23 +158,35 @@ int ComponentShape::getId()
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-	setCursor(Qt::ClosedHandCursor);
-	m_dragged = true;
-	update();
-	QGraphicsItem::mousePressEvent(event);
+	if (event->button() == Qt::LeftButton) {
+		// handle left mouse button here
+		setCursor(Qt::ClosedHandCursor);
+		m_dragged = true;
+		update();
+	}
+	else {
+		//pass on
+		QGraphicsItem::mousePressEvent(event);
+	}
 }
 
 void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
-	setCursor(Qt::ArrowCursor);
-	m_dragged = false;
-	qDebug() << "DROP: " << pos();
-	// signal new position to controller
-	//TODO id-wise
-	emitMoveElement(m_trajectory, pos().toPoint());
+	if (event->button() == Qt::LeftButton) {
+		setCursor(Qt::ArrowCursor);
+		m_dragged = false;
+		qDebug() << "DROP: " << pos();
+		// signal new position to controller
+		//TODO id-wise
+		emitMoveElement(m_trajectory, pos().toPoint());
 
-	update();
-	QGraphicsItem::mouseReleaseEvent(event);
+		update();
+	}
+	else {
+		//pass on
+		QGraphicsItem::mouseReleaseEvent(event);
+
+	}
 }
 
 //QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)

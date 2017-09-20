@@ -103,7 +103,6 @@ class MediaPlayer : public IModel {
 
     bool getTrackingState();
 
-
 	int toggleRecordGraphicsScenes(GraphicsView * gv);
 	int toggleRecordImageStream();
 

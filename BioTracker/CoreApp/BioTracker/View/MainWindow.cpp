@@ -7,14 +7,19 @@
 #include "QLayout"
 
 #include "View/GraphicsView.h"
+#include "View/AnnotationsView.h"
+#include "Model/null_Model.h"
+#include "Controller/null_Controller.h"
 
-#include "QGraphicsObject"//MARKER
+#include "QGraphicsObject"
 
 
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
     IViewMainWindow(parent, controller, model),
     ui(new Ui::MainWindow) {
+	_currentParameterView = 0;
+	_currentElementView = 0;
     ui->setupUi(this);
 }
 
@@ -32,33 +37,62 @@ void MainWindow::addVideoView(IView* videoView) {
 	m_graphView = dynamic_cast<GraphicsView*>(videoView);
 	m_graphView->setParent(ui->trackingArea);
     ui->videoViewLayout->addWidget(m_graphView);
-    // gl widget
-    //dynamic_cast<BioTracker3VideoView *>(videoView)->setParent(ui->trackingArea);
-    //ui->videoViewLayout->addWidget(dynamic_cast<BioTracker3VideoView *>(videoView));
 }
 
 void MainWindow::addTrackerElementsView(IView *elemView)
 {
+	if (_currentElementView && _currentCoreView) {
+		_currentElementView->setParent(0); 
+		_currentCoreView->setParent(0);
+		m_graphView->removeGraphicsItem(_currentElementView);
+		m_graphView->removeGraphicsItem(_currentCoreView);
+
+	}
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
 	graphObj->setParent(ui->trackingArea);
+
 	m_graphView->addGraphicsItem(graphObj);
+	_currentElementView = graphObj;
+}
+
+void MainWindow::addCoreElementsView(IView * coreView)
+{
+	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(coreView);
+	graphObj->setParent(ui->trackingArea);
+
+	m_graphView->addGraphicsItem(graphObj);
+	_currentCoreView = graphObj;
 }
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
+	if (_currentParameterView) {
+		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
+		qDebug() << "currentParameterView was set";
+
+	}
 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-	pluginParameter->setParent(this);
+	pluginParameter->setParent(ui->scrollArea);
 	pluginParameter->setStyleSheet("background-color:transparent;");
+
+    //ui->scrollArea->setWidgetResizable(true);
 
 	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(1);
 	dynamic_cast<QTabWidget*>(ui->scrollArea)->addTab(pluginParameter, "tracker");
 
     /*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
     ui->scrollArea->setWidgetResizable(true);*/
+
+	_currentParameterView = parameter;}
+
+void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
+	QString ct = ui->comboBox_TrackerSelect->currentText();
+	Q_EMIT selectPlugin(ct);
 }
 
-void MainWindow::setTrackerList(QStringListModel* trackerList) {
+void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
     ui->comboBox_TrackerSelect->setModel(trackerList);
+	ui->comboBox_TrackerSelect->setCurrentText(current);
 }
 
 void MainWindow::activeTrackingCheckBox() {

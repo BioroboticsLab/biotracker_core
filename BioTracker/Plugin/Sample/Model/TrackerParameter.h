@@ -5,42 +5,46 @@
 #include "Interfaces/IModel/IModel.h"
 #include "settings/Settings.h"
 
-class TrackerParameter : public IModel
-{
-    Q_OBJECT
-public:
-    TrackerParameter(QObject *parent = 0);
+namespace sampleTracker {
 
-    void setThreshold(int x);
 
-    int getThreshold(); 
-	
-	void TrackerParameter::setAll(int a,int b, int c, int d, int e, int f)
+	class TrackerParameter : public IModel
 	{
-		_lowH = a;
-		_highH = b;
-		_lowS = c;
-		_highS = d;
-		_lowV = e;
-		_highV = f;
+		Q_OBJECT
+	public:
+		TrackerParameter(QObject *parent = 0);
 
-		Q_EMIT notifyView();
-	}
+		void setThreshold(int x);
+
+		int getThreshold();
+
+		void TrackerParameter::setAll(int a, int b, int c, int d, int e, int f)
+		{
+			_lowH = a;
+			_highH = b;
+			_lowS = c;
+			_highS = d;
+			_lowV = e;
+			_highV = f;
+
+			Q_EMIT notifyView();
+		}
 
 
-	// values for filtering a color (HSV format)
-	int _lowH;
-	int _highH;
-	int _lowS;
-	int _highS;
-	int _lowV;
-	int _highV;
+		// values for filtering a color (HSV format)
+		int _lowH;
+		int _highH;
+		int _lowS;
+		int _highS;
+		int _lowV;
+		int _highV;
 
-private:
-	BioTracker::Core::Settings *_settings;
+	private:
+		BioTracker::Core::Settings *_settings;
 
-	int m_Threshold;
+		int m_Threshold;
 
-};
+	};
+}
 
 #endif // TRACKERPARAMETER_H

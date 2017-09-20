@@ -18,12 +18,12 @@ class IView {
     virtual void connectModelView() = 0;
     void setModel(IModel *model);
     IController *getController();
+	const IController *getController() const;
     IModel *getModel();
-
+	const IModel *getModel() const;
   private:
     IController *mController;
     IModel *mModel;
-
 };
 
 #endif // IVIEW_H

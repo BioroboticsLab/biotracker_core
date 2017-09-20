@@ -5,7 +5,7 @@
 #include "Model/TrackerParameter.h"
 
 namespace Ui {
-class TrackerParameterView;
+	class TrackerParameterView;
 }
 
 class TrackerParameterView : public IViewWidget
