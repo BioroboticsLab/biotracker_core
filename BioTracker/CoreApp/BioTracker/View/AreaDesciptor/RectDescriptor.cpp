@@ -5,7 +5,7 @@
 #include <QGraphicsSceneHoverEvent>
 
 #include "util/misc.h"
-#include "Model/AreaInfoElement.h"
+#include "Model/AreaDescriptor/AreaInfoElement.h"
 #include <QGraphicsRectItem>
 
 RectDescriptor::RectDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
