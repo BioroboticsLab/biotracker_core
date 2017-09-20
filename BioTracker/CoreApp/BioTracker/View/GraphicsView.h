@@ -15,10 +15,10 @@ public:
 	void removeGraphicsItem(QGraphicsItem *item);
 	QGraphicsScene *m_GraphicsScene;//MARKER
 
-	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent*event);
-	void mouseMoveEvent(QMouseEvent*event);
-	void keyReleaseEvent(QKeyEvent *event);
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent*event) override;
+	void mouseMoveEvent(QMouseEvent*event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
 
     // IGraphicsView interface
 public Q_SLOTS:
@@ -33,6 +33,9 @@ private:
 	QPoint m_ViewportDragOrigin{ 0, 0 };
 
 Q_SIGNALS:
+	// If you connect to these signals, you MUST use Qt::DirectConnection.
+	// You also SHOULD call event->accept() if you handle it.
+	// You MAY want to only handle events with isAccepted() == false.
 	void onMousePressEvent(QMouseEvent *event, QPoint imagePosition);
 	void onMouseReleaseEvent(QMouseEvent*event, QPoint imagePosition);
 	void onMouseMoveEvent(QMouseEvent*event, QPoint imagePosition);
