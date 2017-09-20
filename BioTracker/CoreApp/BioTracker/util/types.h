@@ -27,6 +27,12 @@
 #define CFG_DIR_TRACKS						"./Tracks/"
 #endif
 
+namespace AREADESCRIPTOR
+{
+	const std::string CN_ARENA = "TRACKERPARAM/CN_CORNERS_ARENA";
+	const std::string CN_APPERTURE = "TRACKERPARAM/CN_CORNERS_APPERTURE";
+	const std::string CN_APPERTURE_TYPE = "TRACKERPARAM/CN_CORNERS_APPERTURE_TYPE";
+}
 
 
 const std::vector<std::pair<std::string, std::string>> codecList = {

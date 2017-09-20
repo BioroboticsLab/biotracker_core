@@ -11,10 +11,10 @@
 #include "Interfaces/IModel/IModelDataExporter.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
-#include "Model/AreaInfo.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "Model/TrackingAlgorithm/imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include <iostream>
 
 #include "Model/Network/TcpListener.h"
@@ -44,7 +44,7 @@ private:
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
 	TrackerParameter* _TrackingParameter;
-	AreaInfo* _AreaInfo;
+	IModelAreaDescriptor* _AreaInfo;
 
 	IModelDataExporter *_exporter;
 

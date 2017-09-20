@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Model/TrackedComponents/pose/FishPose.h"
-#include "Model/TrackingAlgorithm/property/Rectification.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/BlobPose.h"
-
-#include "Model/AreaInfo.h"
 
 template <typename T>
 class IDetector
@@ -56,7 +54,7 @@ public:
 	/**
 	 * 
 	*/
-	void setAreaInfo(AreaInfo* ai) {
+	void setAreaInfo(IModelAreaDescriptor* ai) {
 		_areaInfo = ai;
 	}
 
@@ -64,5 +62,5 @@ private:
 	virtual std::vector<T> findBlobs(const cv::Mat& binImage, const cv::Mat& oriImage) = 0;
 
 protected:
-	AreaInfo* _areaInfo;
+	IModelAreaDescriptor* _areaInfo;
 };

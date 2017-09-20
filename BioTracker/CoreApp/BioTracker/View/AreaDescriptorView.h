@@ -8,7 +8,7 @@ class AreaDescriptorView : public IViewTrackedComponent
 {
 	Q_OBJECT
 public:
-	AreaDescriptorView(QGraphicsItem *parent = 0, IController *controller = 0, IModel *model = 0);
+	AreaDescriptorView(IController *controller = 0, IModel *model = 0);
 
 	// QGraphicsItem interface
 public:

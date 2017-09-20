@@ -10,15 +10,15 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 {
 	_TrackingParameter = (TrackerParameter*)parameter;
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
-	_AreaInfo = (AreaInfo*)areaInfo;
+	_AreaInfo = (IModelAreaDescriptor*)areaInfo;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
 	_exporter = 0;
-
-	Rectification::instance().initRecitification(
-		_TrackingParameter->getAreaWidth(),
-		_TrackingParameter->getAreaHeight(),
-		_TrackedTrajectoryMajor);
+	 
+	//Rectification::instance().initRecitification( //TODO PORT
+	//	_TrackingParameter->getAreaWidth(),
+	//	_TrackingParameter->getAreaHeight(),
+	//	_TrackedTrajectoryMajor);
 	_noFish = -1;
 
 	if (set->getValueOrDefault<bool>(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false)) {
@@ -104,9 +104,10 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-	if (!Rectification::instance().isSetup()) {
-		Rectification::instance().setupRecitification(100, 100, p_image->size().width, p_image->size().height);
-	}
+	//TODO PORT use the IModelAreaDescriptor instead
+//	if (!Rectification::instance().isSetup()) {
+//		Rectification::instance().setupRecitification(100, 100, p_image->size().width, p_image->size().height);
+//	}
 
 	//The user changed the # of fish. Reset the history and start over!
 	if (_noFish != _TrackingParameter->getNoFish()) {
