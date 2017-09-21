@@ -79,7 +79,7 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-	// TODO traj gets new id but element gets only appended -> position = current framenumber
+	// TODO traj gets new id but element gets only appended; -> potentially not in the right position
 	TrackedTrajectory* newTraj = new TrackedTrajectory();
 	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());
 	firstElem->setX(position.x());
@@ -89,6 +89,7 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
+		qDebug() << "trajectory added at" << firstElem->getX() << "," << firstElem->getY();
 	}
 }
 

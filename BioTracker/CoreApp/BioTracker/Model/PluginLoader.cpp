@@ -83,6 +83,11 @@ QString PluginLoader::getCurrentPluginName() {
 	return m_currentPluginName;
 }
 
+const std::map<QString, QString> &PluginLoader::getPluginMap() const
+{
+    return m_PluginMap;
+}
+
 QString PluginLoader::readMetaDataFromPlugin() {
 	QJsonValue pluginMeda(m_PluginLoader->metaData().value("MetaData"));
 	QJsonObject metaObj = pluginMeda.toObject();

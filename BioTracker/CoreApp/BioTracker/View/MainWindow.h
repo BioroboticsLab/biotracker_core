@@ -9,6 +9,7 @@
 #include "CameraDevice.h"
 #include "QPointer"
 #include "QStringListModel"
+#include "QGraphicsObject"
 #include "View/GraphicsView.h"
 #include "util/types.h"
 #include "SettingsWindow.h"

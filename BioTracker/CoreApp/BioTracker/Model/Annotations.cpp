@@ -1,5 +1,6 @@
 #include "Annotations.h"
 
+#include <math.h>
 #include <fstream>
 
 Annotations::~Annotations() 
@@ -112,7 +113,7 @@ void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos)
 bool Annotations::Annotation::isHandleAtPosition(const QPoint &handle, const QPoint &pos)
 {
 	QPoint diff = handle - pos;
-	const float euclidian = std::sqrtf((diff.x() * diff.x()) + (diff.y() * diff.y()));
+    const float euclidian = std::sqrt((diff.x() * diff.x()) + (diff.y() * diff.y()));
 	return euclidian <= 20.0;
 }
 

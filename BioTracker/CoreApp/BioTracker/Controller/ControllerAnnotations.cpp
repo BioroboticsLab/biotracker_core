@@ -32,10 +32,10 @@ void ControllerAnnotations::connectControllerToController() {
 		auto view = dynamic_cast<GraphicsView*> (viewController->getView());
 		view->addGraphicsItem(static_cast<AnnotationsView*>(getView()));
 
-		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAnnotations::mousePressEvent);
-		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAnnotations::mouseReleaseEvent);
-		QObject::connect(view, &GraphicsView::onMouseMoveEvent, this, &ControllerAnnotations::mouseMoveEvent);
-		QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAnnotations::keyReleaseEvent);
+		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAnnotations::mousePressEvent, Qt::DirectConnection);
+		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAnnotations::mouseReleaseEvent, Qt::DirectConnection);
+		QObject::connect(view, &GraphicsView::onMouseMoveEvent, this, &ControllerAnnotations::mouseMoveEvent, Qt::DirectConnection);
+		QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAnnotations::keyReleaseEvent, Qt::DirectConnection);
 
 		QWidget *viewport = view->viewport();
 		QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
@@ -77,6 +77,8 @@ void ControllerAnnotations::keyReleaseEvent(QKeyEvent *event)
 {
 	auto model = static_cast<Annotations*>(getModel());
 	actionQueued = ActionQueued::None;
+	bool handled = true;
+
 	switch (event->key())
 	{
 	case Qt::Key::Key_A:
@@ -91,15 +93,21 @@ void ControllerAnnotations::keyReleaseEvent(QKeyEvent *event)
 		{
 			updateView();
 		}
+		else
+			handled = false;
 		break;
 	default:
+		handled = false;
 		break;
 	}
+	if (handled)
+		event->accept();
 }
 
 void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
+	bool handled = true;
 
 	switch (actionQueued)
 	{
@@ -112,8 +120,12 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 	default:
 		if (model->tryStartDragging(pos))
 			updateView();
+		else
+			handled = false;
 		break;
 	}
+	if (handled)
+		event->accept();
 	actionQueued = ActionQueued::None;
 }
 
@@ -124,6 +136,7 @@ void ControllerAnnotations::mouseReleaseEvent(QMouseEvent*event, const QPoint &p
 	if (model->endAnnotation(pos))
 	{
 		updateView();
+		event->accept();
 	}
 }
 
@@ -131,9 +144,10 @@ void ControllerAnnotations::mouseMoveEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
 
-	if (model->updateAnnotation(pos))
+	if (event->buttons() == Qt::LeftButton &&  model->updateAnnotation(pos))
 	{
 		updateView();
+		event->accept();
 	}
 }
 

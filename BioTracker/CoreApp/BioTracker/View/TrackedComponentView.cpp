@@ -390,6 +390,11 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 
 				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
 				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
+
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
+
 			}
 			else {
 				printf("error: no trajectory -> no shape created");

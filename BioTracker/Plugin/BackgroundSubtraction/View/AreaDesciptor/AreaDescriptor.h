@@ -7,7 +7,7 @@ class AreaDescriptor : public IViewTrackedComponent
 {
 	Q_OBJECT
 public:
-	AreaDescriptor::AreaDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
+    AreaDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
 		IViewTrackedComponent(parent, controller, model) {};
 	~AreaDescriptor();
 

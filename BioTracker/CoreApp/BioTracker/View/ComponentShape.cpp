@@ -35,6 +35,8 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 		setFlag(ItemIsSelectable);
 		setFlag(ItemSendsGeometryChanges);
 		setPos(0 - m_w / 2 , 0- m_h / 2);
+
+		qDebug() << "shape is created at:" << pos();
 		//for draging, disable with permissions
 		setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -52,6 +54,9 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 
 	//TODO integrate to expert options
 	//painter->setRenderHint(QPainter::Antialiasing);
+
+	//qDebug() << "shape is painted at:" << pos();
+
 
 	//check if scene is set
 	if (!(this->scene())) {
@@ -104,6 +109,9 @@ bool ComponentShape::updatePosition(uint framenumber)
 				this->setPos(component->getX() - m_w/2, component->getY() - m_w/2);
 				this->show();
 				update();
+
+				//qDebug() << "shape is updated to:" << pos();
+
 				//printf("shape updated\n");
 			}
 			//TODO think about removing entirely or not
@@ -158,16 +166,16 @@ int ComponentShape::getId()
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
+	//qDebug() << "shape get dragged at:" << pos();
+
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
 		setCursor(Qt::ClosedHandCursor);
 		m_dragged = true;
 		update();
 	}
-	else {
-		//pass on
-		QGraphicsItem::mousePressEvent(event);
-	}
+	//pass on
+	QGraphicsItem::mousePressEvent(event);
 }
 
 void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
@@ -182,11 +190,14 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 
 		update();
 	}
-	else {
-		//pass on
-		QGraphicsItem::mouseReleaseEvent(event);
+	//pass on
+	QGraphicsItem::mouseReleaseEvent(event);
 
-	}
+}
+
+void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
+	//qDebug() << "shape gets moved to:" << pos();
+	QGraphicsItem::mouseMoveEvent(event);
 }
 
 //QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)

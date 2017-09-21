@@ -88,7 +88,10 @@ void GraphicsView::mousePressEvent(QMouseEvent *event)
 	{
 		const QPointF imagePosition = mapToScene(event->pos());
 		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		event->ignore();
 		emit(onMousePressEvent(event, imagePositionInt));
+		if (!event->isAccepted())
+			QGraphicsView::mousePressEvent(event);
 	}
 }
 
@@ -98,7 +101,10 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent*event)
 	{
 		const QPointF imagePosition = mapToScene(event->pos());
 		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		event->ignore();
 		emit(onMouseReleaseEvent(event, imagePositionInt));
+		if (!event->isAccepted())
+			QGraphicsView::mouseReleaseEvent(event);
 	}
 }
 
@@ -125,6 +131,9 @@ void GraphicsView::mouseMoveEvent(QMouseEvent*event)
 	{
 		const QPointF imagePosition = mapToScene(event->pos());
 		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
+		event->ignore();
 		emit(onMouseMoveEvent(event, imagePositionInt));
+		if (!event->isAccepted())
+			QGraphicsView::mouseMoveEvent(event);
 	}
 }

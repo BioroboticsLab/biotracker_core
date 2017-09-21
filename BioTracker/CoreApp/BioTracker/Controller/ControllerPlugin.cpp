@@ -85,7 +85,7 @@ void ControllerPlugin::selectPlugin(QString str) {
 	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
 
 	if (loader->getCurrentPluginName() != str)
-		loadPluginFromFileName(loader->m_PluginMap.find(str)->second);
+        loadPluginFromFileName(loader->getPluginMap().find(str)->second);
 }
 
 void ControllerPlugin::createModel() {
@@ -177,11 +177,11 @@ void ControllerPlugin::connectPlugin() {
 
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
-	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
+	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 
-	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, SLOT(receiveAddTrajectory(QPoint)));
+	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 
-	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
+	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 
 }
 
