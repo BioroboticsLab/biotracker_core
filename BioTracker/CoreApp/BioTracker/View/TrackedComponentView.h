@@ -7,6 +7,7 @@
 #include "Interfaces/ENUMS.h"
 #include "QPoint"
 #include "QSignalMapper"
+#include "Interfaces\IModel\IModelTrackedTrajectory.h"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
@@ -31,13 +32,20 @@ public:
 signals:
 	void emitUpdateCornersChanged(int id, int relX, int relY);
 	void emitAddTrajectory(QPoint pos);
+	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 	// IViewTrackedComponent interface
 public slots:
 	void getNotified() override;
 	void rcvDimensionUpdate(int x, int y);
+	// contextmenu actions
 	void addTrajectory();
+	void swapIds();
+	void removeTrajectories();
+	// update shapes when receiving tracking done
 	void updateShapes(uint framenumber);
+
+	void receiveBroadcastMove();
 
 private:
 	QRectF m_boundingRect;
@@ -55,12 +63,18 @@ protected:
 	bool eventFilter(QObject * target, QEvent * event) override;
 	void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+	/*void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
+	void dropEvent(QGraphicsSceneDragDropEvent *event) override;*/
 	
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-
+	//member
+	bool permissionAdd;
+	bool permissionSwap;
 };
 
 #endif // TRACKEDCOMPONENTVIEW_H

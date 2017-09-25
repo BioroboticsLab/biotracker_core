@@ -14,12 +14,12 @@ public:
 	IView *getTrackingElementsWidget();
 public Q_SLOTS:
 		void receiveAddTrajectory(QPoint position);
-		//TODO setup accessing by id
 		void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
-		//TODO move specific element or last element of trajectory? --> last child does not work when rewinding
 		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position);
-
-		//void receiveCurrentFrameNumber(int framenumber);
+		/* TODO Swaps ID's of last elements (-> swap elements) or swap ID's of trajectories and all of its elements?
+		*/
+		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+		void receiveCurrentFrameNumber(uint framenumber);
 
 
 	// IController interface
@@ -30,7 +30,7 @@ protected:
 	void connectControllerToController() override;
 
 	//members
-	int m_currentframe;
+	int m_currentFrameNumber;
 };
 
 #endif // CONTROLLERTRACKEDCOMPONENT_H

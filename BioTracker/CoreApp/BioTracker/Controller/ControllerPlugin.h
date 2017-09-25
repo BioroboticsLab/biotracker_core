@@ -14,12 +14,13 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE, ADD, MOVE };
+enum EDIT { REMOVE, ADD, MOVE, SWAP };
 
 struct queueElement {
 	EDIT type;
 	QPoint pos;
-	IModelTrackedTrajectory* trajectory;
+	IModelTrackedTrajectory* trajectory0;
+	IModelTrackedTrajectory* trajectory1;
 	IModelTrackedComponent* element;
 };
 
@@ -53,6 +54,7 @@ signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
+	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 	// IController interface
   protected:
@@ -84,11 +86,15 @@ signals:
 	void  receiveAddTrajectory(QPoint pos);
 	/**
 	*
-	* Receive command to move a element (now the last element) in a trajectory and put it in edit queue
+	* Receive command to move a element in a trajectory and put it in edit queue
 	*/
-
-	// TODO move specific element, not last one! this does not work after rewinding
 	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	/**
+	*
+	* Receive command to two ID'S and put it in edit queue
+	*/
+	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
 
 
   private:

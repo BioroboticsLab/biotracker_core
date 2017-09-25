@@ -53,6 +53,11 @@ void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory 
 	emitMoveElement(trajectory, pos);
 }
 
+void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
+{
+	emitSwapIds(trajectory0, trajectory1);
+}
+
 void ControllerTrackedComponentCore::createModel()
 {
 	// This controller gets his model (via addModel()) from the corresponding tracked-component-controller when a plugin is loaded
@@ -71,6 +76,8 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	m_View = new TrackedComponentView(0, this, m_Model);
 
 	QObject::connect(dynamic_cast<TrackedComponentView*>(m_View), SIGNAL(emitAddTrajectory(QPoint)), this, SLOT(receiveAddTrajectory(QPoint)));
+	QObject::connect(dynamic_cast<TrackedComponentView*>(m_View), SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
+
 }
 
 void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumber) 

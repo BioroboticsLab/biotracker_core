@@ -52,6 +52,12 @@ void MainWindow::addTrackerElementsView(IView *elemView)
 	graphObj->setParent(ui->trackingArea);
 
 	m_graphView->addGraphicsItem(graphObj);
+	QRectF viewSceneRect = m_graphView->sceneRect();
+
+	//TODO zoom out to fit whole view when loading
+	//m_graphView->setSceneRect(0, 0, 3000, 3000);
+	//m_graphView->fitInView(m_graphView->m_GraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+	//m_graphView->ensureVisible(0, 0, 2000, 2000);
 	_currentElementView = graphObj;
 }
 
@@ -61,6 +67,9 @@ void MainWindow::addCoreElementsView(IView * coreView)
 	graphObj->setParent(ui->trackingArea);
 
 	m_graphView->addGraphicsItem(graphObj);
+	
+	//m_graphView->centerOn(1000, 1000);
+	//m_graphView->fitInView(m_graphView->m_GraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 	_currentCoreView = graphObj;
 }
 

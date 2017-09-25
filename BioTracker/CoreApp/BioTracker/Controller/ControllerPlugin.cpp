@@ -126,11 +126,14 @@ void ControllerPlugin::connectControllerToController() {
 	IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
 
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
-
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, SLOT(receiveAddTrajectory(QPoint)));
-
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), this, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
+		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
+		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), this, 
+		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
+		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 }
 
 void ControllerPlugin::createPlugin() {
@@ -175,14 +178,16 @@ void ControllerPlugin::connectPlugin() {
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
 
-	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
-
-	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
-
-	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-
-	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
-
+	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, 
+		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
+	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
+		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, 
+		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, 
+		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj, 
+		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 }
 
 void ControllerPlugin::disconnectPlugin() {
@@ -209,7 +214,7 @@ void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * traject
 	//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
 	queueElement removeEdit;
 	removeEdit.type = EDIT::REMOVE;
-	removeEdit.trajectory = trajectory;
+	removeEdit.trajectory0 = trajectory;
 	m_editQueue.enqueue(removeEdit);
 }
 
@@ -225,9 +230,18 @@ void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, 
 {
 	queueElement moveEdit;
 	moveEdit.type = EDIT::MOVE;
-	moveEdit.trajectory = trajectory;
+	moveEdit.trajectory0 = trajectory;
 	moveEdit.pos = pos;
 	m_editQueue.enqueue(moveEdit);
+}
+
+void ControllerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
+{
+	queueElement swapEdit;
+	swapEdit.type = EDIT::SWAP;
+	swapEdit.trajectory0 = trajectory0;
+	swapEdit.trajectory1 = trajectory1;
+	m_editQueue.enqueue(swapEdit);
 }
 
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
@@ -239,14 +253,16 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 			switch (edit.type)
 			{
 			case EDIT::REMOVE:
-				//edit.second->setValid(false);
-				emitRemoveTrajectory(edit.trajectory);
+				emitRemoveTrajectory(edit.trajectory0);
 				break;
 			case EDIT::ADD:
 				emitAddTrajectory(edit.pos);
 				break;
 			case EDIT::MOVE:
-				emitMoveElement(edit.trajectory, edit.pos);
+				emitMoveElement(edit.trajectory0, edit.pos);
+				break;
+			case EDIT::SWAP:
+				emitSwapIds(edit.trajectory0, edit.trajectory1);
 				break;
 			}
 		}

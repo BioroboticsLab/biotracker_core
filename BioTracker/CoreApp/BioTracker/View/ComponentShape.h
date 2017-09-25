@@ -27,10 +27,13 @@ class ComponentShape : public QGraphicsObject
 		IModelTrackedTrajectory* getTrajectory();
 		void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 		int getId();
+		bool isSwappable();
+		bool isRemovable();
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+		void broadcastMove();
 
 	public Q_SLOTS:
 		void changeBrushColor();
@@ -40,19 +43,19 @@ class ComponentShape : public QGraphicsObject
 		void unmarkShape();
 
 	protected:
-		//QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-
 		void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 	private:
 		QGraphicsObject *m_parent;
 		std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
-		bool m_removable;
-		bool m_swappable;
+		bool m_pMovable;
+		bool m_pRemovable;
+		bool m_pSwappable;
 		IModelTrackedTrajectory* m_trajectory;
 		int m_id;
 		int m_z;
@@ -62,7 +65,9 @@ class ComponentShape : public QGraphicsObject
 		QColor m_brushColor;
 		bool m_marked;
 		int m_penWidth;
+		Qt::PenStyle m_penStyle;
 		bool m_dragged;
+		QPoint m_mousePressPos;
 };
 
 

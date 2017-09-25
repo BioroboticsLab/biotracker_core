@@ -73,19 +73,19 @@ IView *ControllerTrackedComponent::getTrackingElementsWidget()
 void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
 	trajectory->setValid(false);
+	qDebug() << "trajectory" << trajectory->getId() << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-	// TODO traj gets new id but element gets only appended; -> potentially not in the right position
 	TrackedTrajectory* newTraj = new TrackedTrajectory();
 	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());
 	firstElem->setX(position.x());
 	firstElem->setY(position.y());
 	firstElem->setTime(start);
-	newTraj->add(firstElem);
+	newTraj->add(firstElem, m_currentFrameNumber);
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
@@ -95,11 +95,33 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 
 void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
 {
-
-	//TODO not last child but by id or last active child!
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
-	TrackedElement* lastChild = dynamic_cast<TrackedElement*>(traj->getLastChild());
-	lastChild->setX(position.x());
-	lastChild->setY(position.y());
-	qDebug() << "plugin-pos:" << position;
+	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
+	if (!traj->getId() <= 2) {
+		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
+		//TODO setX, setY do not work correctly as pose not yet accessible
+		element->setX(position.x());
+		element->setY(position.y());
+		qDebug() << "plugin-pos:" << position;
+	}
+}
+
+void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
+{
+	//TODO do this, not just nothing
+	TrackedTrajectory* traj0 = dynamic_cast<TrackedTrajectory*>(trajectory0);
+	TrackedTrajectory* traj1 = dynamic_cast<TrackedTrajectory*>(trajectory1);
+
+	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
+	if (!traj0->getId() <= 2 && !traj1->getId() <= 2) {
+		int traj0Id = traj0->getId();
+		int traj1Id = traj1->getId();
+
+		qDebug() << "TODO: Swap IDs " << traj0Id << "and " << traj1Id;
+	}
+}
+
+void ControllerTrackedComponent::receiveCurrentFrameNumber(uint framenumber)
+{
+	m_currentFrameNumber = (int)framenumber;
 }

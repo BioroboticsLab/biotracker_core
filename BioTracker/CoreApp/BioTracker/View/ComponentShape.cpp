@@ -15,10 +15,12 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	m_penColor = Qt::black;
 	m_penWidth = 0;
+	m_penStyle = Qt::SolidLine;
 	m_brushColor = Qt::blue;
 	m_marked = false;
-	m_removable = true;
-	m_swappable = true;
+	m_pMovable = true;
+	m_pRemovable = true;
+	m_pSwappable = true;
 
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
@@ -29,16 +31,16 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	//printf("shape creation: traj-size: %i\n", m_trajectory->size()); 
 	//IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(component);
 
-		setData(1, "point");
+	setData(1, "point");
 
-		setFlag(ItemIsMovable);
-		setFlag(ItemIsSelectable);
-		setFlag(ItemSendsGeometryChanges);
-		setPos(0 - m_w / 2 , 0- m_h / 2);
+	setFlag(ItemIsMovable);
+	setFlag(ItemIsSelectable);
+	setFlag(ItemSendsGeometryChanges);
+	setPos(0 - m_w / 2 , 0- m_h / 2);
 
-		qDebug() << "shape is created at:" << pos();
-		//for draging, disable with permissions
-		setAcceptedMouseButtons(Qt::LeftButton);
+	qDebug() << "shape is created at:" << pos();
+	//for draging, disable with permissions
+	setAcceptedMouseButtons(Qt::LeftButton);
 
 }
 
@@ -66,7 +68,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	//draw ellipse
 	if (this->data(1) == "point") {
 		QRectF ellipse = QRectF(0,0,m_w,m_h);
-		QPen pen = QPen(m_penColor, m_penWidth);
+		QPen pen = QPen(m_penColor, m_penWidth, m_penStyle);
 		painter->setPen(pen);
 		painter->setBrush(QBrush(m_brushColor));
 		painter->drawEllipse(ellipse);
@@ -147,13 +149,14 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 	switch (permission.first)
 	{
 		case ENUMS::COREPERMISSIONS::COMPONENTMOVE:
+			m_pMovable = permission.second;
 			this->setFlag(ItemIsMovable, permission.second);
 			break;
 		case ENUMS::COREPERMISSIONS::COMPONENTREMOVE:
-			m_removable = permission.second;
+			m_pRemovable = permission.second;
 			break;
 		case ENUMS::COREPERMISSIONS::COMPONENTSWAP:
-			m_swappable = permission.second;
+			m_pSwappable = permission.second;
 	}
 
 	qDebug() << "shape permission " << permission.first << "set to " << permission.second;
@@ -164,9 +167,22 @@ int ComponentShape::getId()
 	return m_id;
 }
 
+bool ComponentShape::isSwappable()
+{
+	return m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP];
+}
+
+bool ComponentShape::isRemovable()
+{
+	return m_pRemovable;
+}
+
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
 	//qDebug() << "shape get dragged at:" << pos();
+
+	m_mousePressPos = pos().toPoint();
+	//qDebug()<< "PRESS" << m_mousePressPos;
 
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
@@ -183,10 +199,14 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 	if (event->button() == Qt::LeftButton) {
 		setCursor(Qt::ArrowCursor);
 		m_dragged = false;
-		qDebug() << "DROP: " << pos();
+		//qDebug() << "DROP " << this->getId() << ": " << pos();
+		
 		// signal new position to controller
-		//TODO id-wise
-		emitMoveElement(m_trajectory, pos().toPoint());
+		//emitMoveElement(m_trajectory, pos().toPoint());
+
+		//broadcast move so other selected elements get moved too
+		// TODO? maybe unconventional and slow but couldn't find another way; Dropevents in view and dropevents in shape didn't seem to work
+		broadcastMove();
 
 		update();
 	}
@@ -200,10 +220,19 @@ void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
-//QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)
-//{
-//	return false;
-//}
+QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if (change == ItemSelectedHasChanged && scene()) {
+		qDebug() << this->getId() << " selected changed to" << value;
+		if (this->m_marked) {
+			this->markShape();
+		}
+		else {
+			this->unmarkShape();
+		}
+	}
+	return QGraphicsItem::itemChange(change, value);
+}
 
 void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
@@ -212,7 +241,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QAction *changePenColorAction = menu.addAction("Change pen color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()), Qt::Key_X);
 	
 	QAction *removeAction = menu.addAction("Remove", dynamic_cast<ComponentShape*>(this), SLOT(removeShape()), Qt::Key_D);
-	if (!m_removable) { removeAction->setEnabled(false); }
+	if (!m_pRemovable) { removeAction->setEnabled(false); }
 
 	QAction *markAction = menu.addAction("Mark", dynamic_cast<ComponentShape*>(this), SLOT(markShape()), Qt::Key_M);
 	QAction *unmarkAction = menu.addAction("Unmark", dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()), Qt::Key_M);
@@ -257,27 +286,32 @@ void ComponentShape::changePenColor()
 
 bool ComponentShape::removeShape()
 {
-	if (m_removable) {
+	if (m_pRemovable) {
 		qDebug() << "Removing shape...";
 
-
-		//TODO stop tracking meanwhile to avoid errors
-		//set trajectory invalid 
+		//emit to set trajectory invalid 
 		emitRemoveTrajectory(m_trajectory);
-		//m_trajectory->setValid(false);
 		//hide this shape
 		this->hide();
 	}
 	else {
 		qDebug() << "component shape is not removable";
 	}
-	return m_removable;
+	return m_pRemovable;
 }
 
 void ComponentShape::markShape(int penwidth)
-{
+{	
 	m_marked = true;
 	m_penWidth = penwidth;
+	if (this->isSelected()) {
+		m_penColor = Qt::red;
+		m_penStyle = Qt::DashLine;
+	}
+	else {
+		m_penColor = Qt::black;
+		m_penStyle = Qt::SolidLine;
+	}
 	update();
 }
 
@@ -285,5 +319,13 @@ void ComponentShape::unmarkShape()
 {
 	m_marked = false;
 	m_penWidth = 0;
+	if (this->isSelected()) {
+		m_penColor = Qt::red;
+		m_penStyle = Qt::DashLine;
+	}
+	else {
+		m_penColor = Qt::black;
+		m_penStyle = Qt::SolidLine;
+	}
 	update();
 }

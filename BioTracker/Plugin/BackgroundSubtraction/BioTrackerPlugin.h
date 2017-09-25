@@ -41,11 +41,14 @@ signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+	void emitCurrentFrameNumber(uint frameNumber);
 
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	void receiveAddTrajectory(QPoint pos);
 	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 private slots:
 	void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);

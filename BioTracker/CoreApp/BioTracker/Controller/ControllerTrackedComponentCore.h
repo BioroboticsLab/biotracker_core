@@ -22,6 +22,8 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 
+		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
 	public Q_SLOTS:
 		//this slot gets triggered when the tracking is done, so the core-view updates
 		void receiveTrackingOperationDone(uint framenumber);
@@ -34,6 +36,8 @@ class ControllerTrackedComponentCore : public IController
 		void receiveAddTrajectory(QPoint pos);
 
 		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+
+		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 		// IController interface
 	protected:
