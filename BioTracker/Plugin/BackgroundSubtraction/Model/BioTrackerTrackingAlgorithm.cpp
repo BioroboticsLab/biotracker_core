@@ -6,19 +6,13 @@
 #include "Model/TrackedComponents/TrackingRectElement.h"
 #include "settings/Settings.h"
 
-BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory, IModel* areaInfo) : _ipp((TrackerParameter*)parameter)
+BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
 {
 	_TrackingParameter = (TrackerParameter*)parameter;
 	_TrackedTrajectoryMajor = (TrackedTrajectory*)trajectory;
-	_AreaInfo = (IModelAreaDescriptor*)areaInfo;
 	_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	BioTracker::Core::Settings *set = _TrackingParameter->getSettings();
-	_exporter = 0;
 	 
-	//Rectification::instance().initRecitification( //TODO PORT
-	//	_TrackingParameter->getAreaWidth(),
-	//	_TrackingParameter->getAreaHeight(),
-	//	_TrackedTrajectoryMajor);
 	_noFish = -1;
 
 	if (set->getValueOrDefault<bool>(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false)) {
@@ -27,15 +21,18 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 	}
 
+	//This is null so far...
+	//_bd.setAreaInfo(_AreaInfo);
+}
+
+
+void BioTrackerTrackingAlgorithm::receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr) {
+	_AreaInfo = areaDescr;
 	_bd.setAreaInfo(_AreaInfo);
 }
 
 BioTrackerTrackingAlgorithm::~BioTrackerTrackingAlgorithm()
 {
-	if (_exporter) {
-		_exporter->close();
-		delete _exporter;
-	}
 }
 
 std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
@@ -81,12 +78,6 @@ void BioTrackerTrackingAlgorithm::refreshPolygon() {
 
 }
 
-void BioTrackerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {
-	TrackedElement e;
-	exporter->open(_TrackedTrajectoryMajor, (IModelTrackedComponent*)&e);
-	_exporter = exporter;
-}
-
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
 	_ipp.m_TrackingParameter = _TrackingParameter;
@@ -105,9 +96,11 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
 	//TODO PORT use the IModelAreaDescriptor instead
-//	if (!Rectification::instance().isSetup()) {
-//		Rectification::instance().setupRecitification(100, 100, p_image->size().width, p_image->size().height);
-//	}
+	//Refuse to run tracking if we have no area info...
+	if (_AreaInfo == nullptr) {
+		Q_EMIT emitTrackingDone();
+		return;
+	}
 
 	//The user changed the # of fish. Reset the history and start over!
 	if (_noFish != _TrackingParameter->getNoFish()) {
@@ -153,7 +146,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 			trajNumber++;
 		}
 	}
-	_exporter->write(framenumber);
 
 	//Send forth new positions to the robotracker, if networking is enabled
 	if (_TrackingParameter->getDoNetwork()){ 

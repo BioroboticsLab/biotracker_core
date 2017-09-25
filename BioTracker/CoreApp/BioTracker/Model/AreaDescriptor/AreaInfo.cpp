@@ -22,3 +22,9 @@ AreaInfo::AreaInfo(QObject *parent) :
 	p = stringToCVPointVec(arena);
 	_apperture->setVertices(p);
 }
+
+void AreaInfo::updateRectification() {
+
+	Rectification::instance().setArea(_rect->getQVertices());
+	Rectification::instance().setupRecitification(100, 100, 2040, 2040);
+}

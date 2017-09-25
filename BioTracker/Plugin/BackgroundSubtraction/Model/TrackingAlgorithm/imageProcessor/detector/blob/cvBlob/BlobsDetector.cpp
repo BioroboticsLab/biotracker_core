@@ -48,15 +48,13 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 
 		// apply homography
 //TODO PORT
-//		cv::Point2f blobPose_cm = Rectification::instance().pxToCm(blobPose_px);
-		cv::Point2f blobPose_cm;
-
+		cv::Point2f blobPose_cm =_areaInfo->pxToCm(blobPose_px);
 		// ignore blobs outside the tracking area
 		//if (!Rectification::instance().inArea(blobPose_cm))
 		//	continue
 //TODO PORT
-//		if (!_areaInfo->_apperture->insideElement(blobPose_px))
-//			continue;
+		if (!_areaInfo->inTrackingArea(blobPose_px))
+			continue;
 
 		//TODO Important Fix up rectification!
 

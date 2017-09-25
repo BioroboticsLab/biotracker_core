@@ -7,10 +7,11 @@ class AreaInfo : public IModelAreaDescriptor
 {
 	Q_OBJECT
 public:
+	AreaInfo() = delete;
 	AreaInfo(QObject *parent = 0);
 
 	//TODO PORT
-	bool inTrackingArea(cv::Point2f point_cm) override { return false; }; 
+	bool inTrackingArea(cv::Point2f point_cm) override { return true; }; 
 
 	/**
 	* Transform the provided pixel coordinates into world coordinates and return world coordinates.
@@ -25,6 +26,8 @@ public:
 	* @return: world point.
 	*/
 	cv::Point2f cmToPx(cv::Point2f point_cm) override { return point_cm; };
+
+	void updateRectification();
 
 	std::shared_ptr<AreaInfoElement> _rect;
 	std::shared_ptr<AreaInfoElement> _apperture;

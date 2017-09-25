@@ -23,10 +23,8 @@ class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
     Q_OBJECT
 public:
-    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory, IModel* areaInfo);
+    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory);
 	~BioTrackerTrackingAlgorithm();
-
-	void setDataExporter(IModelDataExporter *exporter);
 
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
@@ -34,7 +32,8 @@ Q_SIGNALS:
 
     // ITrackingAlgorithm interface
 public Q_SLOTS:
-	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override; 
+	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
+	void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 
 private:
 	void refreshPolygon();
@@ -45,8 +44,6 @@ private:
     TrackedTrajectory* _TrackedTrajectoryMajor;
 	TrackerParameter* _TrackingParameter;
 	IModelAreaDescriptor* _AreaInfo;
-
-	IModelDataExporter *_exporter;
 
 	TcpListener* _listener;
 

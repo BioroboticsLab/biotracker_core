@@ -4,16 +4,15 @@
 #include "QPainter"
 #include <QGraphicsSceneHoverEvent>
 
-#include "Model/AreaInfoElement.h"
+#include "Model/AreaDescriptor/AreaInfoElement.h"
 #include "util/misc.h"
 
-EllipseDescriptor::EllipseDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
-	AreaDescriptor(parent, controller, model)
+EllipseDescriptor::EllipseDescriptor(IController *controller, IModel *model) :
+	AreaDescriptor(controller, model)
 {
 	setAcceptHoverEvents(true);
 	setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 
-	//_isEllipse = true;
 	_brush = QBrush(Qt::blue);
 
 	updateEllipse();
@@ -110,7 +109,7 @@ bool EllipseDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) 
 
 			(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(_v);
 
-			Q_EMIT updatedPoints();
+		///	Q_EMIT updatedPoints();
 
 			updateEllipse();
 		}

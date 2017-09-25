@@ -6,13 +6,14 @@
 
 #include "util/misc.h"
 #include "Model/AreaDescriptor/AreaInfoElement.h"
+#include "Model/AreaDescriptor/AreaInfo.h"
 #include <QGraphicsRectItem>
 
-RectDescriptor::RectDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
-	AreaDescriptor(parent, controller, model)
+RectDescriptor::RectDescriptor(IController *controller, IModel *model) :
+	AreaDescriptor(controller, model)
 {
 	setAcceptHoverEvents(true);
-	setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
+	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 
 	_brush = QBrush(Qt::blue);
 
@@ -54,6 +55,10 @@ void RectDescriptor::setBrush(QBrush brush) {
 
 bool RectDescriptor::inShape(QPoint p) {
 	return false;
+}
+
+void RectDescriptor::updateRect() {
+	setRect(getRect());
 }
 
 
@@ -122,6 +127,8 @@ void RectDescriptor::updateLinePositions() {
 
 bool RectDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
 
+	return 0;
+
 	//int et = event->type();
 	//std::cout << et << std::endl;
 	if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -154,7 +161,7 @@ bool RectDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
 					_v[i] = cv::Point(nowX, nowY);
 					(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(_v);
 
-					Q_EMIT updatedPoints();
+			///		Q_EMIT updatedPoints();
 					
 					updateLinePositions();
 					//std::cout << "Released corner " << it->first << " at " << nowX << " , " << nowY << '\n';

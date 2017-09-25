@@ -5,9 +5,8 @@
 
 class EllipseDescriptor : public AreaDescriptor
 {
-	Q_OBJECT
 public:
-	EllipseDescriptor(QGraphicsItem *parent = 0, IController *controller = 0, IModel *model = 0);
+	EllipseDescriptor(IController *controller = 0, IModel *model = 0);
 	~EllipseDescriptor();
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 

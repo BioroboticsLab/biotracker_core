@@ -9,6 +9,7 @@
 #include "util/types.h"
 #include "Model/DataExporterCSV.h"
 #include "ControllerDataExporter.h"
+#include "ControllerAreaDescriptor.h"
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr) {
@@ -112,6 +113,10 @@ void ControllerPlugin::createPlugin() {
     m_BioTrackerPlugin->moveToThread(m_TrackingThread);
 
     connectPlugin();
+
+	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
+	ctAreaDesc->triggerUpdateAreaDescriptor();
 }
 
 void ControllerPlugin::connectPlugin() {
@@ -122,12 +127,10 @@ void ControllerPlugin::connectPlugin() {
 
     IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     ControllerTextureObject* ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
+	
+	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
 
-	IController* ctrData = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
-	ControllerDataExporter* ctDataEx = qobject_cast<ControllerDataExporter*>(ctrData);
-
-	IModelDataExporter* exp = dynamic_cast<IModelDataExporter*>(ctDataEx->getModel());
-	m_BioTrackerPlugin->setDataExporter(exp);
 
     QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 
@@ -137,6 +140,8 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitTrackingDone()), model, SLOT(receiveTrackingOperationDone()));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
+
+	QObject::connect(ctAreaDesc, SIGNAL(updateAreaDescriptor(IModelAreaDescriptor*)), obj, SLOT(receiveAreaDescriptor(IModelAreaDescriptor*)));
 }
 
 void ControllerPlugin::disconnectPlugin() {

@@ -18,10 +18,11 @@ public:
     void connectControllerToController() override;
 
     void doTracking(std::shared_ptr<cv::Mat> mat, uint number);
-	void setDataExporter(IModelDataExporter *exporter);
 
     IView *getTrackingParameterWidget();
 
+public Q_SLOTS:
+	void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 
 protected:
     void createModel() override;
@@ -32,6 +33,7 @@ Q_SIGNALS:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
     void emitTrackingDone();
 	void emitChangeDisplayImage(QString str);
+	void emitAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 
 private Q_SLOTS:
     void receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name);

@@ -57,12 +57,11 @@ std::vector<BlobPose> SimpleBlobsDetector::findBlobs(const cv::Mat& binImage, co
 
 		// apply homography
 //TODO PORT
-//		cv::Point2f blobPose_cm = Rectification::instance().pxToCm(blobPose_px);
-		cv::Point2f blobPose_cm;
+		cv::Point2f blobPose_cm = _areaInfo->pxToCm(blobPose_px);
 
 //TODO PORT
-		//if (!_areaInfo->_apperture->insideElement(blobPose_px))
-		//	continue;
+		if (!_areaInfo->inTrackingArea(blobPose_px))
+			continue;
 
 		float blobPose_angleDegree = keyPoints.at(i).angle; // as degree (0..360)
 		float blobPose_angleRadian = keyPoints.at(i).angle * float(CV_PI) / float(180.0);

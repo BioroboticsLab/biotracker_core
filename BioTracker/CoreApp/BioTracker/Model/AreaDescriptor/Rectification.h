@@ -25,7 +25,7 @@ private:
 	/**
 	* The standard constructor.
 	*/
-	Rectification() {}
+	Rectification();
 
 	Rectification(const Rectification&); /* verhindert, dass eine weitere Instanz via
 											Kopier-Konstruktor erstellt werden kann */

@@ -5,6 +5,7 @@
 
 #include "Interfaces/IController/IController.h"
 #include "Interfaces/IModel/IModelDataExporter.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include "opencv2/core/core.hpp"
 #include "memory"
 
@@ -18,7 +19,6 @@ public:
 
 	virtual IView *getTrackerParameterWidget() = 0;
 	virtual IView *getTrackerElementsWidget() = 0;
-	virtual void setDataExporter(IModelDataExporter *exporter) = 0;
 
 private:
     virtual void connectInterfaces() = 0;
@@ -30,6 +30,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     virtual void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) = 0;
+	virtual void receiveAreaDescriptor(IModelAreaDescriptor *areaDescr) = 0;
 
 private Q_SLOTS:
     virtual void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) = 0;

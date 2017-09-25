@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Interfaces/IController/IController.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 class ControllerAreaDescriptor : public IController
 {
@@ -8,10 +11,19 @@ class ControllerAreaDescriptor : public IController
 public:
 	ControllerAreaDescriptor(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
-	//IView *getTrackingElementsWidget();
+	void triggerUpdateAreaDescriptor();
+
+signals:
+	void updateAreaDescriptor(IModelAreaDescriptor *ad);
 
 private slots:
 	void trackingAreaType(int v);
+
+	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
+	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
+	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);
+	void keyReleaseEvent(QKeyEvent *event);
+	void updateView();
 
 	// IController interface
 protected:
@@ -19,4 +31,8 @@ protected:
 	void createView() override;
 	void connectModelToController() override;
 	void connectControllerToController() override;
+private:
+	int _watchingVertice;
+	int _watchingVerticeType;
+
 };
