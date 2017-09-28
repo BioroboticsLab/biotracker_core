@@ -28,3 +28,4 @@ void AreaInfo::updateRectification() {
 	Rectification::instance().setArea(_rect->getQVertices());
 	Rectification::instance().setupRecitification(100, 100, 2040, 2040);
 }
+ 
