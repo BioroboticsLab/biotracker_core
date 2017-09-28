@@ -46,6 +46,13 @@ public slots:
 	void updateShapes(uint framenumber);
 
 	void receiveBroadcastMove();
+	void receiveViewSwitch(bool lever);
+	void receiveSelectAll();
+	void receiveColorChangeBorderAll();
+	void receiveColorChangeBrushAll();
+	void receiveTracingHistoryLength(int history);
+	void receiveTracingStyle(QString style);
+	void receiveTracingSteps(int steps);
 
 private:
 	QRectF m_boundingRect;

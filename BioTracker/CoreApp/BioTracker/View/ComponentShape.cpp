@@ -18,9 +18,13 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_penStyle = Qt::SolidLine;
 	m_brushColor = Qt::blue;
 	m_marked = false;
+	m_tracingStyle = "None";
+	m_tracingLength = 0;
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
+	m_currentFramenumber = 0;
+	m_tracingSteps = 0;
 
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
@@ -59,7 +63,6 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 
 	//qDebug() << "shape is painted at:" << pos();
 
-
 	//check if scene is set
 	if (!(this->scene())) {
 		printf("componentscene is null\n");
@@ -72,6 +75,84 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 		painter->setPen(pen);
 		painter->setBrush(QBrush(m_brushColor));
 		painter->drawEllipse(ellipse);
+		if (m_tracingStyle == "None" || m_tracingLength == 0) {
+			return;
+		}
+		
+		if (m_trajectory->size() != 0) {
+			//instant tracing (no saved history)
+			//TODO don't do this in paint()! or do you?
+			if (m_tracingLength > 0) {
+
+				IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+				QPoint currentPoint = QPoint(currentChild->getX(), currentChild->getY());
+
+				QPoint lastPointDifference = QPoint(0,0) + QPoint(m_h/2, m_w/2);
+
+				for (int i = 1; i <= m_tracingLength; i+=m_tracingSteps) {
+					qDebug() << this->getId();
+					if (i <= m_currentFramenumber) {
+
+						IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
+						if (historyChild) {
+							//positioning
+							QPoint historyPoint = QPoint(historyChild->getX(), historyChild->getY());
+							QPoint historyPointDifference = historyPoint - currentPoint;
+							QPoint adjustedHistoryPointDifference = historyPointDifference + QPoint(m_w / 2, m_h / 2);
+							
+							// TODO draw actually the shapes not just ellipses
+							if (m_tracingStyle == "Shape") {
+								QRectF traceEllipse = QRectF(historyPointDifference.x() + m_w/4, historyPointDifference.y() + m_h/4, m_w / 2, m_h / 2);
+
+								//drawing
+								QColor opaquePenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (255 - (int)(255 / m_tracingLength) * i) + 0.01);
+								QPen opaquePen = QPen(opaquePenColor, m_penWidth, Qt::SolidLine);
+								QColor opaqueBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (int)(255 - (255 / m_tracingLength) * i) + 0.01);
+								QBrush opaqueBrush = QBrush(opaqueBrushColor);
+								painter->setPen(opaquePen);
+								painter->setBrush(opaqueBrush);
+								painter->drawEllipse(traceEllipse);
+							}
+							else if (m_tracingStyle == "Path") {
+								//QLineF arrow[2];
+								
+								QLineF base = QLineF(adjustedHistoryPointDifference, lastPointDifference);
+								//QLineF arm0 = QLineF();
+								//arm0.setP2(lastPointDifference);
+								//arm0.setP1(QPoint(lastPointDifference.x() + 10, lastPointDifference.y() + 10));
+								//arm0.setAngle(base.angle() + 20);
+
+								//arrow[0] = base;
+								//arrow[1] = arm0;
+
+								//painter->drawLines(arrow, 2);
+
+								painter->drawLine(base);
+
+								lastPointDifference = adjustedHistoryPointDifference;
+							}
+							else if (m_tracingStyle == "ArrowPath") {
+								//QLineF arrow[2];
+								QLineF base = QLineF(adjustedHistoryPointDifference, lastPointDifference);
+								QLineF arm0 = base.normalVector();
+								arm0.setLength(10);
+								arm0.setAngle(base.angle() -160);
+
+								QLineF arm1 = base.normalVector();
+								arm1.setLength(10);
+								arm1.setAngle(base.angle() - 200);
+
+								painter->drawLine(base);
+								painter->drawLine(arm0);
+								painter->drawLine(arm1);
+
+								lastPointDifference = adjustedHistoryPointDifference;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -92,6 +173,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 	//printf("update a shape\n");
 
 	//printf("traj-size: %i;  framenumber:%u\n", this->m_trajectory->size(), framenumber);
+	m_currentFramenumber = framenumber;
 
 	if (!m_trajectory) {
 		printf("trajectory not existant, delete child %i...\n", m_id);
@@ -284,6 +366,18 @@ void ComponentShape::changePenColor()
 	update();
 }
 
+void ComponentShape::changeBrushColor(QColor color)
+{
+	m_brushColor = color;
+	update();
+}
+
+void ComponentShape::changePenColor(QColor color)
+{
+	m_penColor = color;
+	update();
+}
+
 bool ComponentShape::removeShape()
 {
 	if (m_pRemovable) {
@@ -327,5 +421,23 @@ void ComponentShape::unmarkShape()
 		m_penColor = Qt::black;
 		m_penStyle = Qt::SolidLine;
 	}
+	update();
+}
+
+void ComponentShape::receiveTracingLength(int tracingLength)
+{
+	m_tracingLength = tracingLength;
+	update();
+}
+
+void ComponentShape::receiveTracingStyle(QString style)
+{
+	m_tracingStyle = style;
+	update();
+}
+
+void ComponentShape::receiveTracingSteps(int steps)
+{
+	m_tracingSteps = steps;
 	update();
 }

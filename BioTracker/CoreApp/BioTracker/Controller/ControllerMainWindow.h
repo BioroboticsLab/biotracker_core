@@ -62,6 +62,8 @@ class ControllerMainWindow : public IController {
 
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
+	public slots:
+	void receiveCoreParameterView(IView* coreParameterView);
 
     // IController interface
   protected:

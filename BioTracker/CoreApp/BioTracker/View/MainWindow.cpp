@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
     IViewMainWindow(parent, controller, model),
     ui(new Ui::MainWindow) {
 	_currentParameterView = 0;
+	_currentCoreParameterView = 0;
 	_currentElementView = 0;
     ui->setupUi(this);
 }
@@ -82,7 +83,7 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 	}
 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
 	pluginParameter->setParent(ui->scrollArea);
-	pluginParameter->setStyleSheet("background-color:transparent;");
+	//pluginParameter->setStyleSheet("background-color:transparent;");
 
     //ui->scrollArea->setWidgetResizable(true);
 
@@ -92,7 +93,30 @@ void MainWindow::addTrackerParameterView(IView *parameter)
     /*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
     ui->scrollArea->setWidgetResizable(true);*/
 
-	_currentParameterView = parameter;}
+	_currentParameterView = parameter;
+}
+
+void MainWindow::addCoreParameterView(IView * coreParameterView)
+{
+	if (_currentCoreParameterView) {
+		dynamic_cast<QWidget*>(_currentCoreParameterView)->setParent(0);
+		qDebug() << "currentCoreParameterView was set";
+
+	}
+	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
+	coreParameter->setParent(ui->scrollArea);
+	//coreParameter->setStyleSheet("background-color:transparent;");
+
+	//ui->scrollArea->setWidgetResizable(true);
+
+	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(0);
+	dynamic_cast<QTabWidget*>(ui->scrollArea)->insertTab(0, coreParameter, "view");
+
+	/*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
+	ui->scrollArea->setWidgetResizable(true);*/
+
+	_currentParameterView = coreParameterView;
+}
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
 	QString ct = ui->comboBox_TrackerSelect->currentText();

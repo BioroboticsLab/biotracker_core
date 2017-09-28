@@ -10,11 +10,13 @@
 #include "QGraphicsEllipseItem"
 
 #include "ComponentShape.h"
+#include "Model/CoreParameter.h"
 #include "Controller\ControllerTrackedComponentCore.h"
 #include "Interfaces\IModel\IModelTrackedTrajectory.h"
 #include "QDebug"
 #include "QMenu"
 #include "QAction"
+#include "qcolordialog.h"
 
 class QGraphicsSceneHoverEvent;
 
@@ -399,6 +401,8 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(all->size() - i));
 			if (trajectory) { 
 
+				CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
+
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
 				//connectShape(newShape);
 
@@ -409,6 +413,11 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
+
+				//TODO do this in extra function
+				newShape->receiveTracingLength(coreParams->m_tracingHistory);
+				newShape->receiveTracingStyle(coreParams->m_tracingStyle);
+				newShape->receiveTracingSteps(coreParams->m_tracingSteps);
 			}
 			else {
 				printf("error: no trajectory -> no shape created");
@@ -433,6 +442,86 @@ void TrackedComponentView::receiveBroadcastMove()
 				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint());
 				qDebug() << shape->pos().toPoint();
 			}
+		}
+	}
+}
+
+void TrackedComponentView::receiveViewSwitch(bool lever)
+{
+	this->setVisible(lever);
+}
+
+void TrackedComponentView::receiveTracingSteps(int steps)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracingSteps(steps);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracingStyle(QString style)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracingStyle(style);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracingHistoryLength(int history)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracingLength(history);
+		}
+	}
+}
+
+//TODO use signals not direct calls
+void TrackedComponentView::receiveColorChangeBrushAll()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	QColor color = QColorDialog::getColor();
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->changeBrushColor(color);
+		}
+	}
+}
+
+//TODO use signals not direct calls
+void TrackedComponentView::receiveColorChangeBorderAll()
+{	
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	QColor color = QColorDialog::getColor();
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->changePenColor(color);
+		}
+	}
+}
+
+void TrackedComponentView::receiveSelectAll()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		if (dynamic_cast<ComponentShape*>(childItem)) {
+			childItem->setSelected(true);
 		}
 	}
 }

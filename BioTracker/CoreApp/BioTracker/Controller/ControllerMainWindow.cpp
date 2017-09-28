@@ -110,3 +110,8 @@ void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 	ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
 	annotationController->reset(path);
 }
+
+void ControllerMainWindow::receiveCoreParameterView(IView* coreParameterView) 
+{
+	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(coreParameterView);
+}

@@ -14,6 +14,8 @@ class ControllerTrackedComponentCore : public IController
 
 		void addModel(IModel* model);
 
+		IModel* getCoreParameter();
+
 	signals:
 		// signal to ctrPlugin to remove trajectory
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -23,6 +25,8 @@ class ControllerTrackedComponentCore : public IController
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 
 		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+		void emitCoreParameterView(IView* coreParameterView);
 
 	public Q_SLOTS:
 		//this slot gets triggered when the tracking is done, so the core-view updates
@@ -45,6 +49,9 @@ class ControllerTrackedComponentCore : public IController
 		void createView() override;
 		void connectModelToController() override;
 		void connectControllerToController() override;
+
+		IView* m_parameterView;
+		IModel* m_coreParameterModel;
 };
 
 #endif // CONTROLLERTRACKEDCOMPONENTCORE_H

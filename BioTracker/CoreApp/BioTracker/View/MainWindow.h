@@ -29,6 +29,7 @@ class MainWindow : public IViewMainWindow {
     void addVideoControllWidget(IView* widget);
     void addVideoView(IView* videoView);
     void addTrackerParameterView(IView* parameter);
+	void addCoreParameterView(IView* coreParameterView);
 	void addTrackerElementsView(IView *elemView);
 	void addCoreElementsView(IView* coreView);
     void setTrackerList(QStringListModel* trackerList, QString current);
@@ -74,6 +75,7 @@ Q_SIGNALS:
 	QPointer< SettingsWindow > m_SettingsWindow;
 
 	IView *_currentParameterView;
+	IView *_currentCoreParameterView;
 	QGraphicsObject *_currentElementView;
 	QGraphicsObject *_currentCoreView;
 

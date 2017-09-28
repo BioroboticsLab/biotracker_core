@@ -38,9 +38,14 @@ class ComponentShape : public QGraphicsObject
 	public Q_SLOTS:
 		void changeBrushColor();
 		void changePenColor();
+		void changeBrushColor(QColor color);
+		void changePenColor(QColor color);
 		bool removeShape();
 		void markShape(int penwidth = 4);
 		void unmarkShape();
+		void receiveTracingLength(int tracingLength);
+		void receiveTracingStyle(QString style);
+		void receiveTracingSteps(int steps);
 
 	protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -57,6 +62,7 @@ class ComponentShape : public QGraphicsObject
 		bool m_pRemovable;
 		bool m_pSwappable;
 		IModelTrackedTrajectory* m_trajectory;
+		int m_currentFramenumber;
 		int m_id;
 		int m_z;
 		int m_w;
@@ -68,6 +74,9 @@ class ComponentShape : public QGraphicsObject
 		Qt::PenStyle m_penStyle;
 		bool m_dragged;
 		QPoint m_mousePressPos;
+		QString m_tracingStyle;
+		int m_tracingLength;
+		int m_tracingSteps;
 };
 
 
