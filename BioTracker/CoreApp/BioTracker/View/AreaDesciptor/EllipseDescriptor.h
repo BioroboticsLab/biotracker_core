@@ -17,6 +17,8 @@ public:
 	void setRect(std::vector<cv::Point> rect) override;
 	std::vector<cv::Point> getRect() override;
 
+	void updateRect() override;
+
 	// IViewTrackedComponent interface
 	public Q_SLOTS:
 	void getNotified();
@@ -41,5 +43,11 @@ private:
 	std::shared_ptr<QGraphicsEllipseItem> _rectification;
 	std::shared_ptr<QGraphicsRectItem> _rectificationMarkerOrig;
 	std::shared_ptr<QGraphicsRectItem> _rectificationMarkerEnd;
+
+	// IView interface
+public:
+	void setNewModel(IModel *model) override { setModel(model); };
+protected:
+	void connectModelView() override {};
 };
 

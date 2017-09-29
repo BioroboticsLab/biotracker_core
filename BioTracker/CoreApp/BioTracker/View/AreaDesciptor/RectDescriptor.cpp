@@ -128,46 +128,4 @@ void RectDescriptor::updateLinePositions() {
 bool RectDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
 
 	return 0;
-
-	//int et = event->type();
-	//std::cout << et << std::endl;
-	if (event->type() == QEvent::GraphicsSceneMousePress) {
-
-		QGraphicsRectItem *r = dynamic_cast<QGraphicsRectItem *>(watched);
-		if (r) {
-			for (std::vector<std::shared_ptr<QGraphicsRectItem>>::iterator it = _rectification.begin(); it != _rectification.end(); ++it) {
-				if (it->get() == watched) {
-					QGraphicsSceneMouseEvent *e = (QGraphicsSceneMouseEvent*)event;
-					_watchingDrag = watched;
-					_dragX = e->pos().x();
-					_dragY = e->pos().y();
-				}
-			}
-		}
-	}
-	if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-
-		QGraphicsRectItem *r = dynamic_cast<QGraphicsRectItem *>(watched);
-		if (r) {
-			//Find the one which was dragged
-			for (int i = 0; i< _rectification.size(); i++) {
-				if (_rectification[i].get() == _watchingDrag) {
-					QGraphicsSceneMouseEvent *e = (QGraphicsSceneMouseEvent*)event;
-					int nowX = e->pos().x();
-					int nowY = e->pos().y();
-					//it->second->setX(it->second->x() + nowX - _dragX);
-					//it->second->setY(it->second->y() + nowY - _dragY);
-					_rectification[i].get()->setRect(QRect(nowX - 10, nowY - 10, 20, 20));
-					_v[i] = cv::Point(nowX, nowY);
-					(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(_v);
-
-			///		Q_EMIT updatedPoints();
-					
-					updateLinePositions();
-					//std::cout << "Released corner " << it->first << " at " << nowX << " , " << nowY << '\n';
-				}
-			}
-		}
-	}
-	return true;
 }

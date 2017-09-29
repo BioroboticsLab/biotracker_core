@@ -13,5 +13,6 @@ public:
 	virtual void setBrush(QBrush brush) = 0;
 	virtual void setRect(std::vector<cv::Point> rect) = 0;
 	virtual std::vector<cv::Point> getRect() = 0;
+	virtual void updateRect() = 0;
 };
 

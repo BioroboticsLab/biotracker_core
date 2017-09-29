@@ -19,7 +19,7 @@ public:
 	void setRect(std::vector<cv::Point> rect) override;
 	std::vector<cv::Point> getRect() override;
 
-	void updateRect();
+	void updateRect() override;
 	
 	// IViewTrackedComponent interface
 public Q_SLOTS:

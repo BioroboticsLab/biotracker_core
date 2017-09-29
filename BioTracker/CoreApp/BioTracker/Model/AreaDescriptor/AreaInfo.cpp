@@ -28,4 +28,22 @@ void AreaInfo::updateRectification() {
 	Rectification::instance().setArea(_rect->getQVertices());
 	Rectification::instance().setupRecitification(100, 100, 2040, 2040);
 }
- 
+
+void AreaInfo::updateApperture() {
+	std::vector<cv::Point> p = _apperture->getVertices();
+
+	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	_settings->setParam(AREADESCRIPTOR::CN_APPERTURE, cvPointsToString(p).c_str());
+}
+
+bool AreaInfo::inTrackingArea(cv::Point2f point_cm) {
+	return _apperture->insideElement(point_cm);
+}
+
+cv::Point2f AreaInfo::pxToCm(cv::Point point_px) {
+	return Rectification::instance().pxToCm(point_px);
+}
+
+cv::Point2f AreaInfo::cmToPx(cv::Point2f point_cm) {
+	return Rectification::instance().cmToPx(point_cm);
+}

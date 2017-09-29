@@ -35,4 +35,6 @@ private:
 	int _watchingVertice;
 	int _watchingVerticeType;
 
+	IView *m_ViewApperture;
+
 };

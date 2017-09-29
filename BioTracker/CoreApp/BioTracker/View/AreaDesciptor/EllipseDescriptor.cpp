@@ -15,9 +15,15 @@ EllipseDescriptor::EllipseDescriptor(IController *controller, IModel *model) :
 
 	_brush = QBrush(Qt::blue);
 
+
+	_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
+	for (int i = 0; i < 4; i++) {
+		std::shared_ptr<QGraphicsRectItem> ri = std::make_shared<QGraphicsRectItem>(QRect(_v[i].x - 10, _v[i].y - 10, 20, 20), this);
+		ri->setBrush(_brush);
+	}
+
 	updateEllipse();
 
-	//_ellipseRotation = 0.0;
 	_isInit = false;
 }
 
@@ -50,6 +56,10 @@ void EllipseDescriptor::setBrush(QBrush brush) {
 	_rectificationMarkerEnd->setBrush(_brush);
 }
 
+void EllipseDescriptor::updateRect() {
+	setRect(getRect());
+}
+
 void EllipseDescriptor::setRect(std::vector<cv::Point> rect) {
 	if(rect.size() >= 3){
 		_v = rect;
@@ -79,7 +89,7 @@ void EllipseDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 }
 
 bool EllipseDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
-	
+	return 1;
 	if (event->type() == QEvent::GraphicsSceneMousePress) {
 
 		QGraphicsRectItem *r = dynamic_cast<QGraphicsRectItem *>(watched);

@@ -12,6 +12,7 @@ Rectification::Rectification() {
 	int w = _settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_W, 80);
 	int h = _settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_H, 80);
 	initRecitification(w,h);
+	setupRecitification(0,0,0,0);
 }
 
 void Rectification::init(double areaHeight_cm, double areaWidth_cm,
