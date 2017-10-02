@@ -67,8 +67,9 @@ void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
 
 	for (int i = 0; i < noFish; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
-		TrackedElement *e = new TrackedElement(t, "n.a.", i);
-		e->setId(i);
+		//t->setId(i);
+		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
+		//e->setId(i);
 		t->add(e, 0);
 		_TrackedTrajectoryMajor->add(t, i);
 	}
@@ -98,7 +99,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//TODO PORT use the IModelAreaDescriptor instead
 	//Refuse to run tracking if we have no area info...
 	if (_AreaInfo == nullptr) {
-		Q_EMIT emitTrackingDone();
+		Q_EMIT emitTrackingDone(framenumber);
 		return;
 	}
 
@@ -139,7 +140,9 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
 		if (t) {
-			TrackedElement *e = new TrackedElement(t, "n.a.", trajNumber);
+			TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
+
+			//does this work? trajnumber is not traj-id with new id system
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
 			e->setTime(start);
 			t->add(e, framenumber);
@@ -198,5 +201,5 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	//	_TrackingParameter->setNewSelection("");
 	//}
 
-	Q_EMIT emitTrackingDone();
+	Q_EMIT emitTrackingDone(framenumber);
 }

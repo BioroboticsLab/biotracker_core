@@ -29,6 +29,7 @@ public:
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
 	void emitDimensionUpdate(int x, int y);
+	void emitTrackingDone(uint framenumber);
 
     // ITrackingAlgorithm interface
 public Q_SLOTS:

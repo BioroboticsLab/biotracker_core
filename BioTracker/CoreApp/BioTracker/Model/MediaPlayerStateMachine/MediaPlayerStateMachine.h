@@ -43,6 +43,8 @@ class MediaPlayerStateMachine : public IModel {
 
 	IPlayerState::PLAYER_STATES getState();
 
+	//IPlayerState::PLAYER_STATES getState();
+
   public Q_SLOTS:
     /**
      * This SLOT is called by the MediaPlayer class. If this slot is triggered the next state will be executed.

@@ -10,35 +10,49 @@
 
 #include "QPointer"
 #include "memory"
+#include "QPoint"
 
 class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
-    Q_INTERFACES(IBioTrackerPlugin)
+	Q_OBJECT
+	Q_PLUGIN_METADATA(IID "de.fu-berlin.mi.biorobotics.BioTrackerPlugin" FILE "BioTrackerPlugin.json")
+	Q_INTERFACES(IBioTrackerPlugin)
 
   public:
-    BioTrackerPlugin();
+	BioTrackerPlugin();
 
-    // IBioTrackerPlugin interface
-    IView* getTrackerParameterWidget();
+	// IBioTrackerPlugin interface
+	IView* getTrackerParameterWidget();
 	IView *getTrackerElementsWidget();
-	void setDataExporter(IModelDataExporter *exporter);
+	IModel* getTrackerComponentModel();
 
   public:
-    void createPlugin();
-    void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+	void createPlugin();
+	void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+	void sendCorePermissions();
 
   private:
-    void connectInterfaces();
-  signals:
-    void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitTrackingDone();
+	void connectInterfaces();
+signals:
+	void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+	void emitTrackingDone(uint framenumber);
 	void emitChangeDisplayImage(QString str);
 	void emitAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
+	void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitAddTrajectory(QPoint pos);
+	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+	void emitCurrentFrameNumber(uint frameNumber);
+
+public slots:
+	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void receiveAddTrajectory(QPoint pos);
+	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 private slots:
-    void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
-    void receiveTrackingDone();
+	void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
+	void receiveTrackingDone(uint framenumber);
 	void receiveChangeDisplayImage(QString str);
 	void receiveAreaDescriptor(IModelAreaDescriptor *areaDescr);
 
@@ -48,6 +62,10 @@ private:
 	IController *m_AreaDescrController;
 
 	IBioTrackerContext *m_PluginContext;
+
+public:
+	QList<ENUMS::COREPERMISSIONS> m_CorePermissions;
+
 
 };
 

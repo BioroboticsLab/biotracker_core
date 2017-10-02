@@ -63,9 +63,9 @@ void ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm(std::shared_
     Q_EMIT emitCvMat(mat, name);
 }
 
-void ControllerTrackingAlgorithm::receiveTrackingDone()
+void ControllerTrackingAlgorithm::receiveTrackingDone(uint framenumber)
 {
-    Q_EMIT emitTrackingDone();
+    Q_EMIT emitTrackingDone(framenumber);
 }
 
 void ControllerTrackingAlgorithm::receiveChangeDisplayImage(QString str) {

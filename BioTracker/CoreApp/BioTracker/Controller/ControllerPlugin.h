@@ -11,16 +11,28 @@
 #include "Interfaces/IController/IController.h"
 #include "Interfaces/IBioTrackerPlugin.h"
 #include "QThread"
+#include "QQueue"
+#include "QPoint"
+
+enum EDIT { REMOVE, ADD, MOVE, SWAP };
+
+struct queueElement {
+	EDIT type;
+	QPoint pos;
+	IModelTrackedTrajectory* trajectory0;
+	IModelTrackedTrajectory* trajectory1;
+	IModelTrackedComponent* element;
+};
 
 /**
  * This is the controller class of the Plugin Loader Component. This component is responsible for loading and managing BioTracker Plugins
  * The ControllerPlugin class is responsible for loading and connecting to BioTracker Plugins.
  */
 class ControllerPlugin : public IController {
-    Q_OBJECT
+	Q_OBJECT
   public:
-    ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
-    ~ControllerPlugin();
+	ControllerPlugin(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+	~ControllerPlugin();
 
 	void addToPluginList(QString str);
 
@@ -38,32 +50,61 @@ class ControllerPlugin : public IController {
 
 	void selectPlugin(QString str);
 
-    // IController interface
+signals:
+	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitAddTrajectory(QPoint pos);
+	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
+	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	// IController interface
   protected:
-    void createModel() override;
-    void createView() override;
-    void connectModelToController() override;
-    void connectControllerToController() override;
+	void createModel() override;
+	void createView() override;
+	void connectModelToController() override;
+	void connectControllerToController() override;
 
-    void createPlugin();
+	void createPlugin();
 
-    void connectPlugin();
-    void disconnectPlugin();
+	void connectPlugin();
+	void disconnectPlugin();
 
   private Q_SLOTS:
-    /**
-     *
-     * If Tracking is active and the tracking process was finished, the Plugin is able to emit a Signal that triggers this SLOT.
-     */
-    void receiveTrackingDone();
+	/**
+	 *
+	 * If Tracking is active and the tracking process was finished, the Plugin is able to emit a Signal that triggers this SLOT.
+	 */
+	void receiveTrackingDone();
+	/**
+	*
+	* Receive command to remove a trajectory and put it in edit queue
+	*/
+	void  receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	/**
+	*
+	* Receive command to add a trajectory and put it in edit queue
+	*/
+	void  receiveAddTrajectory(QPoint pos);
+	/**
+	*
+	* Receive command to move a element in a trajectory and put it in edit queue
+	*/
+	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	/**
+	*
+	* Receive command to two ID'S and put it in edit queue
+	*/
+	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+
 
   private:
 	void loadPluginsFromPluginSubfolder();
 
     IBioTrackerPlugin* m_BioTrackerPlugin;
 
+	QQueue<queueElement> m_editQueue;
 
-    QPointer< QThread >  m_TrackingThread;
+	QPointer< QThread >  m_TrackingThread;
 
 
 

@@ -201,7 +201,6 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 		m_trackingSeen = false;
 	}
 
-
 	if (m_recd) {
 		//reopenVideoWriter(); //4us
 		QRectF rscene = m_gv->sceneRect(); //0us

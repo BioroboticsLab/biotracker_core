@@ -63,6 +63,11 @@ void ControllerMainWindow::setTrackerElementsWidget(IView *widget)
 	dynamic_cast<MainWindow*>(m_View)->addTrackerElementsView(widget);
 }
 
+void ControllerMainWindow::setCoreElementsWidget(IView * widget)
+{
+	dynamic_cast<MainWindow*>(m_View)->addCoreElementsView(widget);
+}
+
 void ControllerMainWindow::deactiveTrackingCheckBox() {
     dynamic_cast<MainWindow*>(m_View)->deactivateTrackingCheckBox();
 }
@@ -104,4 +109,9 @@ void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
 	annotationController->reset(path);
+}
+
+void ControllerMainWindow::receiveCoreParameterView(IView* coreParameterView) 
+{
+	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(coreParameterView);
 }

@@ -31,13 +31,13 @@ protected:
 
 Q_SIGNALS:
     void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name);
-    void emitTrackingDone();
+    void emitTrackingDone(uint framenumber);
 	void emitChangeDisplayImage(QString str);
 	void emitAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 
 private Q_SLOTS:
     void receiveCvMatFromTrackingAlgorithm(std::shared_ptr<cv::Mat> mat, QString name);
-    void receiveTrackingDone();
+    void receiveTrackingDone(uint framenumber);
 	void receiveChangeDisplayImage(QString str);
 
 private:

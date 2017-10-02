@@ -31,3 +31,7 @@ const IController *IView::getController() const {
 const IModel *IView::getModel() const {
 	return mModel;
 }
+
+void IView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>) {
+
+}

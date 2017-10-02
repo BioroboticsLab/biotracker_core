@@ -19,14 +19,17 @@ public:
 
 	virtual IView *getTrackerParameterWidget() = 0;
 	virtual IView *getTrackerElementsWidget() = 0;
+	virtual IModel *getTrackerComponentModel() = 0;
+	virtual void sendCorePermissions() = 0;
 
 private:
     virtual void connectInterfaces() = 0;
 
 Q_SIGNALS:
     virtual void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) = 0;
-    virtual void emitTrackingDone() = 0;
+    virtual void emitTrackingDone(uint framenumber) = 0;
 	virtual void emitChangeDisplayImage(QString str) = 0;
+	virtual void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>) = 0;
 
 public Q_SLOTS:
     virtual void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) = 0;

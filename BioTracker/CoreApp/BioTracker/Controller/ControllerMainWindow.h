@@ -58,9 +58,12 @@ class ControllerMainWindow : public IController {
      */
     void setTrackerParamterWidget(IView* widget);
 	void setTrackerElementsWidget(IView *widget);
+	void setCoreElementsWidget(IView* widget);
 
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
+	public slots:
+	void receiveCoreParameterView(IView* coreParameterView);
 
     // IController interface
   protected:

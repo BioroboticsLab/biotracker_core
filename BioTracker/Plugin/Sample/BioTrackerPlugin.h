@@ -22,8 +22,10 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
 		// IBioTrackerPlugin interface
 		IView* getTrackerParameterWidget();
 		IView *getTrackerElementsWidget();
+		IModel *getTrackerComponentModel() { return 0; };
 
 		void setDataExporter(IModelDataExporter *exporter) { };
+		void sendCorePermissions() { };
 
 	public:
 		void createPlugin();

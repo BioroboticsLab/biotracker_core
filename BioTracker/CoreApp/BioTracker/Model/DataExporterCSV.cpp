@@ -15,11 +15,11 @@ DataExporterCSV::~DataExporterCSV()
 
 void DataExporterCSV::open(IModelTrackedTrajectory *root, IModelTrackedComponent *hint, bool append, std::string file) {
 	_root = root;
-	IModelTrackedComponent *t = hint;
+	IModelTrackedPoint *t = dynamic_cast<IModelTrackedPoint*>(hint);
 	if (!t)
 	{
 		for (int i = 0; i < _root->size(); i++) {
-			t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
+			t = dynamic_cast<IModelTrackedPoint *>(_root->getChild(i));
 			if (t) {
 				break;
 			}
@@ -48,11 +48,11 @@ void DataExporterCSV::write(int idx) {
 	for (int i = 0; i < _root->size(); i++) {
 		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
 		if (t) {
-			IModelTrackedComponent *e;
+			IModelTrackedPoint *e;
 			if (idx == -1)
-				e = t->getLastChild();
+				e = dynamic_cast<IModelTrackedPoint*>(t->getLastChild());
 			else
-				e = t->getChild(idx);
+				e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
 			if (e->getValid())
 				_ofs << (trajNumber > 0 ? "," : "") << e->getId()
 				<< "," + std::to_string(idx)

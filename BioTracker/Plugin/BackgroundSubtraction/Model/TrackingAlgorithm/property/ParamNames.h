@@ -120,6 +120,18 @@ namespace GUIPARAM
 	const std::string ENABLE_SHOW_BLOBS				= "GUIPARAM/ENABLE_SHOW_BLOBS";
 	// Swap fish id
 	const std::string ENABLE_SWAP_FISH_ID			= "GUIPARAM/ENABLE_SWAP_FISH_ID";
+
+	// Core view of tracked components
+	const std::string ENABLE_CORE_COMPONENT_VIEW	= "GUIPARAM/ENABLE_CORE_COMPONENT_VIEW";
+	// Move components in core view
+	const std::string ENABLE_CORE_COMPONENT_MOVE	= "GUIPARAM/ENABLE_CORE_COMPONENT_MOVE";
+	// Remove components in core view
+	const std::string ENABLE_CORE_COMPONENT_REMOVE	= "GUIPARAM/ENABLE_CORE_COMPONENT_REMOVE";
+	// Swap component id in core view
+	const std::string ENABLE_CORE_COMPONENT_ID_SWAP	= "GUIPARAM/ENABLE_CORE_COMPONENT_ID_SWAP";
+	// Add component in core view
+	const std::string ENABLE_CORE_COMPONENT_ADD		= "GUIPARAM/ENABLE_CORE_COMPONENT_ADD";
+
 }
 
 namespace FISHTANKPARAM
