@@ -104,8 +104,9 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	}
 
 	//The user changed the # of fish. Reset the history and start over!
-	if (_noFish != _TrackingParameter->getNoFish()) {
-		_noFish = _TrackingParameter->getNoFish(); 
+	
+	if (_noFish != _TrackedTrajectoryMajor->size()) {
+		_noFish = _TrackedTrajectoryMajor->size();
 		resetFishHistory(_noFish);
 		_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	}	

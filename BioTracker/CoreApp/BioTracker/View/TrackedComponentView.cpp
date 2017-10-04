@@ -186,6 +186,8 @@ void TrackedComponentView::createChildShapesAtStart() {
 
 void TrackedComponentView::updateShapes(uint framenumber) {
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
+	if (!all)
+		return;
 
 	//qDebug() << "main:" << all->getId();
 

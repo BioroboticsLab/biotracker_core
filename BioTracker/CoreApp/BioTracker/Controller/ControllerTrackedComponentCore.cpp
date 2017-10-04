@@ -1,5 +1,6 @@
 #include "ControllerTrackedComponentCore.h"
 #include "ControllerMainWindow.h"
+#include "ControllerCoreParameter.h"
 #include "Model/null_Model.h"
 #include "Model/CoreParameter.h"
 #include "View/TrackedComponentView.h"
@@ -85,7 +86,7 @@ IView *ControllerTrackedComponentCore::getTrackingElementsWidgetCore()
 IModel* ControllerTrackedComponentCore::getCoreParameter()
 {
 	IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
-	QPointer< ControllerMainWindow > ctrCP = qobject_cast<ControllerMainWindow *>(ctr);
+	QPointer< ControllerCoreParameter > ctrCP = qobject_cast<ControllerCoreParameter *>(ctr);
 	return ctrCP->getModel();
 }
 

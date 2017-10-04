@@ -1,10 +1,12 @@
 #include "DataExporterCSV.h"
 #include "util/types.h"
 #include "util/misc.h"
+#include <qdebug.h>
 
 DataExporterCSV::DataExporterCSV(QObject *parent) :
 	IModelDataExporter(parent)
 {
+	_root = 0;
 }
 
 
@@ -44,6 +46,11 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root, IModelTrackedComponent
 }
 
 void DataExporterCSV::write(int idx) {
+	if (!_root) {
+		qDebug() << "No output opened!";
+		return;
+	}
+
 	int trajNumber = 0;
 	for (int i = 0; i < _root->size(); i++) {
 		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));

@@ -54,6 +54,9 @@ public slots:
 	void receiveTracingStyle(QString style);
 	void receiveTracingSteps(int steps);
 
+public:
+	void setNewModel(IModel *model) override { setModel(model); };
+
 private:
 	QRectF m_boundingRect;
 

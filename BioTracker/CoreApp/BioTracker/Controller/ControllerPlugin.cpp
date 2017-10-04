@@ -75,6 +75,10 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		//Add tracked component view to main window
 		ctrMainWindow->setCoreElementsWidget(ctrTrackedComponentCore->getTrackingElementsWidgetCore());
 
+		IController* ctrDE = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+		QPointer< ControllerDataExporter > ctrDataExp = qobject_cast<ControllerDataExporter*>(ctrDE);
+		ctrDataExp->setDataStructure(m_BioTrackerPlugin->getTrackerComponentModel());
+
 		m_BioTrackerPlugin->sendCorePermissions();
 		
 	}
@@ -172,6 +176,8 @@ void ControllerPlugin::connectPlugin() {
 	ControllerTrackedComponentCore* ctrCompView = qobject_cast<ControllerTrackedComponentCore*>(ctrC);
 
 	QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
+
+	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctDataEx, SLOT(receiveTrackingDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitTrackingDone()), model, SLOT(receiveTrackingOperationDone()));
 	QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
