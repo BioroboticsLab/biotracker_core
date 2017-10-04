@@ -31,6 +31,8 @@ public:
 
 	void updateRectification();
 
+	void setRectificationDimensions(double w, double h);
+
 	std::shared_ptr<AreaInfoElement> _rect;
 	std::shared_ptr<AreaInfoElement> _apperture;
 

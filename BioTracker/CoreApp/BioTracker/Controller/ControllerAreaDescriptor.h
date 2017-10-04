@@ -16,6 +16,12 @@ public:
 signals:
 	void updateAreaDescriptor(IModelAreaDescriptor *ad);
 
+public slots:
+	void setRectificationDimensions(double w, double h);
+	void setDisplayRectificationDefinition(bool b);
+	void setDisplayTrackingAreaDefinition(bool b);
+	void setTrackingAreaAsEllipse(bool b);
+
 private slots:
 	void trackingAreaType(int v);
 

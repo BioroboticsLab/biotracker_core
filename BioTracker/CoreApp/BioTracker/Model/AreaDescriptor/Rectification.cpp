@@ -63,6 +63,12 @@ void Rectification::setArea()
 	setArea(getDefaultArena());
 }
 
+void Rectification::setDimension(double areaWidth_cm, double areaHeight_cm) {
+	_areaWidth_cm = areaWidth_cm; 
+	_areaHeight_cm = areaHeight_cm; 
+	setupRecitification(_frameDisplayWidthPx, _frameDisplayHeightPx, _camCaptureWidth_px, _camCaptureHeight_px);
+}
+
 void Rectification::setupRecitification(int frameDisplayWidthPx, int frameDisplayHeightPx, int camImageWidth, int camImageHeight)
 {
 	_frameDisplayWidthPx = frameDisplayWidthPx;

@@ -26,7 +26,6 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
-		void emitCoreParameterView(IView* coreParameterView);
 
 	public Q_SLOTS:
 		//this slot gets triggered when the tracking is done, so the core-view updates

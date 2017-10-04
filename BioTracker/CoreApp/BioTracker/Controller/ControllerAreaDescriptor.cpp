@@ -113,6 +113,11 @@ void ControllerAreaDescriptor::connectControllerToController()
 		QObject::connect(area->_rect.get(), SIGNAL(updatedVertices()), this, SLOT(updateView()));
 		QObject::connect(area->_apperture.get(), SIGNAL(updatedVertices()), this, SLOT(updateView()));
 	}
+	{
+		//View stuff from the parameter view
+		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+		auto viewController = qobject_cast<ControllerGraphicScene*>(ctr);
+	}
 }
 
 void ControllerAreaDescriptor::createModel()
@@ -122,11 +127,11 @@ void ControllerAreaDescriptor::createModel()
 
 void ControllerAreaDescriptor::updateView() {
 
+	AreaInfo* area = static_cast<AreaInfo*>(getModel());
 	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
 	rd->updateRect();
 	AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
 	ad->updateRect();
-	AreaInfo* area = static_cast<AreaInfo*>(getModel());
 	area->updateRectification();
 	area->updateApperture();
 }
@@ -181,4 +186,35 @@ void ControllerAreaDescriptor::mouseMoveEvent(QMouseEvent*event, const QPoint &p
 {
 
 }
+
+void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {
+
+	AreaInfo* area = static_cast<AreaInfo*>(getModel());
+	area->setRectificationDimensions(w, h);
+	triggerUpdateAreaDescriptor();
+	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	_settings->setParam(AREADESCRIPTOR::RECT_W, w);
+	_settings->setParam(AREADESCRIPTOR::RECT_H, h);
+}
+
+void ControllerAreaDescriptor::setDisplayRectificationDefinition(bool b) {
+	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
+	rd->setVisible(b);
+}
+
+void ControllerAreaDescriptor::setDisplayTrackingAreaDefinition(bool b) {
+	AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
+	ad->setVisible(b);
+}
+
+void ControllerAreaDescriptor::setTrackingAreaAsEllipse(bool b) {
+	//Not passing b as a parameter for clarification reasons
+	if (b) {
+		trackingAreaType(1);
+	}
+	else {
+		trackingAreaType(0);
+	}
+}
+
 

@@ -61,11 +61,9 @@ void RectDescriptor::updateRect() {
 	setRect(getRect());
 }
 
-
 void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 	std::vector<std::shared_ptr<QGraphicsRectItem>> rectification;
 	std::vector<std::shared_ptr<QGraphicsLineItem>> rectificationLines;
-
 
 	_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
 

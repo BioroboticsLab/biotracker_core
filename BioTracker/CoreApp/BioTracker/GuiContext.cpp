@@ -10,7 +10,7 @@
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerDataExporter.h"
 #include "Controller/ControllerAreaDescriptor.h"
-//#include "Controller/ControllerAreaDescriptor.h"
+#include "Controller/ControllerCoreParameter.h"
 #include "QPointer"
 
 #include "QDebug"
@@ -28,6 +28,7 @@ GuiContext::GuiContext(QObject *parent) :
 	QPointer< IController > DataExportController = new ControllerDataExporter(this, this, ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	QPointer< IController > AnnotationsController = new ControllerAnnotations(this, this, ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	QPointer< IController > CoreParameterController = new ControllerCoreParameter(this, this, ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	
 //	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
@@ -42,6 +43,7 @@ GuiContext::GuiContext(QObject *parent) :
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::DATAEXPORT, DataExportController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::ANNOTATIONS, AnnotationsController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR, AreaDescriptorController);
+	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::COREPARAMETER, CoreParameterController);
 
 }
 

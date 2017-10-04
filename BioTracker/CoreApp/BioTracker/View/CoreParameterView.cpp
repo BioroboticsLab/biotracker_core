@@ -11,17 +11,8 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 {
 	ui->setupUi(this);
 
-	////ui->lineEdit->setValidator(new QIntValidator(this));
-	//ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
-	//ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
-	//ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
-	////	ui->lineEdit_5_MogHist->setValidator(new QIntValidator(this));
-	////	ui->lineEdit_6_MogThresh->setValidator(new QIntValidator(this));
-	//ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
-	//ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
-	//ui->lineEditNoFish->setValidator(new QIntValidator(this));
-
-	//ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));
+	ui->lineEditRectHeight->setValidator(new QIntValidator(this));
+	ui->lineEditRectWidth->setValidator(new QIntValidator(this));
 
 	//BioCore::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
 	//int v = _settings->getValueOrDefault<int>(TRACKERPARAM::CN_APPERTURE_TYPE, 0);
@@ -45,6 +36,11 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 CoreParameterView::~CoreParameterView()
 {
 	delete ui;
+	
+}
+
+QWidget* CoreParameterView::getTrackerHook() {
+	return ui->tabWidgetParameters;
 }
 
 void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v) 
@@ -101,62 +97,35 @@ void CoreParameterView::on_pushButtonColorChangeBrush_clicked()
 	emitColorChangeBrushAll();
 }
 
-//void CoreParameterView::on_pushButton_clicked()
-//{
-//	//int threshold = ui->lineEdit->text().toInt();
-//	CoreParameter *parameter = qobject_cast<CoreParameter *>(getModel());
-//	//parameter->setThreshold(threshold);
-//
-//	int setBinarizationThreshold = ui->lineEdit_2_binThresh->text().toInt();
-//	int setSizeErode = ui->lineEdit_3_SizeErode->text().toInt();
-//	int setSizeDilate = ui->lineEdit_4_SizeDilate->text().toInt();
-//	int setmog2History = 0;// ui->lineEdit_5_MogHist->text().toInt();
-//	int setmog2VarThresh = 0;// ui->lineEdit_6_MogThresh->text().toInt();
-//	int setMinBlobSize = ui->lineEdit_8_MinBlob->text().toInt();
-//	int setMaxBlobSize = ui->lineEdit_9MaxBlob->text().toInt();
-//	int setAreaW = ui->lineEdit_areaw->text().toInt();
-//	int setAreaH = ui->lineEdit_areah->text().toInt();
-//
-//	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->text().toDouble();
-//
-//	parameter->setAll(0, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh,
-//		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize, setAreaW, setAreaH);
-//}
-
 void CoreParameterView::getNotified()
 {
 	qDebug() << "Core parameter notified";
-	//CoreParameter *parameter = qobject_cast<CoreParameter *>(getModel());
-	////int threshold = parameter->getThreshold();
-	////ui->lineEdit->setText(QString::number(threshold));
-
-	//int val = parameter->getBinarizationThreshold();
-	//ui->lineEdit_2_binThresh->setText(QString::number(val));
-
-	//val = parameter->getSizeErode();
-	//ui->lineEdit_3_SizeErode->setText(QString::number(val));
-
-	//val = parameter->getSizeDilate();
-	//ui->lineEdit_4_SizeDilate->setText(QString::number(val));
-
-	//val = parameter->getmog2History();
-	////ui->lineEdit_5_MogHist->setText(QString::number(val));
-
-	//val = parameter->getmog2VarThresh();
-	////ui->lineEdit_6_MogThresh->setText(QString::number(val));
-
-	//double dval = parameter->getmog2BackgroundRatio();
-	//ui->lineEdit_7_MogBack->setText(QString::number(dval));
-
-	//val = parameter->getMinBlobSize();
-	//ui->lineEdit_8_MinBlob->setText(QString::number(val));
-
-	//val = parameter->getMaxBlobSize();
-	//ui->lineEdit_9MaxBlob->setText(QString::number(val));
-
-	//val = parameter->getAreaWidth();
-	//ui->lineEdit_areaw->setText(QString::number(val));
-
-	//val = parameter->getAreaHeight();
-	//ui->lineEdit_areah->setText(QString::number(val));
 }
+
+
+
+void CoreParameterView::on_lineEditRectWidth_textChanged(QString s) {
+	double w = ::atof(ui->lineEditRectWidth->text().toStdString().c_str());
+	double h = ::atof(ui->lineEditRectHeight->text().toStdString().c_str());
+	Q_EMIT emitRectDimensions(w,h);
+}
+
+void CoreParameterView::on_lineEditRectHeight_textChanged(QString s) {
+	double w = ::atof(ui->lineEditRectWidth->text().toStdString().c_str());
+	double h = ::atof(ui->lineEditRectHeight->text().toStdString().c_str());
+	Q_EMIT emitRectDimensions(w, h); 
+}
+
+void CoreParameterView::on_checkBoxDisplayTrackingArea_stateChanged(int v) {
+	Q_EMIT emitDisplayTrackingArea(ui->checkBoxDisplayTrackingArea->isChecked());
+}
+
+void CoreParameterView::on_checkBoxDisplayRectification_stateChanged(int v) {
+	Q_EMIT emitDisplayRectification(ui->checkBoxDisplayRectification->isChecked());
+}
+
+void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
+	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
+}
+
+

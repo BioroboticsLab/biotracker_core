@@ -59,7 +59,7 @@ void AreaInfoElement::setVerticeAtLocation(const QPoint &pos, int vertice) {
 	if (_type == 0 && vertice >= 0 && vertice <4) {
 		_v[vertice] = cv::Point2f(pos.x(), pos.y());
 	}
-	else if (_type == 0 && vertice >= 0 && vertice < 2) {
+	else if (_type > 0 && vertice >= 0 && vertice < 2) {
 		_v[vertice] = cv::Point2f(pos.x(), pos.y());
 	}
 

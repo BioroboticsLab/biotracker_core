@@ -81,7 +81,7 @@ public:
 	 * @param: areaHeight_cm, height of the tank in cm,
 	 * @return: void.
 	 */
-	void setDimension(double areaWidth_cm, double areaHeight_cm) { _areaWidth_cm = areaWidth_cm; _areaHeight_cm = areaHeight_cm; }
+	void setDimension(double areaWidth_cm, double areaHeight_cm);
 
 	void setCamImageSize(cv::Size size) { _camCaptureWidth_px = size.width; _camCaptureHeight_px = size.height; }
 

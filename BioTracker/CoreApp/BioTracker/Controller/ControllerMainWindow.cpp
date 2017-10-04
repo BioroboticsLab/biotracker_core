@@ -96,6 +96,9 @@ void ControllerMainWindow::connectModelToController() {
 
 void ControllerMainWindow::connectControllerToController() {
 
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	IView* v = ctr->getView();
+	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(v);
 }
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
@@ -109,9 +112,4 @@ void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
 	annotationController->reset(path);
-}
-
-void ControllerMainWindow::receiveCoreParameterView(IView* coreParameterView) 
-{
-	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(coreParameterView);
 }

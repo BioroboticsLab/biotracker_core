@@ -13,10 +13,13 @@ public:
 
 	bool insideElement(cv::Point p);
 
-	void setVertices(std::vector<cv::Point> p) { 
-		_v = p; 
+	void setVertices(std::vector<cv::Point> p) {
+		_v = p;
 		Q_EMIT updatedVertices();
 	};
+
+	std::vector<cv::Point> _v;
+
 	std::vector<cv::Point> getVertices() { return _v; };
 
 	//TODO: change everything to QPoints?
@@ -47,6 +50,5 @@ signals:
 private:
 	// Position in pixels.
 	QPoint origin{ 0, 0 };
-	std::vector<cv::Point> _v;
 };
 

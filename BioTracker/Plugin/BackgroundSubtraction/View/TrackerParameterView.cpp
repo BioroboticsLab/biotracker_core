@@ -9,21 +9,13 @@ TrackerParameterView::TrackerParameterView(QWidget *parent, IController *control
 {
     ui->setupUi(this);
 
-	//ui->lineEdit->setValidator(new QIntValidator(this));
 	ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
 	ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
 	ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
-//	ui->lineEdit_5_MogHist->setValidator(new QIntValidator(this));
-//	ui->lineEdit_6_MogThresh->setValidator(new QIntValidator(this));
 	ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
 	ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
-	ui->lineEditNoFish->setValidator(new QIntValidator(this));
 
 	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));	
-
-	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
-	int v = _settings->getValueOrDefault<int>(TRACKERPARAM::CN_APPERTURE_TYPE, 0);
-	ui->checkBoxTrackingArea->setChecked(v);
 
     getNotified();
 }
@@ -55,9 +47,6 @@ void TrackerParameterView::on_checkBoxBackground_stateChanged(int v) {
 }
 
 void TrackerParameterView::on_pushButtonNoFish_clicked() {
-	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-	int noFish = ui->lineEditNoFish->text().toInt();
-	parameter->setNoFish(noFish);
 }
 
 void TrackerParameterView::on_checkBoxTrackingArea_stateChanged(int v) {
@@ -66,9 +55,7 @@ void TrackerParameterView::on_checkBoxTrackingArea_stateChanged(int v) {
 
 void TrackerParameterView::on_pushButton_clicked()
 {
-	//int threshold = ui->lineEdit->text().toInt();
 	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-	//parameter->setThreshold(threshold);
 
 	int setBinarizationThreshold = ui->lineEdit_2_binThresh->text().toInt();
 	int setSizeErode = ui->lineEdit_3_SizeErode->text().toInt();
@@ -77,13 +64,11 @@ void TrackerParameterView::on_pushButton_clicked()
 	int setmog2VarThresh = 0;// ui->lineEdit_6_MogThresh->text().toInt();
 	int setMinBlobSize = ui->lineEdit_8_MinBlob->text().toInt();
 	int setMaxBlobSize = ui->lineEdit_9MaxBlob->text().toInt();
-	int setAreaW = ui->lineEdit_areaw->text().toInt();
-	int setAreaH = ui->lineEdit_areah->text().toInt();
 		
 	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->text().toDouble();
 
 	parameter->setAll(0, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh, 
-		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize, setAreaW, setAreaH);
+		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize);
 }
 
 void TrackerParameterView::getNotified()
@@ -115,10 +100,4 @@ void TrackerParameterView::getNotified()
 
 	val = parameter->getMaxBlobSize();
 	ui->lineEdit_9MaxBlob->setText(QString::number(val));
-
-	val = parameter->getAreaWidth();
-	ui->lineEdit_areaw->setText(QString::number(val));
-
-	val = parameter->getAreaHeight();
-	ui->lineEdit_areah->setText(QString::number(val));
 }

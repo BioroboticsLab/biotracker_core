@@ -29,6 +29,10 @@ void AreaInfo::updateRectification() {
 	Rectification::instance().setupRecitification(100, 100, 2040, 2040);
 }
 
+void AreaInfo::setRectificationDimensions(double w, double h) {
+	Rectification::instance().setDimension(w,h);
+}
+
 void AreaInfo::updateApperture() {
 	std::vector<cv::Point> p = _apperture->getVertices();
 
