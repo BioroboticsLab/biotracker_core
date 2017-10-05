@@ -3,7 +3,7 @@
 
 #include "Interfaces/IController/IController.h"
 #include "QPoint"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 
 class ControllerTrackedComponent : public IController
 {

@@ -2,7 +2,7 @@
 #define IVIEW_H
 
 #include "Interfaces/IModel/IModel.h"
-#include "Interfaces\ENUMS.h"
+#include "Interfaces/ENUMS.h"
 
 class IController;
 class IView {

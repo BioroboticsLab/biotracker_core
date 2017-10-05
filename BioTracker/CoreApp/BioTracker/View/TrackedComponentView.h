@@ -7,7 +7,7 @@
 #include "Interfaces/ENUMS.h"
 #include "QPoint"
 #include "QSignalMapper"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.

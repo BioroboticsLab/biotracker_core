@@ -2,7 +2,7 @@
 #define CONTROLLERTRACKEDCOMPONENTCORE_H
 
 #include "Interfaces/IController/IController.h"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 
 class ControllerTrackedComponentCore : public IController
 {

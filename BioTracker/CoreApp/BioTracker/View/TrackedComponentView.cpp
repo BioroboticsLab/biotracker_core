@@ -11,8 +11,8 @@
 
 #include "ComponentShape.h"
 #include "Model/CoreParameter.h"
-#include "Controller\ControllerTrackedComponentCore.h"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Controller/ControllerTrackedComponentCore.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "QDebug"
 #include "QMenu"
 #include "QAction"
@@ -254,7 +254,7 @@ void TrackedComponentView::receiveBroadcastMove()
 	
 	QGraphicsItem* item;
 
-	for each (item in allSelectedItems) {
+	foreach (item, allSelectedItems) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(item);
 		if (shape) {
 			if (shape->isSelected()) {
@@ -415,7 +415,7 @@ void TrackedComponentView::removeTrajectories()
 {
 	QList<QGraphicsItem *> allSelectedItems = this->scene()->selectedItems();
 	QGraphicsItem* item;
-	for each (item in allSelectedItems) {
+	foreach (item, allSelectedItems) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(item);
 		if (shape) {
 			shape->removeShape();
