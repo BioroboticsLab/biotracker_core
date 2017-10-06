@@ -190,7 +190,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 
 
 	//printf("localtraj-size: %i\n", m_trajectory->size());
-	if (m_trajectory->size() != 0) {
+    if (m_trajectory->size() != 0 && m_trajectory->getValid()) {
 
 		//TODO for each IModelTrackedComponent type
 		IModelTrackedPoint* component = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));

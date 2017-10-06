@@ -42,7 +42,11 @@ bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
 
 void TrackedTrajectory::clear()
 {
-	m_TrackedComponents.clear();
+    foreach(IModelTrackedComponent* el, m_TrackedComponents) {
+        if (dynamic_cast<IModelTrackedTrajectory*>(el))
+            dynamic_cast<IModelTrackedTrajectory*>(el)->clear();
+    }
+    m_TrackedComponents.clear();
 }
 
 IModelTrackedComponent* TrackedTrajectory::getChild(int index)

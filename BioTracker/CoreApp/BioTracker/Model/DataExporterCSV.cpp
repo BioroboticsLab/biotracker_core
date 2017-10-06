@@ -163,7 +163,7 @@ void DataExporterCSV::writeAll() {
     o.close();
 
     //Erase all tracking data from the tracking structure!
-    //_root->clear();
+    _root->clear();
 
     //Remove temporary file
     QFile file(_tmpFile.c_str());
