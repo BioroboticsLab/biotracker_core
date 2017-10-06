@@ -41,7 +41,8 @@ private:
 
 	//Rects
 	std::vector<std::shared_ptr<QGraphicsRectItem>> _rectification;
-	std::vector<std::shared_ptr<QGraphicsLineItem>> _rectificationLines;
+    std::vector<std::shared_ptr<QGraphicsLineItem>> _rectificationLines;
+    std::vector<std::shared_ptr<QGraphicsSimpleTextItem>> _rectificationNumbers;
 
 	QBrush _brush;
 

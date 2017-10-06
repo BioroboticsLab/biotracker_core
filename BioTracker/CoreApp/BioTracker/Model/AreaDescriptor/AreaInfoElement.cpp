@@ -6,6 +6,7 @@
 AreaInfoElement::AreaInfoElement(int type)
 {
 	_type = type;
+    _showNumbers = false;
 }
 
 

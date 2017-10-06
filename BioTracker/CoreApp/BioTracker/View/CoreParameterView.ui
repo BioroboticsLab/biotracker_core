@@ -522,93 +522,6 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBoxRectificationParm">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="title">
-                      <string>Area descriptor</string>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_9">
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout">
-                        <item>
-                         <widget class="QLabel" name="labelAreaSize">
-                          <property name="text">
-                           <string>Rectification dimensions:</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLineEdit" name="lineEditRectWidth">
-                          <property name="text">
-                           <string>100</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="label">
-                          <property name="maximumSize">
-                           <size>
-                            <width>10</width>
-                            <height>10</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>x</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLineEdit" name="lineEditRectHeight">
-                          <property name="text">
-                           <string>100</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="label_cm">
-                          <property name="maximumSize">
-                           <size>
-                            <width>15</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>cm</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
-                       <widget class="QCheckBox" name="checkBoxDisplayTrackingArea">
-                        <property name="text">
-                         <string>Display tracking area definition</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QCheckBox" name="checkBoxDisplayRectification">
-                        <property name="text">
-                         <string>Display Rectification definition</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QCheckBox" name="checkboxTrackingAreaAsEllipse">
-                        <property name="text">
-                         <string>Tracking area as ellipse</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
                     <spacer name="verticalSpacer">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -625,7 +538,100 @@
                   <zorder>pushButtonSelectAll</zorder>
                   <zorder>groupBox_3</zorder>
                   <zorder>verticalSpacer</zorder>
-                  <zorder>groupBoxRectificationParm</zorder>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBoxRectificationParm">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="title">
+                   <string>Area descriptor</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout">
+                     <item>
+                      <widget class="QLabel" name="labelAreaSize">
+                       <property name="text">
+                        <string>Rectification dimensions:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="lineEditRectWidth">
+                       <property name="text">
+                        <string>100</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label">
+                       <property name="maximumSize">
+                        <size>
+                         <width>10</width>
+                         <height>10</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>x</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="lineEditRectHeight">
+                       <property name="text">
+                        <string>100</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_cm">
+                       <property name="maximumSize">
+                        <size>
+                         <width>15</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>cm</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxDisplayTrackingArea">
+                     <property name="text">
+                      <string>Display tracking area definition</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxDisplayRectification">
+                     <property name="text">
+                      <string>Display Rectification definition</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkboxTrackingAreaAsEllipse">
+                     <property name="text">
+                      <string>Tracking area as ellipse</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton">
+                  <property name="text">
+                   <string>Finalize experiment</string>
+                  </property>
                  </widget>
                 </item>
                </layout>

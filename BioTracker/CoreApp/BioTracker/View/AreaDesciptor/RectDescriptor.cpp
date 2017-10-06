@@ -23,6 +23,14 @@ RectDescriptor::RectDescriptor(IController *controller, IModel *model) :
 		std::shared_ptr<QGraphicsRectItem> ri = std::make_shared<QGraphicsRectItem>(QRect(_v[i].x - 10, _v[i].y - 10, 20, 20), this);
 		ri->setBrush(_brush);
 		_rectification.push_back(ri);
+
+        //Numbers at corners
+        if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
+            std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(QString::number(i), this);
+            ti->setPos(_v[i].x + 10, _v[i].y + 10);
+            ti->setFont(QFont("Arial", 20));
+            _rectificationNumbers.push_back(ti);
+        }
 	}
 
 	for (int i = 0; i < 4; i++) {
@@ -63,7 +71,8 @@ void RectDescriptor::updateRect() {
 
 void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 	std::vector<std::shared_ptr<QGraphicsRectItem>> rectification;
-	std::vector<std::shared_ptr<QGraphicsLineItem>> rectificationLines;
+    std::vector<std::shared_ptr<QGraphicsLineItem>> rectificationLines;
+    std::vector<std::shared_ptr<QGraphicsSimpleTextItem>> rectificationNumbers;
 
 	_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
 
@@ -71,6 +80,13 @@ void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 		std::shared_ptr<QGraphicsRectItem> ri = std::make_shared<QGraphicsRectItem>(QRect(rect[i].x - 10, rect[i].y - 10, 20, 20), this);
 		ri->setBrush(_brush);
 		rectification.push_back(ri);
+        //Numbers at corners
+        if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
+            std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(QString(i), this);
+            ti->setPos(_v[i].x + 10, _v[i].y + 10);
+            ti->setFont(QFont("Arial", 20));
+            rectificationNumbers.push_back(ti);
+        }
 	}
 
 	for (int i = 0; i < 4; i++) {
@@ -78,12 +94,13 @@ void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 		auto fst = rectification[i];
 		auto snd = rectification[(i + 1) % 4];
 
-		std::shared_ptr<QGraphicsLineItem> ri = std::make_shared<QGraphicsLineItem>(
-			QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10), this);
-		rectificationLines.push_back(std::shared_ptr<QGraphicsLineItem>(ri));
+        std::shared_ptr<QGraphicsLineItem> ri = std::make_shared<QGraphicsLineItem>(
+            QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10), this);
+        rectificationLines.push_back(std::shared_ptr<QGraphicsLineItem>(ri));
 	}
 	_rectification = rectification;
 	_rectificationLines = rectificationLines;
+    _rectificationNumbers = rectificationNumbers;
 }
 
 std::vector<cv::Point> RectDescriptor::getRect() {

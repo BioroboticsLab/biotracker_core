@@ -15,6 +15,7 @@ AreaInfo::AreaInfo(QObject *parent) :
 
 	std::vector<cv::Point> p = Rectification::instance().getDefaultArena();
 	_rect->setVertices(p);
+    _rect->setShowNumbers(true);
 
 
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);

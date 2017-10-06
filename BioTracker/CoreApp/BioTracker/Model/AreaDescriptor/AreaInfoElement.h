@@ -37,9 +37,18 @@ public:
 
 	virtual QPoint *getHandleForPosition(const QPoint &pos)
 	{
-		if (isHandleAtPosition(origin, pos)) return &origin;
+		if (isHandleAtPosition(_origin, pos)) return &_origin;
 		return nullptr;
 	}
+
+    void setShowNumbers(bool b) {
+        _showNumbers = b;
+    }
+
+    bool getShowNumbers() {
+        return _showNumbers;
+    }
+
 protected:
 	bool isHandleAtPosition(const cv::Point2f &handle, const QPoint &pos);
 	bool isHandleAtPosition(const QPoint &handle, const QPoint &pos);
@@ -49,6 +58,8 @@ signals:
 
 private:
 	// Position in pixels.
-	QPoint origin{ 0, 0 };
+	QPoint _origin{ 0, 0 };
+
+    bool _showNumbers;
 };
 

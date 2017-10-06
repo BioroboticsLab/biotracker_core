@@ -36,9 +36,9 @@ public:
 
 public:
 	signals :
-			void emitSelectAllTracks();
-			void emitViewSwitch(bool lever);
-			void emitSelectAll();
+            void emitSelectAllTracks();
+            void emitViewSwitch(bool lever);
+            void emitSelectAll();
 			void emitColorChangeBorderAll();
 			void emitColorChangeBrushAll();
 			void emitTracingHistoryLength(int history);
