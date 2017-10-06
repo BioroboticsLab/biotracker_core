@@ -43,6 +43,8 @@ class VideoControllWidget : public IViewWidget {
 
     void on_button_stop_clicked();
 
+    void on_button_screenshot_clicked();
+
     void on_button_previousFrame_clicked();
 
 

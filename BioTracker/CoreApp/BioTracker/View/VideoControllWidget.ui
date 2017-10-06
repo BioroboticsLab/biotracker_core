@@ -203,7 +203,7 @@
       <item>
        <widget class="QPushButton" name="button_screenshot">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="font">
          <font>

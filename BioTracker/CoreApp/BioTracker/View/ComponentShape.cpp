@@ -7,6 +7,7 @@
 #include "QGraphicsSceneContextMenuEvent"
 #include "QDebug"
 #include "QColorDialog"
+#include <assert.h>
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent), m_w(20), m_h(20)
@@ -24,7 +25,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_pRemovable = true;
 	m_pSwappable = true;
 	m_currentFramenumber = 0;
-	m_tracingSteps = 0;
+	m_tracingSteps = 1;
 
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
@@ -58,6 +59,12 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+    //TODO Jonas check if these are always sane
+    assert(m_tracingSteps > 0);
+    int tracingSteps = std::max(m_tracingSteps, 1);
+    if (m_currentFramenumber <= 0)
+        return;
+
 	//TODO integrate to expert options
 	//painter->setRenderHint(QPainter::Antialiasing);
 
@@ -89,7 +96,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 
 				QPoint lastPointDifference = QPoint(0,0) + QPoint(m_h/2, m_w/2);
 
-				for (int i = 1; i <= m_tracingLength; i+=m_tracingSteps) {
+				for (int i = 1; i <= m_tracingLength; i+= tracingSteps) {
 					qDebug() << this->getId();
 					if (i <= m_currentFramenumber) {
 
@@ -176,7 +183,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 	m_currentFramenumber = framenumber;
 
 	if (!m_trajectory) {
-		printf("trajectory not existant, delete child %i...\n", m_id);
+		//printf("trajectory not existant, delete child %i...\n", m_id);
 		delete this;
 		return false;
 	}
@@ -207,11 +214,11 @@ bool ComponentShape::updatePosition(uint framenumber)
 			return true;
 		}
 		else {
-			printf("no tracked component in this trajectory in frame: %u", framenumber);
+			//printf("no tracked component in this trajectory in frame: %u", framenumber);
 		}	
 	}
 	else {
-		printf("trajectory empty, delete child%i...\n", m_id);
+		//printf("trajectory empty, delete child%i...\n", m_id);
 		delete this;
 		return false;
 	}
@@ -319,8 +326,8 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
 	QMenu menu;
-	QAction *changeBrushColorAction = menu.addAction("Change brush color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()), Qt::SHIFT + Qt::Key_A);
-	QAction *changePenColorAction = menu.addAction("Change pen color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()), Qt::Key_X);
+	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()), Qt::SHIFT + Qt::Key_A);
+	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()), Qt::Key_X);
 	
 	QAction *removeAction = menu.addAction("Remove", dynamic_cast<ComponentShape*>(this), SLOT(removeShape()), Qt::Key_D);
 	if (!m_pRemovable) { removeAction->setEnabled(false); }
@@ -384,7 +391,7 @@ bool ComponentShape::removeShape()
 		qDebug() << "Removing shape...";
 
 		//emit to set trajectory invalid 
-		emitRemoveTrajectory(m_trajectory);
+		Q_EMIT emitRemoveTrajectory(m_trajectory);
 		//hide this shape
 		this->hide();
 	}

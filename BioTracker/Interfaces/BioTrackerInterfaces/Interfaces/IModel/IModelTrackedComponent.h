@@ -25,6 +25,10 @@ public:
 	* The constructor of the IModelTrackedComponent class is able to receive a QObject as parent.
 	*/
 	IModelTrackedComponent(QObject *parent = 0);
+    virtual void  setValid(bool v) = 0;
+    virtual void  setId(int id) = 0;
+    virtual int   getId() = 0;
+    virtual bool  getValid() = 0;
 };
 
 /*
@@ -49,9 +53,7 @@ public:
 	virtual void  setH(float h) = 0;
 	virtual void  setRad(float r) = 0;
 	virtual void  setDeg(float d) = 0;
-	virtual void  setId(int id) = 0;
 	virtual void  setTime(std::chrono::steady_clock::time_point t) = 0;
-	virtual void  setValid(bool v) = 0;
 
 	virtual float getX() = 0;
 	virtual float getY() = 0;
@@ -60,9 +62,7 @@ public:
 	virtual float getH() = 0;
 	virtual float getRad() = 0;
 	virtual float getDeg() = 0;
-	virtual int   getId() = 0;
 	virtual std::chrono::steady_clock::time_point  getTime() = 0;
-	virtual bool  getValid() = 0;
 
 	virtual bool hasX() = 0;
 	virtual bool hasY() = 0;

@@ -144,6 +144,11 @@ void VideoControllWidget::on_button_record_cam_clicked() {
 	int success = controller->recordInput();
 }
 
+void VideoControllWidget::on_button_screenshot_clicked() {
+    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+    controller->takeScreenshot();
+}
+
 void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {
 	QString name = arg1;
 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());

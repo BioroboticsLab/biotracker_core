@@ -102,7 +102,7 @@ void DataExporterCSV::write(int idx) {
                 e = dynamic_cast<IModelTrackedPoint*>(t->getLastChild());
             else
                 e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
-            if (e->getValid()) {
+            if (e && e->getValid()) {
                 _ofs << writeTrackpoint(e, trajNumber);
             }
 			trajNumber++;
@@ -141,7 +141,9 @@ void DataExporterCSV::writeAll() {
     //Write out everything to a new file
     int trajNumber = 0;
 
+    //idx is the frame number
     for (int idx = 0; idx < max; idx++) {
+        //i is the track number
         for (int i = 0; i < _root->size(); i++) {
 
             o << std::to_string(idx)

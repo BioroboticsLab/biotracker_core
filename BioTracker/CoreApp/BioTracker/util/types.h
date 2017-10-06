@@ -25,6 +25,7 @@
 #define CFG_DIR_PLUGINS						"./Plugins/"
 #define CFG_DIR_VIDEOS						"./Videos/"
 #define CFG_DIR_TRACKS						"./Tracks/"
+#define CFG_DIR_SCREENSHOTS					"./Screenshots/"
 
 #endif
 
