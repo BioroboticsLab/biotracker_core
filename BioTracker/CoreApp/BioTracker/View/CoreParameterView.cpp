@@ -128,4 +128,7 @@ void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
 	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
 }
 
+void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
+    Q_EMIT emitFinalizeExperiment();
+}
 

@@ -12,13 +12,18 @@ public:
 	DataExporterCSV(QObject *parent = 0);
 	~DataExporterCSV();
 
-	void open(IModelTrackedTrajectory *root, IModelTrackedComponent *hint = 0, bool append = false, std::string file = "") override;
+	void open(IModelTrackedTrajectory *root) override;
 	void write(int idx = -1) override;
 	void writeAll() override;
 	void close() override;
+    void finalizeAndReInit() override;
 
 private:
+    std::string writeTrackpoint(IModelTrackedPoint *e, int trajNumber);
+
 	IModelTrackedTrajectory *_root;
 	std::ofstream _ofs;
+    std::string _tmpFile;
+    std::string _finalFile;
 };
 

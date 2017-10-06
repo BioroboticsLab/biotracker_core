@@ -39,9 +39,12 @@ void ControllerDataExporter::setDataStructure(IModel* exp) {
 	qobject_cast<IModelDataExporter*>(m_Model)->open(static_cast<IModelTrackedTrajectory*>(exp));
 }
 
-
 void ControllerDataExporter::receiveTrackingDone(uint frame) {
 	dynamic_cast<IModelDataExporter*>(getModel())->write(frame);
+}
+
+void ControllerDataExporter::receiveFinalizeExperiment() {
+    dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
 }
 
 void ControllerDataExporter::connectModelToController() {
@@ -49,7 +52,6 @@ void ControllerDataExporter::connectModelToController() {
 	MediaPlayer* mplay = dynamic_cast<MediaPlayer*>(ctrM->getModel());
 
 	QObject::connect(mplay, &MediaPlayer::fwdPlayerParameters, this, &ControllerDataExporter::rcvPlayerParameters);
-
 }
 
 void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {

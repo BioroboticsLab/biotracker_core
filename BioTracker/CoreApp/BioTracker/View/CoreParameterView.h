@@ -33,6 +33,7 @@ public:
 	void on_checkBoxDisplayTrackingArea_stateChanged(int v);
 	void on_checkBoxDisplayRectification_stateChanged(int v);
 	void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
+    void on_pushButtonFinalizeExperiment_clicked();
 
 public:
 	signals :
@@ -48,7 +49,9 @@ public:
 			void emitRectDimensions(double w, double h);
 			void emitDisplayTrackingArea(bool b);
 			void emitDisplayRectification(bool b);
-			void emitTrackingAreaAsEllipse(bool b);
+            void emitTrackingAreaAsEllipse(bool b);
+
+            void emitFinalizeExperiment();
 private:
 	Ui::CoreParameterView *ui;
 

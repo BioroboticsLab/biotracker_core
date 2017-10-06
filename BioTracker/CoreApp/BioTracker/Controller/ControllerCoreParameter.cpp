@@ -1,6 +1,7 @@
 #include "ControllerCoreParameter.h"
 #include "ControllerTrackedComponentCore.h"
 #include "ControllerAreaDescriptor.h"
+#include "ControllerDataExporter.h"
 #include "View/CoreParameterView.h"
 #include "View/TrackedComponentView.h"
 #include "Model/CoreParameter.h"
@@ -49,6 +50,12 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitDisplayRectification, adController, &ControllerAreaDescriptor::setDisplayRectificationDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
 	}
+    //Connections to the DataExporter
+    {
+        IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+        ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ctr);
+        QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+    }
 
 }
 
@@ -58,8 +65,8 @@ void ControllerCoreParameter::createModel()
 	m_Model = new CoreParameter(this);
 }
 
-void ControllerCoreParameter::updateView() {
-
+void ControllerCoreParameter::updateView() 
+{
 //	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
 //	rd->updateRect();
 }

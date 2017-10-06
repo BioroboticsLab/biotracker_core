@@ -36,7 +36,13 @@ Congratulations! You build the Biotracker 3!
 
 ##  Building Biotracker 3 (Linux)
 
-Comming soon
+Having set all the library paths you can build it just like any cmake project:  
+git clone https://github.com/BioroboticsLab/biotracker_core.git  
+cd biotracker_core  
+mkdir build  
+cd build  
+cmake ../BioTracker  
+make  
 
 ##  Building Biotracker 3 (OSX)
 

@@ -19,6 +19,7 @@ public:
 
 	public Q_SLOTS:
 	void receiveTrackingDone(uint frame);
+    void receiveFinalizeExperiment();
 
 protected:
 	void createModel() override;
