@@ -95,10 +95,19 @@ void CoreParameterView::on_pushButtonColorChangeBorder_clicked()
 {
 	emitColorChangeBorderAll();
 }
+void CoreParameterView::on_pushButtonColorChangeBorderSelected_clicked()
+{
+	emitColorChangeBorderSelected();
+}
 //TODO show current color
 void CoreParameterView::on_pushButtonColorChangeBrush_clicked()
 {
 	emitColorChangeBrushAll();
+}
+
+void CoreParameterView::on_pushButtonColorchangeBrushSelected_clicked()
+{
+	emitColorChangeBrushSelected();
 }
 
 //void CoreParameterView::on_pushButton_clicked()

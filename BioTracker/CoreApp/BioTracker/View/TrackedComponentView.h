@@ -49,7 +49,9 @@ public slots:
 	void receiveViewSwitch(bool lever);
 	void receiveSelectAll();
 	void receiveColorChangeBorderAll();
+	void receiveColorChangeBorderSelected();
 	void receiveColorChangeBrushAll();
+	void receiveColorChangeBrushSelected();
 	void receiveTracingHistoryLength(int history);
 	void receiveTracingStyle(QString style);
 	void receiveTracingSteps(int steps);

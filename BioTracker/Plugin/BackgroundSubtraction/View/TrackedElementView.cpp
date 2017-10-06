@@ -9,6 +9,7 @@
 #include "settings/Settings.h"
 #include "Model/TrackingAlgorithm/property/ParamNames.h"
 #include "util/misc.h"
+#include "qDebug.h"
 
 class QGraphicsSceneHoverEvent;
 

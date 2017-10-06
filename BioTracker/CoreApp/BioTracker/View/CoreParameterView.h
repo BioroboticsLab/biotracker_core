@@ -24,7 +24,9 @@ public:
 	void on_spinBoxTracingSteps_valueChanged(int i);
 	void on_pushButtonSelectAll_clicked();
 	void on_pushButtonColorChangeBorder_clicked();
+	void on_pushButtonColorChangeBorderSelected_clicked();
 	void on_pushButtonColorChangeBrush_clicked();
+	void on_pushButtonColorchangeBrushSelected_clicked();
 
 public:
 	signals :
@@ -32,7 +34,9 @@ public:
 			void emitViewSwitch(bool lever);
 			void emitSelectAll();
 			void emitColorChangeBorderAll();
+			void emitColorChangeBorderSelected();
 			void emitColorChangeBrushAll();
+			void emitColorChangeBrushSelected();
 			void emitTracingHistoryLength(int history);
 			void emitTracingStyle(QString style);
 			void emitTracingSteps(int steps);

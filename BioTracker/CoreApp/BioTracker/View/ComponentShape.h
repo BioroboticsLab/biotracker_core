@@ -24,11 +24,13 @@ class ComponentShape : public QGraphicsObject
 		bool advance();
 
 		bool updatePosition(uint framenumber);
+		void updateAttributes();
 		IModelTrackedTrajectory* getTrajectory();
 		void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 		int getId();
 		bool isSwappable();
 		bool isRemovable();
+		void trace();
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -41,7 +43,7 @@ class ComponentShape : public QGraphicsObject
 		void changeBrushColor(QColor color);
 		void changePenColor(QColor color);
 		bool removeShape();
-		void markShape(int penwidth = 4);
+		void markShape(int penwidth = 0);
 		void unmarkShape();
 		void receiveTracingLength(int tracingLength);
 		void receiveTracingStyle(QString style);
@@ -61,13 +63,19 @@ class ComponentShape : public QGraphicsObject
 		bool m_pMovable;
 		bool m_pRemovable;
 		bool m_pSwappable;
+		bool m_antialiasing;
 		IModelTrackedTrajectory* m_trajectory;
+		QList<QPolygonF> m_polygons;
 		int m_currentFramenumber;
 		int m_id;
 		int m_z;
 		int m_w;
+		int m_wDefault;
 		int m_h;
+		int m_hDefault;
+		float m_rotation;
 		QColor m_penColor;
+		QColor m_penColorLast;
 		QColor m_brushColor;
 		bool m_marked;
 		int m_penWidth;
@@ -75,8 +83,12 @@ class ComponentShape : public QGraphicsObject
 		bool m_dragged;
 		QPoint m_mousePressPos;
 		QString m_tracingStyle;
+		bool m_tracingShapeTransparent;
+		bool m_tracingShapeFalse;
 		int m_tracingLength;
 		int m_tracingSteps;
+		QGraphicsRectItem* m_tracingLayer;
+		bool m_angleLine;
 };
 
 

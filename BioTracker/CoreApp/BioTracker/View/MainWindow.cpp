@@ -112,6 +112,7 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(0);
 	dynamic_cast<QTabWidget*>(ui->scrollArea)->insertTab(0, coreParameter, "view");
 
+
 	/*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
 	ui->scrollArea->setWidgetResizable(true);*/
 

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>304</width>
-    <height>516</height>
+    <width>276</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -24,8 +24,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>304</width>
-    <height>1000</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="palette">
@@ -136,8 +136,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>304</width>
-        <height>516</height>
+        <width>276</width>
+        <height>515</height>
        </rect>
       </property>
       <property name="palette">
@@ -207,7 +207,7 @@
       <property name="autoFillBackground">
        <bool>true</bool>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -262,13 +262,13 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <property name="leftMargin">
-             <number>5</number>
+             <number>2</number>
             </property>
             <property name="topMargin">
              <number>5</number>
             </property>
             <property name="rightMargin">
-             <number>5</number>
+             <number>2</number>
             </property>
             <property name="bottomMargin">
              <number>5</number>
@@ -319,7 +319,7 @@
                  <item>
                   <widget class="QLabel" name="labelTracingHistoryLength">
                    <property name="text">
-                    <string>Tracing history length (in frames):</string>
+                    <string>Tracing history frames:</string>
                    </property>
                   </widget>
                  </item>
@@ -356,7 +356,6 @@
               </layout>
               <zorder></zorder>
               <zorder></zorder>
-              <zorder>horizontalLayoutWidget_3</zorder>
              </widget>
             </item>
             <item>
@@ -383,7 +382,7 @@
                     <item>
                      <widget class="QLabel" name="labelFillColor">
                       <property name="text">
-                       <string>Fill color:</string>
+                       <string>Fill:</string>
                       </property>
                      </widget>
                     </item>
@@ -408,7 +407,7 @@
                     <item>
                      <widget class="QLabel" name="labelBorderColor">
                       <property name="text">
-                       <string>Border color:</string>
+                       <string>Border:</string>
                       </property>
                      </widget>
                     </item>
@@ -445,11 +444,6 @@
                 </spacer>
                </item>
               </layout>
-              <zorder>pushButtonSelectAll</zorder>
-              <zorder>horizontalLayoutWidget</zorder>
-              <zorder>labelBorderColor</zorder>
-              <zorder>groupBox_3</zorder>
-              <zorder>verticalSpacer</zorder>
              </widget>
             </item>
            </layout>
