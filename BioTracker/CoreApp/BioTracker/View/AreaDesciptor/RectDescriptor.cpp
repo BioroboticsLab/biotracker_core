@@ -12,6 +12,8 @@
 RectDescriptor::RectDescriptor(IController *controller, IModel *model) :
 	AreaDescriptor(controller, model)
 {
+    _dragVectorId = -1;
+    _dragType = BiotrackerTypes::AreaType::NONE;
 	setAcceptHoverEvents(true);
 	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 
@@ -82,7 +84,7 @@ void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 		rectification.push_back(ri);
         //Numbers at corners
         if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
-            std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(QString(i), this);
+            std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(QString::number(i), this);
             ti->setPos(_v[i].x + 10, _v[i].y + 10);
             ti->setFont(QFont("Arial", 20));
             rectificationNumbers.push_back(ti);
@@ -107,6 +109,19 @@ std::vector<cv::Point> RectDescriptor::getRect() {
 	return (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
 }
 
+#include <iostream>
+void RectDescriptor::receiveDragUpdate(BiotrackerTypes::AreaType vectorType, int id, double x, double y) {
+    _dragType = (dynamic_cast<AreaInfoElement*>(getModel()))->getAreaType();
+    if (_dragType == vectorType) {
+        _dragVectorId = id;
+        _drag = QPoint(x,y);
+    }
+    else {
+        _dragVectorId = -1;
+    }
+    update();
+}
+
 RectDescriptor::~RectDescriptor()
 {
 }
@@ -124,6 +139,19 @@ void RectDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
 	if (!_isInit)
 		init();
+
+    //TODO remove hardcoding and code duplication
+    if (_dragVectorId > 0 && _dragType != BiotrackerTypes::AreaType::NONE) {
+        QColor transparentGray = Qt::gray;
+        transparentGray.setAlphaF(0.75);
+        painter->setPen(QPen(transparentGray, 1, Qt::SolidLine)); 
+        painter->drawRect(_drag.x()-10, _drag.y()-10, 20, 20);
+
+        auto fst = _rectification[(_dragVectorId - 1) % 4];
+        auto snd = _rectification[(_dragVectorId + 1) % 4];
+        painter->drawLine(QLine(fst->rect().x() + 10, fst->rect().y() + 10, _drag.x(), _drag.y()));
+        painter->drawLine(QLine(snd->rect().x() + 10, snd->rect().y() + 10, _drag.x(), _drag.y()));
+    }
 }
 
 void RectDescriptor::updateLinePositions() {
@@ -133,8 +161,6 @@ void RectDescriptor::updateLinePositions() {
 		auto fst = _rectification[i];
 		auto snd = _rectification[(i + 1) % 4];
 		auto ln = _rectificationLines[i];
-		//float f1 = fst->rect().x() + 5, f2 = fst->rect().y() + 5, f3 = snd->rect().x() + 5, f4 = snd->rect().y() + 5;
-
 		ln->setLine(QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10));
 	}
 

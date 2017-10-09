@@ -17,7 +17,7 @@ ControllerAreaDescriptor::ControllerAreaDescriptor(QObject *parent, IBioTrackerC
 	IController(parent, context, ctr)
 {
 	_watchingVertice = -1;
-	_watchingVerticeType = -1; 
+	_watchingVerticeType = BiotrackerTypes::AreaType::NONE;
 	m_ViewApperture = nullptr;
 }
 
@@ -35,7 +35,7 @@ void ControllerAreaDescriptor::createView()
 	AreaInfo* mInf = dynamic_cast<AreaInfo*> (getModel());
 	RectDescriptor* view = new RectDescriptor(this, mInf->_rect.get());
 	m_View = view;
-	
+    QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, view, &RectDescriptor::receiveDragUpdate);
 
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
 	auto viewController = qobject_cast<ControllerGraphicScene*>(ctr);
@@ -74,16 +74,16 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	if (v == 0) {
 		m_ViewApperture = new RectDescriptor(this, area->_apperture.get());
-		area->_apperture->_type = 0;
+		area->_apperture->setType(0);
 		static_cast<RectDescriptor*>(m_ViewApperture)->setBrush(QBrush(Qt::red));
-		//QObject::connect(m_ViewApperture, &RectDescriptor::updateRect, view, &AreaDescriptorView::updateApperture);
+        QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<RectDescriptor*>(m_ViewApperture), &RectDescriptor::receiveDragUpdate);
 		_settings->setParam(AREADESCRIPTOR::CN_APPERTURE_TYPE, 0);
 	}
 	else if (v > 0) {
 		m_ViewApperture = new EllipseDescriptor(this, area->_apperture.get());
-		area->_apperture->_type = 1;
+		area->_apperture->setType(1);
 		static_cast<EllipseDescriptor*>(m_ViewApperture)->setBrush(QBrush(Qt::red));
-		//QObject::connect(view->_tracking, &EllipseDescriptor::updatedPoints, view, &AreaDescriptorView::updateApperture);
+        QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<EllipseDescriptor*>(m_ViewApperture), &EllipseDescriptor::receiveDragUpdate);
 		_settings->setParam(AREADESCRIPTOR::CN_APPERTURE_TYPE, 1);
 	}
 
@@ -148,43 +148,49 @@ void ControllerAreaDescriptor::mousePressEvent(QMouseEvent *event, const QPoint 
 	int verticeRect = model->_rect->getVerticeAtLocation(pos);
 	if (verticeRect >= 0) {
 		_watchingVertice = verticeRect;
-		_watchingVerticeType = 0;
+		_watchingVerticeType = BiotrackerTypes::AreaType::RECT;
 		event->accept();
 	}
 
 	int verticeApp = model->_apperture->getVerticeAtLocation(pos);
 	if (verticeApp >= 0) {
 		_watchingVertice = verticeApp;
-		_watchingVerticeType = 1;
+		_watchingVerticeType = BiotrackerTypes::AreaType::APPERTURE;
 		event->accept();
 	}
 
 	if (verticeRect < 0 && verticeApp < 0) {
 		_watchingVertice = -1;
-		_watchingVerticeType = -1;
+		_watchingVerticeType = BiotrackerTypes::AreaType::NONE;
 	}
+
+    Q_EMIT currentVectorDrag(_watchingVerticeType, _watchingVertice, pos.x(), pos.y());
 }
 
 void ControllerAreaDescriptor::mouseReleaseEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<AreaInfo*>(getModel());
 
-	if (_watchingVertice >= 0 && _watchingVerticeType == 0) {
+	if (_watchingVertice >= 0 && _watchingVerticeType == BiotrackerTypes::AreaType::RECT) {
 		model->_rect->setVerticeAtLocation(pos, _watchingVertice);
 		event->accept();
 		triggerUpdateAreaDescriptor();
 	}
 
-	if (_watchingVertice >= 0 && _watchingVerticeType == 1) {
+	if (_watchingVertice >= 0 && _watchingVerticeType == BiotrackerTypes::AreaType::APPERTURE) {
 		model->_apperture->setVerticeAtLocation(pos, _watchingVertice);
 		event->accept();
 		triggerUpdateAreaDescriptor();
 	}
+
+    _watchingVerticeType = BiotrackerTypes::AreaType::NONE;
+    _watchingVertice = -1;
+    Q_EMIT currentVectorDrag(_watchingVerticeType, _watchingVertice, pos.x(), pos.y());
 }
 
 void ControllerAreaDescriptor::mouseMoveEvent(QMouseEvent*event, const QPoint &pos)
 {
-
+    Q_EMIT currentVectorDrag(_watchingVerticeType, _watchingVertice, pos.x(), pos.y());
 }
 
 void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {

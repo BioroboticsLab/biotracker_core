@@ -2,6 +2,7 @@
 #include "Interfaces/IModel/IModel.h"
 #include <cv.h>
 #include <QPoint>
+#include "util/types.h"
 
 class AreaInfoElement : public IModel
 {
@@ -30,7 +31,9 @@ public:
 		}
 		return v; 
 	};
-	int _type;
+
+    int getType() { return _type; };
+    void setType(int t) { _type = t; };
 
 	void setVerticeAtLocation(const QPoint &pos, int vertice);
 	int getVerticeAtLocation(const QPoint &pos);
@@ -49,6 +52,9 @@ public:
         return _showNumbers;
     }
 
+    BiotrackerTypes::AreaType getAreaType() { return _areaType; }
+    void setAreaType(BiotrackerTypes::AreaType t) { _areaType = t; }
+
 protected:
 	bool isHandleAtPosition(const cv::Point2f &handle, const QPoint &pos);
 	bool isHandleAtPosition(const QPoint &handle, const QPoint &pos);
@@ -61,5 +67,11 @@ private:
 	QPoint _origin{ 0, 0 };
 
     bool _showNumbers;
+
+    //Rect or Ellipse?
+    int _type;
+
+    //Rectification, tracking area or both?
+    BiotrackerTypes::AreaType _areaType;
 };
 

@@ -2,6 +2,7 @@
 #include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include "Interfaces/IModel/IModel.h"
 #include "AreaInfoElement.h"
+#include "util/types.h"
 
 class AreaInfo : public IModelAreaDescriptor
 {

@@ -28,10 +28,6 @@ EllipseDescriptor::EllipseDescriptor(IController *controller, IModel *model) :
 }
 
 void EllipseDescriptor::init() {
-	//_rectificationMarkerOrig->setAcceptHoverEvents(true);
-	//_rectificationMarkerOrig->installSceneEventFilter(this);
-	//_rectificationMarkerEnd->setAcceptHoverEvents(true);
-	//_rectificationMarkerEnd->installSceneEventFilter(this);
 	_rectificationMarkerOrig->setBrush(_brush);
 	_rectificationMarkerEnd->setBrush(_brush);
 }
@@ -63,9 +59,20 @@ void EllipseDescriptor::updateRect() {
 void EllipseDescriptor::setRect(std::vector<cv::Point> rect) {
 	if(rect.size() >= 2){
 		_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
-		//(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(rect);
 		updateEllipse();
 	}
+}
+
+void EllipseDescriptor::receiveDragUpdate(BiotrackerTypes::AreaType vectorType, int id, double x, double y) {
+    int atype = (dynamic_cast<AreaInfoElement*>(getModel()))->getAreaType();
+    if (atype == vectorType) {
+        _dragVectorId = id;
+        _drag = QPoint(x, y);        
+    }
+    else {
+        _dragVectorId = -1;
+    }
+    update();
 }
 
 std::vector<cv::Point> EllipseDescriptor::getRect() {
@@ -86,6 +93,19 @@ void EllipseDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 {
 	if (!_isInit)
 		init();
+
+    //TODO remove hardcoding and code duplication
+    if (_dragVectorId > 0) {
+        QColor transparentGray = Qt::gray;
+        transparentGray.setAlphaF(0.75);
+        painter->setPen(QPen(transparentGray, 1, Qt::SolidLine));
+        painter->drawRect(_drag.x(), _drag.y(), 10, 10);
+
+
+        auto fst = _dragVectorId != 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;
+        auto snd = _dragVectorId == 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;;
+        painter->drawEllipse(QRect(fst->rect().x(), fst->rect().y(), _drag.x()-15, _drag.y()-15));
+    }
 }
 
 bool EllipseDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {

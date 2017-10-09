@@ -3,9 +3,12 @@
 #include "AreaDescriptor.h"
 #include "cv.h"
 #include <QBrush>
+#include "util/types.h"
+#include <QObject>
 
-class RectDescriptor :  public AreaDescriptor
+class RectDescriptor : public QObject, public AreaDescriptor
 {
+    Q_OBJECT
 public:
 	RectDescriptor(IController *controller = 0, IModel *model = 0);
 	~RectDescriptor();
@@ -24,6 +27,7 @@ public:
 	// IViewTrackedComponent interface
 public Q_SLOTS:
 	void getNotified();
+    void receiveDragUpdate(BiotrackerTypes::AreaType vectorType, int id, double x, double y);
 
 protected:
 	bool sceneEventFilter(QGraphicsItem * watched, QEvent * event) override;
@@ -45,6 +49,10 @@ private:
     std::vector<std::shared_ptr<QGraphicsSimpleTextItem>> _rectificationNumbers;
 
 	QBrush _brush;
+
+    BiotrackerTypes::AreaType _dragType;
+    int _dragVectorId;
+    QPoint _drag;
 
 	// IView interface
 public:

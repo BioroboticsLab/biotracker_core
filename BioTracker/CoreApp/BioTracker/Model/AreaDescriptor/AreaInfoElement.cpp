@@ -3,10 +3,11 @@
 #include <cv.h>
 #include "opencv2/imgproc/imgproc.hpp"
 
-AreaInfoElement::AreaInfoElement(int type)
+AreaInfoElement::AreaInfoElement(int type) : 
+    _areaType(BiotrackerTypes::AreaType::NONE),
+    _type(type),
+    _showNumbers(false)
 {
-	_type = type;
-    _showNumbers = false;
 }
 
 

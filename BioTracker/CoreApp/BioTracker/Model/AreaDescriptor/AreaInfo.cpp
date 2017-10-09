@@ -4,7 +4,6 @@
 
 #include "settings/Settings.h"
 #include "util/misc.h"
-#include "util/types.h"
 
 AreaInfo::AreaInfo(QObject *parent) :
 	IModelAreaDescriptor(parent)
@@ -16,12 +15,14 @@ AreaInfo::AreaInfo(QObject *parent) :
 	std::vector<cv::Point> p = Rectification::instance().getDefaultArena();
 	_rect->setVertices(p);
     _rect->setShowNumbers(true);
+    _rect->setAreaType(BiotrackerTypes::AreaType::RECT);
 
 
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string arena = _settings->getValueOrDefault<std::string>(AREADESCRIPTOR::CN_APPERTURE, "15,15;15,105;105,105;105,15");
 	p = stringToCVPointVec(arena);
 	_apperture->setVertices(p);
+    _apperture->setAreaType(BiotrackerTypes::AreaType::APPERTURE);
 }
 
 void AreaInfo::updateRectification() {

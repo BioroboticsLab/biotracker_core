@@ -4,6 +4,7 @@
 #include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include "util/types.h"
 
 class ControllerAreaDescriptor : public IController
 {
@@ -15,6 +16,7 @@ public:
 
 signals:
 	void updateAreaDescriptor(IModelAreaDescriptor *ad);
+    void currentVectorDrag(BiotrackerTypes::AreaType vectorType, int id, double x, double y);
 
 public slots:
 	void setRectificationDimensions(double w, double h);
@@ -39,7 +41,7 @@ protected:
 	void connectControllerToController() override;
 private:
 	int _watchingVertice;
-	int _watchingVerticeType;
+    BiotrackerTypes::AreaType _watchingVerticeType;
 
 	IView *m_ViewApperture;
 

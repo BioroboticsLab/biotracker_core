@@ -26,8 +26,17 @@
 #define CFG_DIR_VIDEOS						"./Videos/"
 #define CFG_DIR_TRACKS						"./Tracks/"
 #define CFG_DIR_SCREENSHOTS					"./Screenshots/"
-
 #endif
+
+namespace BiotrackerTypes{
+    enum AreaType {
+        NONE = -1,
+        RECT = 0,
+        APPERTURE = 1,
+        COMBINED = 2
+    };
+
+}
 
 namespace AREADESCRIPTOR
 {
