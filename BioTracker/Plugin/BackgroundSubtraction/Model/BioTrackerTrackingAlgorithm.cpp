@@ -21,6 +21,10 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 		QObject::connect(_listener, SIGNAL(newConnection()), _listener, SLOT(acceptConnection()));
 	}
 
+
+    _lastImage = nullptr;
+    _lastFramenumber = -1;
+
 	//This is null so far...
 	//_bd.setAreaInfo(_AreaInfo);
 }
@@ -79,9 +83,55 @@ void BioTrackerTrackingAlgorithm::refreshPolygon() {
 
 }
 
+void BioTrackerTrackingAlgorithm::receiveParametersChanged() {
+    if (_lastFramenumber >= 0 && _lastImage && !_lastImage->empty()) {
+        doTracking(_lastImage, _lastFramenumber);
+    }
+}
+
+void BioTrackerTrackingAlgorithm::sendSelectedImage(std::map<std::string, std::shared_ptr<cv::Mat>> *images) {
+
+    std::shared_ptr<cv::Mat> sendImage;
+    //Send forth whatever the user selected
+    switch (_TrackingParameter->getSendImage()) {
+    case 0: //Send none
+            //sendImage = images.find(std::string("Original"))->second;
+            //Q_EMIT emitCvMatA(sendImage, QString("Original"));
+        Q_EMIT emitChangeDisplayImage("Original");
+        break;
+    case 1:
+        sendImage = images->find(std::string("Binarized"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Binarized"));
+        Q_EMIT emitChangeDisplayImage(QString("Binarized"));
+        break;
+    case 2:
+        sendImage = images->find(std::string("Eroded"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Eroded"));
+        Q_EMIT emitChangeDisplayImage(QString("Eroded"));
+        break;
+    case 3:
+        sendImage = images->find(std::string("Dilated"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Dilated"));
+        Q_EMIT emitChangeDisplayImage(QString("Dilated"));
+        break;
+    case 4:
+        sendImage = images->find(std::string("Foreground"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Foreground"));
+        Q_EMIT emitChangeDisplayImage(QString("Foreground"));
+        break;
+    case 5:
+        sendImage = images->find(std::string("Background"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Background"));
+        Q_EMIT emitChangeDisplayImage(QString("Background"));
+        break;
+    }
+}
+
 void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, uint framenumber)
 {
 	_ipp.m_TrackingParameter = _TrackingParameter;
+    _lastImage = p_image;
+    _lastFramenumber = framenumber;
 
 	//dont do nothing if we ain't got an image
 	if (p_image->empty()) {
@@ -111,11 +161,15 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		_nn2d = std::make_shared<NN2dMapper>(_TrackedTrajectoryMajor);
 	}	
 
+    if (_TrackingParameter->getResetBackground()) {
+        _TrackingParameter->setResetBackground(false);
+        _ipp.resetBackgroundImage();
+    }
+
 	//Do the preprocessing
 	std::map<std::string, std::shared_ptr<cv::Mat>> images = _ipp.preProcess(p_image);
 	std::shared_ptr<cv::Mat> dilated = images.find(std::string("Dilated"))->second;
 	std::shared_ptr<cv::Mat> greyMat = images.find(std::string("Greyscale"))->second;
-	std::shared_ptr<cv::Mat> sendImage;
 
 	//Find blobs via ellipsefitting
 	_bd.setMaxBlobSize(_TrackingParameter->getMaxBlobSize());
@@ -150,39 +204,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		_listener->sendPositions(framenumber, ps, std::vector<cv::Point2f>(), start);
 	}
 
-	//Send forth whatever the user selected
-	switch (_TrackingParameter->getSendImage()) {
-	case 0: //Send none
-		//sendImage = images.find(std::string("Original"))->second;
-		//Q_EMIT emitCvMatA(sendImage, QString("Original"));
-		Q_EMIT emitChangeDisplayImage("Original");
-		break;
-	case 1:
-		sendImage = images.find(std::string("Binarized"))->second;
-		Q_EMIT emitCvMatA(sendImage, QString("Binarized"));
-		Q_EMIT emitChangeDisplayImage(QString("Binarized"));
-		break;
-	case 2:
-		sendImage = images.find(std::string("Eroded"))->second;
-		Q_EMIT emitCvMatA(sendImage, QString("Eroded"));
-		Q_EMIT emitChangeDisplayImage(QString("Eroded"));
-		break;
-	case 3:
-		sendImage = images.find(std::string("Dilated"))->second;
-		Q_EMIT emitCvMatA(sendImage, QString("Dilated"));
-		Q_EMIT emitChangeDisplayImage(QString("Dilated"));
-		break;
-	case 4:
-		sendImage = images.find(std::string("Foreground"))->second;
-		Q_EMIT emitCvMatA(sendImage, QString("Foreground"));
-		Q_EMIT emitChangeDisplayImage(QString("Foreground"));
-		break;
-	case 5:
-		sendImage = images.find(std::string("Background"))->second;
-		Q_EMIT emitCvMatA(sendImage, QString("Background"));
-		Q_EMIT emitChangeDisplayImage(QString("Background"));
-		break;
-	}
+    sendSelectedImage(&images);
 
 	//First the user still wants to see the original image, right?
 	if (framenumber==1) {

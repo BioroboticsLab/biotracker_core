@@ -9,15 +9,25 @@ TrackerParameterView::TrackerParameterView(QWidget *parent, IController *control
 {
     ui->setupUi(this);
 
-	ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
+    //For the spinboxes we don't need this
+	/*ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
 	ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
 	ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
 	ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
 	ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
-
 	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));	
-
+    */
     getNotified();
+
+
+    QObject::connect(ui->lineEdit_2_binThresh, SIGNAL(valueChanged(int)), this, SLOT(on_pushButton_clicked()));
+    QObject::connect(ui->lineEdit_3_SizeErode, SIGNAL(valueChanged(int)), this, SLOT(on_pushButton_clicked()));
+    QObject::connect(ui->lineEdit_4_SizeDilate, SIGNAL(valueChanged(int)), this, SLOT(on_pushButton_clicked()));
+    QObject::connect(ui->lineEdit_8_MinBlob, SIGNAL(valueChanged(int)), this, SLOT(on_pushButton_clicked()));
+    QObject::connect(ui->lineEdit_9MaxBlob, SIGNAL(valueChanged(int)), this, SLOT(on_pushButton_clicked()));
+    QObject::connect(ui->lineEdit_7_MogBack, SIGNAL(valueChanged(double)), this, SLOT(on_pushButton_clicked()));
+
+    ui->pushButton->setVisible(false);
 }
 
 TrackerParameterView::~TrackerParameterView()
@@ -49,6 +59,7 @@ void TrackerParameterView::on_checkBoxBackground_stateChanged(int v) {
 void TrackerParameterView::on_pushButtonNoFish_clicked() {
 }
 
+
 void TrackerParameterView::on_checkBoxTrackingArea_stateChanged(int v) {
 	Q_EMIT trackingAreaType(v);
 }
@@ -65,39 +76,33 @@ void TrackerParameterView::on_pushButton_clicked()
 	int setMinBlobSize = ui->lineEdit_8_MinBlob->text().toInt();
 	int setMaxBlobSize = ui->lineEdit_9MaxBlob->text().toInt();
 		
-	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->text().toDouble();
+	double setmog2BackgroundRatio = ui->lineEdit_7_MogBack->value();
 
 	parameter->setAll(0, setBinarizationThreshold, setSizeErode, setSizeDilate, setmog2History, setmog2VarThresh, 
 		setmog2BackgroundRatio, setMinBlobSize, setMaxBlobSize);
+
+    Q_EMIT parametersChanged();
 }
 
 void TrackerParameterView::getNotified()
 {
     TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-	//int threshold = parameter->getThreshold();
-	//ui->lineEdit->setText(QString::number(threshold));
 
 	int val = parameter->getBinarizationThreshold();
-	ui->lineEdit_2_binThresh->setText(QString::number(val));
+	ui->lineEdit_2_binThresh->setValue(val);
 
 	val = parameter->getSizeErode();
-	ui->lineEdit_3_SizeErode->setText(QString::number(val));
+	ui->lineEdit_3_SizeErode->setValue(val);
 
 	val = parameter->getSizeDilate();
-	ui->lineEdit_4_SizeDilate->setText(QString::number(val));
-
-	val = parameter->getmog2History();
-	//ui->lineEdit_5_MogHist->setText(QString::number(val));
-
-	val = parameter->getmog2VarThresh();
-	//ui->lineEdit_6_MogThresh->setText(QString::number(val));
+	ui->lineEdit_4_SizeDilate->setValue(val);
 
 	double dval = parameter->getmog2BackgroundRatio();
-	ui->lineEdit_7_MogBack->setText(QString::number(dval));
+	ui->lineEdit_7_MogBack->setValue(dval);
 
 	val = parameter->getMinBlobSize();
-	ui->lineEdit_8_MinBlob->setText(QString::number(val));
+	ui->lineEdit_8_MinBlob->setValue(val);
 
 	val = parameter->getMaxBlobSize();
-	ui->lineEdit_9MaxBlob->setText(QString::number(val));
+	ui->lineEdit_9MaxBlob->setValue(val);
 }
