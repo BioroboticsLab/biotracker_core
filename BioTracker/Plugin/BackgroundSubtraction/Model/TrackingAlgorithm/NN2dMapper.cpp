@@ -19,7 +19,7 @@ NN2dMapper::NN2dMapper(TrackedTrajectory *tree) {
 	for (int i = 0; i < _tree->size(); i++)
 	{
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_tree->getChild(i));
-		if (t){
+		if (t && t->getValid()){
 			_mapLastConfidentAngle.insert(std::pair<int, float>(cid, std::numeric_limits<float>::quiet_NaN()));
 			cid++;
 		}
@@ -199,7 +199,7 @@ TrackedTrajectory* getChildOfType(TrackedTrajectory* tree, int tid) {
 	int cid = 0;
 	for (int i = 0; i < tree->size(); i++) {
 		TrackedTrajectory* t = dynamic_cast<TrackedTrajectory*>(tree->getChild(i));
-		if (t && cid==tid) {
+		if (t && cid==tid && t->getValid()) {
 			return t;
 		}else if (t)
 			cid++;
@@ -211,6 +211,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 {
 	//Get corresponding trajectory
 	TrackedTrajectory* t = getChildOfType((TrackedTrajectory*)_tree, trackid);
+    return 0;
 
 	// can't give estimate if not enough poses available
 	if (t->size() < 3) return std::numeric_limits<float>::quiet_NaN();
@@ -233,6 +234,8 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	for (int i=start+1; i<t->size(); i++)
 	{
 		TrackedElement* ecur = (TrackedElement*)t->getChild(i);
+		if (!ecur)
+			return 0;
 		cv::Point2f currentPoint = ecur->getFishPose().position_cm();
 		const cv::Point2f oneStepDerivative = nextPoint - currentPoint;
 

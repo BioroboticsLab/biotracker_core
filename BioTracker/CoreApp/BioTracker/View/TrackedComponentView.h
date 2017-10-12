@@ -7,7 +7,7 @@
 #include "Interfaces/ENUMS.h"
 #include "QPoint"
 #include "QSignalMapper"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
@@ -55,6 +55,9 @@ public slots:
 	void receiveTracingHistoryLength(int history);
 	void receiveTracingStyle(QString style);
 	void receiveTracingSteps(int steps);
+
+public:
+	void setNewModel(IModel *model) override { setModel(model); };
 
 private:
 	QRectF m_boundingRect;

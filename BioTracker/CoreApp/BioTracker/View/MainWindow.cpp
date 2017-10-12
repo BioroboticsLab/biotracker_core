@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include "Controller/ControllerMainWindow.h"
+#include "View/CoreParameterView.h"
 #include "VideoControllWidget.h"
 #include "qfiledialog.h"
 #include "QLayout"
@@ -55,10 +56,6 @@ void MainWindow::addTrackerElementsView(IView *elemView)
 	m_graphView->addGraphicsItem(graphObj);
 	QRectF viewSceneRect = m_graphView->sceneRect();
 
-	//TODO zoom out to fit whole view when loading
-	//m_graphView->setSceneRect(0, 0, 3000, 3000);
-	//m_graphView->fitInView(m_graphView->m_GraphicsScene->sceneRect(), Qt::KeepAspectRatio);
-	//m_graphView->ensureVisible(0, 0, 2000, 2000);
 	_currentElementView = graphObj;
 }
 
@@ -68,55 +65,43 @@ void MainWindow::addCoreElementsView(IView * coreView)
 	graphObj->setParent(ui->trackingArea);
 
 	m_graphView->addGraphicsItem(graphObj);
-	
-	//m_graphView->centerOn(1000, 1000);
-	//m_graphView->fitInView(m_graphView->m_GraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 	_currentCoreView = graphObj;
 }
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
-	if (_currentParameterView) {
-		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
-		qDebug() << "currentParameterView was set";
+	if (_currentCoreParameterView) {
+		CoreParameterView* v = static_cast<CoreParameterView*>(_currentCoreParameterView);
+		QWidget* w = v->getTrackerHook();
 
+		if (_currentParameterView) {
+			dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
+			//qDebug() << "currentParameterView was set";
+		}
+
+		QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
+		dynamic_cast<QTabWidget*>(w)->removeTab(0);
+		dynamic_cast<QTabWidget*>(w)->insertTab(0, pluginParameter, "tracker");
+		
 	}
-	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-	pluginParameter->setParent(ui->scrollArea);
-	//pluginParameter->setStyleSheet("background-color:transparent;");
-
-    //ui->scrollArea->setWidgetResizable(true);
-
-	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(1);
-	dynamic_cast<QTabWidget*>(ui->scrollArea)->addTab(pluginParameter, "tracker");
-
-    /*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
-    ui->scrollArea->setWidgetResizable(true);*/
-
-	_currentParameterView = parameter;
+	else {
+		qDebug() << "Error adding tracker parameter";
+		assert(false);
+	}
 }
 
+#include "qtextedit.h"
 void MainWindow::addCoreParameterView(IView * coreParameterView)
 {
-	if (_currentCoreParameterView) {
-		dynamic_cast<QWidget*>(_currentCoreParameterView)->setParent(0);
-		qDebug() << "currentCoreParameterView was set";
 
-	}
 	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
-	coreParameter->setParent(ui->scrollArea);
-	//coreParameter->setStyleSheet("background-color:transparent;");
-
-	//ui->scrollArea->setWidgetResizable(true);
-
-	dynamic_cast<QTabWidget*>(ui->scrollArea)->removeTab(0);
-	dynamic_cast<QTabWidget*>(ui->scrollArea)->insertTab(0, coreParameter, "view");
-
-
-	/*ui->scrollArea->setWidget(dynamic_cast<QWidget*>(parameter));
-	ui->scrollArea->setWidgetResizable(true);*/
-
-	_currentParameterView = coreParameterView;
+	if (coreParameter) {
+		ui->widgetParameterArea->updateGeometry();
+		coreParameter->updateGeometry();
+		coreParameter->setParent(ui->widgetParameterArea); //viewTab
+		coreParameter->setVisible(1);
+		_currentCoreParameterView = coreParameterView;
+	}
 }
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {

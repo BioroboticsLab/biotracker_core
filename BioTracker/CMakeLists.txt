@@ -8,14 +8,6 @@ cmake_policy (SET CMP0020 NEW)
 project(Biotracker)
 set(CMAKE_CXX_FLAGS "-std=c++11" CACHE STRING "compile flags" FORCE)
 
-#Armin Berres — 11/22/2008, 3:12:41 PM (Stackoverflow)
-#ZERO_CHECK will rerun cmake. You can/should execute this after changing something on your CMake files.
-#Hauke - 17.05.2017
-#It seems that doing the regeneration from visual studio usually leads to stale QT moc files. 
-#So if you change the cmake files, better wipe the entire configuration and re-run from cmake-gui. 
-#Clean build takes a while but will safe you a lot of pain.
-set(CMAKE_SUPPRESS_REGENERATION true)
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -64,7 +56,7 @@ add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
-add_subdirectory(Plugin/Sample)
+#add_subdirectory(Plugin/Sample)
 #add_subdirectory(Plugin/LukasKanade)
 
 

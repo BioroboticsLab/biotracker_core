@@ -65,69 +65,6 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_9">
-           <item>
-            <widget class="QLabel" name="label_13">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Area dimensions:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_areaw">
-             <property name="maximumSize">
-              <size>
-               <width>75</width>
-               <height>16777215</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_14">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>x</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_areah">
-             <property name="maximumSize">
-              <size>
-               <width>75</width>
-               <height>16777215</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_15">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>cm</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QLabel" name="label_2">
@@ -137,7 +74,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_2_binThresh"/>
+            <widget class="QSpinBox" name="lineEdit_2_binThresh"/>
            </item>
           </layout>
          </item>
@@ -151,7 +88,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_3_SizeErode"/>
+            <widget class="QSpinBox" name="lineEdit_3_SizeErode"/>
            </item>
           </layout>
          </item>
@@ -165,7 +102,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_4_SizeDilate"/>
+            <widget class="QSpinBox" name="lineEdit_4_SizeDilate"/>
            </item>
           </layout>
          </item>
@@ -179,7 +116,20 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_7_MogBack"/>
+            <widget class="QDoubleSpinBox" name="lineEdit_7_MogBack">
+             <property name="decimals">
+              <number>6</number>
+             </property>
+             <property name="maximum">
+              <double>1.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.001000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.001000000000000</double>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -193,7 +143,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_8_MinBlob"/>
+            <widget class="QSpinBox" name="lineEdit_8_MinBlob"/>
            </item>
           </layout>
          </item>
@@ -207,7 +157,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_9MaxBlob"/>
+            <widget class="QSpinBox" name="lineEdit_9MaxBlob">
+             <property name="maximum">
+              <number>10000</number>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -272,38 +226,6 @@
           <widget class="QPushButton" name="pushButtonResetBackground">
            <property name="text">
             <string>Reset Background</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string># of Objects</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditNoFish">
-             <property name="text">
-              <string>2</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonNoFish">
-           <property name="text">
-            <string>Set # (Erases History)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxTrackingArea">
-           <property name="text">
-            <string>Tracking area as an ellipse</string>
            </property>
           </widget>
          </item>

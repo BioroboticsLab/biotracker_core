@@ -113,6 +113,7 @@ class MediaPlayer : public IModel {
     QString getCurrentFileName();
     std::shared_ptr<cv::Mat> getCurrentFrame();
 
+    void takeScreenshot(GraphicsView *gv);
 
   public Q_SLOTS:
     /**

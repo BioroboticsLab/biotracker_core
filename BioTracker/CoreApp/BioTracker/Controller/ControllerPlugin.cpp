@@ -10,6 +10,7 @@
 #include "util/types.h"
 #include "Model/DataExporterCSV.h"
 #include "ControllerDataExporter.h"
+#include "ControllerAreaDescriptor.h"
 
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
@@ -73,6 +74,10 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		ctrTrackedComponentCore->addModel(m_BioTrackerPlugin->getTrackerComponentModel());
 		//Add tracked component view to main window
 		ctrMainWindow->setCoreElementsWidget(ctrTrackedComponentCore->getTrackingElementsWidgetCore());
+
+		IController* ctrDE = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+		QPointer< ControllerDataExporter > ctrDataExp = qobject_cast<ControllerDataExporter*>(ctrDE);
+		ctrDataExp->setDataStructure(m_BioTrackerPlugin->getTrackerComponentModel());
 
 		m_BioTrackerPlugin->sendCorePermissions();
 		
@@ -143,6 +148,10 @@ void ControllerPlugin::createPlugin() {
 	m_BioTrackerPlugin->moveToThread(m_TrackingThread);
 
 	connectPlugin();
+
+	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
+	ctAreaDesc->triggerUpdateAreaDescriptor();
 }
 
 void ControllerPlugin::connectPlugin() {
@@ -153,6 +162,9 @@ void ControllerPlugin::connectPlugin() {
 
 	IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
 	ControllerTextureObject* ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
+	
+	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
 
 
 
@@ -160,13 +172,12 @@ void ControllerPlugin::connectPlugin() {
 	IController* ctrData = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	ControllerDataExporter* ctDataEx = qobject_cast<ControllerDataExporter*>(ctrData);
 
-	IModelDataExporter* exp = dynamic_cast<IModelDataExporter*>(ctDataEx->getModel());
-	m_BioTrackerPlugin->setDataExporter(exp);
-
 	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	ControllerTrackedComponentCore* ctrCompView = qobject_cast<ControllerTrackedComponentCore*>(ctrC);
 
 	QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
+
+	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctDataEx, SLOT(receiveTrackingDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitTrackingDone()), model, SLOT(receiveTrackingOperationDone()));
 	QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
@@ -177,6 +188,8 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveTrackingOperationDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
+
+	QObject::connect(ctAreaDesc, SIGNAL(updateAreaDescriptor(IModelAreaDescriptor*)), obj, SLOT(receiveAreaDescriptor(IModelAreaDescriptor*)));
 
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, 
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));

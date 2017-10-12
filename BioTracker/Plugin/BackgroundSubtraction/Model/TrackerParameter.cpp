@@ -17,13 +17,8 @@ TrackerParameter::TrackerParameter(QObject *parent) :
 	m_mog2VarThresh = _settings->getValueOrDefault(TRACKERPARAM::BG_MOG2_VAR_THRESHOLD, 64);
 	m_mog2BackgroundRatio = _settings->getValueOrDefault(TRACKERPARAM::BG_MOG2_BACKGROUND_RATIO, 0.05);
 
-	m_noFish = _settings->getValueOrDefault(FISHTANKPARAM::FISHTANK_FISH_AMOUNT, 2);
 	m_doNetwork = _settings->getValueOrDefault(FISHTANKPARAM::FISHTANK_ENABLE_NETWORKING, false);
 	m_networkPort = _settings->getValueOrDefault(FISHTANKPARAM::FISHTANK_NETWORKING_PORT, 54444);
-
-
-	m_areaWidth = _settings->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_WIDTH, 80);
-	m_areaHeight = _settings->getValueOrDefault<int>(FISHTANKPARAM::FISHTANK_AREA_HEIGHT, 80);
 
 	m_Threshold = 12345;
 

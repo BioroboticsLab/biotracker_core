@@ -88,20 +88,31 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
-		qDebug() << "trajectory added at" << firstElem->getX() << "," << firstElem->getY();
+		qDebug() << "Trajectory added at" << firstElem->getX() << "," << firstElem->getY();
 	}
 }
 
 void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
-	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
+	// don't move starter dummies and main trajectory (id's: 0,1,2)!!
 	if (!traj->getId() <= 2) {
 		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
-		//TODO setX, setY do not work correctly as pose not yet accessible
-		element->setX(position.x());
-		element->setY(position.y());
-		qDebug() << "plugin-pos:" << position;
+
+		//TODO rewrite this when default ipose is coded...
+		FishPose oldPose = element->getFishPose();
+		cv::Point newPosPx = cv::Point(position.x(), position.y());
+		cv::Point2f newPosCm = m_areaDescr->pxToCm(newPosPx);
+		// ignore blobs outside the tracking area
+		if (!m_areaDescr->inTrackingArea(newPosPx)) {
+			qDebug() << "Moved the entity outside of the tracking area!";
+			return;
+		}
+
+		FishPose newPose = FishPose(newPosCm, newPosPx, oldPose.orientation_rad(), oldPose.orientation_deg(), oldPose.width(), oldPose.height(), oldPose.getScore());
+
+		element->setFishPose(newPose);
+		//qDebug() << "plugin-pos:" << position;
 	}
 }
 
@@ -123,4 +134,9 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 void ControllerTrackedComponent::receiveCurrentFrameNumber(uint framenumber)
 {
 	m_currentFrameNumber = (int)framenumber;
+}
+
+void ControllerTrackedComponent::receiveAreaDescriptorUpdate(IModelAreaDescriptor * areaDescr)
+{
+	m_areaDescr = areaDescr;
 }

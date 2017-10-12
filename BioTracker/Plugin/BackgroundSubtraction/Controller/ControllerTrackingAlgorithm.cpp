@@ -1,6 +1,5 @@
 #include "ControllerTrackingAlgorithm.h"
 #include "ControllerTrackedComponent.h"
-#include "ControllerAreaDescriptor.h"
 
 #include "Model/TrackerParameter.h"
 #include "View/TrackerParameterView.h"
@@ -25,10 +24,6 @@ void ControllerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> mat, uint 
     qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->doTracking(mat, number);
 }
 
-void ControllerTrackingAlgorithm::setDataExporter(IModelDataExporter *exporter) {
-	qobject_cast<BioTrackerTrackingAlgorithm *>(m_Model)->setDataExporter(exporter);
-}
-
 IView *ControllerTrackingAlgorithm::getTrackingParameterWidget()
 {
     return m_View;
@@ -40,9 +35,7 @@ void ControllerTrackingAlgorithm::createModel()
 
 	m_TrackingParameter = new TrackerParameter(this);
 
-	IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
-	QPointer< ControllerAreaDescriptor > ctrArea = qobject_cast<ControllerAreaDescriptor *>(ctr);
-    m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter, m_TrackedTrajectoryMajor, ctrArea->getModel());
+	m_Model = new BioTrackerTrackingAlgorithm(m_TrackingParameter, m_TrackedTrajectoryMajor);
 }
 
 void ControllerTrackingAlgorithm::createView()
@@ -56,6 +49,10 @@ void ControllerTrackingAlgorithm::connectModelToController()
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitCvMatA, this, &ControllerTrackingAlgorithm::receiveCvMatFromTrackingAlgorithm);
     QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitTrackingDone, this, &ControllerTrackingAlgorithm::receiveTrackingDone);
 	QObject::connect(trackingAlg, &BioTrackerTrackingAlgorithm::emitChangeDisplayImage, this, &ControllerTrackingAlgorithm::receiveChangeDisplayImage);
+	QObject::connect(this, &ControllerTrackingAlgorithm::emitAreaDescriptorUpdate, trackingAlg, &BioTrackerTrackingAlgorithm::receiveAreaDescriptorUpdate);
+
+    QObject::connect(static_cast<TrackerParameterView*>(m_View), &TrackerParameterView::parametersChanged, 
+        trackingAlg, &BioTrackerTrackingAlgorithm::receiveParametersChanged);
 
 	//enable the tracker to send video dimension updates to the view via signal
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
@@ -76,4 +73,8 @@ void ControllerTrackingAlgorithm::receiveTrackingDone(uint framenumber)
 
 void ControllerTrackingAlgorithm::receiveChangeDisplayImage(QString str) {
 	Q_EMIT emitChangeDisplayImage(str);
+}
+
+void ControllerTrackingAlgorithm::receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr) {
+	Q_EMIT emitAreaDescriptorUpdate(areaDescr);
 }

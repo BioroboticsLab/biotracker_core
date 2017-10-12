@@ -2,21 +2,15 @@
 
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
-#include "Controller/ControllerAreaDescriptor.h"
 
 PluginContext::PluginContext(QObject *parent) :
 	IBioTrackerContext(parent)
 {
 	QPointer< IController > ComponentController = new ControllerTrackedComponent(this, this, ENUMS::CONTROLLERTYPE::COMPONENT);
 	QPointer< IController > TrackingController = new ControllerTrackingAlgorithm(this, this, ENUMS::CONTROLLERTYPE::TRACKING);
-	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::COMPONENT, ComponentController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TRACKING, TrackingController);
-	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR, AreaDescriptorController); 
-
-	//createAppController();
-	//connectController();
 }
 
 void PluginContext::createAppController()

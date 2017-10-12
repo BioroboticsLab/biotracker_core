@@ -3,7 +3,6 @@
 
 #include "Controller/ControllerTrackingAlgorithm.h"
 #include "Controller/ControllerTrackedComponent.h"
-#include "Controller/ControllerAreaDescriptor.h"
 
 #include "util/singleton.h"
 #include "settings/Settings.h"
@@ -26,10 +25,6 @@ IModel* BioTrackerPlugin::getTrackerComponentModel() {
 	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getModel();
 }
 
-void BioTrackerPlugin::setDataExporter(IModelDataExporter *exporter) {
-	qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->setDataExporter(exporter);
-}
-
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 #endif // QT_VERSION < 0x050000
@@ -45,9 +40,6 @@ void BioTrackerPlugin::createPlugin() {
 	IController * ctr2 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::TRACKING);
 	m_TrackerController = qobject_cast<ControllerTrackingAlgorithm *>(ctr2);
 
-	IController * ctr3 = m_PluginContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
-	m_AreaDescrController = qobject_cast<ControllerAreaDescriptor *>(ctr3);
-
 	connectInterfaces();
 }
 
@@ -62,12 +54,22 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
 
 	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrajectory, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrajectory, Qt::DirectConnection);
+	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrAlg, &ControllerTrackingAlgorithm::receiveAreaDescriptorUpdate);
+
+	//connect this to enable moving of elements -> we need pxtocm() to create new poses
+	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrTrC, &ControllerTrackedComponent::receiveAreaDescriptorUpdate, Qt::DirectConnection);
+
 	QObject::connect(this, &BioTrackerPlugin::emitAddTrajectory, ctrTrC, &ControllerTrackedComponent::receiveAddTrajectory, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitSwapIds, ctrTrC, &ControllerTrackedComponent::receiveSwapIds, Qt::DirectConnection);
 
 
 	QObject::connect(this, &BioTrackerPlugin::emitCurrentFrameNumber, ctrTrC, &ControllerTrackedComponent::receiveCurrentFrameNumber);
+}
+
+
+void BioTrackerPlugin::receiveAreaDescriptor(IModelAreaDescriptor *areaDescr) {
+	Q_EMIT emitAreaDescriptorUpdate(areaDescr);
 }
 
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {

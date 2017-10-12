@@ -51,6 +51,7 @@ void  TrackedElement::setY(float val) {
 	_pose = pnew;
 };
 
+//TODO for all setters from here -> why no _pose = pnew;?
 void  TrackedElement::setRad(float r) {
 	_rad = r;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());

@@ -30,7 +30,8 @@ public:
 	void clear() override;
 	IModelTrackedComponent *getChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
-	int size() override;
+    int size() override;
+    int validCount();
 
 private:
 	QList<IModelTrackedComponent*> m_TrackedComponents;

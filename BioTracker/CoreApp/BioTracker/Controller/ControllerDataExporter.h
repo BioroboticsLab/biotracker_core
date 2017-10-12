@@ -15,8 +15,11 @@ public:
 	// IController interface
 public:
 	void connectControllerToController() override;
+	void setDataStructure(IModel* exp);
 
 	public Q_SLOTS:
+	void receiveTrackingDone(uint frame);
+    void receiveFinalizeExperiment();
 
 protected:
 	void createModel() override;

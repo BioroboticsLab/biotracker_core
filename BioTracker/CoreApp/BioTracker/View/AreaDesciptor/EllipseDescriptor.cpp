@@ -4,29 +4,30 @@
 #include "QPainter"
 #include <QGraphicsSceneHoverEvent>
 
-#include "Model/AreaInfoElement.h"
+#include "Model/AreaDescriptor/AreaInfoElement.h"
 #include "util/misc.h"
 
-EllipseDescriptor::EllipseDescriptor(QGraphicsItem *parent, IController *controller, IModel *model) :
-	AreaDescriptor(parent, controller, model)
+EllipseDescriptor::EllipseDescriptor(IController *controller, IModel *model) :
+	AreaDescriptor(controller, model)
 {
 	setAcceptHoverEvents(true);
 	setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 
-	//_isEllipse = true;
 	_brush = QBrush(Qt::blue);
+
+
+	_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
+	for (int i = 0; i < 4; i++) {
+		std::shared_ptr<QGraphicsRectItem> ri = std::make_shared<QGraphicsRectItem>(QRect(_v[i].x - 10, _v[i].y - 10, 20, 20), this);
+		ri->setBrush(_brush);
+	}
 
 	updateEllipse();
 
-	//_ellipseRotation = 0.0;
 	_isInit = false;
 }
 
 void EllipseDescriptor::init() {
-	_rectificationMarkerOrig->setAcceptHoverEvents(true);
-	_rectificationMarkerOrig->installSceneEventFilter(this);
-	_rectificationMarkerEnd->setAcceptHoverEvents(true);
-	_rectificationMarkerEnd->installSceneEventFilter(this);
 	_rectificationMarkerOrig->setBrush(_brush);
 	_rectificationMarkerEnd->setBrush(_brush);
 }
@@ -51,12 +52,27 @@ void EllipseDescriptor::setBrush(QBrush brush) {
 	_rectificationMarkerEnd->setBrush(_brush);
 }
 
+void EllipseDescriptor::updateRect() {
+	setRect(getRect());
+}
+
 void EllipseDescriptor::setRect(std::vector<cv::Point> rect) {
-	if(rect.size() >= 3){
-		_v = rect;
-		(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(rect);
+	if(rect.size() >= 2){
+		_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
 		updateEllipse();
 	}
+}
+
+void EllipseDescriptor::receiveDragUpdate(BiotrackerTypes::AreaType vectorType, int id, double x, double y) {
+    int atype = (dynamic_cast<AreaInfoElement*>(getModel()))->getAreaType();
+    if (atype == vectorType) {
+        _dragVectorId = id;
+        _drag = QPoint(x, y);        
+    }
+    else {
+        _dragVectorId = -1;
+    }
+    update();
 }
 
 std::vector<cv::Point> EllipseDescriptor::getRect() {
@@ -77,43 +93,21 @@ void EllipseDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 {
 	if (!_isInit)
 		init();
+
+    //TODO remove hardcoding and code duplication
+    if (_dragVectorId > 0) {
+        QColor transparentGray = Qt::gray;
+        transparentGray.setAlphaF(0.75);
+        painter->setPen(QPen(transparentGray, 1, Qt::SolidLine));
+        painter->drawRect(_drag.x(), _drag.y(), 10, 10);
+
+
+        auto fst = _dragVectorId != 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;
+        auto snd = _dragVectorId == 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;;
+        painter->drawEllipse(QRect(fst->rect().x(), fst->rect().y(), _drag.x()-15, _drag.y()-15));
+    }
 }
 
 bool EllipseDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
-	
-	if (event->type() == QEvent::GraphicsSceneMousePress) {
-
-		QGraphicsRectItem *r = dynamic_cast<QGraphicsRectItem *>(watched);
-		if (r && (r == _rectificationMarkerOrig.get() || r == _rectificationMarkerEnd.get())) {
-				QGraphicsSceneMouseEvent *e = (QGraphicsSceneMouseEvent*)event;
-				_watchingDrag = watched;
-				_dragX = e->pos().x();
-				_dragY = e->pos().y();
-		}		
-	}
-	if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-
-		QGraphicsRectItem *r = dynamic_cast<QGraphicsRectItem *>(watched);
-		if (r && (r == _rectificationMarkerOrig.get() || r == _rectificationMarkerEnd.get())) {
-			//Find the one which was dragged
-
-
-			QGraphicsSceneMouseEvent *e = (QGraphicsSceneMouseEvent*)event;
-			int nowX = e->pos().x();
-			int nowY = e->pos().y();
-
-			if (r == _rectificationMarkerOrig.get())
-				_v[0] = cv::Point(nowX, nowY);
-			else
-				_v[1] = cv::Point(nowX, nowY);
-
-
-			(dynamic_cast<AreaInfoElement*>(getModel()))->setVertices(_v);
-
-			Q_EMIT updatedPoints();
-
-			updateEllipse();
-		}
-	}
-	return true;
+	return 1;
 }

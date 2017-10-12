@@ -16,13 +16,15 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<std::size_t>("std::size_t");
     qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<std::vector<boost::filesystem::path>>("std::vector<boost::filesystem::path>");
+    qRegisterMetaType<BiotrackerTypes::AreaType>("BiotrackerTypes::AreaType");
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
     qRegisterMetaType<playerParameters*>("playerParameters*");
 	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
 
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_PLUGINS));
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_VIDEOS));
-	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_TRACKS));
+    boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_TRACKS));
+    boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_SCREENSHOTS));
 
     BioTracker3App bioTracker3(&app);
     GuiContext context(&bioTracker3);

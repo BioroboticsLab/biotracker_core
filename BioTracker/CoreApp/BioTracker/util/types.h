@@ -25,9 +25,27 @@
 #define CFG_DIR_PLUGINS						"./Plugins/"
 #define CFG_DIR_VIDEOS						"./Videos/"
 #define CFG_DIR_TRACKS						"./Tracks/"
-
+#define CFG_DIR_SCREENSHOTS					"./Screenshots/"
 #endif
 
+namespace BiotrackerTypes{
+    enum AreaType {
+        NONE = -1,
+        RECT = 0,
+        APPERTURE = 1,
+        COMBINED = 2
+    };
+
+}
+
+namespace AREADESCRIPTOR
+{
+	const std::string CN_ARENA = "TRACKERPARAM/CN_CORNERS_ARENA";
+	const std::string CN_APPERTURE = "TRACKERPARAM/CN_CORNERS_APPERTURE";
+	const std::string CN_APPERTURE_TYPE = "TRACKERPARAM/CN_CORNERS_APPERTURE_TYPE";
+	const std::string RECT_W = "RECTIFICATION/WIDTH";
+	const std::string RECT_H = "RECTIFICATION/HEIGHT";
+}
 
 
 const std::vector<std::pair<std::string, std::string>> codecList = {

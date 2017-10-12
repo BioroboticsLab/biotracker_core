@@ -2,16 +2,22 @@
 <ui version="4.0">
  <class>CoreParameterView</class>
  <widget class="QWidget" name="CoreParameterView">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>829</height>
+    <width>341</width>
+    <height>833</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -24,8 +30,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>99999</width>
+    <height>99999</height>
    </size>
   </property>
   <property name="palette">
@@ -98,7 +104,7 @@
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -136,9 +142,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>289</width>
-        <height>812</height>
+        <width>341</width>
+        <height>833</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="palette">
        <palette>
@@ -222,491 +234,614 @@
        </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
+         </property>
          <property name="topMargin">
           <number>6</number>
          </property>
-         <item alignment="Qt::AlignHCenter">
-          <widget class="QCheckBox" name="checkBoxEnableCoreView">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-             <underline>false</underline>
-            </font>
-           </property>
-           <property name="text">
-            <string>Enable core visualization</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item>
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QTabWidget" name="tabWidgetParameters">
+           <property name="currentIndex">
+            <number>1</number>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="widgetParameter" native="true">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>100</height>
-            </size>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="leftMargin">
-             <number>2</number>
+           <widget class="QWidget" name="tab_tracker">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="topMargin">
-             <number>5</number>
+            <attribute name="title">
+             <string>tracker</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+           </widget>
+           <widget class="QWidget" name="tab_view">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="rightMargin">
-             <number>2</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QGroupBox" name="groupBoxTracks">
-              <property name="title">
-               <string>Tracks</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <item>
-                <widget class="QPushButton" name="pushButtonSelectAll">
-                 <property name="text">
-                  <string>Select all</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="groupBoxTrackDimensions">
-                 <property name="title">
-                  <string>Dimensions</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_5">
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutTrackWidth">
-                    <item>
-                     <widget class="QLabel" name="labelTrackWidth">
-                      <property name="text">
-                       <string>Width:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSpinBox" name="spinboxTrackWidth"/>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutTrackHeight">
-                    <item>
-                     <widget class="QLabel" name="labelTrackHeight">
-                      <property name="text">
-                       <string>Height:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSpinBox" name="spinBoxTrackHeight"/>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutOrientationLine">
-                    <item>
-                     <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
-                      <property name="text">
-                       <string>Show orientation line</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
-                    <item>
-                     <widget class="QLabel" name="labelTrackDimensionSetter">
-                      <property name="text">
-                       <string>Set for:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
-                      <property name="text">
-                       <string>All tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected">
-                      <property name="text">
-                       <string>Selected tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="groupBoxTracksColor">
-                 <property name="title">
-                  <string>Color</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_7">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout">
-                    <item>
-                     <widget class="QLabel" name="labelFillColor">
-                      <property name="text">
-                       <string>Fill:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonColorChangeBrush">
-                      <property name="text">
-                       <string>All tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonColorchangeBrushSelected">
-                      <property name="text">
-                       <string>Selected tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="borderColor">
-                    <item>
-                     <widget class="QLabel" name="labelBorderColor">
-                      <property name="text">
-                       <string>Border:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonColorChangeBorder">
-                      <property name="text">
-                       <string>All tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonColorChangeBorderSelected">
-                      <property name="text">
-                       <string>Selected tracks</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxTracing">
-              <property name="title">
-               <string>Tracing</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <layout class="QHBoxLayout" name="layoutTracingStyle">
+            <attribute name="title">
+             <string>view</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QScrollArea" name="scrollArea_2">
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustIgnored</enum>
+               </property>
+               <property name="widgetResizable">
+                <bool>false</bool>
+               </property>
+               <widget class="QWidget" name="scrollAreaWidgetContents_2">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>313</width>
+                  <height>884</height>
+                 </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
                  <item>
-                  <widget class="QLabel" name="labelTracingStyle">
-                   <property name="text">
-                    <string>Tracing Style:</string>
+                  <widget class="QWidget" name="widgetParameter" native="true">
+                   <property name="enabled">
+                    <bool>true</bool>
                    </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="comboBoxTracingStyle">
-                   <item>
-                    <property name="text">
-                     <string>None</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Shape</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Path</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>ArrowPath</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="layoutTracingHistory">
-                 <item>
-                  <widget class="QLabel" name="labelTracingHistoryLength">
-                   <property name="text">
-                    <string>Tracing history frames:</string>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="spinBoxTracingHistoryLength">
-                   <property name="wrapping">
-                    <bool>false</bool>
-                   </property>
-                   <property name="value">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="layoutTracingSteps">
-                 <item>
-                  <widget class="QLabel" name="labelTracingSteps">
-                   <property name="text">
-                    <string>Tracing steps:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="spinBoxTracingSteps">
-                   <property name="value">
-                    <number>1</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="layoutTracingTimeDegradation">
-                 <item>
-                  <widget class="QLabel" name="labelTracingTimeDegradation">
-                   <property name="text">
-                    <string>Tracing time degradation:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="comboBoxTracingTimeDegradation">
-                   <item>
-                    <property name="text">
-                     <string>None</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Transparency</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>False color</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="groupBoxTracerDimensions">
-                 <property name="title">
-                  <string>Tracer dimensions</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_8">
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutTracerWidth">
-                    <item>
-                     <widget class="QLabel" name="labelTracerWidth">
-                      <property name="text">
-                       <string>Tracer width:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSpinBox" name="spinBoxTracerwidth"/>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="layoutTracerheight">
-                    <item>
-                     <widget class="QLabel" name="labelTracerHeight">
-                      <property name="text">
-                       <string>Tracer height:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSpinBox" name="spinBoxTracerHeight"/>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="checkBoxTracerOrientationLine">
-                    <property name="text">
-                     <string>Show orientation line</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-              <zorder></zorder>
-              <zorder></zorder>
-              <zorder>horizontalLayoutWidget</zorder>
-              <zorder>groupBoxTracerDimensions</zorder>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxRectificationParm_2">
-              <property name="title">
-               <string>Area Descriptor</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_11">
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout_2">
-                 <item>
-                  <widget class="QLabel" name="labelAreaSize_2">
-                   <property name="text">
-                    <string>Rectification dimensions:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="lineEditRectWidth_2">
-                   <property name="text">
-                    <string>100</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_2">
-                   <property name="maximumSize">
+                   <property name="minimumSize">
                     <size>
-                     <width>10</width>
-                     <height>10</height>
+                     <width>0</width>
+                     <height>100</height>
                     </size>
                    </property>
-                   <property name="text">
-                    <string>x</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="lineEditRectHeight_2">
-                   <property name="text">
-                    <string>100</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_cm_2">
-                   <property name="maximumSize">
-                    <size>
-                     <width>15</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>cm</string>
-                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_6">
+                    <property name="leftMargin">
+                     <number>5</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>5</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>5</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>5</number>
+                    </property>
+                    <item alignment="Qt::AlignHCenter">
+                     <widget class="QCheckBox" name="checkBoxEnableCoreView">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                        <underline>false</underline>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Enable core visualization</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="Line" name="line">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QGroupBox" name="groupBox_2">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="title">
+                       <string>Tracks</string>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_3">
+                       <item>
+                        <widget class="QPushButton" name="pushButtonSelectAll">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="text">
+                          <string>Select all</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QGroupBox" name="groupBoxTrackDimensions">
+                         <property name="title">
+                          <string>Dimensions</string>
+                         </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_8">
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutTrackWidth_2">
+                            <item>
+                             <widget class="QLabel" name="labelTrackWidth_2">
+                              <property name="text">
+                               <string>Width:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="spinboxTrackWidth_2">
+                              <property name="minimum">
+                               <number>1</number>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutTrackHeight_2">
+                            <item>
+                             <widget class="QLabel" name="labelTrackHeight_2">
+                              <property name="text">
+                               <string>Height:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="spinBoxTrackHeight_2">
+                              <property name="minimum">
+                               <number>1</number>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutOrientationLine_2">
+                            <item>
+                             <widget class="QCheckBox" name="checkBoxTrackOrientationLine_2">
+                              <property name="text">
+                               <string>Show orientation line</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutTrackDimensionSetter_2">
+                            <item>
+                             <widget class="QLabel" name="labelTrackDimensionSetter_2">
+                              <property name="text">
+                               <string>Set for:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll_2">
+                              <property name="text">
+                               <string>All tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected_2">
+                              <property name="text">
+                               <string>Selected tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QGroupBox" name="groupBoxTracksColor">
+                         <property name="title">
+                          <string>Color</string>
+                         </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_7">
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout">
+                            <item>
+                             <widget class="QLabel" name="labelFillColor">
+                              <property name="text">
+                               <string>Fill:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonColorChangeBrush">
+                              <property name="text">
+                               <string>All tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonColorchangeBrushSelected">
+                              <property name="text">
+                               <string>Selected tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="borderColor">
+                            <item>
+                             <widget class="QLabel" name="labelBorderColor">
+                              <property name="text">
+                               <string>Border:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonColorChangeBorder">
+                              <property name="text">
+                               <string>All tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="pushButtonColorChangeBorderSelected">
+                              <property name="text">
+                               <string>Selected tracks</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QGroupBox" name="groupBoxTracing">
+                      <property name="title">
+                       <string>Tracing</string>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_4">
+                       <item>
+                        <layout class="QHBoxLayout" name="layoutTracingStyle">
+                         <item>
+                          <widget class="QLabel" name="labelTracingStyle">
+                           <property name="text">
+                            <string>Tracing Style:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QComboBox" name="comboBoxTracingStyle">
+                           <item>
+                            <property name="text">
+                             <string>None</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Shape</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Path</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>ArrowPath</string>
+                            </property>
+                           </item>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="layoutTracingHistory">
+                         <item>
+                          <widget class="QLabel" name="labelTracingHistoryLength">
+                           <property name="text">
+                            <string>Tracing history frames:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QSpinBox" name="spinBoxTracingHistoryLength">
+                           <property name="wrapping">
+                            <bool>false</bool>
+                           </property>
+                           <property name="minimum">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <number>1000000</number>
+                           </property>
+                           <property name="value">
+                            <number>10</number>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="layoutTracingSteps">
+                         <item>
+                          <widget class="QLabel" name="labelTracingSteps">
+                           <property name="text">
+                            <string>Tracing steps:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QSpinBox" name="spinBoxTracingSteps">
+                           <property name="minimum">
+                            <number>1</number>
+                           </property>
+                           <property name="value">
+                            <number>1</number>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="layoutTracingTimeDegradation">
+                         <item>
+                          <widget class="QLabel" name="labelTracingTimeDegradation">
+                           <property name="text">
+                            <string>Tracing time degradation:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QComboBox" name="comboBoxTracingTimeDegradation">
+                           <item>
+                            <property name="text">
+                             <string>None</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Transparency</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>False color</string>
+                            </property>
+                           </item>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="QGroupBox" name="groupBoxTracerDimensions">
+                         <property name="title">
+                          <string>Tracer dimensions</string>
+                         </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_10">
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutTracerWidth">
+                            <item>
+                             <widget class="QLabel" name="labelTracerWidth">
+                              <property name="text">
+                               <string>Tracer width:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="spinBoxTracerwidth">
+                              <property name="minimum">
+                               <number>1</number>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="layoutTracerheight">
+                            <item>
+                             <widget class="QLabel" name="labelTracerHeight">
+                              <property name="text">
+                               <string>Tracer height:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="spinBoxTracerHeight">
+                              <property name="minimum">
+                               <number>1</number>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxTracerOrientationLine">
+                            <property name="text">
+                             <string>Show orientation line</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                      </layout>
+                      <zorder></zorder>
+                      <zorder></zorder>
+                      <zorder>groupBoxTracerDimensions</zorder>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QGroupBox" name="groupBoxRectificationParm">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="title">
+                       <string>Area descriptor</string>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_9">
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout">
+                         <item>
+                          <widget class="QLabel" name="labelAreaSize">
+                           <property name="text">
+                            <string>Rectification dimensions:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="lineEditRectWidth">
+                           <property name="text">
+                            <string>100</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label">
+                           <property name="maximumSize">
+                            <size>
+                             <width>10</width>
+                             <height>10</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>x</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="lineEditRectHeight">
+                           <property name="text">
+                            <string>100</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_cm">
+                           <property name="maximumSize">
+                            <size>
+                             <width>15</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>cm</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkBoxDisplayTrackingArea">
+                         <property name="text">
+                          <string>Display tracking area definition</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkBoxDisplayRectification">
+                         <property name="text">
+                          <string>Display Rectification definition</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkboxTrackingAreaAsEllipse">
+                         <property name="text">
+                          <string>Tracking area as ellipse</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QGroupBox" name="groupBoxMiscellaneous">
+                      <property name="title">
+                       <string>Miscellaneous</string>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_11">
+                       <item>
+                        <widget class="QCheckBox" name="checkBoxAntialiasing">
+                         <property name="text">
+                          <string>Enable antialiasing</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="checkBoxExpertOptions">
+                      <property name="text">
+                       <string>Enable expert options</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonFinalizeExperiment">
+                      <property name="text">
+                       <string>Finalize experiment</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer_2">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxDisplayTrackingArea_2">
-                 <property name="text">
-                  <string>Display tracking area definition</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxDisplayRectification_2">
-                 <property name="text">
-                  <string>Display Rectification definition</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkboxTrackingAreaAsEllipse_2">
-                 <property name="text">
-                  <string>Tracking area as ellipse</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxMiscellaneous">
-              <property name="title">
-               <string>Miscellaneous</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <item>
-                <widget class="QCheckBox" name="checkBoxAntialiasing">
-                 <property name="text">
-                  <string>Enable antialiasing</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButtonFinalizeExperiment">
-              <property name="text">
-               <string>Finalize experiment</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBoxExpertOptions">
-              <property name="text">
-               <string>Enable expert options</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>

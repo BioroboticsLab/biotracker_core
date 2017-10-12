@@ -29,13 +29,13 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_tracingStyle = "None";
 	m_tracingShapeTransparent = true;
 	m_tracingShapeFalse = false;
-	m_tracingLength = 0;
+	m_tracingLength = 10;
 	m_tracingLayer = new QGraphicsRectItem(this);
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
 	m_currentFramenumber = 0;
-	m_tracingSteps = 0;
+	m_tracingSteps = 1;
 	m_angleLine = true;
 	m_rotation = 0;
 
@@ -94,6 +94,12 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
+
+    //TODO Jonas check if these are always sane
+    assert(m_tracingSteps > 0);
+    int tracingSteps = std::max(m_tracingSteps, 1);
+    if (m_currentFramenumber <= 0)
+        return;
 
 	//TODO integrate to expert options
 	if (m_antialiasing) {
@@ -162,7 +168,9 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	//	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
 	//	QPoint currentPoint = QPoint(currentChild->getX(), currentChild->getY());
 
-	//	QPoint lastPointDifference = QPoint(0,0) + QPoint(m_h/2, m_w/2);
+				for (int i = 1; i <= m_tracingLength; i+= tracingSteps) {
+					qDebug() << this->getId();
+					if (i <= m_currentFramenumber) {
 
 	//	for (int i = 1; i <= m_tracingLength; i+=m_tracingSteps) {
 	//		if (i <= m_currentFramenumber) {
@@ -250,14 +258,14 @@ bool ComponentShape::updatePosition(uint framenumber)
 	m_currentFramenumber = framenumber;
 
 	if (!m_trajectory) {
-		qDebug() << "trajectory not existant, delete child" << m_id ;
+		//printf("trajectory not existant, delete child %i...\n", m_id);
 		delete this;
 		return false;
 	}
-	if (m_trajectory->size() != 0) {
+	if (m_trajectory->size() != 0 && m_trajectory->getValid()) {
 
-		//update width and height for the lastest tracked component
-		updateAttributes();
+		//update width and height for the latest tracked component
+		updateAttributes(); 
 
 		//for each point-like (point, rectangle, ellipse)
 		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
@@ -294,7 +302,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 		}
 	}
 	else {
-		qDebug() << "trajectory empty, delete child" << m_id;
+		//printf("trajectory empty, delete child%i...\n", m_id);
 		delete this;
 		return false;
 	}
@@ -574,7 +582,7 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
 	QMenu menu;
-
+	
 	// create the info box
 	QWidgetAction* infoBox = new QWidgetAction(this);
 
@@ -660,7 +668,7 @@ bool ComponentShape::removeShape()
 		qDebug() << "Removing shape...";
 
 		//emit to set trajectory invalid 
-		emitRemoveTrajectory(m_trajectory);
+		Q_EMIT emitRemoveTrajectory(m_trajectory);
 		//hide this shape
 		this->hide();
 	}
@@ -695,17 +703,20 @@ void ComponentShape::unmarkShape()
 void ComponentShape::receiveTracingLength(int tracingLength)
 {
 	m_tracingLength = tracingLength;
+	trace();
 	update();
 }
 
 void ComponentShape::receiveTracingStyle(QString style)
 {
 	m_tracingStyle = style;
+	trace();
 	update();
 }
 
 void ComponentShape::receiveTracingSteps(int steps)
 {
 	m_tracingSteps = steps;
+	trace();
 	update();
 }

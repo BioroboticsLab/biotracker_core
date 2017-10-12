@@ -173,6 +173,28 @@ int MediaPlayer::reopenVideoWriter() {
 	return m_recd;
 }
 
+void MediaPlayer::takeScreenshot(GraphicsView *gv) {
+    //TODO duplicated code
+    QRectF rscene = gv->sceneRect(); //0us
+    QRectF rview = gv->rect(); //0us
+    QPixmap *pix;
+    if (!m_recordScaled)
+        pix = new QPixmap(rscene.size().toSize()); //17us
+    else
+        pix = new QPixmap(rview.size().toSize()); //17us
+
+    QPainter *paint = new QPainter(pix); //21us
+
+    if (!m_recordScaled)
+        gv->scene()->render(paint); //8544us
+    else
+        gv->render(paint);
+
+    QImage image = pix->toImage(); //8724us
+
+    image.save(getTimeAndDate(CFG_DIR_SCREENSHOTS+std::string("/Screenshot"), ".png").c_str());
+}
+
 void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
     m_Back = param->m_Back;

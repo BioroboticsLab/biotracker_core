@@ -3,7 +3,8 @@
 
 #include "Interfaces/IController/IController.h"
 #include "QPoint"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 
 class ControllerTrackedComponent : public IController
 {
@@ -22,6 +23,8 @@ public Q_SLOTS:
 		void receiveCurrentFrameNumber(uint framenumber);
 
 
+		void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
+
 	// IController interface
 protected:
 	void createModel() override;
@@ -31,6 +34,7 @@ protected:
 
 	//members
 	int m_currentFrameNumber;
+	IModelAreaDescriptor* m_areaDescr;
 };
 
 #endif // CONTROLLERTRACKEDCOMPONENT_H

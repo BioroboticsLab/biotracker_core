@@ -84,6 +84,12 @@ int ControllerPlayer::recordInput() {
 	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordImageStream();
 }
 
+void ControllerPlayer::takeScreenshot() {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+    QPointer< ControllerGraphicScene > ctrTextureObject = qobject_cast<ControllerGraphicScene*>(ctr);
+    return qobject_cast<MediaPlayer*>(m_Model)->takeScreenshot(dynamic_cast<GraphicsView *>(ctrTextureObject->getView()));
+}
+
 void ControllerPlayer::setTrackingActivated() {
     qobject_cast<MediaPlayer*>(m_Model)->setTrackingActive();
 }

@@ -17,6 +17,8 @@ public:
 	explicit CoreParameterView(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
 	~CoreParameterView();
 
+	QWidget* getTrackerHook();
+
 	private slots:
 	void on_checkBoxEnableCoreView_stateChanged(int v);
 	void on_comboBoxTracingStyle_currentIndexChanged(const QString & text);
@@ -28,11 +30,18 @@ public:
 	void on_pushButtonColorChangeBrush_clicked();
 	void on_pushButtonColorchangeBrushSelected_clicked();
 
+	void on_lineEditRectWidth_textChanged(QString s);
+	void on_lineEditRectHeight_textChanged(QString s);
+	void on_checkBoxDisplayTrackingArea_stateChanged(int v);
+	void on_checkBoxDisplayRectification_stateChanged(int v);
+	void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
+    void on_pushButtonFinalizeExperiment_clicked();
+
 public:
 	signals :
-			void emitSelectAllTracks();
-			void emitViewSwitch(bool lever);
-			void emitSelectAll();
+            void emitSelectAllTracks();
+            void emitViewSwitch(bool lever);
+            void emitSelectAll();
 			void emitColorChangeBorderAll();
 			void emitColorChangeBorderSelected();
 			void emitColorChangeBrushAll();
@@ -41,6 +50,12 @@ public:
 			void emitTracingStyle(QString style);
 			void emitTracingSteps(int steps);
 
+			void emitRectDimensions(double w, double h);
+			void emitDisplayTrackingArea(bool b);
+			void emitDisplayRectification(bool b);
+            void emitTrackingAreaAsEllipse(bool b);
+
+            void emitFinalizeExperiment();
 private:
 	Ui::CoreParameterView *ui;
 

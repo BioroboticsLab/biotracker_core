@@ -11,10 +11,10 @@
 #include "Interfaces/IModel/IModelDataExporter.h"
 #include "Model/TrackedComponents/TrackedElement.h"
 #include "Model/TrackedComponents/TrackedTrajectory.h"
-#include "Model/AreaInfo.h"
 #include "Model/TrackingAlgorithm/imageProcessor/detector/blob/cvBlob/BlobsDetector.h"
 #include "Model/TrackingAlgorithm/imageProcessor/preprocessor/ImagePreProcessor.h"
 #include "Model/TrackingAlgorithm/NN2dMapper.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include <iostream>
 
 #include "Model/Network/TcpListener.h"
@@ -23,10 +23,8 @@ class BioTrackerTrackingAlgorithm : public IModelTrackingAlgorithm
 {
     Q_OBJECT
 public:
-    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory, IModel* areaInfo);
+    BioTrackerTrackingAlgorithm(IModel* parameter, IModel* trajectory);
 	~BioTrackerTrackingAlgorithm();
-
-	void setDataExporter(IModelDataExporter *exporter);
 
 Q_SIGNALS:
     void emitCvMatA(std::shared_ptr<cv::Mat> image, QString name);
@@ -35,19 +33,20 @@ Q_SIGNALS:
 
     // ITrackingAlgorithm interface
 public Q_SLOTS:
-	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override; 
+	void doTracking(std::shared_ptr<cv::Mat> image, uint framenumber) override;
+	void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
+    void receiveParametersChanged();
 
 private:
 	void refreshPolygon();
+    void sendSelectedImage(std::map<std::string, std::shared_ptr<cv::Mat>>* images);
 
 	std::vector<FishPose> getLastPositionsAsPose();
 	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
 	TrackerParameter* _TrackingParameter;
-	AreaInfo* _AreaInfo;
-
-	IModelDataExporter *_exporter;
+	IModelAreaDescriptor* _AreaInfo;
 
 	TcpListener* _listener;
 
@@ -64,6 +63,9 @@ private:
 
 	int _imageX;
 	int _imageY;
+
+    std::shared_ptr<cv::Mat> _lastImage;
+    uint _lastFramenumber;
 };
 
 #endif // BIOTRACKERTRACKINGALGORITHM_H
