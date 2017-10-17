@@ -367,8 +367,12 @@ void ComponentShape::trace()
 		QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
 
 		for (int i = 1; i <= m_tracingLength; i += m_tracingSteps) {
-			if (i <= m_currentFramenumber) {
-
+			
+			//comment why?
+			if (i >= m_currentFramenumber){
+				continue;
+			}
+			
 				IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
 				if (historyChild) {
 
@@ -383,10 +387,10 @@ void ComponentShape::trace()
 						QBrush timeDegradationBrush = QBrush(m_brushColor);
 
 						if (m_tracingTimeDegradation == "Transparency") {
-							QColor timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (255.0f - (255.0f / (float)m_tracingLength) * i));
+							QColor timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
 							timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
 
-							QColor timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (255.0f - (255.0f / (float)m_tracingLength) * i));
+							QColor timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
 							timeDegradationBrush = QBrush(timeDegradationBrushColor);
 
 						}
@@ -485,7 +489,7 @@ void ComponentShape::trace()
 						lastPointDifference = adjustedHistoryPointDifference;
 					}
 				}
-			}
+			
 		}
 	}
 }
