@@ -44,17 +44,34 @@ public slots:
 	void removeTrajectories();
 	// update shapes when receiving tracking done
 	void updateShapes(uint framenumber);
-
+	//Move Tracks
 	void receiveBroadcastMove();
 	void receiveViewSwitch(bool lever);
+	//Select all tracks
 	void receiveSelectAll();
+	//Track dimensions
+	void receiveTrackDimensionsAll(int width, int height);
+	void receiveTrackDimensionsSelected(int width, int height);
+	void receiveTrackOrientationLine(bool toggle);
+	void receiveTrackDimensionsSetDefault();
+	//Track color
 	void receiveColorChangeBorderAll();
 	void receiveColorChangeBorderSelected();
 	void receiveColorChangeBrushAll();
 	void receiveColorChangeBrushSelected();
+	//Tracing
 	void receiveTracingHistoryLength(int history);
 	void receiveTracingStyle(QString style);
 	void receiveTracingSteps(int steps);
+	void receiveTracingTimeDegradation(QString degradation);
+	//Tracing dimensions
+	void receiveTracerWidth(int width);
+	void receiveTracerHeight(int height);
+	void receiveTracerOrientationLine(bool toggle);
+
+	//Visual
+	void receiveToggleAntialiasing(bool toggle);
+
 
 public:
 	void setNewModel(IModel *model) override { setModel(model); };

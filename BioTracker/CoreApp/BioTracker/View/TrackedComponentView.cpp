@@ -306,6 +306,54 @@ void TrackedComponentView::receiveViewSwitch(bool lever)
 	this->setVisible(lever);
 }
 
+void TrackedComponentView::receiveTrackDimensionsAll(int width, int height)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveDimensions(width, height);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackDimensionsSelected(int width, int height)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape && childShape->isSelected()) {
+			childShape->receiveDimensions(width, height);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackOrientationLine(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveToggleOrientationLine(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackDimensionsSetDefault()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->setDimensionsToDefault();
+		}
+	}
+}
+
 void TrackedComponentView::receiveTracingSteps(int steps)
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
@@ -338,6 +386,18 @@ void TrackedComponentView::receiveTracingHistoryLength(int history)
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
 			childShape->receiveTracingLength(history);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracingTimeDegradation(QString degradation)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracingTimeDegradation(degradation);
 		}
 	}
 }
@@ -491,3 +551,51 @@ void TrackedComponentView::removeTrajectories()
 //	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrTrCompView, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
 //	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), ctrTrCompView, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
 //}
+
+void TrackedComponentView::receiveTracerWidth(int width)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerWidth(width);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracerHeight(int height)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerHeight(height);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracerOrientationLine(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerOrientationLine(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveToggleAntialiasing(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveAntialiasing(toggle);
+		}
+	}
+}

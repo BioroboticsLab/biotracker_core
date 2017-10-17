@@ -34,14 +34,29 @@ void ControllerCoreParameter::connectControllerToController()
 		TrackedComponentView* tcview = static_cast<TrackedComponentView*>(vv);
 
 		QObject::connect(view, &CoreParameterView::emitViewSwitch, tcview, &TrackedComponentView::receiveViewSwitch, Qt::DirectConnection);
+		//Tracks
 		QObject::connect(view, &CoreParameterView::emitSelectAll, tcview, &TrackedComponentView::receiveSelectAll, Qt::DirectConnection);
+		//Track dimensions
+		QObject::connect(view, &CoreParameterView::emitTrackOrientationLine, tcview, &TrackedComponentView::receiveTrackOrientationLine, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrackDimensionsAll, tcview, &TrackedComponentView::receiveTrackDimensionsAll, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrackDimensionsSelected, tcview, &TrackedComponentView::receiveTrackDimensionsSelected, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrackDimensionsSetDefault, tcview, &TrackedComponentView::receiveTrackDimensionsSetDefault, Qt::DirectConnection);
+		//Track color
 		QObject::connect(view, &CoreParameterView::emitColorChangeBorderAll, tcview, &TrackedComponentView::receiveColorChangeBorderAll, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitColorChangeBorderSelected, tcview, &TrackedComponentView::receiveColorChangeBorderSelected, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitColorChangeBrushAll, tcview, &TrackedComponentView::receiveColorChangeBrushAll, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitColorChangeBrushSelected, tcview, &TrackedComponentView::receiveColorChangeBrushSelected, Qt::DirectConnection);
+		//Tracing
 		QObject::connect(view, &CoreParameterView::emitTracingHistoryLength, tcview, &TrackedComponentView::receiveTracingHistoryLength, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracingStyle, tcview, &TrackedComponentView::receiveTracingStyle, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracingSteps, tcview, &TrackedComponentView::receiveTracingSteps, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTracingTimeDegradation, tcview, &TrackedComponentView::receiveTracingTimeDegradation, Qt::DirectConnection);
+		//Tracing dimensions
+		QObject::connect(view, &CoreParameterView::emitTracerWidth, tcview, &TrackedComponentView::receiveTracerWidth, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTracerHeight, tcview, &TrackedComponentView::receiveTracerHeight, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTracerOrientationLine, tcview, &TrackedComponentView::receiveTracerOrientationLine, Qt::DirectConnection);
+		//Misc
+		QObject::connect(view, &CoreParameterView::emitToggleAntialiasing, tcview, &TrackedComponentView::receiveToggleAntialiasing, Qt::DirectConnection);
 	}
 	//Connections to the AreaDescriptor
 	{

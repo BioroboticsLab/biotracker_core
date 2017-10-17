@@ -32,11 +32,23 @@ public:
 
 public:
 	bool m_viewSwitch;
+	bool m_antialiasing;
+	//Tracing
 	QString m_tracingStyle;
 	int m_tracingHistory;
 	int m_tracingSteps;
+	QString m_tracingTimeDegradation;
+	int m_tracerWidth;
+	int m_tracerHeight;
+	bool m_tracerOrientationLine;
+	//Track dimensions
+	int m_trackWidth;
+	int m_trackHeight;
+	bool m_trackOrientationLine;
+	//Track color
 	QColor* m_colorBorder;
 	QColor* m_colorBrush;
+
 };
 
 #endif // COREPARAMETER_H

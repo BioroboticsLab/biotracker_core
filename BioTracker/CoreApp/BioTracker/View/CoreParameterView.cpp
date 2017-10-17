@@ -32,8 +32,17 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
 	coreParams->m_viewSwitch = ui->checkBoxEnableCoreView->isChecked();
+
+	//TODO do this the other way around!
+	//tracing
 	coreParams->m_tracingStyle = ui->comboBoxTracingStyle->currentText();
 	coreParams->m_tracingHistory = ui->spinBoxTracingHistoryLength->value();
+	coreParams->m_tracingSteps = ui->spinBoxTracingSteps->value();
+	coreParams->m_tracingTimeDegradation = ui->comboBoxTracingTimeDegradation->currentText();
+	coreParams->m_tracerWidth = ui->spinBoxTracerWidth->value();
+	coreParams->m_tracerHeight = ui->spinBoxTracerHeight->value();
+	coreParams->m_tracerOrientationLine = ui->checkBoxTracerOrientationLine->isChecked();
+
 	//TODO  colors
 	coreParams->m_tracingSteps = ui->spinBoxTracingSteps->value();
 	coreParams->m_colorBorder = new QColor();
@@ -66,7 +75,6 @@ void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v)
 		ui->widgetParameter->setEnabled(true);
 		emitViewSwitch(true);
 		coreParams->m_viewSwitch = true;
-
 	}
 }
 
@@ -89,6 +97,34 @@ void CoreParameterView::on_spinBoxTracingSteps_valueChanged(int i)
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	coreParams->m_tracingSteps = i;
 	emitTracingSteps(i);
+}
+
+void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_tracingTimeDegradation = text;
+	emitTracingTimeDegradation(text);
+}
+
+void CoreParameterView::on_spinBoxTracerWidth_valueChanged(int width)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_tracerWidth = width;
+	emitTracerWidth(width);
+}
+
+void CoreParameterView::on_spinBoxTracerHeight_valueChanged(int height)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_tracerHeight = height;
+	emitTracerHeight(height);
+}
+
+void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_tracerOrientationLine = toggle;
+	emitTracerOrientationLine(toggle);
 }
 
 void CoreParameterView::on_pushButtonSelectAll_clicked()
@@ -115,12 +151,37 @@ void CoreParameterView::on_pushButtonColorchangeBrushSelected_clicked()
 	emitColorChangeBrushSelected();
 }
 
-void CoreParameterView::getNotified()
+void CoreParameterView::on_checkBoxTrackOrientationLine_stateChanged(int v)
 {
-	qDebug() << "Core parameter notified";
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_trackOrientationLine = v;
+	emitTracerOrientationLine(v);
 }
 
+// if dimensions are set for all tracks they are going to be set for new tracks aswell
+void CoreParameterView::on_pushButtonTrackDimensionSetterAll_clicked()
+{
+	int width = ui->spinboxTrackWidth->value();
+	int height = ui->spinBoxTrackHeight->value();
 
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_trackWidth = width;
+	coreParams->m_trackHeight = height;
+
+	emitTrackDimensionsAll(width, height);
+}
+
+void CoreParameterView::on_pushButtonTrackDimensionSetterSelected_clicked()
+{
+	int width = ui->spinboxTrackWidth->value();
+	int height = ui->spinBoxTrackHeight->value();
+	emitTrackDimensionsSelected(width, height);
+}
+
+void CoreParameterView::on_pushButtonTrackDefaultDimensions_clicked()
+{
+	emitTrackDimensionsSetDefault();
+}
 
 void CoreParameterView::on_lineEditRectWidth_textChanged(QString s) {
 	double w = ::atof(ui->lineEditRectWidth->text().toStdString().c_str());
@@ -148,5 +209,30 @@ void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
 
 void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
     Q_EMIT emitFinalizeExperiment();
+}
+
+void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
+{
+	//TODO HIDE STUFF HERE, NOT ALL STUFF 
+
+	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
+		ui->widgetParameter->hide();
+	}
+	//enable
+	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
+		ui->widgetParameter->show();
+	}
+}
+
+void CoreParameterView::on_checkBoxAntialiasing_stateChanged(int v)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_antialiasing = v;
+	emitToggleAntialiasing(v);
+}
+
+void CoreParameterView::getNotified()
+{
+	qDebug() << "Core parameter notified";
 }
 

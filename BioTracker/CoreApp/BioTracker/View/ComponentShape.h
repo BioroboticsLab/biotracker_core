@@ -45,9 +45,22 @@ class ComponentShape : public QGraphicsObject
 		bool removeShape();
 		void markShape(int penwidth = 0);
 		void unmarkShape();
+
+		//Tracing
 		void receiveTracingLength(int tracingLength);
 		void receiveTracingStyle(QString style);
 		void receiveTracingSteps(int steps);
+		void receiveTracingTimeDegradation(QString timeDegradation);
+		void receiveTracerWidth(int width);
+		void receiveTracerHeight(int height);
+		void receiveTracerOrientationLine(bool toggle);
+		//Visual
+		void receiveAntialiasing(bool toggle);
+		//Dimensions
+		void receiveDimensions(int width, int height);
+		void setDimensionsToDefault();
+		void receiveToggleOrientationLine(bool toggle);
+
 
 	protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -87,8 +100,12 @@ class ComponentShape : public QGraphicsObject
 		bool m_tracingShapeFalse;
 		int m_tracingLength;
 		int m_tracingSteps;
+		QString m_tracingTimeDegradation;
 		QGraphicsRectItem* m_tracingLayer;
-		bool m_angleLine;
+		int m_tracerWidth;
+		int	m_tracerHeight;
+		bool m_tracingOrientationLine;
+		bool m_orientationLine;
 };
 
 
