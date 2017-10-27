@@ -164,9 +164,7 @@ void TrackedComponentView::createChildShapesAtStart() {
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
 
-				newShape->receiveTracingLength(coreParams->m_tracingHistory);
-				newShape->receiveTracingStyle(coreParams->m_tracingStyle);
-				newShape->receiveTracingSteps(coreParams->m_tracingSteps);
+				newShape->setMembers(coreParams);
 				
 				//TODO bad code clean up
 				//IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(trajectory->getLastChild());
@@ -282,7 +280,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	}
 }
 // gets triggered when one or more shape is moved; emits move signal to tracker for all selected shapes
-// TODO: this way cause i don't see a better way to get drop-event for not clicked shapes (they dont get mouseevents if multiple shapes are selected)
+// TODO this way cause i don't see a better way to get drop-event for not clicked shapes (they dont get mouseevents if multiple shapes are selected)
 void TrackedComponentView::receiveBroadcastMove()
 {
 	QList<QGraphicsItem *> allSelectedItems = this->scene()->selectedItems();
@@ -301,6 +299,8 @@ void TrackedComponentView::receiveBroadcastMove()
 	}
 }
 
+
+//TODO make area descriptor invisible too
 void TrackedComponentView::receiveViewSwitch(bool lever)
 {
 	this->setVisible(lever);
@@ -552,26 +552,14 @@ void TrackedComponentView::removeTrajectories()
 //	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), ctrTrCompView, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
 //}
 
-void TrackedComponentView::receiveTracerWidth(int width)
+void TrackedComponentView::receiveTracerProportions(float proportion)
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
-			childShape->receiveTracerWidth(width);
-		}
-	}
-}
-
-void TrackedComponentView::receiveTracerHeight(int height)
-{
-	QList<QGraphicsItem*> childrenItems = this->childItems();
-	QGraphicsItem* childItem;
-	foreach(childItem, childrenItems) {
-		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
-		if (childShape) {
-			childShape->receiveTracerHeight(height);
+			childShape->receiveTracerProportions(proportion);
 		}
 	}
 }

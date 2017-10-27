@@ -28,8 +28,7 @@ public:
 	void on_spinBoxTracingSteps_valueChanged(int i);
 	void on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text);
 
-	void on_spinBoxTracerWidth_valueChanged(int width);
-	void on_spinBoxTracerHeight_valueChanged(int height);
+	void on_spinBoxTracerProportions_valueChanged(double proportions);
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
 
 	//Track - select all
@@ -46,7 +45,7 @@ public:
 
 	void on_pushButtonTrackDimensionSetterAll_clicked();
 	void on_pushButtonTrackDimensionSetterSelected_clicked();
-	void on_pushButtonTrackDefaultDimensions_clicked();
+	void on_pushButtonDefaultDimensions_clicked();
 
 	//Area descriptor
 	void on_lineEditRectWidth_textChanged(QString s);
@@ -85,8 +84,7 @@ public:
 			void emitTracingSteps(int steps);
 			void emitTracingTimeDegradation(QString degradation);
 			//Tracing dimensions
-			void emitTracerWidth(int width);
-			void emitTracerHeight(int height);
+			void emitTracerProportions(float proportion);
 			void emitTracerOrientationLine(bool toggle);
 
 			//Area descriptor
@@ -109,6 +107,7 @@ private:
 	public slots:
 
 	void getNotified();
+	void fillUI();
 };
 
 #endif // COREPARAMETERVIEW_H

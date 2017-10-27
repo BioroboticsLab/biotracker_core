@@ -8,6 +8,7 @@
 #include "qgraphicsitem.h"
 #include "View/TrackedComponentView.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "Model/CoreParameter.h"
 
 
 class ComponentShape : public QGraphicsObject
@@ -31,6 +32,7 @@ class ComponentShape : public QGraphicsObject
 		bool isSwappable();
 		bool isRemovable();
 		void trace();
+		void setMembers(CoreParameter* coreParams);
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -51,8 +53,7 @@ class ComponentShape : public QGraphicsObject
 		void receiveTracingStyle(QString style);
 		void receiveTracingSteps(int steps);
 		void receiveTracingTimeDegradation(QString timeDegradation);
-		void receiveTracerWidth(int width);
-		void receiveTracerHeight(int height);
+		void receiveTracerProportions(float proportion);
 		void receiveTracerOrientationLine(bool toggle);
 		//Visual
 		void receiveAntialiasing(bool toggle);
@@ -71,6 +72,8 @@ class ComponentShape : public QGraphicsObject
 		void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 	private:
+
+		//Member
 		QGraphicsObject *m_parent;
 		std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
 		bool m_pMovable;
@@ -86,6 +89,7 @@ class ComponentShape : public QGraphicsObject
 		int m_wDefault;
 		int m_h;
 		int m_hDefault;
+		bool m_useDefaultDimensions;
 		float m_rotation;
 		QColor m_penColor;
 		QColor m_penColorLast;
@@ -96,14 +100,11 @@ class ComponentShape : public QGraphicsObject
 		bool m_dragged;
 		QPoint m_mousePressPos;
 		QString m_tracingStyle;
-		bool m_tracingShapeTransparent;
-		bool m_tracingShapeFalse;
 		int m_tracingLength;
 		int m_tracingSteps;
 		QString m_tracingTimeDegradation;
 		QGraphicsRectItem* m_tracingLayer;
-		int m_tracerWidth;
-		int	m_tracerHeight;
+		float m_tracerProportions;
 		bool m_tracingOrientationLine;
 		bool m_orientationLine;
 };

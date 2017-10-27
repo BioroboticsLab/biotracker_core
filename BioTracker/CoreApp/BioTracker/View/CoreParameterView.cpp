@@ -25,28 +25,15 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 
 	//BioCore::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
 	//int v = _settings->getValueOrDefault<int>(TRACKERPARAM::CN_APPERTURE_TYPE, 0);
-	ui->checkBoxEnableCoreView->setChecked(true);
-	ui->spinBoxTracingHistoryLength->setMinimum(0);
-	ui->spinBoxTracingHistoryLength->setMaximum(1000);
+	//ui->checkBoxEnableCoreView->setChecked(true);
+	//ui->spinBoxTracingHistoryLength->setMinimum(0);
+	//ui->spinBoxTracingHistoryLength->setMaximum(1000);
+
+	
 
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
-	coreParams->m_viewSwitch = ui->checkBoxEnableCoreView->isChecked();
-
-	//TODO do this the other way around!
-	//tracing
-	coreParams->m_tracingStyle = ui->comboBoxTracingStyle->currentText();
-	coreParams->m_tracingHistory = ui->spinBoxTracingHistoryLength->value();
-	coreParams->m_tracingSteps = ui->spinBoxTracingSteps->value();
-	coreParams->m_tracingTimeDegradation = ui->comboBoxTracingTimeDegradation->currentText();
-	coreParams->m_tracerWidth = ui->spinBoxTracerWidth->value();
-	coreParams->m_tracerHeight = ui->spinBoxTracerHeight->value();
-	coreParams->m_tracerOrientationLine = ui->checkBoxTracerOrientationLine->isChecked();
-
-	//TODO  colors
-	coreParams->m_tracingSteps = ui->spinBoxTracingSteps->value();
-	coreParams->m_colorBorder = new QColor();
-	coreParams->m_colorBrush =  new QColor();
+	fillUI();
 
 	getNotified();
 }
@@ -106,18 +93,11 @@ void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(co
 	emitTracingTimeDegradation(text);
 }
 
-void CoreParameterView::on_spinBoxTracerWidth_valueChanged(int width)
+void CoreParameterView::on_spinBoxTracerProportions_valueChanged(double proportion)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_tracerWidth = width;
-	emitTracerWidth(width);
-}
-
-void CoreParameterView::on_spinBoxTracerHeight_valueChanged(int height)
-{
-	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_tracerHeight = height;
-	emitTracerHeight(height);
+	coreParams->m_tracerProportions = (float)proportion;
+	emitTracerProportions((float)proportion);
 }
 
 void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle)
@@ -136,6 +116,7 @@ void CoreParameterView::on_pushButtonColorChangeBorder_clicked()
 {
 	emitColorChangeBorderAll();
 }
+
 void CoreParameterView::on_pushButtonColorChangeBorderSelected_clicked()
 {
 	emitColorChangeBorderSelected();
@@ -155,7 +136,7 @@ void CoreParameterView::on_checkBoxTrackOrientationLine_stateChanged(int v)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	coreParams->m_trackOrientationLine = v;
-	emitTracerOrientationLine(v);
+	emitTrackOrientationLine(v);
 }
 
 // if dimensions are set for all tracks they are going to be set for new tracks aswell
@@ -178,7 +159,7 @@ void CoreParameterView::on_pushButtonTrackDimensionSetterSelected_clicked()
 	emitTrackDimensionsSelected(width, height);
 }
 
-void CoreParameterView::on_pushButtonTrackDefaultDimensions_clicked()
+void CoreParameterView::on_pushButtonDefaultDimensions_clicked()
 {
 	emitTrackDimensionsSetDefault();
 }
@@ -213,26 +194,76 @@ void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
 
 void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 {
-	//TODO HIDE STUFF HERE, NOT ALL STUFF 
-
+	//disable
 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-		ui->widgetParameter->hide();
+		ui->groupBoxTracerDimensions->hide();
+		ui->groupBoxMiscellaneous->hide();
 	}
 	//enable
 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-		ui->widgetParameter->show();
+		ui->groupBoxTracerDimensions->show();
+		ui->groupBoxMiscellaneous->show();
 	}
 }
 
 void CoreParameterView::on_checkBoxAntialiasing_stateChanged(int v)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_antialiasing = v;
+	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
+		coreParams->m_antialiasing = false;
+	}
+	//enable
+	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
+		coreParams->m_antialiasing = true;
+
+	}
 	emitToggleAntialiasing(v);
+}
+
+void CoreParameterView::fillUI() 
+{
+	//setup ui from params
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+
+	//view toggle
+	if (coreParams->m_viewSwitch) { ui->checkBoxEnableCoreView->setChecked(true); }
+	else { ui->checkBoxEnableCoreView->setChecked(false); }
+	//track orientation line
+	if (coreParams->m_trackOrientationLine) { ui->checkBoxTrackOrientationLine->setChecked(true); }
+	else {ui->checkBoxTrackOrientationLine->setChecked(false);}
+	//tracer proportions
+	ui->spinBoxTracerProportions->setValue(0.5);
+	//tracer orientation line
+	if (coreParams->m_tracerOrientationLine) { ui->checkBoxTracerOrientationLine->setChecked(true); }
+	else { ui->checkBoxTracerOrientationLine->setChecked(false); }
+	//tracing style
+	if (coreParams->m_tracingStyle == "None") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
+	//tracing time degradation
+	if (coreParams->m_tracingTimeDegradation == "None") { ui->comboBoxTracingTimeDegradation->setCurrentIndex(0); }
+	//tracing history
+	if (coreParams->m_tracingHistory) { ui->spinBoxTracingHistoryLength->setValue(coreParams->m_tracingHistory); }
+	//tracing steps
+	if (coreParams->m_tracingSteps) { ui->spinBoxTracingSteps->setValue(coreParams->m_tracingSteps); }
+	//antialiasing
+	if (coreParams->m_antialiasing) { ui->checkBoxAntialiasing->setChecked(true); }
+	else { ui->checkBoxAntialiasing->setChecked(false); }
+
+
+
+	//enable/disable widgets
+
+	//expert options
+	if (ui->checkBoxExpertOptions->isChecked()) {
+		ui->groupBoxTracerDimensions->show();
+		ui->groupBoxMiscellaneous->show();
+	}
+	else {
+		ui->groupBoxTracerDimensions->hide();
+		ui->groupBoxMiscellaneous->hide();
+	}
 }
 
 void CoreParameterView::getNotified()
 {
 	qDebug() << "Core parameter notified";
 }
-

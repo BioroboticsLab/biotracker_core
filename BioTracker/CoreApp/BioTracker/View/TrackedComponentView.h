@@ -65,8 +65,7 @@ public slots:
 	void receiveTracingSteps(int steps);
 	void receiveTracingTimeDegradation(QString degradation);
 	//Tracing dimensions
-	void receiveTracerWidth(int width);
-	void receiveTracerHeight(int height);
+	void receiveTracerProportions(float proportion);
 	void receiveTracerOrientationLine(bool toggle);
 
 	//Visual

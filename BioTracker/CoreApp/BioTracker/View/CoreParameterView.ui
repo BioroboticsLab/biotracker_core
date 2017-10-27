@@ -295,6 +295,12 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="midLineWidth">
                     <number>-2</number>
                    </property>
@@ -313,7 +319,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>304</width>
-                      <height>893</height>
+                      <height>852</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -365,6 +371,13 @@
                       </widget>
                      </item>
                      <item>
+                      <widget class="Line" name="line_3">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
                       <widget class="Line" name="line">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -393,7 +406,7 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>850</height>
+                           <height>800</height>
                           </size>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -401,7 +414,7 @@
                            <number>5</number>
                           </property>
                           <property name="topMargin">
-                           <number>5</number>
+                           <number>0</number>
                           </property>
                           <property name="rightMargin">
                            <number>5</number>
@@ -420,13 +433,25 @@
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
-                              <height>325</height>
+                              <height>0</height>
                              </size>
                             </property>
                             <property name="title">
                              <string>Tracks</string>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_17">
+                             <property name="leftMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>5</number>
+                             </property>
                              <item>
                               <widget class="QPushButton" name="pushButtonSelectAll">
                                <property name="sizePolicy">
@@ -451,13 +476,16 @@
                                <property name="minimumSize">
                                 <size>
                                  <width>0</width>
-                                 <height>168</height>
+                                 <height>0</height>
                                 </size>
                                </property>
                                <property name="title">
                                 <string>Dimensions</string>
                                </property>
                                <layout class="QVBoxLayout" name="verticalLayout_18">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
                                 <item>
                                  <layout class="QHBoxLayout" name="layoutTrackWidth">
                                   <item>
@@ -532,6 +560,9 @@
                                     <property name="text">
                                      <string>Show orientation line</string>
                                     </property>
+                                    <property name="checked">
+                                     <bool>true</bool>
+                                    </property>
                                    </widget>
                                   </item>
                                  </layout>
@@ -560,13 +591,16 @@
                                <property name="minimumSize">
                                 <size>
                                  <width>0</width>
-                                 <height>89</height>
+                                 <height>0</height>
                                 </size>
                                </property>
                                <property name="title">
                                 <string>Color</string>
                                </property>
                                <layout class="QVBoxLayout" name="verticalLayout_19">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
                                 <item>
                                  <layout class="QHBoxLayout" name="horizontalLayoutGroupBoxTracksColor">
                                   <item>
@@ -628,13 +662,28 @@
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
-                              <height>251</height>
+                              <height>0</height>
                              </size>
                             </property>
                             <property name="title">
                              <string>Tracing</string>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_20">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
+                             <property name="leftMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>5</number>
+                             </property>
                              <item>
                               <layout class="QHBoxLayout" name="layoutTracingStyle">
                                <item>
@@ -755,40 +804,52 @@
                                </property>
                                <layout class="QVBoxLayout" name="verticalLayout_21">
                                 <item>
-                                 <layout class="QHBoxLayout" name="layoutTracerWidth">
-                                  <item>
-                                   <widget class="QLabel" name="labelTracerWidth">
-                                    <property name="text">
-                                     <string>Tracer width:</string>
-                                    </property>
-                                   </widget>
-                                  </item>
-                                  <item>
-                                   <widget class="QSpinBox" name="spinBoxTracerWidth">
-                                    <property name="minimum">
-                                     <number>1</number>
-                                    </property>
-                                   </widget>
-                                  </item>
-                                 </layout>
-                                </item>
-                                <item>
-                                 <layout class="QHBoxLayout" name="layoutTracerWeight">
-                                  <item>
-                                   <widget class="QLabel" name="labelTracerHeight">
-                                    <property name="text">
-                                     <string>Tracer height:</string>
-                                    </property>
-                                   </widget>
-                                  </item>
-                                  <item>
-                                   <widget class="QSpinBox" name="spinBoxTracerHeight">
-                                    <property name="minimum">
-                                     <number>1</number>
-                                    </property>
-                                   </widget>
-                                  </item>
-                                 </layout>
+                                 <widget class="QWidget" name="widgetTracerDimensions" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="leftMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="topMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="rightMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="bottomMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <layout class="QHBoxLayout" name="layoutTracerProportions">
+                                     <item>
+                                      <widget class="QLabel" name="labelTracerProportions">
+                                       <property name="text">
+                                        <string>Tracer proportions</string>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QDoubleSpinBox" name="spinBoxTracerProportions">
+                                       <property name="decimals">
+                                        <number>2</number>
+                                       </property>
+                                       <property name="minimum">
+                                        <double>0.010000000000000</double>
+                                       </property>
+                                       <property name="singleStep">
+                                        <double>0.001000000000000</double>
+                                       </property>
+                                       <property name="value">
+                                        <double>0.500000000000000</double>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                    </layout>
+                                   </item>
+                                  </layout>
+                                 </widget>
                                 </item>
                                 <item>
                                  <widget class="QCheckBox" name="checkBoxTracerOrientationLine">
@@ -817,13 +878,25 @@
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
-                              <height>124</height>
+                              <height>0</height>
                              </size>
                             </property>
                             <property name="title">
                              <string>Area descriptor</string>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_22">
+                             <property name="leftMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>5</number>
+                             </property>
                              <item>
                               <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout">
                                <item>
@@ -920,6 +993,18 @@
                              <bool>false</bool>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_23">
+                             <property name="leftMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>5</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>5</number>
+                             </property>
                              <item>
                               <widget class="QCheckBox" name="checkBoxAntialiasing">
                                <property name="text">
