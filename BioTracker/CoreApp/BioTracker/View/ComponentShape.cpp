@@ -21,12 +21,14 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_penWidth = 0;
 	m_penStyle = Qt::SolidLine;
 	m_marked = false;
-	m_tracingLayer = new QGraphicsRectItem(this);
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
 	m_currentFramenumber = 0;
 	m_rotation = 0;
+
+	m_tracingLayer = new QGraphicsRectItem();
+	this->scene()->addItem(m_tracingLayer);
 
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
@@ -245,9 +247,9 @@ void ComponentShape::trace()
 	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
 	QPointF currentPoint = QPointF(currentChild->getX(), currentChild->getY());
 
-	m_tracingLayer->setPos(0,0);
-	m_tracingLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-	m_tracingLayer->setRotation(-m_rotation);
+	m_tracingLayer->setPos(this->pos());
+	//m_tracingLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+	//m_tracingLayer->setRotation(-m_rotation);
 	m_tracingLayer->setFlag(QGraphicsItem::ItemHasNoContents);
 	m_tracingLayer->show();
 
@@ -484,13 +486,13 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 			m_penColorLast = m_penColor;
 			m_penColor = Qt::red;
 			m_penStyle = Qt::DashLine;
-			trace();
+			//trace();
 			update();
 		}
 		else {
 			m_penColor = m_penColorLast;
 			m_penStyle = Qt::SolidLine;
-			trace();
+			//trace();
 			update();
 
 		}
