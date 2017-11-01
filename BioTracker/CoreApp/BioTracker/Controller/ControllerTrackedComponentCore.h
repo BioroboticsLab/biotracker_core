@@ -19,6 +19,8 @@ class ControllerTrackedComponentCore : public IController
 	signals:
 		// signal to ctrPlugin to remove trajectory
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+		// signal to ctrPlugin to remove track entity
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 		// signal to ctrPlugin to add trajectory
 		void emitAddTrajectory(QPoint pos);
 
@@ -33,8 +35,11 @@ class ControllerTrackedComponentCore : public IController
 		//gets triggered when plugin sends permissions
 		void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
-		//gets triggered when shape-trajectory is getting removed
+		//gets triggered when trajectory is getting removed
 		void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+
+		//gets triggered when a track entity is getting removed
+		void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 
 		void receiveAddTrajectory(QPoint pos);
 

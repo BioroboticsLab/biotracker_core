@@ -36,6 +36,7 @@ class ComponentShape : public QGraphicsObject
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 		void broadcastMove();
 
@@ -44,7 +45,8 @@ class ComponentShape : public QGraphicsObject
 		void changePenColor();
 		void changeBrushColor(QColor color);
 		void changePenColor(QColor color);
-		bool removeShape();
+		bool removeTrack();
+		bool removeTrackEntity();
 		void markShape(int penwidth = 0);
 		void unmarkShape();
 

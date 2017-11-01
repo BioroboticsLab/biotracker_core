@@ -277,7 +277,7 @@ void ComponentShape::trace()
 			}
 			
 			IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
-			if (historyChild) {
+			if (historyChild && historyChild->getValid()) {
 
 				//positioning
 				QPointF historyPoint = QPointF(historyChild->getX(), historyChild->getY());
@@ -519,8 +519,12 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
 	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()) );
 	QAction *showProperties = menu.addSeparator();
-	QAction *removeAction = menu.addAction("Remove", dynamic_cast<ComponentShape*>(this), SLOT(removeShape()));
-	if (!m_pRemovable) { removeAction->setEnabled(false); }
+	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
+	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
+	if (!m_pRemovable) { 
+		removeTrackAction->setEnabled(false);
+		removeTrackEntityAction->setEnabled(false);
+	}
 
 	QAction *markAction = menu.addAction("Mark", dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction("Unmark", dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
@@ -583,18 +587,35 @@ void ComponentShape::changePenColor(QColor color)
 	}
 }
 
-bool ComponentShape::removeShape()
+bool ComponentShape::removeTrack()
 {
 	if (m_pRemovable) {
-		qDebug() << "Removing shape...";
+		qDebug() << "Removing track...";
 
 		//emit to set trajectory invalid 
 		Q_EMIT emitRemoveTrajectory(m_trajectory);
 		//hide this shape
 		this->hide();
+		this->m_tracingLayer->hide();
 	}
 	else {
-		qDebug() << "component shape is not removable";
+		qDebug() << "track is not removable";
+	}
+	return m_pRemovable;
+}
+
+bool ComponentShape::removeTrackEntity()
+{
+	if (m_pRemovable) {
+		qDebug() << "Removing track entity...";
+
+		//emit to set trajectory invalid 
+		Q_EMIT emitRemoveTrackEntity(m_trajectory);
+		//hide this shape
+		this->hide();
+	}
+	else {
+		qDebug() << "trackentity is not removable";
 	}
 	return m_pRemovable;
 }

@@ -56,6 +56,11 @@ void ControllerTrackedComponentCore::receiveRemoveTrajectory(IModelTrackedTrajec
 	emitRemoveTrajectory(trajectory);
 }
 
+void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory)
+{
+	emitRemoveTrackEntity(trajectory);
+}
+
 void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
 {
 	emitAddTrajectory(pos);

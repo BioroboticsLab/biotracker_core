@@ -133,6 +133,8 @@ void ControllerPlugin::connectControllerToController() {
 
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), this,
+		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), this, 
@@ -195,6 +197,8 @@ void ControllerPlugin::connectPlugin() {
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), obj,
+		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, 
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, 
@@ -225,10 +229,19 @@ void ControllerPlugin::disconnectPlugin() {
 void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
 	//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
-	queueElement removeEdit;
-	removeEdit.type = EDIT::REMOVE;
-	removeEdit.trajectory0 = trajectory;
-	m_editQueue.enqueue(removeEdit);
+	queueElement removeTrackEdit;
+	removeTrackEdit.type = EDIT::REMOVE_TRACK;
+	removeTrackEdit.trajectory0 = trajectory;
+	m_editQueue.enqueue(removeTrackEdit);
+}
+
+void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
+{
+	//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
+	queueElement removeEntityEdit;
+	removeEntityEdit.type = EDIT::REMOVE_ENTITY;
+	removeEntityEdit.trajectory0 = trajectory;
+	m_editQueue.enqueue(removeEntityEdit);
 }
 
 void ControllerPlugin::receiveAddTrajectory(QPoint pos)
@@ -265,8 +278,11 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 
 			switch (edit.type)
 			{
-			case EDIT::REMOVE:
+			case EDIT::REMOVE_TRACK:
 				emitRemoveTrajectory(edit.trajectory0);
+				break;
+			case EDIT::REMOVE_ENTITY:
+				emitRemoveTrackEntity(edit.trajectory0);
 				break;
 			case EDIT::ADD:
 				emitAddTrajectory(edit.pos);

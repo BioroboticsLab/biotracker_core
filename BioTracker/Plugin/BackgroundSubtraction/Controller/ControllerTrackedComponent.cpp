@@ -75,6 +75,12 @@ void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory
 	qDebug() << "trajectory" << trajectory->getId() << "set invalid";
 }
 
+void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
+{
+	trajectory->getChild(m_currentFrameNumber)->setValid(false);
+	qDebug() << "traack entity #" << m_currentFrameNumber << "set invalid";
+}
+
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();

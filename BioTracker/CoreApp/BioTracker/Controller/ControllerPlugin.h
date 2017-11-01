@@ -14,7 +14,7 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE, ADD, MOVE, SWAP };
+enum EDIT { REMOVE_TRACK, REMOVE_ENTITY, ADD, MOVE, SWAP };
 
 struct queueElement {
 	EDIT type;
@@ -52,6 +52,7 @@ class ControllerPlugin : public IController {
 
 signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
@@ -79,6 +80,11 @@ signals:
 	* Receive command to remove a trajectory and put it in edit queue
 	*/
 	void  receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	/**
+	*
+	* Receive command to remove a track entity and put it in edit queue
+	*/
+	void  receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	/**
 	*
 	* Receive command to add a trajectory and put it in edit queue
