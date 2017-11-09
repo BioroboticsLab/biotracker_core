@@ -67,17 +67,25 @@ void  TrackedElement::setW(float w) {
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _w, _pose.height(), _pose.getScore());
 }
 
-void  TrackedElement::setH(float h) {
+void TrackedElement::setH(float h) {
 	_h = h;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _h, _pose.getScore());
 }
 
-float  TrackedElement::getX() {
-	return _pose.position_px().x;
+float TrackedElement::getX() {
+	return _pose.position_cm().x;
 }
 
-float  TrackedElement::getY() {
-	return _pose.position_px().y;
+float TrackedElement::getY() {
+	return _pose.position_cm().y;
+}
+
+float TrackedElement::getXpx() {
+    return _pose.position_px().x;
+}
+
+float TrackedElement::getYpx() {
+    return _pose.position_px().y;
 }
 
 float TrackedElement::getDeg() {

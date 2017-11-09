@@ -54,6 +54,7 @@ find_package(Boost REQUIRED system filesystem chrono thread timer)
 
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
+add_subdirectory(Plugin/LukasKanade)
 add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
 #add_subdirectory(Plugin/Sample)

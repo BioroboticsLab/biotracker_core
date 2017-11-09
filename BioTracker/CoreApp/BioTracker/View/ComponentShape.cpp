@@ -92,7 +92,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 			if (m_tracingLength > 0) {
 
 				IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-				QPoint currentPoint = QPoint(currentChild->getX(), currentChild->getY());
+				QPoint currentPoint = QPoint(currentChild->getXpx(), currentChild->getYpx());
 
 				QPoint lastPointDifference = QPoint(0,0) + QPoint(m_h/2, m_w/2);
 
@@ -103,7 +103,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 						IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
 						if (historyChild) {
 							//positioning
-							QPoint historyPoint = QPoint(historyChild->getX(), historyChild->getY());
+							QPoint historyPoint = QPoint(historyChild->getXpx(), historyChild->getYpx());
 							QPoint historyPointDifference = historyPoint - currentPoint;
 							QPoint adjustedHistoryPointDifference = historyPointDifference + QPoint(m_w / 2, m_h / 2);
 							
@@ -197,7 +197,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 		if (component) {
 			// if component and traj valid -> show and update
 			if (component->getValid() && m_trajectory->getValid()) {
-				this->setPos(component->getX() - m_w/2, component->getY() - m_w/2);
+				this->setPos(component->getXpx() - m_w/2, component->getYpx() - m_w/2);
 				this->show();
 				update();
 

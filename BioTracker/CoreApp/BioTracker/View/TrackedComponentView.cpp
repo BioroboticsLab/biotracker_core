@@ -162,8 +162,8 @@ void TrackedComponentView::createChildShapesAtStart() {
 
 			IModelTrackedPoint *rect = dynamic_cast<IModelTrackedPoint *>(all->getChild(i));
 			if (rect) {
-				int x = rect->getX();
-				int y = rect->getY();
+				int x = rect->getXpx();
+				int y = rect->getYpx();
 				int w = 20;
 				int h = 20;
 
@@ -207,13 +207,15 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	//	//qDebug() << dynamic_cast<ComponentShape*>(this->childItems()[m])->getId();
 	//}
 	//update each shape; shape deletes itself if trajectory is empty or not existant
-	for (int i = 0; i < this->childItems().size(); i++) {
-		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
-		if (shape) {
-			if (!(shape->updatePosition(framenumber))) {
-				i--;
-			}
-		}
+    int size = this->childItems().size();
+	for (int i = 0; i < size; i++) {
+        if (i < this->childItems().size()) {
+            ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
+            if (shape) {
+                if (!(shape->updatePosition(framenumber))) {
+                }
+            }
+        }
 	}
 	// check for new trajectories; for each create a new shape
 	if (this->childItems().size() < all->size()) {

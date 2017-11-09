@@ -98,7 +98,8 @@ void RectDescriptor::setRect(std::vector<cv::Point> rect) {
 
         std::shared_ptr<QGraphicsLineItem> ri = std::make_shared<QGraphicsLineItem>(
             QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10), this);
-        rectificationLines.push_back(std::shared_ptr<QGraphicsLineItem>(ri));
+
+        rectificationLines.push_back(ri);
 	}
 	_rectification = rectification;
 	_rectificationLines = rectificationLines;
@@ -109,7 +110,6 @@ std::vector<cv::Point> RectDescriptor::getRect() {
 	return (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
 }
 
-#include <iostream>
 void RectDescriptor::receiveDragUpdate(BiotrackerTypes::AreaType vectorType, int id, double x, double y) {
     _dragType = (dynamic_cast<AreaInfoElement*>(getModel()))->getAreaType();
     if (_dragType == vectorType) {
@@ -163,7 +163,11 @@ void RectDescriptor::updateLinePositions() {
 		auto ln = _rectificationLines[i];
 		ln->setLine(QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10));
 	}
-
+    /*
+    std::shared_ptr<QGraphicsTextItem> ti = std::make_shared<QGraphicsTextItem>("TEST 1234", this);
+    ti->setPos(_v[i].x + 10, _v[i].y + 10);
+    ti->setFont(QFont("Arial", 20));
+    ti->setRotation(45);*/
 }
 
 bool RectDescriptor::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {

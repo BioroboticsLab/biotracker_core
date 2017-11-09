@@ -52,34 +52,22 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root) {
         << ",deg"
         << ",rad"
         << std::endl;
-    //if (t)
-    /*_ofs << "ID"
-        << ",frame No."
-        << ",time(source, ms)"
-        << (t->hasTime() ? ",time(tracking, ms)" : "")
-		<< (t->hasX() ? ",x" : "")
-		<< (t->hasY() ? ",y" : "")
-		<< (t->hasZ() ? ",z" : "")
-		//<< (t->hasW() ? ",w" : "")
-		//<< (t->hasH() ? ",h" : "")
-		<< (t->hasDeg() ? ",deg" : "")
-		<< (t->hasRad() ? ",rad" : "")
-		<< std::endl;*/
 
 }
 
 std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumber) {
     std::stringstream ss;
     ss << (trajNumber > 0 ? "," : "") << e->getId()
-        << (e->hasTime() ? "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count()) : "")
+        << "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count())
+        << "," + e->getCoordinateUnit()
         << (e->hasX() ? "," + std::to_string(e->getX()) : "")
         << (e->hasY() ? "," + std::to_string(e->getY()) : "")
-        << (e->hasZ() ? "," + std::to_string(e->getZ()) : "")
-        //<< (e->hasW() ? "," + std::to_string(e->getW()) : "")
-        //<< (e->hasH() ? "," + std::to_string(e->getH()) : "")
+        << (e->hasW() ? "," + std::to_string(e->getW()) : "")
+        << (e->hasH() ? "," + std::to_string(e->getH()) : "")
         << (e->hasDeg() ? "," + std::to_string(e->getDeg()) : "")
         << (e->hasRad() ? "," + std::to_string(e->getRad()) : "");
-    return ss.str();
+    std::string s = ss.str();
+    return s;
 }
 
 void DataExporterCSV::write(int idx) {
@@ -93,7 +81,7 @@ void DataExporterCSV::write(int idx) {
 	for (int i = 0; i < _root->size(); i++) {
         //TODO there is some duplicated code here
         _ofs << std::to_string(idx)
-            << "," + std::to_string((((float)idx) / _fps) * 1000);
+            << "," + std::to_string((long long)((((double)idx) / _fps) * 1000));
 
 		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
 		if (t) {
