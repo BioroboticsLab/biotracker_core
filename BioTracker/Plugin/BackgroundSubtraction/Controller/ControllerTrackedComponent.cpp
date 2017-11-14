@@ -8,7 +8,7 @@
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
 {
-
+	m_currentFrameNumber = 0;
 }
 
 void ControllerTrackedComponent::createView()
@@ -78,31 +78,43 @@ void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory
 void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
 {
 	trajectory->getChild(m_currentFrameNumber)->setValid(false);
-	qDebug() << "traack entity #" << m_currentFrameNumber << "set invalid";
+	qDebug() << "track entity #" << m_currentFrameNumber << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
+	cv::Point newPosPx = cv::Point(position.x(), position.y());
+	cv::Point2f newPosCm = m_areaDescr->pxToCm(newPosPx);
+	// ignore blobs outside the tracking area
+	//if (!m_areaDescr->inTrackingArea(newPosPx)) {
+	//	qDebug() << "Created the entity outside of the tracking area!";
+	//	return;
+	//}
+
 	TrackedTrajectory* newTraj = new TrackedTrajectory();
 	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());
-	firstElem->setX(position.x());
-	firstElem->setY(position.y());
+
+	FishPose newPose = FishPose(newPosCm, newPosPx, 0, 0, 20, 20, 0.0);
+
+	firstElem->setFishPose(newPose);
+
+
 	firstElem->setTime(start);
 	newTraj->add(firstElem, m_currentFrameNumber);
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
-		qDebug() << "Trajectory added at" << firstElem->getX() << "," << firstElem->getY();
+		qDebug() << "TRACKER: Trajectory added at" << firstElem->getX() << "," << firstElem->getY();
 	}
 }
 
 void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
-	// don't move starter dummies and main trajectory (id's: 0,1,2)!!
-	if (!traj->getId() <= 2) {
+	// don't move when frame number under 0 and main trajectory (id's: 0)!!
+	if (!(traj->getId() == 0) && m_currentFrameNumber > 0) {
 		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
 
 		//TODO rewrite this when default ipose is coded...

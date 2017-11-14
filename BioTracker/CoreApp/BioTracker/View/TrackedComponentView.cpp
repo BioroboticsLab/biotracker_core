@@ -25,7 +25,7 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 {
 
 	//TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
-	m_boundingRect = QRectF(0, 0, 2040, 2040);
+	m_boundingRect = QRectF(0, 0, 4080, 4080);
 	setAcceptHoverEvents(true);
 	setAcceptDrops(true);
 	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
@@ -84,6 +84,7 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 void TrackedComponentView::getNotified()
 {
+	updateShapes(m_currentFrameNumber);
 	update();
 }
 bool TrackedComponentView::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
@@ -178,6 +179,7 @@ void TrackedComponentView::createChildShapesAtStart() {
 				//if (polygon) { newShape->setData(1, "polygon"); }
 
 				newShape->setData(1, "ellipse");
+				newShape->update();
 
 			}
 
@@ -206,11 +208,11 @@ void TrackedComponentView::createChildShapesAtStart() {
 
 
 void TrackedComponentView::updateShapes(uint framenumber) {
+	m_currentFrameNumber = framenumber;
+
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 	if (!all)
 		return;
-
-	//qDebug() << "main:" << all->getId();
 
 	//qDebug() << "all traj id's";
 	//for (int k = 0; k < all->size(); k++) {
@@ -270,9 +272,11 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
 
-				newShape->receiveTracingLength(coreParams->m_tracingHistory);
-				newShape->receiveTracingStyle(coreParams->m_tracingStyle);
-				newShape->receiveTracingSteps(coreParams->m_tracingSteps);
+				newShape->m_currentFramenumber = m_currentFrameNumber;
+
+				newShape->setMembers(coreParams);
+
+				newShape->updatePosition(m_currentFrameNumber);
 			}
 			else {
 				qDebug() << "error: no trajectory -> no shape created";
@@ -484,7 +488,7 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	QMenu menu;
 	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_A);
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()), Qt::Key_S);
-	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_U);
+	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(unmarkAll()), Qt::Key_U);
 	QAction *removeSelectedAction = menu.addAction("Remove selected tracks", dynamic_cast<TrackedComponentView*>(this), SLOT(removeTrajectories()), Qt::Key_Backspace);
 
 	
@@ -508,18 +512,19 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 
 	// execute menu
 	QAction *selectedAction = menu.exec(event->screenPos());
-
+	lastClickedPos = QPoint(0, 0);
 }
 
 void TrackedComponentView::addTrajectory()
 {
 	if (!lastClickedPos.isNull()) {
-		qDebug() << "new Component at position " << lastClickedPos;
+		qDebug() << "TCV: new track at position " << lastClickedPos;
 		emitAddTrajectory(lastClickedPos);
 		lastClickedPos = QPoint(0, 0);
 	}
 	else {
-		qDebug() << "could not add new component";
+		qDebug() << "TCV: new track at position (0,0)";
+		emitAddTrajectory(QPoint(0, 0));
 	}
 }
 
@@ -542,6 +547,17 @@ void TrackedComponentView::removeTrajectories()
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(item);
 		if (shape) {
 			shape->removeTrack();
+		}
+	}
+}
+
+void TrackedComponentView::unmarkAll() {
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->unmarkShape();
 		}
 	}
 }

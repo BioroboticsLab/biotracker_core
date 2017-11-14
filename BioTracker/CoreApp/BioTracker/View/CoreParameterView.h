@@ -31,8 +31,9 @@ public:
 	void on_spinBoxTracerProportions_valueChanged(double proportions);
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
 
-	//Track - select all
+	//Track 
 	void on_pushButtonSelectAll_clicked();
+	void on_pushButtonAddTrack_clicked();
 
 	//Track color
 	void on_pushButtonColorChangeBorder_clicked();
@@ -68,6 +69,8 @@ public:
             void emitViewSwitch(bool lever);
 			//Select all tracks
             void emitSelectAll();
+			//Set number of tracks
+			void emitAddTrack();
 			//Track color
 			void emitColorChangeBorderAll();
 			void emitColorChangeBorderSelected();

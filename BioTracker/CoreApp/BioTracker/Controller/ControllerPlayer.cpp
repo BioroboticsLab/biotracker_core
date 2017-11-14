@@ -16,16 +16,19 @@ ControllerPlayer::~ControllerPlayer()
 }
 
 void ControllerPlayer::loadVideoStream(QString str) {
-
     qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(str);
+	emitPauseState(true);
 }
 
 void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) {
     qobject_cast<MediaPlayer*>(m_Model)->loadPictures(files);
+	emitPauseState(true);
+
 }
 
 void ControllerPlayer::loadCameraDevice(CameraConfiguration conf) {
     qobject_cast<MediaPlayer*>(m_Model)->loadCameraDevice(conf);
+	emitPauseState(true);
 }
 
 void ControllerPlayer::nextFrame() {
@@ -38,14 +41,17 @@ void ControllerPlayer::prevFrame() {
 
 void ControllerPlayer::play() {
     qobject_cast<MediaPlayer*>(m_Model)->playCommand();
+	emitPauseState(false);
 }
 
 void ControllerPlayer::stop() {
     qobject_cast<MediaPlayer*>(m_Model)->stopCommand();
+	emitPauseState(true);
 }
 
 void ControllerPlayer::pause() {
     qobject_cast<MediaPlayer*>(m_Model)->pauseCommand();
+	emitPauseState(true);
 }
 
 void ControllerPlayer::setGoToFrame(int frame) {

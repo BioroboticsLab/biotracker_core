@@ -28,6 +28,7 @@ public:
 
 		Q_EMIT notifyView();
 	};
+	void setTrackNumber(int number);
 
 
 
@@ -48,6 +49,9 @@ public:
 	//Track color
 	QColor* m_colorBorder = new QColor(Qt::black);
 	QColor* m_colorBrush = new QColor(Qt::blue);
+	//Track count
+	int m_trackNumber = 0;
+
 
 };
 

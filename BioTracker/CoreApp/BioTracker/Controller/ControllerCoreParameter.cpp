@@ -36,6 +36,8 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitViewSwitch, tcview, &TrackedComponentView::receiveViewSwitch, Qt::DirectConnection);
 		//Tracks
 		QObject::connect(view, &CoreParameterView::emitSelectAll, tcview, &TrackedComponentView::receiveSelectAll, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitAddTrack, tcview, &TrackedComponentView::addTrajectory, Qt::DirectConnection);
+
 		//Track dimensions
 		QObject::connect(view, &CoreParameterView::emitTrackOrientationLine, tcview, &TrackedComponentView::receiveTrackOrientationLine, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackDimensionsAll, tcview, &TrackedComponentView::receiveTrackDimensionsAll, Qt::DirectConnection);
@@ -56,6 +58,8 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitTracerOrientationLine, tcview, &TrackedComponentView::receiveTracerOrientationLine, Qt::DirectConnection);
 		//Misc
 		QObject::connect(view, &CoreParameterView::emitToggleAntialiasing, tcview, &TrackedComponentView::receiveToggleAntialiasing, Qt::DirectConnection);
+
+		//
 	}
 	//Connections to the AreaDescriptor
 	{
@@ -73,6 +77,14 @@ void ControllerCoreParameter::connectControllerToController()
         QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
     }
 
+}
+
+void ControllerCoreParameter::receiveTrackNumber(int number)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	if (coreParams) {
+		coreParams->setTrackNumber(number);
+	}
 }
 
 void ControllerCoreParameter::createModel()

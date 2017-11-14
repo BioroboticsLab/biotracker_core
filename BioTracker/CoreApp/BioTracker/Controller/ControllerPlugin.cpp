@@ -141,6 +141,17 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+
+	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
+		SLOT(receiveUpdateView()));
+
+
+	// connect ControllerPlayer
+	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+	QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer*>(ctrC);
+	QObject::connect(ctrPlayer, SIGNAL(emitPauseState(bool)), this,
+		SLOT(receivePauseState(bool)), Qt::DirectConnection);
+
 }
 
 void ControllerPlugin::createPlugin() {
@@ -228,46 +239,81 @@ void ControllerPlugin::disconnectPlugin() {
 
 void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
-	//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
-	queueElement removeTrackEdit;
-	removeTrackEdit.type = EDIT::REMOVE_TRACK;
-	removeTrackEdit.trajectory0 = trajectory;
-	m_editQueue.enqueue(removeTrackEdit);
+	if (m_paused) {
+		emitRemoveTrajectory(trajectory);
+		emitUpdateView();
+	}
+	else {
+		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
+		queueElement removeTrackEdit;
+		removeTrackEdit.type = EDIT::REMOVE_TRACK;
+		removeTrackEdit.trajectory0 = trajectory;
+		m_editQueue.enqueue(removeTrackEdit);
+	}
 }
 
 void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
 {
-	//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
-	queueElement removeEntityEdit;
-	removeEntityEdit.type = EDIT::REMOVE_ENTITY;
-	removeEntityEdit.trajectory0 = trajectory;
-	m_editQueue.enqueue(removeEntityEdit);
+	if (m_paused) {
+		emitRemoveTrackEntity(trajectory);
+		emitUpdateView();
+	}
+	else {
+		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
+		queueElement removeEntityEdit;
+		removeEntityEdit.type = EDIT::REMOVE_ENTITY;
+		removeEntityEdit.trajectory0 = trajectory;
+		m_editQueue.enqueue(removeEntityEdit);
+	}
 }
 
 void ControllerPlugin::receiveAddTrajectory(QPoint pos)
 {
-	queueElement addEdit;
-	addEdit.type = EDIT::ADD;
-	addEdit.pos = pos;
-	m_editQueue.enqueue(addEdit);
+	if (m_paused) {
+		emitAddTrajectory(pos);
+		emitUpdateView();
+	}
+	else {
+		queueElement addEdit;
+		addEdit.type = EDIT::ADD;
+		addEdit.pos = pos;
+		m_editQueue.enqueue(addEdit);
+	}
 }
 
 void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos)
 {
-	queueElement moveEdit;
-	moveEdit.type = EDIT::MOVE;
-	moveEdit.trajectory0 = trajectory;
-	moveEdit.pos = pos;
-	m_editQueue.enqueue(moveEdit);
+	if (m_paused) {
+		emitMoveElement(trajectory, pos);
+		emitUpdateView();
+	}
+	else {
+		queueElement moveEdit;
+		moveEdit.type = EDIT::MOVE;
+		moveEdit.trajectory0 = trajectory;
+		moveEdit.pos = pos;
+		m_editQueue.enqueue(moveEdit);
+	}
 }
 
 void ControllerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
 {
-	queueElement swapEdit;
-	swapEdit.type = EDIT::SWAP;
-	swapEdit.trajectory0 = trajectory0;
-	swapEdit.trajectory1 = trajectory1;
-	m_editQueue.enqueue(swapEdit);
+	if (m_paused) {
+		emitSwapIds(trajectory0, trajectory1);
+		emitUpdateView();
+	}
+	else {
+		queueElement swapEdit;
+		swapEdit.type = EDIT::SWAP;
+		swapEdit.trajectory0 = trajectory0;
+		swapEdit.trajectory1 = trajectory1;
+		m_editQueue.enqueue(swapEdit);
+	}
+}
+
+void ControllerPlugin::receivePauseState(bool state)
+{
+	m_paused = state;
 }
 
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {

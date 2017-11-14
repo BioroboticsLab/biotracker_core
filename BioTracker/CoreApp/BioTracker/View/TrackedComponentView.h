@@ -42,6 +42,7 @@ public slots:
 	void addTrajectory();
 	void swapIds();
 	void removeTrajectories();
+	void unmarkAll();
 	// update shapes when receiving tracking done
 	void updateShapes(uint framenumber);
 	//Move Tracks
@@ -103,6 +104,8 @@ protected:
 	//member
 	bool permissionAdd;
 	bool permissionSwap;
+
+	int m_currentFrameNumber;
 };
 
 #endif // TRACKEDCOMPONENTVIEW_H

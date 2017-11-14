@@ -9,3 +9,9 @@ CoreParameter::CoreParameter(QObject *parent) :
 
 	Q_EMIT notifyView();
 }
+
+void CoreParameter::setTrackNumber(int number)
+{
+	m_trackNumber = number;
+	notifyView();
+}

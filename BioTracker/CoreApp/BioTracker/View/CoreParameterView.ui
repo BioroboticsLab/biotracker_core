@@ -12,7 +12,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>345</width>
+    <width>343</width>
     <height>872</height>
    </rect>
   </property>
@@ -144,7 +144,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>343</width>
+          <width>341</width>
           <height>870</height>
          </rect>
         </property>
@@ -317,8 +317,8 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>0</y>
-                      <width>304</width>
+                      <y>-29</y>
+                      <width>302</width>
                       <height>852</height>
                      </rect>
                     </property>
@@ -466,9 +466,34 @@
                               </widget>
                              </item>
                              <item>
+                              <layout class="QHBoxLayout" name="horizontalLayout_2">
+                               <item>
+                                <widget class="QLabel" name="labelNumberOfTracksLabel">
+                                 <property name="text">
+                                  <string>Number of Tracks:</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLabel" name="labelNumberOfTracks">
+                                 <property name="text">
+                                  <string>0</string>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="pushButtonAddTrack">
+                               <property name="text">
+                                <string>Add a track</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
                               <widget class="QGroupBox" name="groupBoxTrackDimensions">
                                <property name="sizePolicy">
-                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
@@ -506,6 +531,9 @@
                                     <property name="minimum">
                                      <number>1</number>
                                     </property>
+                                    <property name="maximum">
+                                     <number>1000</number>
+                                    </property>
                                    </widget>
                                   </item>
                                  </layout>
@@ -523,6 +551,9 @@
                                    <widget class="QSpinBox" name="spinBoxTrackHeight">
                                     <property name="minimum">
                                      <number>1</number>
+                                    </property>
+                                    <property name="maximum">
+                                     <number>1000</number>
                                     </property>
                                    </widget>
                                   </item>
@@ -583,7 +614,7 @@
                              <item>
                               <widget class="QGroupBox" name="groupBoxTracksColor">
                                <property name="sizePolicy">
-                                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
@@ -1044,7 +1075,7 @@
                             <property name="sizeHint" stdset="0">
                              <size>
                               <width>20</width>
-                              <height>20</height>
+                              <height>40</height>
                              </size>
                             </property>
                            </spacer>
@@ -1061,6 +1092,11 @@
                 </layout>
                </item>
               </layout>
+             </widget>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Page</string>
+              </attribute>
              </widget>
             </widget>
            </item>

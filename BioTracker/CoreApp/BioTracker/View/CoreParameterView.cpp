@@ -111,6 +111,11 @@ void CoreParameterView::on_pushButtonSelectAll_clicked()
 {
 	emitSelectAll();
 }
+
+void CoreParameterView::on_pushButtonAddTrack_clicked()
+{
+	emitAddTrack();
+}
 //TODO show current color
 void CoreParameterView::on_pushButtonColorChangeBorder_clicked()
 {
@@ -146,10 +151,12 @@ void CoreParameterView::on_pushButtonTrackDimensionSetterAll_clicked()
 	int height = ui->spinBoxTrackHeight->value();
 
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_trackWidth = width;
-	coreParams->m_trackHeight = height;
+	if (coreParams) {
+		coreParams->m_trackWidth = width;
+		coreParams->m_trackHeight = height;
 
-	emitTrackDimensionsAll(width, height);
+		emitTrackDimensionsAll(width, height);
+	}
 }
 
 void CoreParameterView::on_pushButtonTrackDimensionSetterSelected_clicked()
@@ -247,8 +254,10 @@ void CoreParameterView::fillUI()
 	//antialiasing
 	if (coreParams->m_antialiasing) { ui->checkBoxAntialiasing->setChecked(true); }
 	else { ui->checkBoxAntialiasing->setChecked(false); }
-
-
+	//track width
+	if (coreParams->m_trackWidth) { ui->spinboxTrackWidth->setValue(coreParams->m_trackWidth); }
+	//track height
+	if (coreParams->m_trackHeight) { ui->spinBoxTrackHeight->setValue(coreParams->m_trackHeight); }
 
 	//enable/disable widgets
 
@@ -265,5 +274,7 @@ void CoreParameterView::fillUI()
 
 void CoreParameterView::getNotified()
 {
-	qDebug() << "Core parameter notified";
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+
+	ui->labelNumberOfTracks->setText(QString::number(coreParams->m_trackNumber));
 }

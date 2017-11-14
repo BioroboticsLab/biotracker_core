@@ -33,11 +33,10 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
 	setFlag(ItemSendsGeometryChanges);
-	setPos(0 - (m_w / 2) , 0 - (m_h / 2));
-
-	qDebug() << "shape is created at:" << pos();
 
 	setAcceptedMouseButtons(Qt::LeftButton);
+
+	setVisible(true);
 }
 QRectF ComponentShape::boundingRect() const
 {
@@ -81,7 +80,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	Q_UNUSED(widget);
 
    
-    if (m_currentFramenumber <= 0)
+    if (m_currentFramenumber < 0)
         return;
 	//Antialiasing
 	if (m_antialiasing) {
@@ -302,8 +301,8 @@ void ComponentShape::trace()
 						float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
 						QColor timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
 						QColor timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-						timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
-						timeDegradationBrush = QBrush(timeDegradationPenColor);
+						timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+						timeDegradationBrush = QBrush(timeDegradationBrushColor);
 					}
 
 					//orientation line
@@ -418,7 +417,7 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 			m_pSwappable = permission.second;
 	}
 
-	qDebug() << "shape permission " << permission.first << "set to " << permission.second;
+	//qDebug() << "shape permission " << permission.first << "set to " << permission.second;
 }
 
 int ComponentShape::getId()
@@ -486,13 +485,13 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 			m_penColorLast = m_penColor;
 			m_penColor = Qt::red;
 			m_penStyle = Qt::DashLine;
-			//trace();
+			trace();
 			update();
 		}
 		else {
 			m_penColor = m_penColorLast;
 			m_penStyle = Qt::SolidLine;
-			//trace();
+			trace();
 			update();
 
 		}
@@ -730,6 +729,9 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_tracingOrientationLine = coreParams->m_tracerOrientationLine;
 	m_orientationLine = coreParams->m_trackOrientationLine;
 
+	m_brushColor = *(coreParams->m_colorBrush);
+	m_penColor = *(coreParams->m_colorBorder);
+
 
 	// set dimensions and default dimensions
 	if (coreParams->m_trackWidth > 0) {
@@ -740,4 +742,6 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 		m_h = coreParams->m_trackHeight;
 		m_hDefault = coreParams->m_trackHeight;
 	}
+
+	update();
 }

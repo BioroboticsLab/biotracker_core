@@ -34,6 +34,9 @@ class ComponentShape : public QGraphicsObject
 		void trace();
 		void setMembers(CoreParameter* coreParams);
 
+		//public member
+		int m_currentFramenumber;
+
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
@@ -84,7 +87,6 @@ class ComponentShape : public QGraphicsObject
 		bool m_antialiasing;
 		IModelTrackedTrajectory* m_trajectory;
 		QList<QPolygonF> m_polygons;
-		int m_currentFramenumber;
 		int m_id;
 		int m_z;
 		int m_w;

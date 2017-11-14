@@ -57,6 +57,8 @@ signals:
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
+	void emitUpdateView();
+
 	// IController interface
   protected:
 	void createModel() override;
@@ -97,9 +99,11 @@ signals:
 	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	/**
 	*
-	* Receive command to two ID'S and put it in edit queue
+	* Receive command to swap two ID'S and put it in edit queue
 	*/
 	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	void  receivePauseState(bool state);
 
 
 
@@ -111,6 +115,8 @@ signals:
 	QQueue<queueElement> m_editQueue;
 
 	QPointer< QThread >  m_TrackingThread;
+
+	bool m_paused = false;
 
 
 
