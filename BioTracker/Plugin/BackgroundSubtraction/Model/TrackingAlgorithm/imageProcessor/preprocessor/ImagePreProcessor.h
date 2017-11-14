@@ -6,7 +6,6 @@
 #include <QtCore/QSettings>
 
 #include "helper/StringHelper.h"
-#include "Model/TrackingAlgorithm/property/SystemProperty.h"
 #include "Model/TrackerParameter.h"
 
 

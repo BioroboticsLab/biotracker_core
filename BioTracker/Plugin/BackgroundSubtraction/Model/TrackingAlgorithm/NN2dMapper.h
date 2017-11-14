@@ -19,7 +19,6 @@ public:
 
 	~NN2dMapper(void) {};
 	
-	//TODO HAUKE Document this!
 	std::tuple<std::vector<FishPose>, std::vector<float>> getNewPoses(const std::vector<FishPose> &fishPoses, std::vector<BlobPose> blobPoses);
 	std::vector<FishPose> convertBlobPosesToFishPoses(std::vector<BlobPose> blobPoses);
 	float estimateOrientationRad(int trackid, float *confidence);

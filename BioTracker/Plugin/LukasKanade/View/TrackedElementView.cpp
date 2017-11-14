@@ -16,18 +16,18 @@ TrackedElementView::TrackedElementView(QGraphicsItem *parent, IController *contr
     IViewTrackedComponent(parent, controller, model) 
 {
     TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
-    m_boundingRect = QRectF(0,0, 100, 100);
+    _boundingRect = QRectF(0,0, 100, 100);
 } 
 
 void TrackedElementView::rcvDimensionUpdate(int x, int y) {
-	m_boundingRect = QRectF(0, 0, x, y);
+	_boundingRect = QRectF(0, 0, x, y);
 	update();
 }
 
 QRectF TrackedElementView::boundingRect() const
 {
 
-    return m_boundingRect;
+    return _boundingRect;
 }
 
 

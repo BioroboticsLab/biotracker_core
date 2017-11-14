@@ -4,7 +4,7 @@
 
 #include "Interfaces/IModel/IModel.h"
 #include "settings/Settings.h"
-#include "Model/TrackingAlgorithm/property/ParamNames.h"
+#include "Model/TrackingAlgorithm/ParamNames.h"
 
 class TrackerParameter : public IModel
 {
@@ -21,82 +21,82 @@ public:
 	void setBinarizationThreshold(int x);
 	int getBinarizationThreshold();
 
-	int getSizeErode() { return m_SizeErode; };
+	int getSizeErode() { return _SizeErode; };
 	void setSizeErode(int x) {
-		m_SizeErode = x;
+		_SizeErode = x;
 		Q_EMIT notifyView();
 	};
 
-	int getSizeDilate() { return m_SizeDilate; };
+	int getSizeDilate() { return _SizeDilate; };
 	void setSizeDilate(int x) {
-		m_SizeDilate = x;
+		_SizeDilate = x;
 		Q_EMIT notifyView();
 	};
 
-	int getmog2History() { return m_mog2History; };
+	int getmog2History() { return _mog2History; };
 	void setmog2History(int x) {
-		m_mog2History = x;
+		_mog2History = x;
 		Q_EMIT notifyView();
 	};
 
-	int getmog2VarThresh() { return m_mog2VarThresh; };
+	int getmog2VarThresh() { return _mog2VarThresh; };
 	void setmog2VarThresh(int x) {
-		m_mog2VarThresh = x;
+		_mog2VarThresh = x;
 		Q_EMIT notifyView();
 	};
 
-	double getmog2BackgroundRatio() { return m_mog2BackgroundRatio; };
+	double getmog2BackgroundRatio() { return _mog2BackgroundRatio; };
 	void setmog2BackgroundRatio(double x) {
-		m_mog2BackgroundRatio = x;
+		_mog2BackgroundRatio = x;
 		Q_EMIT notifyView();
 	};
 
-	double getMinBlobSize() { return m_MinBlobSize; };
+	double getMinBlobSize() { return _MinBlobSize; };
 	void setMinBlobSize(double x) {
-		m_MinBlobSize = x;
+		_MinBlobSize = x;
 		Q_EMIT notifyView();
 	};
 
-	double getMaxBlobSize() { return m_MaxBlobSize; };
+	double getMaxBlobSize() { return _MaxBlobSize; };
 	void setMaxBlobSize(double x) {
-		m_MaxBlobSize = x;
+		_MaxBlobSize = x;
 		Q_EMIT notifyView();
 	};
 
-	bool getDoBackground() { return m_doBackground; };
+	bool getDoBackground() { return _doBackground; };
 	void setDoBackground(bool x) {
-		m_doBackground = x;
+		_doBackground = x;
 		Q_EMIT notifyView();
 	};
 
-	bool getDoNetwork() { return m_doNetwork; };
+	bool getDoNetwork() { return _doNetwork; };
 	void setDoNetwork(bool x) {
-		m_doNetwork = x;
+		_doNetwork = x;
 		Q_EMIT notifyView();
 	};
 
-	int getSendImage() { return m_sendImage; };
+	int getSendImage() { return _sendImage; };
 	void setSendImage(int x) {
-		m_sendImage = x;
+		_sendImage = x;
 		Q_EMIT notifyView();
 	};
 
-	bool getResetBackground() { return m_resetBackground; };
+	bool getResetBackground() { return _resetBackground; };
 	void setResetBackground(bool x) {
-		m_resetBackground = x;
+		_resetBackground = x;
 		Q_EMIT notifyView();
 	};
 
-	int getNoFish() { return m_noFish; };
+	int getNoFish() { return _noFish; };
 	void setNoFish(int x) {
-		m_noFish = x;
+		_noFish = x;
 		_settings->setParam(FISHTANKPARAM::FISHTANK_FISH_AMOUNT, x);
 		Q_EMIT notifyView();
 	};
 
-	std::string getNewSelection() { return m_newSelection; };
+	std::string getNewSelection() { return _newSelection; };
 	void setNewSelection(std::string x) {
-		m_newSelection = x;
+		_newSelection = x;
 	}
 	
 
@@ -111,15 +111,15 @@ public:
 		int minBlobSize, 
 		int maxBlobSize)
 	{
-		m_Threshold = Threshold;
-		m_BinarizationThreshold = BinarizationThreshold;
-		m_SizeErode = SizeErode;
-		m_SizeDilate = SizeDilate;
-		m_mog2History = mog2History;
-		m_mog2VarThresh = mog2VarThresh;
-		m_mog2BackgroundRatio = mog2BackgroundRatio;
-		m_MinBlobSize = minBlobSize;
-		m_MaxBlobSize = maxBlobSize;
+		_Threshold = Threshold;
+		_BinarizationThreshold = BinarizationThreshold;
+		_SizeErode = SizeErode;
+		_SizeDilate = SizeDilate;
+		_mog2History = mog2History;
+		_mog2VarThresh = mog2VarThresh;
+		_mog2BackgroundRatio = mog2BackgroundRatio;
+		_MinBlobSize = minBlobSize;
+		_MaxBlobSize = maxBlobSize;
 		_settings->setParam(TRACKERPARAM::THRESHOLD_BINARIZING, BinarizationThreshold);
 		_settings->setParam(TRACKERPARAM::SIZE_ERODE, SizeErode);
 		_settings->setParam(TRACKERPARAM::SIZE_DILATE, SizeDilate);
@@ -136,25 +136,25 @@ public:
 private:
 	BioTracker::Core::Settings *_settings;
 
-	int m_Threshold;
-	int m_BinarizationThreshold;
-	int m_SizeErode;
-	int m_SizeDilate;
-	int m_mog2History;
-	int m_mog2VarThresh;
-	double m_mog2BackgroundRatio;
-	int m_MinBlobSize;
-	int m_MaxBlobSize;
+	int _Threshold;
+	int _BinarizationThreshold;
+	int _SizeErode;
+	int _SizeDilate;
+	int _mog2History;
+	int _mog2VarThresh;
+	double _mog2BackgroundRatio;
+	int _MinBlobSize;
+	int _MaxBlobSize;
 
-	bool m_doBackground;
-	int m_sendImage;
-	bool m_resetBackground;
-	int m_noFish;
+	bool _doBackground;
+	int _sendImage;
+	bool _resetBackground;
+	int _noFish;
 
-	int m_networkPort;
-	bool m_doNetwork;
+	int _networkPort;
+	bool _doNetwork;
 
-	std::string m_newSelection;
+	std::string _newSelection;
 };
 
 #endif // TRACKERPARAMETER_H

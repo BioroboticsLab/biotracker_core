@@ -27,7 +27,7 @@ public Q_SIGNAL:
 	void emitUpdateCornersChanged(int id, int relX, int relY);
 
 private:
-    QRectF m_boundingRect;
+    QRectF _boundingRect;
 
 };
 

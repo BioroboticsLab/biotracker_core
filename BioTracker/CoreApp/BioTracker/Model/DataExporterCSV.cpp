@@ -18,24 +18,6 @@ DataExporterCSV::~DataExporterCSV()
 
 void DataExporterCSV::open(IModelTrackedTrajectory *root) {
     _root = root;
-    //This basically detects whether there is a "TrackedPoint" in the tracking structure.
-    //But as there might be no points in the beginning, we discard this and simply assume it's true...
-    //Basically we have no other choice than doing it when we got some tracks (i.e. when finalizing)
-    /*
-    IModelTrackedPoint *t = nullptr;
-    for (int i = 0; i < _root->size(); i++) 
-    {
-        IModelTrackedTrajectory * tr = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-        for (int i = 0; i < _root->size(); i++) {
-            t = dynamic_cast<IModelTrackedPoint *>(_root->getChild(i));
-            if (t) {
-                break;
-            }
-
-            t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-        }
-    }*/
-
     //We need to use "time(source_ms)" instead of the previous "time(source, ms)".
     //Apparently conventional tools like Excel and OOCalc got some issues parsing this correctly (naivly search for commas...)
     std::string baseName = getTimeAndDate(CFG_DIR_TRACKS, "");
@@ -67,6 +49,7 @@ std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumb
         << (e->hasDeg() ? "," + std::to_string(e->getDeg()) : "")
         << (e->hasRad() ? "," + std::to_string(e->getRad()) : "");
     std::string s = ss.str();
+
     return s;
 }
 

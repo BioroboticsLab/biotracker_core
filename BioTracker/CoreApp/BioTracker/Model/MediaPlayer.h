@@ -132,6 +132,11 @@ class MediaPlayer : public IModel {
      */
     void receiveTrackingOperationDone();
 
+    /**
+    * 
+    */
+    void receiveTrackingPaused();
+
 	void receiveChangeDisplayImage(QString str);
 
 
@@ -169,7 +174,7 @@ class MediaPlayer : public IModel {
 
 	bool m_recd;
 	bool m_recordScaled;
-	bool m_trackingSeen;
+	bool m_trackingDone;
 
 	bool m_useCuda;
 	GraphicsView *m_gv;

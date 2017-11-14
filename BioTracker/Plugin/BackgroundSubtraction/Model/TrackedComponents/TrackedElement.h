@@ -48,8 +48,8 @@ public:
 
 	bool hasX() { return true; };
 	bool hasY() { return true; };
-	bool hasW() { return true; };
-	bool hasH() { return true; };
+	bool hasW() { return false; };
+	bool hasH() { return false; };
 	bool hasRad() { return true; };
 	bool hasDeg() { return true; };
 	bool hasTime() { return true; };
