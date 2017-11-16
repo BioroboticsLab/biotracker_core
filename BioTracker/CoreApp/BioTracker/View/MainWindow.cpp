@@ -96,9 +96,15 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
 	if (coreParameter) {
-		ui->widgetParameterArea->updateGeometry();
+		ui->widgetParameterAreaInnerCanvas->updateGeometry();
 		coreParameter->updateGeometry();
-		coreParameter->setParent(ui->widgetParameterArea); //viewTab
+		coreParameter->setParent(ui->widgetParameterAreaInnerCanvas); //viewTab
+
+		QHBoxLayout* hLayout = new QHBoxLayout;
+		hLayout->addWidget(coreParameter, 100, 0);
+
+		ui->widgetParameterAreaInnerCanvas->setLayout(hLayout);
+
 		coreParameter->setVisible(1);
 		_currentCoreParameterView = coreParameterView;
 	}

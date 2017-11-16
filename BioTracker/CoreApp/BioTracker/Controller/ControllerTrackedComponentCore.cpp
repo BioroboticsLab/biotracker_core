@@ -36,6 +36,13 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	TrackedComponentView* view = static_cast<TrackedComponentView*>(m_View);
 	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint)), this, SLOT(receiveAddTrajectory(QPoint)));
 	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
+
+	//connect to update track number in core params
+	IController * ctrICP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	QPointer< ControllerCoreParameter > ctrCP = qobject_cast<ControllerCoreParameter *>(ctrICP);
+	QObject::connect(this, SIGNAL(emitTrackNumber(int)), ctrCP, SLOT(receiveTrackNumber(int)));
+
+
 }
 
 
@@ -56,6 +63,11 @@ void ControllerTrackedComponentCore::receiveRemoveTrajectory(IModelTrackedTrajec
 	emitRemoveTrajectory(trajectory);
 }
 
+void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory)
+{
+	emitRemoveTrackEntity(trajectory);
+}
+
 void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
 {
 	emitAddTrajectory(pos);
@@ -69,6 +81,12 @@ void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory 
 void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
 {
 	emitSwapIds(trajectory0, trajectory1);
+}
+
+void ControllerTrackedComponentCore::receiveUpdateView()
+{
+	TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);
+	compView->getNotified();
 }
 
 void ControllerTrackedComponentCore::createModel()
@@ -94,10 +112,18 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 {
 	m_Model = model;
 	m_View->setNewModel(m_Model);
+	
+	//signal initial track number to core params
+	IModelTrackedTrajectory *iModel = dynamic_cast<IModelTrackedTrajectory *>(getModel());
+	emitTrackNumber(iModel->size());
 }
 
 void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumber) 
 {
+	//signal the view to update track entities
 	TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);
 	compView->updateShapes(framenumber);
+	//signal the core parameter controller to update the track number
+	IModelTrackedTrajectory *model = dynamic_cast<IModelTrackedTrajectory *>(getModel());
+	emitTrackNumber(model->size());
 }

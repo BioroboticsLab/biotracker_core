@@ -54,7 +54,11 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
 
 	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrajectory, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrajectory, Qt::DirectConnection);
+	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrackEntity, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrackEntity, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrAlg, &ControllerTrackingAlgorithm::receiveAreaDescriptorUpdate);
+
+	//connect this to enable moving of elements -> we need pxtocm() to create new poses
+	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrTrC, &ControllerTrackedComponent::receiveAreaDescriptorUpdate, Qt::DirectConnection);
 
 	QObject::connect(this, &BioTrackerPlugin::emitAddTrajectory, ctrTrC, &ControllerTrackedComponent::receiveAddTrajectory, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement, Qt::DirectConnection);
@@ -89,6 +93,10 @@ void BioTrackerPlugin::receiveChangeDisplayImage(QString str) {
 
 void BioTrackerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory) {
 	Q_EMIT emitRemoveTrajectory(trajectory);
+}
+
+void BioTrackerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory) {
+	Q_EMIT emitRemoveTrackEntity(trajectory);
 }
 void BioTrackerPlugin::receiveAddTrajectory(QPoint pos) {
 	Q_EMIT emitAddTrajectory(pos);

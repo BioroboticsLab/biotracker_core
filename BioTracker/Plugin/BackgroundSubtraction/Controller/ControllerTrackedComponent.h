@@ -4,6 +4,7 @@
 #include "Interfaces/IController/IController.h"
 #include "QPoint"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelAreaDescriptor.h"
 
 class ControllerTrackedComponent : public IController
 {
@@ -15,12 +16,16 @@ public:
 public Q_SLOTS:
 		void receiveAddTrajectory(QPoint position);
 		void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+		void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+
 		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position);
 		/* TODO Swaps ID's of last elements (-> swap elements) or swap ID's of trajectories and all of its elements?
 		*/
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 		void receiveCurrentFrameNumber(uint framenumber);
 
+
+		void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 
 	// IController interface
 protected:
@@ -31,6 +36,7 @@ protected:
 
 	//members
 	int m_currentFrameNumber;
+	IModelAreaDescriptor* m_areaDescr;
 };
 
 #endif // CONTROLLERTRACKEDCOMPONENT_H

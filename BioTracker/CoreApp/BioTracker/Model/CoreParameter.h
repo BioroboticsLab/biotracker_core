@@ -3,6 +3,7 @@
 
 
 #include "Interfaces/IModel/IModel.h"
+#include "qcolor.h"
 
 class CoreParameter : public IModel
 {
@@ -27,16 +28,31 @@ public:
 
 		Q_EMIT notifyView();
 	};
+	void setTrackNumber(int number);
 
 
 
 public:
-	bool m_viewSwitch;
-	QString m_tracingStyle;
-	int m_tracingHistory;
-	int m_tracingSteps;
-	QColor* m_colorBorder;
-	QColor* m_colorBrush;
+	bool m_viewSwitch = true;
+	bool m_antialiasing = false;
+	//Tracing
+	QString m_tracingStyle = "None";
+	int m_tracingHistory = 20;
+	int m_tracingSteps = 1;
+	QString m_tracingTimeDegradation = "None";
+	double m_tracerProportions = 0.5;
+	bool m_tracerOrientationLine = false;
+	//Track dimensions
+	int m_trackWidth = 20;
+	int m_trackHeight = 20;
+	bool m_trackOrientationLine = true;
+	//Track color
+	QColor* m_colorBorder = new QColor(Qt::black);
+	QColor* m_colorBrush = new QColor(Qt::blue);
+	//Track count
+	int m_trackNumber = 0;
+
+
 };
 
 #endif // COREPARAMETER_H

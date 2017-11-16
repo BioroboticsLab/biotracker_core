@@ -39,6 +39,7 @@ signals:
 	void emitAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 	void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
@@ -46,6 +47,7 @@ signals:
 
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	void receiveAddTrajectory(QPoint pos);
 	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);

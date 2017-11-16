@@ -14,7 +14,7 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE, ADD, MOVE, SWAP };
+enum EDIT { REMOVE_TRACK, REMOVE_ENTITY, ADD, MOVE, SWAP };
 
 struct queueElement {
 	EDIT type;
@@ -52,9 +52,12 @@ class ControllerPlugin : public IController {
 
 signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	void emitUpdateView();
 
 	// IController interface
   protected:
@@ -81,6 +84,11 @@ signals:
 	void  receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	/**
 	*
+	* Receive command to remove a track entity and put it in edit queue
+	*/
+	void  receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+	/**
+	*
 	* Receive command to add a trajectory and put it in edit queue
 	*/
 	void  receiveAddTrajectory(QPoint pos);
@@ -91,9 +99,11 @@ signals:
 	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	/**
 	*
-	* Receive command to two ID'S and put it in edit queue
+	* Receive command to swap two ID'S and put it in edit queue
 	*/
 	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	void  receivePauseState(bool state);
 
 
 
@@ -105,6 +115,8 @@ signals:
 	QQueue<queueElement> m_editQueue;
 
 	QPointer< QThread >  m_TrackingThread;
+
+	bool m_paused = false;
 
 
 

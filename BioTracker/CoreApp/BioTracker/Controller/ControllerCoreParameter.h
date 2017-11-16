@@ -17,6 +17,8 @@ signals:
 	private slots:
 	//...
 	void updateView();
+	//update track number
+	void receiveTrackNumber(int number);
 
 	// IController interface
 protected:

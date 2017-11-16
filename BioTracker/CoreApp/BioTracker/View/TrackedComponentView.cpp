@@ -25,7 +25,7 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 {
 
 	//TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
-	m_boundingRect = QRectF(0, 0, 2040, 2040);
+	m_boundingRect = QRectF(0, 0, 4080, 4080);
 	setAcceptHoverEvents(true);
 	setAcceptDrops(true);
 	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
@@ -40,7 +40,6 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 
 void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
 	m_boundingRect = QRectF(0, 0, x, y);
-	printf("Core: %i, %i", x, y);
 	update();
 }
 
@@ -85,6 +84,7 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 void TrackedComponentView::getNotified()
 {
+	updateShapes(m_currentFrameNumber);
 	update();
 }
 bool TrackedComponentView::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
@@ -142,6 +142,8 @@ void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>
 
 // at plugin load, draw each element of initial main trajectory
 void TrackedComponentView::createChildShapesAtStart() {
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
+
 	// check if scene is set
 	if (!(this->scene())) {
 		printf("viewscene is null\n");
@@ -155,15 +157,36 @@ void TrackedComponentView::createChildShapesAtStart() {
 			if (trajectory) {
 				//create componentshape for trajectory
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
-				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
-				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
+				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+				QObject::connect(newShape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
+				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
+
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
+				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
+
+				newShape->setMembers(coreParams);
+				
+				//TODO bad code clean up
+				//IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(trajectory->getLastChild());
+				//if (point) { newShape->setData(1, "point"); }
+				//IModelTrackedEllipse* ellipse = dynamic_cast<IModelTrackedEllipse*>(trajectory->getLastChild());
+				//if (ellipse) { newShape->setData(1, "ellipse"); }
+				//IModelTrackedRectangle* rectangle = dynamic_cast<IModelTrackedRectangle*>(trajectory->getLastChild());
+				//if (rectangle) { newShape->setData(1, "rectangle"); }
+				//IModelTrackedPolygon* polygon = dynamic_cast<IModelTrackedPolygon*>(trajectory->getLastChild());
+				//if (polygon) { newShape->setData(1, "polygon"); }
+
+				newShape->setData(1, "ellipse");
+				newShape->update();
+
 			}
 
 			IModelTrackedPoint *rect = dynamic_cast<IModelTrackedPoint *>(all->getChild(i));
 			if (rect) {
-				int x = rect->getXpx();
-				int y = rect->getYpx();
+				int x = rect->getX();
+				int y = rect->getY();
 				int w = 20;
 				int h = 20;
 
@@ -185,11 +208,11 @@ void TrackedComponentView::createChildShapesAtStart() {
 
 
 void TrackedComponentView::updateShapes(uint framenumber) {
+	m_currentFrameNumber = framenumber;
+
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 	if (!all)
 		return;
-
-	//qDebug() << "main:" << all->getId();
 
 	//qDebug() << "all traj id's";
 	//for (int k = 0; k < all->size(); k++) {
@@ -206,16 +229,15 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	//for (int m = 0; m < this->childItems().size(); m++) {
 	//	//qDebug() << dynamic_cast<ComponentShape*>(this->childItems()[m])->getId();
 	//}
+
 	//update each shape; shape deletes itself if trajectory is empty or not existant
-    int size = this->childItems().size();
-	for (int i = 0; i < size; i++) {
-        if (i < this->childItems().size()) {
-            ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
-            if (shape) {
-                if (!(shape->updatePosition(framenumber))) {
-                }
-            }
-        }
+	for (int i = 0; i < this->childItems().size(); i++) {
+		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
+		if (shape) {
+			if (!(shape->updatePosition(framenumber))) {
+				i--;
+			}
+		}
 	}
 	// check for new trajectories; for each create a new shape
 	if (this->childItems().size() < all->size()) {
@@ -226,9 +248,23 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
 
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
+				//set type
+
+				//TODO bad code clean up
+				IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(trajectory->getLastChild());
+				if (point) { newShape->setData(1, "point"); }
+				IModelTrackedEllipse* ellipse = dynamic_cast<IModelTrackedEllipse*>(trajectory->getLastChild());
+				if (ellipse) { newShape->setData(1, "ellipse"); }
+				IModelTrackedRectangle* rectangle = dynamic_cast<IModelTrackedRectangle*>(trajectory->getLastChild());
+				if (rectangle) { newShape->setData(1, "rectangle"); }
+				IModelTrackedPolygon* polygon = dynamic_cast<IModelTrackedPolygon*>(trajectory->getLastChild());
+				if (polygon) { newShape->setData(1, "polygon"); }
+
 				//connectShape(newShape);
 
+				//TODO do this in extra function
 				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+				QObject::connect(newShape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 
@@ -236,20 +272,21 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
 
-				//TODO do this in extra function
-				newShape->receiveTracingLength(coreParams->m_tracingHistory);
-				newShape->receiveTracingStyle(coreParams->m_tracingStyle);
-				newShape->receiveTracingSteps(coreParams->m_tracingSteps);
+				newShape->m_currentFramenumber = m_currentFrameNumber;
+
+				newShape->setMembers(coreParams);
+
+				newShape->updatePosition(m_currentFrameNumber);
 			}
 			else {
-				printf("error: no trajectory -> no shape created");
+				qDebug() << "error: no trajectory -> no shape created";
 			}
 
 		}
 	}
 }
 // gets triggered when one or more shape is moved; emits move signal to tracker for all selected shapes
-// TODO: this way cause i don't see a better way to get drop-event for not clicked shapes (they dont get mouseevents if multiple shapes are selected)
+// TODO this way cause i don't see a better way to get drop-event for not clicked shapes (they dont get mouseevents if multiple shapes are selected)
 void TrackedComponentView::receiveBroadcastMove()
 {
 	QList<QGraphicsItem *> allSelectedItems = this->scene()->selectedItems();
@@ -268,9 +305,59 @@ void TrackedComponentView::receiveBroadcastMove()
 	}
 }
 
+
+//TODO make area descriptor invisible too
 void TrackedComponentView::receiveViewSwitch(bool lever)
 {
 	this->setVisible(lever);
+}
+
+void TrackedComponentView::receiveTrackDimensionsAll(int width, int height)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveDimensions(width, height);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackDimensionsSelected(int width, int height)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape && childShape->isSelected()) {
+			childShape->receiveDimensions(width, height);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackOrientationLine(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveToggleOrientationLine(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTrackDimensionsSetDefault()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->setDimensionsToDefault();
+		}
+	}
 }
 
 void TrackedComponentView::receiveTracingSteps(int steps)
@@ -309,6 +396,18 @@ void TrackedComponentView::receiveTracingHistoryLength(int history)
 	}
 }
 
+void TrackedComponentView::receiveTracingTimeDegradation(QString degradation)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracingTimeDegradation(degradation);
+		}
+	}
+}
+
 //TODO use signals not direct calls
 void TrackedComponentView::receiveColorChangeBrushAll()
 {
@@ -333,6 +432,32 @@ void TrackedComponentView::receiveColorChangeBorderAll()
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
 			childShape->changePenColor(color);
+		}
+	}
+}
+
+void TrackedComponentView::receiveColorChangeBorderSelected()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	QColor color = QColorDialog::getColor();
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape && childShape->isSelected()) {
+			childShape->changePenColor(color);
+		}
+	}
+}
+
+void TrackedComponentView::receiveColorChangeBrushSelected()
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	QColor color = QColorDialog::getColor();
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape && childShape->isSelected()) {
+			childShape->changeBrushColor(color);
 		}
 	}
 }
@@ -363,8 +488,8 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	QMenu menu;
 	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_A);
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()), Qt::Key_S);
-	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_U);
-	QAction *removeSelectedAction = menu.addAction("Remove selected entities", dynamic_cast<TrackedComponentView*>(this), SLOT(removeTrajectories()), Qt::Key_Backspace);
+	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(unmarkAll()), Qt::Key_U);
+	QAction *removeSelectedAction = menu.addAction("Remove selected tracks", dynamic_cast<TrackedComponentView*>(this), SLOT(removeTrajectories()), Qt::Key_Backspace);
 
 	
 	// manage adding
@@ -387,18 +512,19 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 
 	// execute menu
 	QAction *selectedAction = menu.exec(event->screenPos());
-
+	lastClickedPos = QPoint(0, 0);
 }
 
 void TrackedComponentView::addTrajectory()
 {
 	if (!lastClickedPos.isNull()) {
-		qDebug() << "new Component at position " << lastClickedPos;
+		qDebug() << "TCV: new track at position " << lastClickedPos;
 		emitAddTrajectory(lastClickedPos);
 		lastClickedPos = QPoint(0, 0);
 	}
 	else {
-		qDebug() << "could not add new component";
+		qDebug() << "TCV: new track at position (0,0)";
+		emitAddTrajectory(QPoint(0, 0));
 	}
 }
 
@@ -420,7 +546,18 @@ void TrackedComponentView::removeTrajectories()
 	foreach (item, allSelectedItems) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(item);
 		if (shape) {
-			shape->removeShape();
+			shape->removeTrack();
+		}
+	}
+}
+
+void TrackedComponentView::unmarkAll() {
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->unmarkShape();
 		}
 	}
 }
@@ -432,3 +569,39 @@ void TrackedComponentView::removeTrajectories()
 //	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrTrCompView, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
 //	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), ctrTrCompView, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
 //}
+
+void TrackedComponentView::receiveTracerProportions(float proportion)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerProportions(proportion);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracerOrientationLine(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerOrientationLine(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveToggleAntialiasing(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveAntialiasing(toggle);
+		}
+	}
+}

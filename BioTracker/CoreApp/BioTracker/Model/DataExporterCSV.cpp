@@ -5,15 +5,15 @@
 #include <qfile.h>
 
 DataExporterCSV::DataExporterCSV(QObject *parent) :
-	IModelDataExporter(parent)
+    IModelDataExporter(parent)
 {
-	_root = 0;
+    _root = 0;
 }
 
 
 DataExporterCSV::~DataExporterCSV()
 {
-	//delete _root;
+    //delete _root;
 }
 
 void DataExporterCSV::open(IModelTrackedTrajectory *root) {
@@ -27,7 +27,7 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root) {
     _ofs
         << "frame No."
         << ",time(source_ms)"
-        << ",time(tracking_ms)" 
+        << ",time(tracking_ms)"
         << ",ID"
         << ",x"
         << ",y"
@@ -54,21 +54,21 @@ std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumb
 }
 
 void DataExporterCSV::write(int idx) {
-	if (!_root) {
-		qDebug() << "No output opened!";
-		return;
-	}
+    if (!_root) {
+        qDebug() << "No output opened!";
+        return;
+    }
 
     //Write single trajectory
-	int trajNumber = 0;
-	for (int i = 0; i < _root->size(); i++) {
+    int trajNumber = 0;
+    for (int i = 0; i < _root->size(); i++) {
         //TODO there is some duplicated code here
         _ofs << std::to_string(idx)
             << "," + std::to_string((long long)((((double)idx) / _fps) * 1000));
 
-		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-		if (t) {
-			IModelTrackedPoint *e;
+        IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
+        if (t) {
+            IModelTrackedPoint *e;
             if (idx == -1)
                 e = dynamic_cast<IModelTrackedPoint*>(t->getLastChild());
             else
@@ -76,10 +76,10 @@ void DataExporterCSV::write(int idx) {
             if (e && e->getValid()) {
                 _ofs << writeTrackpoint(e, trajNumber);
             }
-			trajNumber++;
-		}
-	}
-	_ofs << std::endl;
+            trajNumber++;
+        }
+    }
+    _ofs << std::endl;
 }
 
 void DataExporterCSV::finalizeAndReInit() {
@@ -123,7 +123,7 @@ void DataExporterCSV::writeAll() {
             IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
             if (t) {
                 IModelTrackedPoint *e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
-                if (e){
+                if (e) {
                     o << writeTrackpoint(e, trajNumber);
                 }
                 trajNumber++;
