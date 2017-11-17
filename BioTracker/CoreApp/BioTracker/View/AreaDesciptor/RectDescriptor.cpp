@@ -13,8 +13,6 @@
 double orientation(cv::Point2f p1, cv::Point2f p2)
 {
     cv::Point2f diff = p1 - p2;
-    //return qAtan2(diff.x, diff.y);
-
     // need to check the origin of coorindiates
     return std::atan2(p1.y - p2.y, p1.x - p2.x);
 }
@@ -29,55 +27,9 @@ RectDescriptor::RectDescriptor(IController *controller, IModel *model) :
 
 	_brush = QBrush(Qt::blue);
 
-	//_isEllipse = true;
 	_v = (dynamic_cast<AreaInfoElement*>(getModel()))->getVertices();
     setRect(_v);
-	//for (int i = 0; i < 4; i++) {
-	//	std::shared_ptr<QGraphicsRectItem> ri = std::make_shared<QGraphicsRectItem>(QRect(_v[i].x - 10, _v[i].y - 10, 20, 20), this);
-	//	ri->setBrush(_brush);
-	//	_rectification.push_back(ri);
 
- //       //Numbers at corners
- //       if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
- //           std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(QString::number(i), this);
- //           ti->setPos(_v[i].x + 10, _v[i].y + 10);
- //           ti->setFont(QFont("Arial", 20));
- //           _rectificationNumbers.push_back(ti);
- //       }
-	//}
-
-	//for (int i = 0; i < 4; i++) {
-
-	//	auto fst = _rectification[i];
-	//	auto snd = _rectification[(i + 1) % 4];
-	//	
-	//	std::shared_ptr<QGraphicsLineItem> ri = std::make_shared<QGraphicsLineItem>(
-	//		QLine(fst->rect().x() + 10, fst->rect().y() + 10, snd->rect().x() + 10, snd->rect().y() + 10), this);
-	//	_rectificationLines.push_back(std::shared_ptr<QGraphicsLineItem>(ri));
-
- //       if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
- //           std::string label = "???";
- //           if (i % 2 == 0) {
- //               label = std::to_string(settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_W, 0));
- //           }
- //           else {
- //               label = std::to_string(settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_H, 0));
- //           }
- //           std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(label.c_str(), this);
- //           cv::Point2f a(fst->rect().x() + 10, fst->rect().y() + 10);
- //           cv::Point2f b(snd->rect().x() + 10, snd->rect().y() + 10);
- //           double alpha = orientation(a,b) * 180 / CV_PI;
- //           //Fix upside down text
- //           alpha = alpha > 0 ? 180 - alpha : alpha;
- //           cv::Point2f c = a + (b - a) * 0.5;
- //           ti->setPos(c.x, c.y);
- //           ti->setFont(QFont("Arial", 20));
- //           ti->setRotation(alpha );
- //           _rectificationNumbers.push_back(ti);
- //       }
-	//}
-
-	//_ellipseRotation = 0.0;
 	_isInit = false;
 }
 
