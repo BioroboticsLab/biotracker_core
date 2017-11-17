@@ -4,6 +4,9 @@
 #include "Model/CoreParameter.h"
 
 #include <iostream>
+#include "settings/Settings.h"
+#include "util/types.h"
+#include <limits>
 
 CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, IModel *model) :
 	IViewWidget(parent, controller, model),
@@ -21,16 +24,22 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	//ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
 	//ui->lineEditNoFish->setValidator(new QIntValidator(this));
 
-	//ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));
+    ui->lineEditRectWidth->setValidator(new QDoubleValidator(this));
+    ui->lineEditRectHeight->setValidator(new QDoubleValidator(this));
 
-	//BioCore::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CONFIGPARAM::CONFIG_INI_FILE);
-	//int v = _settings->getValueOrDefault<int>(TRACKERPARAM::CN_APPERTURE_TYPE, 0);
 	//ui->checkBoxEnableCoreView->setChecked(true);
 	//ui->spinBoxTracingHistoryLength->setMinimum(0);
 	//ui->spinBoxTracingHistoryLength->setMaximum(1000);
-
-	
-
+    BioTracker::Core::Settings *settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+    double h = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 100), std::numeric_limits<double>::epsilon());
+    double w = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 100), std::numeric_limits<double>::epsilon());
+    std::string sw = std::to_string(w);
+    std::string sh = std::to_string(w);
+    sh.erase(sh.find_last_not_of('0') + 1, std::string::npos);
+    sw.erase(sw.find_last_not_of('0') + 1, std::string::npos);
+    ui->lineEditRectWidth->setText(sw.c_str());
+    ui->lineEditRectHeight->setText(sh.c_str());
+    
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
 	fillUI();
@@ -172,14 +181,14 @@ void CoreParameterView::on_pushButtonDefaultDimensions_clicked()
 }
 
 void CoreParameterView::on_lineEditRectWidth_textChanged(QString s) {
-	double w = ::atof(ui->lineEditRectWidth->text().toStdString().c_str());
-	double h = ::atof(ui->lineEditRectHeight->text().toStdString().c_str());
+	double w = std::max(::atof(ui->lineEditRectWidth->text().toStdString().c_str()), std::numeric_limits<double>::epsilon());
+	double h = std::max(::atof(ui->lineEditRectHeight->text().toStdString().c_str()), std::numeric_limits<double>::epsilon());
 	Q_EMIT emitRectDimensions(w,h);
 }
 
 void CoreParameterView::on_lineEditRectHeight_textChanged(QString s) {
-	double w = ::atof(ui->lineEditRectWidth->text().toStdString().c_str());
-	double h = ::atof(ui->lineEditRectHeight->text().toStdString().c_str());
+	double w = std::max(::atof(ui->lineEditRectWidth->text().toStdString().c_str()), std::numeric_limits<double>::epsilon());
+	double h = std::max(::atof(ui->lineEditRectHeight->text().toStdString().c_str()), std::numeric_limits<double>::epsilon());
 	Q_EMIT emitRectDimensions(w, h); 
 }
 
