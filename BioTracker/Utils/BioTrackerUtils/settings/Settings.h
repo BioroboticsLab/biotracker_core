@@ -30,6 +30,7 @@ class Settings {
 private:
 	std::string _confFile;
 	std::mutex _m;
+	std::map<std::string, void*> _dataStore;
 
 public:
 
@@ -52,6 +53,18 @@ public:
 			boost::property_tree::write_json(_confFile, _ptree);
 		}
 		//_m.unlock();
+	}
+
+	void storeValue(std::string key, void* value) {
+		_dataStore.insert(std::pair<std::string, void*>(key, value));
+	}
+
+	void* readValue(std::string key) {
+		std::map<std::string, void*>::iterator it = _dataStore.find(key);
+		if (it != _dataStore.end()) {
+			return it->second;
+		}
+		return nullptr;
 	}
 
 	// C++ 11 style

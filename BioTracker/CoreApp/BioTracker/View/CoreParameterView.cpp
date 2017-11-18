@@ -14,27 +14,14 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 {
 	ui->setupUi(this);
 
-	////ui->lineEdit->setValidator(new QIntValidator(this));
-	//ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
-	//ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
-	//ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
-	////	ui->lineEdit_5_MogHist->setValidator(new QIntValidator(this));
-	////	ui->lineEdit_6_MogThresh->setValidator(new QIntValidator(this));
-	//ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
-	//ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
-	//ui->lineEditNoFish->setValidator(new QIntValidator(this));
-
     ui->lineEditRectWidth->setValidator(new QDoubleValidator(this));
     ui->lineEditRectHeight->setValidator(new QDoubleValidator(this));
 
-	//ui->checkBoxEnableCoreView->setChecked(true);
-	//ui->spinBoxTracingHistoryLength->setMinimum(0);
-	//ui->spinBoxTracingHistoryLength->setMaximum(1000);
     BioTracker::Core::Settings *settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
     double h = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 100), std::numeric_limits<double>::epsilon());
     double w = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 100), std::numeric_limits<double>::epsilon());
     std::string sw = std::to_string(w);
-    std::string sh = std::to_string(w);
+    std::string sh = std::to_string(h);
     sh.erase(sh.find_last_not_of('0') + 1, std::string::npos);
     sw.erase(sw.find_last_not_of('0') + 1, std::string::npos);
     ui->lineEditRectWidth->setText(sw.c_str());

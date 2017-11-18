@@ -115,6 +115,13 @@ void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 		std::string asdf = s.toStdString();
 		addToPluginList(s);
 	}
+
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	std::string *usePlugins = (std::string*)(set->readValue("usePlugins"));
+	if(usePlugins) {
+		addToPluginList(usePlugins->c_str());
+	}
+
 } 
 
 void ControllerPlugin::connectControllerToController() {
