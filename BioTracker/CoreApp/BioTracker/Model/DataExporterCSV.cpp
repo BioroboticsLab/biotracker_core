@@ -41,7 +41,7 @@ std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumb
     std::stringstream ss;
     ss << (trajNumber > 0 ? "," : "") << e->getId()
         << "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count())
-        << "," + e->getCoordinateUnit()
+        << "," + e->getCoordinateUnit().toStdString()
         << (e->hasX() ? "," + std::to_string(e->getX()) : "")
         << (e->hasY() ? "," + std::to_string(e->getY()) : "")
         << (e->hasW() ? "," + std::to_string(e->getW()) : "")

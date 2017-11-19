@@ -13,11 +13,13 @@ class IModelTrackedComponentFactory : public IModel
     virtual ~IModelTrackedComponentFactory() = 0;
 
     IModelTrackedComponent *getNewTrackedElement();
-    IModelTrackedComponent *getNewTrackedObject();
+	IModelTrackedComponent *getNewTrackedObject();
+	IModelTrackedComponent *getNewTrackedTrajectory();
 
 protected:
     virtual IModelTrackedComponent *createTrackedElement() = 0;
-    virtual IModelTrackedComponent *createTrackedObject() = 0;
+	virtual IModelTrackedComponent *createTrackedObject() = 0;
+	virtual IModelTrackedComponent *createTrackedTrajectory() = 0;
 
 };
 

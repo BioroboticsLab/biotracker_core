@@ -60,6 +60,8 @@ class ControllerMainWindow : public IController {
 	void setTrackerElementsWidget(IView *widget);
 	void setCoreElementsWidget(IView* widget);
 
+	void loadTrajectoryFile(std::string file);
+
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
 	public slots:

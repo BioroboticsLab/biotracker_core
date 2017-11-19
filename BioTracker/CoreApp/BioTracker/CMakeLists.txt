@@ -70,7 +70,7 @@ message("Configuring Biotracker_core..." )
 set(EXE_NAME Biotracker_core)
 add_executable(${EXE_NAME} ${_plugin_source_list} guiresources.qrc)
 target_link_libraries(${EXE_NAME} ${LIBS})
-add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility BackgroundSubtraction.tracker)
+add_dependencies(${EXE_NAME} Biotracker_interfaces Biotracker_utility)
 
 # Make this target the default target for a MSVC solution.
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${EXE_NAME})

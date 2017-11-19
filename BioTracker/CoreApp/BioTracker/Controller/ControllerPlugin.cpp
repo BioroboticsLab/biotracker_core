@@ -78,6 +78,7 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		IController* ctrDE = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 		QPointer< ControllerDataExporter > ctrDataExp = qobject_cast<ControllerDataExporter*>(ctrDE);
 		ctrDataExp->setDataStructure(m_BioTrackerPlugin->getTrackerComponentModel());
+		ctrDataExp->setComponentFactory(m_BioTrackerPlugin->getComponentFactory());
 
 		m_BioTrackerPlugin->sendCorePermissions();
 		

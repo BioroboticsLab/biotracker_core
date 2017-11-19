@@ -34,7 +34,7 @@ public:
     int validCount();
 
 private:
-	QList<IModelTrackedComponent*> m_TrackedComponents;
+	QList<IModelTrackedComponent*> _TrackedComponents;
 
 	QString name;
 };

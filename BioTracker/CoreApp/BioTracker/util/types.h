@@ -56,7 +56,8 @@ const std::vector<std::pair<std::string, std::string>> codecList = {
 };
 
 const std::vector<std::string> exporterList = {
-	std::string("CSV")
+	std::string("CSV"),
+	std::string("Serialize")
 };
 
 class CameraConfiguration

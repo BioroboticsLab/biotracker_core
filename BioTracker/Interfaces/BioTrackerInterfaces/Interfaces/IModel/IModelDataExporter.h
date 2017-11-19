@@ -21,6 +21,8 @@ public:
 	void setFps(float fps) { _fps = fps; };
 	void setTitle(std::string title) { _title = title; };
 
+	virtual void loadFile(std::string file) = 0;
+
 public:
 	IModelTrackedTrajectory *_root;
 	float _fps;
