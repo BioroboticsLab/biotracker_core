@@ -59,6 +59,20 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 	return m_TrackedComponents.at(m_TrackedComponents.size()-1);
 }
 
+IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
+{
+    int c = 0;
+    foreach(IModelTrackedComponent* el, m_TrackedComponents) {
+        if (el) {
+            if (c == index)
+                return el;
+            c += el->getValid() ? 1 : 0;
+        }
+    }
+
+    return nullptr;
+}
+
 int TrackedTrajectory::size()
 {
     return m_TrackedComponents.size();

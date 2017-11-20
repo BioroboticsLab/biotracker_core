@@ -29,6 +29,7 @@ public:
 	bool remove(IModelTrackedComponent *comp) override;
 	void clear() override;
 	IModelTrackedComponent *getChild(int index) override;
+    IModelTrackedComponent *getValidChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
     int size() override;
     int validCount();

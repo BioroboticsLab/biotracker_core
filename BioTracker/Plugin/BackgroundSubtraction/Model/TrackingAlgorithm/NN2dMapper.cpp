@@ -35,20 +35,33 @@ struct TupleCompare
 
 };
 
-std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(const std::vector<FishPose> &fishPoses, std::vector<BlobPose> blobPoses) {
+FishPose getFishpose(TrackedTrajectory* traj, uint frameid, uint id) {
+    IModelTrackedComponent* comp = traj->getValidChild(id);
+    TrackedTrajectory* ct = dynamic_cast<TrackedTrajectory*>(comp);
+    if (ct) {
+        TrackedElement *el = dynamic_cast<TrackedElement*>(ct->getChild(frameid-1));
+        if (el)
+            return el->getFishPose();
+    }
+    return FishPose();
+}
+
+std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(TrackedTrajectory* traj, uint frameid, std::vector<BlobPose> blobPoses) {
 	/* The algorithm seems kinda inefficient, as there is many fish*blobs and fish*fish loops.
 	 * But as N is expected to be pretty small (<10 for fish, <20 for blobs) this seems feasible.
 	*/
 	std::vector<FishPose> blobs = convertBlobPosesToFishPoses(blobPoses);
-	int sizeF = fishPoses.size(); 
+
+	int sizeF = traj->validCount();
 	int sizeB = blobs.size();
 	std::vector<std::vector<std::tuple<float, FishPose>>> propMap;
 	
 	//Create propability matrix and sort it
 	for (int i = 0; i < sizeF ; i++) {
 		std::vector<std::tuple<float, FishPose>> currentFish;
+        FishPose cpose = getFishpose(traj, frameid, i);
 		for (int j = 0; j < sizeB ; j++) {
-			currentFish.push_back(std::tuple<float, FishPose>(FishPose::calculateProbabilityOfIdentity(fishPoses[i], blobs[j]), blobs[j]));
+            currentFish.push_back(std::tuple<float, FishPose>(FishPose::calculateProbabilityOfIdentity(cpose, blobs[j]), blobs[j]));
 		}
 		std::sort(begin(currentFish), end(currentFish), TupleCompare());
 		propMap.push_back(currentFish);
@@ -82,39 +95,41 @@ std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(co
 			bestMatchesPoses.push_back(std::get<1>(propMap[i][0]));
 		}
 		else {
-			bestMatchesPoses.push_back(fishPoses[i]);
+			bestMatchesPoses.push_back(getFishpose(traj, frameid, i));
 			bestMatchesProps.push_back(100);
 		}
 	}
 	
 	for (int i = 0; i < bestMatchesPoses.size(); i++) {
-		if (!(bestMatchesPoses[i] == fishPoses[i])) {
-			bool angleConfident = correctAngle(i, bestMatchesPoses[i]);
-			if (angleConfident) _mapLastConfidentAngle.at(i) = bestMatchesPoses[i].orientation_rad();
 
-			//NOTE: I was hoping to do something meaningful with a much less complicated approach,
-			//		but I'm not convinced by these results at all
-			/*cv::Point2f p1		= bestMatchesPoses[i].position_cm();
-			cv::Point2f p2		= fishPoses[i].position_cm();
-			cv::Point2f p3		= p2 - p1;
-			float a				= cvFastArctan(p3.x, p3.y);
-			float byMovementDeg	= fmod((a + 90.f), 360.f);
-			float byMovementRad = (byMovementDeg / 360.f) * (CV_PI * 2.f);
-			float byBlobRad		= bestMatchesPoses[i].orientation_rad();
-			float byprevRad		= fishPoses[i].orientation_rad();
+        //Look at what the fish did in the last 10 frames
+        double historyDir;
+        {
+            double lookBack = 10;
+            cv::Point2f p = getFishpose(traj, frameid - lookBack, i).position_cm();
+            cv::Point2f pnow = bestMatchesPoses[i].position_cm();
+            while (CvHelper::getDistance(p, pnow) < 0.1 && lookBack < 100) {
+                lookBack += 10;
+                cv::Point2f p = getFishpose(traj, frameid - lookBack, i).position_cm();
+                cv::Point2f pnow = bestMatchesPoses[i].position_cm();
+            }
+            double dir = CvHelper::getAngleToTarget(p, pnow);
+            //correct some weird angle definition
+            historyDir = dir + CV_PI / 2;
+        }
 
-			if (abs(byBlobRad- byMovementRad) > CV_PI / 2.f)
-				byBlobRad = byMovementRad;
-			else if (abs(byBlobRad-byprevRad) > CV_PI / 2.f)
-				byBlobRad = byprevRad;
+        //The blob detection will come up with an ellipse orientation, where front and back are ambigious.
+        //So check the history for movement direction. Use the history as an indicator where front and back are.
+        //This might be unstable iff the fish didn't move at all.
+        double dif = CvHelper::angleDifference(bestMatchesPoses[i].orientation_rad(), historyDir);
+        if (std::abs(dif) > CV_PI / 2) {
+            double dir = bestMatchesPoses[i].orientation_rad() + CV_PI;
+            while (dir >  2 * CV_PI) dir -= 2 * CV_PI;
+            while (dir < -2 * CV_PI) dir += 2 * CV_PI;
+            bestMatchesPoses[i].set_orientation_rad(dir);
+            bestMatchesPoses[i].set_orientation_deg(dir * 180.0f / CV_PI);
+        }
 
-			if (byBlobRad - byprevRad > 0.1)
-				byBlobRad = byprevRad - 0.1;
-			else if (byBlobRad - byprevRad < -0.1)
-				byBlobRad = byprevRad + 0.1;
-
-			bestMatchesPoses[i].set_orientation_rad(byBlobRad);*/
-		}
 	}
 
 	return std::tuple<std::vector<FishPose>, std::vector<float>>(bestMatchesPoses,bestMatchesProps);

@@ -29,7 +29,8 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 	//This should be done using a factory, right?
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
-		//t->setId(i);
+        t->setValid(true);
+        //t->setId(i);
 		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
 		t->add(e);
 		all->add(t, i);

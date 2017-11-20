@@ -179,7 +179,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	std::vector<FishPose> fish = getLastPositionsAsPose();
 	
 	//Find new positions using 2D nearest neighbour
-	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(fish, blobs);
+	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(_TrackedTrajectoryMajor, framenumber, blobs);
 
 	//Insert new poses into data structure
 	int trajNumber = 0;
