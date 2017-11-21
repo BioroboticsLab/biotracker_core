@@ -10,6 +10,7 @@
 #include "qwidgetaction.h"
 #include "qlabel.h"
 #include "assert.h"
+#include "qtime"
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
@@ -169,7 +170,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 			// if component and traj valid -> show and update
 			if (pointLike->getValid() && m_trajectory->getValid()) {
 				this->setPos(pointLike->getX() - m_w/2, pointLike->getY() - m_h/2);
-
+				QPointF point = this->pos();
 				//create tracers
 				trace();
 
@@ -236,7 +237,6 @@ void ComponentShape::updateAttributes()
 		}
 	}
 }
-
 
 //TODO is ugly -> make prettier!
 void ComponentShape::trace()
@@ -438,14 +438,15 @@ bool ComponentShape::isRemovable()
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
 	//qDebug() << "shape get dragged at:" << pos();
-
+	m_mousePressTime = QTime::currentTime();
+	m_mousePressTime.start();
 	m_mousePressPos = pos().toPoint();
 	//qDebug()<< "PRESS" << m_mousePressPos;
 
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
 		setCursor(Qt::ClosedHandCursor);
-		m_dragged = true;
+		//m_dragged = true;
 		update();
 	}
 	//pass on
@@ -456,15 +457,27 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
 	if (event->button() == Qt::LeftButton) {
 		setCursor(Qt::ArrowCursor);
+
+		QPoint currentPos = this->pos().toPoint();
+		int manhattanLength = (currentPos - m_mousePressPos).manhattanLength();
+		int moveTime = m_mousePressTime.elapsed();
+		if (manhattanLength > 5 || moveTime > 200) {
+			m_dragged = true;
+		}
+
+
+		if (m_dragged) {
+
+			//broadcast move so other selected elements get moved too
+			// TODO? maybe unconventional and slow but couldn't find another way; Dropevents in view and dropevents in shape didn't seem to work
+			broadcastMove();
+		}
+		else {
+			this->setPos(m_mousePressPos);
+			this->update();
+		}
 		m_dragged = false;
 		//qDebug() << "DROP " << this->getId() << ": " << pos();
-		
-		// signal new position to controller
-		//emitMoveElement(m_trajectory, pos().toPoint());
-
-		//broadcast move so other selected elements get moved too
-		// TODO? maybe unconventional and slow but couldn't find another way; Dropevents in view and dropevents in shape didn't seem to work
-		broadcastMove();
 
 		update();
 	}
@@ -474,7 +487,7 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 }
 
 void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
-	//qDebug() << "shape gets moved to:" << pos();
+	//pass on
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
@@ -732,7 +745,7 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_brushColor = *(coreParams->m_colorBrush);
 	m_penColor = *(coreParams->m_colorBorder);
 
-
+	m_dragged = false;
 	// set dimensions and default dimensions
 	if (coreParams->m_trackWidth > 0) {
 		m_w = coreParams->m_trackWidth;

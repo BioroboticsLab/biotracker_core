@@ -298,8 +298,8 @@ void TrackedComponentView::receiveBroadcastMove()
 		if (shape) {
 			if (shape->isSelected()) {
 				IModelTrackedTrajectory* shapeTrajectory = shape->getTrajectory();
-				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint());
-				qDebug() << shape->pos().toPoint();
+				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint() + QPoint(shape->m_w/2, shape->m_h/2));
+				//qDebug() << shape->pos().toPoint();
 			}
 		}
 	}
@@ -484,7 +484,9 @@ void TrackedComponentView::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
+
 	lastClickedPos = event->pos().toPoint();
+	//qDebug() << "rechtsclick: " << lastClickedPos;
 	QMenu menu;
 	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_A);
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()), Qt::Key_S);

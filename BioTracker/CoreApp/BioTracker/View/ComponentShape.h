@@ -9,7 +9,7 @@
 #include "View/TrackedComponentView.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Model/CoreParameter.h"
-
+#include "QTime"
 
 class ComponentShape : public QGraphicsObject
 {
@@ -36,6 +36,9 @@ class ComponentShape : public QGraphicsObject
 
 		//public member
 		int m_currentFramenumber;
+		//to fix a bug when moving TODO better
+		int m_w;
+		int m_h;
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -89,9 +92,7 @@ class ComponentShape : public QGraphicsObject
 		QList<QPolygonF> m_polygons;
 		int m_id;
 		int m_z;
-		int m_w;
 		int m_wDefault;
-		int m_h;
 		int m_hDefault;
 		bool m_useDefaultDimensions;
 		float m_rotation;
@@ -102,6 +103,7 @@ class ComponentShape : public QGraphicsObject
 		int m_penWidth;
 		Qt::PenStyle m_penStyle;
 		bool m_dragged;
+		QTime m_mousePressTime;
 		QPoint m_mousePressPos;
 		QString m_tracingStyle;
 		int m_tracingLength;
