@@ -47,6 +47,11 @@ public:
 	 */
 	virtual IModelTrackedComponent* getChild(int index)  = 0;
 
+    virtual IModelTrackedComponent* getValidChild(int index) = 0;
+
+	virtual int validCount() = 0;
+
+
 	/**
 	* This shoudd simply return a last child object (highest index).
 	*/

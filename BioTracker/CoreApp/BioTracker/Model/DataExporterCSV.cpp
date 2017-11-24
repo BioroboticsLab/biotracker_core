@@ -5,37 +5,19 @@
 #include <qfile.h>
 
 DataExporterCSV::DataExporterCSV(QObject *parent) :
-	IModelDataExporter(parent)
+    IModelDataExporter(parent)
 {
-	_root = 0;
+    _root = 0;
 }
 
 
 DataExporterCSV::~DataExporterCSV()
 {
-	//delete _root;
+    //delete _root;
 }
 
 void DataExporterCSV::open(IModelTrackedTrajectory *root) {
     _root = root;
-    //This basically detects whether there is a "TrackedPoint" in the tracking structure.
-    //But as there might be no points in the beginning, we discard this and simply assume it's true...
-    //Basically we have no other choice than doing it when we got some tracks (i.e. when finalizing)
-    /*
-    IModelTrackedPoint *t = nullptr;
-    for (int i = 0; i < _root->size(); i++) 
-    {
-        IModelTrackedTrajectory * tr = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-        for (int i = 0; i < _root->size(); i++) {
-            t = dynamic_cast<IModelTrackedPoint *>(_root->getChild(i));
-            if (t) {
-                break;
-            }
-
-            t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-        }
-    }*/
-
     //We need to use "time(source_ms)" instead of the previous "time(source, ms)".
     //Apparently conventional tools like Excel and OOCalc got some issues parsing this correctly (naivly search for commas...)
     std::string baseName = getTimeAndDate(CFG_DIR_TRACKS, "");
@@ -45,59 +27,48 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root) {
     _ofs
         << "frame No."
         << ",time(source_ms)"
-        << ",time(tracking_ms)" 
+        << ",time(tracking_ms)"
         << ",ID"
         << ",x"
         << ",y"
         << ",deg"
         << ",rad"
         << std::endl;
-    //if (t)
-    /*_ofs << "ID"
-        << ",frame No."
-        << ",time(source, ms)"
-        << (t->hasTime() ? ",time(tracking, ms)" : "")
-		<< (t->hasX() ? ",x" : "")
-		<< (t->hasY() ? ",y" : "")
-		<< (t->hasZ() ? ",z" : "")
-		//<< (t->hasW() ? ",w" : "")
-		//<< (t->hasH() ? ",h" : "")
-		<< (t->hasDeg() ? ",deg" : "")
-		<< (t->hasRad() ? ",rad" : "")
-		<< std::endl;*/
 
 }
 
 std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumber) {
     std::stringstream ss;
     ss << (trajNumber > 0 ? "," : "") << e->getId()
-        << (e->hasTime() ? "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count()) : "")
+        << "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count())
+        << "," + e->getCoordinateUnit()
         << (e->hasX() ? "," + std::to_string(e->getX()) : "")
         << (e->hasY() ? "," + std::to_string(e->getY()) : "")
-        << (e->hasZ() ? "," + std::to_string(e->getZ()) : "")
-        //<< (e->hasW() ? "," + std::to_string(e->getW()) : "")
-        //<< (e->hasH() ? "," + std::to_string(e->getH()) : "")
+        << (e->hasW() ? "," + std::to_string(e->getW()) : "")
+        << (e->hasH() ? "," + std::to_string(e->getH()) : "")
         << (e->hasDeg() ? "," + std::to_string(e->getDeg()) : "")
         << (e->hasRad() ? "," + std::to_string(e->getRad()) : "");
-    return ss.str();
+    std::string s = ss.str();
+
+    return s;
 }
 
 void DataExporterCSV::write(int idx) {
-	if (!_root) {
-		qDebug() << "No output opened!";
-		return;
-	}
+    if (!_root) {
+        qDebug() << "No output opened!";
+        return;
+    }
 
     //Write single trajectory
-	int trajNumber = 0;
-	for (int i = 0; i < _root->size(); i++) {
+    int trajNumber = 0;
+    for (int i = 0; i < _root->size(); i++) {
         //TODO there is some duplicated code here
         _ofs << std::to_string(idx)
-            << "," + std::to_string((((float)idx) / _fps) * 1000);
+            << "," + std::to_string((long long)((((double)idx) / _fps) * 1000));
 
-		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-		if (t) {
-			IModelTrackedPoint *e;
+        IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
+        if (t) {
+            IModelTrackedPoint *e;
             if (idx == -1)
                 e = dynamic_cast<IModelTrackedPoint*>(t->getLastChild());
             else
@@ -105,10 +76,10 @@ void DataExporterCSV::write(int idx) {
             if (e && e->getValid()) {
                 _ofs << writeTrackpoint(e, trajNumber);
             }
-			trajNumber++;
-		}
-	}
-	_ofs << std::endl;
+            trajNumber++;
+        }
+    }
+    _ofs << std::endl;
 }
 
 void DataExporterCSV::finalizeAndReInit() {
@@ -152,7 +123,7 @@ void DataExporterCSV::writeAll() {
             IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
             if (t) {
                 IModelTrackedPoint *e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
-                if (e){
+                if (e) {
                     o << writeTrackpoint(e, trajNumber);
                 }
                 trajNumber++;

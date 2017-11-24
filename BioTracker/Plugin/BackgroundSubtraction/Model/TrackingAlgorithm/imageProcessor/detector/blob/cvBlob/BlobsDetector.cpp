@@ -20,6 +20,10 @@ void BlobsDetector::filterBlobsBySize(CBlobResult& blobs)
 	//std::cout << "max filtered blobs: " << blobs.GetNumBlobs() << " max: " << maxBlobSize() << std::endl;
 }
 
+bool isLeft(CvPoint a, CvPoint b, CvPoint c) {
+    return ((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x)) > 0;
+}
+
 std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, const cv::Mat& oriImage)
 {
 	std::vector<BlobPose> blobPoses;
@@ -35,10 +39,9 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 
 	// filter the blobs by size criteria
 	filterBlobsBySize(blobs);	
-	//std::cout << "----" << std::endl;
-	for (int i = 0; i < blobs.GetNumBlobs(); i++)
-	{
 
+	for (int i = 0; i < blobs.GetNumBlobs(); i++)
+    {
 		currentBlob = blobs.GetBlob(i);
 
 		// gets blob center
@@ -47,17 +50,30 @@ std::vector<BlobPose> BlobsDetector::findBlobs(const cv::Mat& processedImage, co
 		cv::Point blobPose_px = cv::Point(x, y);		
 
 		// apply homography
-//TODO PORT
 		cv::Point2f blobPose_cm =_areaInfo->pxToCm(blobPose_px);
+
 		// ignore blobs outside the tracking area
-		//if (!Rectification::instance().inArea(blobPose_cm))
-		//	continue
-//TODO PORT
 		if (!_areaInfo->inTrackingArea(blobPose_px))
 			continue;
+        /*
+        CBlobContour * contour = currentBlob->GetExternalContour();
+        t_PointList externContour = contour->GetContourPoints();
+        CvMemStorage storage;
+        CvPoint actualPoint, previousPoint;
+        CvSeqReader reader;
+        cvStartReadSeq(externContour, &reader);
 
-		//TODO Important Fix up rectification!
-
+        // which contour pixels touch border?
+        for (int j = 0; j < externContour->total; j++)
+        {
+            CV_READ_SEQ_ELEM(actualPoint, reader);
+            if (j == 0) previousPoint = actualPoint;
+            //std::cout << actualPoint.x << "/" << actualPoint.y << std::endl;
+            //std::cout << isLeft(CvPoint a, CvPoint b, actualPoint) << std::endl;
+           
+            previousPoint = actualPoint;
+        }*/
+        
 		float blobPose_angle_deg = currentBlob->GetEllipse().angle;
 		float blobPose_angle_rad = currentBlob->GetEllipse().angle * CV_PI / float(180.0);
 		assert(blobPose_angle_deg >= 0.0f && blobPose_angle_deg <= 360.0f);

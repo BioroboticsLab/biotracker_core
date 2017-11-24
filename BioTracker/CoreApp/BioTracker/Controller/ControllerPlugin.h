@@ -96,7 +96,7 @@ signals:
 	*
 	* Receive command to move a element in a trajectory and put it in edit queue
 	*/
-	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 	/**
 	*
 	* Receive command to swap two ID'S and put it in edit queue
@@ -116,7 +116,7 @@ signals:
 
 	QPointer< QThread >  m_TrackingThread;
 
-	bool m_paused = false;
+	bool m_paused = true;
 
 
 

@@ -9,7 +9,7 @@
 
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
-	m_trackingSeen = false;
+	m_trackingDone = true;
 	m_currentFPS = 0;
 	m_fpsOfSourceFile = 0;
 	_imagew = 0;
@@ -44,6 +44,9 @@ MediaPlayer::MediaPlayer(QObject* parent) :
     QObject::connect(this, &MediaPlayer::stopCommand, m_Player, &MediaPlayerStateMachine::receiveStopCommand);
     QObject::connect(this, &MediaPlayer::goToFrame, m_Player, &MediaPlayerStateMachine::receiveGoToFrame);
 
+    QObject::connect(this, &MediaPlayer::pauseCommand, this, &MediaPlayer::receiveTrackingPaused);
+    QObject::connect(this, &MediaPlayer::stopCommand, this, &MediaPlayer::receiveTrackingPaused);
+
 	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
     // Handel PlayerStateMachine results
@@ -68,12 +71,10 @@ MediaPlayer::~MediaPlayer() {
 
 void MediaPlayer::setTrackingActive() {
     m_TrackingIsActive = true;
-	m_trackingSeen = false;
 }
 
 void MediaPlayer::setTrackingDeactive() {
     m_TrackingIsActive = false;
-	m_trackingSeen = false;
 }
 
 bool MediaPlayer::getPlayState() {
@@ -195,6 +196,10 @@ void MediaPlayer::takeScreenshot(GraphicsView *gv) {
     image.save(getTimeAndDate(CFG_DIR_SCREENSHOTS+std::string("/Screenshot"), ".png").c_str());
 }
 
+void MediaPlayer::receiveTrackingPaused() {
+    m_trackingDone = true;
+}
+
 void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 
     m_Back = param->m_Back;
@@ -216,11 +221,10 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
 
 	if (m_TrackingIsActive) {
+        m_trackingDone = false;
 		Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
-		m_trackingSeen = true;
 	}
 	else {
-		m_trackingSeen = false;
 	}
 
 	if (m_recd) {
@@ -262,18 +266,19 @@ void MediaPlayer::receivePlayerOperationDone() {
 	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	m_currentFPS = floor(1.0/(double(s)/1000000.0));
 
-	if (!m_TrackingIsActive || !m_trackingSeen)
+	//if (!m_TrackingIsActive || !m_trackingRunning)
+    if(m_trackingDone == true || !m_TrackingIsActive)
 		Q_EMIT runPlayerOperation();
 
-	m_trackingSeen = false;
 
 	start = std::chrono::steady_clock::now();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {
     // Only emit this SIGNAL when tracking is active
-    if(m_TrackingIsActive)
-        Q_EMIT runPlayerOperation();
+    if (m_TrackingIsActive) {
+        m_trackingDone = true;
+    }
 }
 
 void MediaPlayer::receiveChangeDisplayImage(QString str) {

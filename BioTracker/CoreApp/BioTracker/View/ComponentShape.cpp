@@ -161,15 +161,17 @@ bool ComponentShape::updatePosition(uint framenumber)
 	}
 	if (m_trajectory->size() != 0 && m_trajectory->getValid()) {
 
+
+
 		//update width and height for the latest tracked component
 		updateAttributes(); 
 
 		//for each point-like (point, rectangle, ellipse)
 		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
 		if (pointLike) {
-			// if component and traj valid -> show and update
-			if (pointLike->getValid() && m_trajectory->getValid()) {
-				this->setPos(pointLike->getX() - m_w/2, pointLike->getY() - m_h/2);
+			// if component and traj valid or current frame is 0 (video initialized) -> show and update
+			if ((pointLike->getValid() && m_trajectory->getValid()) ||m_currentFramenumber == 0) {
+				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
 				QPointF point = this->pos();
 				//create tracers
 				trace();
@@ -200,6 +202,8 @@ bool ComponentShape::updatePosition(uint framenumber)
 	}
 	else {
 		//printf("trajectory empty, delete child%i...\n", m_id);
+		this->hide();
+		m_tracingLayer->hide();
 		delete this;
 		return false;
 	}
@@ -209,6 +213,8 @@ bool ComponentShape::updatePosition(uint framenumber)
 //TODO for polygons
 void ComponentShape::updateAttributes()
 {
+	m_id = m_trajectory->getId();
+
 	prepareGeometryChange();
 	IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
 	if (pointLike) {
@@ -244,7 +250,7 @@ void ComponentShape::trace()
 	//TRACING
 
 	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-	QPointF currentPoint = QPointF(currentChild->getX(), currentChild->getY());
+	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
 
 	m_tracingLayer->setPos(this->pos());
 	//m_tracingLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
@@ -265,12 +271,11 @@ void ComponentShape::trace()
 
 	if (m_trajectory->size() != 0 && m_tracingLength > 0 && !(m_tracingStyle == "None")) {
 
-
 		QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
 
 		for (int i = 1; i <= m_tracingLength; i += m_tracingSteps) {
 			
-			//i cannot be larger than m_currentFramenumber -> cannot be in the future / index out of bounds possible
+			//it cannot be larger than m_currentFramenumber -> cannot be in the future / index out of bounds possible
 			if (i >= m_currentFramenumber){
 				continue;
 			}
@@ -279,7 +284,7 @@ void ComponentShape::trace()
 			if (historyChild && historyChild->getValid()) {
 
 				//positioning
-				QPointF historyPoint = QPointF(historyChild->getX(), historyChild->getY());
+				QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
 				QPointF historyPointDifference = historyPoint - currentPoint;
 				QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
 
@@ -327,7 +332,6 @@ void ComponentShape::trace()
 						//set colors
 						tracePoint->setPen(timeDegradationPen);
 						tracePoint->setBrush(timeDegradationBrush);
-						tracePoint->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 					}
 					else if (this->data(1) == "ellipse") {
 						QGraphicsEllipseItem* traceEllipse = new QGraphicsEllipseItem(m_tracingLayer);
@@ -606,9 +610,7 @@ bool ComponentShape::removeTrack()
 
 		//emit to set trajectory invalid 
 		Q_EMIT emitRemoveTrajectory(m_trajectory);
-		//hide this shape
-		this->hide();
-		this->m_tracingLayer->hide();
+
 	}
 	else {
 		qDebug() << "track is not removable";
@@ -627,7 +629,7 @@ bool ComponentShape::removeTrackEntity()
 		this->hide();
 	}
 	else {
-		qDebug() << "trackentity is not removable";
+		qDebug() << "track entity is not removable";
 	}
 	return m_pRemovable;
 }

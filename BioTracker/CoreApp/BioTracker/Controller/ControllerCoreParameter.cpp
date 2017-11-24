@@ -98,3 +98,15 @@ void ControllerCoreParameter::updateView()
 //	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
 //	rd->updateRect();
 }
+
+void ControllerCoreParameter::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
+{
+	if (dynamic_cast<CoreParameterView*>(m_View)) {
+		dynamic_cast<CoreParameterView*>(m_View)->setPermission(permission);
+	}
+	else {
+		qDebug() << "no view yet";
+		//This should never happen, actually
+		assert(false);
+	}
+}

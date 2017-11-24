@@ -51,7 +51,23 @@ void TrackedTrajectory::clear()
 
 IModelTrackedComponent* TrackedTrajectory::getChild(int index)
 {
+    if (index < 0)
+        return nullptr;
 	return (m_TrackedComponents.size() > index ? m_TrackedComponents.at(index) : nullptr);
+}
+
+IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
+{
+    int c = 0;
+    foreach(IModelTrackedComponent* el, m_TrackedComponents) {
+        if (el){
+            if (c == index)
+                return el;
+            c += el->getValid() ? 1 : 0;
+        }
+    }
+
+    return nullptr;
 }
 
 IModelTrackedComponent* TrackedTrajectory::getLastChild()

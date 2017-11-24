@@ -79,7 +79,7 @@ class ControllerPlayer : public IController {
 
 		int recordInput();
 
-		void takeScreenshot();
+	void takeScreenshot();
 
 	// IController interface
 	public:

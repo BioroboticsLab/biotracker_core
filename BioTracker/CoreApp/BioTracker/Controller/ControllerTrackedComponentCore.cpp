@@ -73,9 +73,9 @@ void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
 	emitAddTrajectory(pos);
 }
 
-void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos)
+void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)
 {
-	emitMoveElement(trajectory, pos);
+	emitMoveElement(trajectory, pos, toMove);
 }
 
 void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
@@ -87,6 +87,10 @@ void ControllerTrackedComponentCore::receiveUpdateView()
 {
 	TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);
 	compView->getNotified();
+	//signal the core parameter controller to update the track number
+	IModelTrackedTrajectory *model = dynamic_cast<IModelTrackedTrajectory *>(getModel());
+	int trackNumber = model->validCount();
+	emitTrackNumber(trackNumber);
 }
 
 void ControllerTrackedComponentCore::createModel()
@@ -115,7 +119,8 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	
 	//signal initial track number to core params
 	IModelTrackedTrajectory *iModel = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	emitTrackNumber(iModel->size());
+	int trackNumber = iModel->validCount();
+	emitTrackNumber(trackNumber);
 }
 
 void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumber) 
@@ -125,5 +130,6 @@ void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumb
 	compView->updateShapes(framenumber);
 	//signal the core parameter controller to update the track number
 	IModelTrackedTrajectory *model = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	emitTrackNumber(model->size());
+	int trackNumber = model->validCount();
+	emitTrackNumber(trackNumber);
 }

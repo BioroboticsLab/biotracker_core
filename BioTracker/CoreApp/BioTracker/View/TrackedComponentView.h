@@ -105,7 +105,7 @@ protected:
 	bool permissionAdd;
 	bool permissionSwap;
 
-	int m_currentFrameNumber;
+	int m_currentFrameNumber = 0;
 };
 
 #endif // TRACKEDCOMPONENTVIEW_H

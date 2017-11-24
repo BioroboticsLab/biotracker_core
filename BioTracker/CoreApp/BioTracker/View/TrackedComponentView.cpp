@@ -87,6 +87,7 @@ void TrackedComponentView::getNotified()
 	updateShapes(m_currentFrameNumber);
 	update();
 }
+
 bool TrackedComponentView::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
 	return true;
 }
@@ -115,7 +116,7 @@ QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVari
 // set permissions, which where send by the plugin
 void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
 {
-	m_permissions.insert(permission);
+	m_permissions[permission.first] = permission.second;
 	qDebug() << "permission " << permission.first << " set to" << permission.second;
 
 
@@ -159,7 +160,7 @@ void TrackedComponentView::createChildShapesAtStart() {
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
 				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
-				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
@@ -265,7 +266,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				//TODO do this in extra function
 				QObject::connect(newShape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
-				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+				QObject::connect(newShape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 				QObject::connect(newShape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 
 				newShape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
@@ -275,7 +276,6 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 				newShape->m_currentFramenumber = m_currentFrameNumber;
 
 				newShape->setMembers(coreParams);
-
 				newShape->updatePosition(m_currentFrameNumber);
 			}
 			else {
@@ -290,6 +290,8 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 void TrackedComponentView::receiveBroadcastMove()
 {
 	QList<QGraphicsItem *> allSelectedItems = this->scene()->selectedItems();
+	QList<ComponentShape*> allSelectedEntitiesList;
+
 	
 	QGraphicsItem* item;
 
@@ -297,12 +299,24 @@ void TrackedComponentView::receiveBroadcastMove()
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(item);
 		if (shape) {
 			if (shape->isSelected()) {
-				IModelTrackedTrajectory* shapeTrajectory = shape->getTrajectory();
-				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint() + QPoint(shape->m_w/2, shape->m_h/2));
-				//qDebug() << shape->pos().toPoint();
+				allSelectedEntitiesList.append(shape);
 			}
 		}
 	}
+
+	int numberSelectedEntitiesToMove = allSelectedEntitiesList.size();
+	ComponentShape* entity;
+	foreach(entity, allSelectedEntitiesList) {
+		ComponentShape* shape = dynamic_cast<ComponentShape*>(entity);
+		if (shape) {
+			if (shape->isSelected()) {
+				IModelTrackedTrajectory* shapeTrajectory = shape->getTrajectory();
+				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint() + QPoint(shape->m_w / 2, shape->m_h / 2), numberSelectedEntitiesToMove);
+				numberSelectedEntitiesToMove--;
+			}
+		}
+	}
+	
 }
 
 
@@ -494,10 +508,10 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	QAction *removeSelectedAction = menu.addAction("Remove selected tracks", dynamic_cast<TrackedComponentView*>(this), SLOT(removeTrajectories()), Qt::Key_Backspace);
 
 	
-	// manage adding
-	if (!m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]) {
-		addComponentAction->setEnabled(false);
-	}
+	// manage permissions
+	addComponentAction->setEnabled(m_permissions[ENUMS::COREPERMISSIONS::COMPONENTADD]);
+	swapIdsAction->setEnabled(m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]);
+	removeSelectedAction->setEnabled(m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]);
 
 	// manage swapping
 	swapIdsAction->setEnabled(false);
@@ -506,8 +520,8 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	if (allSelectedItems.size() == 2 && dynamic_cast<ComponentShape*>(allSelectedItems[0]) && dynamic_cast<ComponentShape*>(allSelectedItems[1])) {
 		ComponentShape* selectedItem0 = dynamic_cast<ComponentShape*>(allSelectedItems[0]);
 		ComponentShape* selectedItem1 = dynamic_cast<ComponentShape*>(allSelectedItems[1]);
-		// check if both shapes are swappable (check permission for each shape
-		if (selectedItem0->isSwappable() && selectedItem1->isSwappable()) {
+		// check if both shapes are swappable (check permission for each shape) and general permission
+		if (selectedItem0->isSwappable() && selectedItem1->isSwappable() && m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]) {
 			swapIdsAction->setEnabled(true);
 		}
 	}
@@ -566,10 +580,6 @@ void TrackedComponentView::unmarkAll() {
 
 //void TrackedComponentView::connectShape(ComponentShape* shape) {
 //
-//	ControllerTrackedComponentCore* ctrTrCompView = dynamic_cast<ControllerTrackedComponentCore*>(this->getController());
-//
-//	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrTrCompView, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
-//	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), ctrTrCompView, SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)));
 //}
 
 void TrackedComponentView::receiveTracerProportions(float proportion)

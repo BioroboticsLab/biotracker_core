@@ -1,5 +1,6 @@
 #include "Rectification.h"
 #include <iostream>
+#include <limits>
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include "settings/Settings.h"
@@ -9,8 +10,8 @@
 Rectification::Rectification() {
 
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-	int w = _settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_W, 80);
-	int h = _settings->getValueOrDefault<int>(AREADESCRIPTOR::RECT_H, 80);
+    double w = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 100), std::numeric_limits<double>::epsilon());
+    double h = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 100), std::numeric_limits<double>::epsilon());
 	initRecitification(w,h);
 	setupRecitification(0,0,0,0);
 }

@@ -58,20 +58,35 @@ class PluginLoader : public IModel {
 	  // Gets the name of the currently loaded plugin
 	  QString getCurrentPluginName();
 
+      /**
+      * Returns a map containing the mapping "plugin name -> filename"
+      */
       std::map<QString, QString> const& getPluginMap() const;
 
 private:
 
+    //a map containing the mapping "plugin name -> filename"
 	std::map<QString, QString> m_PluginMap;
 
+    //nomen est omen
 	bool m_isPluginLoaded;
+
+    //Name of the currently loaded plugin
 	QString m_currentPluginName;
 
+    /**
+    * Gets the metadata from the currently loaded plugin.
+    * Currently this is nothing but the advertised name of the plugin
+    */
 	QString readMetaDataFromPlugin();
 
+    // The QT object to actually load the plugins
 	QPluginLoader* m_PluginLoader;
 
+    // List of all available plugins 
 	QStringList m_PluginList;
+
+    // Entire ListModel of the metadata (actually containing all metadata, not only name)
 	QStringListModel* m_PluginListModel;
 
 

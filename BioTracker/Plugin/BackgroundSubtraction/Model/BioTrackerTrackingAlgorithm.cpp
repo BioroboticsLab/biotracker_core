@@ -146,7 +146,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-	//TODO PORT use the IModelAreaDescriptor instead
 	//Refuse to run tracking if we have no area info...
 	if (_AreaInfo == nullptr) {
 		Q_EMIT emitTrackingDone(framenumber);
@@ -154,7 +153,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	}
 
 	//The user changed the # of fish. Reset the history and start over!
-	
 	if (_noFish != _TrackedTrajectoryMajor->validCount()) {
 		_noFish = _TrackedTrajectoryMajor->validCount();
 		//resetFishHistory(_noFish);
@@ -181,7 +179,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	std::vector<FishPose> fish = getLastPositionsAsPose();
 	
 	//Find new positions using 2D nearest neighbour
-	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(fish, blobs);
+	std::tuple<std::vector<FishPose>, std::vector<float>> poses = _nn2d->getNewPoses(_TrackedTrajectoryMajor, framenumber, blobs);
 
 	//Insert new poses into data structure
 	int trajNumber = 0;

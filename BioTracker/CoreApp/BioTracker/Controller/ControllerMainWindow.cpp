@@ -94,11 +94,17 @@ void ControllerMainWindow::connectModelToController() {
 	
 }
 
+extern std::string initLoadingVideo;
 void ControllerMainWindow::connectControllerToController() {
 
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	IView* v = ctr->getView();
 	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(v);
+
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	std::string *video = (std::string*)(set->readValue("video"));
+	if (video)
+		loadVideo(video->c_str());
 }
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {

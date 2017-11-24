@@ -11,6 +11,7 @@
 #include "Model/DataExporterCSV.h"
 #include "ControllerDataExporter.h"
 #include "ControllerAreaDescriptor.h"
+#include "Controller/ControllerCoreParameter.h"
 
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
@@ -115,6 +116,13 @@ void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 		std::string asdf = s.toStdString();
 		addToPluginList(s);
 	}
+
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	std::string *usePlugins = (std::string*)(set->readValue("usePlugins"));
+	if(usePlugins) {
+		addToPluginList(usePlugins->c_str());
+	}
+
 } 
 
 void ControllerPlugin::connectControllerToController() {
@@ -137,8 +145,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), this, 
-		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
+		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 
@@ -180,13 +188,14 @@ void ControllerPlugin::connectPlugin() {
 	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
 
 
-
-
 	IController* ctrData = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	ControllerDataExporter* ctDataEx = qobject_cast<ControllerDataExporter*>(ctrData);
 
 	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	ControllerTrackedComponentCore* ctrCompView = qobject_cast<ControllerTrackedComponentCore*>(ctrC);
+
+	IController* ctrD = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	ControllerCoreParameter* ctrCoreParam = qobject_cast<ControllerCoreParameter*>(ctrD);
 
 	QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 
@@ -206,6 +215,12 @@ void ControllerPlugin::connectPlugin() {
 
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, 
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
+
+	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCoreParam,
+		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
+
+
+
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), obj,
@@ -281,11 +296,14 @@ void ControllerPlugin::receiveAddTrajectory(QPoint pos)
 	}
 }
 
-void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos)
+void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)
 {
 	if (m_paused) {
 		emitMoveElement(trajectory, pos);
-		emitUpdateView();
+		//only emit the update after the last move is processed
+		if (toMove == 1) {
+			emitUpdateView();
+		}
 	}
 	else {
 		queueElement moveEdit;

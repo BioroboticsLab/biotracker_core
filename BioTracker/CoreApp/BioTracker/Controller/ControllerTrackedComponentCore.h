@@ -24,7 +24,7 @@ class ControllerTrackedComponentCore : public IController
 		// signal to ctrPlugin to add trajectory
 		void emitAddTrajectory(QPoint pos);
 
-		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 
 		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
@@ -45,7 +45,7 @@ class ControllerTrackedComponentCore : public IController
 
 		void receiveAddTrajectory(QPoint pos);
 
-		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 

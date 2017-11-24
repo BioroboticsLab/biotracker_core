@@ -32,7 +32,7 @@ public:
     void parametersChanged();
 
 private:
-    Ui::TrackerParameterView *ui;
+    Ui::TrackerParameterView *_ui;
 
     // IViewWidget interface
 public slots:

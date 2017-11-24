@@ -195,12 +195,16 @@ void ControllerAreaDescriptor::mouseMoveEvent(QMouseEvent*event, const QPoint &p
 
 void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {
 
+    BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+    _settings->setParam(AREADESCRIPTOR::RECT_W, w);
+    _settings->setParam(AREADESCRIPTOR::RECT_H, h);
+
 	AreaInfo* area = static_cast<AreaInfo*>(getModel());
 	area->setRectificationDimensions(w, h);
 	triggerUpdateAreaDescriptor();
-	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-	_settings->setParam(AREADESCRIPTOR::RECT_W, w);
-	_settings->setParam(AREADESCRIPTOR::RECT_H, h);
+
+    RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
+    rd->updateRect();
 }
 
 void ControllerAreaDescriptor::setDisplayRectificationDefinition(bool b) {

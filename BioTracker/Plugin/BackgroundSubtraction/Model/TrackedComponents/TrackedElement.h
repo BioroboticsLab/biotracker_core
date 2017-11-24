@@ -20,10 +20,10 @@ public:
 	TrackedElement(QObject *parent = 0, QString name = "n.a.", int id = 0);
 
 	QString getName();
+    std::string getCoordinateUnit() override { return "cm"; };
 
 	void  setX(float val);
 	void  setY(float val);
-	void  setZ(float z) {};
 	void  setW(float w);
 	void  setH(float h);
 	void  setRad(float r);
@@ -32,11 +32,14 @@ public:
 	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
 
-	float getX();
-	float getY();
-	float getZ() { return 0; };
-	float getW() { return _w; };
-	float getH() { return _h; };
+    float getX();
+    float getY();
+    float getXpx();
+    float getYpx();
+    float getW() { return _w; };
+    float getH() { return _h; };
+    float getWpx() { return _w; };
+    float getHpx() { return _h; };
 	float getRad() { return _rad; };
 	float getDeg();
 	int   getId() { return _id; };
@@ -45,9 +48,8 @@ public:
 
 	bool hasX() { return true; };
 	bool hasY() { return true; };
-	bool hasZ() { return false; };
-	bool hasW() { return true; };
-	bool hasH() { return true; };
+	bool hasW() { return false; };
+	bool hasH() { return false; };
 	bool hasRad() { return true; };
 	bool hasDeg() { return true; };
 	bool hasTime() { return true; };

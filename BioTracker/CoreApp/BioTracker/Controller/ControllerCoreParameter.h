@@ -20,6 +20,9 @@ signals:
 	//update track number
 	void receiveTrackNumber(int number);
 
+	public slots:
+	void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+
 	// IController interface
 protected:
 	void createModel() override;

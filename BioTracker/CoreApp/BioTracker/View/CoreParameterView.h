@@ -18,6 +18,7 @@ public:
 	~CoreParameterView();
 
 	QWidget* getTrackerHook();
+	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
 	private slots:
 	//Enable view

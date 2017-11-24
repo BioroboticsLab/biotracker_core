@@ -43,7 +43,7 @@ class ComponentShape : public QGraphicsObject
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
-		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int sizeOfStackToMove);
 		void broadcastMove();
 
 	public Q_SLOTS:

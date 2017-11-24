@@ -40,13 +40,10 @@ std::vector<BlobPose> SimpleBlobsDetector::findBlobs(const cv::Mat& binImage, co
 	std::vector<BlobPose> blobPoses;
 
 	std::vector<cv::KeyPoint> keyPoints;
-	//std::vector<std::vector<cv::Point>> contours;
-	//std::vector<std::vector<cv::Point>> approxContours;
 
-	//initParams();
 	cv::Ptr<cv::SimpleBlobDetector> blobDetector = cv::SimpleBlobDetector::create(_params);
 
-	blobDetector->detect( binImage, keyPoints/*, (_mask ? &IplImage(*_mask) : nullptr) */);
+	blobDetector->detect( binImage, keyPoints);
 
 	for (int i = 0; i < keyPoints.size(); i++)
 	{
@@ -56,10 +53,8 @@ std::vector<BlobPose> SimpleBlobsDetector::findBlobs(const cv::Mat& binImage, co
 		cv::Point blobPose_px = cv::Point(x, y);		
 
 		// apply homography
-//TODO PORT
 		cv::Point2f blobPose_cm = _areaInfo->pxToCm(blobPose_px);
 
-//TODO PORT
 		if (!_areaInfo->inTrackingArea(blobPose_px))
 			continue;
 

@@ -317,7 +317,7 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-29</y>
+                      <y>0</y>
                       <width>302</width>
                       <height>852</height>
                      </rect>
@@ -1092,11 +1092,6 @@
                 </layout>
                </item>
               </layout>
-             </widget>
-             <widget class="QWidget" name="tab">
-              <attribute name="title">
-               <string>Page</string>
-              </attribute>
              </widget>
             </widget>
            </item>
