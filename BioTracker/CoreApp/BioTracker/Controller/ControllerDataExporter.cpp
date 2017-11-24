@@ -1,6 +1,7 @@
 #include "ControllerDataExporter.h"
 #include "Model/DataExporterCSV.h"
 #include "Model/DataExporterSerialize.h"
+#include "Model/DataExporterJson.h"
 #include "settings/Settings.h"
 #include "util/types.h"
 
@@ -27,8 +28,10 @@ void ControllerDataExporter::createModel() {
 	std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
 	if (exporter == "CSV")
 		m_Model = new DataExporterCSV(this);
-	else if (exporter == "Serialize")
-		m_Model = new DataExporterSerialize(this);
+    else if (exporter == "Serialize")
+        m_Model = new DataExporterSerialize(this);
+    else if (exporter == "Json")
+        m_Model = new DataExporterJson(this);
 	else
 		m_Model = 0;
 }

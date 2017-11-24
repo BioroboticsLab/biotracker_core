@@ -44,6 +44,7 @@ add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Plugin/LukasKanade)
 add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
+add_subdirectory(Plugin/FlyHeart)
 
 
 

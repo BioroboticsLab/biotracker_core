@@ -14,6 +14,7 @@ public:
 protected:
     IModelTrackedComponent *createTrackedElement() override;
     IModelTrackedComponent *createTrackedObject() override;
+    IModelTrackedComponent *createTrackedTrajectory() override;
 };
 
 #endif // TRACKEDOBJECTFACTORY_H

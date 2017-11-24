@@ -25,6 +25,10 @@ IModel* BioTrackerPlugin::getTrackerComponentModel() {
 	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getModel();
 }
 
+IModelTrackedComponentFactory *BioTrackerPlugin::getComponentFactory() {
+    return new TrackedComponentFactory();
+}
+
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(BioTrackerPlugin, BioTrackerPlugin)
 #endif // QT_VERSION < 0x050000
