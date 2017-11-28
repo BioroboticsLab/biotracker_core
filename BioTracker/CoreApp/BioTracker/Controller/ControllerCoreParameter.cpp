@@ -43,6 +43,10 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitTrackDimensionsAll, tcview, &TrackedComponentView::receiveTrackDimensionsAll, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackDimensionsSelected, tcview, &TrackedComponentView::receiveTrackDimensionsSelected, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackDimensionsSetDefault, tcview, &TrackedComponentView::receiveTrackDimensionsSetDefault, Qt::DirectConnection);
+
+		//Track ignore zoom
+		QObject::connect(view, &CoreParameterView::emitIgnoreZoom, tcview, &TrackedComponentView::receiveIgnoreZoom, Qt::DirectConnection);
+
 		//Track color
 		QObject::connect(view, &CoreParameterView::emitColorChangeBorderAll, tcview, &TrackedComponentView::receiveColorChangeBorderAll, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitColorChangeBorderSelected, tcview, &TrackedComponentView::receiveColorChangeBorderSelected, Qt::DirectConnection);

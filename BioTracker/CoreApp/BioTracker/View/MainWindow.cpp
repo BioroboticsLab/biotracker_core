@@ -14,6 +14,7 @@
 
 #include "QGraphicsObject"
 
+#include "qtextedit.h"
 
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
@@ -90,7 +91,6 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 	}
 }
 
-#include "qtextedit.h"
 void MainWindow::addCoreParameterView(IView * coreParameterView)
 {
 
@@ -98,7 +98,7 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 	if (coreParameter) {
 		ui->widgetParameterAreaInnerCanvas->updateGeometry();
 		coreParameter->updateGeometry();
-		coreParameter->setParent(ui->widgetParameterAreaInnerCanvas); //viewTab
+		coreParameter->setParent(ui->widgetParameterAreaInnerCanvas);
 
 		QHBoxLayout* hLayout = new QHBoxLayout;
 		hLayout->addWidget(coreParameter, 100, 0);
@@ -112,7 +112,10 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
 	QString ct = ui->comboBox_TrackerSelect->currentText();
-	Q_EMIT selectPlugin(ct);
+    if (!ct.isEmpty() && _previouslySelectedTracker != ct) {
+        _previouslySelectedTracker = ct;
+        Q_EMIT selectPlugin(ct);
+    }
 }
 
 void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
@@ -165,12 +168,19 @@ void MainWindow::on_actionOpen_Picture_triggered() {
     }
 }
 
-void MainWindow::on_actionLoad_tracking_data_triggered() {
+void MainWindow::on_actionLoad_trackingdata_triggered() {
+	static const QString imageFilter(
+		"tracking data files (*.csv *.dat)");
 
-}
+	std::vector<boost::filesystem::path> files;
+	for (QString const& path : QFileDialog::getOpenFileNames(this,
+		"Open image files", "", imageFilter, 0, QFileDialog::DontUseNativeDialog)) {
+		files.push_back(boost::filesystem::path(path.toStdString()));
+	}
 
-void MainWindow::on_actionSave_tracking_data_triggered() {
-
+	if (!files.empty()) {
+		qobject_cast<ControllerMainWindow*> (getController())->loadTrajectoryFile(files[0].string());
+	}
 }
 
 void MainWindow::on_actionQuit_triggered() {

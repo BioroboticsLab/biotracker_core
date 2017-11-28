@@ -20,12 +20,17 @@ public:
 	TrackedElement(QObject *parent = 0, QString name = "n.a.", int id = 0);
 
 	QString getName();
-    std::string getCoordinateUnit() override { return "cm"; };
+	QString getCoordinateUnit() override { return _unit; };
+	void setCoordinateUnit(QString str) override { _unit = str; };
 
 	void  setX(float val);
 	void  setY(float val);
 	void  setW(float w);
 	void  setH(float h);
+	void  setXpx(float val);
+	void  setYpx(float val);
+	void  setWpx(float w);
+	void  setHpx(float h);
 	void  setRad(float r);
 	void  setDeg(float d);
 	void  setId(int val) { _id = val; };
@@ -67,6 +72,7 @@ public:
 
 private:
 	QString _name;
+	QString _unit = "cm";
 	FishPose _pose;
 	float _x;
 	float _y;

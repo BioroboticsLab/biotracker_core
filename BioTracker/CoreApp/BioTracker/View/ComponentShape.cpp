@@ -42,6 +42,11 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	setVisible(true);
 }
+
+ComponentShape::~ComponentShape() {
+    delete m_tracingLayer;
+}
+
 QRectF ComponentShape::boundingRect() const
 {
 	if (this->data(1) == "ellipse" || this->data(1) == "point" || this->data(1) == "rectangle") {
@@ -253,6 +258,9 @@ void ComponentShape::trace()
 	//TRACING
 
 	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+	if (!currentChild)
+		return;
+
 	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
 
 	m_tracingLayer->setPos(this->pos());
@@ -784,6 +792,12 @@ void ComponentShape::receiveToggleOrientationLine(bool toggle)
 	trace();
 	update();
 }
+void ComponentShape::receiveIgnoreZoom(bool toggle)
+{
+	setFlag(QGraphicsItem::ItemIgnoresTransformations, toggle);
+	trace();
+	update();
+}
 //set members from core params
 void ComponentShape::setMembers(CoreParameter* coreParams)
 {
@@ -801,6 +815,8 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_penColor = *(coreParams->m_colorBorder);
 
 	m_dragged = false;
+	setFlag(QGraphicsItem::ItemIgnoresTransformations, coreParams->m_ignoreZoom);
+
 	// set dimensions and default dimensions
 	if (coreParams->m_trackWidth > 0) {
 		m_w = coreParams->m_trackWidth;

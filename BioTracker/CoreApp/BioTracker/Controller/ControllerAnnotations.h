@@ -17,9 +17,9 @@ public:
 	// IController interface
 public:
 	void connectControllerToController() override;
-	void reset(std::string filepath);
 
 public Q_SLOTS:
+    void reset(std::string filepath);
 	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
 	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
 	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);

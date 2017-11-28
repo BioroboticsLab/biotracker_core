@@ -51,6 +51,8 @@ public:
 	QColor* m_colorBrush = new QColor(Qt::blue);
 	//Track count
 	int m_trackNumber = 0;
+	//Ignore zooming
+	bool m_ignoreZoom = false;
 
 
 };

@@ -73,6 +73,23 @@ void TrackedElement::setH(float h) {
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _h, _pose.getScore());
 }
 
+
+void TrackedElement::setXpx(float val) {
+	std::cout << "Stub..." << std::endl;
+}
+
+void TrackedElement::setYpx(float val) {
+	std::cout << "Stub..." << std::endl;
+}
+
+void TrackedElement::setWpx(float w) {
+	std::cout << "Stub..." << std::endl;
+}
+
+void TrackedElement::setHpx(float h) {
+	std::cout << "Stub..." << std::endl;
+}
+
 float TrackedElement::getX() {
 	return _pose.position_cm().x;
 }

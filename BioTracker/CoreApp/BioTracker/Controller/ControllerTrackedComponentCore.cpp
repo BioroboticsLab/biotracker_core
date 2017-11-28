@@ -19,7 +19,10 @@ ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, 
 
 void ControllerTrackedComponentCore::createView()
 {
-	//m_View = new TrackedComponentView(0, this, m_Model);
+	//This occurs when there has been a previous plugin to visualize
+    if (m_View != nullptr)
+        delete m_View;
+
 	m_View = new TrackedComponentView(0, this, m_Model);
 }
 
@@ -42,7 +45,16 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QPointer< ControllerCoreParameter > ctrCP = qobject_cast<ControllerCoreParameter *>(ctrICP);
 	QObject::connect(this, SIGNAL(emitTrackNumber(int)), ctrCP, SLOT(receiveTrackNumber(int)));
 
+    // Tell the Visualization to reset upon loading a new plugin
+    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+}
 
+void ControllerTrackedComponentCore::receiveOnPluginLoaded() {
+   //createView();
+   //connectControllerToController();
+   //TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);
+   //compView->getNotified();
+   //dynamic_cast<TrackedComponentView*>(m_View)->createChildShapesAtStart();
 }
 
 

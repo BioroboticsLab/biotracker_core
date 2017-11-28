@@ -34,6 +34,8 @@ public:
     */
 	void close() override;
 
+	void loadFile(std::string file) override {};
+
     /**
     *  Effectively a writeAll, close and open.
     */

@@ -36,6 +36,8 @@ public:
 	void on_pushButtonSelectAll_clicked();
 	void on_pushButtonAddTrack_clicked();
 
+	void on_checkBoxIgnoreZoom_stateChanged(int v);
+
 	//Track color
 	void on_pushButtonColorChangeBorder_clicked();
 	void on_pushButtonColorChangeBorderSelected_clicked();
@@ -72,6 +74,8 @@ public:
             void emitSelectAll();
 			//Set number of tracks
 			void emitAddTrack();
+			//Ignore zoom
+			void emitIgnoreZoom(bool toggle);
 			//Track color
 			void emitColorChangeBorderAll();
 			void emitColorChangeBorderSelected();

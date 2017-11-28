@@ -55,6 +55,8 @@ public slots:
 	void receiveTrackDimensionsSelected(int width, int height);
 	void receiveTrackOrientationLine(bool toggle);
 	void receiveTrackDimensionsSetDefault();
+	//Track ignore zoom
+	void receiveIgnoreZoom(bool toggle);
 	//Track color
 	void receiveColorChangeBorderAll();
 	void receiveColorChangeBorderSelected();

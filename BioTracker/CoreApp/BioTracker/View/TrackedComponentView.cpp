@@ -1,4 +1,5 @@
 #include "TrackedComponentView.h"
+#include <assert.h>
 //#include "Model/TrackedComponents/TrackedElement.h"
 //#include "Model/TrackedComponents/TrackingRectElement.h"
 //#include "Model/TrackedComponents/TrackedTrajectory.h"
@@ -26,6 +27,7 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 
 	//TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
 	m_boundingRect = QRectF(0, 0, 4080, 4080);
+    m_currentFrameNumber = 0;
 	setAcceptHoverEvents(true);
 	setAcceptDrops(true);
 	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
@@ -107,7 +109,7 @@ void TrackedComponentView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVariant & value)
 {
-	if (change == ItemSceneHasChanged) {
+	if (change == ItemSceneHasChanged && this->scene()) {
 		createChildShapesAtStart();
 	}
 	return QGraphicsItem::itemChange(change, value);
@@ -146,9 +148,7 @@ void TrackedComponentView::createChildShapesAtStart() {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
 
 	// check if scene is set
-	if (!(this->scene())) {
-		printf("viewscene is null\n");
-	}
+    assert(this->scene());
 	
 	// create a shape for each model-component upon plugin-init
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
@@ -316,7 +316,6 @@ void TrackedComponentView::receiveBroadcastMove()
 			}
 		}
 	}
-	
 }
 
 
@@ -614,6 +613,18 @@ void TrackedComponentView::receiveToggleAntialiasing(bool toggle)
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
 			childShape->receiveAntialiasing(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveIgnoreZoom(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveIgnoreZoom(toggle);
 		}
 	}
 }

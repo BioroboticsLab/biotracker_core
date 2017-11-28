@@ -8,6 +8,7 @@
 #include "settings/Settings.h"
 
 #include "View/TrackedElementView.h"
+#include "Model/TrackedComponents/TrackedComponentFactory.h"
 
 BioTrackerPlugin::BioTrackerPlugin() {
 }
@@ -23,6 +24,10 @@ IView *BioTrackerPlugin::getTrackerElementsWidget()
 // forwards tracked component model to coreApp
 IModel* BioTrackerPlugin::getTrackerComponentModel() {
 	return qobject_cast<ControllerTrackedComponent *> (m_ComponentController)->getModel();
+}
+
+IModelTrackedComponentFactory *BioTrackerPlugin::getComponentFactory() {
+	return new TrackedComponentFactory();
 }
 
 #if QT_VERSION < 0x050000

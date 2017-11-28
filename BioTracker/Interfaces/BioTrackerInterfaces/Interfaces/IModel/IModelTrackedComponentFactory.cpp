@@ -18,3 +18,8 @@ IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedObject()
 {
     return createTrackedObject();
 }
+
+IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedTrajectory()
+{
+	return createTrackedTrajectory();
+}

@@ -3,6 +3,11 @@
 
 #include "IModel.h"
 #include <chrono>
+
+#include <QObject>
+#include <QDataStream>
+#include <ostream>
+
 /**
 * This is the common interface for all TrackedComponents (IModelTrackedTrajectory and any leaf class).
 * It is part of the Composite Pattern and is the equivalent to the abstract Component class.
@@ -20,30 +25,63 @@
 class IModelTrackedComponent : public IModel
 {
 	Q_OBJECT
-
+	Q_PROPERTY(bool _valid READ getValid() WRITE setValid)
+	Q_PROPERTY(double _id READ getId() WRITE setId)
 public:
 	/**
 	* The constructor of the IModelTrackedComponent class is able to receive a QObject as parent.
 	*/
 	IModelTrackedComponent(QObject *parent = 0);
-    virtual void  setValid(bool v) = 0;
-    virtual void  setId(int id) = 0;
-    virtual int   getId() = 0;
-    virtual bool  getValid() = 0;
+	virtual void  setValid(bool v) { _valid = v; };
+	virtual void  setId(int id) { _id = id; };
+	virtual int   getId() { return _id; };
+	virtual bool  getValid() { return _valid; };
 
+	/**
+	* The methode operate() must be implemented by every derivative of this class.
+	*/
+	virtual void operate() = 0;
+
+protected:
+	int _id;
+	bool _valid;
 };
 
-class IModelComponentEuclidian2D {
+QDataStream &operator<<(QDataStream &out, const IModelTrackedComponent &painting);
+QDataStream &operator>>(QDataStream &in, IModelTrackedComponent &painting);
+
+class IModelComponentEuclidian2D : public IModelTrackedComponent {
 public:
+	Q_OBJECT
+	Q_PROPERTY(QString _coordinateUnit READ getCoordinateUnit() WRITE setCoordinateUnit)
+	Q_PROPERTY(float _x READ getX() WRITE setX)
+	Q_PROPERTY(float _y READ getY() WRITE setY)
+	Q_PROPERTY(float _w READ getW() WRITE setW)
+	Q_PROPERTY(float _h READ getH() WRITE setH)
+	Q_PROPERTY(float _wpx READ getWpx() WRITE setWpx)
+	Q_PROPERTY(float _hpx READ getHpx() WRITE setHpx)
+	Q_PROPERTY(float _rad READ getRad() WRITE setRad)
+	Q_PROPERTY(float _deg READ getDeg() WRITE setDeg)
+	Q_PROPERTY(float _xpx READ getXpx() WRITE setXpx)
+	Q_PROPERTY(float _ypx READ getHpx() WRITE setHpx)
+
+public:
+	IModelComponentEuclidian2D(QObject *parent = 0);
+
     /* Returns a human-readable string about coordinate units.
     * Freely enter something like "px", "cm" or "um". This will be annotated in the output.
     */
-    virtual std::string getCoordinateUnit() = 0;
+	virtual QString getCoordinateUnit() { return "cm"; };
+	virtual void setCoordinateUnit(QString c) { _coordinateUnit = c; };
 
     virtual void  setX(float x) = 0;
     virtual void  setY(float y) = 0;
     virtual void  setW(float w) = 0;
     virtual void  setH(float h) = 0;
+	virtual void  setXpx(float h) = 0;
+	virtual void  setYpx(float h) = 0;
+	virtual void  setWpx(float h) = 0;
+	virtual void  setHpx(float h) = 0;
     virtual void  setRad(float r) = 0;
     virtual void  setDeg(float d) = 0;
 
@@ -64,20 +102,41 @@ public:
     virtual bool hasH() = 0;
     virtual bool hasRad() = 0;
     virtual bool hasDeg() = 0;
+
+protected:
+	QString _coordinateUnit;
+	float _x;
+	float _y;
+	float _w;
+	float _h;
+	float _rad;
+	float _deg;
+	float _xpx;
+	float _ypx;
+	float _wpx;
+	float _hpx;
 };
 
 class IModelComponentEuclidian3D : public IModelComponentEuclidian2D {
 public:
-    /* Returns a human-readable string about coordinate units.
-    * Freely enter something like "px", "cm" or "um". This will be annotated in the output.
-    */
-    virtual std::string getCoordinateUnit() = 0;
+	Q_OBJECT
+	Q_PROPERTY(float _z     READ getZ()			WRITE setZ)
+	Q_PROPERTY(float _zpx   READ getZpx()		WRITE setZpx)
+	Q_PROPERTY(float _d     READ getD()			WRITE setD)
+	Q_PROPERTY(float _dpx   READ getDpx()		WRITE setDpx)
+	Q_PROPERTY(float _rada2 READ getRadAxis2() WRITE setRadAxis2)
+	Q_PROPERTY(float _rada3 READ getRadAxis3() WRITE setRadAxis3)
 
-    virtual void  setZ(float z) = 0;
+public:
+	virtual void  setZ(float z) = 0;
+	virtual void  setZpx(float z) = 0;
     virtual void  setD(float h) = 0;
+	virtual void  setDpx(float d) = 0;
     virtual void  setRadAxis2(float r) = 0;
     virtual void  setRadAxis3(float r) = 0;
 
+	virtual float getZ() = 0;
+	virtual float getZpx() = 0;
     virtual float getD() = 0;
     virtual float getDpx() = 0;
     virtual float getRadAxis2() = 0;
@@ -87,41 +146,46 @@ public:
     virtual bool hasD() = 0;
     virtual bool hasRadAxis2() = 0;
     virtual bool hasRadAxis3() = 0;
+
+protected:
+	float _z;
+	float _zpx;
+	float _d;
+	float _dpx;
+	float _rada2;
+	float _rada3;
 };
 
 class IModelComponentTemporal {
 public:
     virtual void  setTime(std::chrono::steady_clock::time_point t) = 0;
     virtual std::chrono::steady_clock::time_point  getTime() = 0;
+
+protected:
+	std::chrono::steady_clock::time_point _time;
 };
 
 /*
 *	Point
 */
-class IModelTrackedPoint : public IModelTrackedComponent, 
-    public IModelComponentEuclidian2D, 
+class IModelTrackedPoint : public IModelComponentEuclidian2D, 
     public IModelComponentTemporal
 {
 	Q_OBJECT
+	//Q_PROPERTY(double _time READ getTime() WRITE setTime)
 
 public:
 	/**
 	* The constructor of the IModelTrackedPoint class is able to receive a QObject as parent.
 	*/
 	IModelTrackedPoint(QObject *parent = 0);
-
-	/**
-	* The methode operate() must be implemented by every derivative of this class.
-	*/
-	virtual void operate();
 };
 
 /**
 *	Polygon
 */
 
-class IModelTrackedPolygon : public IModelTrackedComponent,
-    public IModelComponentEuclidian2D,
+class IModelTrackedPolygon : public IModelComponentEuclidian2D,
     public IModelComponentTemporal
 {
 	Q_OBJECT
@@ -142,11 +206,6 @@ public:
 
 	// Check if list of Polygons exists; first one is the outer Polygon the others are inner Polygons (holes)
 	virtual float hasPolygon() = 0;
-
-	/**
-	* The methode operate() must be implemented by every derivative of this class.
-	*/
-	virtual void operate();
 };
 
 class IModelTrackedEllipse : public IModelTrackedPoint
@@ -159,10 +218,6 @@ public:
 	*/
 	IModelTrackedEllipse(QObject *parent = 0);
 
-	/**
-	* The methode operate() must be implemented by every derivative of this class.
-	*/
-	virtual void operate();
 };
 
 class IModelTrackedRectangle : public IModelTrackedPoint
@@ -174,11 +229,6 @@ public:
 	* The constructor of the IModelTrackedRectangle class is able to receive a QObject as parent.
 	*/
 	IModelTrackedRectangle(QObject *parent = 0);
-
-	/**
-	* The methode operate() must be implemented by every derivative of this class.
-	*/
-	virtual void operate();
 };
 
 #endif // ITRACKEDCOMPONENT_H

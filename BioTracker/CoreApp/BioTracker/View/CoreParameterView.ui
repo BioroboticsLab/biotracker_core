@@ -599,6 +599,17 @@
                                  </layout>
                                 </item>
                                 <item>
+                                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                                  <item>
+                                   <widget class="QCheckBox" name="checkBoxIgnoreZoom">
+                                    <property name="text">
+                                     <string>Always same size</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                 </layout>
+                                </item>
+                                <item>
                                  <widget class="QPushButton" name="pushButtonDefaultDimensions">
                                   <property name="toolTip">
                                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the dimensions of all tracks back to default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

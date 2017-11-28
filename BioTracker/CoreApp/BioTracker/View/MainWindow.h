@@ -48,9 +48,9 @@ Q_SIGNALS:
 
     void on_actionOpen_Picture_triggered();
 
-    void on_actionLoad_tracking_data_triggered();
+    void on_actionLoad_trackingdata_triggered();
 
-    void on_actionSave_tracking_data_triggered();
+    //void on_actionSave_tracking_data_triggered();
 
     void on_actionQuit_triggered();
 
@@ -78,7 +78,7 @@ Q_SIGNALS:
 	IView *_currentCoreParameterView;
 	QGraphicsObject *_currentElementView;
 	QGraphicsObject *_currentCoreView;
-
+    QString _previouslySelectedTracker = "";
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

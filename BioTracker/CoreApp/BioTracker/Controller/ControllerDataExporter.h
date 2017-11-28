@@ -2,6 +2,7 @@
 
 #include "Interfaces/IController/IController.h"
 #include "Interfaces/IBioTrackerPlugin.h"
+#include "Interfaces/IModel/IModelTrackedComponentFactory.h"
 #include "QPointer"
 #include "QThread"
 #include "Model/MediaPlayer.h"
@@ -16,8 +17,13 @@ public:
 public:
 	void connectControllerToController() override;
 	void setDataStructure(IModel* exp);
+	void setComponentFactory(IModelTrackedComponentFactory* exp);
+	IModelTrackedComponentFactory* getComponentFactory() { return _factory; };
+
+	void loadFile(std::string file);
 
 	public Q_SLOTS:
+    void receiveReset();
 	void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
 
@@ -28,5 +34,8 @@ protected:
 
 private Q_SLOTS:
 	void rcvPlayerParameters(playerParameters* parameters);
+
+private:
+	IModelTrackedComponentFactory* _factory;
 };
 

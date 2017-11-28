@@ -60,8 +60,18 @@ class ControllerMainWindow : public IController {
 	void setTrackerElementsWidget(IView *widget);
 	void setCoreElementsWidget(IView* widget);
 
+	void loadTrajectoryFile(std::string file);
+
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
+
+public:
+    signals:
+    void emitPluginLoaded(const std::string path);
+    void emitMediaLoaded(const std::string path);
+    void emitTrackLoaded(const std::string path);
+
+
 	public slots:
 
     // IController interface

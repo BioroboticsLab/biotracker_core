@@ -132,6 +132,12 @@ void CoreParameterView::on_pushButtonAddTrack_clicked()
 {
 	emitAddTrack();
 }
+void CoreParameterView::on_checkBoxIgnoreZoom_stateChanged(int v)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_ignoreZoom = v;
+	emitIgnoreZoom(v);
+}
 //TODO show current color
 void CoreParameterView::on_pushButtonColorChangeBorder_clicked()
 {

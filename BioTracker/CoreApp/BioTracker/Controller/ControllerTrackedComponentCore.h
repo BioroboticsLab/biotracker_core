@@ -19,8 +19,10 @@ class ControllerTrackedComponentCore : public IController
 	signals:
 		// signal to ctrPlugin to remove trajectory
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+
 		// signal to ctrPlugin to remove track entity
 		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+
 		// signal to ctrPlugin to add trajectory
 		void emitAddTrajectory(QPoint pos);
 
@@ -32,8 +34,13 @@ class ControllerTrackedComponentCore : public IController
 
 
 	public Q_SLOTS:
+
+        //A (different) plugin has been loaded. Here, the controller needs to inform the view
+        void receiveOnPluginLoaded();
+
 		//this slot gets triggered when the tracking is done, so the core-view updates
 		void receiveTrackingOperationDone(uint framenumber);
+
 		//gets triggered when plugin sends permissions
 		void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 

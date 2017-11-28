@@ -172,6 +172,8 @@
     <addaction name="separator"/>
     <addaction name="actionLoad_Tracker"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_trackingdata"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuExtras">
@@ -388,6 +390,11 @@
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionLoad_trackingdata">
+   <property name="text">
+    <string>Load trajectory...</string>
    </property>
   </action>
  </widget>

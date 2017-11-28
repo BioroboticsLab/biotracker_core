@@ -25,3 +25,8 @@ IModelTrackedComponent *TrackedComponentFactory::createTrackedObject()
 	t->add(e, 0);
 	return t;
 }
+
+IModelTrackedComponent *TrackedComponentFactory::createTrackedTrajectory()
+{
+	return new TrackedTrajectory();
+}
