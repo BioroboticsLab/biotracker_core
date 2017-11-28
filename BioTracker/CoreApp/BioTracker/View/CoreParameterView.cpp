@@ -257,6 +257,9 @@ void CoreParameterView::fillUI()
 	//view toggle
 	if (coreParams->m_viewSwitch) { ui->checkBoxEnableCoreView->setChecked(true); }
 	else { ui->checkBoxEnableCoreView->setChecked(false); }
+	//track ignore zoom
+	if (coreParams->m_ignoreZoom) { ui->checkBoxIgnoreZoom->setChecked(true); }
+	else { ui->checkBoxIgnoreZoom->setChecked(false); }
 	//track orientation line
 	if (coreParams->m_trackOrientationLine) { ui->checkBoxTrackOrientationLine->setChecked(true); }
 	else {ui->checkBoxTrackOrientationLine->setChecked(false);}
