@@ -38,6 +38,11 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	setVisible(true);
 }
+
+ComponentShape::~ComponentShape() {
+    delete m_tracingLayer;
+}
+
 QRectF ComponentShape::boundingRect() const
 {
 	if (this->data(1) == "ellipse" || this->data(1) == "point" || this->data(1) == "rectangle") {

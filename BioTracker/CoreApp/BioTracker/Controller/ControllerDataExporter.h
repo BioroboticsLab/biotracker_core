@@ -23,6 +23,7 @@ public:
 	void loadFile(std::string file);
 
 	public Q_SLOTS:
+    void receiveReset();
 	void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
 

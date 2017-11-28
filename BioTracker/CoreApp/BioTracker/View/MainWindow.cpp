@@ -112,7 +112,10 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
 	QString ct = ui->comboBox_TrackerSelect->currentText();
-	Q_EMIT selectPlugin(ct);
+    if (!ct.isEmpty() && _previouslySelectedTracker != ct) {
+        _previouslySelectedTracker = ct;
+        Q_EMIT selectPlugin(ct);
+    }
 }
 
 void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {

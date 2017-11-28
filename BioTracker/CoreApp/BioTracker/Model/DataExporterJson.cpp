@@ -64,42 +64,6 @@ void DataExporterJson::finalizeAndReInit() {
 
 void DataExporterJson::loadFile(std::string file){
 
-	ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
-	IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
-	if (!factory) {
-		return;
-	}
-
-	QFile f(file.c_str());
-	f.open(QIODevice::ReadOnly);
-	QDataStream in(&f);
-
-
-	IModelTrackedTrajectory *root = _root;
-	in >> *root;
-	int children = -1;
-	in >> children;
-
-	std::vector<int> childids;
-	for (int i = 0; i < children; i++) {
-		IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
-		in >> *child;
-		childids.push_back(child->getId());
-		root->add(child, child->getId());
-	}
-
-	//i is the track number
-	for (int i = 0; i < childids.size(); i++) {
-		IModelTrackedTrajectory* curTraj = static_cast<IModelTrackedTrajectory*>(root->getChild(childids[i]));
-		int trajSize = -1;
-		in >> trajSize;
-		//idx is the frame number
-		for (int idx = 0; idx < trajSize; idx++) {
-			IModelTrackedComponent *e = factory->getNewTrackedElement();
-			in >> *e;
-			curTraj->add(e,idx);
-		}
-	}
 };
 
 template<typename T>
@@ -161,4 +125,10 @@ void DataExporterJson::writeAll() {
 
 void DataExporterJson::close() {
     _ofs.close();
+
+    if (!_root || _root->size() == 0) {
+        //Remove temporary file
+        QFile file(_tmpFile.c_str());
+        file.remove();
+    }
 }

@@ -18,6 +18,7 @@ class ComponentShape : public QGraphicsObject
 	public:
 		//Constructor
 		ComponentShape(QGraphicsObject* parent = 0, IModelTrackedTrajectory* trajectory = 0, int id = -1);
+        ~ComponentShape();
 
 		QRectF boundingRect() const override;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

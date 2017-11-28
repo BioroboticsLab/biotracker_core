@@ -122,13 +122,6 @@ void DataExporterSerialize::writeAll() {
 
 	QDataStream out(&file); 
 
-	//IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(0));
-	//IModelTrackedComponent *e = dynamic_cast<IModelTrackedComponent*>(t->getChild(5));
-	//out << 42;
-	//out << 1337;
-	//out << *e;
-	//return;
-
 	//serialize tree nodes (!= leafs)
 	out << *_root;
 	out << _root->size();
@@ -161,4 +154,10 @@ void DataExporterSerialize::writeAll() {
 
 void DataExporterSerialize::close() {
     _ofs.close();
+
+    if (!_root || _root->size() == 0) {
+        //Remove temporary file
+        QFile file(_tmpFile.c_str());
+        file.remove();
+    }
 }

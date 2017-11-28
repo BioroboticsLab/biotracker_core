@@ -78,7 +78,7 @@ Q_SIGNALS:
 	IView *_currentCoreParameterView;
 	QGraphicsObject *_currentElementView;
 	QGraphicsObject *_currentCoreView;
-
+    QString _previouslySelectedTracker = "";
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H
