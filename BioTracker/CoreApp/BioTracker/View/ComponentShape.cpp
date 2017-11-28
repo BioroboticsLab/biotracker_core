@@ -11,6 +11,9 @@
 #include "qlabel.h"
 #include "assert.h"
 #include "qtime"
+#include "qlistwidget.h"
+#include "QGraphicsProxyWidget"
+#include "qvboxlayout"
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
@@ -532,6 +535,8 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	infoBox->setDefaultWidget(infoLabel);
 	menu.addAction(infoBox);
 	menu.addSeparator();
+	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
+
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
 	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()) );
 	QAction *showProperties = menu.addSeparator();
@@ -654,6 +659,54 @@ void ComponentShape::unmarkShape()
 
 	trace();
 	update();
+}
+
+//TODO create ui file for this and do this there
+void ComponentShape::createInfoWindow()
+{
+	//QGraphicsProxyWidget* infoWidgetProxy = new QGraphicsProxyWidget(this);
+	QWidget* infoWidget = new QWidget();
+	QVBoxLayout* vLayout = new QVBoxLayout();
+
+	QHBoxLayout* hLayoutId = new QHBoxLayout();
+	QLabel* idLabel = new QLabel("ID:");
+	QLabel* id = new QLabel(QString::number(this->getId()));
+	id->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	hLayoutId->addWidget(idLabel);
+	hLayoutId->addWidget(id);
+
+
+	//imodeltrackedtrajectory needs to output a imodelcomponenteuclidian2d object
+	/*QHBoxLayout* hLayoutPos = new QHBoxLayout();
+	QLabel* positionLabel = new QLabel("Position:");
+	QLabel* position = new QLabel(QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getX()) + QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getY()));
+	position->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	hLayoutId->addWidget(positionLabel);
+	hLayoutId->addWidget(position);
+
+	QHBoxLayout* hLayoutOrientation = new QHBoxLayout();
+	QLabel* orientationLabel = new QLabel("Current orientation:");
+	QLabel* orientation = new QLabel(QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getDeg()));
+	position->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	hLayoutId->addWidget(orientationLabel);
+	hLayoutId->addWidget(orientation);*/
+
+	QHBoxLayout* hLayoutSeen = new QHBoxLayout();
+	QLabel* seenLabel = new QLabel("Seen for x frames:");
+	QLabel* seen = new QLabel(QString::number(this->m_trajectory->validCount()));
+	seen->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	hLayoutId->addWidget(seenLabel);
+	hLayoutId->addWidget(seen);
+
+	vLayout->addLayout(hLayoutId);
+	//vLayout->addLayout(hLayoutPos);
+	//vLayout->addLayout(hLayoutOrientation);
+	vLayout->addLayout(hLayoutSeen);
+
+	infoWidget->setLayout(vLayout);
+	infoWidget->show();
+
+
 }
 
 void ComponentShape::receiveTracingLength(int tracingLength)

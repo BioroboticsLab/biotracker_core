@@ -55,6 +55,7 @@ class ComponentShape : public QGraphicsObject
 		bool removeTrackEntity();
 		void markShape(int penwidth = 0);
 		void unmarkShape();
+		void createInfoWindow();
 
 		//Tracing
 		void receiveTracingLength(int tracingLength);
