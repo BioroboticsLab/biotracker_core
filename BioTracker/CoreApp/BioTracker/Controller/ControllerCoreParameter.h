@@ -11,6 +11,9 @@ class ControllerCoreParameter : public IController
 public:
 	ControllerCoreParameter(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::COREPARAMETER);
 
+    //Triggers the view to re-send gui parameters
+    void triggerUpdate();
+
 signals:
 	//...
 
@@ -19,6 +22,7 @@ signals:
 	void updateView();
 	//update track number
 	void receiveTrackNumber(int number);
+
 
 	// IController interface
 protected:

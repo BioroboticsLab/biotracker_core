@@ -10,6 +10,8 @@
 #include "ControllerGraphicScene.h"
 #include "View/GraphicsView.h"
 #include "Model/AreaDescriptor/Rectification.h"
+#include "Controller/ControllerPlayer.h"
+#include "Controller/ControllerCoreParameter.h"
 
 #include <iostream>
 
@@ -88,6 +90,9 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
 	}
 
 	gview->addGraphicsItem(static_cast<AreaDescriptor*>(m_ViewApperture));
+    bool b = _settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_AREA, 0);
+    if (!b)
+        static_cast<AreaDescriptor*>(m_ViewApperture)->hide();
 }
 
 void ControllerAreaDescriptor::connectControllerToController()
@@ -104,7 +109,14 @@ void ControllerAreaDescriptor::connectControllerToController()
 		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAreaDescriptor::mousePressEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAreaDescriptor::mouseReleaseEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseMoveEvent, this, &ControllerAreaDescriptor::mouseMoveEvent, Qt::DirectConnection);
-		QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAreaDescriptor::keyReleaseEvent, Qt::DirectConnection);
+        QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAreaDescriptor::keyReleaseEvent, Qt::DirectConnection);
+
+        //Area info model needs to know video dimensions
+        auto model = static_cast<AreaInfo*>(getModel()); 
+        IController* ctrPl = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+        auto mediaPlayerController = static_cast<ControllerPlayer*> (ctrPl);
+        MediaPlayer *player = static_cast<MediaPlayer*> (mediaPlayerController->getModel());
+        QObject::connect(player, &MediaPlayer::fwdPlayerParameters, model, &AreaInfo::rcvPlayerParameters, Qt::DirectConnection);
 
 		QWidget *viewport = view->viewport();
 		QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
@@ -118,6 +130,11 @@ void ControllerAreaDescriptor::connectControllerToController()
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
 		auto viewController = qobject_cast<ControllerGraphicScene*>(ctr);
 	}
+    {
+        IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+        ControllerCoreParameter *cctr = static_cast<ControllerCoreParameter*>(ctr);
+        cctr->triggerUpdate();
+    }
 }
 
 void ControllerAreaDescriptor::createModel()
@@ -163,6 +180,11 @@ void ControllerAreaDescriptor::mousePressEvent(QMouseEvent *event, const QPoint 
 		_watchingVertice = -1;
 		_watchingVerticeType = BiotrackerTypes::AreaType::NONE;
 	}
+
+    if (verticeRect > 0 || verticeApp > 0) {
+        AreaInfo* area = static_cast<AreaInfo*>(getModel());
+        area->setUseEntireScreen(false);
+    }
 
     Q_EMIT currentVectorDrag(_watchingVerticeType, _watchingVertice, pos.x(), pos.y());
 }
@@ -210,11 +232,15 @@ void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {
 void ControllerAreaDescriptor::setDisplayRectificationDefinition(bool b) {
 	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
 	rd->setVisible(b);
+    BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+    _settings->setParam(AREADESCRIPTOR::DISP_RECT, b);
 }
 
 void ControllerAreaDescriptor::setDisplayTrackingAreaDefinition(bool b) {
 	AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
 	ad->setVisible(b);
+    BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+    _settings->setParam(AREADESCRIPTOR::DISP_AREA, b);
 }
 
 void ControllerAreaDescriptor::setTrackingAreaAsEllipse(bool b) {

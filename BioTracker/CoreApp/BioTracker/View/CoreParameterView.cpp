@@ -31,6 +31,11 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 
 	fillUI();
 
+    bool darea = settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_AREA, false);
+    bool drect = settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_RECT, false);
+    ui->checkBoxDisplayTrackingArea->setChecked(darea);
+    ui->checkBoxDisplayRectification->setChecked(drect);
+
 	getNotified();
 }
 
@@ -42,6 +47,12 @@ CoreParameterView::~CoreParameterView()
 QWidget * CoreParameterView::getTrackerHook()
 {
 	return ui->tabWidgetParameters;
+}
+
+void CoreParameterView::triggerUpdate() {
+    on_checkBoxDisplayTrackingArea_stateChanged(0);
+    on_checkBoxDisplayRectification_stateChanged(0);
+    on_checkboxTrackingAreaAsEllipse_stateChanged(0);
 }
 
 void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v) 

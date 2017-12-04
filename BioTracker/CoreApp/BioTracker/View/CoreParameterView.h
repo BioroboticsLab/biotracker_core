@@ -19,6 +19,9 @@ public:
 
 	QWidget* getTrackerHook();
 
+    // Triggers re-sending essential signals
+    void triggerUpdate();
+
 	private slots:
 	//Enable view
 	void on_checkBoxEnableCoreView_stateChanged(int v);
