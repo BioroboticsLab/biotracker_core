@@ -25,6 +25,8 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
 	IView *getTrackerElementsWidget();
 	IModel* getTrackerComponentModel();
 
+    IModelTrackedComponentFactory *getComponentFactory();
+
   public:
 	void createPlugin();
 	void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber);

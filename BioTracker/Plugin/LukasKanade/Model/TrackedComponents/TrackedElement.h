@@ -20,12 +20,16 @@ public:
 	TrackedElement(QObject *parent = 0, QString name = "n.a.", int id = 0);
 
 	QString getName();
-    std::string getCoordinateUnit() override { return "px"; };
+    QString getCoordinateUnit() override { return "px"; };
 
-	void  setX(float val);
-	void  setY(float val);
+    void  setX(float val);
+    void  setY(float val);
     void  setW(float w) {};
-	void  setH(float h) {};
+    void  setH(float h) {};
+    void  setXpx(float val) {};
+    void  setYpx(float val) {};
+    void  setWpx(float w) {};
+    void  setHpx(float h) {};
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };

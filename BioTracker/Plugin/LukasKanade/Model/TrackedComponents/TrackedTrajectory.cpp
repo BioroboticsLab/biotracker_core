@@ -62,7 +62,7 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
 {
     int c = 0;
-    foreach(IModelTrackedComponent* el, m_TrackedComponents) {
+    foreach(IModelTrackedComponent* el, _TrackedComponents) {
         if (el) {
             if (c == index)
                 return el;

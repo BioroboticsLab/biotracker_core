@@ -53,13 +53,13 @@ IModelTrackedComponent* TrackedTrajectory::getChild(int index)
 {
     if (index < 0)
         return nullptr;
-	return (m_TrackedComponents.size() > index ? m_TrackedComponents.at(index) : nullptr);
+	return (_TrackedComponents.size() > index ? _TrackedComponents.at(index) : nullptr);
 }
 
 IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
 {
     int c = 0;
-    foreach(IModelTrackedComponent* el, m_TrackedComponents) {
+    foreach(IModelTrackedComponent* el, _TrackedComponents) {
         if (el){
             if (c == index)
                 return el;
