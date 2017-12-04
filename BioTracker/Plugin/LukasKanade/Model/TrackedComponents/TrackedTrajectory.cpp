@@ -6,7 +6,7 @@ TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
 	IModelTrackedTrajectory(parent),
 	name(name)
 {
-
+    setValid(true);
 }
 
 void TrackedTrajectory::operate()
