@@ -20,6 +20,7 @@
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
     IViewMainWindow(parent, controller, model),
     ui(new Ui::MainWindow) {
+    _previouslySelectedTracker = "";
 	_currentParameterView = 0;
 	_currentCoreParameterView = 0;
 	_currentElementView = 0;
@@ -112,7 +113,10 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
 	QString ct = ui->comboBox_TrackerSelect->currentText();
-	Q_EMIT selectPlugin(ct);
+    if (!ct.isEmpty() && _previouslySelectedTracker != ct) {
+        _previouslySelectedTracker = ct;
+        Q_EMIT selectPlugin(ct);
+    }
 }
 
 void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {

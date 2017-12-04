@@ -77,7 +77,7 @@ void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* tra
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
 	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
-	if (!traj->getId() <= 2) {
+	if (!traj->getId() != 0) {
 		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
 		//TODO setX, setY do not work correctly as pose not yet accessible
         if (element) {

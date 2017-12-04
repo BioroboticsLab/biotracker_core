@@ -90,9 +90,9 @@ class ComponentShape : public QGraphicsObject
 		int m_id;
 		int m_z;
 		int m_w;
-		int m_wDefault;
+		int m_wDefault = 20;
 		int m_h;
-		int m_hDefault;
+		int m_hDefault = 20;
 		bool m_useDefaultDimensions;
 		float m_rotation;
 		QColor m_penColor;

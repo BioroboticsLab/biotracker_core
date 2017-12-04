@@ -213,12 +213,12 @@ void ComponentShape::updateAttributes()
 	if (pointLike) {
 		//update width and height ore use defaults
 		if (m_useDefaultDimensions) {
-			if (pointLike->getW() > 0) {
+			if (pointLike->hasW()) {
 				m_w = pointLike->getW();
 			}
 			else { m_w = m_wDefault; }
 
-			if (pointLike->getH() > 0) {
+			if (pointLike->hasH()) {
 				m_h = pointLike->getH();
 			}
 			else { m_h = m_hDefault; }

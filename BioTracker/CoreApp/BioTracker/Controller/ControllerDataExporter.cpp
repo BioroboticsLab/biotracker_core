@@ -1,6 +1,7 @@
 #include "ControllerDataExporter.h"
 #include "Model/DataExporterCSV.h"
 #include "Model/DataExporterSerialize.h"
+#include "Model/DataExporterJson.h"
 #include "settings/Settings.h"
 #include "util/types.h"
 
@@ -21,14 +22,18 @@ void ControllerDataExporter::connectControllerToController() {
 }
 
 void ControllerDataExporter::createModel() {
+    if (getModel())
+        delete getModel();
 
 	//Grab the codec from config file
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
 	if (exporter == "CSV")
 		m_Model = new DataExporterCSV(this);
-	else if (exporter == "Serialize")
-		m_Model = new DataExporterSerialize(this);
+    else if (exporter == "Serialize")
+        m_Model = new DataExporterSerialize(this);
+    else if (exporter == "Json")
+        m_Model = new DataExporterJson(this);
 	else
 		m_Model = 0;
 }
@@ -56,11 +61,24 @@ void ControllerDataExporter::setComponentFactory(IModelTrackedComponentFactory* 
 }
 
 void ControllerDataExporter::receiveTrackingDone(uint frame) {
-	dynamic_cast<IModelDataExporter*>(getModel())->write(frame);
+    if (getModel()) {
+        dynamic_cast<IModelDataExporter*>(getModel())->write(frame);
+    }
 }
 
 void ControllerDataExporter::receiveFinalizeExperiment() {
-    dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
+    if (getModel()) {
+        dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
+    }
+}
+
+void ControllerDataExporter::receiveReset() {
+    if (getModel()) {
+        dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
+        dynamic_cast<IModelDataExporter*>(getModel())->close();
+    }
+
+    createModel();
 }
 
 void ControllerDataExporter::connectModelToController() {

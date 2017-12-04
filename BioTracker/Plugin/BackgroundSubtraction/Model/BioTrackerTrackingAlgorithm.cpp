@@ -202,12 +202,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		_listener->sendPositions(framenumber, ps, std::vector<cv::Point2f>(), start);
 	}
 
-    //sendSelectedImage(&images);
-
-    std::shared_ptr<cv::Mat> test = std::make_shared<cv::Mat>(*p_image);
-    //cv::resize(*test, *test, test->size() * 2);
-
-    Q_EMIT emitCvMatA(test, QString("Original"));
+    sendSelectedImage(&images);
 
 	//First the user still wants to see the original image, right?
 	if (framenumber==1) {

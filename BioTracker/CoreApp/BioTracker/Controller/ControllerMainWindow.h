@@ -64,6 +64,17 @@ class ControllerMainWindow : public IController {
 
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
+
+public:
+    signals:
+    void emitOnLoadPlugin(const std::string path);
+    void emitOnLoadMedia(const std::string path);
+
+    void emitPluginLoaded(const std::string path);
+    void emitMediaLoaded(const std::string path);
+    void emitTrackLoaded(const std::string path); 
+
+
 	public slots:
 
     // IController interface

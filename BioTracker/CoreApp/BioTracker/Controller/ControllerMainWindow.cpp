@@ -7,6 +7,7 @@
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerAnnotations.h"
 #include "Controller/ControllerDataExporter.h"
+#include "Controller/ControllerTrackedComponentCore.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -19,9 +20,10 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 }
 
 void ControllerMainWindow::loadVideo(QString str) {
-	onNewMediumLoaded(str.toStdString());
+    Q_EMIT emitOnLoadMedia(str.toStdString());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
+    Q_EMIT emitMediaLoaded(str.toStdString());
 }
 
 void ControllerMainWindow::loadTracker(QString str) {
@@ -30,15 +32,18 @@ void ControllerMainWindow::loadTracker(QString str) {
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
-	onNewMediumLoaded(files.empty() ? "" : files.front().string());
+    std::string str = files.empty() ? "" : files.front().string();
+    Q_EMIT emitOnLoadMedia(str);
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
+    Q_EMIT emitMediaLoaded(str);
 }
 
 void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
-	onNewMediumLoaded();
+    Q_EMIT emitOnLoadMedia("::Camera");
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
+    Q_EMIT emitMediaLoaded("::Camera");
 }
 
 void ControllerMainWindow::activeTracking() {
@@ -72,6 +77,7 @@ void ControllerMainWindow::setCoreElementsWidget(IView * widget)
 void ControllerMainWindow::loadTrajectoryFile(std::string file) {
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
+    Q_EMIT emitTrackLoaded(file);
 }
 
 void ControllerMainWindow::deactiveTrackingCheckBox() {
@@ -98,9 +104,18 @@ void ControllerMainWindow::connectModelToController() {
 	MainWindow *mw = dynamic_cast<MainWindow*> (m_View);
 	QObject::connect(mw, &MainWindow::selectPlugin, this, &ControllerMainWindow::rcvSelectPlugin);
 	
+    // Prepare annotations and serialize existing ones.
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
+    ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
+    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, annotationController, &ControllerAnnotations::reset, Qt::DirectConnection);
+
+    // Write previously written data structure and reset it
+    IController* ctr2 = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+    ControllerDataExporter *contrl = static_cast<ControllerDataExporter*>(ctr2);
+    QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, contrl, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+    QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, contrl, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
 }
 
-extern std::string initLoadingVideo;
 void ControllerMainWindow::connectControllerToController() {
 
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
@@ -114,14 +129,13 @@ void ControllerMainWindow::connectControllerToController() {
 }
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
+    Q_EMIT emitOnLoadPlugin(plugin.toStdString());
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
+    Q_EMIT emitPluginLoaded(plugin.toStdString());
 }
 
 void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 {
-	// Prepare annotations and serialize existing ones.
-	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
-	ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
-	annotationController->reset(path);
+    Q_EMIT emitMediaLoaded(path);
 }
