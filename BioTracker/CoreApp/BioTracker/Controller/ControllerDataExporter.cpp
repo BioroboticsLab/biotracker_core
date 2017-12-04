@@ -1,5 +1,6 @@
 #include "ControllerDataExporter.h"
 #include "Model/DataExporterCSV.h"
+#include "Model/DataExporterSerialize.h"
 #include "settings/Settings.h"
 #include "util/types.h"
 
@@ -26,8 +27,19 @@ void ControllerDataExporter::createModel() {
 	std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
 	if (exporter == "CSV")
 		m_Model = new DataExporterCSV(this);
+	else if (exporter == "Serialize")
+		m_Model = new DataExporterSerialize(this);
 	else
 		m_Model = 0;
+}
+
+void ControllerDataExporter::loadFile(std::string file) {
+	if (_factory) {
+		qobject_cast<IModelDataExporter*>(m_Model)->loadFile(file);
+	}
+	else {
+		std::cout << "Can not load tracks for this plugin as it does not provide a factory." << std::endl;
+	}
 }
 
 void ControllerDataExporter::createView() {
@@ -37,6 +49,10 @@ void ControllerDataExporter::createView() {
 
 void ControllerDataExporter::setDataStructure(IModel* exp) {
 	qobject_cast<IModelDataExporter*>(m_Model)->open(static_cast<IModelTrackedTrajectory*>(exp));
+}
+
+void ControllerDataExporter::setComponentFactory(IModelTrackedComponentFactory* exp) {
+	_factory = exp;
 }
 
 void ControllerDataExporter::receiveTrackingDone(uint frame) {

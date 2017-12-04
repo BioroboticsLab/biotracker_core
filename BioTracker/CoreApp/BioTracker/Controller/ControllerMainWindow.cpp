@@ -6,6 +6,7 @@
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerAnnotations.h"
+#include "Controller/ControllerDataExporter.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -66,6 +67,11 @@ void ControllerMainWindow::setTrackerElementsWidget(IView *widget)
 void ControllerMainWindow::setCoreElementsWidget(IView * widget)
 {
 	dynamic_cast<MainWindow*>(m_View)->addCoreElementsView(widget);
+}
+
+void ControllerMainWindow::loadTrajectoryFile(std::string file) {
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+	static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
 }
 
 void ControllerMainWindow::deactiveTrackingCheckBox() {

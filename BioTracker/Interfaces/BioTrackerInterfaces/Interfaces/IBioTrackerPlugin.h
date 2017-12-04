@@ -6,6 +6,7 @@
 #include "Interfaces/IController/IController.h"
 #include "Interfaces/IModel/IModelDataExporter.h"
 #include "Interfaces/IModel/IModelAreaDescriptor.h"
+#include "Interfaces/IModel/IModelTrackedComponentFactory.h"
 #include "opencv2/core/core.hpp"
 #include "memory"
 
@@ -17,10 +18,12 @@ public:
 
     virtual void createPlugin() = 0;
 
-	virtual IView *getTrackerParameterWidget() = 0;
-	virtual IView *getTrackerElementsWidget() = 0;
-	virtual IModel *getTrackerComponentModel() = 0;
-	virtual void sendCorePermissions() = 0;
+	virtual IView *getTrackerParameterWidget() = 0;// { return nullptr; };
+	virtual IView *getTrackerElementsWidget() = 0;// { return nullptr; };
+	virtual IModel *getTrackerComponentModel() = 0;// { return nullptr; };
+	virtual void sendCorePermissions() = 0;// { return; };
+
+	virtual IModelTrackedComponentFactory *getComponentFactory() = 0;// { return nullptr; };
 
 private:
     virtual void connectInterfaces() = 0;

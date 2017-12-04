@@ -244,6 +244,9 @@ void ComponentShape::trace()
 	//TRACING
 
 	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+	if (!currentChild)
+		return;
+
 	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
 
 	m_tracingLayer->setPos(this->pos());
