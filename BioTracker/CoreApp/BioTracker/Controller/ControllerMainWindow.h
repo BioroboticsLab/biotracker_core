@@ -67,6 +67,9 @@ class ControllerMainWindow : public IController {
 
 public:
     signals:
+    void emitOnLoadPlugin(const std::string path);
+    void emitOnLoadMedia(const std::string path);
+
     void emitPluginLoaded(const std::string path);
     void emitMediaLoaded(const std::string path);
     void emitTrackLoaded(const std::string path);
