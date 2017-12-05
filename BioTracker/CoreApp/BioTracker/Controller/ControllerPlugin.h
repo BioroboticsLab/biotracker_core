@@ -58,6 +58,7 @@ signals:
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 	void emitUpdateView();
+	void signalCurrentFrameNumberToPlugin(uint frameNumber);
 
 	// IController interface
   protected:
@@ -99,11 +100,13 @@ signals:
 	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 	/**
 	*
-	* Receive command to swap two ID'S and put it in edit queue
+	* Receive command to swap two ID's and put it in edit queue
 	*/
 	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 	void  receivePauseState(bool state);
+
+	void  receiveCurrentFrameNumberToPlugin(uint frameNumber);
 
 
 

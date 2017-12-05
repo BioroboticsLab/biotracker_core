@@ -4,6 +4,8 @@
 #include "Controller/ControllerTextureObject.h"
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerGraphicScene.h"
+#include "Controller/ControllerTrackedComponentCore.h"
+
 #include <QGraphicsItem>
 
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -125,10 +127,26 @@ void ControllerPlayer::connectModelToController() {
 
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::renderCurrentImage, this, &ControllerPlayer::receiveRenderImage);
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
+	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalVisualizeCurrentModel, this, &ControllerPlayer::receiveVisualizeCurrentModel);
+	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
+
+}
+
+void ControllerPlayer::receiveVisualizeCurrentModel(uint frameNumber)
+{
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+	QPointer< ControllerTrackedComponentCore > ctrTrCompCore = qobject_cast<ControllerTrackedComponentCore*>(ctr);
+
+	ctrTrCompCore->receiveVisualizeTrackingModel(frameNumber);
 }
 
 void ControllerPlayer::receiveChangeDisplayImage(QString str) {
 	//IView *m_View
 	VideoControllWidget *w = dynamic_cast<VideoControllWidget*>(m_View);
 	w->setSelectedView(str);
+}
+
+void ControllerPlayer::receiveCurrentFrameNumberToPlugin(uint frameNumber)
+{
+	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
 }

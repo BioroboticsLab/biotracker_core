@@ -84,6 +84,12 @@ class MediaPlayer : public IModel {
      * This SIGNAL is only emmited if Tracking Is Active. The PluginLoader component will receive the cv::Mat and the current frame number.
      */
     void trackCurrentImage(std::shared_ptr<cv::Mat> mat, uint number);
+	/**
+	* This SIGNAL is only emmited if Tracking Is inactive. The core visualization controller will receive the framenumber and will try to visualize the tracking model.
+	*/
+	void signalVisualizeCurrentModel(uint frameNumber);
+
+	void signalCurrentFrameNumberToPlugin(uint frameNumber);
 
 	void toggleRecordImageStreamCommand();
 

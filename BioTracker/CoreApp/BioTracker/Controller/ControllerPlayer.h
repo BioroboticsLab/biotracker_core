@@ -87,6 +87,8 @@ class ControllerPlayer : public IController {
 
 	signals:
 		void emitPauseState(bool state);
+		void signalCurrentFrameNumberToPlugin(uint frameNumber);
+
 
 	public Q_SLOTS:
 		/**
@@ -97,8 +99,14 @@ class ControllerPlayer : public IController {
 		* This SLOT receives a cv::Mat and its frame number and hands it over to the ControllerPlugin for Tracking in the BioTracker Plugin.
 		*/
 		void receiveImageToTracker(std::shared_ptr<cv::Mat> mat, uint number);
+		/**
+		* This SLOT receives a framenumber and hands it over to the ControllerTrackedComponentCore for visualizing in the main app.
+		*/
+		void receiveVisualizeCurrentModel(uint frameNumber);
 
 		void receiveChangeDisplayImage(QString str);
+
+		void receiveCurrentFrameNumberToPlugin(uint frameNumber);
 
 	protected:
 		void createModel() override;

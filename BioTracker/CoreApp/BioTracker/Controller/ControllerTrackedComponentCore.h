@@ -38,8 +38,8 @@ class ControllerTrackedComponentCore : public IController
         //A (different) plugin has been loaded. Here, the controller needs to inform the view
         void receiveOnPluginLoaded();
 
-		//this slot gets triggered when the tracking is done, so the core-view updates
-		void receiveTrackingOperationDone(uint framenumber);
+		//this slot gets triggered when the core-view needs to update with the current frame
+		void receiveVisualizeTrackingModel(uint framenumber);
 
 		//gets triggered when plugin sends permissions
 		void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);

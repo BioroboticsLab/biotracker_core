@@ -135,7 +135,7 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	emitTrackNumber(trackNumber);
 }
 
-void ControllerTrackedComponentCore::receiveTrackingOperationDone(uint framenumber) 
+void ControllerTrackedComponentCore::receiveVisualizeTrackingModel(uint framenumber)
 {
 	//signal the view to update track entities
 	TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);

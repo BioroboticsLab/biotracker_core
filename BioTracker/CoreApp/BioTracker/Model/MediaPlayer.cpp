@@ -225,6 +225,8 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 		Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
 	}
 	else {
+		Q_EMIT signalVisualizeCurrentModel(m_CurrentFrameNumber);
+		Q_EMIT signalCurrentFrameNumberToPlugin(m_CurrentFrameNumber);
 	}
 
 	if (m_recd) {

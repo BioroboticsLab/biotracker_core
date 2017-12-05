@@ -70,7 +70,7 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(this, &BioTrackerPlugin::emitSwapIds, ctrTrC, &ControllerTrackedComponent::receiveSwapIds, Qt::DirectConnection);
 
 
-	QObject::connect(this, &BioTrackerPlugin::emitCurrentFrameNumber, ctrTrC, &ControllerTrackedComponent::receiveCurrentFrameNumber);
+	QObject::connect(this, &BioTrackerPlugin::emitCurrentFrameNumber, ctrTrC, &ControllerTrackedComponent::receiveCurrentFrameNumber, Qt::DirectConnection);
 }
 
 
@@ -81,6 +81,10 @@ void BioTrackerPlugin::receiveAreaDescriptor(IModelAreaDescriptor *areaDescr) {
 void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) {
 	qobject_cast<ControllerTrackingAlgorithm*> (m_TrackerController)->doTracking(mat, frameNumber);
 
+	Q_EMIT emitCurrentFrameNumber(frameNumber);
+}
+
+void BioTrackerPlugin::receiveCurrentFrameNumberFromMainApp(uint frameNumber) {
 	Q_EMIT emitCurrentFrameNumber(frameNumber);
 }
 

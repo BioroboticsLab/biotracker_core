@@ -162,12 +162,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 	//printf("update a shape\n");
 	m_currentFramenumber = framenumber;
 
-	if (!m_trajectory) {
-		//printf("trajectory not existant, delete child %i...\n", m_id);
-		delete this;
-		return false;
-	}
-	if (m_trajectory->size() != 0 && m_trajectory->getValid()) {
+	if (m_trajectory && m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(framenumber)) {
 
 
 
@@ -792,6 +787,7 @@ void ComponentShape::receiveToggleOrientationLine(bool toggle)
 	trace();
 	update();
 }
+
 void ComponentShape::receiveIgnoreZoom(bool toggle)
 {
 	setFlag(QGraphicsItem::ItemIgnoresTransformations, toggle);

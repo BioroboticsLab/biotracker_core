@@ -154,12 +154,14 @@ void ControllerPlugin::connectControllerToController() {
 	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
 		SLOT(receiveUpdateView()));
 
-
 	// connect ControllerPlayer
 	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
 	QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer*>(ctrC);
 	QObject::connect(ctrPlayer, SIGNAL(emitPauseState(bool)), this,
 		SLOT(receivePauseState(bool)), Qt::DirectConnection);
+
+	QObject::connect(ctrPlayer, SIGNAL(signalCurrentFrameNumberToPlugin(uint)),
+		this, SLOT(receiveCurrentFrameNumberToPlugin(uint)), Qt::DirectConnection);
 
 }
 
@@ -206,9 +208,10 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
 					 ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
+	//TODO whyy do this two times??
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), model, SLOT(receiveTrackingOperationDone()));
 
-	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveTrackingOperationDone(uint)));
+	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveVisualizeTrackingModel(uint)));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
 
@@ -232,6 +235,9 @@ void ControllerPlugin::connectPlugin() {
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+
+	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
+		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
 }
 
 void ControllerPlugin::disconnectPlugin() {
@@ -333,6 +339,11 @@ void ControllerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IMo
 void ControllerPlugin::receivePauseState(bool state)
 {
 	m_paused = state;
+}
+
+void ControllerPlugin::receiveCurrentFrameNumberToPlugin(uint frameNumber)
+{
+	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
 }
 
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
