@@ -13,9 +13,13 @@ class GuiContext : public IBioTrackerContext
 
 public:
     GuiContext(QObject *parent = 0);
-
+	~GuiContext() {
+		exit();
+	}
 
     void loadBioTrackerPlugin(QString str);
+
+	void exit();
 
     // IBioTrackerContext interface
 protected:

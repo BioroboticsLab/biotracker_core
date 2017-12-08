@@ -69,3 +69,13 @@ void GuiContext::connectController()
         i.value()->connectComponents();
     }
 }
+
+void GuiContext::exit() {
+
+	QMap<ENUMS::CONTROLLERTYPE, IController *>::iterator i;
+	for (i = m_ControllersMap.begin(); i != m_ControllersMap.end(); ++i)
+	{
+		delete i.value();
+	}
+	std::exit(0);
+}

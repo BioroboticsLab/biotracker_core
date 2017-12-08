@@ -184,10 +184,6 @@ void MainWindow::on_actionLoad_trackingdata_triggered() {
 	}
 }
 
-void MainWindow::on_actionQuit_triggered() {
-
-}
-
 void MainWindow::on_actionOpen_Camera_triggered() {
     m_CameraDevice = new CameraDevice();
 
@@ -207,6 +203,10 @@ void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {
 
     if(arg1 == Qt::Unchecked)
         qobject_cast<ControllerMainWindow*> (getController())->deactiveTrackring();
+}
+
+void MainWindow::on_actionQuit_triggered() {
+	qobject_cast<ControllerMainWindow*> (getController())->exit();
 }
 
 

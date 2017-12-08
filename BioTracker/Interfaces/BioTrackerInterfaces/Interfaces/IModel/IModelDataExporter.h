@@ -20,6 +20,10 @@ public:
     virtual void finalizeAndReInit() = 0;
 	void setFps(float fps) { _fps = fps; };
 	void setTitle(std::string title) { _title = title; };
+	void finalize() {
+		close();
+		writeAll();
+	};
 
 	virtual void loadFile(std::string file) = 0;
 

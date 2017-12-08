@@ -139,3 +139,8 @@ void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 {
     Q_EMIT emitMediaLoaded(path);
 }
+
+void ControllerMainWindow::exit() {
+	delete m_BioTrackerContext;
+}
+
