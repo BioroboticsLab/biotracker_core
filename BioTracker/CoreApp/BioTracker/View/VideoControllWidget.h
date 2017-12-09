@@ -54,6 +54,8 @@ class VideoControllWidget : public IViewWidget {
 
     void on_sld_video_sliderMoved(int position);
 
+	void on_sld_video_actionTriggered(int action);
+
   private:
     Ui::VideoControllWidget* ui;
 

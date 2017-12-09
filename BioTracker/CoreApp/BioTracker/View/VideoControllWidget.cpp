@@ -76,7 +76,12 @@ void VideoControllWidget::getNotified() {
 
     if(totalNumberOfFrames >= 1) {
         ui->sld_video->setEnabled(true);
-        ui->sld_video->setMaximum(totalNumberOfFrames);
+        ui->sld_video->setMaximum(totalNumberOfFrames-1);
+		
+		int intervalPower = floor(log10(totalNumberOfFrames));
+		int tickInterval = pow(10, intervalPower > 0? floor(log10(totalNumberOfFrames))-1: 0);
+
+		ui->sld_video->setTickInterval(tickInterval);
     }
 
 
@@ -157,10 +162,18 @@ void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QStri
 }
 
 void VideoControllWidget::on_sld_video_sliderReleased() {
-    int position = ui->sld_video->value();
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->setGoToFrame(position);
+   // int position = ui->sld_video->sliderPosition();
+    //ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+    //controller->setGoToFrame(position);
 }
+
+void VideoControllWidget::on_sld_video_actionTriggered(int action)
+{
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+	int position = ui->sld_video->sliderPosition();
+	controller->setGoToFrame(position);
+}
+
 
 /**
  * If the video slider is moved, this function sets the value to the current frame number lable

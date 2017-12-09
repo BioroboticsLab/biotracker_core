@@ -133,6 +133,12 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
 	m_PlayerParameters->m_Play = stateParam.m_Play;
 	m_PlayerParameters->m_Stop = stateParam.m_Stop;
 
+	//end of video reached
+	//if (m_PlayerParameters->m_CurrentFrameNumber == m_PlayerParameters->m_TotalNumbFrames - 1) {
+	//	m_PlayerParameters->m_Forw = false;
+	//	m_PlayerParameters->m_Play = false;
+	//}
+
 	m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
 
 	m_PlayerParameters->m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
