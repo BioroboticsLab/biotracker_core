@@ -2,6 +2,7 @@
 #include "ControllerTrackedComponentCore.h"
 #include "ControllerAreaDescriptor.h"
 #include "ControllerDataExporter.h"
+#include "ControllerGraphicScene.h"
 #include "View/CoreParameterView.h"
 #include "View/TrackedComponentView.h"
 #include "Model/CoreParameter.h"
@@ -33,6 +34,10 @@ void ControllerCoreParameter::connectControllerToController()
 		IView* vv = tccController->getView();
 		TrackedComponentView* tcview = static_cast<TrackedComponentView*>(vv);
 
+		IController* ctr2 = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+		ControllerGraphicScene* ctrGrphScn = dynamic_cast<ControllerGraphicScene*>(ctr2);
+
+
 		QObject::connect(view, &CoreParameterView::emitViewSwitch, tcview, &TrackedComponentView::receiveViewSwitch, Qt::DirectConnection);
 		//Tracks
 		QObject::connect(view, &CoreParameterView::emitSelectAll, tcview, &TrackedComponentView::receiveSelectAll, Qt::DirectConnection);
@@ -61,7 +66,10 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitTracerProportions, tcview, &TrackedComponentView::receiveTracerProportions, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracerOrientationLine, tcview, &TrackedComponentView::receiveTracerOrientationLine, Qt::DirectConnection);
 		//Misc
-		QObject::connect(view, &CoreParameterView::emitToggleAntialiasing, tcview, &TrackedComponentView::receiveToggleAntialiasing, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitToggleAntialiasingEntities, tcview, &TrackedComponentView::receiveToggleAntialiasingEntities, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitToggleAntialiasingFull, ctrGrphScn, &ControllerGraphicScene::receiveToggleAntialiasingFull, Qt::DirectConnection);
+
+
 
 		//
 	}

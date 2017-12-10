@@ -132,6 +132,7 @@ void CoreParameterView::on_pushButtonAddTrack_clicked()
 {
 	emitAddTrack();
 }
+
 void CoreParameterView::on_checkBoxIgnoreZoom_stateChanged(int v)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
@@ -235,18 +236,32 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 	}
 }
 
-void CoreParameterView::on_checkBoxAntialiasing_stateChanged(int v)
+void CoreParameterView::on_checkBoxAntialiasingEntities_stateChanged(int v)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-		coreParams->m_antialiasing = false;
+		coreParams->m_antialiasingEntities = false;
 	}
 	//enable
 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-		coreParams->m_antialiasing = true;
+		coreParams->m_antialiasingEntities = true;
 
 	}
-	emitToggleAntialiasing(v);
+	emitToggleAntialiasingEntities(v);
+}
+
+void CoreParameterView::on_checkBoxAntialiasingFull_stateChanged(int v)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
+		coreParams->m_antialiasingFull = false;
+	}
+	//enable
+	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
+		coreParams->m_antialiasingFull = true;
+
+	}
+	emitToggleAntialiasingFull(v);
 }
 
 void CoreParameterView::fillUI() 
@@ -277,8 +292,10 @@ void CoreParameterView::fillUI()
 	//tracing steps
 	if (coreParams->m_tracingSteps) { ui->spinBoxTracingSteps->setValue(coreParams->m_tracingSteps); }
 	//antialiasing
-	if (coreParams->m_antialiasing) { ui->checkBoxAntialiasing->setChecked(true); }
-	else { ui->checkBoxAntialiasing->setChecked(false); }
+	if (coreParams->m_antialiasingEntities) { ui->checkBoxAntialiasingEntities->setChecked(true); }
+	else { ui->checkBoxAntialiasingEntities->setChecked(false); }
+	if (coreParams->m_antialiasingFull) { ui->checkBoxAntialiasingFull->setChecked(true); }
+	else { ui->checkBoxAntialiasingFull->setChecked(false); }
 	//track width
 	if (coreParams->m_trackWidth) { ui->spinboxTrackWidth->setValue(coreParams->m_trackWidth); }
 	//track height

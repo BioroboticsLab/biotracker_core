@@ -106,6 +106,21 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setPen(pen);
 	painter->setBrush(brush);
 
+	// draw angleLine
+	if (m_orientationLine) {
+		QLineF angleline;
+		angleline.setP1(QPointF(m_w / 2, m_h / 2));
+		if (m_h > m_w) {
+			angleline.setAngle(-90);
+		}
+		else {
+			angleline.setAngle(0);
+		}
+		//TODO length changable
+		angleline.setLength(100);
+		painter->drawLine(angleline);
+	}
+
 	//TODO enums for types?
 
 	//draw ellipse
@@ -135,20 +150,10 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 		}
 	}
 
-	// draw angleLine
-	if (m_orientationLine) {
-		QLineF angleline;
-		angleline.setP1(QPointF(m_w / 2, m_h / 2));
-		if (m_h > m_w) {
-			angleline.setAngle(-90);
-		}
-		else {
-			angleline.setAngle(0);
-		}
-		//TODO length changable
-		angleline.setLength(100);
-		painter->drawLine(angleline);
-	}
+	// draw id in center
+
+	painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
+
 }
 
 bool ComponentShape::advance()
@@ -223,12 +228,12 @@ void ComponentShape::updateAttributes()
 	if (pointLike) {
 		//update width and height ore use defaults
 		if (m_useDefaultDimensions) {
-			if (pointLike->getW() > 0) {
+			if (pointLike->hasW()) {
 				m_w = pointLike->getW();
 			}
 			else { m_w = m_wDefault; }
 
-			if (pointLike->getH() > 0) {
+			if (pointLike->hasH()) {
 				m_h = pointLike->getH();
 			}
 			else { m_h = m_hDefault; }
@@ -797,7 +802,7 @@ void ComponentShape::receiveIgnoreZoom(bool toggle)
 //set members from core params
 void ComponentShape::setMembers(CoreParameter* coreParams)
 {
-	m_antialiasing = coreParams->m_antialiasing;
+	m_antialiasing = coreParams->m_antialiasingEntities;
 
 	m_tracingStyle = coreParams->m_tracingStyle;
 	m_tracingTimeDegradation = coreParams->m_tracingTimeDegradation;

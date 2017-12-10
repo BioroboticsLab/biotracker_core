@@ -72,7 +72,7 @@ public slots:
 	void receiveTracerOrientationLine(bool toggle);
 
 	//Visual
-	void receiveToggleAntialiasing(bool toggle);
+	void receiveToggleAntialiasingEntities(bool toggle);
 
 
 public:

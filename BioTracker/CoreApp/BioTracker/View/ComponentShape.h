@@ -37,9 +37,12 @@ class ComponentShape : public QGraphicsObject
 
 		//public member
 		int m_currentFramenumber;
-		//to fix a bug when moving TODO better
+		//to fix a bug when moving; TODO better
 		int m_w;
 		int m_h;
+
+		QGraphicsRectItem* m_tracingLayer;
+
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
@@ -113,7 +116,6 @@ class ComponentShape : public QGraphicsObject
 		int m_tracingLength;
 		int m_tracingSteps;
 		QString m_tracingTimeDegradation;
-		QGraphicsRectItem* m_tracingLayer;
 		float m_tracerProportions;
 		bool m_tracingOrientationLine;
 		bool m_orientationLine;

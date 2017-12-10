@@ -39,7 +39,7 @@ void ControllerGraphicScene::createView()
 
 void ControllerGraphicScene::connectModelToController()
 {
-
+	QObject::connect(this, &ControllerGraphicScene::signalToggleAntialiasingFull, dynamic_cast<GraphicsView*>(m_View), &GraphicsView::receiveToggleAntialiasingFull);
 }
 
 void ControllerGraphicScene::connectControllerToController()
@@ -47,4 +47,8 @@ void ControllerGraphicScene::connectControllerToController()
 	IController * ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 	QPointer< MainWindow > mainWin = dynamic_cast<MainWindow *>(ctrM->getView());
 	mainWin->addVideoView(m_View);
+}
+
+void ControllerGraphicScene::receiveToggleAntialiasingFull(bool toggle) {
+	signalToggleAntialiasingFull(toggle);
 }

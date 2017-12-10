@@ -33,6 +33,12 @@ class ControllerGraphicScene : public IController {
      */
 	void addTextureObject(QGraphicsItem* item);
 
+  signals:
+	void signalToggleAntialiasingFull(bool toggle);
+		
+ public slots:
+	void receiveToggleAntialiasingFull(bool toggle);
+
     // IController interface
   protected:
     void createModel() override;
@@ -41,6 +47,7 @@ class ControllerGraphicScene : public IController {
     void connectControllerToController() override;
 
   private:
+
     IView* m_GraphicsView;
 
     IModel* m_Element;

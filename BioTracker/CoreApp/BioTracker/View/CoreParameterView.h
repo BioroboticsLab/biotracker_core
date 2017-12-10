@@ -63,7 +63,8 @@ public:
 
 	//Misc
 	void on_checkBoxExpertOptions_stateChanged(int v);
-	void on_checkBoxAntialiasing_stateChanged(int v);
+	void on_checkBoxAntialiasingEntities_stateChanged(int v);
+	void on_checkBoxAntialiasingFull_stateChanged(int v);
 
 public:
 	signals :
@@ -105,7 +106,9 @@ public:
             void emitFinalizeExperiment();
 
 			//Misc
-			void emitToggleAntialiasing(bool toggle);
+			void emitToggleAntialiasingEntities(bool toggle);
+			void emitToggleAntialiasingFull(bool toggle);
+
 private:
 	Ui::CoreParameterView *ui;
 

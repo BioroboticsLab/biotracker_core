@@ -34,7 +34,9 @@ public:
 
 public:
 	bool m_viewSwitch = true;
-	bool m_antialiasing = false;
+	bool m_antialiasingEntities = false;
+	bool m_antialiasingFull = false;
+
 	//Tracing
 	QString m_tracingStyle = "None";
 	int m_tracingHistory = 20;
@@ -48,7 +50,7 @@ public:
 	bool m_trackOrientationLine = true;
 	//Track color
 	QColor* m_colorBorder = new QColor(Qt::black);
-	QColor* m_colorBrush = new QColor(Qt::blue);
+	QColor* m_colorBrush = new QColor(Qt::green);
 	//Track count
 	int m_trackNumber = 0;
 	//Ignore zooming

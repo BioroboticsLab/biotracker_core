@@ -49,7 +49,6 @@ void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
 
 QRectF TrackedComponentView::boundingRect() const
 {
-
 	return m_boundingRect;
 }
 
@@ -324,6 +323,15 @@ void TrackedComponentView::receiveBroadcastMove()
 void TrackedComponentView::receiveViewSwitch(bool lever)
 {
 	this->setVisible(lever);
+	
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->m_tracingLayer->setVisible(lever);
+		}
+	}
 }
 
 void TrackedComponentView::receiveTrackDimensionsAll(int width, int height)
@@ -539,8 +547,9 @@ void TrackedComponentView::addTrajectory()
 		lastClickedPos = QPoint(0, 0);
 	}
 	else {
-		qDebug() << "TCV: new track at position (0,0)";
-		emitAddTrajectory(QPoint(0, 0));
+		qDebug() << "TCV: new track at center of top left quarter of video";
+		QPoint topLeftQuarterCenter = QPoint(this->boundingRect().width() / 8, this->boundingRect().height() / 8);
+		emitAddTrajectory(topLeftQuarterCenter);
 	}
 }
 
@@ -606,7 +615,7 @@ void TrackedComponentView::receiveTracerOrientationLine(bool toggle)
 	}
 }
 
-void TrackedComponentView::receiveToggleAntialiasing(bool toggle)
+void TrackedComponentView::receiveToggleAntialiasingEntities(bool toggle)
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;

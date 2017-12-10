@@ -23,6 +23,7 @@ public:
     // IGraphicsView interface
 public Q_SLOTS:
     void getNotified() override;
+	void receiveToggleAntialiasingFull(bool toggle);
 
     // QWidget interface
 protected:
