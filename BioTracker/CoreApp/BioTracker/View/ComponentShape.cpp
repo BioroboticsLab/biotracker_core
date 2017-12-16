@@ -513,12 +513,14 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 			m_penColorLast = m_penColor;
 			m_penColor = Qt::red;
 			m_penStyle = Qt::DashLine;
+			this->setZValue(2);
 			trace();
 			update();
 		}
 		else {
 			m_penColor = m_penColorLast;
 			m_penStyle = Qt::SolidLine;
+			this->setZValue(0);
 			trace();
 			update();
 
