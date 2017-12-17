@@ -119,6 +119,7 @@ private:
 
 	void getNotified();
 	void fillUI();
+	void setStyle();
 };
 
 #endif // COREPARAMETERVIEW_H

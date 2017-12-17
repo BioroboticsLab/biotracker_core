@@ -30,6 +30,7 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
 	fillUI();
+	setStyle();
 
 	getNotified();
 }
@@ -228,11 +229,15 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
+		ui->groupBoxTrackDimensions->hide();
+		ui->groupBoxTracerDimensions->hide();
 	}
 	//enable
 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
+		ui->groupBoxTrackDimensions->show();
+		ui->groupBoxTracerDimensions->show();
 	}
 }
 
@@ -307,11 +312,30 @@ void CoreParameterView::fillUI()
 	if (ui->checkBoxExpertOptions->isChecked()) {
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
+		ui->groupBoxTrackDimensions->show();
 	}
 	else {
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
+		ui->groupBoxTrackDimensions->hide();
 	}
+}
+
+void CoreParameterView::setStyle() 
+{
+	//main groupboxes
+	ui->groupBoxTracks->setStyleSheet("QGroupBox { background-color: #bbdefb;}");
+	ui->groupBoxRectificationParm->setStyleSheet("QGroupBox { background-color: #d1c4e9; }");
+	ui->groupBoxTracing->setStyleSheet("QGroupBox { background-color: #c8e6c9; }");
+	ui->groupBoxMiscellaneous->setStyleSheet("QGroupBox { background-color: #ffecb3; }");
+
+	//expert options are slightly darker
+	ui->groupBoxTrackDimensions->setStyleSheet("QGroupBox { background-color: #90caf9;}");
+	ui->groupBoxTracerDimensions->setStyleSheet("QGroupBox { background-color: #a5d6a7;}");
+
+
+
+
 }
 
 void CoreParameterView::getNotified()

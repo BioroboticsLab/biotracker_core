@@ -440,6 +440,9 @@
                              <string>Tracks</string>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_17">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
                              <property name="leftMargin">
                               <number>5</number>
                              </property>
@@ -570,6 +573,12 @@
                                   </item>
                                   <item>
                                    <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
+                                    <property name="minimumSize">
+                                     <size>
+                                      <width>0</width>
+                                      <height>0</height>
+                                     </size>
+                                    </property>
                                     <property name="text">
                                      <string>All tracks</string>
                                     </property>
@@ -912,7 +921,7 @@
                           <item>
                            <widget class="QGroupBox" name="groupBoxRectificationParm">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -927,6 +936,9 @@
                              <string>Area descriptor</string>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_22">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
                              <property name="leftMargin">
                               <number>5</number>
                              </property>
@@ -1035,17 +1047,20 @@
                              <bool>false</bool>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_23">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
                              <property name="leftMargin">
-                              <number>5</number>
+                              <number>9</number>
                              </property>
                              <property name="topMargin">
-                              <number>5</number>
+                              <number>9</number>
                              </property>
                              <property name="rightMargin">
-                              <number>5</number>
+                              <number>9</number>
                              </property>
                              <property name="bottomMargin">
-                              <number>5</number>
+                              <number>9</number>
                              </property>
                              <item>
                               <widget class="QCheckBox" name="checkBoxAntialiasingEntities">
