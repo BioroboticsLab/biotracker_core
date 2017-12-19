@@ -10,10 +10,10 @@
 #include "qwidgetaction.h"
 #include "qlabel.h"
 #include "assert.h"
-#include "qtime"
+#include "QTime"
 #include "qlistwidget.h"
 #include "QGraphicsProxyWidget"
-#include "qvboxlayout"
+#include "QVBoxLayout"
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
