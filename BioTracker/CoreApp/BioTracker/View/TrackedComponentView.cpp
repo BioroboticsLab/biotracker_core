@@ -1,9 +1,6 @@
 #include "TrackedComponentView.h"
 #include <assert.h>
-//#include "Model/TrackedComponents/TrackedElement.h"
-//#include "Model/TrackedComponents/TrackingRectElement.h"
-//#include "Model/TrackedComponents/TrackedTrajectory.h"
-//#include "Model/TrackingAlgorithm/property/Rectification.h"
+
 #include "QBrush"
 #include "QPainter"
 #include <QGraphicsSceneHoverEvent>
@@ -61,7 +58,6 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	
 	QFont* font = new QFont();
 	font->setPointSize(50);
-
 	painter->setFont(*font);
 
 	QBrush brush(Qt::red);
@@ -146,6 +142,12 @@ void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>
 // at plugin load, draw each element of initial main trajectory
 void TrackedComponentView::createChildShapesAtStart() {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
+
+	//flush all old children (e.g. from previous trackers)
+	foreach(QGraphicsItem* child, this->childItems()) {
+		child->hide();
+		delete child;
+	}
 
 	// check if scene is set
     assert(this->scene());

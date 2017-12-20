@@ -143,10 +143,19 @@ class MediaPlayer : public IModel {
     */
     void receiveTrackingPaused();
 
+    /** 
+     * Catches the pause state from the controller. 
+     * This will automatically wrap all cases of "stop" semantics.
+     * We do this although the info is basically passed implicitly via other commands, because it's easier
+     */
+    void rcvPauseState(bool state);
+
 	void receiveChangeDisplayImage(QString str);
 
 
   private:
+      //TODO Refactor members to _ instead of m_
+
 	  /**
 	  * helper function which opens a video. If video size has changed, a new video is opened. 
 	  */
@@ -181,6 +190,7 @@ class MediaPlayer : public IModel {
 	bool m_recd;
 	bool m_recordScaled;
 	bool m_trackingDone;
+    bool _paused = true;
 
 	bool m_useCuda;
 	GraphicsView *m_gv;

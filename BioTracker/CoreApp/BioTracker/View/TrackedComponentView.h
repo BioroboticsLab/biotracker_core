@@ -82,9 +82,9 @@ private:
 	QRectF m_boundingRect;
 
 	std::map<int, std::shared_ptr<QGraphicsRectItem>> _rectification;
-	QGraphicsItem *_watchingDrag;
-	int _dragX;
-	int _dragY;
+	QGraphicsItem *_watchingDrag = nullptr;
+	int _dragX = 0;
+	int _dragY = 0;
 	std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
 	QPoint lastClickedPos;
 

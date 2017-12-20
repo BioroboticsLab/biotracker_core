@@ -99,8 +99,8 @@ class ComponentShape : public QGraphicsObject
 		QList<QPolygonF> m_polygons;
 		int m_id;
 		int m_z;
-		int m_wDefault;
-		int m_hDefault;
+		int m_wDefault = 20;
+		int m_hDefault = 20;
 		bool m_useDefaultDimensions;
 		float m_rotation;
 		QColor m_penColor;

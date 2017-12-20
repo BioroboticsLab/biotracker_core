@@ -3,6 +3,7 @@
 #include "Interfaces/IModel/IModel.h"
 #include "AreaInfoElement.h"
 #include "util/types.h"
+#include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 
 class AreaInfo : public IModelAreaDescriptor
 {
@@ -34,12 +35,20 @@ public:
 
 	void setRectificationDimensions(double w, double h);
 
+    void setUseEntireScreen(bool b) { _useEntireScreen = b; };
+    bool getUseEntireScreen() { return _useEntireScreen; };
+
 	std::shared_ptr<AreaInfoElement> _rect;
 	std::shared_ptr<AreaInfoElement> _apperture;
 
 private:
 
+    //If the user never changed the area, use the whole screen. Indicate by this switch
+    bool _useEntireScreen = false;
+    int _vdimX = 1;
+    int _vdimY = 1;
 
-
+public Q_SLOTS:
+    void rcvPlayerParameters(playerParameters* parameters);
 };
 

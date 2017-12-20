@@ -41,6 +41,7 @@ class ControllerTrackedComponentCore : public IController
 		//this slot gets triggered when the core-view needs to update with the current frame
 		void receiveVisualizeTrackingModel(uint framenumber);
 
+
 		//gets triggered when plugin sends permissions
 		void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 

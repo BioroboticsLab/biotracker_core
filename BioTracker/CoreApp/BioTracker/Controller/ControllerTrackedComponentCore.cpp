@@ -9,6 +9,8 @@
 #include "util/types.h"
 #include "qdebug.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "Interfaces/IView/IViewTrackedComponent.h"
+
 
 ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
@@ -111,7 +113,6 @@ void ControllerTrackedComponentCore::createModel()
 	m_Model = new null_Model();
 }
 
-
 IView *ControllerTrackedComponentCore::getTrackingElementsWidgetCore()
 {
 	return m_View;
@@ -128,6 +129,8 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 {
 	m_Model = model;
 	m_View->setNewModel(m_Model);
+
+	TrackedComponentView* view = dynamic_cast<TrackedComponentView*>(m_View);
 	
 	//signal initial track number to core params
 	IModelTrackedTrajectory *iModel = dynamic_cast<IModelTrackedTrajectory *>(getModel());

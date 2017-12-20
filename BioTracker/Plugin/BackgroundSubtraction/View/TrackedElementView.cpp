@@ -14,15 +14,15 @@
 class QGraphicsSceneHoverEvent;
 
 TrackedElementView::TrackedElementView(QGraphicsItem *parent, IController *controller, IModel *model) :
-    IViewTrackedComponent(parent, controller, model) 
+    IViewTrackedComponent(parent, controller, model)
 {
     TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
     _boundingRect = QRectF(0,0, 100, 100);
-} 
+}
 
 void TrackedElementView::rcvDimensionUpdate(int x, int y) {
-	_boundingRect = QRectF(0, 0, x, y);
-	update();
+    _boundingRect = QRectF(0, 0, x, y);
+    update();
 }
 
 QRectF TrackedElementView::boundingRect() const
@@ -34,10 +34,10 @@ QRectF TrackedElementView::boundingRect() const
 
 void TrackedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	QGraphicsScene *scene = this->scene();
+    QGraphicsScene *scene = this->scene();
 
-	//Dev note: You could do some meaningful drawing here.
-	//So far, the core does everything we need.
+    //Dev note: You could do some meaningful drawing here.
+    //So far, the core does everything we need.
 }
 
 void TrackedElementView::getNotified()

@@ -8,7 +8,7 @@ namespace LUKASKANADE {
     namespace CONFIGPARAM
     {
         // System config
-        const std::string CONFIG_INI_FILE = "./BSTrackerConfig.ini";
+        const std::string CONFIG_INI_FILE = "./LKTrackerConfig.ini";
     }
 
     namespace APPLICATIONPARAM

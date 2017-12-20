@@ -8,7 +8,6 @@ IViewWidget::IViewWidget(QWidget *parent, IController *controller, IModel *model
 
 void IViewWidget::setNewModel(IModel *model) {
     setModel(model);
-
     if (getModel() != nullptr) {
         connectModelView();
     }

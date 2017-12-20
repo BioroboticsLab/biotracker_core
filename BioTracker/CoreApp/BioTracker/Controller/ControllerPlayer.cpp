@@ -127,6 +127,7 @@ void ControllerPlayer::connectModelToController() {
 
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::renderCurrentImage, this, &ControllerPlayer::receiveRenderImage);
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
+    QObject::connect(this, &ControllerPlayer::emitPauseState, qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::rcvPauseState);
 	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalVisualizeCurrentModel, this, &ControllerPlayer::receiveVisualizeCurrentModel);
 	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
 

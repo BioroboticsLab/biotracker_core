@@ -8,6 +8,7 @@
 #include "settings/Settings.h"
 
 #include "View/TrackedElementView.h"
+#include "Model/TrackedComponents/TrackedComponentFactory.h"
 
 BioTrackerPlugin::BioTrackerPlugin() {
 }

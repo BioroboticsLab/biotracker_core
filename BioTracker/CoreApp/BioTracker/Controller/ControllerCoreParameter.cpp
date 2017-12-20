@@ -26,7 +26,7 @@ void ControllerCoreParameter::connectModelToController()
 
 void ControllerCoreParameter::connectControllerToController()
 {
-	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
+	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);view->triggerUpdate();
 	//Connections to the trackedComponentCore
 	{
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
@@ -81,7 +81,8 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitDisplayTrackingArea, adController, &ControllerAreaDescriptor::setDisplayTrackingAreaDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitDisplayRectification, adController, &ControllerAreaDescriptor::setDisplayRectificationDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
-	}
+        view->triggerUpdate();
+    }
     //Connections to the DataExporter
     {
         IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
@@ -89,6 +90,12 @@ void ControllerCoreParameter::connectControllerToController()
         QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
     }
 
+}
+
+void ControllerCoreParameter::triggerUpdate() {
+
+    CoreParameterView* view = static_cast<CoreParameterView*>(m_View); view->triggerUpdate(); 
+    view->triggerUpdate();
 }
 
 void ControllerCoreParameter::receiveTrackNumber(int number)

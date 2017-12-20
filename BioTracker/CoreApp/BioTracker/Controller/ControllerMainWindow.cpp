@@ -20,9 +20,10 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 }
 
 void ControllerMainWindow::loadVideo(QString str) {
+    Q_EMIT emitOnLoadMedia(str.toStdString());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
-    onNewMediumLoaded(str.toStdString());
+    Q_EMIT emitMediaLoaded(str.toStdString());
 }
 
 void ControllerMainWindow::loadTracker(QString str) {
@@ -31,15 +32,18 @@ void ControllerMainWindow::loadTracker(QString str) {
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
+    std::string str = files.empty() ? "" : files.front().string();
+    Q_EMIT emitOnLoadMedia(str);
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
-    onNewMediumLoaded(files.empty() ? "" : files.front().string());
+    Q_EMIT emitMediaLoaded(str);
 }
 
 void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
+    Q_EMIT emitOnLoadMedia("::Camera");
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
-    onNewMediumLoaded("::Camera");
+    Q_EMIT emitMediaLoaded("::Camera");
 }
 
 void ControllerMainWindow::activeTracking() {
@@ -103,13 +107,13 @@ void ControllerMainWindow::connectModelToController() {
     // Prepare annotations and serialize existing ones.
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
     ControllerAnnotations *annotationController = static_cast<ControllerAnnotations*>(ctr);
-    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, annotationController, &ControllerAnnotations::reset);
+    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, annotationController, &ControllerAnnotations::reset, Qt::DirectConnection);
 
     // Write previously written data structure and reset it
     IController* ctr2 = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
     ControllerDataExporter *contrl = static_cast<ControllerDataExporter*>(ctr2);
-    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, contrl, &ControllerDataExporter::receiveFinalizeExperiment);
-    QObject::connect(this, &ControllerMainWindow::emitPluginLoaded, contrl, &ControllerDataExporter::receiveReset);
+    QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, contrl, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+    QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, contrl, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
 }
 
 void ControllerMainWindow::connectControllerToController() {
@@ -125,12 +129,18 @@ void ControllerMainWindow::connectControllerToController() {
 }
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
-	Q_EMIT emitPluginLoaded(plugin.toStdString());
+    Q_EMIT emitOnLoadPlugin(plugin.toStdString());
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
+    Q_EMIT emitPluginLoaded(plugin.toStdString());
 }
 
 void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 {
     Q_EMIT emitMediaLoaded(path);
 }
+
+void ControllerMainWindow::exit() {
+	delete m_BioTrackerContext;
+}
+

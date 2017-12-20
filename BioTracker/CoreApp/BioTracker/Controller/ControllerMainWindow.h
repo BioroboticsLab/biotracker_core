@@ -65,11 +65,17 @@ class ControllerMainWindow : public IController {
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();
 
+	//Passes exit command to the GUI context
+	void exit();
+
 public:
     signals:
+    void emitOnLoadPlugin(const std::string path);
+    void emitOnLoadMedia(const std::string path);
+
     void emitPluginLoaded(const std::string path);
     void emitMediaLoaded(const std::string path);
-    void emitTrackLoaded(const std::string path);
+    void emitTrackLoaded(const std::string path); 
 
 
 	public slots:
