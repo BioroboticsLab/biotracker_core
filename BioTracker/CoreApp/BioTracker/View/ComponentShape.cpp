@@ -30,6 +30,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_pSwappable = true;
 	m_currentFramenumber = 0;
 	m_rotation = 0;
+	m_trajectoryWasActiveOnce = false;
 
 	m_tracingLayer = new QGraphicsRectItem();
 	this->scene()->addItem(m_tracingLayer);

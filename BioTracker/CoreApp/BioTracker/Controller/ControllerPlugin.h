@@ -121,6 +121,8 @@ signals:
 
 	bool m_paused = true;
 
+	uint m_currentFrameNumber = 0;
+
 
 
 };

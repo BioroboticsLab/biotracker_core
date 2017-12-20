@@ -176,6 +176,9 @@ void ControllerPlugin::createPlugin() {
 	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
 	ctAreaDesc->triggerUpdateAreaDescriptor();
+
+	Q_EMIT signalCurrentFrameNumberToPlugin(m_currentFrameNumber);
+
 }
 
 void ControllerPlugin::connectPlugin() {
@@ -343,10 +346,13 @@ void ControllerPlugin::receivePauseState(bool state)
 
 void ControllerPlugin::receiveCurrentFrameNumberToPlugin(uint frameNumber)
 {
+	m_currentFrameNumber = frameNumber;
 	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
 }
 
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
+	m_currentFrameNumber = number;
+
 	//Prevent calling the plugin if none is loaded
 	if (m_BioTrackerPlugin) {
 		while (!m_editQueue.isEmpty()) {

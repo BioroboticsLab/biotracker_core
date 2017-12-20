@@ -21,7 +21,6 @@ public Q_SLOTS:
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 		void receiveCurrentFrameNumber(uint framenumber);
 
-
 	// IController interface
 protected:
 	void createModel() override;

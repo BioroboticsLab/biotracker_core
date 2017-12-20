@@ -51,6 +51,8 @@ public slots:
 	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
+	void receiveCurrentFrameNumberFromMainApp(uint frameNumber);
+
 private slots:
 	void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name);
 	void receiveTrackingDone(uint framenumber);

@@ -79,6 +79,10 @@ void BioTrackerPlugin::receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> m
 	Q_EMIT emitCurrentFrameNumber(frameNumber);
 }
 
+void BioTrackerPlugin::receiveCurrentFrameNumberFromMainApp(uint frameNumber) {
+	Q_EMIT emitCurrentFrameNumber(frameNumber);
+}
+
 void BioTrackerPlugin::receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) {
 	Q_EMIT emitCvMat(mat, name);
 }

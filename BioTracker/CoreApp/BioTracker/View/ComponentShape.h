@@ -119,6 +119,7 @@ class ComponentShape : public QGraphicsObject
 		float m_tracerProportions;
 		bool m_tracingOrientationLine;
 		bool m_orientationLine;
+		bool m_trajectoryWasActiveOnce;
 };
 
 

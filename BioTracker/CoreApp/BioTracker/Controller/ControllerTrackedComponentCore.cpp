@@ -142,6 +142,8 @@ void ControllerTrackedComponentCore::receiveVisualizeTrackingModel(uint framenum
 	compView->updateShapes(framenumber);
 	//signal the core parameter controller to update the track number
 	IModelTrackedTrajectory *model = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	int trackNumber = model->validCount();
-	emitTrackNumber(trackNumber);
+	if (model) {
+		int trackNumber = model->validCount();
+		emitTrackNumber(trackNumber);
+	}
 }

@@ -85,6 +85,7 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	firstElem->setX(position.x());
 	firstElem->setY(position.y());
 	firstElem->setTime(start);
+	firstElem->setValid(true);
 	newTraj->add(firstElem, m_currentFrameNumber);
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
