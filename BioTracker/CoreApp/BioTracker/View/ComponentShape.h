@@ -68,6 +68,7 @@ class ComponentShape : public QGraphicsObject
 		void receiveTracingTimeDegradation(QString timeDegradation);
 		void receiveTracerProportions(float proportion);
 		void receiveTracerOrientationLine(bool toggle);
+		void receiveTracerFrameNumber(bool toggle);
 		//Visual
 		void receiveAntialiasing(bool toggle);
 		//Dimensions
@@ -118,6 +119,7 @@ class ComponentShape : public QGraphicsObject
 		QString m_tracingTimeDegradation;
 		float m_tracerProportions;
 		bool m_tracingOrientationLine;
+		bool m_tracerFrameNumber;
 		bool m_orientationLine;
 		bool m_trajectoryWasActiveOnce;
 };

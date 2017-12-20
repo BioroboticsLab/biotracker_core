@@ -62,6 +62,7 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitTracingStyle, tcview, &TrackedComponentView::receiveTracingStyle, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracingSteps, tcview, &TrackedComponentView::receiveTracingSteps, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracingTimeDegradation, tcview, &TrackedComponentView::receiveTracingTimeDegradation, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTracerFrameNumber, tcview, &TrackedComponentView::receiveTracerFrameNumber, Qt::DirectConnection);
 		//Tracing dimensions
 		QObject::connect(view, &CoreParameterView::emitTracerProportions, tcview, &TrackedComponentView::receiveTracerProportions, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTracerOrientationLine, tcview, &TrackedComponentView::receiveTracerOrientationLine, Qt::DirectConnection);

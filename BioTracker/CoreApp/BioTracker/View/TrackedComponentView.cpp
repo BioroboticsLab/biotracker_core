@@ -513,13 +513,11 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 
 	lastClickedPos = event->pos().toPoint();
 
+	QMenu menu;
 
 
 	// create the info box
 	QWidgetAction* infoBox = new QWidgetAction(this);
-
-	QMenu menu;
-
 	QString info = QString("Position (x,y) : ");
 	info.append(QString("(" + QString::number(lastClickedPos.x()) + ", " + QString::number(lastClickedPos.y()) + ")"));
 	QLabel* infoLabel = new QLabel(info);
@@ -529,7 +527,6 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	infoBox->setDefaultWidget(infoLabel);
 	menu.addAction(infoBox);
 	menu.addSeparator();
-	//qDebug() << "rechtsclick: " << lastClickedPos;
 	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_A);
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()), Qt::Key_S);
 	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(unmarkAll()), Qt::Key_U);
@@ -631,6 +628,17 @@ void TrackedComponentView::receiveTracerOrientationLine(bool toggle)
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
 			childShape->receiveTracerOrientationLine(toggle);
+		}
+	}
+}
+
+void TrackedComponentView::receiveTracerFrameNumber(bool toggle) {
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveTracerFrameNumber(toggle);
 		}
 	}
 }

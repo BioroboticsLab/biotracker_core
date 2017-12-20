@@ -44,6 +44,7 @@ public:
 	QString m_tracingTimeDegradation = "None";
 	double m_tracerProportions = 0.5;
 	bool m_tracerOrientationLine = false;
+	bool m_tracerFrameNumber = false;
 	//Track dimensions
 	int m_trackWidth = 20;
 	int m_trackHeight = 20;

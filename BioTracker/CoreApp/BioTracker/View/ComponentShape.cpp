@@ -404,8 +404,14 @@ void ComponentShape::trace()
 
 					lastPointDifference = adjustedHistoryPointDifference;
 				}
+
+				//add framenumber to each tracer
+				if (m_tracerFrameNumber) {
+					uint tracerNumber = m_currentFramenumber - i;
+					QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
+					tracerNumberText->setPos(adjustedHistoryPointDifference);
+				}
 			}
-			
 		}
 	}
 }
@@ -762,6 +768,13 @@ void ComponentShape::receiveTracerOrientationLine(bool toggle)
 	update();
 }
 
+void ComponentShape::receiveTracerFrameNumber(bool toggle)
+{
+	m_tracerFrameNumber = toggle;
+	trace();
+	update();
+}
+
 void ComponentShape::receiveAntialiasing(bool toggle)
 {
 	m_antialiasing = toggle;
@@ -813,6 +826,8 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_tracingSteps = coreParams->m_tracingSteps;
 	m_tracerProportions = coreParams->m_tracerProportions;
 	m_tracingOrientationLine = coreParams->m_tracerOrientationLine;
+	m_tracerFrameNumber = coreParams->m_tracerFrameNumber;
+
 	m_orientationLine = coreParams->m_trackOrientationLine;
 
 	m_brushColor = *(coreParams->m_colorBrush);

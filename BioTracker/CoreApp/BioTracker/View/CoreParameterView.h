@@ -31,6 +31,7 @@ public:
 	void on_spinBoxTracingHistoryLength_valueChanged(int i);
 	void on_spinBoxTracingSteps_valueChanged(int i);
 	void on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text);
+	void on_checkBoxTracerFrameNumber_stateChanged(int toggle);
 
 	void on_spinBoxTracerProportions_valueChanged(double proportions);
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
@@ -95,6 +96,7 @@ public:
 			void emitTracingStyle(QString style);
 			void emitTracingSteps(int steps);
 			void emitTracingTimeDegradation(QString degradation);
+			void emitTracerFrameNumber(bool toggle);
 			//Tracing dimensions
 			void emitTracerProportions(float proportion);
 			void emitTracerOrientationLine(bool toggle);

@@ -121,6 +121,13 @@ void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(co
 	emitTracingTimeDegradation(text);
 }
 
+void CoreParameterView::on_checkBoxTracerFrameNumber_stateChanged(int toggle)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_tracerFrameNumber = toggle;
+	emitTracerFrameNumber(toggle);
+}
+
 void CoreParameterView::on_spinBoxTracerProportions_valueChanged(double proportion)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
@@ -242,6 +249,7 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 		ui->groupBoxMiscellaneous->hide();
 		ui->groupBoxTrackDimensions->hide();
 		ui->groupBoxTracerDimensions->hide();
+		ui->checkBoxTracerFrameNumber->hide();
 	}
 	//enable
 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
@@ -249,6 +257,7 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
 		ui->groupBoxTracerDimensions->show();
+		ui->checkBoxTracerFrameNumber->show();
 	}
 }
 
@@ -307,6 +316,9 @@ void CoreParameterView::fillUI()
 	if (coreParams->m_tracingHistory) { ui->spinBoxTracingHistoryLength->setValue(coreParams->m_tracingHistory); }
 	//tracing steps
 	if (coreParams->m_tracingSteps) { ui->spinBoxTracingSteps->setValue(coreParams->m_tracingSteps); }
+	//tracer frame number
+	if (coreParams->m_tracerFrameNumber) { ui->checkBoxTracerFrameNumber->setChecked(true); }
+	else { ui->checkBoxTracerFrameNumber->setChecked(false); }
 	//antialiasing
 	if (coreParams->m_antialiasingEntities) { ui->checkBoxAntialiasingEntities->setChecked(true); }
 	else { ui->checkBoxAntialiasingEntities->setChecked(false); }
@@ -324,11 +336,13 @@ void CoreParameterView::fillUI()
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
+		ui->checkBoxTracerFrameNumber->show();
 	}
 	else {
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
 		ui->groupBoxTrackDimensions->hide();
+		ui->checkBoxTracerFrameNumber->hide();
 	}
 }
 

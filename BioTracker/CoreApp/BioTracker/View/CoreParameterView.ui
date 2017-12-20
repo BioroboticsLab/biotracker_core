@@ -317,9 +317,9 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-54</y>
-                      <width>358</width>
-                      <height>1058</height>
+                      <y>-88</y>
+                      <width>302</width>
+                      <height>1052</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -849,6 +849,17 @@
                               </layout>
                              </item>
                              <item>
+                              <layout class="QHBoxLayout" name="layoutTracerFrameNumber">
+                               <item>
+                                <widget class="QCheckBox" name="checkBoxTracerFrameNumber">
+                                 <property name="text">
+                                  <string>Show frame number</string>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </item>
+                             <item>
                               <widget class="QGroupBox" name="groupBoxTracerDimensions">
                                <property name="title">
                                 <string>Tracer dimensions</string>
@@ -916,6 +927,7 @@
                             <zorder>groupBoxTracerDimensions</zorder>
                             <zorder></zorder>
                             <zorder></zorder>
+                            <zorder>horizontalLayoutWidget</zorder>
                            </widget>
                           </item>
                           <item>
