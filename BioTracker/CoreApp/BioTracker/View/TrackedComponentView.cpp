@@ -13,6 +13,8 @@
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "QDebug"
 #include "QMenu"
+#include "qlabel.h"
+#include "QWidgetAction"
 #include "QAction"
 #include "qcolordialog.h"
 
@@ -510,8 +512,24 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 {
 
 	lastClickedPos = event->pos().toPoint();
-	//qDebug() << "rechtsclick: " << lastClickedPos;
+
+
+
+	// create the info box
+	QWidgetAction* infoBox = new QWidgetAction(this);
+
 	QMenu menu;
+
+	QString info = QString("Position (x,y) : ");
+	info.append(QString("(" + QString::number(lastClickedPos.x()) + ", " + QString::number(lastClickedPos.y()) + ")"));
+	QLabel* infoLabel = new QLabel(info);
+	infoLabel->setWordWrap(true);
+	infoLabel->setStyleSheet("QLabel {font-weight: bold; text-align: center}");
+	infoLabel->setAlignment(Qt::AlignCenter);
+	infoBox->setDefaultWidget(infoLabel);
+	menu.addAction(infoBox);
+	menu.addSeparator();
+	//qDebug() << "rechtsclick: " << lastClickedPos;
 	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()), Qt::Key_A);
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()), Qt::Key_S);
 	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(unmarkAll()), Qt::Key_U);
