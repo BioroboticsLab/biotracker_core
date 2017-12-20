@@ -115,7 +115,10 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
     cv::TermCriteria termcrit(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
 
 	//if current frame is first frame return
-	if (framenumber == 0) {return;}
+	if (framenumber == 0) {
+		Q_EMIT emitTrackingDone(framenumber);
+		return;
+	}
 
     std::vector<cv::Point2f> prevPts = getPoints(_TrackedTrajectoryMajor, framenumber-1);
 
