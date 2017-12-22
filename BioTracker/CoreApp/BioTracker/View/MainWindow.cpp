@@ -129,7 +129,7 @@ void MainWindow::activeTrackingCheckBox() {
 }
 
 void MainWindow::deactivateTrackingCheckBox() {
-    ui->checkBox_TrackingActivated->setEnabled(true);
+    ui->checkBox_TrackingActivated->setEnabled(false);
 }
 
 void MainWindow::on_actionOpen_Video_triggered() {

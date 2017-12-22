@@ -132,6 +132,8 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
     Q_EMIT emitOnLoadPlugin(plugin.toStdString());
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
+	dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
+	activeTrackingCheckBox();
     Q_EMIT emitPluginLoaded(plugin.toStdString());
 }
 
