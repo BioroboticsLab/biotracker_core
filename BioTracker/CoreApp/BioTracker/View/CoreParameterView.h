@@ -28,12 +28,12 @@ public:
 	void on_checkBoxEnableCoreView_stateChanged(int v);
 	//Tracing
 	void on_comboBoxTracingStyle_currentIndexChanged(const QString & text);
-	void on_spinBoxTracingHistoryLength_valueChanged(int i);
-	void on_spinBoxTracingSteps_valueChanged(int i);
+	void on_spinBoxTracingHistoryLength_editingFinished();
+	void on_spinBoxTracingSteps_editingFinished();
 	void on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text);
 	void on_checkBoxTracerFrameNumber_stateChanged(int toggle);
 
-	void on_spinBoxTracerProportions_valueChanged(double proportions);
+	void on_spinBoxTracerProportions_editingFinished();
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
 
 	//Track 

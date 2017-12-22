@@ -100,18 +100,20 @@ void CoreParameterView::on_comboBoxTracingStyle_currentIndexChanged(const QStrin
 	emitTracingStyle(text);
 }
 
-void CoreParameterView::on_spinBoxTracingHistoryLength_valueChanged(int i)
+void CoreParameterView::on_spinBoxTracingHistoryLength_editingFinished()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_tracingHistory = i;
-	emitTracingHistoryLength(i);
+	int value = ui->spinBoxTracingHistoryLength->value();
+	coreParams->m_tracingHistory = value;
+	emitTracingHistoryLength(value);
 }
 
-void CoreParameterView::on_spinBoxTracingSteps_valueChanged(int i)
+void CoreParameterView::on_spinBoxTracingSteps_editingFinished()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_tracingSteps = i;
-	emitTracingSteps(i);
+	int value = ui->spinBoxTracingSteps->value();
+	coreParams->m_tracingSteps = value;
+	emitTracingSteps(value);
 }
 
 void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text)
@@ -128,11 +130,12 @@ void CoreParameterView::on_checkBoxTracerFrameNumber_stateChanged(int toggle)
 	emitTracerFrameNumber(toggle);
 }
 
-void CoreParameterView::on_spinBoxTracerProportions_valueChanged(double proportion)
+void CoreParameterView::on_spinBoxTracerProportions_editingFinished()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	coreParams->m_tracerProportions = (float)proportion;
-	emitTracerProportions((float)proportion);
+	float value = (float)ui->spinBoxTracingSteps->value();
+	coreParams->m_tracerProportions = value;
+	emitTracerProportions(value);
 }
 
 void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle)

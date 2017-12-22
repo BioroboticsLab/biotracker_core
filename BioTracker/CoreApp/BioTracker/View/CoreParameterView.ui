@@ -317,7 +317,7 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-88</y>
+                      <y>0</y>
                       <width>302</width>
                       <height>1052</height>
                      </rect>
@@ -531,6 +531,9 @@
                                   </item>
                                   <item>
                                    <widget class="QSpinBox" name="spinboxTrackWidth">
+                                    <property name="buttonSymbols">
+                                     <enum>QAbstractSpinBox::PlusMinus</enum>
+                                    </property>
                                     <property name="minimum">
                                      <number>1</number>
                                     </property>
@@ -552,6 +555,9 @@
                                   </item>
                                   <item>
                                    <widget class="QSpinBox" name="spinBoxTrackHeight">
+                                    <property name="buttonSymbols">
+                                     <enum>QAbstractSpinBox::PlusMinus</enum>
+                                    </property>
                                     <property name="minimum">
                                      <number>1</number>
                                     </property>
@@ -784,6 +790,9 @@
                                  <property name="wrapping">
                                   <bool>false</bool>
                                  </property>
+                                 <property name="buttonSymbols">
+                                  <enum>QAbstractSpinBox::PlusMinus</enum>
+                                 </property>
                                  <property name="minimum">
                                   <number>1</number>
                                  </property>
@@ -808,6 +817,9 @@
                                </item>
                                <item>
                                 <widget class="QSpinBox" name="spinBoxTracingSteps">
+                                 <property name="buttonSymbols">
+                                  <enum>QAbstractSpinBox::PlusMinus</enum>
+                                 </property>
                                  <property name="minimum">
                                   <number>1</number>
                                  </property>
@@ -927,7 +939,6 @@
                             <zorder>groupBoxTracerDimensions</zorder>
                             <zorder></zorder>
                             <zorder></zorder>
-                            <zorder>horizontalLayoutWidget</zorder>
                            </widget>
                           </item>
                           <item>

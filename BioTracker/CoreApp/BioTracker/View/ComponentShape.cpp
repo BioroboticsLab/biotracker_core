@@ -300,27 +300,29 @@ void ComponentShape::trace()
 				QPointF historyPointDifference = historyPoint - currentPoint;
 				QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
 
+				//time degradation colors
+				QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+				QBrush timeDegradationBrush = QBrush(m_brushColor);
+				QColor timeDegradationBrushColor;
+				QColor timeDegradationPenColor;
+
+				if (m_tracingTimeDegradation == "Transparency") {
+					timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+					timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
+
+					timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+					timeDegradationBrush = QBrush(timeDegradationBrushColor);
+
+				}
+				else if (m_tracingTimeDegradation == "False color") {
+					float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
+					timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+					timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+					timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+					timeDegradationBrush = QBrush(timeDegradationBrushColor);
+				}
+
 				if (m_tracingStyle == "Shape") {
-
-					//time degradation colors
-					QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-					QBrush timeDegradationBrush = QBrush(m_brushColor);
-
-					if (m_tracingTimeDegradation == "Transparency") {
-						QColor timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
-						timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
-
-						QColor timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
-						timeDegradationBrush = QBrush(timeDegradationBrushColor);
-
-					}
-					else if (m_tracingTimeDegradation == "False color") {
-						float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
-						QColor timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-						QColor timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-						timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-						timeDegradationBrush = QBrush(timeDegradationBrushColor);
-					}
 
 					//orientation line
 					if (m_tracingOrientationLine) {
@@ -377,26 +379,28 @@ void ComponentShape::trace()
 				//PATH
 				else if (m_tracingStyle == "Path") {
 
-					QLineF base = QLineF(adjustedHistoryPointDifference, lastPointDifference);
+					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 					QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
-					lineItem->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
+					lineItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
 
 					lastPointDifference = adjustedHistoryPointDifference;
 				}
 				//ARROWPATH
 				else if (m_tracingStyle == "ArrowPath") {
-					QLineF base = QLineF(adjustedHistoryPointDifference, lastPointDifference);
+					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+
+					int armLength = std::floor(base.length() / 9) + 2;
 
 					QLineF arm0 = base.normalVector();
-					arm0.setLength(10);
-					arm0.setAngle(base.angle() -160);
+					arm0.setLength(armLength);
+					arm0.setAngle(base.angle() + 20);
 
 					QLineF arm1 = base.normalVector();
-					arm1.setLength(10);
-					arm1.setAngle(base.angle() - 200);
+					arm1.setLength(armLength);
+					arm1.setAngle(base.angle() - 20);
 
 					QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
-					baseItem->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
+					baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
 					QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
 					arm0Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
 					QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
