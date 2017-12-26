@@ -43,6 +43,8 @@ signals:
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+
 	void emitCurrentFrameNumber(uint frameNumber);
 
 public slots:

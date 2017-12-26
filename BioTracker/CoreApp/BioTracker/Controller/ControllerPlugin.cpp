@@ -150,6 +150,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
+		SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
 		SLOT(receiveUpdateView()));
@@ -227,7 +229,7 @@ void ControllerPlugin::connectPlugin() {
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
 
-
+	// data model actions
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), obj,
@@ -238,6 +240,8 @@ void ControllerPlugin::connectPlugin() {
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
+		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
 		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
@@ -339,6 +343,21 @@ void ControllerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IMo
 	}
 }
 
+void ControllerPlugin::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
+{
+	if (m_paused) {
+		emitToggleFixTrack(trajectory, toggle);
+		emitUpdateView();
+	}
+	else {
+		queueElement fixEdit;
+		fixEdit.type = EDIT::FIX;
+		fixEdit.trajectory0 = trajectory;
+		fixEdit.toggle = toggle;
+		m_editQueue.enqueue(fixEdit);
+	}
+}
+
 void ControllerPlugin::receivePauseState(bool state)
 {
 	m_paused = state;
@@ -374,6 +393,9 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				break;
 			case EDIT::SWAP:
 				emitSwapIds(edit.trajectory0, edit.trajectory1);
+				break;
+			case EDIT::FIX:
+				emitToggleFixTrack(edit.trajectory0, edit.toggle);
 				break;
 			}
 		}

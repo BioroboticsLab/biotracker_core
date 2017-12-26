@@ -35,6 +35,7 @@ public:
 	void  setId(int val) { _id = val; };
 	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
+	void  setFixed(bool f) { _fixed = f; };
 
     float getX();
     float getY();
@@ -49,6 +50,7 @@ public:
 	int   getId() { return _id; };
 	std::chrono::steady_clock::time_point  getTime() { return _time; };
 	bool  getValid() { return _valid; };
+	bool  getFixed() { return _fixed; };
 
 	bool hasX() { return true; };
 	bool hasY() { return true; };
@@ -77,6 +79,7 @@ private:
 	std::chrono::steady_clock::time_point _time;
 	bool _valid;
 	bool _pressed;
+	bool _fixed;
 };
 
 #endif // TRACKEDELEMENT_H

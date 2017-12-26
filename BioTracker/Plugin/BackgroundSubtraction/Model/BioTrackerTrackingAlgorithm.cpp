@@ -47,7 +47,7 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 	std::vector<FishPose> last;
 	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
-		if (t && t->getValid()) {
+		if (t && t->getValid() && !t->getFixed()) {
 			TrackedElement *e = (TrackedElement *)t->getLastChild();
 			last.push_back(e->getFishPose());
 		}
@@ -185,7 +185,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 	int trajNumber = 0;
 	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
 		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
-		if (t && t->getValid()) {
+		if (t && t->getValid() && !t->getFixed()) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
 
 			//does this work? trajnumber is not traj-id with new id system

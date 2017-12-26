@@ -58,7 +58,7 @@ std::vector<cv::Point2f> getPoints(TrackedTrajectory* trackedTrajectoryMajor, in
     int trajNumber = 0;
     for (int i = 0; i < trackedTrajectoryMajor->size(); i++) {
         TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(trackedTrajectoryMajor->getChild(i));
-        if (t && t->getValid()) {
+        if (t && t->getValid() && !t->getFixed()) {
             IModelTrackedPoint* p = dynamic_cast<IModelTrackedPoint*>(t->getChild(frameNo));
             if (p != nullptr) {
                 points.push_back(cv::Point2f(p->getX(), p->getY()));
@@ -78,7 +78,7 @@ void setPoints(TrackedTrajectory* trackedTrajectoryMajor, int frameNo, std::vect
     int trajNumber = 0;
     for (int i = 0; i < trackedTrajectoryMajor->size(); i++) {
         TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(trackedTrajectoryMajor->getChild(i));
-        if (t && t->getValid() && !points.empty()) {
+        if (t && t->getValid() && !points.empty() && !t->getFixed()) {
             cv::Point2f p = points[0];
             points.erase(points.begin());
             TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());

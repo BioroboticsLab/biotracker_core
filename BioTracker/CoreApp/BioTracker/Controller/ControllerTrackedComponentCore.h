@@ -30,6 +30,8 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
+		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+
 		void emitTrackNumber(int number);
 
 
@@ -56,6 +58,8 @@ class ControllerTrackedComponentCore : public IController
 		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+		void receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
 		void receiveUpdateView();
 

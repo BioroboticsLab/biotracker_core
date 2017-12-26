@@ -64,6 +64,7 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(this, &BioTrackerPlugin::emitAddTrajectory, ctrTrC, &ControllerTrackedComponent::receiveAddTrajectory, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitSwapIds, ctrTrC, &ControllerTrackedComponent::receiveSwapIds, Qt::DirectConnection);
+	QObject::connect(this, &BioTrackerPlugin::emitToggleFixTrack, ctrTrC, &ControllerTrackedComponent::receiveToggleFixTrack, Qt::DirectConnection);
 
 
 	QObject::connect(this, &BioTrackerPlugin::emitCurrentFrameNumber, ctrTrC, &ControllerTrackedComponent::receiveCurrentFrameNumber);

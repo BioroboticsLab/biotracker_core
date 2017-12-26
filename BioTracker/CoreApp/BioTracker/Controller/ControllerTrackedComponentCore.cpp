@@ -97,6 +97,11 @@ void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * tr
 	emitSwapIds(trajectory0, trajectory1);
 }
 
+void ControllerTrackedComponentCore::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
+{
+	emitToggleFixTrack(trajectory, toggle);
+}
+
 void ControllerTrackedComponentCore::receiveUpdateView()
 {
 	TrackedComponentView* compView = dynamic_cast<TrackedComponentView*>(m_View);
@@ -134,8 +139,10 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	
 	//signal initial track number to core params
 	IModelTrackedTrajectory *iModel = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	int trackNumber = iModel->validCount();
-	emitTrackNumber(trackNumber);
+	if (iModel) {
+		int trackNumber = iModel->validCount();
+		emitTrackNumber(trackNumber);
+	}
 }
 
 void ControllerTrackedComponentCore::receiveVisualizeTrackingModel(uint framenumber)

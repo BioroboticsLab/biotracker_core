@@ -6,7 +6,6 @@
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "qpainter.h"
 #include "qgraphicsitem.h"
-#include "View/TrackedComponentView.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Model/CoreParameter.h"
 #include "QTime"
@@ -48,6 +47,7 @@ class ComponentShape : public QGraphicsObject
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int sizeOfStackToMove);
+		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 		void broadcastMove();
 
 	public Q_SLOTS:
@@ -59,6 +59,7 @@ class ComponentShape : public QGraphicsObject
 		bool removeTrackEntity();
 		void markShape(int penwidth = 0);
 		void unmarkShape();
+		void toggleFixTrack();
 		void createInfoWindow();
 
 		//Tracing
@@ -95,6 +96,7 @@ class ComponentShape : public QGraphicsObject
 		bool m_pMovable;
 		bool m_pRemovable;
 		bool m_pSwappable;
+		bool m_fixed;
 		bool m_antialiasing;
 		IModelTrackedTrajectory* m_trajectory;
 		QList<QPolygonF> m_polygons;
@@ -110,6 +112,7 @@ class ComponentShape : public QGraphicsObject
 		bool m_marked;
 		int m_penWidth;
 		Qt::PenStyle m_penStyle;
+		Qt::PenStyle m_penStylePrev;
 		bool m_dragged;
 		QTime m_mousePressTime;
 		QPoint m_mousePressPos;

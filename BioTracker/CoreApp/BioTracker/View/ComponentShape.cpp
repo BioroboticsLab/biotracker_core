@@ -24,10 +24,12 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_useDefaultDimensions = true;
 	m_penWidth = 0;
 	m_penStyle = Qt::SolidLine;
+	m_penStylePrev = Qt::SolidLine;
 	m_marked = false;
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
+	m_fixed = false;
 	m_currentFramenumber = 0;
 	m_rotation = 0;
 	m_trajectoryWasActiveOnce = false;
@@ -523,6 +525,7 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 		if (this->isSelected()) {
 			m_penColorLast = m_penColor;
 			m_penColor = Qt::red;
+			m_penStylePrev = m_penStyle;
 			m_penStyle = Qt::DashLine;
 			this->setZValue(2);
 			trace();
@@ -530,7 +533,7 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 		}
 		else {
 			m_penColor = m_penColorLast;
-			m_penStyle = Qt::SolidLine;
+			m_penStyle = m_penStylePrev;
 			this->setZValue(0);
 			trace();
 			update();
@@ -568,15 +571,18 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 		removeTrackEntityAction->setEnabled(false);
 	}
 
+	QString fixText = m_fixed?"Unfix track":"Fix Track";
+	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
+
 	QAction *markAction = menu.addAction("Mark", dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction("Unmark", dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
 	if (m_marked) {
-		markAction->setEnabled(false);
+		markAction->setVisible(false);
 		unmarkAction->setEnabled(true);
 	}
 	else {
 		markAction->setEnabled(true);
-		unmarkAction->setEnabled(false);
+		unmarkAction->setVisible(false);
 	}
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
@@ -680,6 +686,21 @@ void ComponentShape::unmarkShape()
 
 	trace();
 	update();
+}
+
+void ComponentShape::toggleFixTrack()
+{
+	if (m_fixed) {
+		m_fixed = false;
+		m_penStyle = Qt::SolidLine;
+	}
+	else {
+		m_fixed = true;
+		m_penStyle = Qt::DotLine;
+	}
+	Q_EMIT emitToggleFixTrack(m_trajectory, m_fixed);
+	update();
+	trace();
 }
 
 //TODO create ui file for this and do this there

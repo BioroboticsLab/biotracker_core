@@ -14,7 +14,7 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE_TRACK, REMOVE_ENTITY, ADD, MOVE, SWAP };
+enum EDIT { REMOVE_TRACK, REMOVE_ENTITY, ADD, MOVE, SWAP, FIX };
 
 struct queueElement {
 	EDIT type;
@@ -22,6 +22,7 @@ struct queueElement {
 	IModelTrackedTrajectory* trajectory0;
 	IModelTrackedTrajectory* trajectory1;
 	IModelTrackedComponent* element;
+	bool toggle;
 };
 
 /**
@@ -56,6 +57,7 @@ signals:
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory0, bool toggle);
 
 	void emitUpdateView();
 	void signalCurrentFrameNumberToPlugin(uint frameNumber);
@@ -103,6 +105,8 @@ signals:
 	* Receive command to swap two ID's and put it in edit queue
 	*/
 	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	void  receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
 	void  receivePauseState(bool state);
 

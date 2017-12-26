@@ -7,6 +7,7 @@ TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
 	name(name)
 {
     setValid(true);
+	setFixed(false);
 }
 
 void TrackedTrajectory::operate()

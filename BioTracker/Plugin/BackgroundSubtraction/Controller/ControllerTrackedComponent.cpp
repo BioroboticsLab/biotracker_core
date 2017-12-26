@@ -136,6 +136,11 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 	}
 }
 
+void ControllerTrackedComponent::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
+{
+	trajectory->setFixed(toggle);
+}
+
 void ControllerTrackedComponent::receiveCurrentFrameNumber(uint framenumber)
 {
 	m_currentFrameNumber = (int)framenumber;

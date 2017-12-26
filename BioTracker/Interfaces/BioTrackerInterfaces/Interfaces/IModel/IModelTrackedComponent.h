@@ -34,8 +34,10 @@ public:
 	IModelTrackedComponent(QObject *parent = 0);
 	virtual void  setValid(bool v) { _valid = v; };
 	virtual void  setId(int id) { _id = id; };
+	virtual void  setFixed(bool fixed) { _fixed = fixed; };
 	virtual int   getId() { return _id; };
 	virtual bool  getValid() { return _valid; };
+	virtual bool  getFixed() { return _fixed; };
 
 	/**
 	* The methode operate() must be implemented by every derivative of this class.
@@ -45,6 +47,7 @@ public:
 protected:
 	int _id;
 	bool _valid;
+	bool _fixed;
 };
 
 QDataStream &operator<<(QDataStream &out, const IModelTrackedComponent &painting);

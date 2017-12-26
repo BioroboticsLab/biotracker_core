@@ -13,6 +13,7 @@ TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 	_y = 0;
 	_valid = false;
 	_pressed = false;
+	_fixed = false;
 }
 
 QString TrackedElement::getName()

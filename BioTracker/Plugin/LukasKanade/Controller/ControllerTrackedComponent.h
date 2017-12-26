@@ -19,6 +19,7 @@ public Q_SLOTS:
 		/* TODO Swaps ID's of last elements (-> swap elements) or swap ID's of trajectories and all of its elements?
 		*/
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+		void receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 		void receiveCurrentFrameNumber(uint framenumber);
 
 	// IController interface

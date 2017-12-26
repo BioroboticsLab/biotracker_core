@@ -25,6 +25,7 @@ public:
 	void  setId(int val) { _id = val; };
 	void  setTime(std::chrono::steady_clock::time_point t) {};
 	void  setValid(bool v) {};
+	void  setFixed(bool f) { _fixed = f;};
 
 	float getX() { return _x; };
 	float getY() { return _y; };
@@ -36,6 +37,7 @@ public:
 	int   getId() { return _id; };
 	std::chrono::steady_clock::time_point  getTime() { return std::chrono::steady_clock::time_point(); };
 	bool  getValid() { return false; };
+	bool  getFixed() { return _fixed; };
 
 	bool hasX() { return true; };
 	bool hasY() { return true; };
@@ -64,4 +66,5 @@ private:
 	float _x;
 	float _y;
 	bool _pressed;
+	bool _fixed;
 };

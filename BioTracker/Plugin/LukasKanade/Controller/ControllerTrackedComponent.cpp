@@ -98,13 +98,21 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 	TrackedTrajectory* traj0 = dynamic_cast<TrackedTrajectory*>(trajectory0);
 	TrackedTrajectory* traj1 = dynamic_cast<TrackedTrajectory*>(trajectory1);
 
-	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
-	if (!traj0->getId() <= 2 && !traj1->getId() <= 2) {
+	// dont't move main trajectory (id's: 0)!!
+	if (!(traj0->getId() == 0) && !(traj1->getId() == 0)) {
 		int traj0Id = traj0->getId();
 		int traj1Id = traj1->getId();
 
-		qDebug() << "TODO: Swap IDs " << traj0Id << "and " << traj1Id;
+		traj0->setId(traj1Id);
+		traj1->setId(traj0Id);
+
+		qDebug() << "Swap IDs " << traj0Id << "and " << traj1Id;
 	}
+}
+
+void ControllerTrackedComponent::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
+{
+	trajectory->setFixed(toggle);
 }
 
 void ControllerTrackedComponent::receiveCurrentFrameNumber(uint framenumber)

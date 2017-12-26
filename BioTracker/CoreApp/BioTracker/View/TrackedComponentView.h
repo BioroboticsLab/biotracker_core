@@ -8,6 +8,7 @@
 #include "QPoint"
 #include "QSignalMapper"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "View/ComponentShape.h"
 
 /**
 * This class inherits from the IViewTrackedComponent class and is therefor part of the Composite Pattern.
@@ -24,7 +25,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 	
 	void createChildShapesAtStart();
-	//void connectShape(ComponentShape* shape);
+	void connectShape(ComponentShape* shape);
 	
 	// IView interface
 	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
