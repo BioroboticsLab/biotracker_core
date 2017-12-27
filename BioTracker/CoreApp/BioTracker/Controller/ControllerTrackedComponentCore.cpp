@@ -10,6 +10,7 @@
 #include "qdebug.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Interfaces/IView/IViewTrackedComponent.h"
+#include "Model\UndoCommands\TrackCommands.h"
 
 
 ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -85,6 +86,7 @@ void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTraje
 void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
 {
 	emitAddTrajectory(pos);
+	QUndoCommand* addCommand = new AddTrackCommand(0, pos);
 }
 
 void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)
