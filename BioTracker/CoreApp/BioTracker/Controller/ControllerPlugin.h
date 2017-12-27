@@ -14,7 +14,7 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE_TRACK, REMOVE_ENTITY, ADD, MOVE, SWAP, FIX };
+enum EDIT { REMOVE_TRACK, REMOVE_TRACK_ID, REMOVE_ENTITY, ADD, MOVE, SWAP, FIX, VALIDATE };
 
 struct queueElement {
 	EDIT type;
@@ -23,6 +23,7 @@ struct queueElement {
 	IModelTrackedTrajectory* trajectory1;
 	IModelTrackedComponent* element;
 	bool toggle;
+	int id;
 };
 
 /**
@@ -53,7 +54,9 @@ class ControllerPlugin : public IController {
 
 signals:
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+	void emitRemoveTrajectoryId(int id);
 	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+	void emitValidateTrajectory(int id);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
@@ -87,6 +90,11 @@ signals:
 	void  receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	/**
 	*
+	* Receive command to remove a trajectory by id and put it in edit queue
+	*/
+	void  receiveRemoveTrajectory(int id);
+	/**
+	*
 	* Receive command to remove a track entity and put it in edit queue
 	*/
 	void  receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
@@ -105,6 +113,8 @@ signals:
 	* Receive command to swap two ID's and put it in edit queue
 	*/
 	void  receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+	void  receiveValidateTrajectory(int id);
 
 	void  receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 

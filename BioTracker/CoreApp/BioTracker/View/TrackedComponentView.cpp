@@ -507,15 +507,25 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 
 void TrackedComponentView::addTrajectory()
 {
+	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
+	int id = -1;
+	if (all) {
+		id = all->size()+1;
+	}
+
+	if (id <= 0) {
+		qDebug() << "ERROR id is <= 0";
+	}
+
 	if (!lastClickedPos.isNull()) {
 		qDebug() << "TCV: new track at position " << lastClickedPos;
-		emitAddTrajectory(lastClickedPos);
+		emitAddTrajectory(lastClickedPos, id);
 		lastClickedPos = QPoint(0, 0);
 	}
 	else {
 		qDebug() << "TCV: new track at center of top left quarter of video";
 		QPoint topLeftQuarterCenter = QPoint(this->boundingRect().width() / 8, this->boundingRect().height() / 8);
-		emitAddTrajectory(topLeftQuarterCenter);
+		emitAddTrajectory(topLeftQuarterCenter, id);
 	}
 }
 
@@ -574,6 +584,8 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	QObject::connect(shape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*,bool)), Qt::DirectConnection);
+
+	
 
 	QObject::connect(shape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 

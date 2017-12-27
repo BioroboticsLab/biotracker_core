@@ -12,6 +12,7 @@
 #include "ControllerDataExporter.h"
 #include "ControllerAreaDescriptor.h"
 #include "Controller/ControllerCoreParameter.h"
+#include "Controller\ControllerCommands.h"
 
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
@@ -140,12 +141,12 @@ void ControllerPlugin::connectControllerToController() {
 	IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
 
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
-		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
+		//SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), this,
 		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
-		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
+		//SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
@@ -155,6 +156,18 @@ void ControllerPlugin::connectControllerToController() {
 
 	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
 		SLOT(receiveUpdateView()));
+
+	// connect ControllerCommands
+	IController* ctrD = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMMANDS);
+	QPointer< ControllerCommands > ctrCommands = qobject_cast<ControllerCommands*>(ctrD);
+
+	QObject::connect(ctrCommands, SIGNAL(emitAddTrajectory(QPoint)), this,
+		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitRemoveTrajectoryId(int)), this,
+		SLOT(receiveRemoveTrajectoryId(int)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitValidateTrajectory(int)), this,
+		SLOT(receiveValidateTrajectory(int)), Qt::DirectConnection);
+
 
 	// connect ControllerPlayer
 	IController* ctrC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
@@ -243,6 +256,11 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
 		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
+	QObject::connect(this, SIGNAL(emitRemoveTrajectoryId(int)), obj,
+		SIGNAL(receiveRemoveTrajectoryId(int)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitValidateTrajectory(int)), obj,
+		SIGNAL(receiveValidateTrajectory(int)), Qt::DirectConnection);
+
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
 		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
 }
@@ -277,6 +295,21 @@ void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * traject
 		queueElement removeTrackEdit;
 		removeTrackEdit.type = EDIT::REMOVE_TRACK;
 		removeTrackEdit.trajectory0 = trajectory;
+		m_editQueue.enqueue(removeTrackEdit);
+	}
+}
+
+void ControllerPlugin::receiveRemoveTrajectory(int id)
+{
+	if (m_paused) {
+		emitRemoveTrajectoryId(id);
+		emitUpdateView();
+	}
+	else {
+		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
+		queueElement removeTrackEdit;
+		removeTrackEdit.type = EDIT::REMOVE_TRACK_ID;
+		removeTrackEdit.id = id;
 		m_editQueue.enqueue(removeTrackEdit);
 	}
 }
@@ -343,6 +376,19 @@ void ControllerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IMo
 	}
 }
 
+void ControllerPlugin::receiveValidateTrajectory(int id)
+{
+	if (m_paused) {
+		emitValidateTrajectory(id);
+	}
+	else {
+		queueElement validateEdit;
+		validateEdit.type = EDIT::VALIDATE;
+		validateEdit.id = id;
+		m_editQueue.enqueue(validateEdit);
+	}
+}
+
 void ControllerPlugin::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
 {
 	if (m_paused) {
@@ -382,6 +428,9 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 			case EDIT::REMOVE_TRACK:
 				emitRemoveTrajectory(edit.trajectory0);
 				break;
+			case EDIT::REMOVE_TRACK_ID:
+				emitRemoveTrajectoryId(edit.id);
+				break;
 			case EDIT::REMOVE_ENTITY:
 				emitRemoveTrackEntity(edit.trajectory0);
 				break;
@@ -396,6 +445,9 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				break;
 			case EDIT::FIX:
 				emitToggleFixTrack(edit.trajectory0, edit.toggle);
+				break;
+			case EDIT::VALIDATE:
+				emitValidateTrajectory(edit.id);
 				break;
 			}
 		}

@@ -13,10 +13,31 @@ class ControllerCommands : public IController {
 	Q_OBJECT
 	public:
 		ControllerCommands(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
-		~ControllerCommands();
+		virtual ~ControllerCommands();
+
+	signals:
+		// signal to ctrPlugin to remove trajectory
+		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
+
+		void emitRemoveTrajectoryId(int id);
+
+		// signal to ctrPlugin to remove track entity
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+
+		// signal to ctrPlugin to add trajectory
+		void emitAddTrajectory(QPoint pos);
+
+		void emitValidateTrajectory(int id);
+
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
+
+		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
+
+		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+
 
 	public slots:
-		void receiveAddTrackCommand(QPoint pos);
+		void receiveAddTrackCommand(QPoint pos, int id);
 		void receiveRemoveTrackCommand(IModelTrackedTrajectory* traj);
 		void receiveRemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber);
 		void receiveMoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos);

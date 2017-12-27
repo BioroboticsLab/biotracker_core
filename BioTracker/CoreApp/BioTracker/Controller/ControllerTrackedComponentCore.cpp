@@ -10,7 +10,7 @@
 #include "qdebug.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Interfaces/IView/IViewTrackedComponent.h"
-#include "Model\UndoCommands\TrackCommands.h"
+#include "Controller/ControllerCommands.h"
 
 
 ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -40,13 +40,20 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow *>(ctr);
 
 	TrackedComponentView* view = static_cast<TrackedComponentView*>(m_View);
-	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint)), this, SLOT(receiveAddTrajectory(QPoint)));
+	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint, int)), this, SLOT(receiveAddTrajectory(QPoint, int)));
 	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 
 	//connect to update track number in core params
 	IController * ctrICP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	QPointer< ControllerCoreParameter > ctrCP = qobject_cast<ControllerCoreParameter *>(ctrICP);
 	QObject::connect(this, SIGNAL(emitTrackNumber(int)), ctrCP, SLOT(receiveTrackNumber(int)));
+
+	//connect to commandcontroller
+	IController * ctrICC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMMANDS);
+	QPointer< ControllerCommands > ctrCC = qobject_cast<ControllerCommands*>(ctrICC);
+	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint, int)), ctrCC, SLOT(receiveAddTrackCommand(QPoint, int)));
+	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrCC, SLOT(receiveRemoveTrackCommand(IModelTrackedTrajectory*)));
+
 
     // Tell the Visualization to reset upon loading a new plugin
     QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
@@ -83,10 +90,9 @@ void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTraje
 	emitRemoveTrackEntity(trajectory);
 }
 
-void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos)
+void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos, int id)
 {
-	emitAddTrajectory(pos);
-	QUndoCommand* addCommand = new AddTrackCommand(0, pos);
+	emitAddTrajectory(pos, id);
 }
 
 void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)

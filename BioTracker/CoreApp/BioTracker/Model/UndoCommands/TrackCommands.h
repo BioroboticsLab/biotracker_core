@@ -7,89 +7,113 @@
 #include "Interfaces\IModel\IModelTrackedTrajectory.h"
 #include "QPoint"
 
-class AddTrackCommand : public QUndoCommand
+class AddTrackCommand : public QObject, public QUndoCommand
 {
-public:
-	AddTrackCommand(int id, QPoint pos,
-		QUndoCommand *parent = 0);
-	void undo() override;
-	void redo() override;
+	Q_OBJECT
+	public:
+		AddTrackCommand(int id, QPoint pos, 
+			QUndoCommand *parent = 0);
+		void undo() override;
+		void redo() override;
+	signals:
+		void emitAddTrajectory(QPoint pos);
+		void emitValidateTrajectory(int id);
+		void emitRemoveTrajectoryId(int id);
 
-private:
-	IModelTrackedTrajectory* _traj;
-	int _id;
+	private:
+		IModelTrackedTrajectory* _traj;
+		int _id;
+		QPoint _pos;
+		bool _added;
 };
 
-class RemoveTrackCommand : public QUndoCommand
+class RemoveTrackCommand : public QObject, public QUndoCommand
 {
-public:
-	RemoveTrackCommand(IModelTrackedTrajectory* traj,
-		QUndoCommand *parent = 0);
+	Q_OBJECT
+	public:
+		RemoveTrackCommand(IModelTrackedTrajectory* traj,
+			QUndoCommand *parent = 0);
 
-	void undo() override;
-	void redo() override;
+		void undo() override;
+		void redo() override;
+	signals:
+		void emitValidateTrajectory(int id);
+		void emitRemoveTrajectory(IModelTrackedTrajectory* traj);
 
-private:
-	IModelTrackedTrajectory* _traj;
+	private:
+		IModelTrackedTrajectory* _traj;
 };
 
-class RemoveElementCommand : public QUndoCommand
+class RemoveElementCommand : public QObject, public QUndoCommand
 {
-public:
-	RemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber,
-		QUndoCommand *parent = 0);
+	Q_OBJECT
+	public:
+		RemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber,
+			QUndoCommand *parent = 0);
 
-	void undo() override;
-	void redo() override;
+		void undo() override;
+		void redo() override;
+	signals:
+		void emitValidateEntity(int id, uint frameNumber);
+		void emitRemoveElement(IModelTrackedTrajectory* traj, uint frameNumber);
 
-private:
-	IModelTrackedTrajectory* _traj;
-	uint _frameNumber;
+	private:
+		IModelTrackedTrajectory* _traj;
+		uint _frameNumber;
 };
 
-class MoveElementCommand : public QUndoCommand
+class MoveElementCommand : public QObject, public QUndoCommand
 {
-public:
-	MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint newPos,
-		QUndoCommand *parent = 0);
+	Q_OBJECT
+	public:
+		MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint newPos,
+			QUndoCommand *parent = 0);
 
-	void undo() override;
-	void redo() override;
+		void undo() override;
+		void redo() override;
+	signals:
+		void emitMoveTrajectory(IModelTrackedTrajectory* traj, uint _frameNumber, QPoint pos);
 
-private:
-	IModelTrackedTrajectory* _traj;
-	uint _frameNumber;
-	QPoint _oldPos;
-	QPoint _newPos;
+	private:
+		IModelTrackedTrajectory* _traj;
+		uint _frameNumber;
+		QPoint _oldPos;
+		QPoint _newPos;
 };
 
-class SwapTrackIdCommand : public QUndoCommand
+class SwapTrackIdCommand : public QObject, public QUndoCommand
 {
-public:
-	SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1,
-		QUndoCommand *parent = 0);
+	Q_OBJECT
+	public:
+		SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1,
+			QUndoCommand *parent = 0);
 
-	void undo() override;
-	void redo() override;
+		void undo() override;
+		void redo() override;
 
-private:
-	IModelTrackedTrajectory* _traj0;
-	IModelTrackedTrajectory* _traj1;
+	signals:
+		void emitSwapIds(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1);
+
+	private:
+		IModelTrackedTrajectory* _traj0;
+		IModelTrackedTrajectory* _traj1;
 };
 
-class FixTrackCommand : public QUndoCommand
+class FixTrackCommand : public QObject, public QUndoCommand
 {
-public:
-	FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed,
-		QUndoCommand *parent = 0);
+	Q_OBJECT
+	public:
+		FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed,
+			QUndoCommand *parent = 0);
 
-	void undo() override;
-	void redo() override;
+		void undo() override;
+		void redo() override;
+	signals:
+		void emitFixTrack(IModelTrackedTrajectory* traj, bool toggle);
 
-private:
-	IModelTrackedTrajectory* _traj;
-	bool _isFixed;
-
+	private:
+		IModelTrackedTrajectory* _traj;
+		bool _isFixed;
 };
 
 #endif //TRACKCOMMANDS_H

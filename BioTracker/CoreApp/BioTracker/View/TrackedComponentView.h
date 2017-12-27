@@ -32,7 +32,7 @@ public:
 
 signals:
 	void emitUpdateCornersChanged(int id, int relX, int relY);
-	void emitAddTrajectory(QPoint pos);
+	void emitAddTrajectory(QPoint pos, int id);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
 	// IViewTrackedComponent interface

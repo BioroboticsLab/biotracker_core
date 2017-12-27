@@ -58,7 +58,12 @@ void BioTrackerPlugin::connectInterfaces() {
 
 	QObject::connect(ctrAlg, &ControllerTrackingAlgorithm::emitChangeDisplayImage, this, &BioTrackerPlugin::receiveChangeDisplayImage);
 
-	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrajectory, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrajectory, Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrTrC, SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+
+	QObject::connect(this, SIGNAL(emitRemoveTrajectoryId(int)), ctrTrC, SLOT(receiveRemoveTrajectoryId(int)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitValidateTrajectory(int)), ctrTrC, SLOT(receiveValidateTrajectory(int)), Qt::DirectConnection);
+
+
 	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrackEntity, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrackEntity, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrAlg, &ControllerTrackingAlgorithm::receiveAreaDescriptorUpdate);
 
