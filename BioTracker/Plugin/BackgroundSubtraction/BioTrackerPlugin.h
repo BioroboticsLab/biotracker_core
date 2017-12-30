@@ -48,7 +48,7 @@ signals:
 
 	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 	void emitAddTrajectory(QPoint pos);
-	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
+	void emitMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void emitCurrentFrameNumber(uint frameNumber);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
@@ -56,7 +56,6 @@ signals:
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	void receiveAddTrajectory(QPoint pos);
-	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void receiveCurrentFrameNumberFromMainApp(uint frameNumber);
 

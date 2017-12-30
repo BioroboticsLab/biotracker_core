@@ -119,12 +119,12 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	}
 }
 
-void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
+void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint position)
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
 	// don't move when frame number under 0 and main trajectory (id's: 0)!!
-	if (!(traj->getId() == 0) && m_currentFrameNumber >= 0) {
-		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
+	if (!(traj->getId() == 0) && frameNumber >= 0) {
+		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(frameNumber));
 
 		//TODO rewrite this when default ipose is implemented...
 		FishPose oldPose = element->getFishPose();
@@ -133,8 +133,8 @@ void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* tra
 		cv::Point2f newPosCm = m_areaDescr->pxToCm(newPosPx);
 		// ignore blobs outside the tracking area
 		if (!m_areaDescr->inTrackingArea(newPosPx)) {
-			qDebug() << "Moved the entity outside of the tracking area!";
-			return;
+			qDebug() << "Attention! You moved the entity outside of the tracking area!";
+			//return;
 		}
 
 		FishPose newPose = FishPose(newPosCm, newPosPx, oldPose.orientation_rad(), oldPose.orientation_deg(), oldPose.width(), oldPose.height(), oldPose.getScore());

@@ -31,7 +31,7 @@ class ControllerCommands : public IController {
 
 		void emitValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
-		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint pos, int toMove);
 
 		void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 
@@ -42,7 +42,7 @@ class ControllerCommands : public IController {
 		void receiveAddTrackCommand(QPoint pos, int id);
 		void receiveRemoveTrackCommand(IModelTrackedTrajectory* traj);
 		void receiveRemoveTrackEntityCommand(IModelTrackedTrajectory* traj, uint frameNumber);
-		void receiveMoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos);
+		void receiveMoveElementCommand(IModelTrackedTrajectory* traj , QPoint oldPos, QPoint newPos, uint frameNumber, int toMove);
 		void receiveSwapIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1);
 		void receiveFixTrackCommand(IModelTrackedTrajectory* traj, bool toggle);
 

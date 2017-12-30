@@ -36,8 +36,12 @@ void ControllerCommands::receiveRemoveTrackEntityCommand(IModelTrackedTrajectory
 	_undoStack->push(rmeCmd);
 }
 
-void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory * traj, uint frameNumber, QPoint oldPos)
+void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory* traj, QPoint oldPos, QPoint newPos, uint frameNumber, int toMove)
 {
+	MoveElementCommand* mvCmd = new MoveElementCommand(traj, frameNumber, oldPos, newPos, toMove);
+	QObject::connect(mvCmd, &MoveElementCommand::emitMoveElement, this, &ControllerCommands::emitMoveElement);
+
+	_undoStack->push(mvCmd);
 }
 
 void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, IModelTrackedTrajectory * traj1)

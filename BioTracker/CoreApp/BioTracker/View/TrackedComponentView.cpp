@@ -265,7 +265,7 @@ void TrackedComponentView::receiveBroadcastMove()
 		if (shape) {
 			if (shape->isSelected()) {
 				IModelTrackedTrajectory* shapeTrajectory = shape->getTrajectory();
-				shape->emitMoveElement(shapeTrajectory, shape->pos().toPoint() + QPoint(shape->m_w / 2, shape->m_h / 2), numberSelectedEntitiesToMove);
+				shape->emitMoveElement(shapeTrajectory,shape->getOldPos() + QPoint(shape->m_w / 2, shape->m_h / 2), shape->pos().toPoint() + QPoint(shape->m_w / 2, shape->m_h / 2), m_currentFrameNumber, numberSelectedEntitiesToMove);
 				numberSelectedEntitiesToMove--;
 			}
 		}
@@ -582,7 +582,7 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	//connect slots/signals
 	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
-	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
+	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*,QPoint, QPoint, uint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*,bool)), Qt::DirectConnection);
 
 	

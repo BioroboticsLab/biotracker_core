@@ -147,8 +147,8 @@ void ControllerPlugin::connectControllerToController() {
 		//SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
 		//SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
-		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
+		//SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
@@ -173,6 +173,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveValidateTrajectory(int)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), this,
 		SLOT(receiveValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint, int)), this,
+		SLOT(receiveMoveElement(IModelTrackedTrajectory*, uint, QPoint, int)), Qt::DirectConnection);
 
 
 	// connect ControllerPlayer
@@ -255,8 +257,8 @@ void ControllerPlugin::connectPlugin() {
 		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, 
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, 
-		SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), obj, 
+		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
@@ -352,10 +354,10 @@ void ControllerPlugin::receiveAddTrajectory(QPoint pos)
 	}
 }
 
-void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)
+void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, uint frameNumber, QPoint pos, int toMove)
 {
 	if (m_paused) {
-		emitMoveElement(trajectory, pos);
+		emitMoveElement(trajectory, frameNumber, pos);
 		//only emit the update after the last move is processed
 		if (toMove == 1) {
 			emitUpdateView();
@@ -366,6 +368,7 @@ void ControllerPlugin::receiveMoveElement(IModelTrackedTrajectory * trajectory, 
 		moveEdit.type = EDIT::MOVE;
 		moveEdit.trajectory0 = trajectory;
 		moveEdit.pos = pos;
+		moveEdit.frameNumber = frameNumber;
 		m_editQueue.enqueue(moveEdit);
 	}
 }
@@ -464,7 +467,7 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				emitAddTrajectory(edit.pos);
 				break;
 			case EDIT::MOVE:
-				emitMoveElement(edit.trajectory0, edit.pos);
+				emitMoveElement(edit.trajectory0, edit.frameNumber, edit.pos);
 				break;
 			case EDIT::SWAP:
 				emitSwapIds(edit.trajectory0, edit.trajectory1);

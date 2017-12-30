@@ -115,10 +115,6 @@ void BioTrackerPlugin::receiveAddTrajectory(QPoint pos) {
 	Q_EMIT emitAddTrajectory(pos);
 }
 
-void BioTrackerPlugin::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos) {
-	Q_EMIT emitMoveElement(trajectory, pos);
-}
-
 void BioTrackerPlugin::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
 {
 	Q_EMIT emitSwapIds(trajectory0, trajectory1);

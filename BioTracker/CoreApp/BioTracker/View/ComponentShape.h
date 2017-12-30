@@ -31,6 +31,7 @@ class ComponentShape : public QGraphicsObject
 		int getId();
 		bool isSwappable();
 		bool isRemovable();
+		QPoint getOldPos();
 		void trace();
 		void setMembers(CoreParameter* coreParams);
 
@@ -46,7 +47,7 @@ class ComponentShape : public QGraphicsObject
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
-		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int sizeOfStackToMove);
+		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint oldPos, QPoint newPos, uint frameNumber, int sizeOfStackToMove);
 		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 		void broadcastMove();
 
@@ -125,6 +126,7 @@ class ComponentShape : public QGraphicsObject
 		bool m_tracerFrameNumber;
 		bool m_orientationLine;
 		bool m_trajectoryWasActiveOnce;
+		QPoint m_oldPos;
 };
 
 

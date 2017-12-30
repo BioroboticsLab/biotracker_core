@@ -34,7 +34,6 @@ void AddTrackCommand::redo()
 RemoveTrackCommand::RemoveTrackCommand(IModelTrackedTrajectory* traj, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj)
 {
-	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
 
 
 	setText(QObject::tr("Remove track"));
@@ -55,10 +54,9 @@ void RemoveTrackCommand::redo()
 RemoveElementCommand::RemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj), _frameNumber(frameNumber)
 {
-	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
 
 
-	setText(QObject::tr("Remove element"));
+	setText(QObject::tr("Remove entity"));
 }
 
 void RemoveElementCommand::undo()
@@ -73,24 +71,38 @@ void RemoveElementCommand::redo()
 	emitRemoveElement(_traj, _frameNumber);
 }
 
-MoveElementCommand::MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint newPos, QUndoCommand *parent)
-	:QUndoCommand(parent)
+MoveElementCommand::MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos,  QPoint newPos, int toMove, QUndoCommand *parent)
+	:QUndoCommand(parent), _traj(traj), _frameNumber(frameNumber), _oldPos(oldPos), _newPos(newPos), _toMove(toMove)
 {
-	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
-
-
-	setText(QObject::tr("Move"));
+	setText(QObject::tr("Move entity"));
 }
 
 void MoveElementCommand::undo()
 {
 	qDebug() << "undo mv";
+	emitMoveElement(_traj, _frameNumber, _oldPos, _toMove);
 }
 
 void MoveElementCommand::redo()
 {
 	qDebug() << "do mv";
+	emitMoveElement(_traj, _frameNumber, _newPos, _toMove);
+	_toMove = 1;
 }
+
+//bool MoveElementCommand::mergeWith(const QUndoCommand * command)
+//{
+//	const MoveElementCommand *moveCommandToMerge = static_cast<const MoveElementCommand *>(command);
+//	IModelTrackedTrajectory* trajToMerge = moveCommandToMerge->_traj;
+//	uint frameNumberToMerge = moveCommandToMerge->_frameNumber;
+//
+//	if ((_traj != trajToMerge) || (frameNumberToMerge != _frameNumber)) {
+//		return false;
+//	}
+//
+//	_oldPos
+//
+//}
 
 SwapTrackIdCommand::SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1, QUndoCommand *parent)
 	:QUndoCommand(parent)

@@ -54,6 +54,8 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint, int)), ctrCC, SLOT(receiveAddTrackCommand(QPoint, int)));
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrCC, SLOT(receiveRemoveTrackCommand(IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), ctrCC, SLOT(receiveRemoveTrackEntityCommand(IModelTrackedTrajectory*, uint)));
+	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)), ctrCC, SLOT(receiveMoveElementCommand(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)));
+
 
 
 
@@ -97,9 +99,9 @@ void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos, int id)
 	emitAddTrajectory(pos, id);
 }
 
-void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint pos, int toMove)
+void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint oldPos, QPoint newPos, uint frameNumber, int toMove)
 {
-	emitMoveElement(trajectory, pos, toMove);
+	emitMoveElement(trajectory, oldPos, newPos, frameNumber, toMove);
 }
 
 void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)

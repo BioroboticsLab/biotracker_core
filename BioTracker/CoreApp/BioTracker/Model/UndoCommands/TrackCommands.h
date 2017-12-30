@@ -66,19 +66,21 @@ class MoveElementCommand : public QObject, public QUndoCommand
 {
 	Q_OBJECT
 	public:
-		MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint newPos,
+		MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos, QPoint newPos, int toMove,
 			QUndoCommand *parent = 0);
 
 		void undo() override;
 		void redo() override;
+		//bool mergeWith(const QUndoCommand *command) override;
 	signals:
-		void emitMoveTrajectory(IModelTrackedTrajectory* traj, uint _frameNumber, QPoint pos);
+		void emitMoveElement(IModelTrackedTrajectory* traj, uint _frameNumber, QPoint pos, int toMove);
 
 	private:
 		IModelTrackedTrajectory* _traj;
 		uint _frameNumber;
 		QPoint _oldPos;
 		QPoint _newPos;
+		int _toMove;
 };
 
 class SwapTrackIdCommand : public QObject, public QUndoCommand

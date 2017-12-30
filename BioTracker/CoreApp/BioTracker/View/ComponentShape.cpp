@@ -184,6 +184,7 @@ bool ComponentShape::updatePosition(uint framenumber)
 			//TODO undo/redo remove entity does not work on frame 0 because of m_currentFramenumber == 0!!!!!!!
 			if ((pointLike->getValid() && m_trajectory->getValid()) || m_currentFramenumber == 0) {
 				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
+				m_oldPos = this->pos().toPoint();
 				QPointF point = this->pos();
 				//create tracers
 				trace();
@@ -462,6 +463,11 @@ bool ComponentShape::isSwappable()
 bool ComponentShape::isRemovable()
 {
 	return m_pRemovable;
+}
+
+QPoint ComponentShape::getOldPos()
+{
+	return m_oldPos;
 }
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)

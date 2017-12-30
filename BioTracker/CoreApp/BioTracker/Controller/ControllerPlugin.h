@@ -60,7 +60,7 @@ signals:
 	void emitValidateTrajectory(int id);
 	void emitValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 	void emitAddTrajectory(QPoint pos);
-	void emitMoveElement(IModelTrackedTrajectory* element, QPoint pos);
+	void emitMoveElement(IModelTrackedTrajectory* element, uint frameNumber, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory0, bool toggle);
 
@@ -109,7 +109,7 @@ signals:
 	*
 	* Receive command to move a element in a trajectory and put it in edit queue
 	*/
-	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
+	void  receiveMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint pos, int toMove);
 	/**
 	*
 	* Receive command to swap two ID's and put it in edit queue

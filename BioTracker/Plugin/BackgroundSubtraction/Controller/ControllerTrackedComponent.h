@@ -22,7 +22,7 @@ public Q_SLOTS:
 		void receiveValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 		void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
-		void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position);
+		void receiveMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint position);
 		/* TODO Swaps ID's of last elements (-> swap elements) or swap ID's of trajectories and all of its elements?
 		*/
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
