@@ -21,7 +21,7 @@ class ControllerTrackedComponentCore : public IController
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 
 		// signal to ctrPlugin to remove track entity
-		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 		// signal to ctrPlugin to add trajectory
 		void emitAddTrajectory(QPoint pos, int id);
@@ -51,7 +51,7 @@ class ControllerTrackedComponentCore : public IController
 		void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 
 		//gets triggered when a track entity is getting removed
-		void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+		void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 		void receiveAddTrajectory(QPoint pos, int id);
 

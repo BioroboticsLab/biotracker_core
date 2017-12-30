@@ -9,7 +9,7 @@ AddTrackCommand::AddTrackCommand(int id, QPoint pos, QUndoCommand *parent)
 	:QUndoCommand(parent), _id(id), _pos(pos)
 {
 	_added = false;
-	setText(QObject::tr("Add track" + _id));
+	setText(QObject::tr("Add track"));
 }
 
 void AddTrackCommand::undo()
@@ -32,7 +32,7 @@ void AddTrackCommand::redo()
 }
 
 RemoveTrackCommand::RemoveTrackCommand(IModelTrackedTrajectory* traj, QUndoCommand *parent)
-	:QUndoCommand(parent)
+	:QUndoCommand(parent), _traj(traj)
 {
 	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
 
@@ -53,7 +53,7 @@ void RemoveTrackCommand::redo()
 }
 
 RemoveElementCommand::RemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QUndoCommand *parent)
-	:QUndoCommand(parent)
+	:QUndoCommand(parent), _traj(traj), _frameNumber(frameNumber)
 {
 	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
 
@@ -64,11 +64,13 @@ RemoveElementCommand::RemoveElementCommand(IModelTrackedTrajectory* traj, uint f
 void RemoveElementCommand::undo()
 {
 	qDebug() << "undo rme";
+	emitValidateEntity(_traj, _frameNumber);
 }
 
 void RemoveElementCommand::redo()
 {
 	qDebug() << "do rme";
+	emitRemoveElement(_traj, _frameNumber);
 }
 
 MoveElementCommand::MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint newPos, QUndoCommand *parent)

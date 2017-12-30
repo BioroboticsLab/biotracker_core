@@ -54,7 +54,7 @@ class RemoveElementCommand : public QObject, public QUndoCommand
 		void undo() override;
 		void redo() override;
 	signals:
-		void emitValidateEntity(int id, uint frameNumber);
+		void emitValidateEntity(IModelTrackedTrajectory* traj, uint frameNumber);
 		void emitRemoveElement(IModelTrackedTrajectory* traj, uint frameNumber);
 
 	private:

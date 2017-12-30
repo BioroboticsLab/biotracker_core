@@ -58,7 +58,7 @@ void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory
 	qDebug() << "track" << trajectory->getId() << "set invalid";
 }
 
-void ControllerTrackedComponent::receiveRemoveTrajectory(int id)
+void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
 {
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
@@ -78,10 +78,16 @@ void ControllerTrackedComponent::receiveValidateTrajectory(int id)
 	}
 }
 
-void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
+void ControllerTrackedComponent::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
-	trajectory->getChild(m_currentFrameNumber)->setValid(false);
-	qDebug() << "track " << trajectory->getId() << " entity #" << m_currentFrameNumber << "set invalid";
+	trajectory->getChild(frameNumber)->setValid(true);
+	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
+}
+
+void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
+{
+	trajectory->getChild(frameNumber)->setValid(false);
+	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)

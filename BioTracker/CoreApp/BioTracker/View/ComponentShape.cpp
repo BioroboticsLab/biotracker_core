@@ -181,7 +181,8 @@ bool ComponentShape::updatePosition(uint framenumber)
 		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
 		if (pointLike) {
 			// if component and traj valid or current frame is 0 (video initialized) -> show and update
-			if ((pointLike->getValid() && m_trajectory->getValid()) ||m_currentFramenumber == 0) {
+			//TODO undo/redo remove entity does not work on frame 0 because of m_currentFramenumber == 0!!!!!!!
+			if ((pointLike->getValid() && m_trajectory->getValid()) || m_currentFramenumber == 0) {
 				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
 				QPointF point = this->pos();
 				//create tracers
@@ -656,9 +657,9 @@ bool ComponentShape::removeTrackEntity()
 		qDebug() << "Removing track entity...";
 
 		//emit to set trajectory invalid 
-		Q_EMIT emitRemoveTrackEntity(m_trajectory);
+		Q_EMIT emitRemoveTrackEntity(m_trajectory, m_currentFramenumber);
 		//hide this shape
-		this->hide();
+		//this->hide();
 	}
 	else {
 		qDebug() << "track entity is not removable";

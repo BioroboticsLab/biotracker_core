@@ -45,7 +45,7 @@ class ComponentShape : public QGraphicsObject
 
 	signals:
 		void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
-		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int sizeOfStackToMove);
 		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 		void broadcastMove();

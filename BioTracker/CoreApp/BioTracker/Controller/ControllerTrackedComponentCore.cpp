@@ -53,6 +53,8 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QPointer< ControllerCommands > ctrCC = qobject_cast<ControllerCommands*>(ctrICC);
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint, int)), ctrCC, SLOT(receiveAddTrackCommand(QPoint, int)));
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrCC, SLOT(receiveRemoveTrackCommand(IModelTrackedTrajectory*)));
+	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), ctrCC, SLOT(receiveRemoveTrackEntityCommand(IModelTrackedTrajectory*, uint)));
+
 
 
     // Tell the Visualization to reset upon loading a new plugin
@@ -85,9 +87,9 @@ void ControllerTrackedComponentCore::receiveRemoveTrajectory(IModelTrackedTrajec
 	emitRemoveTrajectory(trajectory);
 }
 
-void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory)
+void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber)
 {
-	emitRemoveTrackEntity(trajectory);
+	emitRemoveTrackEntity(trajectory, frameNumber);
 }
 
 void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos, int id)

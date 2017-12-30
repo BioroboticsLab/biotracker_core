@@ -143,8 +143,8 @@ void ControllerPlugin::connectControllerToController() {
 
 	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
 		//SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), this,
-		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), this,
+		//SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
 		//SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
@@ -163,10 +163,16 @@ void ControllerPlugin::connectControllerToController() {
 
 	QObject::connect(ctrCommands, SIGNAL(emitAddTrajectory(QPoint)), this,
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this,
+		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitRemoveTrajectoryId(int)), this,
 		SLOT(receiveRemoveTrajectoryId(int)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), this,
+		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitValidateTrajectory(int)), this,
 		SLOT(receiveValidateTrajectory(int)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), this,
+		SLOT(receiveValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 
 
 	// connect ControllerPlayer
@@ -245,8 +251,8 @@ void ControllerPlugin::connectPlugin() {
 	// data model actions
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), obj,
-		SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), obj,
+		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, 
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint)), obj, 
@@ -257,9 +263,11 @@ void ControllerPlugin::connectPlugin() {
 		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(emitRemoveTrajectoryId(int)), obj,
-		SIGNAL(receiveRemoveTrajectoryId(int)), Qt::DirectConnection);
+		SIGNAL(emitRemoveTrajectoryId(int)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitValidateTrajectory(int)), obj,
-		SIGNAL(receiveValidateTrajectory(int)), Qt::DirectConnection);
+		SIGNAL(emitValidateTrajectory(int)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), obj,
+		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
 		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
@@ -299,7 +307,7 @@ void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * traject
 	}
 }
 
-void ControllerPlugin::receiveRemoveTrajectory(int id)
+void ControllerPlugin::receiveRemoveTrajectoryId(int id)
 {
 	if (m_paused) {
 		emitRemoveTrajectoryId(id);
@@ -314,10 +322,10 @@ void ControllerPlugin::receiveRemoveTrajectory(int id)
 	}
 }
 
-void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory)
+void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	if (m_paused) {
-		emitRemoveTrackEntity(trajectory);
+		emitRemoveTrackEntity(trajectory, frameNumber);
 		emitUpdateView();
 	}
 	else {
@@ -325,6 +333,7 @@ void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajec
 		queueElement removeEntityEdit;
 		removeEntityEdit.type = EDIT::REMOVE_ENTITY;
 		removeEntityEdit.trajectory0 = trajectory;
+		removeEntityEdit.frameNumber = frameNumber;
 		m_editQueue.enqueue(removeEntityEdit);
 	}
 }
@@ -380,12 +389,29 @@ void ControllerPlugin::receiveValidateTrajectory(int id)
 {
 	if (m_paused) {
 		emitValidateTrajectory(id);
+		emitUpdateView();
 	}
 	else {
 		queueElement validateEdit;
 		validateEdit.type = EDIT::VALIDATE;
 		validateEdit.id = id;
 		m_editQueue.enqueue(validateEdit);
+	}
+}
+
+void ControllerPlugin::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
+{
+	if (m_paused) {
+		emitValidateEntity(trajectory, frameNumber);
+		emitUpdateView();
+	}
+	else {
+		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
+		queueElement validateEntityEdit;
+		validateEntityEdit.type = EDIT::VALIDATE_ENTITY;
+		validateEntityEdit.trajectory0 = trajectory;
+		validateEntityEdit.frameNumber = frameNumber;
+		m_editQueue.enqueue(validateEntityEdit);
 	}
 }
 
@@ -432,7 +458,7 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				emitRemoveTrajectoryId(edit.id);
 				break;
 			case EDIT::REMOVE_ENTITY:
-				emitRemoveTrackEntity(edit.trajectory0);
+				emitRemoveTrackEntity(edit.trajectory0, edit.frameNumber);
 				break;
 			case EDIT::ADD:
 				emitAddTrajectory(edit.pos);
@@ -448,6 +474,9 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				break;
 			case EDIT::VALIDATE:
 				emitValidateTrajectory(edit.id);
+				break;
+			case EDIT::VALIDATE_ENTITY:
+				emitValidateEntity(edit.trajectory0, edit.frameNumber);
 				break;
 			}
 		}

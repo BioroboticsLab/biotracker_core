@@ -22,12 +22,14 @@ class ControllerCommands : public IController {
 		void emitRemoveTrajectoryId(int id);
 
 		// signal to ctrPlugin to remove track entity
-		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+		void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 		// signal to ctrPlugin to add trajectory
 		void emitAddTrajectory(QPoint pos);
 
 		void emitValidateTrajectory(int id);
+
+		void emitValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos, int toMove);
 
@@ -39,7 +41,7 @@ class ControllerCommands : public IController {
 	public slots:
 		void receiveAddTrackCommand(QPoint pos, int id);
 		void receiveRemoveTrackCommand(IModelTrackedTrajectory* traj);
-		void receiveRemoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber);
+		void receiveRemoveTrackEntityCommand(IModelTrackedTrajectory* traj, uint frameNumber);
 		void receiveMoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos);
 		void receiveSwapIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1);
 		void receiveFixTrackCommand(IModelTrackedTrajectory* traj, bool toggle);

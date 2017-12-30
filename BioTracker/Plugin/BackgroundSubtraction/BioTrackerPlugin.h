@@ -44,8 +44,9 @@ signals:
 
 	void emitRemoveTrajectoryId(int id);
 	void emitValidateTrajectory(int id);
+	void emitValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
-	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
+	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
@@ -54,7 +55,6 @@ signals:
 
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
-	void receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory);
 	void receiveAddTrajectory(QPoint pos);
 	void receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint pos);
 	void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);

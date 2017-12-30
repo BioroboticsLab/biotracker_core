@@ -21,15 +21,19 @@ void ControllerCommands::receiveAddTrackCommand(QPoint pos, int id) {
 void ControllerCommands::receiveRemoveTrackCommand(IModelTrackedTrajectory * traj)
 {
 	RemoveTrackCommand* rmtCmd = new RemoveTrackCommand(traj);
-	/*QObject::connect(rmtCmd, &AddTrackCommand::emitAddTrajectory, this, &ControllerCommands::emitAddTrajectory);
-	QObject::connect(rmtCmd, &AddTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory);
-	QObject::connect(rmtCmd, &AddTrackCommand::emitRemoveTrajectoryId, this, &ControllerCommands::emitRemoveTrajectoryId);*/
+	QObject::connect(rmtCmd, &RemoveTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory);
+	QObject::connect(rmtCmd, &RemoveTrackCommand::emitRemoveTrajectory, this, &ControllerCommands::emitRemoveTrajectory);
 
 	_undoStack->push(rmtCmd);
 }
 
-void ControllerCommands::receiveRemoveElementCommand(IModelTrackedTrajectory * traj, uint frameNumber)
+void ControllerCommands::receiveRemoveTrackEntityCommand(IModelTrackedTrajectory * traj, uint frameNumber)
 {
+	RemoveElementCommand* rmeCmd = new RemoveElementCommand(traj, frameNumber);
+	QObject::connect(rmeCmd, &RemoveElementCommand::emitValidateEntity, this, &ControllerCommands::emitValidateEntity);
+	QObject::connect(rmeCmd, &RemoveElementCommand::emitRemoveElement, this, &ControllerCommands::emitRemoveTrackEntity);
+
+	_undoStack->push(rmeCmd);
 }
 
 void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory * traj, uint frameNumber, QPoint oldPos)
