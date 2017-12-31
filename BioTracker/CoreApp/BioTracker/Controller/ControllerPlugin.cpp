@@ -12,7 +12,7 @@
 #include "ControllerDataExporter.h"
 #include "ControllerAreaDescriptor.h"
 #include "Controller/ControllerCoreParameter.h"
-#include "Controller\ControllerCommands.h"
+#include "Controller/ControllerCommands.h"
 
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
@@ -149,8 +149,8 @@ void ControllerPlugin::connectControllerToController() {
 		//SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
 	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
 		//SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
-		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
+		//SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
 		SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
@@ -175,6 +175,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint, int)), this,
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, uint, QPoint, int)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
+		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 
 
 	// connect ControllerPlayer

@@ -1,4 +1,4 @@
-#include "Controller\ControllerCommands.h"
+#include "Controller/ControllerCommands.h"
 
 ControllerCommands::ControllerCommands(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
@@ -46,6 +46,10 @@ void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory* traj
 
 void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, IModelTrackedTrajectory * traj1)
 {
+	SwapTrackIdCommand* swapCmd = new SwapTrackIdCommand(traj0, traj1);
+	QObject::connect(swapCmd, &SwapTrackIdCommand::emitSwapIds, this, &ControllerCommands::emitSwapIds);
+
+    _undoStack->push(swapCmd);
 }
 
 void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, bool toggle)

@@ -1,6 +1,6 @@
 #include "TrackCommands.h"
 
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "QUndoCommand"
 #include "QPoint"
 #include "QDebug"
@@ -34,8 +34,6 @@ void AddTrackCommand::redo()
 RemoveTrackCommand::RemoveTrackCommand(IModelTrackedTrajectory* traj, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj)
 {
-
-
 	setText(QObject::tr("Remove track"));
 }
 
@@ -90,7 +88,7 @@ void MoveElementCommand::redo()
 	_toMove = 1;
 }
 
-//bool MoveElementCommand::mergeWith(const QUndoCommand * command)
+/*bool MoveElementCommand::mergeWith(const QUndoCommand * command)
 //{
 //	const MoveElementCommand *moveCommandToMerge = static_cast<const MoveElementCommand *>(command);
 //	IModelTrackedTrajectory* trajToMerge = moveCommandToMerge->_traj;
@@ -102,25 +100,24 @@ void MoveElementCommand::redo()
 //
 //	_oldPos
 //
-//}
+}*/
 
 SwapTrackIdCommand::SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1, QUndoCommand *parent)
-	:QUndoCommand(parent)
+	:QUndoCommand(parent), _traj0(traj0), _traj1(traj1)
 {
-	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
-
-
 	setText(QObject::tr("Swap"));
 }
 
 void SwapTrackIdCommand::undo()
 {
 	qDebug() << "undo mv";
+	emitSwapIds(_traj1, _traj0);
 }
 
 void SwapTrackIdCommand::redo()
 {
 	qDebug() << "do mv";
+	emitSwapIds(_traj0, _traj1);
 }
 
 FixTrackCommand::FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed, QUndoCommand *parent)

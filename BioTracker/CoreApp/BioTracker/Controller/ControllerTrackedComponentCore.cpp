@@ -55,9 +55,7 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), ctrCC, SLOT(receiveRemoveTrackCommand(IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), ctrCC, SLOT(receiveRemoveTrackEntityCommand(IModelTrackedTrajectory*, uint)));
 	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)), ctrCC, SLOT(receiveMoveElementCommand(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)));
-
-
-
+	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), ctrCC, SLOT(receiveSwapIdCommand(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 
     // Tell the Visualization to reset upon loading a new plugin
     QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);

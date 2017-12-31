@@ -3,8 +3,8 @@
 
 #pragma once
 #include "Interfaces/IController/IController.h"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
-#include "Model\UndoCommands\TrackCommands.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
+#include "Model/UndoCommands/TrackCommands.h"
 #include "QUndoStack"
 #include "QUndoView"
 

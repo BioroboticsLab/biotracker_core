@@ -4,7 +4,7 @@
 #pragma once
 
 #include "QUndoCommand"
-#include "Interfaces\IModel\IModelTrackedTrajectory.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "QPoint"
 
 class AddTrackCommand : public QObject, public QUndoCommand

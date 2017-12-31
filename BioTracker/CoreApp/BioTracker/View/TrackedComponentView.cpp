@@ -39,7 +39,7 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, true));
 }
 
-//TODO: is never triggered
+//TODO: is never triggered but should be
 void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
 	m_boundingRect = QRectF(0, 0, x, y);
 	update();
