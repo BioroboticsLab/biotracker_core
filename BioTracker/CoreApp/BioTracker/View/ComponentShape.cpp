@@ -228,10 +228,18 @@ void ComponentShape::updateAttributes()
 {
 	m_id = m_trajectory->getId();
 
+
+	//update m_fixed
+	m_fixed = m_trajectory->getFixed();
+
+	if (!m_fixed) {m_penStyle = Qt::SolidLine;}
+	else {m_penStyle = Qt::DotLine;}
+
 	prepareGeometryChange();
 	IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
 	if (pointLike) {
-		//update width and height ore use defaults
+
+		//update width and height or use defaults
 		if (m_useDefaultDimensions) {
 			if (pointLike->hasW()) {
 				m_w = pointLike->getW();
@@ -277,7 +285,7 @@ void ComponentShape::trace()
 	// really unefficient to flush each time
 	//flush tracing shape history
 	//TODO make this more efficient(e.g. delete last element and append new element)
-/*	while (m_tracingHistoryShapes.size() > 0) {
+ /*	while (m_tracingHistoryShapes.size() > 0) {
 		m_tracingHistoryShapes[0]->hide();
 		m_tracingHistoryShapes.removeAt(0);
 	}*/	
@@ -581,8 +589,10 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QString fixText = m_fixed?"Unfix track":"Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
-	QAction *markAction = menu.addAction("Mark", dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
-	QAction *unmarkAction = menu.addAction("Unmark", dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
+	//TODO is ugly makenot ugly pls
+	QString markText = m_marked?"Unmark":"Mark";
+	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
+	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
 	if (m_marked) {
 		markAction->setVisible(false);
 		unmarkAction->setEnabled(true);
@@ -697,15 +707,9 @@ void ComponentShape::unmarkShape()
 
 void ComponentShape::toggleFixTrack()
 {
-	if (m_fixed) {
-		m_fixed = false;
-		m_penStyle = Qt::SolidLine;
-	}
-	else {
-		m_fixed = true;
-		m_penStyle = Qt::DotLine;
-	}
-	Q_EMIT emitToggleFixTrack(m_trajectory, m_fixed);
+	//if traj is currently fixed-> emit flase, else emit true
+	bool fixToggle = m_fixed?false:true;
+	Q_EMIT emitToggleFixTrack(m_trajectory, fixToggle);
 	update();
 	trace();
 }

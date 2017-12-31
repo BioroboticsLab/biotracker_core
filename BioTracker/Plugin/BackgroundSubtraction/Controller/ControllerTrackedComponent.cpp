@@ -164,6 +164,7 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 
 void ControllerTrackedComponent::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
 {
+	qDebug() << "Fix trajectory " << trajectory->getId();
 	trajectory->setFixed(toggle);
 }
 

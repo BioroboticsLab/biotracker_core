@@ -110,31 +110,30 @@ SwapTrackIdCommand::SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTra
 
 void SwapTrackIdCommand::undo()
 {
-	qDebug() << "undo mv";
+	qDebug() << "undo swap";
 	emitSwapIds(_traj1, _traj0);
 }
 
 void SwapTrackIdCommand::redo()
 {
-	qDebug() << "do mv";
+	qDebug() << "do swap";
 	emitSwapIds(_traj0, _traj1);
 }
 
 FixTrackCommand::FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed, QUndoCommand *parent)
-	:QUndoCommand(parent)
+	:QUndoCommand(parent), _traj(traj), _isFixed(isFixed)
 {
-	//IModelTrackedTrajectory* traj = new IModelTrackedTrajectory();
-
-
 	setText(QObject::tr("Fix"));
 }
 
 void FixTrackCommand::undo()
 {
 	qDebug() << "undo fix";
+	emitFixTrack(_traj, !_isFixed);
 }
 
 void FixTrackCommand::redo()
 {
 	qDebug() << "do fix ";
+	emitFixTrack(_traj, _isFixed);
 }

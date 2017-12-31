@@ -53,7 +53,8 @@
                 "/usr/local/include/opencv",
                 "/usr/include/x86_64-linux-gnu/qt5/QtGui",
                 "/usr/include/qt4",
-                "${workspaceRoot}/BioTracker/CoreApp/BioTracker"
+                "${workspaceRoot}/BioTracker/CoreApp/BioTracker",
+                "${workspaceRoot}/BioTracker/Plugin/BackgroundSubtraction"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

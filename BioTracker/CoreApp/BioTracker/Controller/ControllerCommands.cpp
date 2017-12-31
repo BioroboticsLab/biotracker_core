@@ -54,6 +54,10 @@ void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, I
 
 void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, bool toggle)
 {
+	FixTrackCommand* fixCmd = new FixTrackCommand(traj, toggle);
+	QObject::connect(fixCmd, &FixTrackCommand::emitFixTrack, this, &ControllerCommands::emitToggleFixTrack);
+
+    _undoStack->push(fixCmd);
 }
 
 void ControllerCommands::receiveUndo()

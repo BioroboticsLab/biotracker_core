@@ -151,8 +151,8 @@ void ControllerPlugin::connectControllerToController() {
 		//SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
 	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		//SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
-	QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
-		SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
+	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
+		//SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
 		SLOT(receiveUpdateView()));
@@ -177,6 +177,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveMoveElement(IModelTrackedTrajectory*, uint, QPoint, int)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
+		SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
 
 
 	// connect ControllerPlayer
