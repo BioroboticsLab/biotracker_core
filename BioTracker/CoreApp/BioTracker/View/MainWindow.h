@@ -56,6 +56,12 @@ Q_SIGNALS:
 
     void on_actionOpen_Camera_triggered();
 
+	void on_actionUndo_triggered();
+
+	void on_actionRedo_triggered();
+
+	void on_actionShowActionList_triggered();
+
 	void on_comboBox_TrackerSelect_currentIndexChanged();
 
 //menu->Extras

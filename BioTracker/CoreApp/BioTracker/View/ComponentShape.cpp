@@ -271,27 +271,29 @@ void ComponentShape::trace()
 	//TRACING
 
 	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+	//return if current entity is not existant
 	if (!currentChild)
 		return;
 
 	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
 
+	//update the tracing layer
 	m_tracingLayer->setPos(this->pos());
-	//m_tracingLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-	//m_tracingLayer->setRotation(-m_rotation);
 	m_tracingLayer->setFlag(QGraphicsItem::ItemHasNoContents);
 	m_tracingLayer->show();
 
 	// really unefficient to flush each time
 	//flush tracing shape history
-	//TODO make this more efficient(e.g. delete last element and append new element)
- /*	while (m_tracingHistoryShapes.size() > 0) {
-		m_tracingHistoryShapes[0]->hide();
-		m_tracingHistoryShapes.removeAt(0);
-	}*/	
+	
 	while (m_tracingLayer->childItems().size() > 0) {
 		delete m_tracingLayer->childItems()[0];
 	}
+
+	////check if number of tracing children in tracing layer is correct
+	//if (m_tracingLayer->childItems().size() != (int)floor(m_tracingLength / m_tracingSteps)) {
+
+	//}
+
 
 	if (m_trajectory->size() != 0 && m_tracingLength > 0 && !(m_tracingStyle == "None")) {
 

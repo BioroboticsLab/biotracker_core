@@ -8,6 +8,7 @@
 #include "Controller/ControllerAnnotations.h"
 #include "Controller/ControllerDataExporter.h"
 #include "Controller/ControllerTrackedComponentCore.h"
+#include "Controller/ControllerCommands.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -117,11 +118,20 @@ void ControllerMainWindow::connectModelToController() {
 }
 
 void ControllerMainWindow::connectControllerToController() {
-
+	//
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	IView* v = ctr->getView();
 	dynamic_cast<MainWindow*>(m_View)->addCoreParameterView(v);
 
+	//connect to controller commands
+	IController* ictrcmd = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMMANDS);
+	ControllerCommands *ctrcmd = static_cast<ControllerCommands*>(ictrcmd);
+
+	QObject::connect(this, &ControllerMainWindow::emitUndoCommand, ctrcmd, &ControllerCommands::receiveUndo, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitRedoCommand, ctrcmd, &ControllerCommands::receiveRedo, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitShowActionListCommand, ctrcmd, &ControllerCommands::receiveShowActionList, Qt::DirectConnection);
+
+	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string *video = (std::string*)(set->readValue("video"));
 	if (video)

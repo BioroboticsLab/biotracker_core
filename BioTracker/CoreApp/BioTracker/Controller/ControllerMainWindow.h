@@ -77,6 +77,10 @@ public:
     void emitMediaLoaded(const std::string path);
     void emitTrackLoaded(const std::string path); 
 
+	void emitUndoCommand();
+	void emitRedoCommand();
+	void emitShowActionListCommand();
+
 
 	public slots:
 

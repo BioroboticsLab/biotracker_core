@@ -192,6 +192,21 @@ void MainWindow::on_actionOpen_Camera_triggered() {
     QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
 }
 
+void MainWindow::on_actionUndo_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitUndoCommand();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitRedoCommand();
+}
+
+void MainWindow::on_actionShowActionList_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitShowActionListCommand();
+}
+
 void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
     qobject_cast<ControllerMainWindow*> (getController())->loadCameraDevice(conf);
 

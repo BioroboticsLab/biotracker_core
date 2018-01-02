@@ -180,7 +180,17 @@
     </property>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowActionList"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuExtras"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetAlgorithm">
@@ -388,6 +398,36 @@
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>undo</string>
+   </property>
+   <property name="toolTip">
+    <string>undo the last action</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>redo</string>
+   </property>
+   <property name="toolTip">
+    <string>redo the next action is possible</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionShowActionList">
+   <property name="text">
+    <string>show action list</string>
+   </property>
+   <property name="toolTip">
+    <string>show the action list containing all actions</string>
    </property>
   </action>
  </widget>

@@ -1,4 +1,5 @@
 #include "Controller/ControllerCommands.h"
+#include "QDebug"
 
 ControllerCommands::ControllerCommands(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
@@ -49,7 +50,7 @@ void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, I
 	SwapTrackIdCommand* swapCmd = new SwapTrackIdCommand(traj0, traj1);
 	QObject::connect(swapCmd, &SwapTrackIdCommand::emitSwapIds, this, &ControllerCommands::emitSwapIds);
 
-    _undoStack->push(swapCmd);
+	_undoStack->push(swapCmd);
 }
 
 void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, bool toggle)
@@ -57,7 +58,7 @@ void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, 
 	FixTrackCommand* fixCmd = new FixTrackCommand(traj, toggle);
 	QObject::connect(fixCmd, &FixTrackCommand::emitFixTrack, this, &ControllerCommands::emitToggleFixTrack);
 
-    _undoStack->push(fixCmd);
+	_undoStack->push(fixCmd);
 }
 
 void ControllerCommands::receiveUndo()
@@ -65,14 +66,29 @@ void ControllerCommands::receiveUndo()
 	if (_undoStack->canUndo()) {
 		_undoStack->undo();
 	}
+	else {
+		qDebug() << "Cannot undo the last command!";
+	}
 }
 
 void ControllerCommands::receiveRedo()
 {
+	if (_undoStack->canRedo()) {
+		_undoStack->redo();
+	}
+	else {
+		qDebug() << "Cannot redo the next command!";
+	}
+}
+
+void ControllerCommands::receiveShowActionList()
+{
+	_undoView->show();
 }
 
 void ControllerCommands::connectControllerToController()
 {
+
 }
 
 void ControllerCommands::createModel()
@@ -85,7 +101,7 @@ void ControllerCommands::createView()
 	_undoView = new QUndoView(_undoStack);
 	_undoView->setWindowTitle("Command List");
 	_undoView->setAttribute(Qt::WA_QuitOnClose, false);
-	_undoView->show();
+	//_undoView->show();
 }
 
 void ControllerCommands::connectModelToController()

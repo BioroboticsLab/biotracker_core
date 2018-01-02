@@ -48,6 +48,7 @@ class ControllerCommands : public IController {
 
 		void receiveUndo();
 		void receiveRedo();
+		void receiveShowActionList(); 
 
 	// IController interface
 	public:
