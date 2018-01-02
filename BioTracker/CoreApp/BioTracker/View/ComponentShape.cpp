@@ -265,7 +265,6 @@ void ComponentShape::updateAttributes()
 	}
 }
 
-//TODO is ugly -> make prettier!
 void ComponentShape::trace()
 {
 	//TRACING

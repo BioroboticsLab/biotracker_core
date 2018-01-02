@@ -16,6 +16,9 @@ public Q_SLOTS:
     // IView interface
 protected:
     void connectModelView() override;
+
+	//member
+	QRectF _oldBoundingRect;
 };
 
 #endif // TEXTUREOBJECTVIEW_H

@@ -53,6 +53,9 @@ signals:
 	void emitCurrentFrameNumber(uint frameNumber);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
+	void emitDimensionUpdate(int x, int y);
+
+
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);
 	void receiveAddTrajectory(QPoint pos);

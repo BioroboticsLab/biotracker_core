@@ -253,6 +253,8 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCoreParam,
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
+	QObject::connect(obj, SIGNAL(emitDimensionUpdate(int, int)), ctrCompView, SIGNAL(emitDimensionUpdate(int, int)));
+
 
 	// data model actions
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 

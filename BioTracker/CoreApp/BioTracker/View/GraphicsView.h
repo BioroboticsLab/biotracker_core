@@ -13,6 +13,7 @@ public:
     void addGraphicsItem(QGraphicsItem *item);
     void addPixmapItem(QGraphicsItem *item);
 	void removeGraphicsItem(QGraphicsItem *item);
+
 	QGraphicsScene *m_GraphicsScene;//MARKER
 
 	void mousePressEvent(QMouseEvent *event) override;

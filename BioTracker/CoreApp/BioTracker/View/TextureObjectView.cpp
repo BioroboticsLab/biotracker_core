@@ -1,12 +1,14 @@
 #include "TextureObjectView.h"
 #include "Model/TextureObject.h"
 #include "QGraphicsScene"
+#include "View/GraphicsView.h"
 
 
 TextureObjectView::TextureObjectView(QObject *parent, IController *controller, IModel *model) :
     IViewGraphicsPixmapItem(parent, controller, model)
 {
     setZValue(-1);
+	_oldBoundingRect = QRectF();
 }
 
 void TextureObjectView::getNotified()
@@ -20,7 +22,18 @@ void TextureObjectView::getNotified()
 	if (texture->height() > 1) {
 		QGraphicsScene *scene = this->scene();
 
-		scene->setSceneRect(this->boundingRect());
+		QRectF currentBoundingRect = this->boundingRect();
+
+		//check if bounding rect changed -> this means that a new video has been loaded right?
+		if (currentBoundingRect != _oldBoundingRect) {
+			scene->setSceneRect(currentBoundingRect);
+
+			GraphicsView* view = dynamic_cast<GraphicsView*>(scene->views()[0]);
+			view->fitInView(currentBoundingRect, Qt::KeepAspectRatio);
+			
+			_oldBoundingRect = currentBoundingRect;
+		}
+
 		
 		//scene->setSceneRect(0, 0, pma.width(), pma.height());
 		//printf("textureobjectView: %i, %i ", pma.width(), pma.height());

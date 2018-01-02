@@ -9,6 +9,7 @@
 #include "Controller/ControllerDataExporter.h"
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCommands.h"
+#include "Controller/ControllerGraphicScene.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -115,6 +116,7 @@ void ControllerMainWindow::connectModelToController() {
     ControllerDataExporter *contrl = static_cast<ControllerDataExporter*>(ctr2);
     QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, contrl, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
     QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, contrl, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
+
 }
 
 void ControllerMainWindow::connectControllerToController() {

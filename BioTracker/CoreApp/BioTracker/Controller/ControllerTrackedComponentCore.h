@@ -34,6 +34,8 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitTrackNumber(int number);
 
+		void emitDimensionUpdate(int x, int y);
+
 
 	public Q_SLOTS:
 
@@ -62,6 +64,7 @@ class ControllerTrackedComponentCore : public IController
 		void receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
 		void receiveUpdateView();
+		
 
 		// IController interface
 	protected:

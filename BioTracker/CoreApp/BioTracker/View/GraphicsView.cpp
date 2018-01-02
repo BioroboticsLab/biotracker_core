@@ -8,6 +8,7 @@
 #include <qpixmap.h>
 #include <QGraphicsItem>
 #include <QScrollBar>
+#include <QDebug>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)

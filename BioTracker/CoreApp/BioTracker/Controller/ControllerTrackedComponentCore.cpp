@@ -39,9 +39,11 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	IController * ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow *>(ctr);
 
+	//connect to view
 	TrackedComponentView* view = static_cast<TrackedComponentView*>(m_View);
 	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint, int)), this, SLOT(receiveAddTrajectory(QPoint, int)));
 	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
+	QObject::connect(this, SIGNAL(emitDimensionUpdate(int, int)), view, SLOT(rcvDimensionUpdate(int, int)));
 
 	//connect to update track number in core params
 	IController * ctrICP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
