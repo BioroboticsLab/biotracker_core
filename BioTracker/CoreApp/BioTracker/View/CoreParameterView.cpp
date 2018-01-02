@@ -133,7 +133,7 @@ void CoreParameterView::on_checkBoxTracerFrameNumber_stateChanged(int toggle)
 void CoreParameterView::on_spinBoxTracerProportions_editingFinished()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	float value = (float)ui->spinBoxTracingSteps->value();
+	float value = (float)ui->spinBoxTracerProportions->value();
 	coreParams->m_tracerProportions = value;
 	emitTracerProportions(value);
 }

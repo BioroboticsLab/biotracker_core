@@ -283,152 +283,121 @@ void ComponentShape::trace()
 	m_tracingLayer->show();
 
 	// really unefficient to flush each time
-	//flush tracing shape history
+	//flush tracing shape history, open up the memory
 	
 	while (m_tracingLayer->childItems().size() > 0) {
 		delete m_tracingLayer->childItems()[0];
 	}
 
 	////check if number of tracing children in tracing layer is correct
-	//if (m_tracingLayer->childItems().size() != (int)floor(m_tracingLength / m_tracingSteps)) {
-
+	////delete/add the difference
+	//while (m_tracingLayer->childItems().size() > (int)floor(m_tracingLength / m_tracingSteps)) {
+	//	delete m_tracingLayer->childItems()[0];
+	//}
+	//while (m_tracingLayer->childItems().size() < (int)floor(m_tracingLength / m_tracingSteps)) {
+	//	m_tracingLayer
 	//}
 
 
-	if (m_trajectory->size() != 0 && m_tracingLength > 0 && !(m_tracingStyle == "None")) {
+	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "None") {
+		return;
+	}
 
-		QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
+	QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
 
-		for (int i = 1; i <= m_tracingLength; i += m_tracingSteps) {
+	for (int i = 1; i <= m_tracingLength && i <= m_currentFramenumber; i += m_tracingSteps) {
 			
-			//it cannot be larger than m_currentFramenumber -> cannot be in the future / index out of bounds possible
-			if (i >= m_currentFramenumber){
-				continue;
+		IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
+		if (historyChild && historyChild->getValid()) {
+
+			//positioning
+			QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
+			QPointF historyPointDifference = historyPoint - currentPoint;
+			QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
+
+			//time degradation colors
+			QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+			QBrush timeDegradationBrush = QBrush(m_brushColor);
+			QColor timeDegradationBrushColor;
+			QColor timeDegradationPenColor;
+
+			if (m_tracingTimeDegradation == "Transparency") {
+				timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+				timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
+
+				timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+				timeDegradationBrush = QBrush(timeDegradationBrushColor);
+
 			}
-			
-			IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
-			if (historyChild && historyChild->getValid()) {
+			else if (m_tracingTimeDegradation == "False color") {
+				float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
+				timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+				timeDegradationBrush = QBrush(timeDegradationBrushColor);
+			}
 
-				//positioning
-				QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
-				QPointF historyPointDifference = historyPoint - currentPoint;
-				QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
+			if (m_tracingStyle == "Shape") {
 
-				//time degradation colors
-				QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-				QBrush timeDegradationBrush = QBrush(m_brushColor);
-				QColor timeDegradationBrushColor;
-				QColor timeDegradationPenColor;
 
-				if (m_tracingTimeDegradation == "Transparency") {
-					timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
-					timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
+				//orientation line
+				if (m_tracingOrientationLine) {
+					QLineF orientationLine = QLineF();
+					orientationLine.setP1(adjustedHistoryPointDifference);
+					orientationLine.setAngle(historyChild->getDeg());
+					orientationLine.setLength(15);
 
-					timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
-					timeDegradationBrush = QBrush(timeDegradationBrushColor);
-
-				}
-				else if (m_tracingTimeDegradation == "False color") {
-					float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
-					timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-					timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-					timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-					timeDegradationBrush = QBrush(timeDegradationBrushColor);
+					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
 				}
 
-				if (m_tracingStyle == "Shape") {
+				createShapeTracer(this->data(1), historyChild, adjustedHistoryPointDifference, timeDegradationPen, timeDegradationBrush);
 
-					//orientation line
-					if (m_tracingOrientationLine) {
-						QLineF orientationLine = QLineF();
-						orientationLine.setP1(adjustedHistoryPointDifference);
-						orientationLine.setAngle(historyChild->getDeg());
-						orientationLine.setLength(15);
+			}
 
-						QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
-					}
+			//PATH
+			else if (m_tracingStyle == "Path") {
 
-					if (this->data(1) == "point") {
-						QGraphicsEllipseItem* tracePoint = new QGraphicsEllipseItem(m_tracingLayer);
-						tracePoint->setPos(adjustedHistoryPointDifference);
-						tracePoint->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
-						//tracer orientation
-						float tracerOrientation;
-						if (m_h > m_w) {tracerOrientation = -90 - historyChild->getDeg();}
-						else {tracerOrientation = -historyChild->getDeg();}
-						tracePoint->setRotation(tracerOrientation);
-						//set colors
-						tracePoint->setPen(timeDegradationPen);
-						tracePoint->setBrush(timeDegradationBrush);
-					}
-					else if (this->data(1) == "ellipse") {
-						QGraphicsEllipseItem* traceEllipse = new QGraphicsEllipseItem(m_tracingLayer);
-						traceEllipse->setPos(adjustedHistoryPointDifference);
-						traceEllipse->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
-						//set orientation
-						float tracerOrientation;
-						if (m_h > m_w) {tracerOrientation = -90 - historyChild->getDeg();}
-						else {tracerOrientation = -historyChild->getDeg();}
-						traceEllipse->setRotation(tracerOrientation);
-						//set colors
-						traceEllipse->setPen(timeDegradationPen);
-						traceEllipse->setBrush(timeDegradationBrush);
-					}
-					else if (this->data(1) == "rectangle") {
-						QGraphicsEllipseItem* traceRect = new QGraphicsEllipseItem(m_tracingLayer);
-						traceRect->setPos(adjustedHistoryPointDifference);
-						traceRect->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
-						//set orientation
-						float tracerOrientation;
-						if (m_h > m_w) {tracerOrientation = -90 - historyChild->getDeg();}
-						else {tracerOrientation = -historyChild->getDeg();}
-						traceRect->setRotation(tracerOrientation);
-						//set colors
-						traceRect->setPen(timeDegradationPen);
-						traceRect->setBrush(timeDegradationBrush);
-					}
-					//TODO polygons
-				}
+				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+				QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
+				lineItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
 
-				//PATH
-				else if (m_tracingStyle == "Path") {
+				lastPointDifference = adjustedHistoryPointDifference;
+			}
+			//ARROWPATH
+			else if (m_tracingStyle == "ArrowPath") {
+				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 
-					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
-					QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
-					lineItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
+				int armLength = std::floor(base.length() / 9) + 2;
 
-					lastPointDifference = adjustedHistoryPointDifference;
-				}
-				//ARROWPATH
-				else if (m_tracingStyle == "ArrowPath") {
-					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+				QLineF arm0 = base.normalVector();
+				arm0.setLength(armLength);
+				arm0.setAngle(base.angle() + 20);
 
-					int armLength = std::floor(base.length() / 9) + 2;
+				QLineF arm1 = base.normalVector();
+				arm1.setLength(armLength);
+				arm1.setAngle(base.angle() - 20);
 
-					QLineF arm0 = base.normalVector();
-					arm0.setLength(armLength);
-					arm0.setAngle(base.angle() + 20);
+				QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
+				baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
+				QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
+				arm0Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
+				QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
+				arm1Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
 
-					QLineF arm1 = base.normalVector();
-					arm1.setLength(armLength);
-					arm1.setAngle(base.angle() - 20);
+				lastPointDifference = adjustedHistoryPointDifference;
+			}
 
-					QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
-					baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
-					QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
-					arm0Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
-					QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
-					arm1Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
-
-					lastPointDifference = adjustedHistoryPointDifference;
-				}
-
-				//add framenumber to each tracer
-				if (m_tracerFrameNumber) {
-					uint tracerNumber = m_currentFramenumber - i;
-					QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
-					tracerNumberText->setPos(adjustedHistoryPointDifference);
-				}
+			//add framenumber to each tracer
+			if (m_tracerFrameNumber) {
+				uint tracerNumber = m_currentFramenumber - i;
+				QFont font = QFont();
+				int fontPixelSize = ((m_w + m_h) / 2) * m_tracerProportions * 0.5;
+				font.setPixelSize(fontPixelSize);
+				font.setItalic(true);
+				font.setStyle(QFont::StyleItalic);
+				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
+				tracerNumberText->setFont(font);
+				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3, -m_h * m_tracerProportions / 3));
 			}
 		}
 	}
@@ -605,6 +574,51 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	}
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
+}
+
+void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * historyChild, QPointF pos, QPen pen, QBrush brush)
+{
+	if (this->data(1) == "point") {
+		QGraphicsEllipseItem* tracePoint = new QGraphicsEllipseItem(m_tracingLayer);
+		tracePoint->setPos(pos);
+		tracePoint->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
+		//tracer orientation
+		float tracerOrientation;
+		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
+		else { tracerOrientation = -historyChild->getDeg(); }
+		tracePoint->setRotation(tracerOrientation);
+		//set colors
+		tracePoint->setPen(pen);
+		tracePoint->setBrush(brush);
+
+	}
+	else if (this->data(1) == "ellipse") {
+		QGraphicsEllipseItem* traceEllipse = new QGraphicsEllipseItem(m_tracingLayer);
+		traceEllipse->setPos(pos);
+		traceEllipse->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
+		//set orientation
+		float tracerOrientation;
+		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
+		else { tracerOrientation = -historyChild->getDeg(); }
+		traceEllipse->setRotation(tracerOrientation);
+		//set colors
+		traceEllipse->setPen(pen);
+		traceEllipse->setBrush(brush);
+	}
+	else if (this->data(1) == "rectangle") {
+		QGraphicsEllipseItem* traceRect = new QGraphicsEllipseItem(m_tracingLayer);
+		traceRect->setPos(pos);
+		traceRect->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
+		//set orientation
+		float tracerOrientation;
+		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
+		else { tracerOrientation = -historyChild->getDeg(); }
+		traceRect->setRotation(tracerOrientation);
+		//set colors
+		traceRect->setPen(pen);
+		traceRect->setBrush(brush);
+	}
+	//TODO polygons
 }
 
 //SLOTS
