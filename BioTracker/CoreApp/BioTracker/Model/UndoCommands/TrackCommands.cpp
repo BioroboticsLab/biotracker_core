@@ -9,7 +9,7 @@ AddTrackCommand::AddTrackCommand(int id, QPoint pos, QUndoCommand *parent)
 	:QUndoCommand(parent), _id(id), _pos(pos)
 {
 	_added = false;
-	setText(QObject::tr("Add track"));
+	setText(QString("Add trajectory ") + QString::number(id));
 }
 
 void AddTrackCommand::undo()
@@ -34,7 +34,7 @@ void AddTrackCommand::redo()
 RemoveTrackCommand::RemoveTrackCommand(IModelTrackedTrajectory* traj, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj)
 {
-	setText(QObject::tr("Remove track"));
+	setText(QString("Remove trajectory ") + QString::number(traj->getId()));
 }
 
 void RemoveTrackCommand::undo()
@@ -54,7 +54,7 @@ RemoveElementCommand::RemoveElementCommand(IModelTrackedTrajectory* traj, uint f
 {
 
 
-	setText(QObject::tr("Remove entity"));
+	setText("Remove entity " + QString::number(_frameNumber) + " of trajectory " + QString::number(traj->getId()));
 }
 
 void RemoveElementCommand::undo()
@@ -72,7 +72,7 @@ void RemoveElementCommand::redo()
 MoveElementCommand::MoveElementCommand(IModelTrackedTrajectory* traj, uint frameNumber, QPoint oldPos,  QPoint newPos, int toMove, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj), _frameNumber(frameNumber), _oldPos(oldPos), _newPos(newPos), _toMove(toMove)
 {
-	setText(QObject::tr("Move entity"));
+	setText("Move entity " + QString::number(_frameNumber) + " of trajectory " + QString::number(traj->getId()) + " to " + QString::number(_newPos.x()) + ", " + QString::number(_newPos.y()));
 }
 
 void MoveElementCommand::undo()
@@ -105,7 +105,7 @@ void MoveElementCommand::redo()
 SwapTrackIdCommand::SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj0(traj0), _traj1(traj1)
 {
-	setText(QObject::tr("Swap"));
+	setText("Swap id's of " + QString::number(_traj0->getId()) + " and " + QString::number(_traj1->getId()));
 }
 
 void SwapTrackIdCommand::undo()
@@ -123,7 +123,13 @@ void SwapTrackIdCommand::redo()
 FixTrackCommand::FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed, QUndoCommand *parent)
 	:QUndoCommand(parent), _traj(traj), _isFixed(isFixed)
 {
-	setText(QObject::tr("Fix"));
+	if (_isFixed) {
+		setText("Fix tracking data of trajectory " + QString::number(_traj->getId()));
+	}
+	else {
+		setText("Unfix tracking data of trajectory " + QString::number(_traj->getId()));
+
+	}
 }
 
 void FixTrackCommand::undo()
