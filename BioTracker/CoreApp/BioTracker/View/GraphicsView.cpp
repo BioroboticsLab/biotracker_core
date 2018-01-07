@@ -23,6 +23,7 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	setTransformationAnchor(AnchorUnderMouse);
 	//setResizeAnchor(AnchorUnderMouse);
 	setViewportUpdateMode(FullViewportUpdate);
+	//setMouseTracking(true);
 
 	setDragMode(RubberBandDrag);
 

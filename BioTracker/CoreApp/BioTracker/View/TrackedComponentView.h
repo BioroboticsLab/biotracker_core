@@ -96,6 +96,7 @@ protected:
 	bool eventFilter(QObject * target, QEvent * event) override;
 	void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+	//void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
 
 	/*void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;*/
@@ -110,6 +111,7 @@ protected:
 	bool permissionSwap;
 
 	int m_currentFrameNumber = 0;
+	//QGraphicsTextItem* _cursorPosText;
 };
 
 #endif // TRACKEDCOMPONENTVIEW_H

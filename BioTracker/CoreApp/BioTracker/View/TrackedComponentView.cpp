@@ -32,6 +32,8 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 	_watchingDrag = 0;
 
+	//_cursorPosText = new QGraphicsTextItem("0,0",0, this->scene());
+
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTVIEW, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
@@ -103,6 +105,15 @@ void TrackedComponentView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void TrackedComponentView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
 }
+
+//void TrackedComponentView::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
+//{
+//	QString posText = QString("%1, %2")
+//		.arg(event->scenePos().x())
+//		.arg(event->scenePos().y()); //Update the cursor potion text
+//
+//	_cursorPosText->setPlainText(posText);
+//}
 
 QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVariant & value)
 {
