@@ -24,7 +24,6 @@ class BIOTRACKERPLUGINSHARED_EXPORT BioTrackerPlugin : public IBioTrackerPlugin 
 	IView* getTrackerParameterWidget();
 	IView *getTrackerElementsWidget();
 	IModel* getTrackerComponentModel();
-
 	IModelTrackedComponentFactory *getComponentFactory();
 
   public:
@@ -41,20 +40,17 @@ signals:
 	void emitAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);
 	void emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 	void emitRemoveTrajectory(IModelTrackedTrajectory* trajectory);
-
+	void emitAddTrajectory(QPoint pos);
 	void emitRemoveTrajectoryId(int id);
 	void emitValidateTrajectory(int id);
 	void emitValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
-
 	void emitRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
-	void emitAddTrajectory(QPoint pos);
 	void emitMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void emitCurrentFrameNumber(uint frameNumber);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
 	void emitDimensionUpdate(int x, int y);
-
 
 public slots:
 	void receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory);

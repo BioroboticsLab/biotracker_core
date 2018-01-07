@@ -8,7 +8,7 @@
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
 {
-
+	m_currentFrameNumber = 0;
 }
 
 void ControllerTrackedComponent::createView()
@@ -29,9 +29,8 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 	//This should be done using a factory, right?
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
-		//t->setId(i);
+		t->setValid(true);
 		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
-		//e->setId(i);
 		t->add(e);
 		all->add(t, i);
 	}
@@ -56,6 +55,38 @@ void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory
 	qDebug() << "trajectory" << trajectory->getId() << "set invalid";
 }
 
+void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
+{
+	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
+	if (allTraj) {
+		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
+		traj->setValid(false);
+		qDebug() << "track" << id << "set invalid";
+	}
+}
+
+void ControllerTrackedComponent::receiveValidateTrajectory(int id)
+{
+	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
+	if (allTraj) {
+		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
+		traj->setValid(true);
+		qDebug() << "track" << id << "validated";
+	}
+}
+
+void ControllerTrackedComponent::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
+{
+	trajectory->getChild(frameNumber)->setValid(true);
+	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
+}
+
+void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
+{
+	trajectory->getChild(frameNumber)->setValid(false);
+	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
+}
+
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -74,12 +105,12 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	}
 }
 
-void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, QPoint position)
+void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint position)
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
 	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
-    if (!(traj->getId() == 0) && m_currentFrameNumber > 0) {
-		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(m_currentFrameNumber));
+    if (!(traj->getId() == 0) && frameNumber >= 0) {
+		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(frameNumber));
 		//TODO setX, setY do not work correctly as pose not yet accessible
         if (element) {
             element->setX(position.x());

@@ -30,7 +30,6 @@ void createTrajectories(int count, TrackedTrajectory* all) {
 	for (int i = 0; i < count; i++) {
 		TrackedTrajectory *t = new TrackedTrajectory();
         t->setValid(true);
-        //t->setId(i);
 		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
 		t->add(e);
 		all->add(t, i);
