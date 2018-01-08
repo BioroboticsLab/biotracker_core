@@ -7,6 +7,7 @@ TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
 	name(name)
 {
 	setFixed(false);
+    setValid(true);
 }
 
 void TrackedTrajectory::operate()
@@ -87,6 +88,5 @@ int TrackedTrajectory::validCount()
         if (el)
             c += el->getValid() ? 1 : 0;
     }
-
     return c;
 }
