@@ -62,10 +62,6 @@ void DataExporterJson::finalizeAndReInit() {
     open(_root);
 }
 
-void DataExporterJson::loadFile(std::string file){
-
-};
-
 template<typename T>
 static T preprocess_value(T &&paramValue) {
     return std::forward<T>(paramValue);
@@ -77,12 +73,103 @@ void writeComponentJson(IModelTrackedComponent* comp, boost::property_tree::ptre
     {
         if (comp->metaObject()->property(i).isStored(comp))
         {
+            if (!comp->metaObject()->property(i).isStored()) {
+                continue;
+            }
             std::string str = comp->metaObject()->property(i).name();
             QVariant v = comp->metaObject()->property(i).read(comp);
             pt->put(str, v.toString().toStdString());
         }
     }
 }
+
+int getId(std::string fst, std::string prefix) {
+    if (fst.size() < prefix.size())
+        return -1;
+
+    std::string token = fst.substr(prefix.size());
+
+    if (token.empty())
+        return -1;
+
+    int id = atoi(token.c_str());
+    return id;
+}
+
+void setElemProperty(boost::property_tree::ptree *tree, std::string key, IModelTrackedComponent* comp) {
+    QString val = QString(tree->data().c_str());
+    std::string check = val.toStdString();
+    QVariant v(val);
+    comp->setProperty(key.c_str(), v);
+}
+
+void populateLevel(
+    IModelTrackedComponent* comp,
+    boost::property_tree::basic_ptree<std::string, std::string, std::less<std::string>> *pt,
+    IModelTrackedComponentFactory* factory,
+    std::deque<std::string> prefixes) 
+{
+    std::string prefix = "";
+    if (prefixes.size() > 0) {
+        prefix = prefixes.front();
+        prefixes.pop_front();
+    }
+    //qDebug() << prefix.c_str();
+
+    for (auto it : *pt) {
+        int id = getId(it.first, prefix);
+        //qDebug() << id;
+
+        if (it.second.size() > 0) {
+            if (prefixes.size() > 0) {
+                IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+                //qDebug() << "TR";
+                populateLevel(child, &(it.second), factory, prefixes);
+                static_cast<IModelTrackedTrajectory*>(comp)->add(child, id);
+            }
+            else {
+                IModelTrackedComponent *node = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement());
+                //qDebug() << "ND";
+                populateLevel(node, &(it.second), factory, prefixes);
+                static_cast<IModelTrackedTrajectory*>(comp)->add(node, id);
+            }
+        }
+        else {
+            setElemProperty(&(it.second), it.first, comp);
+            //qDebug() << "PR " << it.first.c_str();
+        }
+    }
+
+}
+
+void DataExporterJson::loadFile(std::string file) {
+    boost::property_tree::ptree ptRoot;
+    boost::property_tree::read_json(file, ptRoot);
+
+    ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
+    IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
+    if (!factory) {
+        return;
+    }
+    //IModelTrackedTrajectory *root = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+    //_root = root;
+    std::deque<std::string> prefixes = { "Trajectory_", "Element_" };
+    /*IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+    for (int i = 1; i < 100; i++) {
+        IModelTrackedComponent *node = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement());
+        node->setProperty("x", QVariant(24));
+        node->setProperty("y", QVariant(33));
+        child->add(node, 100);
+    }
+    _root->add(child, 100);
+    return;*/
+
+    populateLevel(
+        _root,
+        &ptRoot,
+        factory,
+        prefixes);
+};
 
 void DataExporterJson::writeAll() {
     //Sanity
@@ -94,7 +181,7 @@ void DataExporterJson::writeAll() {
         _ofs.close();
     }
 
-    boost::property_tree::ptree ptRoot;
+    boost::property_tree::ptree ptRoot; 
     writeComponentJson(_root, &ptRoot);
     
 	for (int i = 0; i < _root->size(); i++) {

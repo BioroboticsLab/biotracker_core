@@ -57,7 +57,11 @@ public:
 	bool hasX() { return true; };
 	bool hasY() { return true; };
 	bool hasW() { return false; };
-	bool hasH() { return false; };
+    bool hasH() { return false; };
+    bool hasXpx() { return true; };
+    bool hasYpx() { return true; };
+    bool hasWpx() { return false; };
+    bool hasHpx() { return false; };
 	bool hasRad() { return true; };
 	bool hasDeg() { return true; };
 	bool hasTime() { return true; };
@@ -74,9 +78,9 @@ public:
 	void operate();
 
 private:
-	QString _name;
+	//QString _name;
 	QString _unit = "cm";
-	FishPose _pose;
+	FishPose _pose;/*
 	float _x;
 	float _y;
 	float _w;
@@ -87,7 +91,7 @@ private:
 	std::chrono::steady_clock::time_point _time;
 	bool _valid;
 	bool _pressed;
-	bool _fixed;
+	bool _fixed;*/
 };
 
 #endif // TRACKEDELEMENT_H

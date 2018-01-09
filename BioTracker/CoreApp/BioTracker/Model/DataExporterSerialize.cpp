@@ -98,12 +98,6 @@ void DataExporterSerialize::loadFile(std::string file){
 			curTraj->add(e,idx);
 		}
 	}
-
-	//int idx = -1, i = -1;
-	//in >> idx;
-	//in >> i;
-	//IModelTrackedComponent *e = factory->getNewTrackedElement();
-	//in >> *e;
 };
 
 void DataExporterSerialize::writeAll() {

@@ -56,6 +56,10 @@ public:
 	bool hasY() { return true; };
 	bool hasW() { return false; };
 	bool hasH() { return false; };
+    bool hasXpx() { return false; };
+    bool hasYpx() { return false; };
+    bool hasWpx() { return false; };
+    bool hasHpx() { return false; };
 	bool hasRad() { return false; };
 	bool hasDeg() { return false; };
 	bool hasTime() { return true; };

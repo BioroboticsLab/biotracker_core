@@ -73,6 +73,8 @@ IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
 
 IModelTrackedComponent* TrackedTrajectory::getLastChild()
 {
+    if (_TrackedComponents.empty())
+        return nullptr;
 	return _TrackedComponents.at(_TrackedComponents.size()-1);
 }
 

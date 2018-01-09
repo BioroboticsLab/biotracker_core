@@ -172,6 +172,9 @@
     <addaction name="separator"/>
     <addaction name="actionLoad_Tracker"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_trackingdata"/>
+    <addaction name="actionSave_trackingdata"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuExtras">
@@ -428,6 +431,16 @@
    </property>
    <property name="toolTip">
     <string>show the action list containing all actions</string>
+   </property>
+  </action>
+  <action name="actionLoad_trackingdata">
+   <property name="text">
+    <string>Load Trajectory</string>
+   </property>
+  </action>
+  <action name="actionSave_trackingdata">
+   <property name="text">
+    <string>Save Trajectory</string>
    </property>
   </action>
  </widget>

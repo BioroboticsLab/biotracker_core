@@ -25,8 +25,8 @@
 class IModelTrackedComponent : public IModel
 {
 	Q_OBJECT
-	Q_PROPERTY(bool _valid READ getValid() WRITE setValid)
-	Q_PROPERTY(double _id READ getId() WRITE setId)
+	Q_PROPERTY(bool valid READ getValid() WRITE setValid STORED true)
+	Q_PROPERTY(double id READ getId() WRITE setId STORED true)
 public:
 	/**
 	* The constructor of the IModelTrackedComponent class is able to receive a QObject as parent.
@@ -56,17 +56,17 @@ QDataStream &operator>>(QDataStream &in, IModelTrackedComponent &painting);
 class IModelComponentEuclidian2D : public IModelTrackedComponent {
 public:
 	Q_OBJECT
-	Q_PROPERTY(QString _coordinateUnit READ getCoordinateUnit() WRITE setCoordinateUnit)
-	Q_PROPERTY(float _x READ getX() WRITE setX)
-	Q_PROPERTY(float _y READ getY() WRITE setY)
-	Q_PROPERTY(float _w READ getW() WRITE setW)
-	Q_PROPERTY(float _h READ getH() WRITE setH)
-	Q_PROPERTY(float _wpx READ getWpx() WRITE setWpx)
-	Q_PROPERTY(float _hpx READ getHpx() WRITE setHpx)
-	Q_PROPERTY(float _rad READ getRad() WRITE setRad)
-	Q_PROPERTY(float _deg READ getDeg() WRITE setDeg)
-	Q_PROPERTY(float _xpx READ getXpx() WRITE setXpx)
-	Q_PROPERTY(float _ypx READ getHpx() WRITE setHpx)
+	Q_PROPERTY(QString coordinateUnit READ getCoordinateUnit() WRITE setCoordinateUnit STORED true)
+	Q_PROPERTY(float x READ getX() WRITE setX STORED hasX)
+	Q_PROPERTY(float y READ getY() WRITE setY STORED hasY)
+	Q_PROPERTY(float w READ getW() WRITE setW STORED hasW)
+	Q_PROPERTY(float h READ getH() WRITE setH STORED hasH)
+	Q_PROPERTY(float wpx READ getWpx() WRITE setWpx STORED hasWpx)
+	Q_PROPERTY(float hpx READ getHpx() WRITE setHpx STORED hasHpx)
+	Q_PROPERTY(float rad READ getRad() WRITE setRad STORED hasRad)
+	Q_PROPERTY(float deg READ getDeg() WRITE setDeg STORED hasDeg)
+	Q_PROPERTY(float xpx READ getXpx() WRITE setXpx STORED hasXpx)
+	Q_PROPERTY(float ypx READ getYpx() WRITE setYpx STORED hasYpx)
 
 public:
 	IModelComponentEuclidian2D(QObject *parent = 0);
@@ -103,6 +103,10 @@ public:
     virtual bool hasY() = 0;
     virtual bool hasW() = 0;
     virtual bool hasH() = 0;
+    virtual bool hasXpx() = 0;
+    virtual bool hasYpx() = 0;
+    virtual bool hasWpx() = 0;
+    virtual bool hasHpx() = 0;
     virtual bool hasRad() = 0;
     virtual bool hasDeg() = 0;
 
@@ -123,12 +127,12 @@ protected:
 class IModelComponentEuclidian3D : public IModelComponentEuclidian2D {
 public:
 	Q_OBJECT
-	Q_PROPERTY(float _z     READ getZ()			WRITE setZ)
-	Q_PROPERTY(float _zpx   READ getZpx()		WRITE setZpx)
-	Q_PROPERTY(float _d     READ getD()			WRITE setD)
-	Q_PROPERTY(float _dpx   READ getDpx()		WRITE setDpx)
-	Q_PROPERTY(float _rada2 READ getRadAxis2() WRITE setRadAxis2)
-	Q_PROPERTY(float _rada3 READ getRadAxis3() WRITE setRadAxis3)
+	Q_PROPERTY(float z     READ getZ()			WRITE setZ          STORED hasZ)
+	Q_PROPERTY(float zpx   READ getZpx()		WRITE setZpx        STORED hasZpx)
+	Q_PROPERTY(float d     READ getD()			WRITE setD          STORED hasD)
+	Q_PROPERTY(float dpx   READ getDpx()	    WRITE setDpx        STORED hasDpx)
+	Q_PROPERTY(float rada2 READ getRadAxis2()  WRITE setRadAxis2   STORED hasRadAxis2)
+	Q_PROPERTY(float rada3 READ getRadAxis3()  WRITE setRadAxis3   STORED hasRadAxis3)
 
 public:
 	virtual void  setZ(float z) = 0;
@@ -147,6 +151,8 @@ public:
 
     virtual bool hasZ() = 0;
     virtual bool hasD() = 0;
+    virtual bool hasZpx() = 0;
+    virtual bool hasDpx() = 0;
     virtual bool hasRadAxis2() = 0;
     virtual bool hasRadAxis3() = 0;
 

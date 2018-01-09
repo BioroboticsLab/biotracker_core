@@ -61,7 +61,9 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), ctrCC, SLOT(receiveFixTrackCommand(IModelTrackedTrajectory*, bool)));
 
     // Tell the Visualization to reset upon loading a new plugin
-    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+    //QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitTrackLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+
 }
 
 void ControllerTrackedComponentCore::receiveOnPluginLoaded() {
