@@ -94,8 +94,10 @@ void DataExporterSerialize::loadFile(std::string file){
 		//idx is the frame number
 		for (int idx = 0; idx < trajSize; idx++) {
 			IModelTrackedComponent *e = factory->getNewTrackedElement();
+            int cid = 0;
+            in >> cid;
 			in >> *e;
-			curTraj->add(e,idx);
+			curTraj->add(e, cid);
 		}
 	}
 };
@@ -128,12 +130,25 @@ void DataExporterSerialize::writeAll() {
 	//i is the track number
 	for (int i = 0; i < _root->size(); i++) {
 		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-		out << t->size();
+
+        int cnt = 0;
+        for (int idx = 0; idx < t->size(); idx++) {
+            if (t) {
+                IModelTrackedComponent *e = dynamic_cast<IModelTrackedComponent*>(t->getChild(idx));
+                if (e) {
+                    cnt++;
+                }
+            }
+        }
+        out << cnt;// t->size();
 		//idx is the frame number
 		for (int idx = 0; idx < t->size(); idx++) {
             if (t) {
 				IModelTrackedComponent *e = dynamic_cast<IModelTrackedComponent*>(t->getChild(idx));
-				out << *e;
+                if (e) {
+                    out << idx;
+                    out << *e;
+                }
             }
         }
     }
