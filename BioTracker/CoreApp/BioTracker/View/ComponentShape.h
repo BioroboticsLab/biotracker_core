@@ -24,8 +24,7 @@ class ComponentShape : public QGraphicsObject
 		QPainterPath shape() const override;
 		bool advance();
 
-		bool updatePosition(uint framenumber);
-		void updateAttributes();
+		bool updateAttributes(uint framenumber);
 		IModelTrackedTrajectory* getTrajectory();
 		void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 		int getId();

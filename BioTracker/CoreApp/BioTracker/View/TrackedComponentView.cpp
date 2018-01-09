@@ -225,7 +225,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	for (int i = 0; i < this->childItems().size(); i++) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
 		if (shape) {
-			if (!(shape->updatePosition(framenumber))) {
+			if (!(shape->updateAttributes(framenumber))) {
 				i--;
 			}
 		}
@@ -610,7 +610,7 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	shape->setMembers(coreParams);
 
 	//update the shape
-	shape->updatePosition(m_currentFrameNumber);
+	shape->updateAttributes(m_currentFrameNumber);
 }
 
 void TrackedComponentView::receiveTracerProportions(float proportion)

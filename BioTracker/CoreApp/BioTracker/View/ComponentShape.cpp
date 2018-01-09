@@ -164,104 +164,82 @@ bool ComponentShape::advance()
 	return false;
 }
 
-//put this in updateAttributes
-bool ComponentShape::updatePosition(uint framenumber)
+//enables possibility for plugin to change width, height, rotation, position, etc..
+//TODO for polygons
+bool ComponentShape::updateAttributes(uint frameNumber)
 {
-	//printf("update a shape\n");
-	m_currentFramenumber = framenumber;
+	m_currentFramenumber = frameNumber;
 
-	if (m_trajectory && m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(framenumber)) {
+	//TODO undo/redo remove entity does not work on frame 0 because of m_currentFramenumber == 0!!!!!!!
+	if (m_trajectory && m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
+		m_id = m_trajectory->getId();
+		//update m_fixed
+		m_fixed = m_trajectory->getFixed();
+		if (!m_fixed) {m_penStyle = Qt::SolidLine;}
+		else {m_penStyle = Qt::DotLine;}
+		
+		//update dimensions
+		prepareGeometryChange();
 
+		//type checker
+		bool hasType = false;
 
-
-		//update width and height for the latest tracked component
-		updateAttributes(); 
-
-		//for each point-like (point, rectangle, ellipse)
-		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(framenumber));
-		if (pointLike) {
-			// if component and traj valid or current frame is 0 (video initialized) -> show and update
-			//TODO undo/redo remove entity does not work on frame 0 because of m_currentFramenumber == 0!!!!!!!
-			if ((pointLike->getValid() && m_trajectory->getValid()) || m_currentFramenumber == 0) {
-				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
-				m_oldPos = this->pos().toPoint();
-				QPointF point = this->pos();
-				//create tracers
-				trace();
-
-				this->show();
-				update();
-
-				//qDebug() << "shape is updated to:" << pos();
-
-				//printf("shape updated\n");
+		//if point, ellipse, rectangle and valid or frameNumber = 0 (for initial entities)
+		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+		if (pointLike && (pointLike->getValid() || m_currentFramenumber == 0)) {
+			hasType = true;
+			//update width and height or use defaults
+			if (m_useDefaultDimensions) {
+				if (pointLike->hasW()) {m_w = pointLike->getW();}
+				else { m_w = m_wDefault; }
+				if (pointLike->hasH()) {m_h = pointLike->getH();}
+				else { m_h = m_hDefault; }
 			}
-			// else hide shape
+			//update rotation
+			this->setTransformOriginPoint(m_w / 2, m_h / 2);
+			if (m_h > m_w) {
+				m_rotation = -90 - pointLike->getDeg();
+				this->setRotation(m_rotation);
+			}
 			else {
-				this->hide();
-				update();
+				m_rotation = -pointLike->getDeg();
+				this->setRotation(m_rotation);
 			}
+			//update Position
+			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
+			m_oldPos = this->pos().toPoint();
+
+			//create tracers
+			trace();
+
+			this->show();
+			update();
+
 			return true;
 		}
 		else {
-			qDebug() << "no tracked component in this trajectory in frame: " << framenumber;
+			qDebug() << "no valid tracked component in this trajectory in frame: " << frameNumber;
 			return true;
 		}
-		//for each polygon
-		IModelTrackedPolygon* polygons = dynamic_cast<IModelTrackedPolygon*>(m_trajectory->getChild(framenumber));
-		if (polygons) {
+		// if polygon TODO
+		IModelTrackedPolygon* polygons = dynamic_cast<IModelTrackedPolygon*>(m_trajectory->getChild(frameNumber));
+		if (polygons && (polygons->getValid() || m_currentFramenumber == 0)){
+			hasType = true;
+			qDebug() << "TODO polygon update";
+			return true;
+		}
+ 		//has no type
+		if (!hasType){
+			qDebug() << "The current entity has no known type";
 
 		}
 	}
-	else {
-		//printf("trajectory empty, delete child%i...\n", m_id);
+	else{
+		//trajectory is empty or null or invald or current entity is null
 		this->hide();
 		m_tracingLayer->hide();
 		delete this;
 		return false;
-	}
-
-}
-//enables possibility for plugin to change width, height, rotation
-//TODO for polygons
-void ComponentShape::updateAttributes()
-{
-	m_id = m_trajectory->getId();
-
-
-	//update m_fixed
-	m_fixed = m_trajectory->getFixed();
-
-	if (!m_fixed) {m_penStyle = Qt::SolidLine;}
-	else {m_penStyle = Qt::DotLine;}
-
-	prepareGeometryChange();
-	IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-	if (pointLike) {
-
-		//update width and height or use defaults
-		if (m_useDefaultDimensions) {
-			if (pointLike->hasW()) {
-				m_w = pointLike->getW();
-			}
-			else { m_w = m_wDefault; }
-
-			if (pointLike->hasH()) {
-				m_h = pointLike->getH();
-			}
-			else { m_h = m_hDefault; }
-		}
-
-		//update rotation
-		this->setTransformOriginPoint(m_w / 2, m_h / 2);
-		if (m_h > m_w) {
-			m_rotation = -90 - pointLike->getDeg();
-			this->setRotation(m_rotation);
-		}
-		else {
-			m_rotation = -pointLike->getDeg();
-			this->setRotation(m_rotation);
-		}
 	}
 }
 
@@ -843,7 +821,7 @@ void ComponentShape::receiveDimensions(int width, int height)
 	m_useDefaultDimensions = false;
 	m_w = width;
 	m_h = height;
-	updatePosition(m_currentFramenumber);
+	updateAttributes(m_currentFramenumber);
 	trace();
 	update();
 }
@@ -853,7 +831,7 @@ void ComponentShape::setDimensionsToDefault()
 	m_useDefaultDimensions = true;
 	m_w = m_wDefault;
 	m_h = m_hDefault;
-	updatePosition(m_currentFramenumber);
+	updateAttributes(m_currentFramenumber);
 	trace();
 	update();
 }
