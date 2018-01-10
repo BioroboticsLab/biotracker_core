@@ -4,7 +4,7 @@
 
 #include "Interfaces/IModel/IModel.h"
 #include "settings/Settings.h"
-#include "Model/TrackingAlgorithm/property/ParamNames.h"
+#include "Model/ParamNames.h"
 
 class TrackerParameter : public IModel
 {
@@ -19,13 +19,7 @@ public:
         m_wndSize = x;
 		Q_EMIT notifyView();
 	};
-
-	//std::string getNewSelection() { return m_newSelection; };
-	//void setNewSelection(std::string x) {
-	//	m_newSelection = x;
-	//}
-	
-
+    
 	void setAll(
 		int wndSize)
 	{

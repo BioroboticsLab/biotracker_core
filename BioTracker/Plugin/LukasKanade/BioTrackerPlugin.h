@@ -6,7 +6,7 @@
 #include "Interfaces/IBioTrackerContext.h"
 
 #include "Interfaces/IBioTrackerPlugin.h"
-#include "Model/TrackedComponents/TrackedComponentFactory.h"
+#include "TrackedComponents/TrackedComponentFactory.h"
 
 #include "QPointer"
 #include "memory"
