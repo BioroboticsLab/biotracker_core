@@ -49,6 +49,7 @@ signals:
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void emitCurrentFrameNumber(uint frameNumber);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+	void emitEntityRotation(IModelTrackedTrajectory* trajectory, double angle, uint frameNumber);
 
 	void emitDimensionUpdate(int x, int y);
 

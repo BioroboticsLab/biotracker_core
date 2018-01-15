@@ -56,31 +56,10 @@ void TrackedComponentView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 
-	//check if new components were added to the model
-
-	
-	QFont* font = new QFont();
-	font->setPointSize(50);
-	painter->setFont(*font);
-
-	QBrush brush(Qt::red);
-	painter->setBrush(brush);
-	painter->setPen(QPen(Qt::red, 5));
-
 	// check if model exists
-
 	if (!all) {
-		//TODO Jonas debug
-		//painter->drawText(10, 100, "No Model in Core!");
 		return;
 	}
-
-	//TODO Jonas debug
-	//painter->drawText(0,200, "Model in core!");
-
-	painter->setBrush(QBrush());
-	//TODO Jonas debug
-	//painter->drawRect(this->sceneBoundingRect());
 }
 
 void TrackedComponentView::getNotified()
@@ -594,7 +573,7 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	QObject::connect(shape, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*,QPoint, QPoint, uint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*,bool)), Qt::DirectConnection);
-
+	QObject::connect(shape, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), Qt::DirectConnection);
 	
 
 	QObject::connect(shape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);

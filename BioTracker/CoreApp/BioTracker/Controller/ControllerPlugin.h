@@ -14,7 +14,7 @@
 #include "QQueue"
 #include "QPoint"
 
-enum EDIT { REMOVE_TRACK, REMOVE_TRACK_ID, REMOVE_ENTITY, ADD, MOVE, SWAP, FIX, VALIDATE, VALIDATE_ENTITY };
+enum EDIT { REMOVE_TRACK, REMOVE_TRACK_ID, REMOVE_ENTITY, ADD, MOVE, SWAP, FIX, VALIDATE, VALIDATE_ENTITY, ROTATE_ENTITY };
 
 struct queueElement {
 	EDIT type;
@@ -24,6 +24,7 @@ struct queueElement {
 	IModelTrackedComponent* element;
 	bool toggle;
 	int id;
+	double angle;
 	uint frameNumber;
 };
 
@@ -63,6 +64,7 @@ signals:
 	void emitMoveElement(IModelTrackedTrajectory* element, uint frameNumber, QPoint pos);
 	void emitSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 	void emitToggleFixTrack(IModelTrackedTrajectory* trajectory0, bool toggle);
+	void emitEntityRotation(IModelTrackedTrajectory* trajectory0, double angle, uint frameNumber);
 
 	void emitUpdateView();
 	void signalCurrentFrameNumberToPlugin(uint frameNumber);
@@ -121,6 +123,8 @@ signals:
 	void  receiveValidateEntity(IModelTrackedTrajectory* trajectory, uint frameNumber);
 
 	void  receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+
+	void  receiveEntityRotation(IModelTrackedTrajectory* trajectory, double angle, uint frameNumber);
 
 	void  receivePauseState(bool state);
 

@@ -7,7 +7,6 @@ IModelTrackedTrajectory::IModelTrackedTrajectory(QObject *parent) :
 	IModelTrackedComponent(parent)
 {
 	_id = ++nextID;
-	qDebug() << "new traj:" << _id;
 }
 
 void IModelTrackedTrajectory::operate()

@@ -179,6 +179,8 @@ void ControllerPlugin::connectControllerToController() {
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(ctrCommands, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
 		SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
+	QObject::connect(ctrCommands, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), this,
+		SLOT(receiveEntityRotation(IModelTrackedTrajectory*, double, uint)), Qt::DirectConnection);
 
 
 	// connect ControllerPlayer
@@ -276,6 +278,8 @@ void ControllerPlugin::connectPlugin() {
 		SIGNAL(emitValidateTrajectory(int)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), obj,
 		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), obj,
+		SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), Qt::DirectConnection);
 
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
 		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
@@ -439,6 +443,22 @@ void ControllerPlugin::receiveToggleFixTrack(IModelTrackedTrajectory * trajector
 	}
 }
 
+void ControllerPlugin::receiveEntityRotation(IModelTrackedTrajectory * trajectory, double angle, uint frameNumber)
+{
+	if (m_paused) {
+		emitEntityRotation(trajectory, angle, frameNumber);
+		emitUpdateView();
+	}
+	else {
+		queueElement rotEdit;
+		rotEdit.type = EDIT::ROTATE_ENTITY;
+		rotEdit.trajectory0 = trajectory;
+		rotEdit.angle = angle;
+		rotEdit.frameNumber = frameNumber;
+		m_editQueue.enqueue(rotEdit);
+	}
+}
+
 void ControllerPlugin::receivePauseState(bool state)
 {
 	m_paused = state;
@@ -486,6 +506,9 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				break;
 			case EDIT::VALIDATE_ENTITY:
 				emitValidateEntity(edit.trajectory0, edit.frameNumber);
+				break;
+			case  EDIT::ROTATE_ENTITY:
+				emitEntityRotation(edit.trajectory0, edit.angle, edit.frameNumber);
 				break;
 			}
 		}

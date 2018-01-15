@@ -66,6 +66,7 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrackEntity, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrackEntity, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitValidateTrajectory, ctrTrC, &ControllerTrackedComponent::receiveValidateTrajectory, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitValidateEntity, ctrTrC, &ControllerTrackedComponent::receiveValidateEntity, Qt::DirectConnection);
+	QObject::connect(this, &BioTrackerPlugin::emitEntityRotation, ctrTrC, &ControllerTrackedComponent::receiveEntityRotation, Qt::DirectConnection);
 	//connect this to enable moving of elements -> we need pxtocm() to create new poses
 	QObject::connect(this, &BioTrackerPlugin::emitAreaDescriptorUpdate, ctrTrC, &ControllerTrackedComponent::receiveAreaDescriptorUpdate, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement, Qt::DirectConnection);

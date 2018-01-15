@@ -118,4 +118,23 @@ class FixTrackCommand : public QObject, public QUndoCommand
 		bool _isFixed;
 };
 
+class RotateEntityCommand : public QObject, public QUndoCommand
+{
+	Q_OBJECT
+public:
+	RotateEntityCommand(IModelTrackedTrajectory* traj, double oldAngleDeg, double newAngleDeg, uint frameNumber,
+		QUndoCommand *parent = 0);
+
+	void undo() override;
+	void redo() override;
+signals:
+	void emitEntityRotation(IModelTrackedTrajectory* traj, double angle, uint frameNumber);
+
+private:
+	IModelTrackedTrajectory* _traj;
+	double _oldAngle;
+	double _newAngle;
+	uint _frameNumber;
+};
+
 #endif //TRACKCOMMANDS_H

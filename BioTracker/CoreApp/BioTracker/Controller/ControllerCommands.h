@@ -37,6 +37,8 @@ class ControllerCommands : public IController {
 
 		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
+		void emitEntityRotation(IModelTrackedTrajectory* trajectory, double angleDeg, uint frameNumber);
+
 
 	public slots:
 		void receiveAddTrackCommand(QPoint pos, int id);
@@ -45,6 +47,7 @@ class ControllerCommands : public IController {
 		void receiveMoveElementCommand(IModelTrackedTrajectory* traj , QPoint oldPos, QPoint newPos, uint frameNumber, int toMove);
 		void receiveSwapIdCommand(IModelTrackedTrajectory* traj0, IModelTrackedTrajectory* traj1);
 		void receiveFixTrackCommand(IModelTrackedTrajectory* traj, bool toggle);
+		void receiveEntityRotation(IModelTrackedTrajectory* traj, double oldAngleDeg, double newAngleDeg, uint frameNumber);
 
 		void receiveUndo();
 		void receiveRedo();

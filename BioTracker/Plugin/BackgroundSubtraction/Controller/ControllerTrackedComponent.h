@@ -25,6 +25,7 @@ public Q_SLOTS:
 		*/
 		void receiveSwapIds(IModelTrackedTrajectory* trajectory0, IModelTrackedTrajectory* trajectory1);
 		void receiveToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
+		void receiveEntityRotation(IModelTrackedTrajectory* trajectory, double angle, uint frameNumber);
 		void receiveCurrentFrameNumber(uint framenumber);
 
 		void receiveAreaDescriptorUpdate(IModelAreaDescriptor *areaDescr);

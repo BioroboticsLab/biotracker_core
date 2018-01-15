@@ -209,6 +209,8 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			m_rotationLine.setLength(length);
 
 			//update rotation handle
+			m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+			m_rotationHandleLayer->setRotation(0);
 			m_rotationHandle->setPos(m_rotationLine.p2());
 
 
@@ -855,12 +857,14 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 	m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
 	m_rotationHandleLayer->setRotation(-angle);
 
+	double oldAngle = m_rotation;
+
 	this->setTransformOriginPoint(m_w / 2, m_h / 2);
 	this->setRotation(angle);
 
 	if (rotateEntity) {
-		//Q_EMIT emitRotateEntity(angle, m_currentFrameNumber);
-		//updateAttributes(m_currentFramenumber);
+		Q_EMIT emitEntityRotation(m_trajectory, oldAngle, angle, m_currentFramenumber);
+		updateAttributes(m_currentFramenumber);
 	}
 
 	update();

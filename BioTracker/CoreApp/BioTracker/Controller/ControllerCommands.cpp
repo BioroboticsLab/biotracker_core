@@ -61,6 +61,14 @@ void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, 
 	_undoStack->push(fixCmd);
 }
 
+void ControllerCommands::receiveEntityRotation(IModelTrackedTrajectory * traj,double oldAngleDeg, double newAngleDeg, uint frameNumber)
+{
+	RotateEntityCommand* rotCmd = new RotateEntityCommand(traj, oldAngleDeg, newAngleDeg, frameNumber);
+	QObject::connect(rotCmd, &RotateEntityCommand::emitEntityRotation, this, &ControllerCommands::emitEntityRotation);
+
+	_undoStack->push(rotCmd);
+}
+
 void ControllerCommands::receiveUndo()
 {
 	if (_undoStack->canUndo()) {

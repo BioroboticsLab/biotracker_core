@@ -32,6 +32,8 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 
+		void emitEntityRotation(IModelTrackedTrajectory*,double oldAngleDeg, double newAngleDeg, uint frameNumber);
+
 		void emitTrackNumber(int number);
 
 		void emitDimensionUpdate(int x, int y);

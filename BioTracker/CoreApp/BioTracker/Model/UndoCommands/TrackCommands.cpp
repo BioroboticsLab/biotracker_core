@@ -143,3 +143,21 @@ void FixTrackCommand::redo()
 	qDebug() << "do fix ";
 	emitFixTrack(_traj, _isFixed);
 }
+
+RotateEntityCommand::RotateEntityCommand(IModelTrackedTrajectory* traj, double oldAngle, double angle, uint frameNumber, QUndoCommand *parent)
+	:QUndoCommand(parent), _traj(traj), _newAngle(angle), _oldAngle(oldAngle), _frameNumber(frameNumber)
+{
+	setText("Rotate entity "+ QString::number(_frameNumber) + " of trajectory " + QString::number(_traj->getId()) + " to " + QString::number(_newAngle));
+}
+
+void RotateEntityCommand::undo()
+{
+	qDebug() << "undo rot";
+	emitEntityRotation(_traj, _oldAngle, _frameNumber);
+}
+
+void RotateEntityCommand::redo()
+{
+	qDebug() << "do rot ";
+	emitEntityRotation(_traj, _newAngle, _frameNumber);
+}
