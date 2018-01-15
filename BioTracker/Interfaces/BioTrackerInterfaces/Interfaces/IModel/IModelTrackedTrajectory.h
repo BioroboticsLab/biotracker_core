@@ -57,13 +57,13 @@ public:
 	*/
 	virtual IModelTrackedComponent *getLastChild() = 0;
 
-	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
-	std::chrono::steady_clock::time_point  getTime() { return _time; };
+	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
+	std::chrono::system_clock::time_point  getTime() { return _time; };
 
 	// ITrackedComponent interface
 public:
 	void operate();
-	std::chrono::steady_clock::time_point _time;
+	std::chrono::system_clock::time_point _time;
 
 protected:
 	static int nextID;

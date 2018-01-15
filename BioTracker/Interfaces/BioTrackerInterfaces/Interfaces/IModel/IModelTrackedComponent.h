@@ -34,7 +34,8 @@ public:
 	IModelTrackedComponent(QObject *parent = 0);
 	virtual void  setValid(bool v) { _valid = v; };
 	virtual void  setId(int id) { _id = id; };
-	virtual void  setFixed(bool fixed) { _fixed = fixed; };
+    virtual void  setFixed(bool fixed) { _fixed = fixed; };
+    virtual void  setParent(IModelTrackedComponent *p) { _parentNode = p; };
 	virtual int   getId() { return _id; };
 	virtual bool  getValid() { return _valid; };
 	virtual bool  getFixed() { return _fixed; };
@@ -48,6 +49,7 @@ protected:
 	int _id;
 	bool _valid;
 	bool _fixed;
+    IModelTrackedComponent *_parentNode = nullptr;
 };
 
 QDataStream &operator<<(QDataStream &out, const IModelTrackedComponent &painting);
@@ -167,11 +169,11 @@ protected:
 
 class IModelComponentTemporal {
 public:
-    virtual void  setTime(std::chrono::steady_clock::time_point t) = 0;
-    virtual std::chrono::steady_clock::time_point  getTime() = 0;
+    virtual void  setTime(std::chrono::system_clock::time_point t) = 0;
+    virtual std::chrono::system_clock::time_point  getTime() = 0;
 
 protected:
-	std::chrono::steady_clock::time_point _time;
+	std::chrono::system_clock::time_point _time;
 };
 
 /*

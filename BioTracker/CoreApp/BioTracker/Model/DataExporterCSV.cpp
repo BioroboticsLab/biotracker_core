@@ -1,4 +1,5 @@
 #include "DataExporterCSV.h"
+#include "Controller/ControllerDataExporter.h"
 #include "util/types.h"
 #include "util/misc.h"
 #include <qdebug.h>
@@ -7,6 +8,7 @@
 DataExporterCSV::DataExporterCSV(QObject *parent) :
     IModelDataExporter(parent)
 {
+    _parent = parent;
     _root = 0;
 }
 
@@ -37,10 +39,42 @@ void DataExporterCSV::open(IModelTrackedTrajectory *root) {
 
 }
 
+void DataExporterCSV::loadFile(std::string file) {
+    /* Some testcode to generate a large amount of fake-data
+    ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
+    IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
+    if (!factory) {
+        return;
+    }
+    for (int x = 3; x < 5; x++) {
+
+        IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());;
+        for (int i = 0; i < 1000000; i++) {
+            IModelTrackedComponent *node = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement());
+            IModelComponentEuclidian2D *n = dynamic_cast<IModelComponentEuclidian2D*>(node);
+            n->setXpx(100);
+            n->setYpx(100);
+            n->setRad(1);
+            n->setDeg(100);
+            n->setValid(true);
+            n->setId(i);
+            child->add(node, i);
+        }
+        _root->add(child, x);
+    }
+    */
+}
+
 std::string DataExporterCSV::writeTrackpoint(IModelTrackedPoint *e, int trajNumber) {
     std::stringstream ss;
+    std::chrono::system_clock::time_point p = e->getTime();
+    std::time_t t = std::chrono::system_clock::to_time_t(p);
+    std::string ts(std::ctime(&t));
+    ts = ts.substr(0, ts.size() - 1);
+
     ss << (trajNumber > 0 ? "," : "") << e->getId()
         << "," + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(e->getTime().time_since_epoch()).count())
+        << "," + ts
         << "," + e->getCoordinateUnit().toStdString()
         << (e->hasX() ? "," + std::to_string(e->getX()) : "")
         << (e->hasY() ? "," + std::to_string(e->getY()) : "")
@@ -88,6 +122,32 @@ void DataExporterCSV::finalizeAndReInit() {
     open(_root);
 }
 
+std::string gedHeader(IModelTrackedComponent *t, int cnt) {
+    std::stringstream ss;
+
+    IModelComponentEuclidian2D *e = dynamic_cast<IModelComponentEuclidian2D*>(t);
+    if (e) {
+        ss << "FRAME,";
+        for (int i = 0; i < cnt; i++) {
+
+            ss  
+                << ",ID"
+                << ",TIME"
+                << ",UNIT"
+                << (e->hasX() ? ",X" : "")
+                << (e->hasY() ? ",Y" : "")
+                << (e->hasW() ? ",W" : "")
+                << (e->hasH() ? ",H" : "")
+                << (e->hasDeg() ? ",DEG" : "")
+                << (e->hasRad() ? ",RAD" : "");
+        }
+    }
+    
+    std::string s = ss.str();
+
+    return s;
+}
+
 void DataExporterCSV::writeAll() {
     //Sanity
     if (!_root) {
@@ -108,6 +168,17 @@ void DataExporterCSV::writeAll() {
         IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
         if (t) max = std::max(t->size(), max);
     }
+
+    //write header
+    int vcount = _root->validCount();
+    ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
+    IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
+    if (factory != nullptr) {
+        IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement());
+        o << gedHeader(ptraj, vcount) << "\n";
+        delete ptraj;
+    }
+
 
     //Write out everything to a new file
     int trajNumber = 0;

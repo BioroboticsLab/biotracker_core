@@ -144,7 +144,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		Q_EMIT emitDimensionUpdate(_imageX, _imageY);
 	}
 
-	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
 	//Refuse to run tracking if we have no area info...
 	if (_AreaInfo == nullptr) {

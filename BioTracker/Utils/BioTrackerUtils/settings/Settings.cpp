@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QMessageBox>
 
-#include "Exceptions.h"
+#include "util/Exceptions.h"
 #include "settings/Messages.h"
 
 

@@ -29,19 +29,15 @@ public:
 	bool remove(IModelTrackedComponent *comp) override;
 	void clear() override;
 	IModelTrackedComponent *getChild(int index) override;
-    IModelTrackedComponent* getValidChild(int index) override;
+    IModelTrackedComponent *getValidChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
+
     int size() override;
-    int validCount() override;
-    void setValid(bool v) override;
-    void triggerRecalcValid();
+    int validCount();
 
 private:
 	QList<IModelTrackedComponent*> _TrackedComponents;
 
-    int g_calcValid = 1;
-    int g_validCount = 0;
-    int _size = 0;
 	QString name;
 };
 

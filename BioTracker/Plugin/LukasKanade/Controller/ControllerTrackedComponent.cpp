@@ -88,7 +88,7 @@ void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajector
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 {
-	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
 	TrackedTrajectory* newTraj = new TrackedTrajectory();
 	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());

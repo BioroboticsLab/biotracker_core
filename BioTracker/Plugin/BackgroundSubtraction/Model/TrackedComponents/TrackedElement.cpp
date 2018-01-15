@@ -1,4 +1,5 @@
 #include "TrackedElement.h"
+#include "TrackedTrajectory.h"
 #include "QDebug"
 #include "QRect"
 #include "QBrush"
@@ -11,13 +12,24 @@ TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 	_y = 0;
     //_name = name;
     _id = id;
-	//_time = std::chrono::steady_clock::time_point;
+	//_time = std::chrono::system_clock::time_point;
 	_deg = 0;
 	_rad = 0;
 	_valid = false;
 	//_pressed = false;
 	_fixed = false;
 }
+
+void  TrackedElement::setValid(bool v) 
+{ 
+    _valid = v;
+    if (_parentNode) {
+        TrackedTrajectory* n = dynamic_cast<TrackedTrajectory*>(_parentNode);
+        if (n)
+            n->triggerRecalcValid();
+    }
+}
+
 
 QString TrackedElement::getName()
 {

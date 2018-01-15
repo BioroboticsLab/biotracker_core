@@ -73,7 +73,7 @@ void DataExporterSerialize::loadFile(std::string file){
 	QDataStream in(&f);
 
 
-	IModelTrackedTrajectory *root = _root;// static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+	IModelTrackedTrajectory *root = _root;
 	in >> *root;
 	int children = -1;
 	in >> children;
@@ -140,7 +140,8 @@ void DataExporterSerialize::writeAll() {
                 }
             }
         }
-        out << cnt;// t->size();
+        out << cnt;
+
 		//idx is the frame number
 		for (int idx = 0; idx < t->size(); idx++) {
             if (t) {

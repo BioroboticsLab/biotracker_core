@@ -270,7 +270,7 @@ void MediaPlayer::rcvPauseState(bool state) {
 
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNL when tracking is not active
-	end = std::chrono::steady_clock::now();
+	end = std::chrono::system_clock::now();
     //std::cout << "Printing took "
     //          << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
     //          << "us.\n";
@@ -287,7 +287,7 @@ void MediaPlayer::receivePlayerOperationDone() {
 		Q_EMIT runPlayerOperation();
 
 
-	start = std::chrono::steady_clock::now();
+	start = std::chrono::system_clock::now();
 }
 
 void MediaPlayer::receiveTrackingOperationDone() {

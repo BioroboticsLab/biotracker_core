@@ -201,8 +201,8 @@ class MediaPlayer : public IModel {
     QString m_NameOfCvMat = "Original";
 
 
-    std::chrono::steady_clock::time_point start;
-    std::chrono::steady_clock::time_point end;
+    std::chrono::system_clock::time_point start;
+    std::chrono::system_clock::time_point end;
 };
 
 #endif // MEDIAPLAYER_H

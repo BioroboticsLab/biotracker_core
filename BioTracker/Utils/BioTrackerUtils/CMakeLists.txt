@@ -4,6 +4,7 @@
 
 set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
+	${CMAKE_SOURCE_DIR}/Interfaces/BioTrackerInterfaces/
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS} 
 	${Qt5Core_INCLUDE_DIRS}
@@ -23,6 +24,7 @@ set(QTLIBS
     Qt5::Widgets
 	)
 set(LIBS 
+    Biotracker_interfaces
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARIES}
     ${QTLIBS} 

@@ -4,7 +4,7 @@
 #include "QGraphicsItem"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
-#include "Model/TrackedComponents/pose/FishPose.h"
+#include <cv.h>
 
 /**
 * This class is an example of how a TrackedComponent could be defined.
@@ -20,35 +20,33 @@ public:
 	TrackedElement(QObject *parent = 0, QString name = "n.a.", int id = 0);
 
 	QString getName();
-	QString getCoordinateUnit() override { return _unit; };
-	void setCoordinateUnit(QString str) override { _unit = str; };
+    QString getCoordinateUnit() override { return "px"; };
 
-	void  setX(float val);
-	void  setY(float val);
-	void  setW(float w);
-	void  setH(float h);
-	void  setXpx(float val);
-	void  setYpx(float val);
-	void  setWpx(float w);
-	void  setHpx(float h);
-	void  setRad(float r);
-	void  setDeg(float d);
+    void  setX(float val);
+    void  setY(float val);
+    void  setW(float w) {};
+    void  setH(float h) {};
+    void  setXpx(float val) {};
+    void  setYpx(float val) {};
+    void  setWpx(float w) {};
+    void  setHpx(float h) {};
+	void  setRad(float r) {};
+	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
 	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
-	void  setValid(bool v);
+	void  setValid(bool v) { _valid = v; };
 	void  setFixed(bool f) { _fixed = f; };
-
 
     float getX();
     float getY();
     float getXpx();
     float getYpx();
-    float getW() { return _w; };
-    float getH() { return _h; };
-    float getWpx() { return _w; };
-    float getHpx() { return _h; };
-	float getRad() { return _rad; };
-	float getDeg();
+    float getW() { return 0; };
+    float getH() { return 0; };
+    float getWpx() { return 0; };
+    float getHpx() { return 0; };
+	float getRad() { return 0; };
+	float getDeg() { return 0; };
 	int   getId() { return _id; };
 	std::chrono::system_clock::time_point  getTime() { return _time; };
 	bool  getValid() { return _valid; };
@@ -57,41 +55,30 @@ public:
 	bool hasX() { return true; };
 	bool hasY() { return true; };
 	bool hasW() { return false; };
-    bool hasH() { return false; };
-    bool hasXpx() { return true; };
-    bool hasYpx() { return true; };
+	bool hasH() { return false; };
+    bool hasXpx() { return false; };
+    bool hasYpx() { return false; };
     bool hasWpx() { return false; };
     bool hasHpx() { return false; };
-	bool hasRad() { return true; };
-	bool hasDeg() { return true; };
+	bool hasRad() { return false; };
+	bool hasDeg() { return false; };
 	bool hasTime() { return true; };
 
-	void pressed();
-	void notPressed();
-	bool getPressedStatus();
-
-	void setFishPose(FishPose p);
-	FishPose getFishPose();
+	void setPoint(cv::Point2f p);
+    cv::Point2f getPoint();
 
 	// ITrackedPoint interface
 public:
 	void operate();
 
 private:
-	//QString _name;
-	QString _unit = "cm";
-	FishPose _pose;/*
+	QString _name;
 	float _x;
 	float _y;
-	float _w;
-	float _h;
-	float _deg;
-	float _rad;
 	int _id;
 	std::chrono::system_clock::time_point _time;
 	bool _valid;
-	bool _pressed;
-	bool _fixed;*/
+	bool _fixed;
 };
 
 #endif // TRACKEDELEMENT_H
