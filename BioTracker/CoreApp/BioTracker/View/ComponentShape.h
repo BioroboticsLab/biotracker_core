@@ -9,6 +9,7 @@
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Model/CoreParameter.h"
 #include "QTime"
+#include "View/Utility/RotationHandle.h"
 
 class ComponentShape : public QGraphicsObject
 {
@@ -76,6 +77,7 @@ class ComponentShape : public QGraphicsObject
 		void receiveDimensions(int width, int height);
 		void setDimensionsToDefault();
 		void receiveToggleOrientationLine(bool toggle);
+		void receiveShapeRotation(double angle, bool rotateEntity);
 		//Ignore zoom
 		void receiveIgnoreZoom(bool toggle);
 
@@ -94,10 +96,12 @@ class ComponentShape : public QGraphicsObject
 
 		//Member
 		QGraphicsObject *m_parent;
+		//permissions
 		std::map<ENUMS::COREPERMISSIONS, bool> m_permissions;
 		bool m_pMovable;
 		bool m_pRemovable;
 		bool m_pSwappable;
+		//
 		bool m_fixed;
 		bool m_antialiasing;
 		IModelTrackedTrajectory* m_trajectory;
@@ -125,6 +129,9 @@ class ComponentShape : public QGraphicsObject
 		float m_tracerProportions;
 		bool m_tracingOrientationLine;
 		bool m_tracerFrameNumber;
+		QLineF m_rotationLine;
+		RotationHandle* m_rotationHandle;
+		QGraphicsRectItem* m_rotationHandleLayer;
 		bool m_orientationLine;
 		bool m_trajectoryWasActiveOnce;
 		QPoint m_oldPos;

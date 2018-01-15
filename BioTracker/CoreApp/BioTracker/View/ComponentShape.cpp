@@ -22,7 +22,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	m_polygons = QList<QPolygonF>();
 	m_useDefaultDimensions = true;
-	m_penWidth = 0;
+	m_penWidth = 2;
 	m_penStyle = Qt::SolidLine;
 	m_penStylePrev = Qt::SolidLine;
 	m_marked = false;
@@ -36,6 +36,8 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	m_tracingLayer = new QGraphicsRectItem();
 	this->scene()->addItem(m_tracingLayer);
+
+	m_rotationLine = QLineF();
 
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
@@ -111,17 +113,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 
 	// draw angleLine
 	if (m_orientationLine) {
-		QLineF angleline;
-		angleline.setP1(QPointF(m_w / 2, m_h / 2));
-		if (m_h > m_w) {
-			angleline.setAngle(-90);
-		}
-		else {
-			angleline.setAngle(0);
-		}
-		//TODO length changable
-		angleline.setLength(100);
-		painter->drawLine(angleline);
+		painter->drawLine(m_rotationLine);
 	}
 
 	//TODO enums for types?
@@ -170,7 +162,6 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 {
 	m_currentFramenumber = frameNumber;
 
-	//TODO undo/redo remove entity does not work on frame 0 because of m_currentFramenumber == 0!!!!!!!
 	if (m_trajectory && m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
 		m_id = m_trajectory->getId();
 		//update m_fixed
@@ -205,6 +196,22 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 				m_rotation = -pointLike->getDeg();
 				this->setRotation(m_rotation);
 			}
+
+			//update rotation line
+			m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
+			if (m_h > m_w) {
+				m_rotationLine.setAngle(-90);
+			}
+			else {
+				m_rotationLine.setAngle(0);
+			}
+			qreal length = (m_w + m_h) / 2 * 3;
+			m_rotationLine.setLength(length);
+
+			//update rotation handle
+			m_rotationHandle->setPos(m_rotationLine.p2());
+
+
 			//update Position
 			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
 			m_oldPos = this->pos().toPoint();
@@ -843,6 +850,22 @@ void ComponentShape::receiveToggleOrientationLine(bool toggle)
 	update();
 }
 
+void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
+{
+	m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+	m_rotationHandleLayer->setRotation(-angle);
+
+	this->setTransformOriginPoint(m_w / 2, m_h / 2);
+	this->setRotation(angle);
+
+	if (rotateEntity) {
+		//Q_EMIT emitRotateEntity(angle, m_currentFrameNumber);
+		//updateAttributes(m_currentFramenumber);
+	}
+
+	update();
+}
+
 void ComponentShape::receiveIgnoreZoom(bool toggle)
 {
 	setFlag(QGraphicsItem::ItemIgnoresTransformations, toggle);
@@ -852,6 +875,7 @@ void ComponentShape::receiveIgnoreZoom(bool toggle)
 //set members from core params
 void ComponentShape::setMembers(CoreParameter* coreParams)
 {
+	//from coreParams
 	m_antialiasing = coreParams->m_antialiasingEntities;
 
 	m_tracingStyle = coreParams->m_tracingStyle;
@@ -879,6 +903,14 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 		m_h = coreParams->m_trackHeight;
 		m_hDefault = coreParams->m_trackHeight;
 	}
+
+	//initialize helpers
+	m_rotationHandleLayer = new QGraphicsRectItem(this);
+	m_rotationHandleLayer->setPos(0,0);
+	m_rotationHandleLayer->setFlag(QGraphicsItem::ItemHasNoContents);
+
+	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
+	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
 
 	update();
 }

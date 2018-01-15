@@ -1,0 +1,30 @@
+#pragma once
+
+#ifndef ROTATIONHANDLE_H
+#define ROTATIONHANDLE_H
+
+#include "QGraphicsObject"
+
+
+class RotationHandle : public QGraphicsObject {
+	Q_OBJECT
+
+	public:
+		RotationHandle(QPoint origin, QGraphicsItem* parent = 0);
+		~RotationHandle();
+
+		QRectF boundingRect() const override;
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+		void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
+		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+		void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
+	signals:
+		void emitShapeRotation(double angle, bool rotateEntity = false);
+
+	private:
+		QPoint _origin;
+
+};
+#endif // ROTATIONHANDLE_H
