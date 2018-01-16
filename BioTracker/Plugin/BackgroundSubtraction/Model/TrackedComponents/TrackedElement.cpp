@@ -3,6 +3,7 @@
 #include "QRect"
 #include "QBrush"
 #include "QPainter"
+#include "QtMath"
 
 TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 	IModelTrackedPoint(parent),
@@ -56,12 +57,13 @@ void  TrackedElement::setY(float val) {
 void  TrackedElement::setRad(float r) {
 	_rad = r;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
+
 };
 
 void  TrackedElement::setDeg(float d) {
 	_deg = d;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
-
+	_pose = pnew;
 };
 
 void  TrackedElement::setW(float w) {

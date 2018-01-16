@@ -190,10 +190,12 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			this->setTransformOriginPoint(m_w / 2, m_h / 2);
 			if (m_h > m_w) {
 				m_rotation = -90 - pointLike->getDeg();
+				qDebug()<< pointLike->getDeg();
 				this->setRotation(m_rotation);
 			}
 			else {
 				m_rotation = -pointLike->getDeg();
+				qDebug()<< pointLike->getDeg();
 				this->setRotation(m_rotation);
 			}
 
@@ -441,7 +443,7 @@ void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 	m_mousePressTime = QTime::currentTime();
 	m_mousePressTime.start();
 	m_mousePressPos = pos().toPoint();
-	//qDebug()<< "PRESS" << m_mousePressPos;
+	qDebug()<< "PRESS" << m_mousePressPos;
 
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
@@ -487,6 +489,7 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 }
 
 void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
+	qDebug()<< "MOVE pos " << pos().toPoint();
 	//pass on
 	QGraphicsItem::mouseMoveEvent(event);
 }
@@ -860,11 +863,21 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 	double oldAngle = m_rotation;
 
 	this->setTransformOriginPoint(m_w / 2, m_h / 2);
-	this->setRotation(angle);
+	this->setRotation(m_rotation + angle);
+
+	double toAngle;
 
 	if (rotateEntity) {
-		Q_EMIT emitEntityRotation(m_trajectory, oldAngle, angle, m_currentFramenumber);
-		updateAttributes(m_currentFramenumber);
+
+		if (m_h > m_w) {
+			toAngle += -90 - m_rotation;
+			oldAngle += -90;
+		}
+		else {
+			toAngle = -angle - m_rotation;
+			oldAngle = -oldAngle;
+		}
+		Q_EMIT emitEntityRotation(m_trajectory, oldAngle, toAngle, m_currentFramenumber);
 	}
 
 	update();
