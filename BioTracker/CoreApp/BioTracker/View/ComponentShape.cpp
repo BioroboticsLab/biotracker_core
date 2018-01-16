@@ -869,6 +869,8 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 
 	if (rotateEntity) {
 
+		this->pos();
+
 		if (m_h > m_w) {
 			toAngle += -90 - m_rotation;
 			oldAngle += -90;

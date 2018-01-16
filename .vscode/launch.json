@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/CoreApp/BioTracker/Biotracker_core",
-            "args": [],
+            "args": ["--usePlugin=/home/jonas/git/biotracker_core/build/Plugin/BackgroundSubtraction/libBackgroundSubtraction.tracker.so"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

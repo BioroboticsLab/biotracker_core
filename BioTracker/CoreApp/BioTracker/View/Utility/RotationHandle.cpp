@@ -57,7 +57,7 @@ void RotationHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 		update();
 	}
 	//pass on
-	QGraphicsItem::mousePressEvent(event);
+	QGraphicsItem::mouseReleaseEvent(event);
 }
 
 void RotationHandle::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
