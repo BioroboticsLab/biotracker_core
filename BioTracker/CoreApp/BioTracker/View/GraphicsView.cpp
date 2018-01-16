@@ -9,6 +9,7 @@
 #include <QGraphicsItem>
 #include <QScrollBar>
 #include <QDebug>
+#include <QtOpenGL/QGLWidget>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
@@ -17,6 +18,13 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	m_BackgroundImage = NULL; //TODO Andi init this
 
 	this->setScene(m_GraphicsScene);
+
+
+	//QGLFormat fmt;
+	//fmt.setAlpha(true);
+	//fmt.setStereo(true);
+	//QGLFormat::setDefaultFormat(fmt);
+	this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 
 	this->show();
 

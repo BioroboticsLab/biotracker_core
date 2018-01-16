@@ -494,7 +494,6 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 }
 
 void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
-	//qDebug()<< "MOVE pos " << pos().toPoint();
 	//pass on
 	QGraphicsItem::mouseMoveEvent(event);
 }
