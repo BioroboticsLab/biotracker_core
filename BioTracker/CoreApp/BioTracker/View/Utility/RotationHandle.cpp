@@ -25,11 +25,11 @@ QRectF RotationHandle::boundingRect() const
 
 void RotationHandle::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-	painter->setPen(QPen(Qt::red));
+	painter->setPen(QPen(Qt::blue));
 	painter->setBrush(QBrush(Qt::red));
 
 	painter->drawEllipse(QRect(-2, -2, 4, 4));
-
+	painter->drawRect(boundingRect());
 }
 
 void RotationHandle::mousePressEvent(QGraphicsSceneMouseEvent * event)

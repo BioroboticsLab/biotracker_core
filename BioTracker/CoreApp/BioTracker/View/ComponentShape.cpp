@@ -166,8 +166,15 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 		m_id = m_trajectory->getId();
 		//update m_fixed
 		m_fixed = m_trajectory->getFixed();
-		if (!m_fixed) {m_penStyle = Qt::SolidLine;}
-		else {m_penStyle = Qt::DotLine;}
+		if (!m_fixed)
+		{
+			if(this->isSelected()){m_penStyle = Qt::DashLine;}
+			else{m_penStyle = Qt::SolidLine;}
+		}
+		else {
+			if(this->isSelected()){m_penStyle = Qt::DashDotLine;}
+			else{m_penStyle = Qt::DotLine;}
+		}
 		
 		//update dimensions
 		prepareGeometryChange();
@@ -190,12 +197,10 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			this->setTransformOriginPoint(m_w / 2, m_h / 2);
 			if (m_h > m_w) {
 				m_rotation = -90 - pointLike->getDeg();
-				qDebug()<< pointLike->getDeg();
 				this->setRotation(m_rotation);
 			}
 			else {
 				m_rotation = -pointLike->getDeg();
-				qDebug()<< pointLike->getDeg();
 				this->setRotation(m_rotation);
 			}
 
@@ -443,7 +448,7 @@ void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 	m_mousePressTime = QTime::currentTime();
 	m_mousePressTime.start();
 	m_mousePressPos = pos().toPoint();
-	qDebug()<< "PRESS" << m_mousePressPos;
+	//qDebug()<< "PRESS" << m_mousePressPos;
 
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
@@ -489,7 +494,7 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 }
 
 void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
-	qDebug()<< "MOVE pos " << pos().toPoint();
+	//qDebug()<< "MOVE pos " << pos().toPoint();
 	//pass on
 	QGraphicsItem::mouseMoveEvent(event);
 }
