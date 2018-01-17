@@ -15,7 +15,6 @@ RotationHandle::RotationHandle(QPoint origin, QGraphicsItem* parent) :
 
 RotationHandle::~RotationHandle()
 {
-	delete this;
 }
 
 QRectF RotationHandle::boundingRect() const
@@ -65,8 +64,6 @@ void RotationHandle::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
 	double angleRad = atan2(this->y() - _origin.y(), this->x() - _origin.x());
 	double angleDeg = qRadiansToDegrees(angleRad);
-
-	qDebug() << angleDeg;
 
 	Q_EMIT emitShapeRotation(angleDeg);
 	 

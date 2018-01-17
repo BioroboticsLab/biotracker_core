@@ -30,6 +30,7 @@ set(QTLIBS
     Qt5::Widgets
 	Qt5::Multimedia
 	Qt5::MultimediaWidgets
+	Qt5::OpenGL
 	)
 set(LIBS 
     Biotracker_interfaces

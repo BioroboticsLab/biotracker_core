@@ -118,8 +118,9 @@ void ControllerAreaDescriptor::connectControllerToController()
         MediaPlayer *player = static_cast<MediaPlayer*> (mediaPlayerController->getModel());
         QObject::connect(player, &MediaPlayer::fwdPlayerParameters, model, &AreaInfo::rcvPlayerParameters, Qt::DirectConnection);
 
-		QWidget *viewport = view->viewport();
-		QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
+		////no such signal
+		//QWidget *viewport = view->viewport();
+		//QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
 
 		AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
 		QObject::connect(area->_rect.get(), SIGNAL(updatedVertices()), this, SLOT(updateView()));

@@ -9,7 +9,9 @@
 #include <QGraphicsItem>
 #include <QScrollBar>
 #include <QDebug>
-#include <QtOpenGL/QGLWidget>
+//#include <QtOpenGL/QGLWidget>
+#include <QOpenGlWidget>
+//#include <QSurfaceFormat>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
@@ -19,18 +21,23 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 
 	this->setScene(m_GraphicsScene);
 
+	QOpenGLWidget* openGLWidget = new QOpenGLWidget();
+	QSurfaceFormat surfaceFormat = QSurfaceFormat();
 
-	//QGLFormat fmt;
-	//fmt.setAlpha(true);
-	//fmt.setStereo(true);
-	//QGLFormat::setDefaultFormat(fmt);
-	this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+	surfaceFormat.setRenderableType(QSurfaceFormat::OpenGL);
+	surfaceFormat.setSamples(8);
+	surfaceFormat.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+
+	openGLWidget->setFormat(surfaceFormat);
+
+	this->setViewport(openGLWidget);
+	this->setBackgroundBrush(QBrush(Qt::white));
 
 	this->show();
 
 	setTransformationAnchor(AnchorUnderMouse);
 	//setResizeAnchor(AnchorUnderMouse);
-	setViewportUpdateMode(FullViewportUpdate);
+	setViewportUpdateMode(SmartViewportUpdate);
 	//setMouseTracking(true);
 
 	setDragMode(RubberBandDrag);

@@ -41,7 +41,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
-	setFlag(ItemSendsGeometryChanges);
+	//setFlag(ItemSendsGeometryChanges);
 
 	setAcceptedMouseButtons(Qt::LeftButton);
 
