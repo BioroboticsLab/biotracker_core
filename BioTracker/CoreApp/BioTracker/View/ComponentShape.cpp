@@ -29,6 +29,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
+	m_pRotatable = true;
 	m_fixed = false;
 	m_currentFramenumber = 0;
 	m_rotation = 0;
@@ -417,6 +418,12 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 			break;
 		case ENUMS::COREPERMISSIONS::COMPONENTSWAP:
 			m_pSwappable = permission.second;
+			break;
+		case ENUMS::COREPERMISSIONS::COMPONENTROTATE:
+			m_pRotatable = permission.second;
+			m_rotationHandleLayer->setVisible(permission.second);
+			m_rotationHandle->setVisible(permission.second);
+			break;
 	}
 
 	//qDebug() << "shape permission " << permission.first << "set to " << permission.second;
@@ -435,6 +442,11 @@ bool ComponentShape::isSwappable()
 bool ComponentShape::isRemovable()
 {
 	return m_pRemovable;
+}
+
+bool ComponentShape::isRotatable()
+{
+	return m_pRotatable;
 }
 
 QPoint ComponentShape::getOldPos()

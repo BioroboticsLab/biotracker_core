@@ -66,6 +66,7 @@ void BioTrackerPlugin::connectInterfaces() {
 	QObject::connect(this, &BioTrackerPlugin::emitRemoveTrackEntity, ctrTrC, &ControllerTrackedComponent::receiveRemoveTrackEntity, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitValidateTrajectory, ctrTrC, &ControllerTrackedComponent::receiveValidateTrajectory, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitValidateEntity, ctrTrC, &ControllerTrackedComponent::receiveValidateEntity, Qt::DirectConnection);
+	QObject::connect(this, &BioTrackerPlugin::emitEntityRotation, ctrTrC, &ControllerTrackedComponent::receiveEntityRotation, Qt::DirectConnection);
 	//connect this to enable moving of elements -> we need pxtocm() to create new poses
 	QObject::connect(this, &BioTrackerPlugin::emitMoveElement, ctrTrC, &ControllerTrackedComponent::receiveMoveElement, Qt::DirectConnection);
 	QObject::connect(this, &BioTrackerPlugin::emitSwapIds, ctrTrC, &ControllerTrackedComponent::receiveSwapIds, Qt::DirectConnection);
@@ -127,5 +128,7 @@ void BioTrackerPlugin::sendCorePermissions() {
 	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, enableSwap));
 	bool enableAdd = pluginSettings->getValueOrDefault(LUKASKANADE::GUIPARAM::ENABLE_CORE_COMPONENT_ADD, true);
 	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, enableAdd));
+	bool enableRotate = pluginSettings->getValueOrDefault(LUKASKANADE::GUIPARAM::ENABLE_CORE_COMPONENT_ROTATE, false);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTROTATE, enableRotate));
 }
 

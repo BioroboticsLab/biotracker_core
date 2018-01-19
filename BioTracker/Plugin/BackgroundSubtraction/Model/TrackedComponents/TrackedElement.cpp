@@ -57,7 +57,7 @@ void  TrackedElement::setY(float val) {
 void  TrackedElement::setRad(float r) {
 	_rad = r;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
-
+	_pose = pnew;
 };
 
 void  TrackedElement::setDeg(float d) {

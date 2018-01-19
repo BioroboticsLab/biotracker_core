@@ -52,6 +52,8 @@ namespace LUKASKANADE {
         const std::string ENABLE_CORE_COMPONENT_ID_SWAP = "GUIPARAM/ENABLE_CORE_COMPONENT_ID_SWAP";
         // Add component in core view
         const std::string ENABLE_CORE_COMPONENT_ADD = "GUIPARAM/ENABLE_CORE_COMPONENT_ADD";
+		// Rotate component in core view
+		const std::string ENABLE_CORE_COMPONENT_ROTATE = "GUIPARAM/ENABLE_CORE_COMPONENT_ROTATE";
     }
 
 }

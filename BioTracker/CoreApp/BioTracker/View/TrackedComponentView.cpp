@@ -39,6 +39,7 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, true));
+	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTROTATE, true));
 }
 
 void TrackedComponentView::rcvDimensionUpdate(int x, int y) {
@@ -102,7 +103,7 @@ QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVari
 	return QGraphicsItem::itemChange(change, value);
 }
 
-// set permissions, which where send by the plugin
+// set permissions, which were send by the plugin
 void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
 {
 	m_permissions[permission.first] = permission.second;
@@ -578,15 +579,15 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 
 	QObject::connect(shape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 
+	//set the shapes members
+	shape->m_currentFramenumber = m_currentFrameNumber;
+	shape->setMembers(coreParams);
 
 	//set permissions
 	shape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTMOVE]));
 	shape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTREMOVE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTREMOVE]));
 	shape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP]));
-
-	//set the shapes members
-	shape->m_currentFramenumber = m_currentFrameNumber;
-	shape->setMembers(coreParams);
+	shape->setPermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTROTATE, m_permissions[ENUMS::COREPERMISSIONS::COMPONENTROTATE]));
 
 	//update the shape
 	shape->updateAttributes(m_currentFrameNumber);

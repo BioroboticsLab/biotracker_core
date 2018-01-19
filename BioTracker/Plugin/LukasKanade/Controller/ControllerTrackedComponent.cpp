@@ -4,6 +4,7 @@
 #include "Model/TrackedComponents/TrackedTrajectory.h"
 #include "View/TrackedElementView.h"
 #include "qdebug.h"
+#include "qmath.h"
 
 ControllerTrackedComponent::ControllerTrackedComponent(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
@@ -144,6 +145,18 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 void ControllerTrackedComponent::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
 {
 	trajectory->setFixed(toggle);
+}
+
+void ControllerTrackedComponent::receiveEntityRotation(IModelTrackedTrajectory * trajectory, double angle, uint frameNumber)
+{
+	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
+	if (traj) {
+		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(traj->getChild(frameNumber));
+		if (pointLike) {
+			pointLike->setDeg(float(angle));
+			pointLike->setRad(float(qDegreesToRadians(angle)));
+		}
+	}
 }
 
 void ControllerTrackedComponent::receiveCurrentFrameNumber(uint framenumber)

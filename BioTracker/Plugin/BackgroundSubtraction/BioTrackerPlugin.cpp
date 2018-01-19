@@ -129,5 +129,7 @@ void BioTrackerPlugin::sendCorePermissions() {
 	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTSWAP, enableSwap));
 	bool enableAdd = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_ADD, true);
 	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, enableAdd));
+	bool enableRotate = pluginSettings->getValueOrDefault(GUIPARAM::ENABLE_CORE_COMPONENT_ROTATE, true);
+	Q_EMIT emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTROTATE, enableRotate));
 }
 

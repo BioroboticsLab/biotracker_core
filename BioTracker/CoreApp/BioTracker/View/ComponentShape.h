@@ -31,6 +31,7 @@ class ComponentShape : public QGraphicsObject
 		int getId();
 		bool isSwappable();
 		bool isRemovable();
+		bool isRotatable();
 		QPoint getOldPos();
 		void trace();
 		void setMembers(CoreParameter* coreParams);
@@ -102,6 +103,7 @@ class ComponentShape : public QGraphicsObject
 		bool m_pMovable;
 		bool m_pRemovable;
 		bool m_pSwappable;
+		bool m_pRotatable;
 		//
 		bool m_fixed;
 		bool m_antialiasing;
