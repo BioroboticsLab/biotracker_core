@@ -131,6 +131,8 @@ void ControllerMainWindow::connectControllerToController() {
 
 	QObject::connect(this, &ControllerMainWindow::emitUndoCommand, ctrcmd, &ControllerCommands::receiveUndo, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitRedoCommand, ctrcmd, &ControllerCommands::receiveRedo, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitShowActionListCommand, ctrcmd, &ControllerCommands::receiveShowActionList, Qt::DirectConnection);
 
 	//

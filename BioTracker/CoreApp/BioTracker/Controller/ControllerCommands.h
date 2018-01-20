@@ -51,6 +51,7 @@ class ControllerCommands : public IController {
 
 		void receiveUndo();
 		void receiveRedo();
+		void receiveClear();
 		void receiveShowActionList(); 
 
 	// IController interface

@@ -89,6 +89,11 @@ void ControllerCommands::receiveRedo()
 	}
 }
 
+void ControllerCommands::receiveClear()
+{
+	_undoStack->clear();
+}
+
 void ControllerCommands::receiveShowActionList()
 {
 	_undoView->show();

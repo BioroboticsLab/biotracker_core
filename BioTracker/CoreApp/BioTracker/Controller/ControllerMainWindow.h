@@ -79,6 +79,7 @@ public:
 
 	void emitUndoCommand();
 	void emitRedoCommand();
+	void emitClearUndoStack();
 	void emitShowActionListCommand();
 
 
