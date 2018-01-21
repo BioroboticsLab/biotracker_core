@@ -65,7 +65,7 @@ IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
     int c = 0;
     foreach(IModelTrackedComponent* el, _TrackedComponents) {
         if (el) {
-            if (c == index)
+            if (c == index && el->getValid())
                 return el;
             c += el->getValid() ? 1 : 0;
         }
