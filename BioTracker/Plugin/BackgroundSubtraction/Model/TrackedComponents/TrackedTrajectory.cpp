@@ -2,11 +2,28 @@
 #include "QDebug"
 #include "TrackedElement.h"
 
+void TrackedTrajectory::triggerRecalcValid() {
+    g_calcValid = 1;
+}
+
+void TrackedTrajectory::setValid(bool v) {
+    _valid = v;
+    if (_parentNode) {
+        TrackedTrajectory* n = dynamic_cast<TrackedTrajectory*>(_parentNode);
+        if (n)
+            n->triggerRecalcValid();
+    }
+}
+
 TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
 	IModelTrackedTrajectory(parent),
 	name(name)
 {
 	setFixed(false);
+    g_calcValid = 1;
+    g_validCount = 0;
+    _size = 0;
+    _valid = true;// setValid(true);
 }
 
 void TrackedTrajectory::operate()
@@ -21,14 +38,24 @@ void TrackedTrajectory::operate()
 
 void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
 {
+
+    comp->setParent(this);
+
 	if (pos < 0) {
 		_TrackedComponents.append(comp);
+        _size++;
+        g_validCount++;
 	}
-	else if (_TrackedComponents.size() <= pos) {
-		while (_TrackedComponents.size() < pos)
-			_TrackedComponents.append(0);
+	else if (_size <= pos) {
+        while (_size < pos)
+        {
+            _TrackedComponents.append(0);
+            _size++;
+        }
 
 		_TrackedComponents.append(comp);
+        _size++;
+        g_validCount++;
 	}
 	else {
 		_TrackedComponents[pos] = comp;
@@ -37,23 +64,33 @@ void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
 
 bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
 {
-	return _TrackedComponents.removeOne(comp); //Do not actually remove, just invalidate / replace by dummy
+    g_calcValid = 1;
+    comp->setValid(false);
+    return true;
+    //return _TrackedComponents.removeOne(comp); 
 }
 
 void TrackedTrajectory::clear()
 {
+    g_calcValid = 1;
     foreach(IModelTrackedComponent* el, _TrackedComponents) {
         if (dynamic_cast<IModelTrackedTrajectory*>(el))
             dynamic_cast<IModelTrackedTrajectory*>(el)->clear();
     }
     _TrackedComponents.clear();
+    _size = 0;
 }
 
 IModelTrackedComponent* TrackedTrajectory::getChild(int index)
 {
     if (index < 0)
         return nullptr;
-	return (_TrackedComponents.size() > index ? _TrackedComponents.at(index) : nullptr);
+
+    if (index == _size - 1) {
+        return _TrackedComponents.back();
+    }
+
+	return (_size > index ? _TrackedComponents.at(index) : nullptr);
 }
 
 IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
@@ -72,21 +109,33 @@ IModelTrackedComponent* TrackedTrajectory::getValidChild(int index)
 
 IModelTrackedComponent* TrackedTrajectory::getLastChild()
 {
-	return _TrackedComponents.at(_TrackedComponents.size()-1);
+    if (_TrackedComponents.empty())
+        return nullptr;
+	return _TrackedComponents.back();
 }
 
 int TrackedTrajectory::size()
 {
-    return _TrackedComponents.size();
+    return _size;
 }
 
+
+//int calcValid = 1;
+//int validCount = 0;
 int TrackedTrajectory::validCount()
 {
-    int c = 0;
-    foreach(IModelTrackedComponent* el, _TrackedComponents){
-        if (el)
-            c += el->getValid() ? 1 : 0;
-    }
+    if (g_calcValid == 1) {
+        int c = 0;
+        foreach(IModelTrackedComponent* el, _TrackedComponents) {
+            if (el)
+                c += el->getValid() ? 1 : 0;
+        }
 
-    return c;
+        g_validCount = c;
+        g_calcValid = 0;
+        return c;
+    }
+    else {
+        return g_validCount;
+    }
 }

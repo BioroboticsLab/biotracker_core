@@ -9,8 +9,8 @@
 #include <opencv2/opencv.hpp>
 #include "Interfaces/IModel/IModelTrackingAlgorithm.h"
 #include "Interfaces/IModel/IModelDataExporter.h"
-#include "Model/TrackedComponents/TrackedElement.h"
-#include "Model/TrackedComponents/TrackedTrajectory.h"
+#include "TrackedComponents/TrackedElement.h"
+#include "TrackedComponents/TrackedTrajectory.h"
 #include "Interfaces/IModel/IModelAreaDescriptor.h"
 #include <iostream>
 
@@ -36,7 +36,6 @@ private:
 	void refreshPolygon();
     void sendSelectedImage(std::map<std::string, std::shared_ptr<cv::Mat>>* images);
 
-	std::vector<FishPose> getLastPositionsAsPose();
 	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;

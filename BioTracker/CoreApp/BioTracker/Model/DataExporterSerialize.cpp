@@ -73,7 +73,7 @@ void DataExporterSerialize::loadFile(std::string file){
 	QDataStream in(&f);
 
 
-	IModelTrackedTrajectory *root = _root;// static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+	IModelTrackedTrajectory *root = _root;
 	in >> *root;
 	int children = -1;
 	in >> children;
@@ -94,16 +94,12 @@ void DataExporterSerialize::loadFile(std::string file){
 		//idx is the frame number
 		for (int idx = 0; idx < trajSize; idx++) {
 			IModelTrackedComponent *e = factory->getNewTrackedElement();
+            int cid = 0;
+            in >> cid;
 			in >> *e;
-			curTraj->add(e,idx);
+			curTraj->add(e, cid);
 		}
 	}
-
-	//int idx = -1, i = -1;
-	//in >> idx;
-	//in >> i;
-	//IModelTrackedComponent *e = factory->getNewTrackedElement();
-	//in >> *e;
 };
 
 void DataExporterSerialize::writeAll() {
@@ -134,12 +130,26 @@ void DataExporterSerialize::writeAll() {
 	//i is the track number
 	for (int i = 0; i < _root->size(); i++) {
 		IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-		out << t->size();
+
+        int cnt = 0;
+        for (int idx = 0; idx < t->size(); idx++) {
+            if (t) {
+                IModelTrackedComponent *e = dynamic_cast<IModelTrackedComponent*>(t->getChild(idx));
+                if (e) {
+                    cnt++;
+                }
+            }
+        }
+        out << cnt;
+
 		//idx is the frame number
 		for (int idx = 0; idx < t->size(); idx++) {
             if (t) {
 				IModelTrackedComponent *e = dynamic_cast<IModelTrackedComponent*>(t->getChild(idx));
-				out << *e;
+                if (e) {
+                    out << idx;
+                    out << *e;
+                }
             }
         }
     }

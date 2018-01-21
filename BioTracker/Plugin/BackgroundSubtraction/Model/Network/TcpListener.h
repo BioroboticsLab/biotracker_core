@@ -24,7 +24,7 @@ public slots:
 	std::string sendPositions(int frameNo,
 		const std::vector<FishPose>& poses,
 		const std::vector<cv::Point2f>& polygon,
-		std::chrono::steady_clock::time_point ts);
+		std::chrono::system_clock::time_point ts);
 
 private:
 	std::vector<QTcpSocket *> _sockets;

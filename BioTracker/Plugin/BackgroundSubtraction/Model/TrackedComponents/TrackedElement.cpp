@@ -1,4 +1,5 @@
 #include "TrackedElement.h"
+#include "TrackedTrajectory.h"
 #include "QDebug"
 #include "QRect"
 #include "QBrush"
@@ -6,23 +7,34 @@
 #include "QtMath"
 
 TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
-	IModelTrackedPoint(parent),
-	_name(name),
-	_id(id)
+	IModelTrackedPoint(parent)
 {
 	_x = 0;
 	_y = 0;
-	//_time = std::chrono::steady_clock::time_point;
+    //_name = name;
+    _id = id;
+	//_time = std::chrono::system_clock::time_point;
 	_deg = 0;
 	_rad = 0;
 	_valid = false;
-	_pressed = false;
+	//_pressed = false;
 	_fixed = false;
 }
 
+void  TrackedElement::setValid(bool v) 
+{ 
+    _valid = v;
+    if (_parentNode) {
+        TrackedTrajectory* n = dynamic_cast<TrackedTrajectory*>(_parentNode);
+        if (n)
+            n->triggerRecalcValid();
+    }
+}
+
+
 QString TrackedElement::getName()
 {
-	return _name;
+	return "";
 }
 
 void TrackedElement::setFishPose(FishPose p)
@@ -32,6 +44,8 @@ void TrackedElement::setFishPose(FishPose p)
 	_y = p.position_cm().y;
 	_deg = p.orientation_deg();
 	_rad = p.orientation_rad();
+    _ypx = p.position_px().y;
+    _xpx = p.position_px().x;
 	_valid = true;
 	Q_EMIT notifyView();
 }
@@ -44,12 +58,16 @@ FishPose TrackedElement::getFishPose()
 void  TrackedElement::setX(float val) {
 	_x = val;
 	FishPose pnew(cv::Point(_x, _pose.position_cm().y), cv::Point(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
+    _ypx = _pose.position_px().y;
+    _xpx = _pose.position_px().x;
 	_pose = pnew;
 };
 
 void  TrackedElement::setY(float val) {
 	_y = val;
 	FishPose pnew(cv::Point(_pose.position_cm().x, _y), cv::Point(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
+    _ypx = _pose.position_px().y;
+    _xpx = _pose.position_px().x;
 	_pose = pnew;
 };
 
@@ -57,32 +75,35 @@ void  TrackedElement::setY(float val) {
 void  TrackedElement::setRad(float r) {
 	_rad = r;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
-	_pose = pnew;
+    _pose = pnew;
 };
 
 void  TrackedElement::setDeg(float d) {
 	_deg = d;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
-	_pose = pnew;
+    _pose = pnew;
+
 };
 
 void  TrackedElement::setW(float w) {
 	_w = w;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _w, _pose.height(), _pose.getScore());
+    _pose = pnew;
 }
 
 void TrackedElement::setH(float h) {
 	_h = h;
 	FishPose pnew(_pose.position_cm(), _pose.position_px(), _rad, _deg, _pose.width(), _h, _pose.getScore());
+    _pose = pnew;
 }
 
 
 void TrackedElement::setXpx(float val) {
-	std::cout << "Stub..." << std::endl;
+    _xpx = val;
 }
 
 void TrackedElement::setYpx(float val) {
-	std::cout << "Stub..." << std::endl;
+    _ypx = val;
 }
 
 void TrackedElement::setWpx(float w) {
@@ -102,11 +123,11 @@ float TrackedElement::getY() {
 }
 
 float TrackedElement::getXpx() {
-    return _pose.position_px().x;
+    return _xpx;// _pose.position_px().x;
 }
 
 float TrackedElement::getYpx() {
-    return _pose.position_px().y;
+    return _ypx;// _pose.position_px().y;
 }
 
 float TrackedElement::getDeg() {
@@ -115,25 +136,25 @@ float TrackedElement::getDeg() {
 
 void TrackedElement::operate()
 {
-	qDebug() << "I am TrackedElement " << _name;
+	qDebug() << "I am TrackedElement ";
 }
 
 void TrackedElement::pressed()
 {
-	_pressed = true;
+	//_pressed = true;
 	Q_EMIT notifyView();
 
 }
 
 void TrackedElement::notPressed()
 {
-	_pressed = false;
+	//_pressed = false;
 	Q_EMIT notifyView();
 }
 
 bool TrackedElement::getPressedStatus()
 {
-	return _pressed;
+	return false;
 }
 
 

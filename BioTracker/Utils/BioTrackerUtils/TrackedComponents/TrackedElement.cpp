@@ -12,7 +12,6 @@ TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 	_x = 0;
 	_y = 0;
 	_valid = false;
-	_pressed = false;
 	_fixed = false;
 }
 
@@ -62,24 +61,5 @@ void TrackedElement::operate()
 {
 	qDebug() << "I am TrackedElement " << _name;
 }
-
-void TrackedElement::pressed()
-{
-	_pressed = true;
-	Q_EMIT notifyView();
-
-}
-
-void TrackedElement::notPressed()
-{
-	_pressed = false;
-	Q_EMIT notifyView();
-}
-
-bool TrackedElement::getPressedStatus()
-{
-	return _pressed;
-}
-
 
 

@@ -279,9 +279,7 @@ void ComponentShape::trace()
 	// really unefficient to flush each time
 	//flush tracing shape history, open up the memory
 	
-	while (m_tracingLayer->childItems().size() > 0) {
-		delete m_tracingLayer->childItems()[0];
-	}
+    m_tracingLayer->childItems().clear();
 
 	////check if number of tracing children in tracing layer is correct
 	////delete/add the difference

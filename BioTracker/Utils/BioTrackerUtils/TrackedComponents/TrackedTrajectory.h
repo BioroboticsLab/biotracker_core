@@ -31,6 +31,7 @@ public:
 	IModelTrackedComponent *getChild(int index) override;
     IModelTrackedComponent *getValidChild(int index) override;
 	IModelTrackedComponent *getLastChild() override;
+
     int size() override;
     int validCount();
 

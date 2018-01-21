@@ -33,10 +33,15 @@ public:
 	IModelTrackedComponent *getLastChild() override;
     int size() override;
     int validCount() override;
+    void setValid(bool v) override;
+    void triggerRecalcValid();
 
 private:
 	QList<IModelTrackedComponent*> _TrackedComponents;
 
+    int g_calcValid = 1;
+    int g_validCount = 0;
+    int _size = 0;
 	QString name;
 };
 

@@ -4,7 +4,7 @@
 #include "QGraphicsItem"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
-#include "Model/TrackedComponents/pose/FishPose.h"
+#include <cv.h>
 
 /**
 * This class is an example of how a TrackedComponent could be defined.
@@ -33,7 +33,7 @@ public:
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
-	void  setTime(std::chrono::steady_clock::time_point t) { _time = t; };
+	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
 	void  setValid(bool v) { _valid = v; };
 	void  setFixed(bool f) { _fixed = f; };
 
@@ -48,7 +48,7 @@ public:
 	float getRad() { return 0; };
 	float getDeg() { return 0; };
 	int   getId() { return _id; };
-	std::chrono::steady_clock::time_point  getTime() { return _time; };
+	std::chrono::system_clock::time_point  getTime() { return _time; };
 	bool  getValid() { return _valid; };
 	bool  getFixed() { return _fixed; };
 
@@ -56,13 +56,13 @@ public:
 	bool hasY() { return true; };
 	bool hasW() { return false; };
 	bool hasH() { return false; };
+    bool hasXpx() { return false; };
+    bool hasYpx() { return false; };
+    bool hasWpx() { return false; };
+    bool hasHpx() { return false; };
 	bool hasRad() { return false; };
 	bool hasDeg() { return false; };
 	bool hasTime() { return true; };
-
-	void pressed();
-	void notPressed();
-	bool getPressedStatus();
 
 	void setPoint(cv::Point2f p);
     cv::Point2f getPoint();
@@ -76,9 +76,8 @@ private:
 	float _x;
 	float _y;
 	int _id;
-	std::chrono::steady_clock::time_point _time;
+	std::chrono::system_clock::time_point _time;
 	bool _valid;
-	bool _pressed;
 	bool _fixed;
 };
 

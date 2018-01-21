@@ -34,7 +34,7 @@ public:
     */
 	void close() override;
 
-	void loadFile(std::string file) override {};
+	void loadFile(std::string file) override;
 
     /**
     *  Effectively a writeAll, close and open.
@@ -42,6 +42,8 @@ public:
     void finalizeAndReInit() override;
 
 private:
+
+    QObject *_parent = nullptr;
 
     /**
     *  helper function to generate a part of an output line

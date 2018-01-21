@@ -1,6 +1,6 @@
 #include "TrackerParameter.h"
 #include "util/singleton.h"
-#include "Model/TrackingAlgorithm/property/ParamNames.h"
+#include "Model/ParamNames.h"
 
 TrackerParameter::TrackerParameter(QObject *parent) :
     IModel(parent)

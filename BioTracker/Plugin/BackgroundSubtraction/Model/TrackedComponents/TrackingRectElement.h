@@ -23,7 +23,7 @@ public:
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
-	void  setTime(std::chrono::steady_clock::time_point t) {};
+	void  setTime(std::chrono::system_clock::time_point t) {};
 	void  setValid(bool v) {};
 	void  setFixed(bool f) { _fixed = f; };
 
@@ -35,7 +35,7 @@ public:
 	float getRad() { return 0; };
 	float getDeg() { return 0; };
 	int   getId() { return _id; };
-	std::chrono::steady_clock::time_point  getTime() { return std::chrono::steady_clock::time_point(); };
+	std::chrono::system_clock::time_point  getTime() { return std::chrono::system_clock::time_point(); };
 	bool  getValid() { return false; };
 	bool  getFixed() { return _fixed; };
 

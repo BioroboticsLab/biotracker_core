@@ -171,7 +171,7 @@ void MainWindow::on_actionOpen_Picture_triggered() {
 
 void MainWindow::on_actionLoad_trackingdata_triggered() {
 	static const QString imageFilter(
-		"tracking data files (*.csv *.dat)");
+		"tracking data files (*.csv *.dat *.json)");
 
 	std::vector<boost::filesystem::path> files;
 	for (QString const& path : QFileDialog::getOpenFileNames(this,

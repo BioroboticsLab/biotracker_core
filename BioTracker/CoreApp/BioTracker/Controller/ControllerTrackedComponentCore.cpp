@@ -63,7 +63,9 @@ void ControllerTrackedComponentCore::connectControllerToController()
 
 
     // Tell the Visualization to reset upon loading a new plugin
-    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+    //QObject::connect(ctrMainWindow, &ControllerMainWindow::emitPluginLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitTrackLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+
 }
 
 void ControllerTrackedComponentCore::receiveOnPluginLoaded() {
