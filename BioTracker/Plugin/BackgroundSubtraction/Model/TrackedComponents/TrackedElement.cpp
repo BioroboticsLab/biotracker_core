@@ -10,13 +10,10 @@ TrackedElement::TrackedElement(QObject *parent, QString name, int id) :
 {
 	_x = 0;
 	_y = 0;
-    //_name = name;
     _id = id;
-	//_time = std::chrono::system_clock::time_point;
 	_deg = 0;
 	_rad = 0;
 	_valid = false;
-	//_pressed = false;
 	_fixed = false;
 }
 
@@ -48,6 +45,31 @@ void TrackedElement::setFishPose(FishPose p)
 	_valid = true;
 	Q_EMIT notifyView();
 }
+
+void TrackedElement::setTime(std::chrono::system_clock::time_point t) {
+    _timeSysclck = t;
+};
+
+void TrackedElement::setTime(qint64 t) {
+    _time = t;
+    std::string::size_type sz = 0;
+    long long ll = t / 1000;
+    std::time_t tm(ll);
+    _timeSysclck = std::chrono::system_clock::from_time_t(tm);
+};
+
+qint64 TrackedElement::getTime() {
+    qint64 q(std::chrono::duration_cast<std::chrono::milliseconds>(_timeSysclck.time_since_epoch()).count());
+    return q;
+};
+
+QString TrackedElement::getTimeString() {
+    std::time_t t = std::chrono::system_clock::to_time_t(_timeSysclck);
+    QDateTime dt;
+    dt.setTime_t(t);
+    _timeString = dt.toString();
+    return _timeString;
+};
 
 FishPose TrackedElement::getFishPose()
 {

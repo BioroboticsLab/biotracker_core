@@ -41,6 +41,16 @@ void ControllerDataExporter::createModel() {
 		m_Model = 0;
 }
 
+SourceVideoMetadata ControllerDataExporter::getSourceMetadata() {
+	IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+	MediaPlayer* mplay = dynamic_cast<MediaPlayer*>(ctrM->getModel());
+	SourceVideoMetadata d;
+	d.name = mplay->getCurrentFileName().toStdString();
+	d.fps = std::to_string(mplay->getFpsOfSourceFile());
+	d.fps = d.fps.erase(d.fps.find_last_not_of('0') + 1, std::string::npos);
+	return d;
+}
+
 void ControllerDataExporter::loadFile(std::string file) {
 	if (_factory) {
 		qobject_cast<IModelDataExporter*>(m_Model)->loadFile(file);

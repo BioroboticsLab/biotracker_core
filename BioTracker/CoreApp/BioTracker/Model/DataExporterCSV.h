@@ -2,6 +2,7 @@
 #include "Interfaces/IModel/IModelDataExporter.h"
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
+#include "Interfaces/IModel/IModelTrackedComponentFactory.h"
 #include <iostream>
 #include <fstream>
 
@@ -58,5 +59,38 @@ private:
 
     //Name of the final file, holding a clean representation of the structure.
     std::string _finalFile;
+
+
+
+    /* finding the number of occurrences of a string in another strin
+     *
+     * https://codereview.stackexchange.com/questions/29611/finding-the-number-of-occurrences-of-a-string-in-another-string
+     */
+    int key_search(const std::string& s, const std::string& key);
+
+    /* Get's the names of all stored properties.
+     * 
+     * Useful for corresponding them with CSV headers. order relevant.
+    * returns Individual1
+     */
+    std::vector<std::string> getHeaderElements(IModelTrackedComponent *comp);
+   
+    /* Get's the header as one connected string
+    *
+    * Similar getHeaderElements, but for all components and having all elements of the return vector concatenated
+    * returns GlobalHeaders,Individual1,Indiviual2,...
+    */
+    std::string getHeader(IModelTrackedComponent *comp, int cnt);
+
+    /* Sets sets a property to a components.
+    */
+    void setProperty(IModelTrackedComponent* comp, std::string key, std::string val);
+
+    /* Writes a tracked component to string
+    */
+    std::string writeComponentCSV(IModelTrackedComponent* comp, int tid);
+
+
+    void addChildOfChild(IModelTrackedTrajectory *root, IModelTrackedComponent* child, IModelTrackedComponentFactory* factory, int idx);
 };
 

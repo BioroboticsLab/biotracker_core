@@ -14,14 +14,20 @@ IModelComponentEuclidian2D::IModelComponentEuclidian2D(QObject *parent) :
 
 }
 
+IModelComponentTemporal2D::IModelComponentTemporal2D(QObject *parent) :
+    IModelComponentEuclidian2D(parent)
+{
+
+}
+
 IModelTrackedPoint::IModelTrackedPoint(QObject *parent) :
-	IModelComponentEuclidian2D(parent)
+    IModelComponentTemporal2D(parent)
 {
 
 }
 
 IModelTrackedPolygon::IModelTrackedPolygon(QObject *parent) :
-	IModelComponentEuclidian2D(parent)
+    IModelComponentTemporal2D(parent)
 {
 
 }

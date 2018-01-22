@@ -3,7 +3,6 @@
 #include "TrackedComponents/TrackedComponentFactory.h"
 #include <chrono>
 
-#include "Model/TrackedComponents/TrackingRectElement.h"
 #include "settings/Settings.h"
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)

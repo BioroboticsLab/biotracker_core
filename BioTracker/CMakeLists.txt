@@ -39,6 +39,20 @@ endif()
 find_package(Boost REQUIRED system filesystem chrono thread timer program_options)
 
 
+exec_program(
+    "git"
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ARGS "log --pretty=format:%h -n 1"
+    OUTPUT_VARIABLE VERSION )
+add_definitions( -DGIT_HASH="${VERSION}" )
+message(STATUS "Configured git hash=${VERSION}")
+message(STATUS "Configured QT version=${Qt5Core_VERSION}")
+message(STATUS "Configured QT version=${Qt5Core_VERSION}")
+add_definitions( -DMyQT_VERSION="${Qt5Core_VERSION}" )
+add_definitions( -DMyCV_VERSION="${OpenCV_VERSION}" )
+add_definitions( -DMyBT_VERSION="${Boost_LIB_VERSION}" )
+
+
 add_subdirectory(Interfaces/BioTrackerInterfaces)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Plugin/LukasKanade)

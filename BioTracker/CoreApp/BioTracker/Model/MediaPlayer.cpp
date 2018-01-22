@@ -269,11 +269,8 @@ void MediaPlayer::rcvPauseState(bool state) {
 }
 
 void MediaPlayer::receivePlayerOperationDone() {
-    // Only emit this SIGNL when tracking is not active
+    // Only emit this SIGNAL when tracking is not active
 	end = std::chrono::system_clock::now();
-    //std::cout << "Printing took "
-    //          << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
-    //          << "us.\n";
 	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     if (!_paused) {
         m_currentFPS = floor(1.0 / (double(s) / 1000000.0));
