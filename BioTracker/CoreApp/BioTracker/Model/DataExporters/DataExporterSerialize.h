@@ -1,22 +1,13 @@
 #pragma once
-#include "Interfaces/IModel/IModelDataExporter.h"
-#include "Interfaces/IModel/IModelTrackedTrajectory.h"
-#include "Interfaces/IModel/IModelTrackedComponent.h"
-#include <iostream>
-#include <fstream>
 
-class DataExporterJson : public IModelDataExporter
+#include "DataExporterGeneric.h"
+
+class DataExporterSerialize : public DataExporterGeneric
 {
 	Q_OBJECT
 public:
-    DataExporterJson(QObject *parent = 0);
-	~DataExporterJson();
-
-    /**  
-     *  Opens a file for writing the passed tracking structure
-     *  @param root Pointer to the tracking structure
-	 */ 
-    void open(IModelTrackedTrajectory *root) override;
+	DataExporterSerialize(QObject *parent = 0);
+	~DataExporterSerialize();
 
     /**
     *  Add a single frame index to the output file

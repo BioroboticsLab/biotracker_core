@@ -89,22 +89,47 @@ QRectF EllipseDescriptor::boundingRect() const
 	return QRect(10, 10, 10, 10);
 }
 
+bool isInverted(int x1, int y1, int x2, int y2) {
+    if ((x1 > x2 && y1 < y2) || (x1 < x2 && y1 > y2)) {
+        return true;
+    }
+    return false;
+}
+
+#include <qstatictext.h>
+#include <qtextformat.h>
 void EllipseDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	if (!_isInit)
 		init();
 
     //TODO remove hardcoding and code duplication
-    if (_dragVectorId > 0) {
+    if (_dragVectorId >= 0) {
         QColor transparentGray = Qt::gray;
         transparentGray.setAlphaF(0.75);
         painter->setPen(QPen(transparentGray, 1, Qt::SolidLine));
         painter->drawRect(_drag.x(), _drag.y(), 10, 10);
 
-
         auto fst = _dragVectorId != 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;
-        auto snd = _dragVectorId == 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;;
-        painter->drawEllipse(QRect(fst->rect().x(), fst->rect().y(), _drag.x()-15, _drag.y()-15));
+        //auto snd = _dragVectorId == 0 ? _rectificationMarkerOrig : _rectificationMarkerEnd;
+        bool inv = isInverted(fst->rect().x(), fst->rect().y(), _drag.x(), _drag.y());
+        int x = fst->rect().x() + (_drag.x() - fst->rect().x()) / 2.0;
+        int y = fst->rect().y() + (_drag.y() - fst->rect().y()) / 2.0;
+        //QStaticText lOut;
+        //lOut.setText("Outside");
+        //QTextFormat fmt;
+        //fmt.setProperty(QTextFormat::FontPointSize, 40);
+        //lOut.setTextFormat(fmt);
+        if (inv) {
+            painter->drawText(x, y, 100, 40, Qt::AlignHCenter, "Outside");
+            painter->drawText(0, 40, "inside");
+        }
+        else 
+        {
+            painter->drawText(0, 40, "Outside");
+            painter->drawText(x, y, 100, 40, Qt::AlignHCenter, "inside");
+        }
+        painter->drawEllipse(QRect(fst->rect().x(), fst->rect().y(), _drag.x() - fst->rect().x(), _drag.y() - fst->rect().y()));
     }
 }
 

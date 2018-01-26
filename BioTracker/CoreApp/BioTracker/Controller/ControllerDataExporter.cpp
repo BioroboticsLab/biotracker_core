@@ -1,9 +1,10 @@
 #include "ControllerDataExporter.h"
-#include "Model/DataExporterCSV.h"
-#include "Model/DataExporterSerialize.h"
-#include "Model/DataExporterJson.h"
+#include "Model/DataExporters/DataExporterCSV.h"
+#include "Model/DataExporters/DataExporterSerialize.h"
+#include "Model/DataExporters/DataExporterJson.h"
 #include "settings/Settings.h"
 #include "util/types.h"
+#include <qmessagebox.h>
 
 
 ControllerDataExporter::ControllerDataExporter(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -38,7 +39,12 @@ void ControllerDataExporter::createModel() {
     else if (exporter == "Json")
         m_Model = new DataExporterJson(this);
 	else
-		m_Model = 0;
+		m_Model = nullptr;
+
+    IModelDataExporter* model;
+    if ((model = dynamic_cast<IModelDataExporter*>(getModel())) != nullptr) {
+        QObject::connect(model, &IModelDataExporter::fileWritten, this, &ControllerDataExporter::receiveFileWritten);
+    }
 }
 
 SourceVideoMetadata ControllerDataExporter::getSourceMetadata() {
@@ -98,10 +104,39 @@ void ControllerDataExporter::connectModelToController() {
 	IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
 	MediaPlayer* mplay = dynamic_cast<MediaPlayer*>(ctrM->getModel());
 
-	QObject::connect(mplay, &MediaPlayer::fwdPlayerParameters, this, &ControllerDataExporter::rcvPlayerParameters);
+    QObject::connect(mplay, &MediaPlayer::fwdPlayerParameters, this, &ControllerDataExporter::rcvPlayerParameters);
 }
 
 void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
 	qobject_cast<IModelDataExporter*>(m_Model)->setFps(parameters->m_fpsSourceVideo);
 	qobject_cast<IModelDataExporter*>(m_Model)->setTitle(parameters->m_CurrentTitle);
 }
+
+QString ControllerDataExporter::generateBasename(bool temporaryFile) {
+
+    QString path = (temporaryFile ? CFG_DIR_TEMP : CFG_DIR_TRACKS);
+    //Get all existing files and parse highest export number
+    QStringList allFiles = QDir(CFG_DIR_TEMP).entryList(QDir::NoDotAndDotDot | QDir::Files);
+
+    int maxVal = 0;
+    foreach(QString s, allFiles) {
+        int val;
+        if (sscanf(s.toStdString().c_str(), "Export_%d_*", &val) != EOF) {
+            maxVal = std::max(maxVal, val);
+        }
+    }
+    std::string current = "Export_"+std::to_string(maxVal+1)+"_";
+
+    return QString(getTimeAndDate(path.toStdString() + current, "").c_str());
+}
+
+void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
+
+    QString str = "Exported file:\n";
+    str += fname.absoluteFilePath();
+
+    int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
+        str,
+        QMessageBox::Ok);
+}
+

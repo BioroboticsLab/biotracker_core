@@ -4,30 +4,22 @@
 #include <qdebug.h>
 #include <qfile.h>
 
+#include <qdatastream.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+
 #include "Controller/ControllerDataExporter.h"
 
 DataExporterSerialize::DataExporterSerialize(QObject *parent) :
-    IModelDataExporter(parent)
+    DataExporterGeneric(parent)
 {
-	_parent = parent;
     _root = 0;
 }
 
 
 DataExporterSerialize::~DataExporterSerialize()
 {
-    //delete _root;
-}
-
-void DataExporterSerialize::open(IModelTrackedTrajectory *root) {
-    _root = root;
-    //We need to use "time(source_ms)" instead of the previous "time(source, ms)".
-    //Apparently conventional tools like Excel and OOCalc got some issues parsing this correctly (naivly search for commas...)
-    std::string baseName = getTimeAndDate(CFG_DIR_TRACKS, "");
-    _tmpFile = baseName + ".tmp.dat";
-    _finalFile = baseName + ".dat";
-    _ofs.open(_tmpFile, std::ofstream::out);
-
 }
 
 std::string DataExporterSerialize::writeTrackpoint(IModelTrackedPoint *e, int trajNumber) {
@@ -52,14 +44,6 @@ void DataExporterSerialize::finalizeAndReInit() {
     open(_root);
 }
 
-
-
-#include <qfile.h>
-#include <qdatastream.h>
-#include <qdebug.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
 void DataExporterSerialize::loadFile(std::string file){
 
 	ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
@@ -80,7 +64,7 @@ void DataExporterSerialize::loadFile(std::string file){
 
 	std::vector<int> childids;
 	for (int i = 0; i < children; i++) {
-		IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+		IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory("0"));
 		in >> *child;
 		childids.push_back(child->getId());
 		root->add(child, child->getId());
@@ -93,7 +77,7 @@ void DataExporterSerialize::loadFile(std::string file){
 		in >> trajSize;
 		//idx is the frame number
 		for (int idx = 0; idx < trajSize; idx++) {
-			IModelTrackedComponent *e = factory->getNewTrackedElement();
+			IModelTrackedComponent *e = factory->getNewTrackedElement("0");
             int cid = 0;
             in >> cid;
 			in >> *e;
@@ -110,6 +94,11 @@ void DataExporterSerialize::writeAll() {
     }
     if (_ofs.is_open()) {
         _ofs.close();
+    }
+
+    if (getMaxLinecount() <= 1) {
+        cleanup();
+        return;
     }
 
     //Create final file

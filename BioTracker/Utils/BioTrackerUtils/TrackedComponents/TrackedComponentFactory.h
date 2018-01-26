@@ -10,11 +10,12 @@ public:
     TrackedComponentFactory();
     ~TrackedComponentFactory();
 
+    QList<QString> getElementTypes() override;
     // ITrackedComponentFactory interface
 protected:
-    IModelTrackedComponent *createTrackedElement() override;
-    IModelTrackedComponent *createTrackedObject() override;
-    IModelTrackedComponent *createTrackedTrajectory() override;
+    IModelTrackedComponent *createTrackedElement(QString name) override;
+    IModelTrackedComponent *createTrackedObject(QString name) override;
+    IModelTrackedComponent *createTrackedTrajectory(QString name) override;
 };
 
 #endif // TRACKEDOBJECTFACTORY_H

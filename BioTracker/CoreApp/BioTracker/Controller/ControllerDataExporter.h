@@ -26,6 +26,7 @@ public:
 	void setComponentFactory(IModelTrackedComponentFactory* exp);
 	IModelTrackedComponentFactory* getComponentFactory() { return _factory; };
 	SourceVideoMetadata getSourceMetadata();
+    QString generateBasename(bool temporaryFile);
 
 	void loadFile(std::string file);
 
@@ -33,6 +34,7 @@ public:
     void receiveReset();
 	void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
+    void receiveFileWritten(QFileInfo fname);
 
 protected:
 	void createModel() override;

@@ -149,13 +149,14 @@ void RectDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		init();
 
     //TODO remove hardcoding and code duplication
-    if (_dragVectorId > 0 && _dragType != BiotrackerTypes::AreaType::NONE) {
+    if (_dragVectorId >= 0 && _dragType != BiotrackerTypes::AreaType::NONE) {
         QColor transparentGray = Qt::gray;
         transparentGray.setAlphaF(0.75);
         painter->setPen(QPen(transparentGray, 1, Qt::SolidLine)); 
         painter->drawRect(_drag.x()-10, _drag.y()-10, 20, 20);
-
-        auto fst = _rectification[(_dragVectorId - 1) % 4];
+        int fstId = (_dragVectorId - 1) % 4;
+        fstId = (fstId == -1 ? 3 : fstId);
+        auto fst = _rectification[fstId];
         auto snd = _rectification[(_dragVectorId + 1) % 4];
         painter->drawLine(QLine(fst->rect().x() + 10, fst->rect().y() + 10, _drag.x(), _drag.y()));
         painter->drawLine(QLine(snd->rect().x() + 10, snd->rect().y() + 10, _drag.x(), _drag.y()));
