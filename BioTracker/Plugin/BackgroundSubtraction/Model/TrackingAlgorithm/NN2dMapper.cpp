@@ -130,8 +130,27 @@ std::tuple<std::vector<FishPose>, std::vector<float>> NN2dMapper::getNewPoses(Tr
             bestMatchesPoses[i].set_orientation_deg(dir * 180.0f / CV_PI);
         }
 
+	
+		//TODO move this to algorithm because this does not really take user manipulation into consideration
+		//TODO include difference between estimated and current
+		//simple smoothing out big angle jumps
+		float lastConfidentAngle = _mapLastConfidentAngle.at(i); //this is mot really working if we jump some frmae back/fwd
+		double dir = bestMatchesPoses[i].orientation_rad();
+		if(!std::isnan(lastConfidentAngle)){
+			const float deviationFromLast = CvHelper::angleDifference(lastConfidentAngle, dir);
+			if (std::abs(deviationFromLast) > CV_PI * 0.2 ){ // 36Â°
+				dir += deviationFromLast * 0.5; //reduce big jumps
+			}
+			else{
+				dir += deviationFromLast * 0.1;//smooth out small changes
+			}
+			 while (dir >  2 * CV_PI) dir -= 2 * CV_PI;
+            while (dir < -2 * CV_PI) dir += 2 * CV_PI;
+			bestMatchesPoses[i].set_orientation_rad(dir);
+            bestMatchesPoses[i].set_orientation_deg(dir * 180.0f / CV_PI);
+		}
+		_mapLastConfidentAngle[i] = dir;
 	}
-
 	return std::tuple<std::vector<FishPose>, std::vector<float>>(bestMatchesPoses,bestMatchesProps);
 }
 
@@ -189,7 +208,7 @@ bool NN2dMapper::correctAngle(int trackid, FishPose &pose)
 				proposedAngle = lastConfidentAngle - 0.1f * deviationFromLast;
 		}
 	}
-	// angle should be between 0° and 360°
+	// angle should be between 0ï¿½ and 360ï¿½
 	if (proposedAngle > 2.0f * CV_PI) proposedAngle -= 2.0f * CV_PI;
 	else if (proposedAngle < 0.0f)    proposedAngle += 2.0f * CV_PI;
 	assert(!std::isnan(proposedAngle));
@@ -216,7 +235,7 @@ TrackedTrajectory* getChildOfType(TrackedTrajectory* tree, int tid) {
 		TrackedTrajectory* t = dynamic_cast<TrackedTrajectory*>(tree->getChild(i));
 		if (t && cid==tid && t->getValid()) {
 			return t;
-		}else if (t)
+		}else if (t && t->getValid())
 			cid++;
 	}
 	return 0;
@@ -226,7 +245,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 {
 	//Get corresponding trajectory
 	TrackedTrajectory* t = getChildOfType((TrackedTrajectory*)_tree, trackid);
-    return 0;
+    //return 0;
 
 	// can't give estimate if not enough poses available
 	if (t->size() < 3) return std::numeric_limits<float>::quiet_NaN();
@@ -235,7 +254,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	int start = std::max(t->size()-20, 0);
 	TrackedElement* e = (TrackedElement*)t->getChild(start);
 	if (!e)
-		return 0;
+		return std::numeric_limits<float>::quiet_NaN();
 	cv::Point2f nextPoint = e->getFishPose().position_cm();
 	cv::Point2f positionDerivative(0.0f, 0.0f);
 
@@ -250,7 +269,7 @@ float NN2dMapper::estimateOrientationRad(int trackid, float *confidence)
 	{
 		TrackedElement* ecur = (TrackedElement*)t->getChild(i);
 		if (!ecur)
-			return 0;
+			return std::numeric_limits<float>::quiet_NaN();
 		cv::Point2f currentPoint = ecur->getFishPose().position_cm();
 		const cv::Point2f oneStepDerivative = nextPoint - currentPoint;
 

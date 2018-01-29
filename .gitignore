@@ -114,3 +114,6 @@ CMakeFiles
 /BioTracker/Plugin/Sample/Sample.tracker_autogen/mocs_compilation.cpp
 /BioTracker/Utils/BioTrackerUtils/Biotracker_utility_autogen/mocs_compilation.cpp
 /BioTracker/Plugin/FlyHeart
+/home/jonas/git/biotracker_core/BiotrackerCore.ini
+/home/jonas/git/biotracker_core/BSTrackerConfig.ini
+/home/jonas/git/biotracker_core/.vscode

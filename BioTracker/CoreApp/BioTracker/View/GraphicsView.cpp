@@ -9,8 +9,8 @@
 #include <QGraphicsItem>
 #include <QScrollBar>
 #include <QDebug>
-//#include <QtOpenGL/QGLWidget>
-#include <QOpenGlWidget>
+#include <QtOpenGL/QGLWidget>
+//#include <QOpenGlWidget>
 //#include <QSurfaceFormat>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
@@ -21,16 +21,18 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 
 	this->setScene(m_GraphicsScene);
 
-	QOpenGLWidget* openGLWidget = new QOpenGLWidget();
-	QSurfaceFormat surfaceFormat = QSurfaceFormat();
+	// QOpenGLWidget* openGLWidget = new QOpenGLWidget();
+	// QSurfaceFormat surfaceFormat = QSurfaceFormat();
 
-	surfaceFormat.setRenderableType(QSurfaceFormat::OpenGL);
-	surfaceFormat.setSamples(8);
-	surfaceFormat.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+	// surfaceFormat.setRenderableType(QSurfaceFormat::OpenGL);
+	// surfaceFormat.setSamples(8);
+	// surfaceFormat.setSwapBehavior(QSurfaceFormat::TripleBuffer);
 
-	openGLWidget->setFormat(surfaceFormat);
+	// openGLWidget->setFormat(surfaceFormat);
 
-	this->setViewport(openGLWidget);
+	//this->setViewport(openGLWidget);
+	this->setViewport(new QGLWidget());
+	
 	this->setBackgroundBrush(QBrush(Qt::white));
 
 	this->show();

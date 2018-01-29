@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/CoreApp/BioTracker/Biotracker_core",
-            "args": ["--usePlugin=/home/jonas/git/biotracker_core/build/Plugin/BackgroundSubtraction/libBackgroundSubtraction.tracker.so"],
+            "args": ["--usePlugin=/home/jonas/git/biotracker_core/build/Plugin/BackgroundSubtraction/libBackgroundSubtraction.tracker.so", "--video=/home/jonas/Videos/CameraCaptureMon_Jan_15_16_57_46_2018.avi.mkv"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
