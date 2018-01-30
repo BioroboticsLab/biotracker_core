@@ -26,6 +26,7 @@ class NotificationLogBrowser : public IViewWidget
 	private:
 		Ui::NotificationLogBrowser *ui;
 		QTextBrowser *browser;
+		QFont m_font;
 
 };
 

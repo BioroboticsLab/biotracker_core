@@ -215,7 +215,7 @@ void DataExporterCSV::writeAll() {
 void DataExporterCSV::close() {
     _ofs.close();
 
-    if (!_root || _root->size() == 0) {
+    if ((!_root || _root->size() == 0) && _tmpFile!="" ) {
         //Remove temporary file
         QFile file(_tmpFile.c_str());
         file.remove();

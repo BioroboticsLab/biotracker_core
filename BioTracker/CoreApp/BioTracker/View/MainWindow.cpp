@@ -32,7 +32,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::addVideoControllWidget(IView* widget) {
-    QLayout* layout = new QGridLayout(this);
+    QLayout* layout = new QGridLayout();
     layout->addWidget(dynamic_cast<QWidget*>(widget));
     ui->videoControls->setLayout(layout);
 }
@@ -40,6 +40,7 @@ void MainWindow::addVideoControllWidget(IView* widget) {
 void MainWindow::addVideoView(IView* videoView) {
 	m_graphView = dynamic_cast<GraphicsView*>(videoView);
 	m_graphView->setParent(ui->trackingArea);
+
     ui->videoViewLayout->addWidget(m_graphView);
 }
 
@@ -111,7 +112,7 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 	}
 }
 
-void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged() {
+void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged(QString s) {
 	QString ct = ui->comboBox_TrackerSelect->currentText();
     if (!ct.isEmpty() && _previouslySelectedTracker != ct) {
         _previouslySelectedTracker = ct;

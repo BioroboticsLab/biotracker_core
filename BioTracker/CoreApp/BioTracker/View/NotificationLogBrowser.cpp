@@ -1,5 +1,5 @@
 #include "NotificationLogBrowser.h"
-#include "ui_CoreParameterView.h"
+#include "QVBoxLayout"
 
 
 NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *controller, IModel *model) :
@@ -11,9 +11,13 @@ NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *con
 	setLayout(layout);
 
 	browser = new QTextBrowser(this);
+	browser->setLineWrapMode(QTextEdit::NoWrap);
+
 	layout->addWidget(browser);
 
-
+	m_font = QFont();
+	m_font.setPointSize(8);
+	setFont(m_font);
 
 	resize(200, 400);
 
@@ -34,15 +38,15 @@ void NotificationLogBrowser::outputMessage(QtMsgType type, const QString & msg)
 		break;
 
 	case QtWarningMsg:
-		browser->append(tr("— WARNING: %1").arg(msg));
+		browser->append(tr("<span style='color:orange;'>- %1 </span>").arg(msg));
 		break;
 
 	case QtCriticalMsg:
-		browser->append(tr("— CRITICAL: %1").arg(msg));
+		browser->append(tr("<span style='color:red;'>- %1 </span>").arg(msg));
 		break;
 
 	case QtFatalMsg:
-		browser->append(tr("— FATAL: %1").arg(msg));
+		browser->append(tr("<span style='color:red; font-weight:bold'>- %1 </span>").arg(msg));
 		break;
 	}
 }

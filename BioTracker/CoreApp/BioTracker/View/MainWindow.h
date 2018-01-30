@@ -62,7 +62,7 @@ Q_SIGNALS:
 
 	void on_actionShowActionList_triggered();
 
-	void on_comboBox_TrackerSelect_currentIndexChanged();
+	void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
 
 //menu->Extras
 	void on_actionSettings_triggered();

@@ -117,3 +117,7 @@ CMakeFiles
 /home/jonas/git/biotracker_core/BiotrackerCore.ini
 /home/jonas/git/biotracker_core/BSTrackerConfig.ini
 /home/jonas/git/biotracker_core/.vscode
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/c_cpp_properties.json

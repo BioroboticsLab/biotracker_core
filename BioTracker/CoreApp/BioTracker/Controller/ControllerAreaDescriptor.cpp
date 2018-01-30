@@ -101,10 +101,10 @@ void ControllerAreaDescriptor::connectControllerToController()
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
 		auto viewController = qobject_cast<ControllerGraphicScene*>(ctr);
 		auto view = dynamic_cast<GraphicsView*> (viewController->getView());
-		AreaDescriptor* rd = static_cast<AreaDescriptor*>(getView());
-		AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
-		view->addGraphicsItem(rd);
-		view->addGraphicsItem(ad);
+		// AreaDescriptor* rd = static_cast<AreaDescriptor*>(getView());
+		// AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
+		// view->addGraphicsItem(rd);
+		// view->addGraphicsItem(ad);
 
 		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAreaDescriptor::mousePressEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAreaDescriptor::mouseReleaseEvent, Qt::DirectConnection);

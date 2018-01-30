@@ -22,6 +22,7 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 }
 
 void ControllerMainWindow::loadVideo(QString str) {
+
     Q_EMIT emitOnLoadMedia(str.toStdString());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
@@ -35,6 +36,7 @@ void ControllerMainWindow::loadTracker(QString str) {
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
     std::string str = files.empty() ? "" : files.front().string();
+    
     Q_EMIT emitOnLoadMedia(str);
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);

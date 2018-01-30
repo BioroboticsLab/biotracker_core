@@ -1,6 +1,6 @@
 #include "ControllerNotifications.h"
 #include "View/NotificationLogBrowser.h"
-#include "qDebug"
+#include "qdebug.h"
 
 IView*  view;
 
@@ -17,8 +17,7 @@ void ControllerNotifications::createView()
 {
 	m_View = new NotificationLogBrowser();
 	view = m_View;
-	qInstallMessageHandler(messageHandler);
-	qDebug() << "BLALAAL";
+	//qInstallMessageHandler(messageHandler);
 
 }
 
