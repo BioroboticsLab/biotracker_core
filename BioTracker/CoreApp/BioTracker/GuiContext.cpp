@@ -12,6 +12,7 @@
 #include "Controller/ControllerAreaDescriptor.h"
 #include "Controller/ControllerCoreParameter.h"
 #include "Controller/ControllerCommands.h"
+#include "Controller/ControllerNotifications.h"
 #include "QPointer"
 
 #include "QDebug"
@@ -31,6 +32,8 @@ GuiContext::GuiContext(QObject *parent) :
 	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 	QPointer< IController > CoreParameterController = new ControllerCoreParameter(this, this, ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	QPointer< IController > CommandsController = new ControllerCommands(this, this, ENUMS::CONTROLLERTYPE::COMMANDS);
+	QPointer< IController > NotificationController = new ControllerNotifications(this, this, ENUMS::CONTROLLERTYPE::NOTIFICATION);
+
 	
 //	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
@@ -47,6 +50,8 @@ GuiContext::GuiContext(QObject *parent) :
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR, AreaDescriptorController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::COREPARAMETER, CoreParameterController);
 	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::COMMANDS, CommandsController);
+	m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::NOTIFICATION, NotificationController);
+
 
 }
 
