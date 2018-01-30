@@ -17,7 +17,7 @@ void ControllerNotifications::createView()
 {
 	m_View = new NotificationLogBrowser();
 	view = m_View;
-	//qInstallMessageHandler(messageHandler);
+	qInstallMessageHandler(messageHandler);
 
 }
 
