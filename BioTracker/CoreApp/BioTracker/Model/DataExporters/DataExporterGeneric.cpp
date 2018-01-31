@@ -15,10 +15,9 @@ DataExporterGeneric::DataExporterGeneric(QObject *parent) :
 void DataExporterGeneric::open(IModelTrackedTrajectory *root) {
     _root = root;
     
-    _tmpFile = dynamic_cast<ControllerDataExporter*>(_parent)->generateBasename(true).toStdString() + ".tmp.csv"; 
-    _finalFile = dynamic_cast<ControllerDataExporter*>(_parent)->generateBasename(false).toStdString() + ".csv";
+    _tmpFile = dynamic_cast<ControllerDataExporter*>(_parent)->generateBasename(true).toStdString() + ".tmp" + getSuffix().toStdString();
+    _finalFile = dynamic_cast<ControllerDataExporter*>(_parent)->generateBasename(false).toStdString() + getSuffix().toStdString();
     _ofs.open(_tmpFile, std::ofstream::out);
-
 }
 
 int DataExporterGeneric::getMaxLinecount()

@@ -83,21 +83,9 @@ public:
 	void operate();
 
 private:
-	//QString _name;
     std::chrono::system_clock::time_point _timeSysclck;
 	QString _unit = "cm";
-	FishPose _pose;/*
-	float _x;
-	float _y;
-	float _w;
-	float _h;
-	float _deg;
-	float _rad;
-	int _id;
-	std::chrono::system_clock::time_point _time;
-	bool _valid;
-	bool _pressed;
-	bool _fixed;*/
+	FishPose _pose;
 };
 
 #endif // TRACKEDELEMENT_H

@@ -8,6 +8,7 @@
 #include <QDataStream>
 #include <ostream>
 
+
 /**
 * This is the common interface for all TrackedComponents (IModelTrackedTrajectory and any leaf class).
 * It is part of the Composite Pattern and is the equivalent to the abstract Component class.
@@ -16,7 +17,6 @@
 * has a methode called operate() that needs to be implemented
 * by all derivatives of this interface class.
 */
-
 
 /*
 *	Blank component
@@ -52,6 +52,10 @@ protected:
     IModelTrackedComponent *_parentNode = nullptr;
 };
 
+
+Q_DECLARE_METATYPE(QList<IModelTrackedComponent*>)
+QDataStream &operator<<(QDataStream &ds, const QList<IModelTrackedComponent*> &data);
+QDataStream &operator>>(QDataStream &ds, QList<IModelTrackedComponent*> &data);
 QDataStream &operator<<(QDataStream &out, const IModelTrackedComponent &painting);
 QDataStream &operator>>(QDataStream &in, IModelTrackedComponent &painting);
 

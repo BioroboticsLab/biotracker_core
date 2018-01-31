@@ -26,7 +26,8 @@ public:
 		writeAll();
 	};
 
-	virtual void loadFile(std::string file) = 0;
+    virtual void loadFile(std::string file) = 0;
+    virtual QString getSuffix() = 0;
 
 public:
 	IModelTrackedTrajectory *_root;

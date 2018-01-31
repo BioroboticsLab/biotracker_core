@@ -8,10 +8,9 @@
 #include "util/types.h"
 
 #include "util/CLIcommands.h"
-
+#include "Interfaces/IModel/IModelTrackedComponent.h"
 
 int main(int argc, char* argv[]) {
-    
     QApplication app(argc, argv);
 	CLI::optionParser(argc, argv);
 
@@ -24,6 +23,7 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
     qRegisterMetaType<playerParameters*>("playerParameters*");
 	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
+    qRegisterMetaTypeStreamOperators<QList<IModelTrackedComponent*>>("QList<IModelTrackedComponent*>");
 
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_PLUGINS));
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_VIDEOS));

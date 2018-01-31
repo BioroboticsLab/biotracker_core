@@ -32,22 +32,13 @@ public:
     */
     void finalizeAndReInit() override;
 
-private:
+    QString getSuffix() { return ".dat"; };
 
-	QObject *_parent = nullptr;
+private:
 
     /**
     *  helper function to generate a part of an output line
     */
     std::string writeTrackpoint(IModelTrackedPoint *e, int trajNumber);
-
-	IModelTrackedTrajectory *_root;
-	std::ofstream _ofs;
-    
-    //Name of the temporary file to write to
-    std::string _tmpFile;
-
-    //Name of the final file, holding a clean representation of the structure.
-    std::string _finalFile;
 };
 

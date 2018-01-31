@@ -44,10 +44,12 @@ void DataExporterSerialize::finalizeAndReInit() {
     open(_root);
 }
 
+extern IModelTrackedComponentFactory* factory;
+
 void DataExporterSerialize::loadFile(std::string file){
 
 	ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
-	IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
+    factory = ctr ? ctr->getComponentFactory() : nullptr;
 	if (!factory) {
 		return;
 	}
@@ -56,9 +58,8 @@ void DataExporterSerialize::loadFile(std::string file){
 	f.open(QIODevice::ReadOnly);
 	QDataStream in(&f);
 
-
-	IModelTrackedTrajectory *root = _root;
-	in >> *root;
+    IModelTrackedTrajectory *root = _root;
+    in >> *root;
 	int children = -1;
 	in >> children;
 
@@ -104,8 +105,7 @@ void DataExporterSerialize::writeAll() {
     //Create final file
 	QFile file(_finalFile.c_str());
 	file.open(QIODevice::WriteOnly);
-
-	QDataStream out(&file); 
+	QDataStream out(&file);
 
 	//serialize tree nodes (!= leafs)
 	out << *_root;

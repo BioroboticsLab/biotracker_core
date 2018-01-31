@@ -61,6 +61,7 @@ class MediaPlayerStateMachine : public IModel {
     void receiveStopCommand();
     void receivePlayCommand();
     void receiveGoToFrame(int frame);
+    void receiveTargetFps(double fps);
 
 	void receivetoggleRecordImageStream();
 

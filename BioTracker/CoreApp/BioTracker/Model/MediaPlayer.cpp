@@ -125,6 +125,14 @@ double MediaPlayer::getCurrentFPS() {
     return m_currentFPS;
 }
 
+double MediaPlayer::getTargetFPS() {
+    return m_targetFPS;
+}
+void MediaPlayer::setTargetFPS(double fps) {
+    m_targetFPS = fps; 
+    m_Player->receiveTargetFps(fps);
+}
+
 QString MediaPlayer::getCurrentFileName() {
     return m_CurrentFilename;
 }
@@ -240,7 +248,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 			pix = new QPixmap(rview.size().toSize()); //17us
 
 		QPainter *paint = new QPainter(pix); //21us
-
+        
 		if(!m_recordScaled)
 			m_gv->scene()->render(paint); //8544us
 		else
@@ -279,7 +287,6 @@ void MediaPlayer::receivePlayerOperationDone() {
         m_currentFPS = 0;
     }
 
-	//if (!m_TrackingIsActive || !m_trackingRunning)
     if(m_trackingDone == true || !m_TrackingIsActive)
 		Q_EMIT runPlayerOperation();
 

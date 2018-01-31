@@ -31,14 +31,14 @@ public:
     */
     void finalizeAndReInit() override;
 
+    QString getSuffix() { return ".csv"; };
+
 private:
 
     /**
     *  helper function to generate a part of an output line
     */
     std::string writeTrackpoint(IModelTrackedPoint *e, int trajNumber);
-
-	IModelTrackedTrajectory *_root;
 
     std::string _separator;
 

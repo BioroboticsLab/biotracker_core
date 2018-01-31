@@ -37,8 +37,6 @@ public:
     void triggerRecalcValid();
 
 private:
-	QList<IModelTrackedComponent*> _TrackedComponents;
-
     int g_calcValid = 1;
     int g_validCount = 0;
     int _size = 0;

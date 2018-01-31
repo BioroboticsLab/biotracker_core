@@ -20,31 +20,10 @@ ControllerDataExporter::~ControllerDataExporter()
 }
 
 void ControllerDataExporter::connectControllerToController() {
-	//IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-	//QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
-	//mainWin->addVideoControllWidget(m_View);
 }
 
 void ControllerDataExporter::createModel() {
-    if (getModel())
-        delete getModel();
-
-	//Grab the codec from config file
-	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-	std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
-	if (exporter == "CSV")
-		m_Model = new DataExporterCSV(this);
-    else if (exporter == "Serialize")
-        m_Model = new DataExporterSerialize(this);
-    else if (exporter == "Json")
-        m_Model = new DataExporterJson(this);
-	else
-		m_Model = nullptr;
-
-    IModelDataExporter* model;
-    if ((model = dynamic_cast<IModelDataExporter*>(getModel())) != nullptr) {
-        QObject::connect(model, &IModelDataExporter::fileWritten, this, &ControllerDataExporter::receiveFileWritten);
-    }
+    m_Model = nullptr;
 }
 
 SourceVideoMetadata ControllerDataExporter::getSourceMetadata() {
@@ -72,7 +51,28 @@ void ControllerDataExporter::createView() {
 }
 
 void ControllerDataExporter::setDataStructure(IModel* exp) {
-	qobject_cast<IModelDataExporter*>(m_Model)->open(static_cast<IModelTrackedTrajectory*>(exp));
+    if (getModel())
+        delete getModel();
+
+    //Grab the codec from config file
+    BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+    std::string exporter = exporterList[set->getValueOrDefault<int>(CFG_EXPORTER, 0)];
+    if (exporter == "CSV")
+        m_Model = new DataExporterCSV(this);
+    else if (exporter == "Serialize")
+        m_Model = new DataExporterSerialize(this);
+    else if (exporter == "Json")
+        m_Model = new DataExporterJson(this);
+    else
+        m_Model = nullptr;
+
+    qobject_cast<IModelDataExporter*>(m_Model)->open(static_cast<IModelTrackedTrajectory*>(exp));
+
+    IModelDataExporter* model;
+    if ((model = dynamic_cast<IModelDataExporter*>(getModel())) != nullptr) {
+        QObject::connect(model, &IModelDataExporter::fileWritten, this, &ControllerDataExporter::receiveFileWritten);
+    }
+
 }
 
 void ControllerDataExporter::setComponentFactory(IModelTrackedComponentFactory* exp) {

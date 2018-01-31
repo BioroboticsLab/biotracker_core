@@ -114,6 +114,11 @@ void MediaPlayerStateMachine::receiveGoToFrame(int frame) {
 	setNextState(IPlayerState::STATE_GOTOFRAME);
 }
 
+void MediaPlayerStateMachine::receiveTargetFps(double fps) {
+    m_PlayerParameters->m_fpsTarget = fps;
+    static_cast<PStatePlay*>(m_States.value(IPlayerState::STATE_PLAY))->setFps(fps);
+}
+
 void MediaPlayerStateMachine::receivetoggleRecordImageStream() {
 	if (m_stream)
 		m_PlayerParameters->m_RecI = m_stream->toggleRecord();
@@ -133,12 +138,6 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
 	m_PlayerParameters->m_Play = stateParam.m_Play;
 	m_PlayerParameters->m_Stop = stateParam.m_Stop;
 
-	//end of video reached
-	//if (m_PlayerParameters->m_CurrentFrameNumber == m_PlayerParameters->m_TotalNumbFrames - 1) {
-	//	m_PlayerParameters->m_Forw = false;
-	//	m_PlayerParameters->m_Play = false;
-	//}
-
 	m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
 
 	m_PlayerParameters->m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
@@ -153,7 +152,6 @@ void MediaPlayerStateMachine::emitSignals() {
 
 void MediaPlayerStateMachine::setNextState(IPlayerState::PLAYER_STATES state) {
 	m_NextPlayerState = m_States.value(state);
-	//m_CurrentPlayerStateLabel = state;
 
 	Q_EMIT emitPlayerOperationDone();
 

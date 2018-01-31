@@ -98,6 +98,7 @@ class MediaPlayer : public IModel {
   public:
     void setTrackingActive();
     void setTrackingDeactive();
+    void setTargetFPS(double fps);
 
     bool getPlayState();
     bool getForwardState();
@@ -116,6 +117,7 @@ class MediaPlayer : public IModel {
     size_t getCurrentFrameNumber();
     double getFpsOfSourceFile();
     double getCurrentFPS();
+    double getTargetFPS();
     QString getCurrentFileName();
     std::shared_ptr<cv::Mat> getCurrentFrame();
 
@@ -175,6 +177,7 @@ class MediaPlayer : public IModel {
     size_t m_CurrentFrameNumber;
     double m_fpsOfSourceFile;
     double m_currentFPS;
+    double m_targetFPS;
     QString m_CurrentFilename;
     std::shared_ptr<cv::Mat> m_CurrentFrame;
 

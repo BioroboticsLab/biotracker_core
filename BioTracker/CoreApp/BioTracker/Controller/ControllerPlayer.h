@@ -79,6 +79,8 @@ class ControllerPlayer : public IController {
 
 		int recordInput();
 
+        void setTargetFps(double fps);
+
 	void takeScreenshot();
 
 	// IController interface
