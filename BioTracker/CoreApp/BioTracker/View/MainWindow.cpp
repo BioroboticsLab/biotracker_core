@@ -71,6 +71,18 @@ void MainWindow::addCoreElementsView(IView * coreView)
 	_currentCoreView = graphObj;
 }
 
+void MainWindow::addNotificationBrowser(IView * notificationBrowser)
+{
+	QWidget* notificationWidget = dynamic_cast<QWidget*>(notificationBrowser);
+	if (notificationWidget) {
+		notificationWidget->updateGeometry();
+		
+		ui->toolBox->addItem(notificationWidget, QString("Notifications"));
+
+		notificationWidget->setVisible(1);
+	}
+}
+
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
 	if (_currentCoreParameterView) {
@@ -98,14 +110,17 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
 	if (coreParameter) {
-		ui->widgetParameterAreaInnerCanvas->updateGeometry();
+		ui->widgetParameterAreaOuterCanvas->updateGeometry();
 		coreParameter->updateGeometry();
-		coreParameter->setParent(ui->widgetParameterAreaInnerCanvas);
+		coreParameter->setContentsMargins(QMargins(0, 0, 0, 0));
+		coreParameter->setParent(ui->widgetParameterAreaOuterCanvas);
 
 		QHBoxLayout* hLayout = new QHBoxLayout;
 		hLayout->addWidget(coreParameter, 100, 0);
+		hLayout->setContentsMargins(QMargins(0,0,0,0)); //left, top, right, bottom
+		hLayout->setMargin(0);
 
-		ui->widgetParameterAreaInnerCanvas->setLayout(hLayout);
+		ui->widgetParameterAreaOuterCanvas->setLayout(hLayout);
 
 		coreParameter->setVisible(1);
 		_currentCoreParameterView = coreParameterView;

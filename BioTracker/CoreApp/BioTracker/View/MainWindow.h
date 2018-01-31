@@ -32,6 +32,7 @@ class MainWindow : public IViewMainWindow {
 	void addCoreParameterView(IView* coreParameterView);
 	void addTrackerElementsView(IView *elemView);
 	void addCoreElementsView(IView* coreView);
+	void addNotificationBrowser(IView* notificationBrowser);
     void setTrackerList(QStringListModel* trackerList, QString current);
 
     void activeTrackingCheckBox();

@@ -1,5 +1,6 @@
 #include "ControllerNotifications.h"
 #include "View/NotificationLogBrowser.h"
+#include "ControllerMainWindow.h"
 #include "qdebug.h"
 
 IView*  view;
@@ -27,6 +28,11 @@ void ControllerNotifications::connectModelToController()
 
 void ControllerNotifications::connectControllerToController()
 {
+	// Add notification browser to Main Window
+	IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
+
+	ctrMainWindow->setNotificationBrowserWidget(m_View);
 }
 
 

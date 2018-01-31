@@ -8,12 +8,13 @@ NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *con
 {
 	//ui->setupUi(this);
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	setLayout(layout);
 
 	browser = new QTextBrowser(this);
 	browser->setLineWrapMode(QTextEdit::NoWrap);
 
 	layout->addWidget(browser);
+
+	setLayout(layout);
 
 	m_font = QFont();
 	m_font.setPointSize(8);

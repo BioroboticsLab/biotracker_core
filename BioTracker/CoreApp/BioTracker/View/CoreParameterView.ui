@@ -119,6 +119,9 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QScrollArea" name="scrollArea">
        <property name="enabled">
@@ -222,6 +225,9 @@
          <bool>true</bool>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -236,6 +242,9 @@
          </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="sizeConstraint">
             <enum>QLayout::SetNoConstraint</enum>
            </property>
@@ -257,7 +266,20 @@
               <attribute name="title">
                <string>tracker</string>
               </attribute>
-              <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+              </layout>
              </widget>
              <widget class="QWidget" name="tab_view">
               <property name="sizePolicy">
@@ -270,17 +292,20 @@
                <string>view</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="spacing">
+                <number>0</number>
+               </property>
                <property name="leftMargin">
-                <number>5</number>
+                <number>0</number>
                </property>
                <property name="topMargin">
-                <number>5</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>5</number>
+                <number>0</number>
                </property>
                <property name="bottomMargin">
-                <number>5</number>
+                <number>0</number>
                </property>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout">
@@ -318,7 +343,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>302</width>
+                      <width>312</width>
                       <height>1052</height>
                      </rect>
                     </property>
@@ -465,6 +490,9 @@
                                </property>
                                <property name="text">
                                 <string>Select all</string>
+                               </property>
+                               <property name="shortcut">
+                                <string>Ctrl+A</string>
                                </property>
                               </widget>
                              </item>

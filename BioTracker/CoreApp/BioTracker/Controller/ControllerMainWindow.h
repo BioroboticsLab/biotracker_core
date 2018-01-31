@@ -59,6 +59,7 @@ class ControllerMainWindow : public IController {
     void setTrackerParamterWidget(IView* widget);
 	void setTrackerElementsWidget(IView *widget);
 	void setCoreElementsWidget(IView* widget);
+	void setNotificationBrowserWidget(IView * widget);
 
 	void loadTrajectoryFile(std::string file);
 

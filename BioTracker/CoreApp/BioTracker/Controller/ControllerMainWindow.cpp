@@ -78,6 +78,12 @@ void ControllerMainWindow::setCoreElementsWidget(IView * widget)
 	dynamic_cast<MainWindow*>(m_View)->addCoreElementsView(widget);
 }
 
+void ControllerMainWindow::setNotificationBrowserWidget(IView* widget)
+{
+	dynamic_cast<MainWindow*>(m_View)->addNotificationBrowser(widget);
+}
+
+
 void ControllerMainWindow::loadTrajectoryFile(std::string file) {
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
 	static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
