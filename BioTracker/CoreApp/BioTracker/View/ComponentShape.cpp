@@ -283,7 +283,8 @@ void ComponentShape::trace()
 
 	//check if number of tracing children in tracing layer is correct
 	//delete/add the difference
-	while (m_tracingLayer->childItems().size() > (int)floor(m_tracingLength / m_tracingSteps)) {
+	int initialSize = m_tracingLayer->childItems().size();
+	while (m_tracingLayer->childItems().size() > 0) {
 		delete m_tracingLayer->childItems()[0];
 	}
 
@@ -594,6 +595,8 @@ void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * histo
 		//set colors
 		tracePoint->setPen(pen);
 		tracePoint->setBrush(brush);
+
+		qDebug() << m_tracingLayer->childItems().size();
 
 	}
 	else if (this->data(1) == "ellipse") {

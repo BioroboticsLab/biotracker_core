@@ -28,7 +28,7 @@ void RotationHandle::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setBrush(QBrush(Qt::red));
 
 	painter->drawEllipse(QRect(-2, -2, 4, 4));
-	painter->drawRect(boundingRect());
+	//painter->drawRect(boundingRect());
 }
 
 void RotationHandle::mousePressEvent(QGraphicsSceneMouseEvent * event)
