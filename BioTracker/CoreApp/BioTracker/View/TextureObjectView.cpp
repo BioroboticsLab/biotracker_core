@@ -24,12 +24,13 @@ void TextureObjectView::getNotified()
 
 		QRectF currentBoundingRect = this->boundingRect();
 
-		//check if bounding rect changed -> this means that a new video has been loaded right?
+		//check if bounding rect changed -> this means that a new video has been loaded, right?
 		if (currentBoundingRect != _oldBoundingRect) {
-			scene->setSceneRect(currentBoundingRect);
+			QRectF boundingWithMargins = currentBoundingRect.marginsAdded(QMarginsF(150, 150, 150, 150));
+			scene->setSceneRect(boundingWithMargins);
 
 			GraphicsView* view = dynamic_cast<GraphicsView*>(scene->views()[0]);
-			view->fitInView(currentBoundingRect, Qt::KeepAspectRatio);
+			view->fitInView(boundingWithMargins, Qt::KeepAspectRatio);
 			
 			_oldBoundingRect = currentBoundingRect;
 		}

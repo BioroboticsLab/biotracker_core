@@ -12,7 +12,6 @@
 
 AnnotationsView::~AnnotationsView()
 {
-
 }
 
 void AnnotationsView::prepareUpdate()
@@ -38,6 +37,7 @@ QRectF AnnotationsView::boundingRect() const
 
 void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+	setZValue(-1);
 	auto model = static_cast<const Annotations*>(getModel());
 	for (auto &annotation : model->annotations)
 	{

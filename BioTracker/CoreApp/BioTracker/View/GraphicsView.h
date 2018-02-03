@@ -20,6 +20,9 @@ public:
 	void mouseReleaseEvent(QMouseEvent*event) override;
 	void mouseMoveEvent(QMouseEvent*event) override;
 	void keyReleaseEvent(QKeyEvent *event) override;
+	void drawForeground(QPainter * painter, const QRectF & rect) override;
+
+
 
     // IGraphicsView interface
 public Q_SLOTS:
@@ -33,6 +36,7 @@ protected:
 private:
     QGraphicsItem *m_BackgroundImage;
 	QPoint m_ViewportDragOrigin{ 0, 0 };
+	QPoint m_cursorPos;
 
 Q_SIGNALS:
 	// If you connect to these signals, you MUST use Qt::DirectConnection.

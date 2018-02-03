@@ -181,9 +181,18 @@ void Annotations::AnnotationArrow::paint(QPainter * painter, const QStyleOptionG
 	{
 		painter->save();
 		QPen thick{ painter->pen() };
-		thick.setWidthF(thick.widthF()* 2.f);
+		thick.setWidthF(thick.widthF()* 2.5f);
 		painter->setPen(thick);
 		painter->drawPoint(this->origin);
+		painter->restore();
+	}
+	// Draw the arrowhead slightly thinner.
+	{
+		painter->save();
+		QPen thin{ painter->pen() };
+		thin.setWidthF(thin.widthF()* 0.5f);
+		painter->setPen(thin);
+		painter->drawPoint(this->arrowHead);
 		painter->restore();
 	}
 	Annotation::drawHandleLocation(painter, origin);
