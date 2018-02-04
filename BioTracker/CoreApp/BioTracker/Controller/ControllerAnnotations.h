@@ -37,6 +37,8 @@ protected:
 		None,
 		CreateArrow,
 		CreateLabel,
+		CreateRect,
+		CreateEllipse,
 	};
 	ActionQueued actionQueued{ ActionQueued::None };
 	void updateView();

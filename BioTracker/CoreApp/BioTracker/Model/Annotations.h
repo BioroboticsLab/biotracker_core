@@ -93,11 +93,47 @@ public:
 		QPoint arrowHead;
 	};
 
+	// A rectangle defined by two points (top-left and bottom-right)
+	struct AnnotationRect : public Annotation
+	{
+		using Annotation::Annotation;
+		virtual ~AnnotationRect() = default;
+
+		virtual std::string name() const override { return "rect"; }
+		virtual void deserializeFrom(std::queue<std::string> &args);
+		virtual std::vector<std::string> serializeToVector() const;
+		virtual bool onEndAnnotation(QPoint currentPosition) override { bottomRight = currentPosition; return true; };
+		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const override;
+		virtual QRectF boundingRect() const { return QRect(origin, bottomRight).marginsAdded({ 20, 20, 20, 20 }); }
+		virtual QPoint *getHandleForPosition(const QPoint &pos) override;
+
+		QPoint bottomRight;
+	};
+	// An ellipse defined by two points (top-left and bottom-right)
+	struct AnnotationEllipse : public Annotation
+	{
+		using Annotation::Annotation;
+		virtual ~AnnotationEllipse() = default;
+
+		virtual std::string name() const override { return "rect"; }
+		virtual void deserializeFrom(std::queue<std::string> &args);
+		virtual std::vector<std::string> serializeToVector() const;
+		virtual bool onEndAnnotation(QPoint currentPosition) override { bottomRight = currentPosition; return true; };
+		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const override;
+		virtual QRectF boundingRect() const { return QRect(origin, bottomRight).marginsAdded({ 20, 20, 20, 20 }); }
+		virtual QPoint *getHandleForPosition(const QPoint &pos) override;
+
+		QPoint bottomRight;
+	};
+
+
 	void serialize() const;
 	void deserialize();
 	// Called by the controller to begin a new annotation.
 	void startArrow(QPoint origin, size_t currentFrame);
 	void startLabel(QPoint origin, size_t currentFrame);
+	void startRect(QPoint origin, size_t currentFrame);
+	void startEllipse(QPoint origin, size_t currentFrame);
 	// Called by the controller on mouse-clicks.
 	bool tryStartDragging(QPoint cursor);
 	// Called by the controller during mouse-drags to update the current annotation.

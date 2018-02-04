@@ -87,6 +87,12 @@ void ControllerAnnotations::keyReleaseEvent(QKeyEvent *event)
 	case Qt::Key::Key_L:
 		actionQueued = ActionQueued::CreateLabel;
 		break;
+	case Qt::Key::Key_R:
+		actionQueued = ActionQueued::CreateRect;
+		break;
+	case Qt::Key::Key_E:
+		actionQueued = ActionQueued::CreateEllipse;
+		break;
 	case Qt::Key::Key_Delete:
 		// Remove existing annotations at current frame.
 		if (model->removeSelection())
@@ -116,6 +122,12 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 		break;
 	case ActionQueued::CreateLabel:
 		model->startLabel(pos, model->getCurrentFrame());
+		break;
+	case ActionQueued::CreateRect:
+		model->startRect(pos, model->getCurrentFrame());
+		break;
+	case ActionQueued::CreateEllipse:
+		model->startEllipse(pos, model->getCurrentFrame());
 		break;
 	default:
 		if (model->tryStartDragging(pos))

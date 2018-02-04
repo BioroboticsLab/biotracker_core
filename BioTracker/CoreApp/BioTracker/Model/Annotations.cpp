@@ -205,6 +205,105 @@ QPoint *Annotations::AnnotationArrow::getHandleForPosition(const QPoint &pos)
 	return Annotation::getHandleForPosition(pos);
 }
 
+void Annotations::AnnotationRect::deserializeFrom(std::queue<std::string>& args)
+{
+	Annotation::deserializeFrom(args);
+	if (args.size() < 2) return;
+	const int x = std::stoi(args.front()); args.pop();
+	const int y = std::stoi(args.front()); args.pop();
+	bottomRight = QPoint(x, y);
+}
+
+std::vector<std::string> Annotations::AnnotationRect::serializeToVector() const
+{
+	auto base = Annotations::Annotation::serializeToVector();
+	decltype(base) suffix{ std::to_string(bottomRight.x()), std::to_string(bottomRight.y()) };
+	base.insert(base.end(), suffix.begin(), suffix.end());
+	return base;
+}
+
+void Annotations::AnnotationRect::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
+{
+	QRect rect{ origin, bottomRight };
+	painter->drawRect(rect);
+	// Draw the origin slightly bigger.
+	{
+		painter->save();
+		QPen thick{ painter->pen() };
+		thick.setWidthF(thick.widthF()* 2.5f);
+		painter->setPen(thick);
+		painter->drawPoint(this->origin);
+		painter->restore();
+	}
+	// Draw the bottom right point slightly thinner.
+	{
+		painter->save();
+		QPen thin{ painter->pen() };
+		thin.setWidthF(thin.widthF()* 0.5f);
+		painter->setPen(thin);
+		painter->drawPoint(this->bottomRight);
+		painter->restore();
+	}
+	Annotation::drawHandleLocation(painter, origin);
+	Annotation::drawHandleLocation(painter, bottomRight);
+}
+
+QPoint * Annotations::AnnotationRect::getHandleForPosition(const QPoint & pos)
+{
+	if (isHandleAtPosition(bottomRight, pos)) return &bottomRight;
+	return Annotation::getHandleForPosition(pos);
+}
+
+void Annotations::AnnotationEllipse::deserializeFrom(std::queue<std::string>& args)
+{
+	Annotation::deserializeFrom(args);
+	if (args.size() < 2) return;
+	const int x = std::stoi(args.front()); args.pop();
+	const int y = std::stoi(args.front()); args.pop();
+	bottomRight = QPoint(x, y);
+}
+
+std::vector<std::string> Annotations::AnnotationEllipse::serializeToVector() const
+{
+	auto base = Annotations::Annotation::serializeToVector();
+	decltype(base) suffix{ std::to_string(bottomRight.x()), std::to_string(bottomRight.y()) };
+	base.insert(base.end(), suffix.begin(), suffix.end());
+	return base;
+}
+
+void Annotations::AnnotationEllipse::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
+{
+	QRect rect{ origin, bottomRight };
+	painter->drawEllipse(rect);
+	// Draw the origin slightly bigger.
+	{
+		painter->save();
+		QPen thick{ painter->pen() };
+		thick.setWidthF(thick.widthF()* 2.5f);
+		painter->setPen(thick);
+		painter->drawPoint(this->origin);
+		painter->restore();
+	}
+	// Draw the bottom right point slightly thinner.
+	{
+		painter->save();
+		QPen thin{ painter->pen() };
+		thin.setWidthF(thin.widthF()* 0.5f);
+		painter->setPen(thin);
+		painter->drawPoint(this->bottomRight);
+		painter->restore();
+	}
+	Annotation::drawHandleLocation(painter, origin);
+	Annotation::drawHandleLocation(painter, bottomRight);
+}
+
+QPoint * Annotations::AnnotationEllipse::getHandleForPosition(const QPoint & pos)
+{
+	if (isHandleAtPosition(bottomRight, pos)) return &bottomRight;
+	return Annotation::getHandleForPosition(pos);
+}
+
+
 void Annotations::startArrow(QPoint origin, size_t currentFrame)
 {
 	currentAnnotation = std::make_shared<AnnotationArrow>(origin, currentFrame);
@@ -213,6 +312,16 @@ void Annotations::startArrow(QPoint origin, size_t currentFrame)
 void Annotations::startLabel(QPoint origin, size_t currentFrame)
 {
 	currentAnnotation = std::make_shared<AnnotationLabel>(origin, currentFrame);
+}
+
+void Annotations::startRect(QPoint origin, size_t currentFrame)
+{
+	currentAnnotation = std::make_shared<AnnotationRect>(origin, currentFrame);
+}
+
+void Annotations::startEllipse(QPoint origin, size_t currentFrame)
+{
+	currentAnnotation = std::make_shared<AnnotationEllipse>(origin, currentFrame);
 }
 
 bool Annotations::updateAnnotation(QPoint cursor)
