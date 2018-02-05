@@ -29,6 +29,7 @@
 #define CFG_DIR_TRACKS						"./Tracks/"
 #define CFG_DIR_SCREENSHOTS					"./Screenshots/"
 #define CFG_DIR_TEMP						"./temp/"
+#define CFG_AREA_DEFINITIONS				"./areas.csv"
 #endif
 
 namespace BiotrackerTypes{

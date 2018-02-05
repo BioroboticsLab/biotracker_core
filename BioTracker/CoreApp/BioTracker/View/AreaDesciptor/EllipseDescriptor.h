@@ -4,7 +4,7 @@
 #include <QBrush>
 #include "util/types.h"
 
-class EllipseDescriptor : public QObject, public AreaDescriptor
+class EllipseDescriptor : public AreaDescriptor
 {
     Q_OBJECT
 public:

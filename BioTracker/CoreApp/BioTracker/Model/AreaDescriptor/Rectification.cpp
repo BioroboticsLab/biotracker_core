@@ -41,8 +41,8 @@ void Rectification::initRecitification(double areaHeight_cm, double areaWidth_cm
 
 void Rectification::setArea(std::vector<cv::Point> areaCoordinates) {
 	_areaCoordinates = areaCoordinates;
-	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-	_settings->setParam(AREADESCRIPTOR::CN_ARENA, cvPointsToString(areaCoordinates).c_str());
+	//BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	//_settings->setParam(AREADESCRIPTOR::CN_ARENA, cvPointsToString(areaCoordinates).c_str());
 }
 
 void Rectification::setArea(std::vector<QPoint> areaCoordinates) {
