@@ -42,7 +42,6 @@ private:
     void sendSelectedImage(std::map<std::string, std::shared_ptr<cv::Mat>>* images);
 
 	std::vector<FishPose> getLastPositionsAsPose();
-	void resetFishHistory(int noFish);
 
     TrackedTrajectory* _TrackedTrajectoryMajor;
 	TrackerParameter* _TrackingParameter;

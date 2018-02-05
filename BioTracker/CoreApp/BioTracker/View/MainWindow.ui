@@ -246,6 +246,7 @@
      <string>Extras</string>
     </property>
     <addaction name="actionSettings"/>
+    <addaction name="actionInfo"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -637,6 +638,11 @@
   <action name="actionSave_trackingdata">
    <property name="text">
     <string>Save Trajectory</string>
+   </property>
+  </action>
+  <action name="actionInfo">
+   <property name="text">
+    <string>Info</string>
    </property>
   </action>
  </widget>

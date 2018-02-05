@@ -90,13 +90,13 @@ namespace DataExporterJsonUtil {
             if (it.second.size() > 0) {
                 //This is a valid subtree
                 if (prefixes.size() > 0) {
-                    IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory());
+                    IModelTrackedTrajectory *child = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory("0"));
                     populateLevel(child, &(it.second), factory, prefixes);
                     static_cast<IModelTrackedTrajectory*>(comp)->add(child, id);
                 }
                 //This is a leaf node with only properties beneath
                 else {
-                    IModelTrackedComponent *node = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement());
+                    IModelTrackedComponent *node = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
                     populateLevel(node, &(it.second), factory, prefixes);
                     static_cast<IModelTrackedTrajectory*>(comp)->add(node, id);
                 }
@@ -111,9 +111,8 @@ namespace DataExporterJsonUtil {
 }
 
 DataExporterJson::DataExporterJson(QObject *parent) :
-    IModelDataExporter(parent)
+    DataExporterGeneric(parent)
 {
-	_parent = parent;
     _root = 0;
 }
 
@@ -121,17 +120,6 @@ DataExporterJson::DataExporterJson(QObject *parent) :
 DataExporterJson::~DataExporterJson()
 {
     //delete _root;
-}
-
-void DataExporterJson::open(IModelTrackedTrajectory *root) {
-    _root = root;
-    //We need to use "time(source_ms)" instead of the previous "time(source, ms)".
-    //Apparently conventional tools like Excel and OOCalc got some issues parsing this correctly (naivly search for commas...)
-    std::string baseName = getTimeAndDate(CFG_DIR_TRACKS, "");
-    _tmpFile = baseName + ".tmp.json";
-    _finalFile = baseName + ".json";
-    _ofs.open(_tmpFile, std::ofstream::out);
-
 }
 
 std::string DataExporterJson::writeTrackpoint(IModelTrackedPoint *e, int trajNumber) {
@@ -185,6 +173,11 @@ void DataExporterJson::writeAll() {
     }
     if (_ofs.is_open()) {
         _ofs.close();
+    }
+
+    if (getMaxLinecount() <= 1) {
+        cleanup();
+        return;
     }
 
     boost::property_tree::ptree ptRoot; 

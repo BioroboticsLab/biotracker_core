@@ -7,6 +7,12 @@
 #include "QThread"
 #include "Model/MediaPlayer.h"
 
+//POD class to bundle some infos
+struct SourceVideoMetadata {
+	std::string name;
+	std::string fps;
+};
+
 class ControllerDataExporter : public IController {
 	Q_OBJECT
 public:
@@ -19,6 +25,8 @@ public:
 	void setDataStructure(IModel* exp);
 	void setComponentFactory(IModelTrackedComponentFactory* exp);
 	IModelTrackedComponentFactory* getComponentFactory() { return _factory; };
+	SourceVideoMetadata getSourceMetadata();
+    QString generateBasename(bool temporaryFile);
 
 	void loadFile(std::string file);
 
@@ -26,6 +34,7 @@ public:
     void receiveReset();
 	void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
+    void receiveFileWritten(QFileInfo fname);
 
 protected:
 	void createModel() override;

@@ -67,7 +67,6 @@ bool TrackedTrajectory::remove(IModelTrackedComponent *comp)
     g_calcValid = 1;
     comp->setValid(false);
     return true;
-    //return _TrackedComponents.removeOne(comp); 
 }
 
 void TrackedTrajectory::clear()
@@ -116,7 +115,7 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 
 int TrackedTrajectory::size()
 {
-    return _size;
+    return (_size == 0 ? _size : _size = _TrackedComponents.size());
 }
 
 

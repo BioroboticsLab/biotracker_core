@@ -125,6 +125,14 @@ double MediaPlayer::getCurrentFPS() {
     return m_currentFPS;
 }
 
+double MediaPlayer::getTargetFPS() {
+    return m_targetFPS;
+}
+void MediaPlayer::setTargetFPS(double fps) {
+    m_targetFPS = fps; 
+    m_Player->receiveTargetFps(fps);
+}
+
 QString MediaPlayer::getCurrentFileName() {
     return m_CurrentFilename;
 }
@@ -240,7 +248,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 			pix = new QPixmap(rview.size().toSize()); //17us
 
 		QPainter *paint = new QPainter(pix); //21us
-
+        
 		if(!m_recordScaled)
 			m_gv->scene()->render(paint); //8544us
 		else
@@ -269,11 +277,8 @@ void MediaPlayer::rcvPauseState(bool state) {
 }
 
 void MediaPlayer::receivePlayerOperationDone() {
-    // Only emit this SIGNL when tracking is not active
+    // Only emit this SIGNAL when tracking is not active
 	end = std::chrono::system_clock::now();
-    //std::cout << "Printing took "
-    //          << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
-    //          << "us.\n";
 	long s = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     if (!_paused) {
         m_currentFPS = floor(1.0 / (double(s) / 1000000.0));
@@ -282,7 +287,6 @@ void MediaPlayer::receivePlayerOperationDone() {
         m_currentFPS = 0;
     }
 
-	//if (!m_TrackingIsActive || !m_trackingRunning)
     if(m_trackingDone == true || !m_TrackingIsActive)
 		Q_EMIT runPlayerOperation();
 

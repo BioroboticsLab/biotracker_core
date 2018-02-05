@@ -35,6 +35,8 @@ public:
 
 	void setRectificationDimensions(double w, double h);
 
+    void reset(int w, int h);
+    void loadAreas();
     void setUseEntireScreen(bool b) { _useEntireScreen = b; };
     bool getUseEntireScreen() { return _useEntireScreen; };
 
@@ -47,8 +49,13 @@ private:
     bool _useEntireScreen = false;
     int _vdimX = 1;
     int _vdimY = 1;
+    playerParameters* _parms;
+    bool _rectInitialized = false;
 
 public Q_SLOTS:
     void rcvPlayerParameters(playerParameters* parameters);
+
+private:
+    QString myType();
 };
 

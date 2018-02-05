@@ -5,6 +5,8 @@
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
 #include <cv.h>
+#include <qdatetime.h>
+#include <ctime>
 
 /**
 * This class is an example of how a TrackedComponent could be defined.
@@ -33,7 +35,17 @@ public:
 	void  setRad(float r) {};
 	void  setDeg(float d) {};
 	void  setId(int val) { _id = val; };
-	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
+    void  setTime(std::chrono::system_clock::time_point t) {
+        _timeSysclck = t;
+    };
+    void  setTime(qint64 t) {
+        _time = t;
+        std::string::size_type sz = 0;
+        long long ll = t / 1000;
+        std::time_t tm(ll);
+        _timeSysclck = std::chrono::system_clock::from_time_t(tm);
+    };
+    void  setTimeString(QString t) { _timeString = t; };
 	void  setValid(bool v) { _valid = v; };
 	void  setFixed(bool f) { _fixed = f; };
 
@@ -48,7 +60,17 @@ public:
 	float getRad() { return 0; };
 	float getDeg() { return 0; };
 	int   getId() { return _id; };
-	std::chrono::system_clock::time_point  getTime() { return _time; };
+    qint64  getTime() {
+        qint64 q(std::chrono::duration_cast<std::chrono::milliseconds>(_timeSysclck.time_since_epoch()).count());
+        return q;
+    };
+    QString getTimeString() {
+        std::time_t t = std::chrono::system_clock::to_time_t(_timeSysclck);
+        QDateTime dt;
+        dt.setTime_t(t);
+        _timeString = dt.toString();
+        return _timeString;
+    };
 	bool  getValid() { return _valid; };
 	bool  getFixed() { return _fixed; };
 
@@ -63,6 +85,7 @@ public:
 	bool hasRad() { return false; };
 	bool hasDeg() { return false; };
 	bool hasTime() { return true; };
+    bool hasTimeString() { return true; };
 
 	void setPoint(cv::Point2f p);
     cv::Point2f getPoint();
@@ -72,11 +95,11 @@ public:
 	void operate();
 
 private:
+    std::chrono::system_clock::time_point _timeSysclck;
 	QString _name;
 	float _x;
 	float _y;
 	int _id;
-	std::chrono::system_clock::time_point _time;
 	bool _valid;
 	bool _fixed;
 };

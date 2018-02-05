@@ -9,17 +9,17 @@ IModelTrackedComponentFactory::~IModelTrackedComponentFactory()
 
 }
 
-IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedElement()
+IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedElement(QString name)
 {
-    return createTrackedElement();
+    return createTrackedElement(name);
 }
 
-IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedObject()
+IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedObject(QString name)
 {
-    return createTrackedObject();
+    return createTrackedObject(name);
 }
 
-IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedTrajectory()
+IModelTrackedComponent *IModelTrackedComponentFactory::getNewTrackedTrajectory(QString name)
 {
-	return createTrackedTrajectory();
+	return createTrackedTrajectory(name);
 }

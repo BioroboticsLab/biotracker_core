@@ -68,6 +68,8 @@ Q_SIGNALS:
 //menu->Extras
 	void on_actionSettings_triggered();
 
+    void on_actionInfo_triggered();
+
 //GUI
 
     void receiveSelectedCameraDevice(CameraConfiguration conf);

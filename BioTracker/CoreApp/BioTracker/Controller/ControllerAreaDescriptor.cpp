@@ -15,6 +15,9 @@
 
 #include <iostream>
 
+#include "Model/AreaDescriptor/AreaMemory.h"
+using namespace AreaMemory;
+
 ControllerAreaDescriptor::ControllerAreaDescriptor(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IController(parent, context, ctr)
 {
@@ -31,8 +34,6 @@ void ControllerAreaDescriptor::triggerUpdateAreaDescriptor() {
 
 void ControllerAreaDescriptor::createView()
 {
-	//IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMPONENT);
-
 	assert(m_Model);
 	AreaInfo* mInf = dynamic_cast<AreaInfo*> (getModel());
 	RectDescriptor* view = new RectDescriptor(this, mInf->_rect.get());
@@ -45,13 +46,11 @@ void ControllerAreaDescriptor::createView()
 	gview->addGraphicsItem(view);
 
 	AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
-	
-	//m_ViewApperture = new RectDescriptor(view, this, area->_rect.get());
-	//QObject::connect(view, &RectDescriptor::updatedPoints, view, &AreaDescriptorView::updateRectification);
 
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	int v = _settings->getValueOrDefault<int>(AREADESCRIPTOR::CN_APPERTURE_TYPE, 0);
 	trackingAreaType(v);
+
 }
 
 void ControllerAreaDescriptor::connectModelToController()
@@ -85,14 +84,41 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
 		m_ViewApperture = new EllipseDescriptor(this, area->_apperture.get());
 		area->_apperture->setType(1);
 		static_cast<EllipseDescriptor*>(m_ViewApperture)->setBrush(QBrush(Qt::red));
+        static_cast<EllipseDescriptor*>(m_ViewApperture)->setDimensions(_w, _h);
         QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<EllipseDescriptor*>(m_ViewApperture), &EllipseDescriptor::receiveDragUpdate);
 		_settings->setParam(AREADESCRIPTOR::CN_APPERTURE_TYPE, 1);
 	}
 
-	gview->addGraphicsItem(static_cast<AreaDescriptor*>(m_ViewApperture));
-    bool b = _settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_AREA, 0);
-    if (!b)
+    if (!_visibleApperture)
         static_cast<AreaDescriptor*>(m_ViewApperture)->hide();
+    if (!_visibleRectification)
+        static_cast<AreaDescriptor*>(m_View)->hide();
+
+	gview->addGraphicsItem(static_cast<AreaDescriptor*>(m_ViewApperture));
+}
+
+void ControllerAreaDescriptor::rcvPlayerParameters(playerParameters* parameters)
+{
+    //Best effort to save performance...
+    //File has changed
+    if (_currentFilename != parameters->m_CurrentFilename)
+    {
+        _currentFilename = parameters->m_CurrentFilename;
+
+        //Set area descriptor dimensions
+        AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
+        if (ad) {
+            std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
+            _w = m->size().width;
+            _h = m->size().height;
+            ad->setDimensions(_w, _h);
+        }
+        QVector<QString> v = getVertices(_currentFilename);
+        if (!v.empty()) {
+            changeAreaDescriptorType(v[2]);
+        }
+    }
+    
 }
 
 void ControllerAreaDescriptor::connectControllerToController()
@@ -117,6 +143,12 @@ void ControllerAreaDescriptor::connectControllerToController()
         auto mediaPlayerController = static_cast<ControllerPlayer*> (ctrPl);
         MediaPlayer *player = static_cast<MediaPlayer*> (mediaPlayerController->getModel());
         QObject::connect(player, &MediaPlayer::fwdPlayerParameters, model, &AreaInfo::rcvPlayerParameters, Qt::DirectConnection);
+        QObject::connect(player, &MediaPlayer::fwdPlayerParameters, this, &ControllerAreaDescriptor::rcvPlayerParameters, Qt::DirectConnection);
+
+
+        IController* ctrParms = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+        auto parmsController = qobject_cast<ControllerCoreParameter*>(ctrParms);
+        QObject::connect(this, &ControllerAreaDescriptor::changeAreaDescriptorType, parmsController, &ControllerCoreParameter::changeAreaDescriptorType, Qt::DirectConnection);
 
 		////no such signal
 		//QWidget *viewport = view->viewport();
@@ -231,17 +263,15 @@ void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {
 }
 
 void ControllerAreaDescriptor::setDisplayRectificationDefinition(bool b) {
+    _visibleRectification = b;
 	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
 	rd->setVisible(b);
-    BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-    _settings->setParam(AREADESCRIPTOR::DISP_RECT, b);
 }
 
 void ControllerAreaDescriptor::setDisplayTrackingAreaDefinition(bool b) {
+    _visibleApperture = b;
 	AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
 	ad->setVisible(b);
-    BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-    _settings->setParam(AREADESCRIPTOR::DISP_AREA, b);
 }
 
 void ControllerAreaDescriptor::setTrackingAreaAsEllipse(bool b) {

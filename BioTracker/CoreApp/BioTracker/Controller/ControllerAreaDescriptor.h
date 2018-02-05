@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include "util/types.h"
+#include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 
 class ControllerAreaDescriptor : public IController
 {
@@ -17,12 +18,14 @@ public:
 signals:
 	void updateAreaDescriptor(IModelAreaDescriptor *ad);
     void currentVectorDrag(BiotrackerTypes::AreaType vectorType, int id, double x, double y);
+    void changeAreaDescriptorType(QString type);
 
 public slots:
 	void setRectificationDimensions(double w, double h);
 	void setDisplayRectificationDefinition(bool b);
 	void setDisplayTrackingAreaDefinition(bool b);
 	void setTrackingAreaAsEllipse(bool b);
+    void rcvPlayerParameters(playerParameters* parameters);
 
 private slots:
 	void trackingAreaType(int v);
@@ -44,5 +47,9 @@ private:
     BiotrackerTypes::AreaType _watchingVerticeType;
 
 	IView *m_ViewApperture;
-
+    int _w = 1;
+    int _h = 1;
+    bool _visibleApperture = false;
+    bool _visibleRectification = false;
+    QString _currentFilename = "";
 };

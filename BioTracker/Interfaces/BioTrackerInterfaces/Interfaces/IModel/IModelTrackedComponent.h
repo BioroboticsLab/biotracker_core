@@ -8,6 +8,7 @@
 #include <QDataStream>
 #include <ostream>
 
+
 /**
 * This is the common interface for all TrackedComponents (IModelTrackedTrajectory and any leaf class).
 * It is part of the Composite Pattern and is the equivalent to the abstract Component class.
@@ -16,7 +17,6 @@
 * has a methode called operate() that needs to be implemented
 * by all derivatives of this interface class.
 */
-
 
 /*
 *	Blank component
@@ -52,6 +52,10 @@ protected:
     IModelTrackedComponent *_parentNode = nullptr;
 };
 
+
+Q_DECLARE_METATYPE(QList<IModelTrackedComponent*>)
+QDataStream &operator<<(QDataStream &ds, const QList<IModelTrackedComponent*> &data);
+QDataStream &operator>>(QDataStream &ds, QList<IModelTrackedComponent*> &data);
 QDataStream &operator<<(QDataStream &out, const IModelTrackedComponent &painting);
 QDataStream &operator>>(QDataStream &in, IModelTrackedComponent &painting);
 
@@ -167,20 +171,30 @@ protected:
 	float _rada3;
 };
 
-class IModelComponentTemporal {
+class IModelComponentTemporal2D : public IModelComponentEuclidian2D {
 public:
-    virtual void  setTime(std::chrono::system_clock::time_point t) = 0;
-    virtual std::chrono::system_clock::time_point  getTime() = 0;
+    Q_OBJECT 
+    Q_PROPERTY(qint64 time READ getTime() WRITE setTime STORED hasTime)
+    Q_PROPERTY(QString timeString READ getTimeString() WRITE setTimeString STORED hasTimeString)
+
+public:
+    IModelComponentTemporal2D(QObject *parent = 0);
+    virtual void setTime(qint64 t) = 0;
+    virtual qint64 getTime() = 0;
+    virtual bool hasTime() = 0;
+    virtual void setTimeString(QString t) = 0;
+    virtual QString getTimeString() = 0;
+    virtual bool hasTimeString() = 0;
 
 protected:
-	std::chrono::system_clock::time_point _time;
+    qint64 _time;
+    QString _timeString;
 };
 
 /*
 *	Point
 */
-class IModelTrackedPoint : public IModelComponentEuclidian2D, 
-    public IModelComponentTemporal
+class IModelTrackedPoint : public IModelComponentTemporal2D
 {
 	Q_OBJECT
 	//Q_PROPERTY(double _time READ getTime() WRITE setTime)
@@ -196,8 +210,7 @@ public:
 *	Polygon
 */
 
-class IModelTrackedPolygon : public IModelComponentEuclidian2D,
-    public IModelComponentTemporal
+class IModelTrackedPolygon : public IModelComponentTemporal2D
 {
 	Q_OBJECT
 

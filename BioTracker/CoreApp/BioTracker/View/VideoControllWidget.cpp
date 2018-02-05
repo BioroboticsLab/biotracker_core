@@ -181,3 +181,9 @@ void VideoControllWidget::on_sld_video_actionTriggered(int action)
 void VideoControllWidget::on_sld_video_sliderMoved(int position) {
     ui->frame_num_edit->setText(QString::number(position));
 }
+
+void VideoControllWidget::on_doubleSpinBoxTargetFps_editingFinished() {
+    double val = ui->doubleSpinBoxTargetFps->value();
+    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+    controller->setTargetFps(val);
+}

@@ -14,8 +14,8 @@
  */
 class IModelTrackedTrajectory : public IModelTrackedComponent
 {
-	Q_OBJECT
-
+    Q_OBJECT
+    Q_PROPERTY(QList<IModelTrackedComponent*> childNodes READ getChildNodes() WRITE setChildNodes STORED hasChildNodes);
 public:
 	/**
 	 * The constructor.
@@ -60,6 +60,17 @@ public:
 	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
 	std::chrono::system_clock::time_point  getTime() { return _time; };
 
+
+    QList<IModelTrackedComponent*> getChildNodes() {
+        return _TrackedComponents;
+    }
+    void setChildNodes(QList<IModelTrackedComponent*> n) {
+        _TrackedComponents = n;
+    }
+    bool hasChildNodes() {
+        return true;
+    }
+
 	// ITrackedComponent interface
 public:
 	void operate();
@@ -67,6 +78,8 @@ public:
 
 protected:
 	static int nextID;
+
+    QList<IModelTrackedComponent*> _TrackedComponents;
 };
 
 #endif // ITRACKEDOTRAJECTORY_H

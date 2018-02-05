@@ -92,6 +92,10 @@ int ControllerPlayer::recordInput() {
 	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordImageStream();
 }
 
+void ControllerPlayer::setTargetFps(double fps) {
+    return qobject_cast<MediaPlayer*>(m_Model)->setTargetFPS(fps);
+}
+
 void ControllerPlayer::takeScreenshot() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
     QPointer< ControllerGraphicScene > ctrTextureObject = qobject_cast<ControllerGraphicScene*>(ctr);

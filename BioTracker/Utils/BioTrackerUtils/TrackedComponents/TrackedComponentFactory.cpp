@@ -13,12 +13,16 @@ TrackedComponentFactory::~TrackedComponentFactory()
 
 }
 
-IModelTrackedComponent *TrackedComponentFactory::createTrackedElement()
+QList<QString> TrackedComponentFactory::getElementTypes() {
+    return QList<QString>{ "TrackedElement" };
+}
+
+IModelTrackedComponent *TrackedComponentFactory::createTrackedElement(QString name)
 {
     return new TrackedElement(this, "n.a.");
 }
 
-IModelTrackedComponent *TrackedComponentFactory::createTrackedObject()
+IModelTrackedComponent *TrackedComponentFactory::createTrackedObject(QString name)
 {
 	TrackedTrajectory *t	= new TrackedTrajectory();
 	TrackedElement *e		= new TrackedElement(this, "n.a.", 0);
@@ -26,7 +30,7 @@ IModelTrackedComponent *TrackedComponentFactory::createTrackedObject()
 	return t;
 }
 
-IModelTrackedComponent *TrackedComponentFactory::createTrackedTrajectory()
+IModelTrackedComponent *TrackedComponentFactory::createTrackedTrajectory(QString name)
 {
     return new TrackedTrajectory();
 }

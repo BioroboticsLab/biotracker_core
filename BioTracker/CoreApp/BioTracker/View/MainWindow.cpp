@@ -15,6 +15,7 @@
 #include "QGraphicsObject"
 
 #include "qtextedit.h"
+#include <qmessagebox.h>
 
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
@@ -247,8 +248,33 @@ void MainWindow::on_actionSettings_triggered() {
 	m_SettingsWindow = new SettingsWindow();
 
 	m_SettingsWindow->show();
-
-	//QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
 }
+
+void MainWindow::on_actionInfo_triggered() {
+    std::string version = "";
+    version = "BioTracker3\n\n";
+
+    version = "Version: ";
+    version += GIT_HASH;
+    version += +"\n\n";
+
+    version += "External libraries used:\n\n";
+    std::string qt = MyQT_VERSION;
+    version += "QT " + qt + "\n";
+
+    std::string cv = MyCV_VERSION;
+    version += "OpenCV " + cv + "\n";
+
+    std::string boost = MyBT_VERSION;
+    version += "Boost " + boost + "\n";
+
+    version += "\n\nPublished under LGPL licence";
+
+    int ret = QMessageBox::information(this, tr("BioTracker"),
+        tr( version.c_str()),
+        QMessageBox::Ok);
+}
+
+
 
 

@@ -6,7 +6,7 @@
 #include "util/types.h"
 #include <QObject>
 
-class RectDescriptor : public QObject, public AreaDescriptor
+class RectDescriptor : public AreaDescriptor
 {
     Q_OBJECT
 public:

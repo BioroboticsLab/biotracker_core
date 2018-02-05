@@ -56,6 +56,8 @@ class VideoControllWidget : public IViewWidget {
 
 	void on_sld_video_actionTriggered(int action);
 
+    void on_doubleSpinBoxTargetFps_editingFinished();
+
   private:
     Ui::VideoControllWidget* ui;
 

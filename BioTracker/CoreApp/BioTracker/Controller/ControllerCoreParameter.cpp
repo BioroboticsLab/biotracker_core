@@ -93,6 +93,11 @@ void ControllerCoreParameter::connectControllerToController()
 
 }
 
+void ControllerCoreParameter::changeAreaDescriptorType(QString type) {
+    if (dynamic_cast<CoreParameterView*>(m_View))
+        dynamic_cast<CoreParameterView*>(m_View)->areaDescriptorTypeChanged(type);
+}
+
 void ControllerCoreParameter::triggerUpdate() {
 
     CoreParameterView* view = static_cast<CoreParameterView*>(m_View); view->triggerUpdate(); 
@@ -115,8 +120,6 @@ void ControllerCoreParameter::createModel()
 
 void ControllerCoreParameter::updateView() 
 {
-//	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
-//	rd->updateRect();
 }
 
 void ControllerCoreParameter::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)

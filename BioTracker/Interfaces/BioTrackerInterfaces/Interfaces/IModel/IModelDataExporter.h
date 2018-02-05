@@ -4,6 +4,7 @@
 #include "Interfaces/IModel/IModelTrackedTrajectory.h"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include <string.h>
+#include <qfileinfo.h>
 
 class IModelDataExporter :public IModel
 {
@@ -25,11 +26,15 @@ public:
 		writeAll();
 	};
 
-	virtual void loadFile(std::string file) = 0;
+    virtual void loadFile(std::string file) = 0;
+    virtual QString getSuffix() = 0;
 
 public:
 	IModelTrackedTrajectory *_root;
 	float _fps;
 	std::string _title;
+
+signals:
+    void fileWritten(QFileInfo file);
 };
 

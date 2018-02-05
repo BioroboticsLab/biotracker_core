@@ -8,7 +8,6 @@
 #include "Model/PluginLoader.h"
 #include "settings/Settings.h"
 #include "util/types.h"
-#include "Model/DataExporterCSV.h"
 #include "ControllerDataExporter.h"
 #include "ControllerAreaDescriptor.h"
 #include "Controller/ControllerCoreParameter.h"
@@ -61,14 +60,9 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
         ctrMainWindow->setTrackerParamterWidget(parms);
 
 		//Add Tracker tracked components (Elements) to Main Window
-
-		//IView *v = m_BioTrackerPlugin->getTrackerElementsWidget();
-		//ctrMainWindow->setTrackerElementsWidget(m_BioTrackerPlugin->getTrackerElementsWidget()); //MARKER
 		IView *elems = m_BioTrackerPlugin->getTrackerElementsWidget();
 		ctrMainWindow->setTrackerElementsWidget(elems); 
-
-
-
+        
 		IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 		QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
 

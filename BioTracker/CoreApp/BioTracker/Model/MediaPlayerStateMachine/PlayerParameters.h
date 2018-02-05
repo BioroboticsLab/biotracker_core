@@ -29,7 +29,7 @@ struct playerParameters {
     size_t m_CurrentFrameNumber;
     std::shared_ptr<cv::Mat> m_CurrentFrame;
     double m_fpsSourceVideo;
-
+    double m_fpsTarget;
 };
 
 #endif // PLAYERPARAMETERS_H

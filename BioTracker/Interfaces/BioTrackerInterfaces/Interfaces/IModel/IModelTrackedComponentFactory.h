@@ -12,14 +12,15 @@ class IModelTrackedComponentFactory : public IModel
     IModelTrackedComponentFactory();
     virtual ~IModelTrackedComponentFactory() = 0;
 
-    IModelTrackedComponent *getNewTrackedElement();
-	IModelTrackedComponent *getNewTrackedObject();
-	IModelTrackedComponent *getNewTrackedTrajectory();
+    IModelTrackedComponent *getNewTrackedElement(QString name);
+	IModelTrackedComponent *getNewTrackedObject(QString name);
+    IModelTrackedComponent *getNewTrackedTrajectory(QString name);
+    virtual QList<QString> getElementTypes() = 0;
 
 protected:
-    virtual IModelTrackedComponent *createTrackedElement() = 0;
-	virtual IModelTrackedComponent *createTrackedObject() = 0;
-	virtual IModelTrackedComponent *createTrackedTrajectory() = 0;
+    virtual IModelTrackedComponent *createTrackedElement(QString name) = 0;
+	virtual IModelTrackedComponent *createTrackedObject(QString name) = 0;
+	virtual IModelTrackedComponent *createTrackedTrajectory(QString name) = 0;
 
 };
 

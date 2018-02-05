@@ -5,6 +5,7 @@
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 #include "QString"
 #include "Model/TrackedComponents/pose/FishPose.h"
+#include <qdatetime.h>
 
 /**
 * This class is an example of how a TrackedComponent could be defined.
@@ -34,7 +35,9 @@ public:
 	void  setRad(float r);
 	void  setDeg(float d);
 	void  setId(int val) { _id = val; };
-	void  setTime(std::chrono::system_clock::time_point t) { _time = t; };
+    void  setTime(std::chrono::system_clock::time_point t);
+    void  setTime(qint64 t);
+    void  setTimeString(QString t) { _timeString = t; };
 	void  setValid(bool v);
 	void  setFixed(bool f) { _fixed = f; };
 
@@ -50,7 +53,8 @@ public:
 	float getRad() { return _rad; };
 	float getDeg();
 	int   getId() { return _id; };
-	std::chrono::system_clock::time_point  getTime() { return _time; };
+    qint64  getTime();
+    QString getTimeString();
 	bool  getValid() { return _valid; };
 	bool  getFixed() { return _fixed; };
 
@@ -64,7 +68,8 @@ public:
     bool hasHpx() { return false; };
 	bool hasRad() { return true; };
 	bool hasDeg() { return true; };
-	bool hasTime() { return true; };
+    bool hasTime() { return true; };
+    bool hasTimeString() { return true; };
 
 	void pressed();
 	void notPressed();
@@ -78,20 +83,9 @@ public:
 	void operate();
 
 private:
-	//QString _name;
+    std::chrono::system_clock::time_point _timeSysclck;
 	QString _unit = "cm";
-	FishPose _pose;/*
-	float _x;
-	float _y;
-	float _w;
-	float _h;
-	float _deg;
-	float _rad;
-	int _id;
-	std::chrono::system_clock::time_point _time;
-	bool _valid;
-	bool _pressed;
-	bool _fixed;*/
+	FishPose _pose;
 };
 
 #endif // TRACKEDELEMENT_H

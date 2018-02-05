@@ -23,6 +23,8 @@ public:
     // Triggers re-sending essential signals
     void triggerUpdate();
 
+    void areaDescriptorTypeChanged(QString type);
+
 	private slots:
 	//Enable view
 	void on_checkBoxEnableCoreView_stateChanged(int v);

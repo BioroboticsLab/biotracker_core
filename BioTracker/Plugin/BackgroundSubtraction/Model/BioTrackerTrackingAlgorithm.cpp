@@ -3,7 +3,6 @@
 #include "TrackedComponents/TrackedComponentFactory.h"
 #include <chrono>
 
-#include "Model/TrackedComponents/TrackingRectElement.h"
 #include "settings/Settings.h"
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IModel *trajectory) : _ipp((TrackerParameter*)parameter)
@@ -53,30 +52,6 @@ std::vector<FishPose> BioTrackerTrackingAlgorithm::getLastPositionsAsPose() {
 		}
 	}
 	return last;
-}
-
-void BioTrackerTrackingAlgorithm::resetFishHistory(int noFish) {
-
-	std::vector<FishPose> last;
-	for (int i = 0; i < _TrackedTrajectoryMajor->size(); i++) {
-		TrackedTrajectory *t = dynamic_cast<TrackedTrajectory *>(_TrackedTrajectoryMajor->getChild(i));
-		if (t) {
-			t->clear();
-			if (!_TrackedTrajectoryMajor->remove(t)) {
-				std::cout << "ERROR: Could not remove trajectory." << std::endl;
-			}
-			i = -1;
-		}
-	}
-
-	for (int i = 0; i < noFish; i++) {
-		TrackedTrajectory *t = new TrackedTrajectory();
-		//t->setId(i);
-		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
-		//e->setId(i);
-		t->add(e, 0);
-		_TrackedTrajectoryMajor->add(t, i);
-	}
 }
 
 void BioTrackerTrackingAlgorithm::refreshPolygon() {

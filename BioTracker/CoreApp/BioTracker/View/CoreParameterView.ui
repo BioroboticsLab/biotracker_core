@@ -342,8 +342,8 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>0</y>
-                      <width>312</width>
+                      <y>-279</y>
+                      <width>302</width>
                       <height>1052</height>
                      </rect>
                     </property>
@@ -1059,7 +1059,7 @@
                                 <string>Display tracking area definition</string>
                                </property>
                                <property name="checked">
-                                <bool>true</bool>
+                                <bool>false</bool>
                                </property>
                               </widget>
                              </item>
@@ -1069,7 +1069,7 @@
                                 <string>Display Rectification definition</string>
                                </property>
                                <property name="checked">
-                                <bool>true</bool>
+                                <bool>false</bool>
                                </property>
                               </widget>
                              </item>

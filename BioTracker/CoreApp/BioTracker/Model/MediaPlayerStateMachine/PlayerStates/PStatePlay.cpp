@@ -2,6 +2,9 @@
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 #include "QTimer"
 
+#include <thread>
+using namespace std::chrono;
+
 PStatePlay::PStatePlay(MediaPlayerStateMachine* player,
                        std::shared_ptr<BioTracker::Core::ImageStream> imageStream) :
     IPlayerState(player, imageStream) {
@@ -16,6 +19,7 @@ PStatePlay::PStatePlay(MediaPlayerStateMachine* player,
 
     m_FrameNumber = 0;
 
+
 }
 
 void PStatePlay::operate() {
@@ -25,6 +29,18 @@ void PStatePlay::operate() {
     m_StateParameters.m_Back = false;
     m_StateParameters.m_Stop = true;
     m_StateParameters.m_Paus = true;
+
+    end = std::chrono::system_clock::now();
+    if (_targetFps > 0) {
+        long long dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        long long targetFps = (1. / _targetFps) * 1000.;
+        long long eps = 5;
+
+        if (dt < targetFps) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(targetFps - dt - eps));
+        }
+    }
+    
 
     bool isLastFrame = m_ImageStream->lastFrame();
     IPlayerState::PLAYER_STATES nextState = IPlayerState::STATE_INITIAL;
@@ -39,5 +55,6 @@ void PStatePlay::operate() {
     }
 
 
+    start = std::chrono::system_clock::now();
     m_Player->setNextState(nextState);
 }
