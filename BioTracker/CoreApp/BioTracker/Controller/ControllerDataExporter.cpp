@@ -108,8 +108,10 @@ void ControllerDataExporter::connectModelToController() {
 }
 
 void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
-	qobject_cast<IModelDataExporter*>(m_Model)->setFps(parameters->m_fpsSourceVideo);
-	qobject_cast<IModelDataExporter*>(m_Model)->setTitle(parameters->m_CurrentTitle);
+    if (qobject_cast<IModelDataExporter*>(m_Model) != nullptr) {
+        qobject_cast<IModelDataExporter*>(m_Model)->setFps(parameters->m_fpsSourceVideo);
+        qobject_cast<IModelDataExporter*>(m_Model)->setTitle(parameters->m_CurrentTitle);
+    }
 }
 
 QString ControllerDataExporter::generateBasename(bool temporaryFile) {

@@ -19,18 +19,20 @@ namespace AreaMemory{
     QVector<QString> getVertices(QString file) {
         if (map.size() == 0) {
             std::ifstream o;
-            o.open("areas.csv", std::ifstream::in);
-            while (!o.eof()) {
-                std::string line = "###";
-                getline(o, line);
-                std::vector<std::string> strs;
-                split(line, strs, '#');
-                if (strs.size() >= 5) {
-                    map[strs[0].c_str()] = QVector<QString>{
-                        strs[1].c_str(),
-                        strs[2].c_str(),
-                        strs[3].c_str(),
-                        strs[4].c_str() };
+            o.open(CFG_AREA_DEFINITIONS, std::ifstream::in);
+            if (o.is_open()) {
+                while (!o.eof()) {
+                    std::string line = "";
+                    getline(o, line);
+                    std::vector<std::string> strs;
+                    split(line, strs, '#');
+                    if (strs.size() >= 5) {
+                        map[strs[0].c_str()] = QVector<QString>{
+                            strs[1].c_str(),
+                            strs[2].c_str(),
+                            strs[3].c_str(),
+                            strs[4].c_str() };
+                    }
                 }
             }
         }
@@ -50,13 +52,16 @@ namespace AreaMemory{
         map[file] = values;
         std::ofstream o;
         o.open(CFG_AREA_DEFINITIONS, std::ofstream::out);
-        QMapIterator<QString, QVector<QString>> i(map);
-        while (i.hasNext()) {
-            i.next();
-            o << i.key().toStdString() << "#" << i.value()[0].toStdString()
-                << "#" << i.value()[1].toStdString()
-                << "#" << i.value()[2].toStdString()
-                << "#" << i.value()[3].toStdString() << std::endl;
+
+        if (o.is_open()) {
+            QMapIterator<QString, QVector<QString>> i(map);
+            while (i.hasNext()) {
+                i.next();
+                o << i.key().toStdString() << "#" << i.value()[0].toStdString()
+                    << "#" << i.value()[1].toStdString()
+                    << "#" << i.value()[2].toStdString()
+                    << "#" << i.value()[3].toStdString() << std::endl;
+            }
         }
     }
 

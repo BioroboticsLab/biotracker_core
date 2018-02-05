@@ -38,7 +38,9 @@ void AreaInfo::reset(int w, int h) {
 
     QVector<QString> vertices = _parms != nullptr ? getVertices(_parms->m_CurrentFilename) : QVector<QString>();
 
-    if ((!vertices.empty() && vertices[1] == QString(DEFAULT_RECT) && vertices[2] == QString(DEFAULT_AREA)) || vertices.empty()) {
+    if ( vertices == DEFAULT_PAIR  //couldn't find entry
+        || vertices.empty()) //biotracker just started
+    {
         std::vector<cv::Point> v{
             cv::Point(0,0),
             cv::Point(0,_vdimY),
