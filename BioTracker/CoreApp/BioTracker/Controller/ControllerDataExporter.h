@@ -18,6 +18,7 @@ class ControllerDataExporter : public IController {
 public:
 	ControllerDataExporter(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
 	~ControllerDataExporter();
+    void cleanup();
 
 	// IController interface
 public:

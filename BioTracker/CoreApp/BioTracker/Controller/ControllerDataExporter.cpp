@@ -14,9 +14,11 @@ ControllerDataExporter::ControllerDataExporter(QObject *parent, IBioTrackerConte
 
 ControllerDataExporter::~ControllerDataExporter()
 {
-	if (m_Model)
-		qobject_cast<IModelDataExporter*>(m_Model)->finalize();
-	
+}
+
+void ControllerDataExporter::cleanup() {
+    if (m_Model)
+   	    qobject_cast<IModelDataExporter*>(m_Model)->finalize();
 }
 
 void ControllerDataExporter::connectControllerToController() {

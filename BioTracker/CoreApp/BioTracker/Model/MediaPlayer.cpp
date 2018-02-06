@@ -65,8 +65,13 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 }
 
 MediaPlayer::~MediaPlayer() {
+    stopCommand();
     m_PlayerThread->quit();
-    m_PlayerThread->wait();
+    if (!m_PlayerThread->wait(2000))
+    {
+        m_PlayerThread->terminate();
+        m_PlayerThread->wait(); 
+    }
 }
 
 void MediaPlayer::setTrackingActive() {
