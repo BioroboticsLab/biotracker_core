@@ -4,9 +4,7 @@
 
 NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *controller, IModel *model) :
 	IViewWidget(parent, controller, model)
-	//ui(new Ui::NotificationLogBrowser)
 {
-	//ui->setupUi(this);
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	browser = new QTextBrowser(this);

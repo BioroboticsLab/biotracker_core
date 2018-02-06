@@ -25,16 +25,12 @@ void ControllerGraphicScene::addTextureObject(QGraphicsItem *item)
 
 void ControllerGraphicScene::createModel()
 {
-   // m_Element = new TrackedElement(this, QString("myElement"));
     m_NullModel = new null_Model();
 }
 
 void ControllerGraphicScene::createView()
 {
     m_View = new GraphicsView(0, this, m_NullModel);
-   // m_ElementView = new TrackedElementView(0, this, m_Element);
-
-   //addGraphicsItem(m_ElementView);
 }
 
 void ControllerGraphicScene::connectModelToController()

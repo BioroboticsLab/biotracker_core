@@ -146,7 +146,7 @@ void ControllerPlayer::receiveVisualizeCurrentModel(uint frameNumber)
 }
 
 void ControllerPlayer::receiveChangeDisplayImage(QString str) {
-	//IView *m_View
+
 	VideoControllWidget *w = dynamic_cast<VideoControllWidget*>(m_View);
 	w->setSelectedView(str);
 }

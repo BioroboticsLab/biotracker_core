@@ -135,19 +135,6 @@ void ControllerPlugin::connectControllerToController() {
 	IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
 
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), this, 
-		//SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*)), this,
-		//SLOT(receiveRemoveTrackEntity(IModelTrackedTrajectory*)), Qt::DirectConnection);
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitAddTrajectory(QPoint)), this, 
-		//SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, QPoint, int)), this, 
-		//SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, int)), Qt::DirectConnection);
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this,
-		//SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
-	//QObject::connect(ctrTrackedComponentCore, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), this,
-		//SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
-
 	QObject::connect(this, SIGNAL(emitUpdateView()), ctrTrackedComponentCore,
 		SLOT(receiveUpdateView()));
 
@@ -279,21 +266,6 @@ void ControllerPlugin::connectPlugin() {
 }
 
 void ControllerPlugin::disconnectPlugin() {
-	//    IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
-	//    QPointer< ControllerPlayer > ctrPlayer = qobject_cast<ControllerPlayer*>(ctrA);
-
-	//    IModel* model = ctrPlayer->getModel();
-	//    MediaPlayerStateMachine* player = dynamic_cast<MediaPlayerStateMachine*>(model);
-
-
-	//    IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
-	//    QPointer< ControllerTextureObject > ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
-
-
-	//    //    QObject::disconnect(qobject_cast<QObject*> (m_BioTrackerPlugin), SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>,QString)), ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>,QString)));
-
-
-	//    //    QObject::disconnect(player, SIGNAL(emitCurrentFrame(std::shared_ptr<cv::Mat>)), qobject_cast<QObject*> (m_BioTrackerPlugin), SLOT(receiveCvMat(std::shared_ptr<cv::Mat>)));
 
 }
 
@@ -304,7 +276,6 @@ void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * traject
 		emitUpdateView();
 	}
 	else {
-		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
 		queueElement removeTrackEdit;
 		removeTrackEdit.type = EDIT::REMOVE_TRACK;
 		removeTrackEdit.trajectory0 = trajectory;
@@ -319,7 +290,6 @@ void ControllerPlugin::receiveRemoveTrajectoryId(int id)
 		emitUpdateView();
 	}
 	else {
-		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
 		queueElement removeTrackEdit;
 		removeTrackEdit.type = EDIT::REMOVE_TRACK_ID;
 		removeTrackEdit.id = id;
@@ -334,7 +304,6 @@ void ControllerPlugin::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajec
 		emitUpdateView();
 	}
 	else {
-		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
 		queueElement removeEntityEdit;
 		removeEntityEdit.type = EDIT::REMOVE_ENTITY;
 		removeEntityEdit.trajectory0 = trajectory;
@@ -412,7 +381,6 @@ void ControllerPlugin::receiveValidateEntity(IModelTrackedTrajectory * trajector
 		emitUpdateView();
 	}
 	else {
-		//std::pair<EDIT, IModelTrackedTrajectory*> removeEdit(EDIT::REMOVE, trajectory);
 		queueElement validateEntityEdit;
 		validateEntityEdit.type = EDIT::VALIDATE_ENTITY;
 		validateEntityEdit.trajectory0 = trajectory;

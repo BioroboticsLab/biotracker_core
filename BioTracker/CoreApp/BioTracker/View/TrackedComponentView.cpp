@@ -24,15 +24,11 @@ TrackedComponentView::TrackedComponentView(QGraphicsItem *parent, IController *c
 	IViewTrackedComponent(parent, controller, model)
 {
 
-	//TrackedElement *elem = dynamic_cast<TrackedElement *>(getModel());
 	m_boundingRect = QRectF(0, 0, 4080, 4080);
     m_currentFrameNumber = 0;
 	setAcceptHoverEvents(true);
 	setAcceptDrops(true);
-	//setAcceptedMouseButtons(Qt::MouseButtons::enum_type::LeftButton);
 	_watchingDrag = 0;
-
-	//_cursorPosText = new QGraphicsTextItem("0,0",0, this->scene());
 
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTVIEW, true));
 	m_permissions.insert(std::pair<ENUMS::COREPERMISSIONS, bool>(ENUMS::COREPERMISSIONS::COMPONENTADD, true));
@@ -75,7 +71,7 @@ bool TrackedComponentView::sceneEventFilter(QGraphicsItem *watched, QEvent *even
 
 bool TrackedComponentView::eventFilter(QObject *target, QEvent *event)
 {
-	return false;// TrackedComponentView::eventFilter(target, event);
+	return false;
 }
 
 void TrackedComponentView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -85,15 +81,6 @@ void TrackedComponentView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void TrackedComponentView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
 }
-
-//void TrackedComponentView::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
-//{
-//	QString posText = QString("%1, %2")
-//		.arg(event->scenePos().x())
-//		.arg(event->scenePos().y()); //Update the cursor potion text
-//
-//	_cursorPosText->setPlainText(posText);
-//}
 
 QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVariant & value)
 {
@@ -167,7 +154,6 @@ void TrackedComponentView::createChildShapesAtStart() {
 				rect->setFlag(ItemIsMovable);
 				rect->setFlag(ItemIsSelectable);
 				rect->setFlag(ItemSendsGeometryChanges);
-				//rect->setFlag(ItemIgnoresTransformations);
 				rect->setData(0, i);
 
 			}
@@ -184,23 +170,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 	if (!all)
 		return;
-
-	//qDebug() << "all traj id's";
-	//for (int k = 0; k < all->size(); k++) {
-	//	//qDebug() << dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getId();
-	//	if (dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getId() != dynamic_cast<IModelTrackedPoint*>(dynamic_cast<IModelTrackedTrajectory*>(all->getChild(k))->getLastChild())->getId()) {
-	//		qDebug() << "traj and element not same id!!!!!";
-	//	}
-	//}
-	//qDebug() << "all shape traj id's";
-	//for (int l = 0; l < this->childItems().size(); l++) {
-	//	//qDebug() << dynamic_cast<IModelTrackedTrajectory*>(dynamic_cast<ComponentShape*>(this->childItems()[l])->getTrajectory())->getId();
-	//}
-	//qDebug() << "all shape id's";
-	//for (int m = 0; m < this->childItems().size(); m++) {
-	//	//qDebug() << dynamic_cast<ComponentShape*>(this->childItems()[m])->getId();
-	//}
-
+    
 	//update each shape; shape deletes itself if trajectory is empty or not existant
 	for (int i = 0; i < this->childItems().size(); i++) {
 		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);

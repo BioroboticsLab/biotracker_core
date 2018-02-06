@@ -10,6 +10,10 @@ ControllerNotifications::ControllerNotifications(QObject* parent, IBioTrackerCon
 
 }
 
+ControllerNotifications::~ControllerNotifications() {
+    qInstallMessageHandler(0);
+}
+
 void ControllerNotifications::createModel()
 {
 }

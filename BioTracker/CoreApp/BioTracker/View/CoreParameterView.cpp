@@ -32,11 +32,6 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	fillUI();
 	setStyle();
 
-    //bool darea = settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_AREA, false);
-    //bool drect = settings->getValueOrDefault<bool>(AREADESCRIPTOR::DISP_RECT, false);
-    //ui->checkBoxDisplayTrackingArea->setChecked(darea);
-    //ui->checkBoxDisplayRectification->setChecked(drect);
-
 	getNotified();
 }
 
@@ -52,8 +47,6 @@ QWidget * CoreParameterView::getTrackerHook()
 
 void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
 {
-	//qDebug() << "permission " << permission.first << " set to" << permission.second;
-	//TODO use a switch here!
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW && permission.second == false) {

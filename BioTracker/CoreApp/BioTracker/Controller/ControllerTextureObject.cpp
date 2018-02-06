@@ -52,8 +52,6 @@ void ControllerTextureObject::createModel() {
 
 void ControllerTextureObject::createView() {
     m_View = new TextureObjectView(this, this, m_Model);
-    // this is the gl widget
-    //  m_View = new BioTracker3VideoView(0, this, m_Model);
 }
 
 void ControllerTextureObject::connectModelToController() {

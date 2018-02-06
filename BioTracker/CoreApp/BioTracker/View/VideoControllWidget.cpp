@@ -1,9 +1,6 @@
 #include "VideoControllWidget.h"
 #include "ui_VideoControllWidget.h"
 #include "Controller/ControllerPlayer.h"
-
-//#include "IStates/IPlayerState.h"
-
 #include "Model/MediaPlayer.h"
 
 VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controller, IModel* model) :
@@ -124,7 +121,6 @@ void VideoControllWidget::on_PositionChanged(int position) {
 
 
 void VideoControllWidget::on_button_record_clicked() {
-	//QString name = arg1;
 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
 	int success = controller->recordOutput();
@@ -143,7 +139,6 @@ void VideoControllWidget::on_button_record_clicked() {
 }
 
 void VideoControllWidget::on_button_record_cam_clicked() {
-	//QString name = arg1;
 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
 	int success = controller->recordInput();
@@ -162,9 +157,6 @@ void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QStri
 }
 
 void VideoControllWidget::on_sld_video_sliderReleased() {
-   // int position = ui->sld_video->sliderPosition();
-    //ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    //controller->setGoToFrame(position);
 }
 
 void VideoControllWidget::on_sld_video_actionTriggered(int action)

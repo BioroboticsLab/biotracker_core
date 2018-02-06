@@ -92,7 +92,6 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 
 		if (_currentParameterView) {
 			dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
-			//qDebug() << "currentParameterView was set";
 		}
 
 		QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);

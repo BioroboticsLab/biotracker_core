@@ -10,6 +10,12 @@
 #include "util/CLIcommands.h"
 #include "Interfaces/IModel/IModelTrackedComponent.h"
 
+//This will hide the console. 
+//See https://stackoverflow.com/questions/2139637/hide-console-of-windows-application
+#ifdef _WIN32
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 	CLI::optionParser(argc, argv);

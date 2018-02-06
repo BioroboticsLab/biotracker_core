@@ -8,7 +8,8 @@
 class ControllerNotifications : public IController {
 	Q_OBJECT
 	public:
-		ControllerNotifications(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+        ControllerNotifications(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
+        ~ControllerNotifications();
 		
 	protected:
 		void createModel() override;

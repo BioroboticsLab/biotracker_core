@@ -35,18 +35,6 @@ void TextureObjectView::getNotified()
 			_oldBoundingRect = currentBoundingRect;
 		}
 
-		
-		//scene->setSceneRect(0, 0, pma.width(), pma.height());
-		//printf("textureobjectView: %i, %i ", pma.width(), pma.height());
-		//printf("sceneRect: %f, %f \n", scene->sceneRect().width(), scene->sceneRect().width());
-		
-		/*QRectF boundingRect = QRectF(0, 0, pma.width(), pma.height());
-		QPen pen = QPen(Qt::black);
-		scene->addRect(boundingRect, pen);
-
-		pen = QPen(Qt::red);
-		scene->addRect(scene->sceneRect(), pen);*/
-
 	}
     update();
 }

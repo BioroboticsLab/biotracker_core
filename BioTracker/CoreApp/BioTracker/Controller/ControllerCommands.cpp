@@ -114,7 +114,6 @@ void ControllerCommands::createView()
 	_undoView = new QUndoView(_undoStack);
 	_undoView->setWindowTitle("Command List");
 	_undoView->setAttribute(Qt::WA_QuitOnClose, false);
-	//_undoView->show();
 }
 
 void ControllerCommands::connectModelToController()

@@ -127,10 +127,6 @@ void ControllerAreaDescriptor::connectControllerToController()
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
 		auto viewController = qobject_cast<ControllerGraphicScene*>(ctr);
 		auto view = dynamic_cast<GraphicsView*> (viewController->getView());
-		// AreaDescriptor* rd = static_cast<AreaDescriptor*>(getView());
-		// AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
-		// view->addGraphicsItem(rd);
-		// view->addGraphicsItem(ad);
 
 		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAreaDescriptor::mousePressEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAreaDescriptor::mouseReleaseEvent, Qt::DirectConnection);
@@ -150,9 +146,6 @@ void ControllerAreaDescriptor::connectControllerToController()
         auto parmsController = qobject_cast<ControllerCoreParameter*>(ctrParms);
         QObject::connect(this, &ControllerAreaDescriptor::changeAreaDescriptorType, parmsController, &ControllerCoreParameter::changeAreaDescriptorType, Qt::DirectConnection);
 
-		////no such signal
-		//QWidget *viewport = view->viewport();
-		//QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
 
 		AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
 		QObject::connect(area->_rect.get(), SIGNAL(updatedVertices()), this, SLOT(updateView()));

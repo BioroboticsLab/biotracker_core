@@ -2,7 +2,7 @@
 #include "View/MainWindow.h"
 #include "Model/null_Model.h"
 #include "Model/Annotations.h"
-//#include "Controller/ControllerStrategies/MainGUIApplication.h"
+
 #include "Controller/ControllerPlayer.h"
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerAnnotations.h"

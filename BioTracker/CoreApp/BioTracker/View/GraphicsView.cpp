@@ -11,27 +11,14 @@
 #include <QDebug>
 #include <QtOpenGL/QGLWidget>
 #include <QStringBuilder>
-//#include <QOpenGlWidget>
-//#include <QSurfaceFormat>
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
 {
 	m_GraphicsScene = new QGraphicsScene();
-	m_BackgroundImage = NULL; //TODO Andi init this
+	m_BackgroundImage = NULL; 
 
 	this->setScene(m_GraphicsScene);
-
-	// QOpenGLWidget* openGLWidget = new QOpenGLWidget();
-	// QSurfaceFormat surfaceFormat = QSurfaceFormat();
-
-	// surfaceFormat.setRenderableType(QSurfaceFormat::OpenGL);
-	// surfaceFormat.setSamples(8);
-	// surfaceFormat.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-
-	// openGLWidget->setFormat(surfaceFormat);
-
-	//this->setViewport(openGLWidget);
 	this->setViewport(new QGLWidget());
 	
 	this->setBackgroundBrush(QBrush(Qt::white));
@@ -39,9 +26,7 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	this->show();
 
 	setTransformationAnchor(AnchorUnderMouse);
-	//setResizeAnchor(AnchorUnderMouse);
 	setViewportUpdateMode(SmartViewportUpdate);
-	//setMouseTracking(true);
 
 	setDragMode(RubberBandDrag);
 

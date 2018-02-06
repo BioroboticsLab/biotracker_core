@@ -42,7 +42,6 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
-	//setFlag(ItemSendsGeometryChanges);
 
 	setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -282,15 +281,6 @@ void ComponentShape::trace()
 		delete m_tracingLayer->childItems()[0];
     }
 
-	////check if number of tracing children in tracing layer is correct
-	////delete/add the difference
-	//while (m_tracingLayer->childItems().size() > (int)floor(m_tracingLength / m_tracingSteps)) {
-	//	delete m_tracingLayer->childItems()[0];
-	//}
-	//while (m_tracingLayer->childItems().size() < (int)floor(m_tracingLength / m_tracingSteps)) {
-	//	m_tracingLayer
-	//}
-
 	//check if number of tracing children in tracing layer is correct
 	//delete/add the difference
 	int initialSize = m_tracingLayer->childItems().size();
@@ -430,8 +420,6 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 			m_rotationHandle->setVisible(permission.second);
 			break;
 	}
-
-	//qDebug() << "shape permission " << permission.first << "set to " << permission.second;
 }
 
 int ComponentShape::getId()
@@ -461,16 +449,13 @@ QPoint ComponentShape::getOldPos()
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-	//qDebug() << "shape get dragged at:" << pos();
 	m_mousePressTime = QTime::currentTime();
 	m_mousePressTime.start();
 	m_mousePressPos = pos().toPoint();
-	//qDebug()<< "PRESS" << m_mousePressPos;
 
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
 		setCursor(Qt::ClosedHandCursor);
-		//m_dragged = true;
 		update();
 	}
 	//pass on
@@ -501,7 +486,6 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 			this->update();
 		}
 		m_dragged = false;
-		//qDebug() << "DROP " << this->getId() << ": " << pos();
 
 		update();
 	}
@@ -707,8 +691,6 @@ bool ComponentShape::removeTrackEntity()
 
 		//emit to set trajectory invalid 
 		Q_EMIT emitRemoveTrackEntity(m_trajectory, m_currentFramenumber);
-		//hide this shape
-		//this->hide();
 	}
 	else {
 		qDebug() << "track entity is not removable";
@@ -760,23 +742,7 @@ void ComponentShape::createInfoWindow()
 	id->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	hLayoutId->addWidget(idLabel);
 	hLayoutId->addWidget(id);
-
-
-	//imodeltrackedtrajectory needs to output a imodelcomponenteuclidian2d object
-	/*QHBoxLayout* hLayoutPos = new QHBoxLayout();
-	QLabel* positionLabel = new QLabel("Position:");
-	QLabel* position = new QLabel(QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getX()) + QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getY()));
-	position->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(positionLabel);
-	hLayoutId->addWidget(position);
-
-	QHBoxLayout* hLayoutOrientation = new QHBoxLayout();
-	QLabel* orientationLabel = new QLabel("Current orientation:");
-	QLabel* orientation = new QLabel(QString::number(this->m_trajectory->getChild(m_currentFramenumber)->getDeg()));
-	position->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(orientationLabel);
-	hLayoutId->addWidget(orientation);*/
-
+    
 	QHBoxLayout* hLayoutSeen = new QHBoxLayout();
 	QLabel* seenLabel = new QLabel("Seen for x frames:");
 	QLabel* seen = new QLabel(QString::number(this->m_trajectory->validCount()));
@@ -785,8 +751,6 @@ void ComponentShape::createInfoWindow()
 	hLayoutId->addWidget(seen);
 
 	vLayout->addLayout(hLayoutId);
-	//vLayout->addLayout(hLayoutPos);
-	//vLayout->addLayout(hLayoutOrientation);
 	vLayout->addLayout(hLayoutSeen);
 
 	infoWidget->setLayout(vLayout);

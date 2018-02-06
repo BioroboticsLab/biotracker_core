@@ -34,11 +34,6 @@ GuiContext::GuiContext(QObject *parent) :
 	QPointer< IController > CommandsController = new ControllerCommands(this, this, ENUMS::CONTROLLERTYPE::COMMANDS);
 	QPointer< IController > NotificationController = new ControllerNotifications(this, this, ENUMS::CONTROLLERTYPE::NOTIFICATION);
 
-	
-//	QPointer< IController > AreaDescriptorController = new ControllerAreaDescriptor(this, this, ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
-
-
-
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::MAINWINDOW, MainWindowController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::PLAYER, PlayerController);
     m_ControllersMap.insert(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT, TextureObjectController);

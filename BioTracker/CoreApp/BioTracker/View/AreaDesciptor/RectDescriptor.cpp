@@ -148,6 +148,9 @@ void RectDescriptor::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	if (!_isInit)
 		init();
 
+    //We want smooth lines!
+    painter->setRenderHint(QPainter::Antialiasing);
+
     //TODO remove hardcoding and code duplication
     if (_dragVectorId >= 0 && _dragType != BiotrackerTypes::AreaType::NONE) {
         QColor transparentGray = Qt::gray;
