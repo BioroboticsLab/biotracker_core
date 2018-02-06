@@ -40,7 +40,16 @@
                 "/usr/include/qt4/QtCore",
                 "/usr/local/include/opencv",
                 "/usr/include/qt4/QtGui",
-                "${workspaceRoot}/BioTracker/Interfaces/BioTrackerInterfaces"
+                "${workspaceRoot}/BioTracker/Interfaces/BioTrackerInterfaces",
+                "${workspaceRoot}/BioTracker/CoreApp/BioTracker",
+                "${workspaceRoot}/BioTracker/Utils/BioTrackerUtils",
+                "${workspaceRoot}/BioTracker/Utils/BioTrackerUtils",
+                "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
+                "/usr/include/x86_64-linux-gnu/qt5",
+                "/usr/include/x86_64-linux-gnu/qt5/QtGui",
+                "/usr/include/x86_64-linux-gnu/qt5/QtMultimedia",
+                "/usr/include/x86_64-linux-gnu/qt5/QtMultimediaWidgets",
+                "/usr/include/x86_64-linux-gnu/qt5/QtCore"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

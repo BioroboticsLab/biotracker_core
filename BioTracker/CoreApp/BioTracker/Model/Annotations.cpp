@@ -79,6 +79,10 @@ void Annotations::deserialize()
 					annotation = std::make_shared<AnnotationArrow>();
 				else if (type == "label")
 					annotation = std::make_shared<AnnotationLabel>();
+				else if (type == "rect")
+					annotation = std::make_shared<AnnotationRect>();
+				else if (type == "ellipse")
+					annotation = std::make_shared<AnnotationEllipse>();
 				if (annotation)
 				{
 					annotation->deserializeFrom(args);
@@ -329,11 +333,13 @@ bool Annotations::updateAnnotation(QPoint cursor)
 	if (currentAnnotation)
 	{
 		currentAnnotation->onEndAnnotation(cursor);
+		dirty = true;
 		return true;
 	}
 	if (selection)
 	{
 		*selection.handle = cursor;
+		dirty = true;
 		return true;
 	}
 	return false;
@@ -375,8 +381,10 @@ bool Annotations::removeSelection()
 	for (auto iter = annotations.begin(); iter != annotations.end();)
 	{
 		const auto annotation = *iter;
-		if (annotation.get() == selectedAnnotation)
+		if (annotation.get() == selectedAnnotation){
 			iter = annotations.erase(iter);
+			dirty = true;
+		}
 		else
 			++iter;
 	}

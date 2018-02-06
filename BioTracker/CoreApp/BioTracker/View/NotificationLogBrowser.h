@@ -5,10 +5,6 @@
 #include "Interfaces/IView/IViewWidget.h"
 #include <QTextBrowser>
 
-namespace Ui {
-	class NotificationLogBrowser;
-}
-
 class NotificationLogBrowser : public IViewWidget
 {
 	Q_OBJECT
@@ -24,7 +20,6 @@ class NotificationLogBrowser : public IViewWidget
 		void getNotified();
 
 	private:
-		Ui::NotificationLogBrowser *ui;
 		QTextBrowser *browser;
 		QFont m_font;
 
