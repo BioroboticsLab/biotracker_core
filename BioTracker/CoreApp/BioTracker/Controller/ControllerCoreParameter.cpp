@@ -70,9 +70,6 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitToggleAntialiasingEntities, tcview, &TrackedComponentView::receiveToggleAntialiasingEntities, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitToggleAntialiasingFull, ctrGrphScn, &ControllerGraphicScene::receiveToggleAntialiasingFull, Qt::DirectConnection);
 
-
-
-		//
 	}
 	//Connections to the AreaDescriptor
 	{
