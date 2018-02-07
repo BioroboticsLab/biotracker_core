@@ -1,5 +1,6 @@
 #include "ControllerMainWindow.h"
 #include "View/MainWindow.h"
+#include "View/GraphicsView.h"
 #include "Model/null_Model.h"
 #include "Model/Annotations.h"
 
@@ -9,6 +10,7 @@
 #include "Controller/ControllerDataExporter.h"
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCommands.h"
+#include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "GuiContext.h"
 
@@ -144,11 +146,25 @@ void ControllerMainWindow::connectControllerToController() {
     //QObject::connect(this, &ControllerMainWindow::emit, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitShowActionListCommand, ctrcmd, &ControllerCommands::receiveShowActionList, Qt::DirectConnection);
 
+	//connect to ControllerGraphicScene
+	IController* ictrgrv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
+	ControllerGraphicScene *ctrgrv = static_cast<ControllerGraphicScene*>(ictrgrv);
+	GraphicsView* grv = static_cast<GraphicsView*>(ctrgrv->getView());
+	
+	QObject::connect(grv, &GraphicsView::emitCursorPosition, this, &ControllerMainWindow::receiveCursorPosition, Qt::QueuedConnection);
+
+
 	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string *video = (std::string*)(set->readValue("video"));
 	if (video)
 		loadVideo(video->c_str());
+}
+
+void ControllerMainWindow::receiveCursorPosition(QPoint pos)
+{
+	//qDebug() << pos;
+	dynamic_cast<MainWindow*>(m_View)->setCursorPositionLabel(pos);
 }
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {

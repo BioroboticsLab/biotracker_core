@@ -139,6 +139,12 @@ void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) 
 	ui->comboBox_TrackerSelect->setCurrentText(current);
 }
 
+void MainWindow::setCursorPositionLabel(QPoint pos)
+{
+	QString posString = QString("%1, %2").arg(QString::number(pos.x()), QString::number(pos.y()));
+	ui->cursorPosition->setText(posString);
+}
+
 void MainWindow::activeTrackingCheckBox() {
     ui->checkBox_TrackingActivated->setEnabled(true);
 }
