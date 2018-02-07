@@ -20,6 +20,7 @@ public:
 	void mouseReleaseEvent(QMouseEvent*event) override;
 	void mouseMoveEvent(QMouseEvent*event) override;
 	void keyReleaseEvent(QKeyEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
 
 
     // IGraphicsView interface
@@ -44,6 +45,7 @@ Q_SIGNALS:
 	void onMouseReleaseEvent(QMouseEvent*event, QPoint imagePosition);
 	void onMouseMoveEvent(QMouseEvent*event, QPoint imagePosition);
 	void onKeyReleaseEvent(QKeyEvent *event);
+	void onKeyPressEvent(QKeyEvent *event);
 
 	void emitCursorPosition(QPoint pos);
 

@@ -86,6 +86,11 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 	emit(onKeyReleaseEvent(event));
 }
 
+void GraphicsView::keyPressEvent(QKeyEvent * event)
+{
+	emit(onKeyPressEvent(event));
+}
+
 void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
 	// The middle mouse button is not forwarded but handled here.

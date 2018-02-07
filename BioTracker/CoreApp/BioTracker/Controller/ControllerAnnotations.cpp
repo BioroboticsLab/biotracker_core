@@ -35,7 +35,9 @@ void ControllerAnnotations::connectControllerToController() {
 		QObject::connect(view, &GraphicsView::onMousePressEvent, this, &ControllerAnnotations::mousePressEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseReleaseEvent, this, &ControllerAnnotations::mouseReleaseEvent, Qt::DirectConnection);
 		QObject::connect(view, &GraphicsView::onMouseMoveEvent, this, &ControllerAnnotations::mouseMoveEvent, Qt::DirectConnection);
-		QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAnnotations::keyReleaseEvent, Qt::DirectConnection);
+		//QObject::connect(view, &GraphicsView::onKeyReleaseEvent, this, &ControllerAnnotations::keyReleaseEvent, Qt::DirectConnection);
+		QObject::connect(view, &GraphicsView::onKeyPressEvent, this, &ControllerAnnotations::keyPressEvent, Qt::DirectConnection);
+
 
 		QWidget *viewport = view->viewport();
 		QObject::connect(this, SIGNAL(onRepaintRequired()), viewport, SLOT(repaint()));
@@ -73,39 +75,42 @@ void ControllerAnnotations::updateView()
 	emit(onRepaintRequired());
 }
 
-void ControllerAnnotations::keyReleaseEvent(QKeyEvent *event)
+void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 {
 	auto model = static_cast<Annotations*>(getModel());
 	actionQueued = ActionQueued::None;
 	bool handled = true;
-
-	switch (event->key())
-	{
-	case Qt::Key::Key_A:
-		actionQueued = ActionQueued::CreateArrow;
-		break;
-	case Qt::Key::Key_L:
-		actionQueued = ActionQueued::CreateLabel;
-		break;
-	case Qt::Key::Key_R:
-		actionQueued = ActionQueued::CreateRect;
-		break;
-	case Qt::Key::Key_E:
-		actionQueued = ActionQueued::CreateEllipse;
-		break;
-	case Qt::Key::Key_Delete:
-		// Remove existing annotations at current frame.
-		if (model->removeSelection())
+	if (event->modifiers()&Qt::AltModifier) {
+		switch (event->key())
 		{
-			updateView();
-		}
-		else
+		case Qt::Key::Key_A:
+			actionQueued = ActionQueued::CreateArrow;
+			break;
+		case Qt::Key::Key_L:
+			actionQueued = ActionQueued::CreateLabel;
+			break;
+		case Qt::Key::Key_R:
+			actionQueued = ActionQueued::CreateRect;
+			break;
+		case Qt::Key::Key_E:
+			actionQueued = ActionQueued::CreateEllipse;
+			break;
+		case Qt::Key::Key_Delete:
+			// Remove existing selected annotation at current frame.
+			if (model->removeSelection())
+			{
+				updateView();
+			}
+			else
+				handled = false;
+			break;
+		default:
 			handled = false;
-		break;
-	default:
-		handled = false;
-		break;
+			break;
+		}
 	}
+
+	
 	if (handled)
 		event->accept();
 }
