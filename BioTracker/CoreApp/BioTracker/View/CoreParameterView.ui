@@ -631,11 +631,14 @@
                                  <layout class="QHBoxLayout" name="layoutOrientationLine">
                                   <item>
                                    <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
+                                    <property name="enabled">
+                                     <bool>true</bool>
+                                    </property>
                                     <property name="text">
                                      <string>Show orientation line</string>
                                     </property>
                                     <property name="checked">
-                                     <bool>true</bool>
+                                     <bool>false</bool>
                                     </property>
                                    </widget>
                                   </item>

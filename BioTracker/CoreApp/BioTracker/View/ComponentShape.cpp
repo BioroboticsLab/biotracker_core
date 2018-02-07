@@ -82,7 +82,7 @@ QPainterPath ComponentShape::shape() const
 		path.addPolygon(m_polygons[0]);
 	}
 	else {
-		qDebug() << "Could not create a shape (interaction area) for current track" << m_id;
+		qDebug() << "Could not create a shape (interaction area) for current track " << m_id;
 		assert(0);
 	}
 	return path;
@@ -416,8 +416,15 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 			break;
 		case ENUMS::COREPERMISSIONS::COMPONENTROTATE:
 			m_pRotatable = permission.second;
-			m_rotationHandleLayer->setVisible(permission.second);
-			m_rotationHandle->setVisible(permission.second);
+			
+			if (m_pRotatable) {
+				m_rotationHandleLayer->setVisible(m_orientationLine);
+				m_rotationHandle->setVisible(m_orientationLine);
+			}
+			else {
+				m_rotationHandleLayer->hide();
+				m_rotationHandle->hide();
+			}
 			break;
 	}
 }
@@ -838,6 +845,10 @@ void ComponentShape::setDimensionsToDefault()
 void ComponentShape::receiveToggleOrientationLine(bool toggle)
 {
 	m_orientationLine = toggle;
+	if (m_pRotatable) {
+		m_rotationHandleLayer->setVisible(toggle);
+		m_rotationHandle->setVisible(toggle);
+	}
 	trace();
 	update();
 }
@@ -917,6 +928,11 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 
 	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
 	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
+
+	if (m_pRotatable) {
+		m_rotationHandleLayer->setVisible(m_orientationLine);
+		m_rotationHandle->setVisible(m_orientationLine);
+	}
 
 	update();
 }
