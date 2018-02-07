@@ -31,6 +31,10 @@ public:
 
 	void loadFile(std::string file);
 
+Q_SIGNALS:
+	void emitResetUndoStack();
+	void emitViewUpdate();
+
 	public Q_SLOTS:
     void receiveReset();
 	void receiveTrackingDone(uint frame);

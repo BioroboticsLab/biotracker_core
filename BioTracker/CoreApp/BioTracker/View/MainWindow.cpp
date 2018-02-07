@@ -52,7 +52,6 @@ void MainWindow::addTrackerElementsView(IView *elemView)
 		_currentCoreView->setParent(0);
 		m_graphView->removeGraphicsItem(_currentElementView);
 		m_graphView->removeGraphicsItem(_currentCoreView);
-
 	}
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
 	graphObj->setParent(ui->trackingArea);

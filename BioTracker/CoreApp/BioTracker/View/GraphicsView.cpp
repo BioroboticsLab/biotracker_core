@@ -19,7 +19,7 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	m_BackgroundImage = NULL; 
 
 	this->setScene(m_GraphicsScene);
-	this->setViewport(new QGLWidget());
+	//this->setViewport(new QGLWidget());
 	
 	this->setBackgroundBrush(QBrush(Qt::white));
 

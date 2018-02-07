@@ -1,4 +1,6 @@
 #include "ControllerDataExporter.h"
+#include "Controller/ControllerCommands.h"
+#include "Controller/ControllerTrackedComponentCore.h"
 #include "Model/DataExporters/DataExporterCSV.h"
 #include "Model/DataExporters/DataExporterSerialize.h"
 #include "Model/DataExporters/DataExporterJson.h"
@@ -22,6 +24,18 @@ void ControllerDataExporter::cleanup() {
 }
 
 void ControllerDataExporter::connectControllerToController() {
+    //connect to controller commands
+	IController* ictrcmd = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COMMANDS);
+	ControllerCommands *ctrcmd = static_cast<ControllerCommands*>(ictrcmd);
+
+    QObject::connect(this, &ControllerDataExporter::emitResetUndoStack, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
+
+    //connect to view controller
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE
+    );
+	ControllerTrackedComponentCore *tccController = dynamic_cast<ControllerTrackedComponentCore*>(ctr);
+
+	QObject::connect(this, &ControllerDataExporter::emitViewUpdate, tccController, &ControllerTrackedComponentCore::receiveUpdateView, Qt::DirectConnection);
 }
 
 void ControllerDataExporter::createModel() {
@@ -89,14 +103,18 @@ void ControllerDataExporter::receiveTrackingDone(uint frame) {
 
 void ControllerDataExporter::receiveFinalizeExperiment() {
     if (getModel()) {
+        emitResetUndoStack();
         dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
+        emitViewUpdate();
     }
 }
 
 void ControllerDataExporter::receiveReset() {
     if (getModel()) {
+        emitResetUndoStack();
         dynamic_cast<IModelDataExporter*>(getModel())->finalizeAndReInit();
         dynamic_cast<IModelDataExporter*>(getModel())->close();
+        emitViewUpdate();
     }
 
     createModel();

@@ -26,7 +26,6 @@ NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *con
 
 NotificationLogBrowser::~NotificationLogBrowser()
 {
-	delete ui;
 }
 
 void NotificationLogBrowser::outputMessage(QtMsgType type, const QString & msg)

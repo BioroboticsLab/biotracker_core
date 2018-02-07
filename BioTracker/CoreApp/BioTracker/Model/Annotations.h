@@ -115,7 +115,7 @@ public:
 		using Annotation::Annotation;
 		virtual ~AnnotationEllipse() = default;
 
-		virtual std::string name() const override { return "rect"; }
+		virtual std::string name() const override { return "ellipse"; }
 		virtual void deserializeFrom(std::queue<std::string> &args);
 		virtual std::vector<std::string> serializeToVector() const;
 		virtual bool onEndAnnotation(QPoint currentPosition) override { bottomRight = currentPosition; return true; };
