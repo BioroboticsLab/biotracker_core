@@ -342,8 +342,8 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-279</y>
-                      <width>302</width>
+                      <y>0</y>
+                      <width>312</width>
                       <height>1052</height>
                      </rect>
                     </property>
@@ -645,6 +645,9 @@
                                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                                   <item>
                                    <widget class="QCheckBox" name="checkBoxIgnoreZoom">
+                                    <property name="enabled">
+                                     <bool>true</bool>
+                                    </property>
                                     <property name="text">
                                      <string>Always same size</string>
                                     </property>

@@ -223,7 +223,7 @@
      <x>0</x>
      <y>0</y>
      <width>1054</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -383,6 +383,9 @@
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string/>
    </property>
@@ -455,7 +458,7 @@
           <x>0</x>
           <y>0</y>
           <width>366</width>
-          <height>724</height>
+          <height>737</height>
          </rect>
         </property>
         <attribute name="label">

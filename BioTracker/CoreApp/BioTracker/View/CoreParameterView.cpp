@@ -26,6 +26,9 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
     sw.erase(sw.find_last_not_of('0') + 1, std::string::npos);
     ui->lineEditRectWidth->setText(sw.c_str());
     ui->lineEditRectHeight->setText(sh.c_str());
+
+	//TODO implement it correctly before enabling again
+	ui->checkBoxIgnoreZoom->hide();
     
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
@@ -102,20 +105,20 @@ void CoreParameterView::on_comboBoxTracingStyle_currentIndexChanged(const QStrin
 	emitTracingStyle(text);
 }
 
-void CoreParameterView::on_spinBoxTracingHistoryLength_editingFinished()
+void CoreParameterView::on_spinBoxTracingHistoryLength_valueChanged(int i)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	int value = ui->spinBoxTracingHistoryLength->value();
-	coreParams->m_tracingHistory = value;
-	emitTracingHistoryLength(value);
+	//int value = ui->spinBoxTracingHistoryLength->value();
+	coreParams->m_tracingHistory = i;
+	emitTracingHistoryLength(i);
 }
 
-void CoreParameterView::on_spinBoxTracingSteps_editingFinished()
+void CoreParameterView::on_spinBoxTracingSteps_valueChanged(int i)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	int value = ui->spinBoxTracingSteps->value();
-	coreParams->m_tracingSteps = value;
-	emitTracingSteps(value);
+	//int value = ui->spinBoxTracingSteps->value();
+	coreParams->m_tracingSteps = i;
+	emitTracingSteps(i);
 }
 
 void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text)
@@ -132,12 +135,12 @@ void CoreParameterView::on_checkBoxTracerFrameNumber_stateChanged(int toggle)
 	emitTracerFrameNumber(toggle);
 }
 
-void CoreParameterView::on_spinBoxTracerProportions_editingFinished()
+void CoreParameterView::on_spinBoxTracerProportions_valueChanged(double d)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	float value = (float)ui->spinBoxTracerProportions->value();
-	coreParams->m_tracerProportions = value;
-	emitTracerProportions(value);
+	//float value = (float)ui->spinBoxTracerProportions->value();
+	coreParams->m_tracerProportions = d;
+	emitTracerProportions(d);
 }
 
 void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle)
