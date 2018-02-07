@@ -134,6 +134,7 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 			updateView();
 		else
 			handled = false;
+			updateView();
 		break;
 	}
 	if (handled)
