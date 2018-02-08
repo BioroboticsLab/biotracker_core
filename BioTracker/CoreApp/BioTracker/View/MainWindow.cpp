@@ -13,6 +13,8 @@
 #include "Controller/null_Controller.h"
 
 #include "QGraphicsObject"
+#include <QTableWidget>
+#include <QTableWidgetItem>
 
 #include "qtextedit.h"
 #include <qmessagebox.h>
@@ -277,6 +279,89 @@ void MainWindow::on_actionInfo_triggered() {
     int ret = QMessageBox::information(this, tr("BioTracker"),
         tr( version.c_str()),
         QMessageBox::Ok);
+}
+
+void MainWindow::on_actionShortcuts_triggered() {
+
+	//TODO import this from file
+    std::pair<QString, QString> scUndo (QString("ctrl + z"), QString("undo"));
+    std::pair<QString, QString> scRedo (QString("ctrl + y"), QString("redo"));
+    std::pair<QString, QString> scSel (QString("ctrl + a"), QString("select all"));
+    std::pair<QString, QString> scPlay (QString("Space"), QString("play"));
+    std::pair<QString, QString> scNext (QString("Left Arrow"), QString("Previous Frame"));
+    std::pair<QString, QString> scPrev (QString("Right Arrow"), QString("Next Frame"));
+    std::pair<QString, QString> scStop (QString("ctrl + Space"), QString("Stop"));
+    std::pair<QString, QString> scAL (QString("alt + l"), QString("add label annotation"));
+    std::pair<QString, QString> scAA (QString("alt + a"), QString("add arrow annotation"));
+    std::pair<QString, QString> scAE (QString("alt + e"), QString("add ellipse annotation"));
+    std::pair<QString, QString> scAR (QString("alt + r"), QString("add rect annotation"));
+    std::pair<QString, QString> scADel (QString("alt + delete"), QString("delete selected annotation"));
+
+	std::map<QString,QString> scMap;
+
+	scMap.insert(scUndo);
+	scMap.insert(scRedo);
+	scMap.insert(scSel);
+	scMap.insert(scPlay);
+	scMap.insert(scNext);
+	scMap.insert(scPrev);
+	scMap.insert(scStop);
+	scMap.insert(scAL);
+	scMap.insert(scAA);
+	scMap.insert(scAE);
+	scMap.insert(scAR);
+	scMap.insert(scADel);
+
+	QMap<QString, QString> scQMap = QMap<QString, QString>(scMap);
+
+	QTableWidget* scTable = new QTableWidget();
+	scTable->setRowCount(1);
+	scTable->setColumnCount(2);
+
+	scTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Shortcut"));
+	scTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Description"));
+	scTable->verticalHeader()->hide();
+
+	QMapIterator<QString, QString> sc(scQMap);
+	while (sc.hasNext()) {
+		sc.next();
+		QTableWidgetItem* scKey = new QTableWidgetItem(sc.key());
+		QTableWidgetItem* scKeyInfo = new QTableWidgetItem(sc.value());
+		scKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		scKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+		scTable->setItem(scTable->rowCount()-1 , 0, scKey);
+		scTable->setItem(scTable->rowCount()-1 , 1, scKeyInfo);
+
+		if(sc.hasNext()){
+			scTable->insertRow(scTable->rowCount());
+		}
+	}
+
+ 	//scTable->horizontalHeader()->setStretchLastSection( true ); 
+	scTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+	QWidget* outerWidget = new QWidget();
+	outerWidget->resize(scTable->size());
+	QVBoxLayout* vLayout = new QVBoxLayout();
+
+	qDebug() << scTable->size();
+	qDebug() << scTable->baseSize();
+	qDebug() << scTable->frameSize();
+
+
+	vLayout->addWidget(scTable);
+
+	outerWidget->setLayout(vLayout);
+
+	qDebug() << scTable->size();
+	qDebug() << scTable->baseSize();
+	qDebug() << scTable->frameSize();
+
+
+	outerWidget->show();
+
+
 }
 
 

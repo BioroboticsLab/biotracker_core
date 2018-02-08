@@ -111,8 +111,8 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setPen(pen);
 	painter->setBrush(brush);
 
-	// draw angleLine
-	if (m_orientationLine) {
+	// draw orientation line
+	if (m_orientationLine && !m_rotationLine.isNull()) {
 		painter->drawLine(m_rotationLine);
 	}
 
@@ -194,31 +194,37 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 				else { m_h = m_hDefault; }
 			}
 			//update rotation
-			this->setTransformOriginPoint(m_w / 2, m_h / 2);
-			if (m_h > m_w) {
-				m_rotation = -90 - pointLike->getDeg();
-				this->setRotation(m_rotation);
+			if(pointLike->hasDeg()){
+				this->setTransformOriginPoint(m_w / 2, m_h / 2);
+				if (m_h > m_w) {
+					m_rotation = -90 - pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+				else {
+					m_rotation = -pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+
+				//update rotation line
+				m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
+				if (m_h > m_w) {
+					m_rotationLine.setAngle(-90);
+				}
+				else {
+					m_rotationLine.setAngle(0);
+				}
+				qreal length = (m_w + m_h) / 2 * 3;
+				m_rotationLine.setLength(length);
+
+				//update rotation handle
+				m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+				m_rotationHandleLayer->setRotation(0);
+				m_rotationHandle->setPos(m_rotationLine.p2());
 			}
-			else {
-				m_rotation = -pointLike->getDeg();
-				this->setRotation(m_rotation);
+			else{
+				m_rotationLine = QLineF();
 			}
 
-			//update rotation line
-			m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
-			if (m_h > m_w) {
-				m_rotationLine.setAngle(-90);
-			}
-			else {
-				m_rotationLine.setAngle(0);
-			}
-			qreal length = (m_w + m_h) / 2 * 3;
-			m_rotationLine.setLength(length);
-
-			//update rotation handle
-			m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-			m_rotationHandleLayer->setRotation(0);
-			m_rotationHandle->setPos(m_rotationLine.p2());
 
 
 			//update Position
@@ -759,6 +765,7 @@ void ComponentShape::createInfoWindow()
 	vLayout->addLayout(hLayoutSeen);
 
 	infoWidget->setLayout(vLayout);
+
 	infoWidget->show();
 
 

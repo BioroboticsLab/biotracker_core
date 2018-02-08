@@ -49,7 +49,7 @@ public:
 	int m_trackWidth = 20;
 	int m_trackHeight = 20;
 	//Track misc
-	bool m_trackOrientationLine = false;
+	bool m_trackOrientationLine = true;
 	bool m_trackShowId = false;
 	//Track color
 	QColor* m_colorBorder = new QColor(Qt::black);
