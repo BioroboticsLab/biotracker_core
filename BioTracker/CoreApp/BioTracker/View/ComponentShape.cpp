@@ -146,9 +146,9 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	}
 
 	// draw id in center
-
-	painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
-
+	if (m_showId){
+		painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
+	}
 }
 
 bool ComponentShape::advance()
@@ -334,6 +334,7 @@ void ComponentShape::trace()
 					QLineF orientationLine = QLineF();
 					orientationLine.setP1(adjustedHistoryPointDifference);
 					orientationLine.setAngle(historyChild->getDeg());
+					qreal length = (m_w + m_h) / 2 / m_tracerProportions * 3;
 					orientationLine.setLength(15);
 
 					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
@@ -382,8 +383,13 @@ void ComponentShape::trace()
 				QFont font = QFont();
 				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions * 0.2;
 				font.setPixelSize(fontPixelSize);
+				//font.setBold(true);
 				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
 				tracerNumberText->setFont(font);
+				tracerNumberText->setBrush(QBrush(Qt::white)); //sloooow
+				QPen pen = QPen(Qt::black);
+				pen.setWidth(0);
+				tracerNumberText->setPen(pen); //sloooow
 				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3.5f, -m_h * m_tracerProportions / 7));
 			}
 		}
@@ -568,14 +574,8 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QString markText = m_marked?"Unmark":"Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
-	if (m_marked) {
-		markAction->setVisible(false);
-		unmarkAction->setEnabled(true);
-	}
-	else {
-		markAction->setEnabled(true);
-		unmarkAction->setVisible(false);
-	}
+	markAction->setVisible(!m_marked);
+	unmarkAction->setVisible(m_marked);
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
 }
