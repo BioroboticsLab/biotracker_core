@@ -380,13 +380,11 @@ void ComponentShape::trace()
 			if (m_tracerFrameNumber) {
 				uint tracerNumber = m_currentFramenumber - i;
 				QFont font = QFont();
-				int fontPixelSize = ((m_w + m_h) / 2) * m_tracerProportions * 0.5;
+				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions * 0.2;
 				font.setPixelSize(fontPixelSize);
-				font.setItalic(true);
-				font.setStyle(QFont::StyleItalic);
 				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
 				tracerNumberText->setFont(font);
-				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3, -m_h * m_tracerProportions / 3));
+				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3.5f, -m_h * m_tracerProportions / 7));
 			}
 		}
 	}
