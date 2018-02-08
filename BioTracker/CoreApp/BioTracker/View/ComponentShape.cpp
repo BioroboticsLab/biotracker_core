@@ -851,6 +851,13 @@ void ComponentShape::receiveToggleOrientationLine(bool toggle)
 	update();
 }
 
+void ComponentShape::receiveShowId(bool toggle)
+{
+	m_showId = toggle;
+	trace();
+	update();
+}
+
 void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 {
 	m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
@@ -902,6 +909,7 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_tracerFrameNumber = coreParams->m_tracerFrameNumber;
 
 	m_orientationLine = coreParams->m_trackOrientationLine;
+	m_showId = coreParams->m_trackShowId;
 
 	m_brushColor = *(coreParams->m_colorBrush);
 	m_penColor = *(coreParams->m_colorBorder);

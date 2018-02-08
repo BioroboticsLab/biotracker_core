@@ -283,6 +283,18 @@ void TrackedComponentView::receiveTrackOrientationLine(bool toggle)
 	}
 }
 
+void TrackedComponentView::receiveTrackShowId(bool toggle)
+{
+	QList<QGraphicsItem*> childrenItems = this->childItems();
+	QGraphicsItem* childItem;
+	foreach(childItem, childrenItems) {
+		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
+		if (childShape) {
+			childShape->receiveShowId(toggle);
+		}
+	}
+}
+
 void TrackedComponentView::receiveTrackDimensionsSetDefault()
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();

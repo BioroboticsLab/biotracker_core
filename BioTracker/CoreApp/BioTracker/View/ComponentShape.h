@@ -79,6 +79,7 @@ class ComponentShape : public QGraphicsObject
 		void receiveDimensions(int width, int height);
 		void setDimensionsToDefault();
 		void receiveToggleOrientationLine(bool toggle);
+		void receiveShowId(bool toggle);
 		void receiveShapeRotation(double angle, bool rotateEntity);
 		//Ignore zoom
 		void receiveIgnoreZoom(bool toggle);
@@ -136,6 +137,7 @@ class ComponentShape : public QGraphicsObject
 		RotationHandle* m_rotationHandle;
 		QGraphicsRectItem* m_rotationHandleLayer;
 		bool m_orientationLine;
+		bool m_showId;
 		bool m_trajectoryWasActiveOnce;
 		QPoint m_oldPos;
 };

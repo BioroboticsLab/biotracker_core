@@ -55,6 +55,7 @@ public slots:
 	void receiveTrackDimensionsAll(int width, int height);
 	void receiveTrackDimensionsSelected(int width, int height);
 	void receiveTrackOrientationLine(bool toggle);
+	void receiveTrackShowId(bool toggle);
 	void receiveTrackDimensionsSetDefault();
 	//Track ignore zoom
 	void receiveIgnoreZoom(bool toggle);

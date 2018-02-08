@@ -52,6 +52,8 @@ public:
 	
 	//Track dimensions
 	void on_checkBoxTrackOrientationLine_stateChanged(int v);
+	void on_checkBoxShowId_stateChanged(int v);
+
 
 	void on_pushButtonTrackDimensionSetterAll_clicked();
 	void on_pushButtonTrackDimensionSetterSelected_clicked();
@@ -90,6 +92,7 @@ public:
 			void emitColorChangeBrushSelected();
 			//Track dimensions
 			void emitTrackOrientationLine(bool toggle);
+			void emitTrackShowId(bool toggle);
 			void emitTrackDimensionsAll(int width, int height);
 			void emitTrackDimensionsSelected(int width, int height);
 			void emitTrackDimensionsSetDefault();
