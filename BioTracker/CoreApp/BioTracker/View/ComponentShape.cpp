@@ -14,6 +14,9 @@
 #include "qlistwidget.h"
 #include "QGraphicsProxyWidget"
 #include "QVBoxLayout"
+#include "QSlider"
+#include "QAbstractSlider"
+
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
@@ -23,6 +26,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_polygons = QList<QPolygonF>();
 	m_useDefaultDimensions = true;
 	m_penWidth = 2;
+	m_transparency = 255;
 	m_penStyle = Qt::SolidLine;
 	m_penStylePrev = Qt::SolidLine;
 	m_marked = false;
@@ -564,7 +568,26 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
-	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()) );
+	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()));
+
+	//transparency slider
+	QMenu* transparencyMenu = new QMenu("Transparency");
+	QWidgetAction* sliderBox = new QWidgetAction(this);
+	QSlider* transparencySlider = new QSlider(Qt::Horizontal);
+
+	transparencySlider->setMinimum(0);
+	transparencySlider->setMaximum(255);
+	transparencySlider->setSingleStep(1);
+	transparencySlider->setTickInterval(64);
+	transparencySlider->setValue(m_transparency);
+
+	QObject::connect(transparencySlider, &QSlider::sliderMoved, this, &ComponentShape::receiveTransparency);
+
+	sliderBox->setDefaultWidget(transparencySlider);
+	transparencyMenu->addAction(sliderBox);
+
+	menu.addMenu(transparencyMenu);
+
 	QAction *showProperties = menu.addSeparator();
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
 	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
@@ -576,7 +599,6 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QString fixText = m_fixed?"Unfix track":"Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
-	//TODO is ugly makenot ugly pls
 	QString markText = m_marked?"Unmark":"Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
@@ -637,14 +659,17 @@ void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * histo
 
 void ComponentShape::changeBrushColor()
 {
-	this->m_brushColor = QColorDialog::getColor();
+
+	this->m_brushColor = QColorDialog::getColor(m_brushColor, nullptr, QString("Choose fill color"), QColorDialog::ShowAlphaChannel);
+	//m_transparency = m_brushColor.alpha();
 	trace();
 	update();
 }
 
 void ComponentShape::changePenColor()
 {
-	QColor newColor = QColorDialog::getColor();
+	QColor newColor = QColorDialog::getColor(m_penColor, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);
+	//m_transparency = newColor.alpha();
 
 	if (!isSelected()) {
 		m_penColorLast = m_penColor;
@@ -900,6 +925,24 @@ void ComponentShape::receiveIgnoreZoom(bool toggle)
 	setFlag(QGraphicsItem::ItemIgnoresTransformations, toggle);
 	trace();
 	update();
+}
+
+void ComponentShape::receiveTransparency(int alpha){
+	m_transparency = alpha;
+	m_brushColor.setAlpha(alpha);
+	m_penColor.setAlpha(alpha);
+
+	QColor penColorHandle = m_rotationHandle->pen().color();
+	penColorHandle.setAlpha(alpha);
+	m_rotationHandle->setPen(QPen(penColorHandle));
+
+	QColor brushColorHandle = m_rotationHandle->brush().color();
+	brushColorHandle.setAlpha(alpha);
+	m_rotationHandle->setBrush(QBrush(brushColorHandle));
+
+	trace();
+	update();
+
 }
 //set members from core params
 void ComponentShape::setMembers(CoreParameter* coreParams)

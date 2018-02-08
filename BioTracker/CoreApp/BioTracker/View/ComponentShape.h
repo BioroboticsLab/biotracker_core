@@ -54,6 +54,7 @@ class ComponentShape : public QGraphicsObject
 		void broadcastMove();
 
 	public Q_SLOTS:
+		//context menu actions
 		void changeBrushColor();
 		void changePenColor();
 		void changeBrushColor(QColor color);
@@ -75,6 +76,7 @@ class ComponentShape : public QGraphicsObject
 		void receiveTracerFrameNumber(bool toggle);
 		//Visual
 		void receiveAntialiasing(bool toggle);
+		void receiveTransparency(int alpha);
 		//Dimensions
 		void receiveDimensions(int width, int height);
 		void setDimensionsToDefault();
@@ -119,6 +121,7 @@ class ComponentShape : public QGraphicsObject
 		QColor m_penColor;
 		QColor m_penColorLast;
 		QColor m_brushColor;
+		int m_transparency;
 		bool m_marked;
 		int m_penWidth;
 		Qt::PenStyle m_penStyle;

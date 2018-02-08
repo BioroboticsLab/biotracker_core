@@ -6,11 +6,11 @@
 #include "QGraphicsObject"
 
 
-class RotationHandle : public QGraphicsObject {
+class RotationHandle : public QObject, public QAbstractGraphicsShapeItem {
 	Q_OBJECT
 
 	public:
-		RotationHandle(QPoint origin, QGraphicsItem* parent = 0);
+		RotationHandle(QPoint origin, QAbstractGraphicsShapeItem* parent = 0);
 		~RotationHandle();
 
 		QRectF boundingRect() const override;

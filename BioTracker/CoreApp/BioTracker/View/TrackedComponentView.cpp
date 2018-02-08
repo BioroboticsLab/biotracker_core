@@ -94,7 +94,7 @@ QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVari
 void TrackedComponentView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
 {
 	m_permissions[permission.first] = permission.second;
-	qDebug() << "permission " << permission.first << " set to" << permission.second;
+	qDebug() << permission.first << " set to" << permission.second;
 
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
