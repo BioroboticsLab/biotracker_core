@@ -344,6 +344,7 @@ void MainWindow::on_actionShortcuts_triggered() {
 	scTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	QWidget* outerWidget = new QWidget();
+	outerWidget->setWindowTitle("Shortcuts");
 	outerWidget->resize(scTable->size());
 	QVBoxLayout* vLayout = new QVBoxLayout();
 

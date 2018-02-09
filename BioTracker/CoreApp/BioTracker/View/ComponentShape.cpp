@@ -773,14 +773,8 @@ void ComponentShape::toggleFixTrack()
 //TODO create ui file for this and do this there
 void ComponentShape::createInfoWindow()
 {
-	QWidget* infoWidget = new QWidget();
-	QString title = QString("Information for track %1 on frame %2").arg(QString::number(m_id), QString::number(m_currentFramenumber));
-	infoWidget->setWindowTitle(title);
-	QVBoxLayout* vLayout = new QVBoxLayout();
-
 	QTableWidget* infoTable = new QTableWidget();
-
-
+	
 	infoTable->setRowCount(0);
 	infoTable->setColumnCount(2);
 
@@ -815,15 +809,17 @@ void ComponentShape::createInfoWindow()
 	//infoTable->horizontalHeader()->setStretchLastSection( true ); 
 	infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	
-	QWidget* outerWidget = new QWidget();
-	outerWidget->resize(infoTable->size());
+	QWidget* infoWidget = new QWidget();
+	const QString title = QString("Information for track %1 on frame %2").arg(QString::number(m_id), QString::number(m_currentFramenumber));
+	infoWidget->setWindowTitle(title);
+	QVBoxLayout* vLayout = new QVBoxLayout();
 
+
+	infoWidget->resize(infoTable->size());
 	vLayout->addWidget(infoTable);
+	infoWidget->setLayout(vLayout);
 
-	outerWidget->setLayout(vLayout);
-
-
-	outerWidget->show();
+	infoWidget->show();
 
 	
 }
