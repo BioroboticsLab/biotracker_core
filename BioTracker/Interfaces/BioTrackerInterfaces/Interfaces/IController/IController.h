@@ -24,9 +24,10 @@ class IController : public QObject {
 
     /**
      * @brief connectComponents
-     * bal bal blabla
      */
     void connectComponents();
+
+    virtual void cleanup();
 
     void addView(IView *view);
     void addModel(IModel *model);

@@ -13,6 +13,7 @@
 #include "View/GraphicsView.h"
 #include "util/types.h"
 #include "SettingsWindow.h"
+#include <QCloseEvent>
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +39,8 @@ class MainWindow : public IViewMainWindow {
 
     void activeTrackingCheckBox();
     void deactivateTrackingCheckBox();
+
+    void closeEvent(QCloseEvent *event);
 
 Q_SIGNALS:
 	void selectPlugin(QString ct);

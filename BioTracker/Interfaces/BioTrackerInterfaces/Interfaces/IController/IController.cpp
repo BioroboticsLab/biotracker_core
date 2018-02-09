@@ -8,6 +8,10 @@ IController::IController(QObject *parent, IBioTrackerContext *context, ENUMS::CO
 
 }
 
+void IController::cleanup() {
+
+}
+
 IBioTrackerContext *IController::getBioTrackerContext()
 {
     return m_BioTrackerContext.data();

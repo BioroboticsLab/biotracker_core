@@ -258,6 +258,10 @@ void MainWindow::on_actionSettings_triggered() {
 	m_SettingsWindow->show();
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    qobject_cast<ControllerMainWindow*> (getController())->exit();
+}
+
 void MainWindow::on_actionInfo_triggered() {
     std::string version = "";
     version = "BioTracker3\n\n";

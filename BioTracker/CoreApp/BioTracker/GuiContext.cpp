@@ -75,10 +75,16 @@ void GuiContext::connectController()
 
 void GuiContext::exit() {
 
-	QMap<ENUMS::CONTROLLERTYPE, IController *>::iterator i;
-	for (i = m_ControllersMap.begin(); i != m_ControllersMap.end(); ++i)
-	{
-		delete i.value();
-	}
+    QMap<ENUMS::CONTROLLERTYPE, IController *>::iterator i;
+    for (i = m_ControllersMap.begin(); i != m_ControllersMap.end(); ++i)
+    {
+        i.value()->cleanup();
+    }
+    
+    //for (auto&& i : m_ControllersMap)
+    //{
+    //    delete i;
+    //}
+
 	std::exit(0);
 }
