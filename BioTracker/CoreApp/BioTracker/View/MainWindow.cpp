@@ -15,6 +15,8 @@
 #include "QGraphicsObject"
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QtWidgets/QHeaderView>
+
 
 #include "qtextedit.h"
 #include <qmessagebox.h>
@@ -345,18 +347,9 @@ void MainWindow::on_actionShortcuts_triggered() {
 	outerWidget->resize(scTable->size());
 	QVBoxLayout* vLayout = new QVBoxLayout();
 
-	qDebug() << scTable->size();
-	qDebug() << scTable->baseSize();
-	qDebug() << scTable->frameSize();
-
-
 	vLayout->addWidget(scTable);
 
 	outerWidget->setLayout(vLayout);
-
-	qDebug() << scTable->size();
-	qDebug() << scTable->baseSize();
-	qDebug() << scTable->frameSize();
 
 
 	outerWidget->show();

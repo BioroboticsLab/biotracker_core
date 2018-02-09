@@ -14,19 +14,16 @@ AddTrackCommand::AddTrackCommand(int id, QPoint pos, QUndoCommand *parent)
 
 void AddTrackCommand::undo()
 {
-	qDebug() << "undo add";
 	emitRemoveTrajectoryId(_id);
 }
 
 void AddTrackCommand::redo()
 {
 	if (!_added) {
-		qDebug() << "do add" << _id;
 		Q_EMIT emitAddTrajectory(_pos);
 		_added = true;
 	}
 	else {
-		qDebug() << "redo add" << _id;
 		emitValidateTrajectory(_id);
 	}
 }
@@ -39,13 +36,11 @@ RemoveTrackCommand::RemoveTrackCommand(IModelTrackedTrajectory* traj, QUndoComma
 
 void RemoveTrackCommand::undo()
 {
-	qDebug() << "undo rmt";
 	emitValidateTrajectory(_traj->getId());
 }
 
 void RemoveTrackCommand::redo()
 {
-	qDebug() << "do rmt";
 	emitRemoveTrajectory(_traj);
 }
 
@@ -59,13 +54,11 @@ RemoveElementCommand::RemoveElementCommand(IModelTrackedTrajectory* traj, uint f
 
 void RemoveElementCommand::undo()
 {
-	qDebug() << "undo rme";
 	emitValidateEntity(_traj, _frameNumber);
 }
 
 void RemoveElementCommand::redo()
 {
-	qDebug() << "do rme";
 	emitRemoveElement(_traj, _frameNumber);
 }
 
@@ -77,13 +70,11 @@ MoveElementCommand::MoveElementCommand(IModelTrackedTrajectory* traj, uint frame
 
 void MoveElementCommand::undo()
 {
-	qDebug() << "undo mv";
 	emitMoveElement(_traj, _frameNumber, _oldPos, _toMove);
 }
 
 void MoveElementCommand::redo()
 {
-	qDebug() << "do mv";
 	emitMoveElement(_traj, _frameNumber, _newPos, _toMove);
 	_toMove = 1;
 }
@@ -110,13 +101,11 @@ SwapTrackIdCommand::SwapTrackIdCommand(IModelTrackedTrajectory* traj0, IModelTra
 
 void SwapTrackIdCommand::undo()
 {
-	qDebug() << "undo swap";
 	emitSwapIds(_traj1, _traj0);
 }
 
 void SwapTrackIdCommand::redo()
 {
-	qDebug() << "do swap";
 	emitSwapIds(_traj0, _traj1);
 }
 
@@ -134,13 +123,11 @@ FixTrackCommand::FixTrackCommand(IModelTrackedTrajectory* traj, bool isFixed, QU
 
 void FixTrackCommand::undo()
 {
-	qDebug() << "undo fix";
 	emitFixTrack(_traj, !_isFixed);
 }
 
 void FixTrackCommand::redo()
 {
-	qDebug() << "do fix ";
 	emitFixTrack(_traj, _isFixed);
 }
 
@@ -152,12 +139,10 @@ RotateEntityCommand::RotateEntityCommand(IModelTrackedTrajectory* traj, double o
 
 void RotateEntityCommand::undo()
 {
-	qDebug() << "undo rot";
 	emitEntityRotation(_traj, _oldAngle, _frameNumber);
 }
 
 void RotateEntityCommand::redo()
 {
-	qDebug() << "do rot ";
 	emitEntityRotation(_traj, _newAngle, _frameNumber);
 }

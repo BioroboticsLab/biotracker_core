@@ -16,6 +16,11 @@
 #include "QVBoxLayout"
 #include "QSlider"
 #include "QAbstractSlider"
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QtWidgets/QHeaderView>
+#include <QLinkedList>
+#include <qpair.h>
 
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
@@ -768,32 +773,59 @@ void ComponentShape::toggleFixTrack()
 //TODO create ui file for this and do this there
 void ComponentShape::createInfoWindow()
 {
-	//QGraphicsProxyWidget* infoWidgetProxy = new QGraphicsProxyWidget(this);
 	QWidget* infoWidget = new QWidget();
+	QString title = QString("Information for track %1 on frame %2").arg(QString::number(m_id), QString::number(m_currentFramenumber));
+	infoWidget->setWindowTitle(title);
 	QVBoxLayout* vLayout = new QVBoxLayout();
 
-	QHBoxLayout* hLayoutId = new QHBoxLayout();
-	QLabel* idLabel = new QLabel("ID:");
-	QLabel* id = new QLabel(QString::number(this->getId()));
-	id->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(idLabel);
-	hLayoutId->addWidget(id);
-    
-	QHBoxLayout* hLayoutSeen = new QHBoxLayout();
-	QLabel* seenLabel = new QLabel("Seen for x frames:");
-	QLabel* seen = new QLabel(QString::number(this->m_trajectory->validCount()));
-	seen->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(seenLabel);
-	hLayoutId->addWidget(seen);
-
-	vLayout->addLayout(hLayoutId);
-	vLayout->addLayout(hLayoutSeen);
-
-	infoWidget->setLayout(vLayout);
-
-	infoWidget->show();
+	QTableWidget* infoTable = new QTableWidget();
 
 
+	infoTable->setRowCount(0);
+	infoTable->setColumnCount(2);
+
+	infoTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
+	infoTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
+	infoTable->verticalHeader()->hide();
+
+	QLinkedList<QPair<QString, QString>> infoList;
+	infoList.append(QPair<QString,QString>("ID", QString::number(m_id)));
+	infoList.append(QPair<QString,QString>("Framenumber", QString::number(m_currentFramenumber)));
+	infoList.append(QPair<QString,QString>("Seen for frames", QString::number(m_trajectory->validCount())));
+	infoList.append(QPair<QString,QString>("Width", QString::number(m_w)));
+	infoList.append(QPair<QString,QString>("Height", QString::number(m_h)));
+	infoList.append(QPair<QString,QString>("Orientation (in Degrees)", QString::number(m_rotation)));
+	infoList.append(QPair<QString,QString>("Fixed", QString::number(m_fixed)));
+
+	QLinkedList<QPair<QString, QString>>::const_iterator info;
+	for(info = infoList.constBegin(); info != infoList.constEnd(); ++info){
+		infoTable->insertRow(infoTable->rowCount());
+
+
+		QTableWidgetItem* infoKey = new QTableWidgetItem(info->first);
+		QTableWidgetItem* infoKeyInfo = new QTableWidgetItem(info->second);
+		infoKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		infoKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+		infoTable->setItem(infoTable->rowCount() - 1, 0, infoKey);
+		infoTable->setItem(infoTable->rowCount() - 1, 1, infoKeyInfo);
+
+	}
+
+	//infoTable->horizontalHeader()->setStretchLastSection( true ); 
+	infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	
+	QWidget* outerWidget = new QWidget();
+	outerWidget->resize(infoTable->size());
+
+	vLayout->addWidget(infoTable);
+
+	outerWidget->setLayout(vLayout);
+
+
+	outerWidget->show();
+
+	
 }
 
 void ComponentShape::receiveTracingLength(int tracingLength)
