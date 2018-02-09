@@ -238,9 +238,12 @@ void DataExporterCSV::writeAll() {
     //write header
     int vcount = _root->validCount();
     IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
+    int headerCount = 0;
     if (factory != nullptr) {
         IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
-        o << getHeader(ptraj, vcount) << "\n";
+        std::string header = getHeader(ptraj, vcount);
+        headerCount = getHeaderElements(ptraj).size();
+        o << header << "\n";
         delete ptraj;
     }
 
@@ -254,6 +257,7 @@ void DataExporterCSV::writeAll() {
         o << std::to_string(idx)
             << _separator + std::to_string((((float)idx) / _fps) * 1000);
 
+        int linecnt = 0;
         //i is the track number
         for (int i = 0; i < _root->size(); i++) {
 
@@ -261,10 +265,18 @@ void DataExporterCSV::writeAll() {
             if (t) {
                 IModelTrackedPoint *e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
                 if (e) {
-                    o << writeComponentCSV(e, trajNumber);
+                    std::string line = writeComponentCSV(e, trajNumber);
+                    o << line;
+                    linecnt++;
                 }
                 trajNumber++;
             }
+        }
+        int count = _root->validCount();
+        while (linecnt < count) {
+            for (int i = 0; i<headerCount; i++)
+                o << _separator;
+            linecnt++;
         }
         o << std::endl;
     }

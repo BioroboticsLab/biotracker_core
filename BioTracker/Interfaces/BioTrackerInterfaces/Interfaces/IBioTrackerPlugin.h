@@ -18,15 +18,15 @@ public:
 
     virtual void createPlugin() = 0;
 
-	virtual IView *getTrackerParameterWidget() = 0;// { return nullptr; };
-	virtual IView *getTrackerElementsWidget() = 0;// { return nullptr; };
-	virtual IModel *getTrackerComponentModel() = 0;// { return nullptr; };
-	virtual void sendCorePermissions() = 0;// { return; };
+    virtual IView *getTrackerParameterWidget();
+    virtual IView *getTrackerElementsWidget();
+    virtual IModel *getTrackerComponentModel();
+    virtual void sendCorePermissions();
 
-	virtual IModelTrackedComponentFactory *getComponentFactory() = 0;// { return nullptr; };
+    virtual IModelTrackedComponentFactory *getComponentFactory();
 
 private:
-    virtual void connectInterfaces() = 0;
+    virtual void connectInterfaces();
 
 Q_SIGNALS:
     virtual void emitCvMat(std::shared_ptr<cv::Mat> mat, QString name) = 0;
@@ -36,7 +36,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     virtual void receiveCurrentFrameFromMainApp(std::shared_ptr<cv::Mat> mat, uint frameNumber) = 0;
-	virtual void receiveAreaDescriptor(IModelAreaDescriptor *areaDescr) = 0;
+	virtual void receiveAreaDescriptor(IModelAreaDescriptor *areaDescr);
 
 private Q_SLOTS:
     virtual void receiveCvMatFromController(std::shared_ptr<cv::Mat> mat, QString name) = 0;

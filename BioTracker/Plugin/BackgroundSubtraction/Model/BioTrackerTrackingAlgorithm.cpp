@@ -23,9 +23,6 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 
     _lastImage = nullptr;
     _lastFramenumber = -1;
-
-	//This is null so far...
-	//_bd.setAreaInfo(_AreaInfo);
 }
 
 
