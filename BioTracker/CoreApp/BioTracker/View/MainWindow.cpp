@@ -286,18 +286,18 @@ void MainWindow::on_actionInfo_triggered() {
 void MainWindow::on_actionShortcuts_triggered() {
 
 	//TODO import this from file
-    std::pair<QString, QString> scUndo (QString("ctrl + z"), QString("undo"));
-    std::pair<QString, QString> scRedo (QString("ctrl + y"), QString("redo"));
-    std::pair<QString, QString> scSel (QString("ctrl + a"), QString("select all"));
-    std::pair<QString, QString> scPlay (QString("Space"), QString("play"));
+    std::pair<QString, QString> scUndo (QString("CTRL + Z"), QString("Undo"));
+    std::pair<QString, QString> scRedo (QString("CTRL + Y"), QString("Redo"));
+    std::pair<QString, QString> scSel (QString("CTRL + A"), QString("Select all"));
+    std::pair<QString, QString> scPlay (QString("Space"), QString("Play"));
     std::pair<QString, QString> scNext (QString("Left Arrow"), QString("Previous Frame"));
     std::pair<QString, QString> scPrev (QString("Right Arrow"), QString("Next Frame"));
-    std::pair<QString, QString> scStop (QString("ctrl + Space"), QString("Stop"));
-    std::pair<QString, QString> scAL (QString("alt + l"), QString("add label annotation"));
-    std::pair<QString, QString> scAA (QString("alt + a"), QString("add arrow annotation"));
-    std::pair<QString, QString> scAE (QString("alt + e"), QString("add ellipse annotation"));
-    std::pair<QString, QString> scAR (QString("alt + r"), QString("add rect annotation"));
-    std::pair<QString, QString> scADel (QString("alt + delete"), QString("delete selected annotation"));
+    std::pair<QString, QString> scStop (QString("CTRL + Space"), QString("Stop"));
+    std::pair<QString, QString> scAL (QString("ALT + L"), QString("Add label annotation"));
+    std::pair<QString, QString> scAA (QString("ALT + A"), QString("Add arrow annotation"));
+    std::pair<QString, QString> scAE (QString("ALT + E"), QString("Add ellipse annotation"));
+    std::pair<QString, QString> scAR (QString("ALT + R"), QString("Add rect annotation"));
+    std::pair<QString, QString> scADel (QString("ALT + DELETE"), QString("Delete selected annotation"));
 
 	std::map<QString,QString> scMap;
 
