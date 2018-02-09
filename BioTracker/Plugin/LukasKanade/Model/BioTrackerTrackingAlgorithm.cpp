@@ -121,8 +121,11 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
     std::vector<cv::Point2f> prevPts = getPoints(_TrackedTrajectoryMajor, framenumber-1);
 
-    //if (!currentPointsOnlyActive.empty()) {
-    if (_lastImage != nullptr && ! _lastImage->empty() && !prevPts.empty()){
+    if (_lastImage == nullptr || _lastImage->empty()) {
+        _lastImage = p_image;
+    }
+
+    if (!prevPts.empty()){
         std::vector<float> err;
 
         // calculate pyramids:

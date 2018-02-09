@@ -193,7 +193,7 @@ std::map<std::string, std::shared_ptr<cv::Mat>> ImagePreProcessor::preProcess(st
 	std::map<std::string, std::shared_ptr<cv::Mat>> all;
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Greyscale"), greyMat));
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Background"), m_backgroundImage));
-	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Foreground"), m_foregroundImage));
+	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Difference"), m_foregroundImage));
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Binarized"), binarizedImage));
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Eroded"), erodedImage));
 	all.insert(std::pair<std::string, std::shared_ptr<cv::Mat>>(std::string("Dilated"), dilatedImage));
