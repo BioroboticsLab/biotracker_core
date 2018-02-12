@@ -17,6 +17,9 @@
 #include "QPluginLoader"
 #include "util/types.h"
 
+#include <chrono>
+#include <thread>
+
 
 ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr) {
@@ -185,7 +188,11 @@ void ControllerMainWindow::exit() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     ControllerPlayer *pc = static_cast<ControllerPlayer*>(ctr);
     pc->stop();
-    Sleep(1);
+    
+    //Sleep(1); only windows
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1)); // cross platform
+
 	delete m_BioTrackerContext;
 }
 
