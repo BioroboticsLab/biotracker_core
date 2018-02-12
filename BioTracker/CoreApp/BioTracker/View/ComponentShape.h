@@ -65,6 +65,11 @@ class ComponentShape : public QGraphicsObject
 		void unmarkShape();
 		void toggleFixTrack();
 		void createInfoWindow();
+		void morphIntoRect();
+		void morphIntoEllipse();
+		void morphIntoPoint();
+
+
 
 		//Tracing
 		void receiveTracingLength(int tracingLength);

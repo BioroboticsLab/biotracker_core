@@ -46,7 +46,7 @@ public:
 	bool m_tracerOrientationLine = false;
 	bool m_tracerFrameNumber = false;
 	//Track dimensions
-	int m_trackWidth = 20;
+	int m_trackWidth = 30;
 	int m_trackHeight = 20;
 	//Track misc
 	bool m_trackOrientationLine = true;

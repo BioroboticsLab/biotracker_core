@@ -80,10 +80,14 @@ QRectF ComponentShape::boundingRect() const
 QPainterPath ComponentShape::shape() const
 {
 	QPainterPath path;
-	if (this->data(1) == "ellipse" || this->data(1) == "point") {
+	if (this->data(1) == "ellipse") {
 		path.addEllipse(0, 0, m_w, m_h);
 	}
-	else if (this->data(1) == "recatangle") {
+	if( this->data(1) == "point") {
+		int dim = m_w <= m_h? m_w : m_h;
+		path.addEllipse(0, 0, dim , dim);
+	}
+	else if (this->data(1) == "rectangle") {
 		path.addRect(0, 0, m_w, m_h);
 	}
 	else if (this->data(1) == "polygon") {
@@ -140,10 +144,10 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	}
 
 	//draw point
-	//TODO how to visualize this the best way
+	//take the smaller of width and height
 	//a point should always have the same height and width
 	if (this->data(1) == "point") {
-		QRectF ellipse = QRectF(0, 0, m_w, m_h);
+		QRectF ellipse = QRectF(0, 0, m_w <= m_h? m_w : m_h ,  m_w <= m_h? m_w : m_h);
 		painter->drawEllipse(ellipse);
 	}
 
@@ -572,6 +576,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	menu.addSeparator();
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 
+	//coloring
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
 	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()));
 
@@ -593,7 +598,10 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
 	menu.addMenu(transparencyMenu);
 
+	//
 	QAction *showProperties = menu.addSeparator();
+
+	//removing
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
 	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
 	if (!m_pRemovable) { 
@@ -601,14 +609,32 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 		removeTrackEntityAction->setEnabled(false);
 	}
 
+	//fixing
 	QString fixText = m_fixed?"Unfix track":"Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
+	//marking
 	QString markText = m_marked?"Unmark":"Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
 	markAction->setVisible(!m_marked);
 	unmarkAction->setVisible(m_marked);
+	
+	//
+	QAction *sep2 = menu.addSeparator();
+
+	//morphing
+	QMenu* morphMenu = new QMenu("Morph into...");
+	if(data(1)=="rect" || data(1) == "ellipse" || data(1) == "point"){
+		QAction* morphPoint = morphMenu->addAction("Point", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPoint()));
+		QAction* morphEllipse = morphMenu->addAction("Ellipse", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoEllipse()));
+		QAction* morphRect = morphMenu->addAction("Rectangle", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoRect()));
+	}
+	else{
+		morphMenu->setEnabled(false);
+	}
+	menu.addMenu(morphMenu);
+
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
 }
@@ -645,7 +671,7 @@ void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * histo
 		traceEllipse->setBrush(brush);
 	}
 	else if (this->data(1) == "rectangle") {
-		QGraphicsEllipseItem* traceRect = new QGraphicsEllipseItem(m_tracingLayer);
+		QGraphicsRectItem* traceRect = new QGraphicsRectItem(m_tracingLayer);
 		traceRect->setPos(pos);
 		traceRect->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
 		//set orientation
@@ -822,6 +848,22 @@ void ComponentShape::createInfoWindow()
 	infoWidget->show();
 
 	
+}
+
+void ComponentShape::morphIntoRect(){
+	setData(1, "rectangle");
+	update();
+	trace();
+}
+void ComponentShape::morphIntoEllipse(){
+	setData(1, "ellipse");
+	update();
+	trace();
+}
+void ComponentShape::morphIntoPoint(){
+	setData(1, "point");
+	update();
+	trace();
 }
 
 void ComponentShape::receiveTracingLength(int tracingLength)
