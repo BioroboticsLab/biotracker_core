@@ -75,6 +75,9 @@
            </item>
            <item>
             <widget class="QSpinBox" name="lineEdit_wndSize">
+             <property name="toolTip">
+              <string>Set the window size</string>
+             </property>
              <property name="minimum">
               <number>3</number>
              </property>
