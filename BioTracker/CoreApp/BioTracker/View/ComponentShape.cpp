@@ -876,6 +876,7 @@ void ComponentShape::receiveTracerFrameNumber(bool toggle)
 void ComponentShape::receiveAntialiasing(bool toggle)
 {
 	m_antialiasing = toggle;
+	m_rotationHandle->setAntialiasing(toggle);
 	trace();
 	update();
 }
@@ -978,6 +979,7 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	//from coreParams
 	m_antialiasing = coreParams->m_antialiasingEntities;
 
+
 	m_tracingStyle = coreParams->m_tracingStyle;
 	m_tracingTimeDegradation = coreParams->m_tracingTimeDegradation;
 	m_tracingLength = coreParams->m_tracingHistory;
@@ -1011,6 +1013,7 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_rotationHandleLayer->setFlag(QGraphicsItem::ItemHasNoContents);
 
 	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
+	m_rotationHandle->setAntialiasing(m_antialiasing);
 	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
 
 	if (m_pRotatable) {

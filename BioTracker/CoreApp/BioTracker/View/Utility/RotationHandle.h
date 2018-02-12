@@ -20,11 +20,14 @@ class RotationHandle : public QObject, public QAbstractGraphicsShapeItem {
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
+		void setAntialiasing(bool toggle);
+
 	signals:
 		void emitShapeRotation(double angle, bool rotateEntity = false);
 
 	private:
 		QPoint _origin;
+		bool m_antialiasing;
 
 };
 #endif // ROTATIONHANDLE_H
