@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1054</width>
-    <height>871</height>
+    <width>862</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="palette">
@@ -77,6 +77,9 @@
   <property name="windowTitle">
    <string>BioTracker</string>
   </property>
+  <property name="toolTip">
+   <string>BioTracker</string>
+  </property>
   <property name="dockNestingEnabled">
    <bool>true</bool>
   </property>
@@ -108,7 +111,7 @@
     </property>
     <item>
      <widget class="QWidget" name="widget_2" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0">
        <property name="spacing">
         <number>3</number>
        </property>
@@ -159,7 +162,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>150</height>
+              <height>0</height>
              </size>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
@@ -230,6 +233,52 @@
            </widget>
           </item>
           <item>
+           <widget class="QWidget" name="bottomPanelViewControllerWidget" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="bottomPanelViewControllerButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>v</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QWidget" name="videoControls" native="true">
             <property name="enabled">
              <bool>true</bool>
@@ -257,6 +306,62 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QWidget" name="rightPanelViewControllerWidget" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="rightPanelViewControllerButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>15</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>15</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -267,7 +372,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1054</width>
+     <width>862</width>
      <height>22</height>
     </rect>
    </property>
@@ -303,8 +408,14 @@
     <addaction name="separator"/>
     <addaction name="actionShowActionList"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
    <addaction name="menuExtras"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetAlgorithm">
@@ -316,8 +427,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>369</width>
-     <height>218</height>
+     <width>164</width>
+     <height>193</height>
     </size>
    </property>
    <property name="sizeIncrement">
@@ -430,7 +541,7 @@
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string/>
@@ -510,8 +621,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>366</width>
-          <height>724</height>
+          <width>161</width>
+          <height>418</height>
          </rect>
         </property>
         <property name="toolTip">

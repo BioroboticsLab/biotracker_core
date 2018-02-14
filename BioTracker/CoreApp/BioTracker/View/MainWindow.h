@@ -82,6 +82,10 @@ Q_SIGNALS:
 
     void on_checkBox_TrackingActivated_stateChanged(int arg1);
 
+//hider
+    void on_rightPanelViewControllerButton_clicked();
+    void on_bottomPanelViewControllerButton_clicked();
+
   private:
     Ui::MainWindow* ui;
 	GraphicsView *m_graphView;

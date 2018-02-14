@@ -21,6 +21,8 @@
 #include "qtextedit.h"
 #include <qmessagebox.h>
 
+#include "qdesktopwidget.h"
+
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
     IViewMainWindow(parent, controller, model),
@@ -30,6 +32,18 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	_currentCoreParameterView = 0;
 	_currentElementView = 0;
     ui->setupUi(this);
+
+	//resize to full size
+	QRect availableScreen = QApplication::desktop()->availableGeometry();
+
+	//QWidget::showFullScreen();
+	QWidget::showMaximized();
+
+
+	//view actions
+	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();
+	//dockWidgetHider->setText(ui->dockWidgetAlgorithm->isVisible()?"Hide right panel":"Show right panel");
+	//ui->menuView->addAction(dockWidgetHider);
 }
 
 MainWindow::~MainWindow() {
@@ -247,6 +261,16 @@ void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {
 
 void MainWindow::on_actionQuit_triggered() {
 	qobject_cast<ControllerMainWindow*> (getController())->exit();
+}
+
+void MainWindow::on_rightPanelViewControllerButton_clicked(){
+	ui->dockWidgetAlgorithm->setVisible(ui->rightPanelViewControllerButton->text() == "<");
+	ui->rightPanelViewControllerButton->setText(ui->rightPanelViewControllerButton->text() == ">"?"<":">");
+}
+
+void MainWindow::on_bottomPanelViewControllerButton_clicked(){
+	ui->videoControls->setVisible(ui->bottomPanelViewControllerButton->text() == "^");
+	ui->bottomPanelViewControllerButton->setText(ui->bottomPanelViewControllerButton->text() == "v"?"^":"v");
 }
 
 

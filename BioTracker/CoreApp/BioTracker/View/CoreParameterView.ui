@@ -12,7 +12,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
+    <width>451</width>
     <height>677</height>
    </rect>
   </property>
@@ -147,7 +147,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>430</width>
+          <width>449</width>
           <height>675</height>
          </rect>
         </property>
@@ -351,8 +351,8 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-383</y>
-                      <width>406</width>
+                      <y>0</y>
+                      <width>425</width>
                       <height>1058</height>
                      </rect>
                     </property>
@@ -625,7 +625,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>118</width>
+                                  <height>28</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackWidth">
                                  <item>
                                   <widget class="QLabel" name="labelTrackWidth">
@@ -655,7 +663,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>123</width>
+                                  <height>28</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackHeight">
                                  <item>
                                   <widget class="QLabel" name="labelTrackHeight">
@@ -679,7 +695,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>256</width>
+                                  <height>27</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
                                  <item>
                                   <widget class="QLabel" name="labelTrackDimensionSetter">
@@ -716,7 +740,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>173</width>
+                                  <height>25</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutOrientationLine">
                                  <item>
                                   <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
@@ -878,7 +910,7 @@
                                <item>
                                 <widget class="QLabel" name="labelTracingStyle">
                                  <property name="text">
-                                  <string>Tracing style:</string>
+                                  <string>Style:</string>
                                  </property>
                                 </widget>
                                </item>
@@ -916,7 +948,7 @@
                                <item>
                                 <widget class="QLabel" name="labelTracingHistoryLength">
                                  <property name="text">
-                                  <string>Tracing history frames:</string>
+                                  <string>History frames:</string>
                                  </property>
                                 </widget>
                                </item>
@@ -949,7 +981,7 @@
                                <item>
                                 <widget class="QLabel" name="labelTracingSteps">
                                  <property name="text">
-                                  <string>Tracing steps:</string>
+                                  <string>Steps:</string>
                                  </property>
                                 </widget>
                                </item>
@@ -976,7 +1008,7 @@
                                <item>
                                 <widget class="QLabel" name="labelTracingTimeDegradation">
                                  <property name="text">
-                                  <string>Tracing time degradation:</string>
+                                  <string>Time degradation:</string>
                                  </property>
                                 </widget>
                                </item>
