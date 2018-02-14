@@ -30,12 +30,12 @@ public:
 	void on_checkBoxEnableCoreView_stateChanged(int v);
 	//Tracing
 	void on_comboBoxTracingStyle_currentIndexChanged(const QString & text);
-	void on_spinBoxTracingHistoryLength_editingFinished();
-	void on_spinBoxTracingSteps_editingFinished();
+	void on_spinBoxTracingHistoryLength_valueChanged(int i);
+	void on_spinBoxTracingSteps_valueChanged(int i);
 	void on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text);
 	void on_checkBoxTracerFrameNumber_stateChanged(int toggle);
 
-	void on_spinBoxTracerProportions_editingFinished();
+	void on_spinBoxTracerProportions_valueChanged(double d);
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
 
 	//Track 
@@ -52,6 +52,8 @@ public:
 	
 	//Track dimensions
 	void on_checkBoxTrackOrientationLine_stateChanged(int v);
+	void on_checkBoxShowId_stateChanged(int v);
+
 
 	void on_pushButtonTrackDimensionSetterAll_clicked();
 	void on_pushButtonTrackDimensionSetterSelected_clicked();
@@ -90,6 +92,7 @@ public:
 			void emitColorChangeBrushSelected();
 			//Track dimensions
 			void emitTrackOrientationLine(bool toggle);
+			void emitTrackShowId(bool toggle);
 			void emitTrackDimensionsAll(int width, int height);
 			void emitTrackDimensionsSelected(int width, int height);
 			void emitTrackDimensionsSetDefault();

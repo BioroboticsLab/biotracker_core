@@ -35,6 +35,7 @@ class MainWindow : public IViewMainWindow {
 	void addCoreElementsView(IView* coreView);
 	void addNotificationBrowser(IView* notificationBrowser);
     void setTrackerList(QStringListModel* trackerList, QString current);
+	void setCursorPositionLabel(QPoint pos);
 
     void activeTrackingCheckBox();
     void deactivateTrackingCheckBox();
@@ -65,6 +66,8 @@ Q_SIGNALS:
 	void on_actionRedo_triggered();
 
 	void on_actionShowActionList_triggered();
+
+    void on_actionShortcuts_triggered();
 
 	void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
 

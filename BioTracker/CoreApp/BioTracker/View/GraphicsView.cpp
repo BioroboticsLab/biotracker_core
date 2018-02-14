@@ -86,14 +86,9 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 	emit(onKeyReleaseEvent(event));
 }
 
-void GraphicsView::drawForeground(QPainter * painter, const QRectF & rect)
+void GraphicsView::keyPressEvent(QKeyEvent * event)
 {
-	qreal horScale = transform().m11();
-	QFont font = QFont();
-	font.setPixelSize(10 * 1/horScale);
-	painter->setFont(font);
-	QString posString = QString("Cursor position: (%1, %2)").arg(QString::number(m_cursorPos.x()), QString::number(m_cursorPos.y()));
-	painter->drawText(rect.bottomLeft(), posString);
+	emit(onKeyPressEvent(event));
 }
 
 void GraphicsView::mousePressEvent(QMouseEvent *event)
@@ -152,6 +147,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent*event)
 		const QPointF imagePosition = mapToScene(event->pos());
 		const QPoint imagePositionInt = QPoint(imagePosition.x(), imagePosition.y());
 		m_cursorPos = imagePositionInt;
+		emitCursorPosition(m_cursorPos); //to mainwindow
 		event->ignore();
 		emit(onMouseMoveEvent(event, imagePositionInt));
 		if (!event->isAccepted())

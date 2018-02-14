@@ -15,14 +15,16 @@ std::string Annotations::getFilename() const
 
 void Annotations::serialize() const
 {
-	if (!dirty || filepath.empty() || annotations.empty()) return;
+	if (!dirty || filepath.empty()) return;
 
 	std::ofstream outfile(getFilename(), std::ios_base::out | std::ios_base::trunc);
 	if (!outfile.good()) return;
 
-	for (auto & annotation : annotations)
-	{
-		outfile << annotation.get() << std::endl;
+	if (!annotations.empty()) {
+		for (auto & annotation : annotations)
+		{
+			outfile << annotation.get() << std::endl;
+		}
 	}
 
 	dirty = !outfile.good();

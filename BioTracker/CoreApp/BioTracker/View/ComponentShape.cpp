@@ -14,6 +14,14 @@
 #include "qlistwidget.h"
 #include "QGraphicsProxyWidget"
 #include "QVBoxLayout"
+#include "QSlider"
+#include "QAbstractSlider"
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QtWidgets/QHeaderView>
+#include <QLinkedList>
+#include <qpair.h>
+
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
@@ -23,6 +31,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_polygons = QList<QPolygonF>();
 	m_useDefaultDimensions = true;
 	m_penWidth = 2;
+	m_transparency = 255;
 	m_penStyle = Qt::SolidLine;
 	m_penStylePrev = Qt::SolidLine;
 	m_marked = false;
@@ -82,7 +91,7 @@ QPainterPath ComponentShape::shape() const
 		path.addPolygon(m_polygons[0]);
 	}
 	else {
-		qDebug() << "Could not create a shape (interaction area) for current track" << m_id;
+		qDebug() << "Could not create a shape (interaction area) for current track " << m_id;
 		assert(0);
 	}
 	return path;
@@ -111,8 +120,8 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setPen(pen);
 	painter->setBrush(brush);
 
-	// draw angleLine
-	if (m_orientationLine) {
+	// draw orientation line
+	if (m_orientationLine && !m_rotationLine.isNull()) {
 		painter->drawLine(m_rotationLine);
 	}
 
@@ -146,9 +155,9 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	}
 
 	// draw id in center
-
-	painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
-
+	if (m_showId){
+		painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
+	}
 }
 
 bool ComponentShape::advance()
@@ -194,31 +203,37 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 				else { m_h = m_hDefault; }
 			}
 			//update rotation
-			this->setTransformOriginPoint(m_w / 2, m_h / 2);
-			if (m_h > m_w) {
-				m_rotation = -90 - pointLike->getDeg();
-				this->setRotation(m_rotation);
+			if(pointLike->hasDeg()){
+				this->setTransformOriginPoint(m_w / 2, m_h / 2);
+				if (m_h > m_w) {
+					m_rotation = -90 - pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+				else {
+					m_rotation = -pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+
+				//update rotation line
+				m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
+				if (m_h > m_w) {
+					m_rotationLine.setAngle(-90);
+				}
+				else {
+					m_rotationLine.setAngle(0);
+				}
+				qreal length = (m_w + m_h) / 2 * 3;
+				m_rotationLine.setLength(length);
+
+				//update rotation handle
+				m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+				m_rotationHandleLayer->setRotation(0);
+				m_rotationHandle->setPos(m_rotationLine.p2());
 			}
-			else {
-				m_rotation = -pointLike->getDeg();
-				this->setRotation(m_rotation);
+			else{
+				m_rotationLine = QLineF();
 			}
 
-			//update rotation line
-			m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
-			if (m_h > m_w) {
-				m_rotationLine.setAngle(-90);
-			}
-			else {
-				m_rotationLine.setAngle(0);
-			}
-			qreal length = (m_w + m_h) / 2 * 3;
-			m_rotationLine.setLength(length);
-
-			//update rotation handle
-			m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-			m_rotationHandleLayer->setRotation(0);
-			m_rotationHandle->setPos(m_rotationLine.p2());
 
 
 			//update Position
@@ -334,6 +349,7 @@ void ComponentShape::trace()
 					QLineF orientationLine = QLineF();
 					orientationLine.setP1(adjustedHistoryPointDifference);
 					orientationLine.setAngle(historyChild->getDeg());
+					qreal length = (m_w + m_h) / 2 / m_tracerProportions * 3;
 					orientationLine.setLength(15);
 
 					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
@@ -380,13 +396,16 @@ void ComponentShape::trace()
 			if (m_tracerFrameNumber) {
 				uint tracerNumber = m_currentFramenumber - i;
 				QFont font = QFont();
-				int fontPixelSize = ((m_w + m_h) / 2) * m_tracerProportions * 0.5;
+				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions * 0.2;
 				font.setPixelSize(fontPixelSize);
-				font.setItalic(true);
-				font.setStyle(QFont::StyleItalic);
+				//font.setBold(true);
 				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
 				tracerNumberText->setFont(font);
-				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3, -m_h * m_tracerProportions / 3));
+				tracerNumberText->setBrush(QBrush(Qt::white)); //sloooow
+				QPen pen = QPen(Qt::black);
+				pen.setWidth(0);
+				tracerNumberText->setPen(pen); //sloooow
+				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3.5f, -m_h * m_tracerProportions / 7));
 			}
 		}
 	}
@@ -416,8 +435,15 @@ void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 			break;
 		case ENUMS::COREPERMISSIONS::COMPONENTROTATE:
 			m_pRotatable = permission.second;
-			m_rotationHandleLayer->setVisible(permission.second);
-			m_rotationHandle->setVisible(permission.second);
+			
+			if (m_pRotatable) {
+				m_rotationHandleLayer->setVisible(m_orientationLine);
+				m_rotationHandle->setVisible(m_orientationLine);
+			}
+			else {
+				m_rotationHandleLayer->hide();
+				m_rotationHandle->hide();
+			}
 			break;
 	}
 }
@@ -547,7 +573,26 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
-	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()) );
+	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()));
+
+	//transparency slider
+	QMenu* transparencyMenu = new QMenu("Transparency");
+	QWidgetAction* sliderBox = new QWidgetAction(this);
+	QSlider* transparencySlider = new QSlider(Qt::Horizontal);
+
+	transparencySlider->setMinimum(0);
+	transparencySlider->setMaximum(255);
+	transparencySlider->setSingleStep(1);
+	transparencySlider->setTickInterval(64);
+	transparencySlider->setValue(m_transparency);
+
+	QObject::connect(transparencySlider, &QSlider::sliderMoved, this, &ComponentShape::receiveTransparency);
+
+	sliderBox->setDefaultWidget(transparencySlider);
+	transparencyMenu->addAction(sliderBox);
+
+	menu.addMenu(transparencyMenu);
+
 	QAction *showProperties = menu.addSeparator();
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
 	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
@@ -559,18 +604,11 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QString fixText = m_fixed?"Unfix track":"Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
-	//TODO is ugly makenot ugly pls
 	QString markText = m_marked?"Unmark":"Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
-	if (m_marked) {
-		markAction->setVisible(false);
-		unmarkAction->setEnabled(true);
-	}
-	else {
-		markAction->setEnabled(true);
-		unmarkAction->setVisible(false);
-	}
+	markAction->setVisible(!m_marked);
+	unmarkAction->setVisible(m_marked);
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
 }
@@ -626,14 +664,17 @@ void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * histo
 
 void ComponentShape::changeBrushColor()
 {
-	this->m_brushColor = QColorDialog::getColor();
+
+	this->m_brushColor = QColorDialog::getColor(m_brushColor, nullptr, QString("Choose fill color"), QColorDialog::ShowAlphaChannel);
+	//m_transparency = m_brushColor.alpha();
 	trace();
 	update();
 }
 
 void ComponentShape::changePenColor()
 {
-	QColor newColor = QColorDialog::getColor();
+	QColor newColor = QColorDialog::getColor(m_penColor, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);
+	//m_transparency = newColor.alpha();
 
 	if (!isSelected()) {
 		m_penColorLast = m_penColor;
@@ -732,31 +773,55 @@ void ComponentShape::toggleFixTrack()
 //TODO create ui file for this and do this there
 void ComponentShape::createInfoWindow()
 {
-	//QGraphicsProxyWidget* infoWidgetProxy = new QGraphicsProxyWidget(this);
+	QTableWidget* infoTable = new QTableWidget();
+	
+	infoTable->setRowCount(0);
+	infoTable->setColumnCount(2);
+
+	infoTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
+	infoTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
+	infoTable->verticalHeader()->hide();
+
+	QLinkedList<QPair<QString, QString>> infoList;
+	infoList.append(QPair<QString,QString>("ID", QString::number(m_id)));
+	infoList.append(QPair<QString,QString>("Framenumber", QString::number(m_currentFramenumber)));
+	infoList.append(QPair<QString,QString>("Seen for frames", QString::number(m_trajectory->validCount())));
+	infoList.append(QPair<QString,QString>("Width", QString::number(m_w)));
+	infoList.append(QPair<QString,QString>("Height", QString::number(m_h)));
+	infoList.append(QPair<QString,QString>("Orientation (in Degrees)", QString::number(m_rotation)));
+	infoList.append(QPair<QString,QString>("Fixed", QString::number(m_fixed)));
+
+	QLinkedList<QPair<QString, QString>>::const_iterator info;
+	for(info = infoList.constBegin(); info != infoList.constEnd(); ++info){
+		infoTable->insertRow(infoTable->rowCount());
+
+
+		QTableWidgetItem* infoKey = new QTableWidgetItem(info->first);
+		QTableWidgetItem* infoKeyInfo = new QTableWidgetItem(info->second);
+		infoKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		infoKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+		infoTable->setItem(infoTable->rowCount() - 1, 0, infoKey);
+		infoTable->setItem(infoTable->rowCount() - 1, 1, infoKeyInfo);
+
+	}
+
+	//infoTable->horizontalHeader()->setStretchLastSection( true ); 
+	infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	
 	QWidget* infoWidget = new QWidget();
+	const QString title = QString("Information for track %1 on frame %2").arg(QString::number(m_id), QString::number(m_currentFramenumber));
+	infoWidget->setWindowTitle(title);
 	QVBoxLayout* vLayout = new QVBoxLayout();
 
-	QHBoxLayout* hLayoutId = new QHBoxLayout();
-	QLabel* idLabel = new QLabel("ID:");
-	QLabel* id = new QLabel(QString::number(this->getId()));
-	id->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(idLabel);
-	hLayoutId->addWidget(id);
-    
-	QHBoxLayout* hLayoutSeen = new QHBoxLayout();
-	QLabel* seenLabel = new QLabel("Seen for x frames:");
-	QLabel* seen = new QLabel(QString::number(this->m_trajectory->validCount()));
-	seen->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	hLayoutId->addWidget(seenLabel);
-	hLayoutId->addWidget(seen);
 
-	vLayout->addLayout(hLayoutId);
-	vLayout->addLayout(hLayoutSeen);
-
+	infoWidget->resize(infoTable->size());
+	vLayout->addWidget(infoTable);
 	infoWidget->setLayout(vLayout);
+
 	infoWidget->show();
 
-
+	
 }
 
 void ComponentShape::receiveTracingLength(int tracingLength)
@@ -811,6 +876,7 @@ void ComponentShape::receiveTracerFrameNumber(bool toggle)
 void ComponentShape::receiveAntialiasing(bool toggle)
 {
 	m_antialiasing = toggle;
+	m_rotationHandle->setAntialiasing(toggle);
 	trace();
 	update();
 }
@@ -838,6 +904,17 @@ void ComponentShape::setDimensionsToDefault()
 void ComponentShape::receiveToggleOrientationLine(bool toggle)
 {
 	m_orientationLine = toggle;
+	if (m_pRotatable) {
+		m_rotationHandleLayer->setVisible(toggle);
+		m_rotationHandle->setVisible(toggle);
+	}
+	trace();
+	update();
+}
+
+void ComponentShape::receiveShowId(bool toggle)
+{
+	m_showId = toggle;
 	trace();
 	update();
 }
@@ -878,11 +955,30 @@ void ComponentShape::receiveIgnoreZoom(bool toggle)
 	trace();
 	update();
 }
+
+void ComponentShape::receiveTransparency(int alpha){
+	m_transparency = alpha;
+	m_brushColor.setAlpha(alpha);
+	m_penColor.setAlpha(alpha);
+
+	QColor penColorHandle = m_rotationHandle->pen().color();
+	penColorHandle.setAlpha(alpha);
+	m_rotationHandle->setPen(QPen(penColorHandle));
+
+	QColor brushColorHandle = m_rotationHandle->brush().color();
+	brushColorHandle.setAlpha(alpha);
+	m_rotationHandle->setBrush(QBrush(brushColorHandle));
+
+	trace();
+	update();
+
+}
 //set members from core params
 void ComponentShape::setMembers(CoreParameter* coreParams)
 {
 	//from coreParams
 	m_antialiasing = coreParams->m_antialiasingEntities;
+
 
 	m_tracingStyle = coreParams->m_tracingStyle;
 	m_tracingTimeDegradation = coreParams->m_tracingTimeDegradation;
@@ -893,6 +989,7 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_tracerFrameNumber = coreParams->m_tracerFrameNumber;
 
 	m_orientationLine = coreParams->m_trackOrientationLine;
+	m_showId = coreParams->m_trackShowId;
 
 	m_brushColor = *(coreParams->m_colorBrush);
 	m_penColor = *(coreParams->m_colorBorder);
@@ -916,7 +1013,13 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_rotationHandleLayer->setFlag(QGraphicsItem::ItemHasNoContents);
 
 	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
+	m_rotationHandle->setAntialiasing(m_antialiasing);
 	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
+
+	if (m_pRotatable) {
+		m_rotationHandleLayer->setVisible(m_orientationLine);
+		m_rotationHandle->setVisible(m_orientationLine);
+	}
 
 	update();
 }

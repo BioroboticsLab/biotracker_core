@@ -23,7 +23,7 @@ public Q_SLOTS:
 	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
 	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
 	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);
-	void keyReleaseEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event);
 	void setPlayerParameters(playerParameters* parameters);
 
 protected:

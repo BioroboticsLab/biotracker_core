@@ -54,6 +54,7 @@ class ComponentShape : public QGraphicsObject
 		void broadcastMove();
 
 	public Q_SLOTS:
+		//context menu actions
 		void changeBrushColor();
 		void changePenColor();
 		void changeBrushColor(QColor color);
@@ -75,10 +76,12 @@ class ComponentShape : public QGraphicsObject
 		void receiveTracerFrameNumber(bool toggle);
 		//Visual
 		void receiveAntialiasing(bool toggle);
+		void receiveTransparency(int alpha);
 		//Dimensions
 		void receiveDimensions(int width, int height);
 		void setDimensionsToDefault();
 		void receiveToggleOrientationLine(bool toggle);
+		void receiveShowId(bool toggle);
 		void receiveShapeRotation(double angle, bool rotateEntity);
 		//Ignore zoom
 		void receiveIgnoreZoom(bool toggle);
@@ -118,6 +121,7 @@ class ComponentShape : public QGraphicsObject
 		QColor m_penColor;
 		QColor m_penColorLast;
 		QColor m_brushColor;
+		int m_transparency;
 		bool m_marked;
 		int m_penWidth;
 		Qt::PenStyle m_penStyle;
@@ -136,6 +140,7 @@ class ComponentShape : public QGraphicsObject
 		RotationHandle* m_rotationHandle;
 		QGraphicsRectItem* m_rotationHandleLayer;
 		bool m_orientationLine;
+		bool m_showId;
 		bool m_trajectoryWasActiveOnce;
 		QPoint m_oldPos;
 };

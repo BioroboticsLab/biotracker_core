@@ -6,10 +6,12 @@
 #include "qdebug.h"
 
 
-RotationHandle::RotationHandle(QPoint origin, QGraphicsItem* parent) :
-	QGraphicsObject(parent), _origin(origin)
+RotationHandle::RotationHandle(QPoint origin, QAbstractGraphicsShapeItem* parent) :
+	QAbstractGraphicsShapeItem(parent), _origin(origin)
 {
 	setFlag(ItemIsMovable);
+	setPen(QPen(Qt::blue));
+	setBrush(QBrush(Qt::red));
 	//setFlag(ItemIgnoresTransformations);
 }
 
@@ -24,10 +26,14 @@ QRectF RotationHandle::boundingRect() const
 
 void RotationHandle::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-	painter->setPen(QPen(Qt::blue));
-	painter->setBrush(QBrush(Qt::red));
+	if(m_antialiasing){
+		painter->setRenderHint(QPainter::Antialiasing);
+	}
+	painter->setPen(this->pen());
+	painter->setBrush(this->brush());
 
 	painter->drawEllipse(QRect(-2, -2, 4, 4));
+
 	//painter->drawRect(boundingRect());
 }
 
@@ -71,4 +77,10 @@ void RotationHandle::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
 	//pass on
 	QGraphicsItem::mouseMoveEvent(event);
+}
+
+void RotationHandle::setAntialiasing(bool toggle)
+{
+	m_antialiasing = toggle;
+	update();
 }

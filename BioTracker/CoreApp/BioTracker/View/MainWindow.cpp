@@ -13,6 +13,10 @@
 #include "Controller/null_Controller.h"
 
 #include "QGraphicsObject"
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QtWidgets/QHeaderView>
+
 
 #include "qtextedit.h"
 #include <qmessagebox.h>
@@ -137,6 +141,12 @@ void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged(QString s) {
 void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
     ui->comboBox_TrackerSelect->setModel(trackerList);
 	ui->comboBox_TrackerSelect->setCurrentText(current);
+}
+
+void MainWindow::setCursorPositionLabel(QPoint pos)
+{
+	QString posString = QString("%1, %2").arg(QString::number(pos.x()), QString::number(pos.y()));
+	ui->cursorPosition->setText(posString);
 }
 
 void MainWindow::activeTrackingCheckBox() {
@@ -275,6 +285,81 @@ void MainWindow::on_actionInfo_triggered() {
     int ret = QMessageBox::information(this, tr("BioTracker"),
         tr( version.c_str()),
         QMessageBox::Ok);
+}
+
+void MainWindow::on_actionShortcuts_triggered() {
+
+	//TODO import this from file
+    std::pair<QString, QString> scUndo (QString("CTRL + Z"), QString("Undo"));
+    std::pair<QString, QString> scRedo (QString("CTRL + Y"), QString("Redo"));
+    std::pair<QString, QString> scSel (QString("CTRL + A"), QString("Select all"));
+    std::pair<QString, QString> scPlay (QString("Space"), QString("Play"));
+    std::pair<QString, QString> scNext (QString("Left Arrow"), QString("Previous Frame"));
+    std::pair<QString, QString> scPrev (QString("Right Arrow"), QString("Next Frame"));
+    std::pair<QString, QString> scStop (QString("CTRL + Space"), QString("Stop"));
+    std::pair<QString, QString> scAL (QString("ALT + L"), QString("Add label annotation"));
+    std::pair<QString, QString> scAA (QString("ALT + A"), QString("Add arrow annotation"));
+    std::pair<QString, QString> scAE (QString("ALT + E"), QString("Add ellipse annotation"));
+    std::pair<QString, QString> scAR (QString("ALT + R"), QString("Add rect annotation"));
+    std::pair<QString, QString> scADel (QString("ALT + DELETE"), QString("Delete selected annotation"));
+
+	std::map<QString,QString> scMap;
+
+	scMap.insert(scUndo);
+	scMap.insert(scRedo);
+	scMap.insert(scSel);
+	scMap.insert(scPlay);
+	scMap.insert(scNext);
+	scMap.insert(scPrev);
+	scMap.insert(scStop);
+	scMap.insert(scAL);
+	scMap.insert(scAA);
+	scMap.insert(scAE);
+	scMap.insert(scAR);
+	scMap.insert(scADel);
+
+	QMap<QString, QString> scQMap = QMap<QString, QString>(scMap);
+
+	QTableWidget* scTable = new QTableWidget();
+	scTable->setRowCount(1);
+	scTable->setColumnCount(2);
+
+	scTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Shortcut"));
+	scTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Description"));
+	scTable->verticalHeader()->hide();
+
+	QMapIterator<QString, QString> sc(scQMap);
+	while (sc.hasNext()) {
+		sc.next();
+		QTableWidgetItem* scKey = new QTableWidgetItem(sc.key());
+		QTableWidgetItem* scKeyInfo = new QTableWidgetItem(sc.value());
+		scKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		scKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+		scTable->setItem(scTable->rowCount()-1 , 0, scKey);
+		scTable->setItem(scTable->rowCount()-1 , 1, scKeyInfo);
+
+		if(sc.hasNext()){
+			scTable->insertRow(scTable->rowCount());
+		}
+	}
+
+ 	//scTable->horizontalHeader()->setStretchLastSection( true ); 
+	scTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+	QWidget* outerWidget = new QWidget();
+	outerWidget->setWindowTitle("Shortcuts");
+	outerWidget->resize(scTable->size());
+	QVBoxLayout* vLayout = new QVBoxLayout();
+
+	vLayout->addWidget(scTable);
+
+	outerWidget->setLayout(vLayout);
+
+
+	outerWidget->show();
+
+
 }
 
 

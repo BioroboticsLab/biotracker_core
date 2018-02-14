@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
-    <height>112</height>
+    <width>1066</width>
+    <height>114</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,6 +33,9 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Show the current state of the video. Slide to desired frame</string>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
@@ -128,7 +131,7 @@
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Play</string>
+         <string>Play/Pause</string>
         </property>
         <property name="styleSheet">
          <string notr="true"/>
@@ -229,7 +232,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Screenshot</string>
+         <string>Take a screenshot</string>
         </property>
         <property name="statusTip">
          <string/>
@@ -254,6 +257,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="button_record_cam">
+        <property name="toolTip">
+         <string>Record the camera output / video</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -271,6 +277,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="button_record">
+        <property name="toolTip">
+         <string>Record the camera / video output with tracking overlay</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -309,6 +318,9 @@
           <width>60</width>
           <height>30</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Displays the current frame</string>
         </property>
         <property name="text">
          <string>0</string>
@@ -383,6 +395,9 @@
       </item>
       <item>
        <widget class="QLabel" name="label_2">
+        <property name="toolTip">
+         <string>frames per second</string>
+        </property>
         <property name="text">
          <string>fps:</string>
         </property>
@@ -414,6 +429,9 @@
       </item>
       <item>
        <widget class="QDoubleSpinBox" name="doubleSpinBoxTargetFps">
+        <property name="toolTip">
+         <string>Set a fps limit (0 for no limit)</string>
+        </property>
         <property name="decimals">
          <number>1</number>
         </property>
@@ -425,7 +443,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string> curren:</string>
+         <string> current:</string>
         </property>
        </widget>
       </item>
@@ -442,6 +460,9 @@
           <width>20</width>
           <height>10</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Displays current frames per second</string>
         </property>
         <property name="text">
          <string>0</string>

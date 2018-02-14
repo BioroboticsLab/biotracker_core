@@ -95,6 +95,7 @@ public:
 
 	private slots:
 	void rcvSelectPlugin(QString plugin);
+	void receiveCursorPosition(QPoint pos);
 
 private:
 	// Internal cleanup callback when a new video or imagestream is loaded.

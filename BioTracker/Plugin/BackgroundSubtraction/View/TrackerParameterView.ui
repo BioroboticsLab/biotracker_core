@@ -74,7 +74,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="lineEdit_2_binThresh"/>
+            <widget class="QSpinBox" name="lineEdit_2_binThresh">
+             <property name="toolTip">
+              <string>Set the binarization threshold</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -88,7 +92,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="lineEdit_3_SizeErode"/>
+            <widget class="QSpinBox" name="lineEdit_3_SizeErode">
+             <property name="toolTip">
+              <string>Set the erosion size</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -102,7 +110,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="lineEdit_4_SizeDilate"/>
+            <widget class="QSpinBox" name="lineEdit_4_SizeDilate">
+             <property name="toolTip">
+              <string>Set the dilation size</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -117,6 +129,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="lineEdit_7_MogBack">
+             <property name="toolTip">
+              <string>Set the background ratio</string>
+             </property>
              <property name="decimals">
               <number>6</number>
              </property>
@@ -143,7 +158,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="lineEdit_8_MinBlob"/>
+            <widget class="QSpinBox" name="lineEdit_8_MinBlob">
+             <property name="toolTip">
+              <string>Set the minimal blob size</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -158,6 +177,9 @@
            </item>
            <item>
             <widget class="QSpinBox" name="lineEdit_9MaxBlob">
+             <property name="toolTip">
+              <string>Sets the maximum blob size</string>
+             </property>
              <property name="maximum">
               <number>10000</number>
              </property>
@@ -187,6 +209,9 @@
          </item>
          <item>
           <widget class="QComboBox" name="comboBoxSendImage">
+           <property name="toolTip">
+            <string>Choose with image to display</string>
+           </property>
            <property name="currentText">
             <string>Original</string>
            </property>
@@ -224,6 +249,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonResetBackground">
+           <property name="toolTip">
+            <string>Reset the current background</string>
+           </property>
            <property name="text">
             <string>Reset Background</string>
            </property>

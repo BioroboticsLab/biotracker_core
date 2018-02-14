@@ -26,6 +26,9 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
     sw.erase(sw.find_last_not_of('0') + 1, std::string::npos);
     ui->lineEditRectWidth->setText(sw.c_str());
     ui->lineEditRectHeight->setText(sh.c_str());
+
+	//TODO implement it correctly before enabling again
+	ui->checkBoxIgnoreZoom->hide();
     
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
 
@@ -102,20 +105,20 @@ void CoreParameterView::on_comboBoxTracingStyle_currentIndexChanged(const QStrin
 	emitTracingStyle(text);
 }
 
-void CoreParameterView::on_spinBoxTracingHistoryLength_editingFinished()
+void CoreParameterView::on_spinBoxTracingHistoryLength_valueChanged(int i)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	int value = ui->spinBoxTracingHistoryLength->value();
-	coreParams->m_tracingHistory = value;
-	emitTracingHistoryLength(value);
+	//int value = ui->spinBoxTracingHistoryLength->value();
+	coreParams->m_tracingHistory = i;
+	emitTracingHistoryLength(i);
 }
 
-void CoreParameterView::on_spinBoxTracingSteps_editingFinished()
+void CoreParameterView::on_spinBoxTracingSteps_valueChanged(int i)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	int value = ui->spinBoxTracingSteps->value();
-	coreParams->m_tracingSteps = value;
-	emitTracingSteps(value);
+	//int value = ui->spinBoxTracingSteps->value();
+	coreParams->m_tracingSteps = i;
+	emitTracingSteps(i);
 }
 
 void CoreParameterView::on_comboBoxTracingTimeDegradation_currentIndexChanged(const QString & text)
@@ -132,12 +135,12 @@ void CoreParameterView::on_checkBoxTracerFrameNumber_stateChanged(int toggle)
 	emitTracerFrameNumber(toggle);
 }
 
-void CoreParameterView::on_spinBoxTracerProportions_editingFinished()
+void CoreParameterView::on_spinBoxTracerProportions_valueChanged(double d)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	float value = (float)ui->spinBoxTracerProportions->value();
-	coreParams->m_tracerProportions = value;
-	emitTracerProportions(value);
+	//float value = (float)ui->spinBoxTracerProportions->value();
+	coreParams->m_tracerProportions = d;
+	emitTracerProportions(d);
 }
 
 void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle)
@@ -189,6 +192,13 @@ void CoreParameterView::on_checkBoxTrackOrientationLine_stateChanged(int v)
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	coreParams->m_trackOrientationLine = v;
 	emitTrackOrientationLine(v);
+}
+
+void CoreParameterView::on_checkBoxShowId_stateChanged(int v)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_trackShowId = v;
+	emitTrackShowId(v);
 }
 
 // if dimensions are set for all tracks they are going to be set for new tracks aswell
@@ -255,6 +265,7 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 		ui->groupBoxTrackDimensions->hide();
 		ui->groupBoxTracerDimensions->hide();
 		ui->checkBoxTracerFrameNumber->hide();
+		ui->checkBoxShowId->hide();
 	}
 	//enable
 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
@@ -263,6 +274,7 @@ void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
 		ui->groupBoxTrackDimensions->show();
 		ui->groupBoxTracerDimensions->show();
 		ui->checkBoxTracerFrameNumber->show();
+		ui->checkBoxShowId->show();
 	}
 }
 
@@ -300,19 +312,17 @@ void CoreParameterView::fillUI()
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 
 	//view toggle
-	if (coreParams->m_viewSwitch) { ui->checkBoxEnableCoreView->setChecked(true); }
-	else { ui->checkBoxEnableCoreView->setChecked(false); }
+	ui->checkBoxEnableCoreView->setChecked(coreParams->m_viewSwitch);
 	//track ignore zoom
-	if (coreParams->m_ignoreZoom) { ui->checkBoxIgnoreZoom->setChecked(true); }
-	else { ui->checkBoxIgnoreZoom->setChecked(false); }
+	ui->checkBoxIgnoreZoom->setChecked(coreParams->m_ignoreZoom);
 	//track orientation line
-	if (coreParams->m_trackOrientationLine) { ui->checkBoxTrackOrientationLine->setChecked(true); }
-	else {ui->checkBoxTrackOrientationLine->setChecked(false);}
+	ui->checkBoxTrackOrientationLine->setChecked(coreParams->m_trackOrientationLine);
+	//track show id
+	ui->checkBoxShowId->setChecked(coreParams->m_trackShowId);
 	//tracer proportions
-	ui->spinBoxTracerProportions->setValue(0.5);
+	ui->spinBoxTracerProportions->setValue(coreParams->m_tracerProportions);
 	//tracer orientation line
-	if (coreParams->m_tracerOrientationLine) { ui->checkBoxTracerOrientationLine->setChecked(true); }
-	else { ui->checkBoxTracerOrientationLine->setChecked(false); }
+	ui->checkBoxTracerOrientationLine->setChecked(coreParams->m_tracerOrientationLine);
 	//tracing style
 	if (coreParams->m_tracingStyle == "None") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
 	//tracing time degradation
@@ -322,13 +332,10 @@ void CoreParameterView::fillUI()
 	//tracing steps
 	if (coreParams->m_tracingSteps) { ui->spinBoxTracingSteps->setValue(coreParams->m_tracingSteps); }
 	//tracer frame number
-	if (coreParams->m_tracerFrameNumber) { ui->checkBoxTracerFrameNumber->setChecked(true); }
-	else { ui->checkBoxTracerFrameNumber->setChecked(false); }
+	ui->checkBoxTracerFrameNumber->setChecked(coreParams->m_tracerFrameNumber);
 	//antialiasing
-	if (coreParams->m_antialiasingEntities) { ui->checkBoxAntialiasingEntities->setChecked(true); }
-	else { ui->checkBoxAntialiasingEntities->setChecked(false); }
-	if (coreParams->m_antialiasingFull) { ui->checkBoxAntialiasingFull->setChecked(true); }
-	else { ui->checkBoxAntialiasingFull->setChecked(false); }
+	ui->checkBoxAntialiasingEntities->setChecked(coreParams->m_antialiasingEntities);
+	ui->checkBoxAntialiasingFull->setChecked(coreParams->m_antialiasingFull);
 	//track width
 	if (coreParams->m_trackWidth) { ui->spinboxTrackWidth->setValue(coreParams->m_trackWidth); }
 	//track height
@@ -342,12 +349,14 @@ void CoreParameterView::fillUI()
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
 		ui->checkBoxTracerFrameNumber->show();
+		ui->checkBoxShowId->show();
 	}
 	else {
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
 		ui->groupBoxTrackDimensions->hide();
 		ui->checkBoxTracerFrameNumber->hide();
+		ui->checkBoxShowId->hide();
 	}
 }
 
