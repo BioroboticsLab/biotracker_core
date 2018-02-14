@@ -40,7 +40,8 @@ void PStatePlay::operate() {
             std::this_thread::sleep_for(std::chrono::milliseconds(targetFps - dt - eps));
         }
     }
-    
+
+    start = std::chrono::system_clock::now();
 
     bool isLastFrame = m_ImageStream->lastFrame();
     IPlayerState::PLAYER_STATES nextState = IPlayerState::STATE_INITIAL;
@@ -54,7 +55,5 @@ void PStatePlay::operate() {
         nextState = IPlayerState::STATE_INITIAL_STREAM;
     }
 
-
-    start = std::chrono::system_clock::now();
     m_Player->setNextState(nextState);
 }

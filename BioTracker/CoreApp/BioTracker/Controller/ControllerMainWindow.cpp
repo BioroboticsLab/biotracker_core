@@ -169,7 +169,6 @@ void ControllerMainWindow::exit() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     ControllerPlayer *pc = static_cast<ControllerPlayer*>(ctr);
     pc->stop();
-    Sleep(1);
 	delete m_BioTrackerContext;
 }
 
