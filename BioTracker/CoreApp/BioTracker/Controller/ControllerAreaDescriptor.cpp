@@ -107,8 +107,8 @@ void ControllerAreaDescriptor::rcvPlayerParameters(playerParameters* parameters)
 
         //Set area descriptor dimensions
         AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
-        if (ad) {
-            std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
+        std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
+        if (ad && m != nullptr) {
             _w = m->size().width;
             _h = m->size().height;
             ad->setDimensions(_w, _h);

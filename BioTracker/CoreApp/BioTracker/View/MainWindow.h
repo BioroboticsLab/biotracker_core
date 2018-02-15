@@ -42,6 +42,10 @@ class MainWindow : public IViewMainWindow {
 
     void closeEvent(QCloseEvent *event);
 
+    void activateTracking();
+
+    void deactivateTracking();
+
 Q_SIGNALS:
 	void selectPlugin(QString ct);
 

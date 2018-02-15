@@ -256,21 +256,21 @@
              <property name="toolTip">
               <string/>
              </property>
-             <property name="currentIndex">
-              <number>1</number>
+             <property name="tabPosition">
+              <enum>QTabWidget::North</enum>
              </property>
-             <widget class="QWidget" name="tab_tracker">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="tab_experiment">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="toolTip">
-               <string>Tracker parameter</string>
-              </property>
               <attribute name="title">
-               <string>tracker</string>
+               <string>Experiment</string>
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
                <property name="leftMargin">
@@ -285,6 +285,231 @@
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+                    <widget class="QLabel" name="label_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Experiment</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_333">
+                   <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+                    <widget class="QLabel" name="label_4">
+                     <property name="text">
+                      <string>(hover text for information)</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item alignment="Qt::AlignLeft">
+                    <widget class="QLabel" name="label_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>50</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
+Increments automatically after finalizing. 
+Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
+                     </property>
+                     <property name="text">
+                      <string>Trial No. </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_ExpTrialNo">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
+Increments automatically after finalizing. 
+Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
+                     </property>
+                     <property name="text">
+                      <string>###</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item alignment="Qt::AlignLeft">
+                    <widget class="QLabel" name="label_ExpSrc">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>50</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Source of the video data. 
+Select a source in the &quot;File&quot; menu.</string>
+                     </property>
+                     <property name="text">
+                      <string>Source:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_ExpSrcCnt">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>Source of the video data. 
+Select a source in the &quot;File&quot; menu.</string>
+                     </property>
+                     <property name="text">
+                      <string>No Media</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item alignment="Qt::AlignLeft">
+                    <widget class="QLabel" name="label_ExpObj">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>50</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Number of objects being tracked in a video. 
+You can add some by right-clicking the video (if loaded).</string>
+                     </property>
+                     <property name="text">
+                      <string>Objects:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_ExpObjCnt">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>Number of objects being tracked in a video. 
+You can add some by right-clicking the video (if loaded).</string>
+                     </property>
+                     <property name="text">
+                      <string>###</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <widget class="QPushButton" name="pushButton_startExp">
+                     <property name="toolTip">
+                      <string>Starts tracking the video or stop tracking respectively. 
+If results are questionable, mediate the selection of tracker 
+(drop down menu at the top) and the tracker parameters (&quot;Tracker&quot; tab)</string>
+                     </property>
+                     <property name="text">
+                      <string>Start Trial</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <widget class="QPushButton" name="pushButton_finalizeExp">
+                     <property name="toolTip">
+                      <string>Finalizes the current trial.
+ Clicking this will not only stop the trial, 
+but also write back the 
+data to the &quot;Tracks&quot; directory and increment the trial count. </string>
+                     </property>
+                     <property name="text">
+                      <string>Finalize Trial</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="tab_view">
@@ -298,7 +523,7 @@
                <string>Visualization parameter</string>
               </property>
               <attribute name="title">
-               <string>view</string>
+               <string>View</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <property name="spacing">
@@ -351,9 +576,9 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-383</y>
-                      <width>406</width>
-                      <height>1058</height>
+                      <y>0</y>
+                      <width>401</width>
+                      <height>1052</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -625,7 +850,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>89</width>
+                                  <height>22</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackWidth">
                                  <item>
                                   <widget class="QLabel" name="labelTrackWidth">
@@ -655,7 +888,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>92</width>
+                                  <height>22</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackHeight">
                                  <item>
                                   <widget class="QLabel" name="labelTrackHeight">
@@ -679,7 +920,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>207</width>
+                                  <height>25</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
                                  <item>
                                   <widget class="QLabel" name="labelTrackDimensionSetter">
@@ -716,7 +965,15 @@
                                  </item>
                                 </layout>
                                </widget>
-                               <widget class="QWidget" name="">
+                               <widget class="QWidget" name="layoutWidget">
+                                <property name="geometry">
+                                 <rect>
+                                  <x>0</x>
+                                  <y>0</y>
+                                  <width>125</width>
+                                  <height>19</height>
+                                 </rect>
+                                </property>
                                 <layout class="QHBoxLayout" name="layoutOrientationLine">
                                  <item>
                                   <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
@@ -1323,6 +1580,34 @@
                  </item>
                 </layout>
                </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_tracker">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Tracker parameter</string>
+              </property>
+              <attribute name="title">
+               <string>Tracker</string>
+              </attribute>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
               </layout>
              </widget>
             </widget>

@@ -134,11 +134,9 @@ void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
     }
 }
 
-QString ControllerDataExporter::generateBasename(bool temporaryFile) {
-
-    QString path = (temporaryFile ? CFG_DIR_TEMP : CFG_DIR_TRACKS);
+int ControllerDataExporter::getTrialNumber() {
     //Get all existing files and parse highest export number
-    QStringList allFiles = QDir(CFG_DIR_TEMP).entryList(QDir::NoDotAndDotDot | QDir::Files);
+    QStringList allFiles = QDir(CFG_DIR_TRACKS).entryList(QDir::NoDotAndDotDot | QDir::Files);
 
     int maxVal = 0;
     foreach(QString s, allFiles) {
@@ -147,6 +145,13 @@ QString ControllerDataExporter::generateBasename(bool temporaryFile) {
             maxVal = std::max(maxVal, val);
         }
     }
+    return maxVal;
+}
+
+QString ControllerDataExporter::generateBasename(bool temporaryFile) {
+
+    QString path = (temporaryFile ? CFG_DIR_TEMP : CFG_DIR_TRACKS);
+    int maxVal = getTrialNumber();
     std::string current = "Export_"+std::to_string(maxVal+1)+"_";
 
     return QString(getTimeAndDate(path.toStdString() + current, "").c_str());

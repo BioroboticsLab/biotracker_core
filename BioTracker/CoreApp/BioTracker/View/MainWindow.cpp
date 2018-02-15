@@ -98,8 +98,8 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 		}
 
 		QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-		dynamic_cast<QTabWidget*>(w)->removeTab(0);
-		dynamic_cast<QTabWidget*>(w)->insertTab(0, pluginParameter, "tracker");
+		dynamic_cast<QTabWidget*>(w)->removeTab(2);
+		dynamic_cast<QTabWidget*>(w)->insertTab(2, pluginParameter, "Tracker");
 		
 	}
 	else {
@@ -235,6 +235,14 @@ void MainWindow::on_actionShowActionList_triggered()
 void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
     qobject_cast<ControllerMainWindow*> (getController())->loadCameraDevice(conf);
 
+}
+
+void MainWindow::activateTracking() {
+    ui->checkBox_TrackingActivated->setChecked(true);
+}
+
+void MainWindow::deactivateTracking() {
+    ui->checkBox_TrackingActivated->setChecked(false);
 }
 
 void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {

@@ -7,6 +7,8 @@
 #include "settings/Settings.h"
 #include "util/types.h"
 #include <limits>
+#include "Controller/ControllerCoreParameter.h"
+#include <qmessagebox.h>
 
 CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, IModel *model) :
 	IViewWidget(parent, controller, model),
@@ -31,6 +33,9 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	ui->checkBoxIgnoreZoom->hide();
     
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
+
+    int trial = dynamic_cast<ControllerCoreParameter*>(controller)->getTrialNumber();
+    ui->label_ExpTrialNo->setText(std::to_string(trial).c_str());
 
 	fillUI();
 	setStyle();
@@ -380,6 +385,52 @@ void CoreParameterView::setStyle()
 void CoreParameterView::getNotified()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+    ui->labelNumberOfTracks->setText(QString::number(coreParams->m_trackNumber));
+    ui->label_ExpObjCnt->setText(QString::number(coreParams->m_trackNumber));
 
-	ui->labelNumberOfTracks->setText(QString::number(coreParams->m_trackNumber));
+    int trial = dynamic_cast<ControllerCoreParameter*>(getController())->getTrialNumber() + 1;
+    ui->label_ExpTrialNo->setText(std::to_string(trial).c_str());
 }
+
+/************EXPERIMENT TAB*******************/
+
+void CoreParameterView::on_pushButton_startExp_clicked() {
+    if (!_trackingStarted) {
+        if (_currentFile == "No Media"){
+            int ret = QMessageBox::information(this, tr("BioTracker"),
+                tr("Please select a source video first. \nYou can do so in the \"File\" menu."),
+                QMessageBox::Ok);
+        }
+        else {
+            emitEnableTracking();
+            emitStartPlayback();
+            ui->pushButton_startExp->setText("Stop Trial");
+            _trackingStarted = true;
+        }
+    }
+    else {
+        emitDisableTracking();
+        emitStopPlayback();
+        ui->pushButton_startExp->setText("Start Trial");
+        _trackingStarted = false;
+    }
+}
+
+void CoreParameterView::on_pushButton_finalizeExp_clicked() {
+
+    emitStopPlayback();
+    _trackingStarted = false;
+    ui->pushButton_startExp->setText("Start Trial");
+    emitFinalizeExperiment();
+}
+
+void CoreParameterView::on_label_ExpSrcCnt_clicked() {
+    //Event does not exist
+}
+
+void CoreParameterView::rcvPlayerParameters(playerParameters* parameters) {
+    QFileInfo f(parameters->m_CurrentFilename);
+    _currentFile = f.baseName();
+    ui->label_ExpSrcCnt->setText(_currentFile);
+}
+

@@ -51,5 +51,5 @@ private:
     int _h = 1;
     bool _visibleApperture = false;
     bool _visibleRectification = false;
-    QString _currentFilename = "";
+    QString _currentFilename = "No Media";
 };

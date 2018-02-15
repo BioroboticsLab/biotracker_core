@@ -27,6 +27,9 @@ signals:
 	void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
     void changeAreaDescriptorType(QString type);
 
+    //Forwarded from data exporter
+    int getTrialNumber();
+
 	// IController interface
 protected:
 	void createModel() override;
