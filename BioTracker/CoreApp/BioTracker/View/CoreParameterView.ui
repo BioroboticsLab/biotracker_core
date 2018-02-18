@@ -256,12 +256,15 @@
              <property name="toolTip">
               <string/>
              </property>
+             <property name="tabShape">
+              <enum>QTabWidget::Rounded</enum>
+             </property>
              <property name="currentIndex">
               <number>1</number>
              </property>
              <widget class="QWidget" name="tab_tracker">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -351,9 +354,9 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>0</y>
+                      <y>-123</y>
                       <width>425</width>
-                      <height>1058</height>
+                      <height>1054</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -553,240 +556,200 @@
                                <property name="title">
                                 <string>Dimensions</string>
                                </property>
-                               <widget class="QPushButton" name="pushButtonDefaultDimensions">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>12</x>
-                                  <y>101</y>
-                                  <width>354</width>
-                                  <height>23</height>
-                                 </rect>
-                                </property>
-                                <property name="toolTip">
-                                 <string>Set the dimensions of all tracks back to default</string>
-                                </property>
-                                <property name="text">
-                                 <string>Default dimensions</string>
-                                </property>
-                               </widget>
-                               <widget class="Line" name="line_4">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>12</x>
-                                  <y>124</y>
-                                  <width>354</width>
-                                  <height>16</height>
-                                 </rect>
-                                </property>
-                                <property name="orientation">
-                                 <enum>Qt::Horizontal</enum>
-                                </property>
-                               </widget>
-                               <widget class="QWidget" name="horizontalWidget" native="true">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>12</x>
-                                  <y>173</y>
-                                  <width>354</width>
-                                  <height>20</height>
-                                 </rect>
-                                </property>
-                                <property name="minimumSize">
-                                 <size>
-                                  <width>0</width>
-                                  <height>20</height>
-                                 </size>
-                                </property>
-                                <layout class="QHBoxLayout" name="horizontalLayout_showId">
-                                 <property name="spacing">
-                                  <number>0</number>
-                                 </property>
-                                 <property name="leftMargin">
-                                  <number>0</number>
-                                 </property>
-                                 <property name="topMargin">
-                                  <number>0</number>
-                                 </property>
-                                 <property name="rightMargin">
-                                  <number>0</number>
-                                 </property>
-                                 <property name="bottomMargin">
-                                  <number>0</number>
-                                 </property>
-                                 <item>
-                                  <widget class="QCheckBox" name="checkBoxShowId">
-                                   <property name="toolTip">
-                                    <string>Show the id in the entity</string>
+                               <layout class="QVBoxLayout" name="verticalLayout_3">
+                                <item>
+                                 <widget class="QWidget" name="widget" native="true">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>25</height>
+                                   </size>
+                                  </property>
+                                  <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
+                                   <property name="spacing">
+                                    <number>0</number>
                                    </property>
-                                   <property name="text">
-                                    <string>Show track ID</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                </layout>
-                               </widget>
-                               <widget class="QWidget" name="layoutWidget">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>0</x>
-                                  <y>0</y>
-                                  <width>118</width>
-                                  <height>28</height>
-                                 </rect>
-                                </property>
-                                <layout class="QHBoxLayout" name="layoutTrackWidth">
-                                 <item>
-                                  <widget class="QLabel" name="labelTrackWidth">
-                                   <property name="minimumSize">
-                                    <size>
-                                     <width>0</width>
-                                     <height>0</height>
-                                    </size>
-                                   </property>
-                                   <property name="text">
-                                    <string>Width:</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                 <item>
-                                  <widget class="QSpinBox" name="spinboxTrackWidth">
-                                   <property name="buttonSymbols">
-                                    <enum>QAbstractSpinBox::PlusMinus</enum>
-                                   </property>
-                                   <property name="minimum">
-                                    <number>1</number>
-                                   </property>
-                                   <property name="maximum">
-                                    <number>1000</number>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                </layout>
-                               </widget>
-                               <widget class="QWidget" name="layoutWidget">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>0</x>
-                                  <y>0</y>
-                                  <width>123</width>
-                                  <height>28</height>
-                                 </rect>
-                                </property>
-                                <layout class="QHBoxLayout" name="layoutTrackHeight">
-                                 <item>
-                                  <widget class="QLabel" name="labelTrackHeight">
-                                   <property name="text">
-                                    <string>Height:</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                 <item>
-                                  <widget class="QSpinBox" name="spinBoxTrackHeight">
-                                   <property name="buttonSymbols">
-                                    <enum>QAbstractSpinBox::PlusMinus</enum>
-                                   </property>
-                                   <property name="minimum">
-                                    <number>1</number>
-                                   </property>
-                                   <property name="maximum">
-                                    <number>1000</number>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                </layout>
-                               </widget>
-                               <widget class="QWidget" name="layoutWidget">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>0</x>
-                                  <y>0</y>
-                                  <width>256</width>
-                                  <height>27</height>
-                                 </rect>
-                                </property>
-                                <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
-                                 <item>
-                                  <widget class="QLabel" name="labelTrackDimensionSetter">
-                                   <property name="text">
-                                    <string>Set for:</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                 <item>
-                                  <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
-                                   <property name="minimumSize">
-                                    <size>
-                                     <width>0</width>
-                                     <height>0</height>
-                                    </size>
-                                   </property>
-                                   <property name="toolTip">
-                                    <string>Set the width and height for all tracks</string>
-                                   </property>
-                                   <property name="text">
-                                    <string>All tracks</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                 <item>
-                                  <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected">
-                                   <property name="toolTip">
-                                    <string>Set the width and height only for selected tracks</string>
-                                   </property>
-                                   <property name="text">
-                                    <string>Selected tracks</string>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                </layout>
-                               </widget>
-                               <widget class="QWidget" name="layoutWidget">
-                                <property name="geometry">
-                                 <rect>
-                                  <x>0</x>
-                                  <y>0</y>
-                                  <width>173</width>
-                                  <height>25</height>
-                                 </rect>
-                                </property>
-                                <layout class="QHBoxLayout" name="layoutOrientationLine">
-                                 <item>
-                                  <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
-                                   <property name="enabled">
-                                    <bool>true</bool>
-                                   </property>
-                                   <property name="toolTip">
-                                    <string>Show the orientation line for entities</string>
-                                   </property>
-                                   <property name="text">
-                                    <string>Show orientation line</string>
-                                   </property>
-                                   <property name="checked">
-                                    <bool>false</bool>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                </layout>
-                               </widget>
-                               <widget class="QCheckBox" name="checkBoxIgnoreZoom">
-                                <property name="enabled">
-                                 <bool>true</bool>
-                                </property>
-                                <property name="geometry">
-                                 <rect>
-                                  <x>13</x>
-                                  <y>151</y>
-                                  <width>352</width>
-                                  <height>21</height>
-                                 </rect>
-                                </property>
-                                <property name="toolTip">
-                                 <string>Set entities are not scaling when zooming</string>
-                                </property>
-                                <property name="text">
-                                 <string>Always same size</string>
-                                </property>
-                               </widget>
+                                   <item>
+                                    <widget class="QLabel" name="labelTrackDimensionSetter">
+                                     <property name="text">
+                                      <string>Set for:</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <property name="minimumSize">
+                                      <size>
+                                       <width>0</width>
+                                       <height>0</height>
+                                      </size>
+                                     </property>
+                                     <property name="toolTip">
+                                      <string>Set the width and height for all tracks</string>
+                                     </property>
+                                     <property name="text">
+                                      <string>All tracks</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected">
+                                     <property name="toolTip">
+                                      <string>Set the width and height only for selected tracks</string>
+                                     </property>
+                                     <property name="text">
+                                      <string>Selected tracks</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget" native="true">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>25</height>
+                                   </size>
+                                  </property>
+                                  <layout class="QHBoxLayout" name="layoutTrackHeight">
+                                   <item>
+                                    <widget class="QLabel" name="labelTrackHeight">
+                                     <property name="minimumSize">
+                                      <size>
+                                       <width>0</width>
+                                       <height>14</height>
+                                      </size>
+                                     </property>
+                                     <property name="text">
+                                      <string>Height:</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QSpinBox" name="spinBoxTrackHeight">
+                                     <property name="buttonSymbols">
+                                      <enum>QAbstractSpinBox::PlusMinus</enum>
+                                     </property>
+                                     <property name="minimum">
+                                      <number>1</number>
+                                     </property>
+                                     <property name="maximum">
+                                      <number>1000</number>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget" native="true">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>25</height>
+                                   </size>
+                                  </property>
+                                  <layout class="QHBoxLayout" name="layoutTrackWidth">
+                                   <item>
+                                    <widget class="QLabel" name="labelTrackWidth">
+                                     <property name="minimumSize">
+                                      <size>
+                                       <width>0</width>
+                                       <height>0</height>
+                                      </size>
+                                     </property>
+                                     <property name="text">
+                                      <string>Width:</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QSpinBox" name="spinboxTrackWidth">
+                                     <property name="buttonSymbols">
+                                      <enum>QAbstractSpinBox::PlusMinus</enum>
+                                     </property>
+                                     <property name="minimum">
+                                      <number>1</number>
+                                     </property>
+                                     <property name="maximum">
+                                      <number>1000</number>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QPushButton" name="pushButtonDefaultDimensions">
+                                  <property name="toolTip">
+                                   <string>Set the dimensions of all tracks back to default</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Default dimensions</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="Line" name="line_4">
+                                  <property name="orientation">
+                                   <enum>Qt::Horizontal</enum>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QCheckBox" name="checkBoxTrackOrientationLine">
+                                  <property name="enabled">
+                                   <bool>true</bool>
+                                  </property>
+                                  <property name="toolTip">
+                                   <string>Show the orientation line for entities</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Show orientation line</string>
+                                  </property>
+                                  <property name="checked">
+                                   <bool>false</bool>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QCheckBox" name="checkBoxIgnoreZoom">
+                                  <property name="enabled">
+                                   <bool>true</bool>
+                                  </property>
+                                  <property name="toolTip">
+                                   <string>Set entities are not scaling when zooming</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Always same size</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QCheckBox" name="checkBoxShowId">
+                                  <property name="toolTip">
+                                   <string>Show the id in the entity</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Show track ID</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
                               </widget>
                              </item>
                              <item>
@@ -1174,6 +1137,12 @@
                                 </item>
                                 <item>
                                  <widget class="QLineEdit" name="lineEditRectWidth">
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>16777215</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
                                   <property name="text">
                                    <string>100</string>
                                   </property>
@@ -1194,6 +1163,12 @@
                                 </item>
                                 <item>
                                  <widget class="QLineEdit" name="lineEditRectHeight">
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>16777215</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
                                   <property name="text">
                                    <string>100</string>
                                   </property>

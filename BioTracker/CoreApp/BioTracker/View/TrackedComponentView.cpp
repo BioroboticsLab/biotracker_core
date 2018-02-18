@@ -181,20 +181,23 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 		}
 	}
 	// check for new trajectories; for each create a new shape
-	if (this->childItems().size() < all->size()) {
-		int childrenCount = this->childItems().size();
-		for (int i = all->size() - childrenCount; i > 0; i--) {
-			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(all->size() - i));
-			if (trajectory) { 
-				CoreParameter* coreParams = dynamic_cast<CoreParameter*>(dynamic_cast<ControllerTrackedComponentCore*>(getController())->getCoreParameter());
 
+	//if #shapes smaller than #validtracks add new shapes
+	int validTracks = all->validCount();
+
+	if (this->childItems().size() < validTracks) {
+		int childrenCount = this->childItems().size();
+		// iterate over trajectories form back to increase performance
+		for (int i = all->size()-1; i >= 0 && this->childItems().size() < validTracks; i--) {
+			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
+			//trajectory must not be null, must be valid, and must not be already visualized
+			if (trajectory && trajectory->getValid() && !checkTrajectory(trajectory)) {
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
 				connectShape(newShape);
 			}
 			else {
-				qDebug() << "error: no trajectory -> no shape created";
+				//qDebug() << "error: no trajectory valid -> no shape created";
 			}
-
 		}
 	}
 }
@@ -360,7 +363,7 @@ void TrackedComponentView::receiveColorChangeBrushAll()
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor();
+	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose fill color"), QColorDialog::ShowAlphaChannel);;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
@@ -374,7 +377,7 @@ void TrackedComponentView::receiveColorChangeBorderAll()
 {	
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor();
+	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
@@ -387,7 +390,7 @@ void TrackedComponentView::receiveColorChangeBorderSelected()
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor();
+	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape && childShape->isSelected()) {
@@ -400,7 +403,7 @@ void TrackedComponentView::receiveColorChangeBrushSelected()
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor();
+	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose fill color"), QColorDialog::ShowAlphaChannel);;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape && childShape->isSelected()) {
@@ -573,6 +576,21 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 
 	//update the shape
 	shape->updateAttributes(m_currentFrameNumber);
+}
+
+bool TrackedComponentView::checkTrajectory(IModelTrackedTrajectory* trajectory){
+	bool isVisualized = false;
+
+	for (int i = 0; i < this->childItems().size(); i++) {
+		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
+		if (shape) {
+			if(shape->getTrajectory() == trajectory){
+				isVisualized = true;
+				break;
+			}
+		}
+	}
+	return isVisualized;
 }
 
 void TrackedComponentView::receiveTracerProportions(float proportion)

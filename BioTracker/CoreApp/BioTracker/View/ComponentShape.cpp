@@ -238,8 +238,6 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 				m_rotationLine = QLineF();
 			}
 
-
-
 			//update Position
 			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
 			m_oldPos = this->pos().toPoint();
@@ -746,7 +744,7 @@ bool ComponentShape::removeTrack()
 
 	}
 	else {
-		qDebug() << "track is not removable";
+		qDebug() << "Track is not removable";
 	}
 	return m_pRemovable;
 }

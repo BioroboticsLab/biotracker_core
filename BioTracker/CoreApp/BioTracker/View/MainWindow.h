@@ -15,6 +15,8 @@
 #include "SettingsWindow.h"
 #include <QCloseEvent>
 
+#include "Utility/SwitchButton.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -42,6 +44,8 @@ class MainWindow : public IViewMainWindow {
 
     void closeEvent(QCloseEvent *event);
 
+    void setupUpperToolBar();
+
 Q_SIGNALS:
 	void selectPlugin(QString ct);
 
@@ -67,20 +71,31 @@ Q_SIGNALS:
 
 	void on_actionShowActionList_triggered();
 
-    void on_actionShortcuts_triggered();
-
 	void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
+
+    //left toolbar actions
+    void on_actionAdd_Track_triggered();
+    void on_actionDelete_selected_entity_triggered();
+    void on_actionChange_the_border_color_triggered();
+    void on_actionChange_the_fill_color_triggered();
+    void on_actionAdd_label_Annotation_triggered();
+    void on_actionAdd_rectangular_annotation_triggered();
+    void on_actionAdd_arrow_annotation_triggered();
+    void on_actionAdd_elliptical_annotation_triggered();
+    void on_actionDelete_selected_Annotation_triggered();
 
 //menu->Extras
 	void on_actionSettings_triggered();
 
-    void on_actionInfo_triggered();
+    void on_actionAbout_triggered();
+
+    void on_actionShortcuts_triggered();
 
 //GUI
 
     void receiveSelectedCameraDevice(CameraConfiguration conf);
 
-    void on_checkBox_TrackingActivated_stateChanged(int arg1);
+    void receiveSetTracking(bool toggle);
 
 //hider
     void on_rightPanelViewControllerButton_clicked();
@@ -89,6 +104,10 @@ Q_SIGNALS:
   private:
     Ui::MainWindow* ui;
 	GraphicsView *m_graphView;
+    QLabel *_cursorPosition;
+    int _lastRightPanelWidth;
+    int _lastVideoWidgetWidth;
+    QLabel* cursorPositionLabel;
 
 	QPointer< CameraDevice > m_CameraDevice;
 	QPointer< SettingsWindow > m_SettingsWindow;
@@ -98,6 +117,7 @@ Q_SIGNALS:
 	QGraphicsObject *_currentElementView;
 	QGraphicsObject *_currentCoreView;
     QString _previouslySelectedTracker; 
+    SwitchButton* _trackerActivator;
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

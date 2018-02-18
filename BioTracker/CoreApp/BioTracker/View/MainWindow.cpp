@@ -23,6 +23,9 @@
 
 #include "qdesktopwidget.h"
 
+#include "QToolButton"
+
+
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
     IViewMainWindow(parent, controller, model),
@@ -33,12 +36,17 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	_currentElementView = 0;
     ui->setupUi(this);
 
-	//resize to full size
-	QRect availableScreen = QApplication::desktop()->availableGeometry();
+	//add cursor position label
+	QLabel* _cursorPosition = new QLabel("0,0");
+	_cursorPosition->setObjectName("_cursorPosition");
+ 	statusBar()->insertPermanentWidget(0,_cursorPosition);
 
+	//setup toolbars
+	setupUpperToolBar();
+
+	//resize to full size
 	//QWidget::showFullScreen();
 	QWidget::showMaximized();
-
 
 	//view actions
 	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();
@@ -49,6 +57,95 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+void MainWindow::setupUpperToolBar() {
+	//add tracker list to upper toolbar
+	//ui->toolBarMenu->addWidget(ui->comboBox_TrackerSelect);
+	//
+	_trackerActivator = new SwitchButton();
+	QObject::connect(_trackerActivator , &SwitchButton::emitSetTracking, this, &MainWindow::receiveSetTracking, Qt::DirectConnection);
+	//QAction* activatorAction = ui->toolBarMenu->addWidget(_trackerActivator);
+
+	//choose tracker groupbox
+	QGroupBox* chooseTrackerBox = new QGroupBox("Choose tracker");
+	QHBoxLayout* chooseTrackerBoxLayout = new QHBoxLayout;
+	chooseTrackerBoxLayout->addWidget(ui->comboBox_TrackerSelect);
+	chooseTrackerBoxLayout->addWidget(_trackerActivator);
+
+	chooseTrackerBox->setLayout(chooseTrackerBoxLayout);
+	ui->toolBarMenu->addWidget(chooseTrackerBox);
+
+	//media groupbox
+	QGroupBox* mediaBox = new QGroupBox("Load media");
+	QFont font = QFont();
+	font.setPointSize(8);
+	font.setBold(true);
+	mediaBox->setFont(font);
+	QHBoxLayout* mediaBoxLayout = new QHBoxLayout;
+	mediaBoxLayout->setContentsMargins(0,0,0,0);
+	//mediaBoxLayout->setSpacing(0);
+	QToolButton* cameraButton = new QToolButton;
+	cameraButton->setIconSize(QSize(24,24));
+	cameraButton->setDefaultAction(ui->actionOpen_Camera);
+	cameraButton->setAutoRaise(true);
+
+	QToolButton* videoButton = new QToolButton;
+	videoButton->setIconSize(QSize(24,24));
+	videoButton->setDefaultAction(ui->actionOpen_Video);
+	videoButton->setAutoRaise(true);
+
+	QToolButton* imageButton = new QToolButton;
+	imageButton->setIconSize(QSize(24,24));
+	imageButton->setDefaultAction(ui->actionOpen_Picture);
+	imageButton->setAutoRaise(true);
+
+	mediaBoxLayout->addWidget(videoButton);
+	mediaBoxLayout->addWidget(imageButton);
+	mediaBoxLayout->addWidget(cameraButton);
+
+	mediaBox->setLayout(mediaBoxLayout);
+	ui->toolBarMenu->addWidget(mediaBox);
+
+
+	////////trackerbox
+	QFrame* trackerBox = new QFrame;
+	trackerBox->setObjectName("trackerBox");
+	trackerBox->setStyleSheet("#trackerBox { border: 1px solid #e5e5e5; }");
+	QHBoxLayout* trackerBoxLayout = new QHBoxLayout;
+	trackerBoxLayout->setContentsMargins(5,0,5,0);
+
+	QToolButton* trackerButton = new QToolButton;
+	trackerButton->setIconSize(QSize(24,24));
+	trackerButton->setDefaultAction(ui->actionLoad_Tracker);
+	trackerButton->setAutoRaise(true);
+
+	trackerBoxLayout->addWidget(trackerButton);
+	trackerBox->setLayout(trackerBoxLayout);
+	ui->toolBarMenu->addWidget(trackerBox);
+
+
+	////////loadSaveBox
+	QWidget* loadSaveBox = new QWidget;
+	loadSaveBox->setStyleSheet("background-color:#e5e5e5;"); 
+	QHBoxLayout* loadSaveBoxLayout = new QHBoxLayout;
+	loadSaveBoxLayout->setContentsMargins(5,0,5,0);
+
+	QToolButton* loadFileButton = new QToolButton;
+	loadFileButton->setIconSize(QSize(24,24));
+	loadFileButton->setDefaultAction(ui->actionLoad_trackingdata);
+	loadFileButton->setAutoRaise(true);
+	
+	QToolButton* saveFileButton = new QToolButton;
+	saveFileButton->setIconSize(QSize(24,24));
+	saveFileButton->setDefaultAction(ui->actionSave_trackingdata);
+	saveFileButton->setAutoRaise(true);
+
+	loadSaveBoxLayout->addWidget(loadFileButton);
+	loadSaveBoxLayout->addWidget(saveFileButton);
+	loadSaveBox->setLayout(loadSaveBoxLayout);
+	ui->toolBarMenu->addWidget(loadSaveBox);
+}
+
 
 void MainWindow::addVideoControllWidget(IView* widget) {
     QLayout* layout = new QGridLayout();
@@ -127,20 +224,28 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
 	if (coreParameter) {
-		ui->widgetParameterAreaOuterCanvas->updateGeometry();
+		ui->widget_alg->updateGeometry();
 		coreParameter->updateGeometry();
 		coreParameter->setContentsMargins(QMargins(0, 0, 0, 0));
-		coreParameter->setParent(ui->widgetParameterAreaOuterCanvas);
+		coreParameter->setParent(ui->widget_alg);
 
 		QHBoxLayout* hLayout = new QHBoxLayout;
 		hLayout->addWidget(coreParameter, 100, 0);
 		hLayout->setContentsMargins(QMargins(0,0,0,0)); //left, top, right, bottom
 		hLayout->setMargin(0);
 
-		ui->widgetParameterAreaOuterCanvas->setLayout(hLayout);
+		ui->widget_alg->setLayout(hLayout);
 
 		coreParameter->setVisible(1);
 		_currentCoreParameterView = coreParameterView;
+
+
+		
+		//resize rightpanel
+		QList<int> splitterSizes;
+		splitterSizes << 20000 << 10000; //2:1 TODO make this fixed (right panel fixed start size)
+		ui->mainSplitter->setSizes(splitterSizes);
+
 	}
 }
 
@@ -160,15 +265,23 @@ void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) 
 void MainWindow::setCursorPositionLabel(QPoint pos)
 {
 	QString posString = QString("%1, %2").arg(QString::number(pos.x()), QString::number(pos.y()));
-	ui->cursorPosition->setText(posString);
+	if(_cursorPosition){
+		_cursorPosition->setText(posString);
+	}
+
+	QLabel* currentChild = statusBar()->findChild<QLabel*>("_cursorPosition");
+	currentChild->setText(posString);
+	
 }
 
 void MainWindow::activeTrackingCheckBox() {
-    ui->checkBox_TrackingActivated->setEnabled(true);
+    //ui->checkBox_TrackingActivated->setEnabled(true);
+	_trackerActivator->setEnabled(true);
 }
 
 void MainWindow::deactivateTrackingCheckBox() {
-    ui->checkBox_TrackingActivated->setEnabled(false);
+    //ui->checkBox_TrackingActivated->setEnabled(false);
+	_trackerActivator->setEnabled(false);
 }
 
 void MainWindow::on_actionOpen_Video_triggered() {
@@ -251,27 +364,72 @@ void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
 
 }
 
-void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {
-    if(arg1 == Qt::Checked)
-        qobject_cast<ControllerMainWindow*> (getController())->activeTracking();
-
-    if(arg1 == Qt::Unchecked)
-        qobject_cast<ControllerMainWindow*> (getController())->deactiveTrackring();
-}
-
 void MainWindow::on_actionQuit_triggered() {
 	qobject_cast<ControllerMainWindow*> (getController())->exit();
 }
 
 void MainWindow::on_rightPanelViewControllerButton_clicked(){
-	ui->dockWidgetAlgorithm->setVisible(ui->rightPanelViewControllerButton->text() == "<");
-	ui->rightPanelViewControllerButton->setText(ui->rightPanelViewControllerButton->text() == ">"?"<":">");
+	QList<int> splitterSizes = QList<int> ();
+	if(ui->widgetParameterAreaOuterCanvas->isVisible()){
+		_lastRightPanelWidth = ui->mainSplitter->sizes()[1]; //save last width to restore on show
+		_lastVideoWidgetWidth = ui->mainSplitter->sizes()[0];
+
+		ui->widgetParameterAreaOuterCanvas->hide();
+		splitterSizes << 20000 << ui->rightPanelViewControllerWidget->minimumSizeHint().width();
+
+		ui->rightPanelViewControllerButton->setText("<");	
+	}
+	else{
+		ui->widgetParameterAreaOuterCanvas->show();
+		splitterSizes << _lastVideoWidgetWidth << _lastRightPanelWidth;
+		ui->rightPanelViewControllerButton->setText(">");	
+	}
+	ui->mainSplitter->setSizes(splitterSizes);
 }
 
 void MainWindow::on_bottomPanelViewControllerButton_clicked(){
 	ui->videoControls->setVisible(ui->bottomPanelViewControllerButton->text() == "^");
 	ui->bottomPanelViewControllerButton->setText(ui->bottomPanelViewControllerButton->text() == "v"?"^":"v");
 }
+
+void MainWindow::receiveSetTracking(bool toggle){
+	if(toggle){
+		qobject_cast<ControllerMainWindow*> (getController())->activeTracking();
+	}
+	else{
+		qobject_cast<ControllerMainWindow*> (getController())->deactiveTrackring();
+	}
+}
+
+//////////////////////////Left toolbar actions///////////////////////////
+void MainWindow::on_actionAdd_Track_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitAddTrack();
+}
+void MainWindow::on_actionDelete_selected_entity_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitDeleteSelectedTracks();
+}
+void MainWindow::on_actionChange_the_border_color_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitChangeColorBorder();
+}
+void MainWindow::on_actionChange_the_fill_color_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitChangeColorFill();
+}
+void MainWindow::on_actionAdd_label_Annotation_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitAddLabelAnno();
+}
+void MainWindow::on_actionAdd_rectangular_annotation_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitAddRectAnno();
+}
+void MainWindow::on_actionAdd_arrow_annotation_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitAddArrAnno();
+}
+void MainWindow::on_actionAdd_elliptical_annotation_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitAddEllAnno();
+}
+void MainWindow::on_actionDelete_selected_Annotation_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitDelSelAnno();
+}
+
 
 
 //////////////////////////////////Extras//////////////////////////////
@@ -286,29 +444,35 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     qobject_cast<ControllerMainWindow*> (getController())->exit();
 }
 
-void MainWindow::on_actionInfo_triggered() {
+void MainWindow::on_actionAbout_triggered() {
     std::string version = "";
-    version = "BioTracker3\n\n";
+    version = "BioTracker3<br><br>";
 
     version = "Version: ";
     version += GIT_HASH;
-    version += +"\n\n";
+    version += +"<br><br>";
 
-    version += "External libraries used:\n\n";
+    version += "External libraries used:<br><br>";
     std::string qt = MyQT_VERSION;
-    version += "QT " + qt + "\n";
+    version += "QT " + qt + "<br>";
 
     std::string cv = MyCV_VERSION;
-    version += "OpenCV " + cv + "\n";
+    version += "OpenCV " + cv + "<br>";
 
     std::string boost = MyBT_VERSION;
-    version += "Boost " + boost + "\n";
+    version += "Boost " + boost + "<br>";
 
-    version += "\n\nPublished under LGPL licence";
+	version += "<br><br>Icons by <a href='https://icons8.com/'>icons8</a><br>";
 
-    int ret = QMessageBox::information(this, tr("BioTracker"),
-        tr( version.c_str()),
-        QMessageBox::Ok);
+    version += "<br><br>Published under LGPL licence";
+
+	QMessageBox msgBox(this);
+    msgBox.setWindowTitle("About BioTracker");
+    msgBox.setTextFormat(Qt::RichText);   //this is what makes the links clickable
+    msgBox.setText(tr(version.c_str()));
+    msgBox.exec();
+
+    //QMessageBox::about(this, tr("About BioTracker"), tr(version.c_str()));
 }
 
 void MainWindow::on_actionShortcuts_triggered() {

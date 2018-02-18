@@ -38,6 +38,12 @@ class ControllerTrackedComponentCore : public IController
 
 		void emitDimensionUpdate(int x, int y);
 
+		//pass left-toolbar actions to view
+		void emitAddTrack();
+		void emitDeleteSelectedTracks();
+		void emitChangeColorBorder();
+		void emitChangeColorFill();
+
 
 	public Q_SLOTS:
 

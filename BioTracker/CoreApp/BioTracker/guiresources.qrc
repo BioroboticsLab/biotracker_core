@@ -13,5 +13,23 @@
         <file>resources/recording.png</file>
         <file>resources/recordCam.png</file>
         <file>resources/recordingCam.png</file>
+        <file>resources/upper_toolbar/download.png</file>
+        <file>resources/upper_toolbar/file-picture.png</file>
+        <file>resources/upper_toolbar/file-play.png</file>
+        <file>resources/upper_toolbar/tracker.png</file>
+        <file>resources/upper_toolbar/redo2.png</file>
+        <file>resources/upper_toolbar/undo2.png</file>
+        <file>resources/upper_toolbar/upload.png</file>
+        <file>resources/upper_toolbar/video-camera.png</file>
+        <file>resources/left_toolbar/anno-arrow.png</file>
+        <file>resources/left_toolbar/anno-label.png</file>
+        <file>resources/left_toolbar/anno-ellipse.png</file>
+        <file>resources/left_toolbar/anno-rect.png</file>
+        <file>resources/left_toolbar/anno-del.png</file>
+        <file>resources/left_toolbar/add-track.png</file>
+	<file>resources/left_toolbar/color-border.png</file>
+	<file>resources/left_toolbar/color-fill.png</file>
+	<file>resources/left_toolbar/delete-entity.png</file>
+	
     </qresource>
 </RCC>

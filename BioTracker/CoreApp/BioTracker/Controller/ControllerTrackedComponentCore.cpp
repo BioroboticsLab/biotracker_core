@@ -45,6 +45,12 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitDimensionUpdate(int, int)), view, SLOT(rcvDimensionUpdate(int, int)));
 
+	QObject::connect(this, SIGNAL(emitAddTrack()), view, SLOT(addTrajectory()));
+	QObject::connect(this, SIGNAL(emitDeleteSelectedTracks()), view, SLOT(removeTrajectories()));
+	QObject::connect(this, SIGNAL(emitChangeColorBorder()), view, SLOT(receiveColorChangeBorderSelected()));
+	QObject::connect(this, SIGNAL(emitChangeColorFill()), view, SLOT(receiveColorChangeBrushSelected()));
+
+
 	//connect to update track number in core params
 	IController * ctrICP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	QPointer< ControllerCoreParameter > ctrCP = qobject_cast<ControllerCoreParameter *>(ctrICP);

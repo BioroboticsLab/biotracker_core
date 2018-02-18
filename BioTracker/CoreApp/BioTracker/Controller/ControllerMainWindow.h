@@ -83,6 +83,16 @@ public:
 	void emitClearUndoStack();
 	void emitShowActionListCommand();
 
+    //left toolbar actions
+    void emitAddTrack();
+    void emitDeleteSelectedTracks();
+    void emitChangeColorBorder();
+    void emitChangeColorFill();
+    void emitAddLabelAnno();
+    void emitAddRectAnno();
+    void emitAddArrAnno();
+    void emitAddEllAnno();
+    void emitDelSelAnno();
 
 	public slots:
 

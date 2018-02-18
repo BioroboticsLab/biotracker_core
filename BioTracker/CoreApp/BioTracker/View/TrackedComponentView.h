@@ -26,6 +26,7 @@ public:
 	
 	void createChildShapesAtStart();
 	void connectShape(ComponentShape* shape);
+	bool checkTrajectory(IModelTrackedTrajectory* trajectory);
 	
 	// IView interface
 	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
