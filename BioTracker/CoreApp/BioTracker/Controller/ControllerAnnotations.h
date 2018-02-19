@@ -26,6 +26,13 @@ public Q_SLOTS:
 	void keyPressEvent(QKeyEvent *event);
 	void setPlayerParameters(playerParameters* parameters);
 
+	//annotation receivers
+	void receiveAddLabelAnno();
+	void receiveAddRectAnno();
+	void receiveAddArrAnno();
+	void receiveAddEllAnno();
+	void receiveDelSelAnno();
+
 protected:
 	void createModel(std::string filepath = "");
 	void createModel() override { createModel(""); }

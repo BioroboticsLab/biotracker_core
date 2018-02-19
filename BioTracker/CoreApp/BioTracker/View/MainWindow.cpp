@@ -68,6 +68,10 @@ void MainWindow::setupUpperToolBar() {
 
 	//choose tracker groupbox
 	QGroupBox* chooseTrackerBox = new QGroupBox("Choose tracker");
+	QFont font1 = QFont();
+	font1.setPointSize(8);
+	font1.setBold(true);
+	chooseTrackerBox->setFont(font1);
 	QHBoxLayout* chooseTrackerBoxLayout = new QHBoxLayout;
 	chooseTrackerBoxLayout->addWidget(ui->comboBox_TrackerSelect);
 	chooseTrackerBoxLayout->addWidget(_trackerActivator);

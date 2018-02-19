@@ -11,7 +11,6 @@
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCommands.h"
 #include "Controller/ControllerGraphicScene.h"
-#include "Controller/ControllerGraphicScene.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -164,11 +163,16 @@ void ControllerMainWindow::connectControllerToController() {
 	QObject::connect(this, &ControllerMainWindow::emitDeleteSelectedTracks, ctrtrcc, &ControllerTrackedComponentCore::emitDeleteSelectedTracks, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitChangeColorBorder, ctrtrcc, &ControllerTrackedComponentCore::emitChangeColorBorder, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitChangeColorFill, ctrtrcc, &ControllerTrackedComponentCore::emitChangeColorFill, Qt::DirectConnection);
-	//QObject::connect(this, &ControllerMainWindow::emitAddLabelAnno, ctrtrcc, &ControllerTrackedComponentCore::emitAddLabelAnno, Qt::DirectConnection);
-	//QObject::connect(this, &ControllerMainWindow::emitAddRectAnno, ctrtrcc, &ControllerTrackedComponentCore::emitAddRectAnno, Qt::DirectConnection);
-	//QObject::connect(this, &ControllerMainWindow::emitAddArrAnno, ctrtrcc, &ControllerTrackedComponentCore::emitAddArrAnno, Qt::DirectConnection);
-	//QObject::connect(this, &ControllerMainWindow::emitAddEllAnno, ctrtrcc, &ControllerTrackedComponentCore::emitAddEllAnno, Qt::DirectConnection);
-	//QObject::connect(this, &ControllerMainWindow::emitDelSelAnno, ctrtrcc, &ControllerTrackedComponentCore::emitDelSelAnno, Qt::DirectConnection);
+	
+    //connect to ControllerAnnotations
+    IController* ictrann = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
+	ControllerAnnotations *ctrann = static_cast<ControllerAnnotations*>(ictrann);
+
+    QObject::connect(this, &ControllerMainWindow::emitAddLabelAnno, ctrann, &ControllerAnnotations::receiveAddLabelAnno, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddRectAnno, ctrann, &ControllerAnnotations::receiveAddRectAnno, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddArrAnno, ctrann, &ControllerAnnotations::receiveAddArrAnno, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddEllAnno, ctrann, &ControllerAnnotations::receiveAddEllAnno, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitDelSelAnno, ctrann, &ControllerAnnotations::receiveDelSelAnno, Qt::DirectConnection);
 
 
 	//

@@ -175,3 +175,23 @@ void ControllerAnnotations::setPlayerParameters(playerParameters* parameters)
 	model->setCurrentFrame(parameters->m_CurrentFrameNumber);
 	emit(onRepaintRequired());
 }
+
+void ControllerAnnotations::receiveAddLabelAnno(){
+	actionQueued = ActionQueued::CreateLabel;
+}
+void ControllerAnnotations::receiveAddRectAnno(){
+	actionQueued = ActionQueued::CreateRect;
+}
+void ControllerAnnotations::receiveAddArrAnno(){
+	actionQueued = ActionQueued::CreateArrow;
+}
+void ControllerAnnotations::receiveAddEllAnno(){
+	actionQueued = ActionQueued::CreateEllipse;
+}
+void ControllerAnnotations::receiveDelSelAnno(){
+	auto model = static_cast<Annotations*>(getModel());
+	if (model->removeSelection()){
+		updateView();
+	}
+}
+
