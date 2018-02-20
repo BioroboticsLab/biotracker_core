@@ -521,7 +521,12 @@ void MainWindow::on_actionToggle_compact_menu_toolbar_2_triggered(){
 
 }
 
-
+void MainWindow::on_toolBarMenu_visibilityChanged(bool visible){
+	ui->actionToggle_menu_toolbar->setText(visible?"Hide menu toolbar": "Show menu toolbar");
+}
+void MainWindow::on_toolBarTools_visibilityChanged(bool visible){
+	ui->actionToggle_view_toolbar->setText(visible?"Hide view toolbar": "Show view toolbar");
+}
 
 //////////////////////////////////Extras//////////////////////////////
 
