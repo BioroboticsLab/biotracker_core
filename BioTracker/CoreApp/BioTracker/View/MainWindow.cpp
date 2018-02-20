@@ -41,6 +41,9 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	_cursorPosition->setObjectName("_cursorPosition");
  	statusBar()->insertPermanentWidget(0,_cursorPosition);
 
+	//TODO
+	ui->actionToggle_compact_menu_toolbar_2->setEnabled(false);
+
 	//setup toolbars
 	setupUpperToolBar();
 
@@ -59,32 +62,34 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setupUpperToolBar() {
-	//add tracker list to upper toolbar
-	//ui->toolBarMenu->addWidget(ui->comboBox_TrackerSelect);
-	//
+
 	_trackerActivator = new SwitchButton();
 	QObject::connect(_trackerActivator , &SwitchButton::emitSetTracking, this, &MainWindow::receiveSetTracking, Qt::DirectConnection);
 	//QAction* activatorAction = ui->toolBarMenu->addWidget(_trackerActivator);
 
-	//choose tracker groupbox
-	QGroupBox* chooseTrackerBox = new QGroupBox("Choose tracker");
-	QFont font1 = QFont();
-	font1.setPointSize(8);
-	font1.setBold(true);
-	chooseTrackerBox->setFont(font1);
-	QHBoxLayout* chooseTrackerBoxLayout = new QHBoxLayout;
-	chooseTrackerBoxLayout->addWidget(ui->comboBox_TrackerSelect);
-	chooseTrackerBoxLayout->addWidget(_trackerActivator);
+	ui->toolBarMenu->setStyleSheet("QGroupBox"
+	" {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	"QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 
-	chooseTrackerBox->setLayout(chooseTrackerBoxLayout);
-	ui->toolBarMenu->addWidget(chooseTrackerBox);
 
-	//media groupbox
+	//infomativeCanvas
+	QWidget* informativeCanvas = new QWidget;
+	QHBoxLayout* informativeCanvasLayout = new QHBoxLayout;
+	informativeCanvasLayout->setContentsMargins(0,0,0,0);
+	informativeCanvasLayout->setSpacing(0);
+
+
+	/////////////////////media groupbox
 	QGroupBox* mediaBox = new QGroupBox("Load media");
+	//style groupbox
+	// mediaBox->setStyleSheet("QGroupBox"
+	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 	QFont font = QFont();
 	font.setPointSize(8);
 	font.setBold(true);
 	mediaBox->setFont(font);
+
 	QHBoxLayout* mediaBoxLayout = new QHBoxLayout;
 	mediaBoxLayout->setContentsMargins(0,0,0,0);
 	//mediaBoxLayout->setSpacing(0);
@@ -108,15 +113,25 @@ void MainWindow::setupUpperToolBar() {
 	mediaBoxLayout->addWidget(cameraButton);
 
 	mediaBox->setLayout(mediaBoxLayout);
-	ui->toolBarMenu->addWidget(mediaBox);
+
+	informativeCanvasLayout->addWidget(mediaBox);
+	//ui->toolBarMenu->addWidget(mediaBox);
 
 
 	////////trackerbox
-	QFrame* trackerBox = new QFrame;
-	trackerBox->setObjectName("trackerBox");
-	trackerBox->setStyleSheet("#trackerBox { border: 1px solid #e5e5e5; }");
+	QGroupBox* trackerBox = new QGroupBox("Load tracker");
+	//style groupbox
+	// trackerBox->setStyleSheet("QGroupBox"
+	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
+
+	QFont font0 = QFont();
+	font0.setPointSize(8);
+	font0.setBold(true);
+	trackerBox->setFont(font0);
+
 	QHBoxLayout* trackerBoxLayout = new QHBoxLayout;
-	trackerBoxLayout->setContentsMargins(5,0,5,0);
+	trackerBoxLayout->setContentsMargins(0,0,0,0);
 
 	QToolButton* trackerButton = new QToolButton;
 	trackerButton->setIconSize(QSize(24,24));
@@ -125,12 +140,23 @@ void MainWindow::setupUpperToolBar() {
 
 	trackerBoxLayout->addWidget(trackerButton);
 	trackerBox->setLayout(trackerBoxLayout);
-	ui->toolBarMenu->addWidget(trackerBox);
+
+	informativeCanvasLayout->addWidget(trackerBox);
+	//ui->toolBarMenu->addWidget(trackerBox);
 
 
 	////////loadSaveBox
-	QWidget* loadSaveBox = new QWidget;
-	loadSaveBox->setStyleSheet("background-color:#e5e5e5;"); 
+	QGroupBox* loadSaveBox = new QGroupBox("Load/Save Data");
+	//style loadSaveBox
+	// loadSaveBox->setStyleSheet("QGroupBox"
+	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
+
+	QFont font2 = QFont();
+	font2.setPointSize(8);
+	font2.setBold(true);
+	loadSaveBox->setFont(font2);
+
 	QHBoxLayout* loadSaveBoxLayout = new QHBoxLayout;
 	loadSaveBoxLayout->setContentsMargins(5,0,5,0);
 
@@ -147,7 +173,38 @@ void MainWindow::setupUpperToolBar() {
 	loadSaveBoxLayout->addWidget(loadFileButton);
 	loadSaveBoxLayout->addWidget(saveFileButton);
 	loadSaveBox->setLayout(loadSaveBoxLayout);
-	ui->toolBarMenu->addWidget(loadSaveBox);
+
+	informativeCanvasLayout->addWidget(loadSaveBox);
+	//ui->toolBarMenu->addWidget(loadSaveBox);
+
+	//////////////////choose tracker groupbox
+	QGroupBox* chooseTrackerBox = new QGroupBox("Choose tracker");
+	//style groupbox
+	// chooseTrackerBox->setStyleSheet("QGroupBox"
+	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
+
+	QFont font1 = QFont();
+	font1.setPointSize(8);
+	font1.setBold(true);
+	chooseTrackerBox->setFont(font1);
+	//
+	QHBoxLayout* chooseTrackerBoxLayout = new QHBoxLayout;
+	chooseTrackerBoxLayout->addWidget(ui->comboBox_TrackerSelect);
+	chooseTrackerBoxLayout->addWidget(_trackerActivator);
+
+	chooseTrackerBox->setLayout(chooseTrackerBoxLayout);
+
+	informativeCanvasLayout->addWidget(chooseTrackerBox);
+	//ui->toolBarMenu->addWidget(chooseTrackerBox);
+
+
+	//add canvas widget to toolbar
+	informativeCanvas->setLayout(informativeCanvasLayout);
+	//informativeCanvas->hide();
+	informativeCanvas->setEnabled(true);
+	QAction* action = ui->toolBarMenu->addWidget(informativeCanvas);
+	//action->setVisible(false);
 }
 
 
@@ -405,7 +462,7 @@ void MainWindow::receiveSetTracking(bool toggle){
 	}
 }
 
-//////////////////////////Left toolbar actions///////////////////////////
+//////////////////////////view toolbar actions///////////////////////////
 void MainWindow::on_actionAdd_Track_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitAddTrack();
 }
@@ -432,6 +489,36 @@ void MainWindow::on_actionAdd_elliptical_annotation_triggered(){
 }
 void MainWindow::on_actionDelete_selected_Annotation_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitDelSelAnno();
+}
+
+///////////////////////////////menu->view/////////////////////////////
+
+
+//toolbars actions
+void MainWindow::on_actionToggle_menu_toolbar_triggered(){
+	bool currentState = ui->toolBarMenu->isVisible();
+	ui->toolBarMenu->setVisible(!currentState);
+	ui->actionToggle_menu_toolbar->setText(!currentState?"Hide menu toolbar": "Show menu toolbar");
+}
+void MainWindow::on_actionToggle_view_toolbar_triggered(){
+	bool currentState = ui->toolBarTools->isVisible();
+	ui->toolBarTools->setVisible(!currentState);
+	ui->actionToggle_view_toolbar->setText(!currentState?"Hide view toolbar": "Show view toolbar");
+}
+void MainWindow::on_actionToggle_compact_menu_toolbar_2_triggered(){
+	// //hide/show compact actions
+	// for(int i = 3; i < ui->toolBarMenu->actions().size(); i++){
+	// 	ui->toolBarMenu->actions().at(i)->setVisible(!ui->toolBarMenu->actions().at(i)->isVisible());
+	// }
+	// //hide/show informative groupboxes
+	// ui->toolBarMenu->actions().at(2)->setVisible(!ui->toolBarMenu->actions().at(2)->isVisible());
+	// ui->toolBarMenu->actions().at(2)->actions().at(1)->setVisible(false);
+	// ui->toolBarMenu->actions().at(2)->setEnabled(true);
+	ui->toolBarMenu->setStyleSheet("QGroupBox"
+	" {border-style: none; margin-top: 0ex; font-size: 1px;}"
+	"QGroupBox::title {font-size: 1px; padding: 0 3px;}");
+
+
 }
 
 

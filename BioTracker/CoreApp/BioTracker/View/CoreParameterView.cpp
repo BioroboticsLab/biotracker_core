@@ -59,7 +59,7 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 	//does not need to be propagated to shapes; only handled by view
 	//TODO: move this to controller
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD  && permission.second == false) {
-		this->ui->pushButtonAddTrack->setDisabled(true);
+		//this->ui->pushButtonAddTrack->setDisabled(true);
 		return;
 	}
 
@@ -155,10 +155,10 @@ void CoreParameterView::on_pushButtonSelectAll_clicked()
 	emitSelectAll();
 }
 
-void CoreParameterView::on_pushButtonAddTrack_clicked()
-{
-	emitAddTrack();
-}
+// void CoreParameterView::on_pushButtonAddTrack_clicked()
+// {
+// 	emitAddTrack();
+// }
 
 void CoreParameterView::on_checkBoxIgnoreZoom_stateChanged(int v)
 {

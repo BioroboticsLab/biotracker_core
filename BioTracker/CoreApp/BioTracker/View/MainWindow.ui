@@ -112,6 +112,9 @@
     <item>
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QSplitter" name="mainSplitter">
          <property name="orientation">
@@ -180,7 +183,11 @@
                <number>0</number>
               </property>
               <item>
-               <layout class="QVBoxLayout" name="videoViewLayout"/>
+               <layout class="QVBoxLayout" name="videoViewLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+               </layout>
               </item>
              </layout>
             </widget>
@@ -432,7 +439,7 @@
                      <x>0</x>
                      <y>0</y>
                      <width>411</width>
-                     <height>417</height>
+                     <height>426</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -534,6 +541,16 @@
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuToolbars">
+     <property name="title">
+      <string>Toolbars</string>
+     </property>
+     <addaction name="actionToggle_menu_toolbar"/>
+     <addaction name="actionToggle_view_toolbar"/>
+     <addaction name="separator"/>
+     <addaction name="actionToggle_compact_menu_toolbar_2"/>
+    </widget>
+    <addaction name="menuToolbars"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -546,10 +563,13 @@
     <string>toolBar</string>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::NoToolBarArea</set>
+    <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -557,18 +577,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionOpen_Video"/>
-   <addaction name="actionOpen_Picture"/>
-   <addaction name="actionOpen_Camera"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionLoad_Tracker"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionLoad_trackingdata"/>
-   <addaction name="actionSave_trackingdata"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
    <addaction name="separator"/>
@@ -578,10 +586,10 @@
     <string>toolBar_2</string>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea</set>
+    <set>Qt::AllToolBarAreas</set>
    </property>
    <property name="iconSize">
     <size>
@@ -719,7 +727,7 @@
     <string>redo</string>
    </property>
    <property name="toolTip">
-    <string>Undo the last entity action if possible</string>
+    <string>Redo the next entity action if possible</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
@@ -879,6 +887,36 @@
    </property>
    <property name="toolTip">
     <string>Change the fill color of selected entities</string>
+   </property>
+  </action>
+  <action name="actionToggle_compact_menu_toolbar_2">
+   <property name="text">
+    <string>Toggle compact menu toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle compact/informative menu toolbar</string>
+   </property>
+  </action>
+  <action name="actionToggle_menu_toolbar">
+   <property name="text">
+    <string>Hide menu toolbar</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle menu toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show menu toolbar</string>
+   </property>
+  </action>
+  <action name="actionToggle_view_toolbar">
+   <property name="text">
+    <string>Hide view toolbar</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle view toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show view toolbar</string>
    </property>
   </action>
  </widget>

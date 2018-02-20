@@ -73,7 +73,14 @@ Q_SIGNALS:
 
 	void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
 
-    //left toolbar actions
+//menu->View
+    //menu->View->Toolbars
+    void on_actionToggle_menu_toolbar_triggered();
+    void on_actionToggle_view_toolbar_triggered();
+    void on_actionToggle_compact_menu_toolbar_2_triggered();
+
+
+//view toolbar actions
     void on_actionAdd_Track_triggered();
     void on_actionDelete_selected_entity_triggered();
     void on_actionChange_the_border_color_triggered();
@@ -83,6 +90,8 @@ Q_SIGNALS:
     void on_actionAdd_arrow_annotation_triggered();
     void on_actionAdd_elliptical_annotation_triggered();
     void on_actionDelete_selected_Annotation_triggered();
+
+
 
 //menu->Extras
 	void on_actionSettings_triggered();

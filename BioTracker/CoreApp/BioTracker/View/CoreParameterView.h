@@ -40,7 +40,7 @@ public:
 
 	//Track 
 	void on_pushButtonSelectAll_clicked();
-	void on_pushButtonAddTrack_clicked();
+	//void on_pushButtonAddTrack_clicked();
 
 	void on_checkBoxIgnoreZoom_stateChanged(int v);
 

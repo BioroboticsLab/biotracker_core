@@ -354,7 +354,7 @@
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-123</y>
+                      <y>0</y>
                       <width>425</width>
                       <height>1054</height>
                      </rect>
@@ -476,6 +476,9 @@
                             <property name="title">
                              <string>Tracks</string>
                             </property>
+                            <property name="alignment">
+                             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                            </property>
                             <layout class="QVBoxLayout" name="verticalLayout_17">
                              <property name="spacing">
                               <number>0</number>
@@ -528,16 +531,6 @@
                                 </widget>
                                </item>
                               </layout>
-                             </item>
-                             <item>
-                              <widget class="QPushButton" name="pushButtonAddTrack">
-                               <property name="toolTip">
-                                <string>Create a new trajectory</string>
-                               </property>
-                               <property name="text">
-                                <string>Add a track</string>
-                               </property>
-                              </widget>
                              </item>
                              <item>
                               <widget class="QGroupBox" name="groupBoxTrackDimensions">

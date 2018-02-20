@@ -83,7 +83,7 @@ public:
 	void emitClearUndoStack();
 	void emitShowActionListCommand();
 
-    //left toolbar actions
+    //view toolbar actions
     void emitAddTrack();
     void emitDeleteSelectedTracks();
     void emitChangeColorBorder();
