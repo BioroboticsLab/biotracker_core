@@ -38,6 +38,8 @@ class MainWindow : public IViewMainWindow {
 	void addNotificationBrowser(IView* notificationBrowser);
     void setTrackerList(QStringListModel* trackerList, QString current);
 	void setCursorPositionLabel(QPoint pos);
+    void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+
 
     void activeTrackingCheckBox();
     void deactivateTrackingCheckBox();

@@ -188,6 +188,15 @@ void ControllerMainWindow::receiveCursorPosition(QPoint pos)
 	dynamic_cast<MainWindow*>(m_View)->setCursorPositionLabel(pos);
 }
 
+void ControllerMainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission){
+    if( dynamic_cast<MainWindow*>(m_View)){
+        dynamic_cast<MainWindow*>(m_View)->setCorePermission(permission);
+    }
+    else{
+        assert(false);
+    }
+}
+
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
     Q_EMIT emitOnLoadPlugin(plugin.toStdString());
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);

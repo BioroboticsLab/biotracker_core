@@ -207,6 +207,16 @@ void MainWindow::setupUpperToolBar() {
 	//action->setVisible(false);
 }
 
+void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission){
+	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD) {
+		ui->actionAdd_Track->setEnabled(permission.second);
+		return;
+	}
+	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTREMOVE) {
+		ui->actionDelete_selected_entity->setEnabled(permission.second);
+		return;
+	}
+}
 
 void MainWindow::addVideoControllWidget(IView* widget) {
     QLayout* layout = new QGridLayout();

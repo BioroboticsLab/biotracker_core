@@ -95,6 +95,7 @@ public:
     void emitDelSelAnno();
 
 	public slots:
+    void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
     // IController interface
   protected:

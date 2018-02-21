@@ -213,6 +213,9 @@ void ControllerPlugin::connectPlugin() {
 	IController* ctrD = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
 	ControllerCoreParameter* ctrCoreParam = qobject_cast<ControllerCoreParameter*>(ctrD);
 
+	IController* ctrE = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrE);
+
 	QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
 
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctDataEx, SLOT(receiveTrackingDone(uint)));
@@ -233,6 +236,9 @@ void ControllerPlugin::connectPlugin() {
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCoreParam,
+		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
+
+	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrMainWindow,
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
 	QObject::connect(obj, SIGNAL(emitDimensionUpdate(int, int)), ctrCompView, SIGNAL(emitDimensionUpdate(int, int)));
