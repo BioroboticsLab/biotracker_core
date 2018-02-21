@@ -126,7 +126,7 @@ void ControllerCoreParameter::setCorePermission(std::pair<ENUMS::COREPERMISSIONS
 		dynamic_cast<CoreParameterView*>(m_View)->setPermission(permission);
 	}
 	else {
-		qDebug() << "no view yet";
+		//qDebug() << "no view yet";
 		//This should never happen, actually
 		assert(false);
 	}

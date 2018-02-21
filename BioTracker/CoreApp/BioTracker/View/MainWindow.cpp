@@ -275,7 +275,7 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 		
 	}
 	else {
-		qDebug() << "Error adding tracker parameter";
+		qWarning() << "Error adding tracker parameter view";
 		assert(false);
 	}
 }

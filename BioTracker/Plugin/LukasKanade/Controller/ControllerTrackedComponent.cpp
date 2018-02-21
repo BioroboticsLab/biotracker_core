@@ -52,7 +52,7 @@ IView *ControllerTrackedComponent::getTrackingElementsWidget()
 void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
 	trajectory->setValid(false);
-	qDebug() << "trajectory" << trajectory->getId() << "set invalid";
+	qDebug() << "Trajectory" << trajectory->getId() << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
@@ -61,7 +61,7 @@ void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(false);
-		qDebug() << "track" << id << "set invalid";
+		qDebug() << "Track" << id << "set invalid";
 	}
 }
 
@@ -71,20 +71,20 @@ void ControllerTrackedComponent::receiveValidateTrajectory(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(true);
-		qDebug() << "track" << id << "validated";
+		qDebug() << "Track" << id << "validated";
 	}
 }
 
 void ControllerTrackedComponent::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(true);
-	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
+	qDebug() << "Track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(false);
-	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
+	qDebug() << "Track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
@@ -101,24 +101,23 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
-		qDebug() << "trajectory added at" << firstElem->getX() << "," << firstElem->getY();
+		qDebug() << "Track added at" << firstElem->getX() << "," << firstElem->getY();
 	}
 }
 
 void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* trajectory, uint frameNumber, QPoint position)
 {
 	TrackedTrajectory* traj = dynamic_cast<TrackedTrajectory*>(trajectory);
-	// dont't move starter dummies and main trajectory (id's: 0,1,2)!!
     if (!(traj->getId() == 0) && frameNumber >= 0) {
 		TrackedElement* element = dynamic_cast<TrackedElement*>(traj->getChild(frameNumber));
 		//TODO setX, setY do not work correctly as pose not yet accessible
         if (element) {
             element->setX(position.x());
             element->setY(position.y());
-            qDebug() << "plugin-pos:" << position;
+            //qDebug() << "plugin-pos:" << position;
         }
         else {
-            qDebug() << "Not found (moved and deleted?):" << position;
+            qDebug() << "Entity to move not found (moved and deleted?): " << position;
         }
 	}
 }

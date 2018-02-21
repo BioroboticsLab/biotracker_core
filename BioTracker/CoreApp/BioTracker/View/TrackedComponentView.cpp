@@ -489,16 +489,16 @@ void TrackedComponentView::addTrajectory()
 	}
 
 	if (id <= 0) {
-		qDebug() << "ERROR id is <= 0";
+		qWarning() << "ID cannot be smaller than or equal 0";
 	}
 
 	if (!lastClickedPos.isNull()) {
-		qDebug() << "TCV: new track at position " << lastClickedPos;
+		//qDebug() << "TCV: new track at position " << lastClickedPos;
 		emitAddTrajectory(lastClickedPos, id);
 		lastClickedPos = QPoint(0, 0);
 	}
 	else {
-		qDebug() << "TCV: new track at center of top left quarter of video";
+		//qDebug() << "TCV: new track at center of top left quarter of video";
 		QPoint topLeftQuarterCenter = QPoint(this->boundingRect().width() / 8, this->boundingRect().height() / 8);
 		emitAddTrajectory(topLeftQuarterCenter, id);
 	}

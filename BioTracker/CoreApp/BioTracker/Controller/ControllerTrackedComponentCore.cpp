@@ -83,7 +83,7 @@ void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERM
 		dynamic_cast<TrackedComponentView*>(m_View)->setPermission(permission);
 	}
 	else {
-		qDebug() << "no view yet";
+		//qDebug() << "no view yet";
 		//This should never happen, actually
 		assert(false);
 	}
