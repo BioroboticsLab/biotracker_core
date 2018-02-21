@@ -109,7 +109,8 @@ Q_SIGNALS:
 //hider
     void on_rightPanelViewControllerButton_clicked();
     void on_bottomPanelViewControllerButton_clicked();
-
+    void on_actionBottom_panel_triggered(bool checked = false);
+    void on_actionRight_panel_triggered(bool checked = false);
 //ui signals
     void on_toolBarMenu_visibilityChanged(bool visible);
     void on_toolBarTools_visibilityChanged(bool visible);

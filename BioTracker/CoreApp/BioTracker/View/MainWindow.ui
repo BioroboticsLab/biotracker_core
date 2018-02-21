@@ -551,6 +551,9 @@
      <addaction name="actionToggle_compact_menu_toolbar_2"/>
     </widget>
     <addaction name="menuToolbars"/>
+    <addaction name="separator"/>
+    <addaction name="actionRight_panel"/>
+    <addaction name="actionBottom_panel"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -917,6 +920,31 @@
    </property>
    <property name="toolTip">
     <string>Toggle hide/show view toolbar</string>
+   </property>
+  </action>
+  <action name="actionRight_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Right panel</string>
+   </property>
+  </action>
+  <action name="actionBottom_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Bottom panel</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show bottom panel</string>
    </property>
   </action>
  </widget>

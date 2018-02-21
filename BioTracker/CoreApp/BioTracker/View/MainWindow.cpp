@@ -439,11 +439,16 @@ void MainWindow::on_rightPanelViewControllerButton_clicked(){
 		splitterSizes << 20000 << ui->rightPanelViewControllerWidget->minimumSizeHint().width();
 
 		ui->rightPanelViewControllerButton->setText("<");	
+		//set menu action unchecked
+		ui->actionRight_panel->setChecked(false);
 	}
 	else{
 		ui->widgetParameterAreaOuterCanvas->show();
 		splitterSizes << _lastVideoWidgetWidth << _lastRightPanelWidth;
-		ui->rightPanelViewControllerButton->setText(">");	
+		ui->rightPanelViewControllerButton->setText(">");
+
+		//set menu action checked
+		ui->actionRight_panel->setChecked(true);	
 	}
 	ui->mainSplitter->setSizes(splitterSizes);
 }
@@ -451,6 +456,9 @@ void MainWindow::on_rightPanelViewControllerButton_clicked(){
 void MainWindow::on_bottomPanelViewControllerButton_clicked(){
 	ui->videoControls->setVisible(ui->bottomPanelViewControllerButton->text() == "^");
 	ui->bottomPanelViewControllerButton->setText(ui->bottomPanelViewControllerButton->text() == "v"?"^":"v");
+
+	//set menu action un-/checked
+	ui->actionBottom_panel->setChecked(ui->videoControls->isVisible());
 }
 
 void MainWindow::receiveSetTracking(bool toggle){
@@ -526,6 +534,13 @@ void MainWindow::on_toolBarMenu_visibilityChanged(bool visible){
 }
 void MainWindow::on_toolBarTools_visibilityChanged(bool visible){
 	ui->actionToggle_view_toolbar->setText(visible?"Hide view toolbar": "Show view toolbar");
+}
+
+void MainWindow::on_actionBottom_panel_triggered(bool checked){
+	ui->bottomPanelViewControllerButton->click();
+}
+void MainWindow::on_actionRight_panel_triggered(bool checked){
+	ui->rightPanelViewControllerButton->click();
 }
 
 //////////////////////////////////Extras//////////////////////////////
