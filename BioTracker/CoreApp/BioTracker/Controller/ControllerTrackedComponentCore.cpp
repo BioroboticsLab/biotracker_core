@@ -47,6 +47,8 @@ void ControllerTrackedComponentCore::connectControllerToController()
 
 	QObject::connect(this, SIGNAL(emitAddTrack()), view, SLOT(addTrajectory()));
 	QObject::connect(this, SIGNAL(emitDeleteSelectedTracks()), view, SLOT(removeTrajectories()));
+	QObject::connect(this, SIGNAL(emitSelectAll()), view, SLOT(receiveSelectAll()));
+	QObject::connect(this, SIGNAL(emitSwapIdsToView()), view, SLOT(swapIds()));
 	QObject::connect(this, SIGNAL(emitChangeColorBorder()), view, SLOT(receiveColorChangeBorderSelected()));
 	QObject::connect(this, SIGNAL(emitChangeColorFill()), view, SLOT(receiveColorChangeBrushSelected()));
 

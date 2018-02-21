@@ -29,7 +29,9 @@
         <file>resources/left_toolbar/add-track.png</file>
 	<file>resources/left_toolbar/color-border.png</file>
 	<file>resources/left_toolbar/color-fill.png</file>
-	<file>resources/left_toolbar/delete-entity.png</file>
+	<file>resources/left_toolbar/delete-track.png</file>
+	<file>resources/left_toolbar/select-all.png</file>
+	<file>resources/left_toolbar/swap.png</file>
 	
     </qresource>
 </RCC>

@@ -161,7 +161,9 @@ void ControllerMainWindow::connectControllerToController() {
 
     QObject::connect(this, &ControllerMainWindow::emitAddTrack, ctrtrcc, &ControllerTrackedComponentCore::emitAddTrack, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitDeleteSelectedTracks, ctrtrcc, &ControllerTrackedComponentCore::emitDeleteSelectedTracks, Qt::DirectConnection);
-	QObject::connect(this, &ControllerMainWindow::emitChangeColorBorder, ctrtrcc, &ControllerTrackedComponentCore::emitChangeColorBorder, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitSelectAll, ctrtrcc, &ControllerTrackedComponentCore::emitSelectAll, Qt::DirectConnection);
+ 	QObject::connect(this, &ControllerMainWindow::emitSwapIds, ctrtrcc, &ControllerTrackedComponentCore::emitSwapIdsToView, Qt::DirectConnection);   
+    QObject::connect(this, &ControllerMainWindow::emitChangeColorBorder, ctrtrcc, &ControllerTrackedComponentCore::emitChangeColorBorder, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitChangeColorFill, ctrtrcc, &ControllerTrackedComponentCore::emitChangeColorFill, Qt::DirectConnection);
 	
     //connect to ControllerAnnotations

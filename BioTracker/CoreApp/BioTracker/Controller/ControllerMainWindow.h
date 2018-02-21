@@ -86,6 +86,8 @@ public:
     //view toolbar actions
     void emitAddTrack();
     void emitDeleteSelectedTracks();
+    void emitSwapIds();
+    void emitSelectAll();
     void emitChangeColorBorder();
     void emitChangeColorFill();
     void emitAddLabelAnno();

@@ -84,7 +84,9 @@ Q_SIGNALS:
 
 //view toolbar actions
     void on_actionAdd_Track_triggered();
-    void on_actionDelete_selected_entity_triggered();
+    void on_actionDelete_selected_tracks_triggered();
+    void on_actionSwap_ID_s_triggered();
+    void on_actionSelect_all_triggered();
     void on_actionChange_the_border_color_triggered();
     void on_actionChange_the_fill_color_triggered();
     void on_actionAdd_label_Annotation_triggered();
@@ -92,8 +94,6 @@ Q_SIGNALS:
     void on_actionAdd_arrow_annotation_triggered();
     void on_actionAdd_elliptical_annotation_triggered();
     void on_actionDelete_selected_Annotation_triggered();
-
-
 
 //menu->Extras
 	void on_actionSettings_triggered();

@@ -41,9 +41,10 @@ class ControllerTrackedComponentCore : public IController
 		//pass left-toolbar actions to view
 		void emitAddTrack();
 		void emitDeleteSelectedTracks();
+		void emitSwapIdsToView();
+		void emitSelectAll();
 		void emitChangeColorBorder();
 		void emitChangeColorFill();
-
 
 	public Q_SLOTS:
 

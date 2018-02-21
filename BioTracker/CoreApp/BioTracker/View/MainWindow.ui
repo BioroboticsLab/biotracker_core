@@ -609,7 +609,9 @@
    <addaction name="separator"/>
    <addaction name="separator"/>
    <addaction name="actionAdd_Track"/>
-   <addaction name="actionDelete_selected_entity"/>
+   <addaction name="actionDelete_selected_track"/>
+   <addaction name="actionSwap_ID_s"/>
+   <addaction name="actionSelect_all"/>
    <addaction name="actionChange_the_border_color"/>
    <addaction name="actionChange_the_fill_color"/>
    <addaction name="separator"/>
@@ -856,13 +858,13 @@
     <string>Deletes the currently selected annotation</string>
    </property>
   </action>
-  <action name="actionDelete_selected_entity">
+  <action name="actionDelete_selected_track">
    <property name="icon">
     <iconset resource="../guiresources.qrc">
-     <normaloff>:/Images/resources/left_toolbar/delete-entity.png</normaloff>:/Images/resources/left_toolbar/delete-entity.png</iconset>
+     <normaloff>:/Images/resources/left_toolbar/delete-track.png</normaloff>:/Images/resources/left_toolbar/delete-track.png</iconset>
    </property>
    <property name="text">
-    <string>Delete selected entity</string>
+    <string>Delete selected track</string>
    </property>
    <property name="toolTip">
     <string>Delete the selected entities</string>
@@ -945,6 +947,30 @@
    </property>
    <property name="toolTip">
     <string>Toggle hide/show bottom panel</string>
+   </property>
+  </action>
+  <action name="actionSelect_all">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/select-all.png</normaloff>:/Images/resources/left_toolbar/select-all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select all</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all tracks</string>
+   </property>
+  </action>
+  <action name="actionSwap_ID_s">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/swap.png</normaloff>:/Images/resources/left_toolbar/swap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Swap ID's</string>
+   </property>
+   <property name="toolTip">
+    <string>Swap ID's of two selected tracks</string>
    </property>
   </action>
  </widget>

@@ -213,7 +213,7 @@ void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 		return;
 	}
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTREMOVE) {
-		ui->actionDelete_selected_entity->setEnabled(permission.second);
+		ui->actionDelete_selected_track->setEnabled(permission.second);
 		return;
 	}
 }
@@ -484,8 +484,15 @@ void MainWindow::receiveSetTracking(bool toggle){
 void MainWindow::on_actionAdd_Track_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitAddTrack();
 }
-void MainWindow::on_actionDelete_selected_entity_triggered(){
+void MainWindow::on_actionDelete_selected_tracks_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitDeleteSelectedTracks();
+}
+void MainWindow::on_actionSwap_ID_s_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitSwapIds();
+
+}
+void MainWindow::on_actionSelect_all_triggered(){
+	qobject_cast<ControllerMainWindow*> (getController())->emitSelectAll();	
 }
 void MainWindow::on_actionChange_the_border_color_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitChangeColorBorder();

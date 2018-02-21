@@ -507,12 +507,20 @@ void TrackedComponentView::addTrajectory()
 void TrackedComponentView::swapIds()
 {
 	QList<QGraphicsItem *> allSelectedItems = this->scene()->selectedItems();
+	if(allSelectedItems.size() != 2){
+		qWarning() << "There need to be exactly two tracks selected to swap ID's!";
+		return;
+	}
 	ComponentShape* shape0 = dynamic_cast<ComponentShape*>(allSelectedItems[0]);
 	ComponentShape* shape1 = dynamic_cast<ComponentShape*>(allSelectedItems[1]);
-	IModelTrackedTrajectory* trajectory0 = dynamic_cast<IModelTrackedTrajectory*>(shape0->getTrajectory());
-	IModelTrackedTrajectory* trajectory1 = dynamic_cast<IModelTrackedTrajectory*>(shape1->getTrajectory());
-
-	emitSwapIds(trajectory0, trajectory1);
+	if(shape0 && shape1 && shape0->isSwappable() && shape1->isSwappable()){
+		IModelTrackedTrajectory* trajectory0 = dynamic_cast<IModelTrackedTrajectory*>(shape0->getTrajectory());
+		IModelTrackedTrajectory* trajectory1 = dynamic_cast<IModelTrackedTrajectory*>(shape1->getTrajectory());
+		emitSwapIds(trajectory0, trajectory1);
+	}
+	else{
+		qWarning() << "Selected objects are not swappable";
+	}
 }
 
 void TrackedComponentView::removeTrajectories()
