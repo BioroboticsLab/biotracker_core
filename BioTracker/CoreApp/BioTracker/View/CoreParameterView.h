@@ -39,7 +39,7 @@ public:
 	void on_checkBoxTracerOrientationLine_stateChanged(int toggle);
 
 	//Track 
-	void on_pushButtonSelectAll_clicked();
+	//void on_pushButtonSelectAll_clicked();
 	//void on_pushButtonAddTrack_clicked();
 
 	void on_checkBoxIgnoreZoom_stateChanged(int v);
@@ -80,7 +80,7 @@ public:
 			//Enable aiew
             void emitViewSwitch(bool lever);
 			//Select all tracks
-            void emitSelectAll();
+            //void emitSelectAll();
 			//Set number of tracks
 			void emitAddTrack();
 			//Ignore zoom

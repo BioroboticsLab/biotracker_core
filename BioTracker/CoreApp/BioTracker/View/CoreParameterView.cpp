@@ -150,10 +150,10 @@ void CoreParameterView::on_checkBoxTracerOrientationLine_stateChanged(int toggle
 	emitTracerOrientationLine(toggle);
 }
 
-void CoreParameterView::on_pushButtonSelectAll_clicked()
-{
-	emitSelectAll();
-}
+// void CoreParameterView::on_pushButtonSelectAll_clicked()
+// {
+// 	emitSelectAll();
+// }
 
 // void CoreParameterView::on_pushButtonAddTrack_clicked()
 // {

@@ -83,7 +83,7 @@ QPainterPath ComponentShape::shape() const
 	if (this->data(1) == "ellipse") {
 		path.addEllipse(0, 0, m_w, m_h);
 	}
-	if( this->data(1) == "point") {
+	else if( this->data(1) == "point") {
 		int dim = m_w <= m_h? m_w : m_h;
 		path.addEllipse(0, 0, dim , dim);
 	}

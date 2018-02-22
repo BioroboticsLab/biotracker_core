@@ -609,7 +609,7 @@
    <addaction name="separator"/>
    <addaction name="separator"/>
    <addaction name="actionAdd_Track"/>
-   <addaction name="actionDelete_selected_track"/>
+   <addaction name="actionDelete_selected_tracks"/>
    <addaction name="actionSwap_ID_s"/>
    <addaction name="actionSelect_all"/>
    <addaction name="actionChange_the_border_color"/>
@@ -797,6 +797,9 @@
    <property name="toolTip">
     <string>Add a Trajectory</string>
    </property>
+   <property name="shortcut">
+    <string>+</string>
+   </property>
   </action>
   <action name="actionAdd_label_Annotation">
    <property name="icon">
@@ -858,7 +861,7 @@
     <string>Deletes the currently selected annotation</string>
    </property>
   </action>
-  <action name="actionDelete_selected_track">
+  <action name="actionDelete_selected_tracks">
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/left_toolbar/delete-track.png</normaloff>:/Images/resources/left_toolbar/delete-track.png</iconset>
@@ -868,6 +871,9 @@
    </property>
    <property name="toolTip">
     <string>Delete the selected entities</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
   <action name="actionChange_the_border_color">
@@ -959,6 +965,9 @@
    </property>
    <property name="toolTip">
     <string>Select all tracks</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionSwap_ID_s">

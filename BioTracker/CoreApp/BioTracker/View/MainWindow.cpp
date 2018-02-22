@@ -16,6 +16,7 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QtWidgets/QHeaderView>
+#include <QLinkedList>
 
 
 #include "qtextedit.h"
@@ -213,7 +214,7 @@ void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 		return;
 	}
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTREMOVE) {
-		ui->actionDelete_selected_track->setEnabled(permission.second);
+		ui->actionDelete_selected_tracks->setEnabled(permission.second);
 		return;
 	}
 }
@@ -605,60 +606,64 @@ void MainWindow::on_actionAbout_triggered() {
 
 void MainWindow::on_actionShortcuts_triggered() {
 
-	//TODO import this from file
-    std::pair<QString, QString> scUndo (QString("CTRL + Z"), QString("Undo"));
-    std::pair<QString, QString> scRedo (QString("CTRL + Y"), QString("Redo"));
-    std::pair<QString, QString> scSel (QString("CTRL + A"), QString("Select all"));
-    std::pair<QString, QString> scPlay (QString("Space"), QString("Play"));
-    std::pair<QString, QString> scNext (QString("Left Arrow"), QString("Previous Frame"));
-    std::pair<QString, QString> scPrev (QString("Right Arrow"), QString("Next Frame"));
-    std::pair<QString, QString> scStop (QString("CTRL + Space"), QString("Stop"));
-    std::pair<QString, QString> scAL (QString("ALT + L"), QString("Add label annotation"));
-    std::pair<QString, QString> scAA (QString("ALT + A"), QString("Add arrow annotation"));
-    std::pair<QString, QString> scAE (QString("ALT + E"), QString("Add ellipse annotation"));
-    std::pair<QString, QString> scAR (QString("ALT + R"), QString("Add rect annotation"));
-    std::pair<QString, QString> scADel (QString("ALT + DELETE"), QString("Delete selected annotation"));
 
-	std::map<QString,QString> scMap;
+	// QLinkedList<QPair<QString, QString>>::const_iterator info;
+	// for(info = infoList.constBegin(); info != infoList.constEnd(); ++info){
+	// 	infoTable->insertRow(infoTable->rowCount());
 
-	scMap.insert(scUndo);
-	scMap.insert(scRedo);
-	scMap.insert(scSel);
-	scMap.insert(scPlay);
-	scMap.insert(scNext);
-	scMap.insert(scPrev);
-	scMap.insert(scStop);
-	scMap.insert(scAL);
-	scMap.insert(scAA);
-	scMap.insert(scAE);
-	scMap.insert(scAR);
-	scMap.insert(scADel);
 
-	QMap<QString, QString> scQMap = QMap<QString, QString>(scMap);
+	// 	QTableWidgetItem* infoKey = new QTableWidgetItem(info->first);
+	// 	QTableWidgetItem* infoKeyInfo = new QTableWidgetItem(info->second);
+	// 	infoKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+	// 	infoKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+	// 	infoTable->setItem(infoTable->rowCount() - 1, 0, infoKey);
+	// 	infoTable->setItem(infoTable->rowCount() - 1, 1, infoKeyInfo);
+
+	// }
 
 	QTableWidget* scTable = new QTableWidget();
-	scTable->setRowCount(1);
+	
+	scTable->setRowCount(0);
 	scTable->setColumnCount(2);
 
 	scTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Shortcut"));
 	scTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Description"));
 	scTable->verticalHeader()->hide();
 
-	QMapIterator<QString, QString> sc(scQMap);
-	while (sc.hasNext()) {
-		sc.next();
-		QTableWidgetItem* scKey = new QTableWidgetItem(sc.key());
-		QTableWidgetItem* scKeyInfo = new QTableWidgetItem(sc.value());
+
+	QLinkedList<QPair<QString, QString>> scList;
+
+	//TODO import this from file
+    scList.append(QPair<QString,QString>(QString("CTRL + Z"), QString("Undo")));
+    scList.append(QPair<QString,QString>(QString("CTRL + Y"), QString("Redo")));
+    scList.append(QPair<QString,QString>(QString("CTRL + A"), QString("Select all")));
+	scList.append(QPair<QString,QString>(QString("+"), QString("Add track")));
+    scList.append(QPair<QString,QString>(QString("DELETE"), QString("Delete all selected tracks")));
+    scList.append(QPair<QString,QString>(QString("Space"), QString("Play")));
+    scList.append(QPair<QString,QString>(QString("Left Arrow"), QString("Previous Frame")));
+    scList.append(QPair<QString,QString>(QString("Right Arrow"), QString("Next Frame")));
+    scList.append(QPair<QString,QString>(QString("CTRL + Space"), QString("Stop")));
+    scList.append(QPair<QString,QString>(QString("ALT + L"), QString("Add label annotation")));
+    scList.append(QPair<QString,QString>(QString("ALT + A"), QString("Add arrow annotation")));
+    scList.append(QPair<QString,QString>(QString("ALT + E"), QString("Add ellipse annotation")));
+    scList.append(QPair<QString,QString>(QString("ALT + R"), QString("Add rect annotation")));
+    scList.append(QPair<QString,QString>(QString("ALT + DELETE"), QString("Delete selected annotation")));
+
+	QLinkedList<QPair<QString, QString>>::const_iterator sc;
+	for(sc = scList.constBegin(); sc != scList.constEnd(); ++sc){
+		scTable->insertRow(scTable->rowCount());
+
+
+		QTableWidgetItem* scKey = new QTableWidgetItem(sc->first);
+		QTableWidgetItem* scKeyInfo = new QTableWidgetItem(sc->second);
 		scKey->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		scKeyInfo->setFlags(Qt::NoItemFlags | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
-		scTable->setItem(scTable->rowCount()-1 , 0, scKey);
-		scTable->setItem(scTable->rowCount()-1 , 1, scKeyInfo);
-
-		if(sc.hasNext()){
-			scTable->insertRow(scTable->rowCount());
-		}
+		scTable->setItem(scTable->rowCount() - 1, 0, scKey);
+		scTable->setItem(scTable->rowCount() - 1, 1, scKeyInfo);
 	}
+
 
  	//scTable->horizontalHeader()->setStretchLastSection( true ); 
 	scTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
