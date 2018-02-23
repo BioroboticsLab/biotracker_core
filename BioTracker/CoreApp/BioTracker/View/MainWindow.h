@@ -33,6 +33,7 @@ class MainWindow : public IViewMainWindow {
     void addVideoView(IView* videoView);
     void addTrackerParameterView(IView* parameter);
 	void addCoreParameterView(IView* coreParameterView);
+    //void addExperimentView(QWidget* experimentWidget);
 	void addTrackerElementsView(IView *elemView);
 	void addCoreElementsView(IView* coreView);
 	void addNotificationBrowser(IView* notificationBrowser);

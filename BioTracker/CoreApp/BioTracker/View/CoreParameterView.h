@@ -108,9 +108,6 @@ public:
     void emitStartPlayback();
     void emitStopPlayback();
 
-    /*
-    VIEW TAB
-    */
 	//Enable view
     void emitViewSwitch(bool lever);
 	//Select all tracks

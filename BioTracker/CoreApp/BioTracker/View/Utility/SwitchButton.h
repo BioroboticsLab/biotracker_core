@@ -24,7 +24,9 @@ class SwitchButton : public QAbstractButton {
         QBrush brush() const { return _brush;}
         void setBrush(const QBrush &brsh) { _brush = brsh;}
         bool state() const { return _switch;}
-        void setState(bool toggle) { _switch = toggle;}
+        void setState(bool toggle) { _switch = toggle; animateSwitch(); update();}
+
+        void animateSwitch();
 
     signals:
         void emitSetEnabled(bool toggle);

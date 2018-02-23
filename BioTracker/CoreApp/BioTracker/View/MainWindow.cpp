@@ -312,6 +312,13 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 	QWidget* coreParameter = dynamic_cast<QWidget*>(coreParameterView);
 	if (coreParameter) {
+		//add experiment widget to toolbar
+		QWidget* experimentWidget = coreParameter->findChild<QWidget*>("experimentWidget");
+		if(experimentWidget){
+			ui->experimentItem->layout()->addWidget(experimentWidget);
+		}
+
+
 		ui->widget_alg->updateGeometry();
 		coreParameter->updateGeometry();
 		coreParameter->setContentsMargins(QMargins(0, 0, 0, 0));
@@ -336,6 +343,10 @@ void MainWindow::addCoreParameterView(IView * coreParameterView)
 
 	}
 }
+
+// void MainWindow::addExperimentView(QWidget* experimentWidget){
+
+// }
 
 void MainWindow::on_comboBox_TrackerSelect_currentIndexChanged(QString s) {
 	QString ct = ui->comboBox_TrackerSelect->currentText();
@@ -483,20 +494,13 @@ void MainWindow::on_rightPanelViewControllerButton_clicked(){
 void MainWindow::on_bottomPanelViewControllerButton_clicked(){
 	ui->videoControls->setVisible(ui->bottomPanelViewControllerButton->text() == "^");
 	ui->bottomPanelViewControllerButton->setText(ui->bottomPanelViewControllerButton->text() == "v"?"^":"v");
+}
 void MainWindow::activateTracking() {
-    ui->checkBox_TrackingActivated->setChecked(true);
+    _trackerActivator->setState(true);
 }
 
 void MainWindow::deactivateTracking() {
-    ui->checkBox_TrackingActivated->setChecked(false);
-}
-
-void MainWindow::on_checkBox_TrackingActivated_stateChanged(int arg1) {
-    if(arg1 == Qt::Checked)
-        qobject_cast<ControllerMainWindow*> (getController())->activeTracking();
-
-	//set menu action un-/checked
-	ui->actionBottom_panel->setChecked(ui->videoControls->isVisible());
+    _trackerActivator->setState(false);
 }
 
 void MainWindow::receiveSetTracking(bool toggle){

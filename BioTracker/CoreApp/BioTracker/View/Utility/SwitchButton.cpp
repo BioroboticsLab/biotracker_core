@@ -2,48 +2,6 @@
 #include "QPainter"
 #include "QMouseEvent"
 
-// SwitchButton::SwitchButton(QWidget* parent)
-//   : QAbstractButton(parent),
-//   _height(50),
-//   _margin(3)
-// {
-//   setCheckable(true);
-//   show();
-//   update();
-// }
-  
-// void SwitchButton::paintEvent(QPaintEvent* event)
-// {
-//   QPainter painter(this);
-//   QPainter p(this);
-//   //painter.fillRect(rect(), Qt::gray);
-//   //painter.drawRoundedRect(QRect(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin), 8.0, 8.0);
-//   QRect stateRect = QRect(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin);
-//   QColor stateColor;
-//   QRect switchRect;
-//   QString text;
-//   int halfWidth = width() / 2;
-//   if (isChecked()) {
-//     switchRect = QRect(halfWidth, _margin, halfWidth - _margin, height() - 2 *_margin);
-//     stateColor = QColor(Qt::green);
-//     text = "Stop tracking";
-  
-//   } else {
-//     switchRect = QRect(_margin , _margin, halfWidth - _margin, height() - 2*_margin);
-//     stateColor = QColor(Qt::red);
-//     text = "Start tracking";
-
-//   }
-//   painter.fillRect(stateRect, stateColor);
-//   painter.fillRect(switchRect, Qt::gray);
-//   painter.drawText(switchRect, Qt::AlignCenter, text);
-//   }
-
-// QSize SwitchButton::sizeHint() const {
-//   return QSize(8 * (_height + _margin), _height + 2 * _margin);
-// //return QSize(2 * (_height + _margin), _height + 2 * _margin);
-// }
-
 void SwitchButton::setHeight(int h){
   _height = h - 2 * _margin;
 }
@@ -102,18 +60,7 @@ void SwitchButton::paintEvent(QPaintEvent *e) {
 void SwitchButton::mouseReleaseEvent(QMouseEvent *e) {
     if (e->button() & Qt::LeftButton) {
         _switch = _switch ? false : true;
-        //_thumb = _switch ? _brush : QBrush("#d5d5d5");
-        if (_switch) {
-            _anim->setStartValue(_height / 2);
-            _anim->setEndValue(width() - _height);
-            _anim->setDuration(240);
-            _anim->start();
-        } else {
-            _anim->setStartValue(offset());
-            _anim->setEndValue(_height / 2);
-            _anim->setDuration(240);
-            _anim->start();
-        }
+        animateSwitch();
 
         emitSetEnabled(_switch);
     }
@@ -124,6 +71,20 @@ void SwitchButton::mouseReleaseEvent(QMouseEvent *e) {
 //     setCursor(Qt::PointingHandCursor);
 //     QAbstractButton::enterEvent(e);
 // }
+
+void SwitchButton::animateSwitch(){
+    if (_switch) {
+        _anim->setStartValue(_height / 2);
+        _anim->setEndValue(width() - _height);
+        _anim->setDuration(240);
+        _anim->start();
+    } else {
+        _anim->setStartValue(offset());
+        _anim->setEndValue(_height / 2);
+        _anim->setDuration(240);
+        _anim->start();
+    }
+}
 
 QSize SwitchButton::sizeHint() const {
     return QSize(8 * (_height + _margin), _height + 2 * _margin);
