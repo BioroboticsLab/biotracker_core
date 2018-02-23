@@ -48,6 +48,9 @@ class MainWindow : public IViewMainWindow {
 
     void setupUpperToolBar();
     void setupVideoToolBar();
+    void activateTracking();
+
+    void deactivateTracking();
 
 Q_SIGNALS:
 	void selectPlugin(QString ct);

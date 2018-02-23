@@ -57,11 +57,13 @@ void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
 void ControllerMainWindow::activeTracking() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->setTrackingActivated();
+    dynamic_cast<MainWindow*>(m_View)->activateTracking();
 }
 
 void ControllerMainWindow::deactiveTrackring() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->setTrackingDeactivated();
+    dynamic_cast<MainWindow*>(m_View)->deactivateTracking();
 }
 
 void ControllerMainWindow::setTrackerList(QStringListModel* trackerList, QString current) {
@@ -145,7 +147,6 @@ void ControllerMainWindow::connectControllerToController() {
 	QObject::connect(this, &ControllerMainWindow::emitRedoCommand, ctrcmd, &ControllerCommands::receiveRedo, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
-    //QObject::connect(this, &ControllerMainWindow::emit, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitShowActionListCommand, ctrcmd, &ControllerCommands::receiveShowActionList, Qt::DirectConnection);
 
 	//connect to ControllerGraphicScene
@@ -222,11 +223,6 @@ void ControllerMainWindow::exit() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     ControllerPlayer *pc = static_cast<ControllerPlayer*>(ctr);
     pc->stop();
-    
-    //Sleep(1); only windows
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1)); // cross platform
-
 	delete m_BioTrackerContext;
 }
 

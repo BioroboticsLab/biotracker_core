@@ -8,15 +8,6 @@ TrackerParameterView::TrackerParameterView(QWidget *parent, IController *control
     _ui(new Ui::TrackerParameterView)
 {
     _ui->setupUi(this);
-
-    //For the spinboxes we don't need this
-	/*ui->lineEdit_2_binThresh->setValidator(new QIntValidator(this));
-	ui->lineEdit_3_SizeErode->setValidator(new QIntValidator(this));
-	ui->lineEdit_4_SizeDilate->setValidator(new QIntValidator(this));
-	ui->lineEdit_8_MinBlob->setValidator(new QIntValidator(this));
-	ui->lineEdit_9MaxBlob->setValidator(new QIntValidator(this));
-	ui->lineEdit_7_MogBack->setValidator(new QDoubleValidator(this));	
-    */
     getNotified();
 
 
@@ -46,23 +37,6 @@ void TrackerParameterView::on_comboBoxSendImage_currentIndexChanged(int v) {
 	parameter->setNewSelection(_ui->comboBoxSendImage->currentText().toStdString());
 }
 
-//void TrackerParameterView::on_checkBoxNetwork_stateChanged(int v) {
-//	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-//	parameter->setDoNetwork(v);
-//}
-//
-//void TrackerParameterView::on_checkBoxBackground_stateChanged(int v) {
-//	TrackerParameter *parameter = qobject_cast<TrackerParameter *>(getModel());
-//	parameter->setDoBackground(v);
-//}
-//
-//void TrackerParameterView::on_pushButtonNoFish_clicked() {
-//}
-//
-//
-//void TrackerParameterView::on_checkBoxTrackingArea_stateChanged(int v) {
-//	Q_EMIT trackingAreaType(v);
-//}
 
 void TrackerParameterView::on_pushButton_clicked()
 {

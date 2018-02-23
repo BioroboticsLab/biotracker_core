@@ -2,7 +2,6 @@
 #(Minimal benötigte CMake-Version wenn z.B. bestimmte CMake-Kommandos benutzt werden)
 
 cmake_policy (SET CMP0020 NEW)
-#cmake_policy(SET CMP0054 NEW)
 
 # Der Projektname
 project(Biotracker)
@@ -58,7 +57,6 @@ add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Plugin/LukasKanade)
 add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
-#add_subdirectory(Plugin/FlyHeart)
 
 
 

@@ -5,6 +5,7 @@
 #include "View/Utility/SwitchButton.h"
 //TODO add default parameters accesible via config
 //#include "Model/CoreViewParameter.h"
+#include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 
 namespace Ui {
 	class CoreParameterView;
@@ -27,6 +28,10 @@ public:
     void areaDescriptorTypeChanged(QString type);
 
 	private slots:
+
+/* 
+    VIEW TAB
+*/
 	//Enable view
 	void on_checkBoxEnableCoreView_stateChanged(int v);
 	//Tracing
@@ -76,56 +81,85 @@ public:
 	void on_checkBoxAntialiasingEntities_toggled(bool toggle);
 	void on_checkBoxAntialiasingFull_toggled(bool toggle);
 
+    /*
+    EXPERIMENT TAB
+    */
+
+    //label_ExpTrialNo
+    //label_ExpSrcCnt
+    //label_ExpObjCnt
+    //pushButton_startExp
+    //pushButton_finalizeExp
+    void on_pushButton_startExp_clicked();
+    void on_pushButton_finalizeExp_clicked();
+    void on_label_ExpSrcCnt_clicked();
+public slots:
+    void rcvPlayerParameters(playerParameters* parameters);
+
+
 public:
 	signals :
 
-			//Enable aiew
-            void emitViewSwitch(bool lever);
-			//Select all tracks
-            //void emitSelectAll();
-			//Set number of tracks
-			void emitAddTrack();
-			//Ignore zoom
-			void emitIgnoreZoom(bool toggle);
-			//Track color
-			void emitColorChangeBorderAll();
-			void emitColorChangeBorderSelected();
-			void emitColorChangeBrushAll();
-			void emitColorChangeBrushSelected();
-			//Track dimensions
-			void emitTrackOrientationLine(bool toggle);
-			void emitTrackShowId(bool toggle);
-			void emitTrackDimensionsAll(int width, int height);
-			void emitTrackDimensionsSelected(int width, int height);
-			void emitTrackDimensionsSetDefault();
-			//Tracing
-			void emitTracingHistoryLength(int history);
-			void emitTracingStyle(QString style);
-			void emitTracingSteps(int steps);
-			void emitTracingTimeDegradation(QString degradation);
-			void emitTracerFrameNumber(bool toggle);
-			//Tracing dimensions
-			void emitTracerProportions(float proportion);
-			void emitTracerOrientationLine(bool toggle);
+    /*
+    EXPERIMENT TAB
+    */
+    void emitEnableTracking();
+    void emitDisableTracking();
+    void emitStartPlayback();
+    void emitStopPlayback();
 
-			//Area descriptor
-			void emitRectDimensions(double w, double h);
-			void emitDisplayTrackingArea(bool b);
-			void emitDisplayRectification(bool b);
-            void emitTrackingAreaAsEllipse(bool b);
+    /*
+    VIEW TAB
+    */
+	//Enable view
+    void emitViewSwitch(bool lever);
+	//Select all tracks
+    //void emitSelectAll();
+	//Set number of tracks
+	void emitAddTrack();
+	//Ignore zoom
+	void emitIgnoreZoom(bool toggle);
+	//Track color
+	void emitColorChangeBorderAll();
+	void emitColorChangeBorderSelected();
+	void emitColorChangeBrushAll();
+	void emitColorChangeBrushSelected();
+	//Track dimensions
+	void emitTrackOrientationLine(bool toggle);
+	void emitTrackShowId(bool toggle);
+	void emitTrackDimensionsAll(int width, int height);
+	void emitTrackDimensionsSelected(int width, int height);
+	void emitTrackDimensionsSetDefault();
+	//Tracing
+	void emitTracingHistoryLength(int history);
+	void emitTracingStyle(QString style);
+	void emitTracingSteps(int steps);
+	void emitTracingTimeDegradation(QString degradation);
+	void emitTracerFrameNumber(bool toggle);
+	//Tracing dimensions
+	void emitTracerProportions(float proportion);
+	void emitTracerOrientationLine(bool toggle);
 
-			//Finalize Experiment
-            //void emitFinalizeExperiment();
+	//Area descriptor
+	void emitRectDimensions(double w, double h);
+	void emitDisplayTrackingArea(bool b);
+	void emitDisplayRectification(bool b);
+    void emitTrackingAreaAsEllipse(bool b);
 
-			//Misc
-			void emitToggleAntialiasingEntities(bool toggle);
-			void emitToggleAntialiasingFull(bool toggle);
+	//Finalize Experiment
+    void emitFinalizeExperiment();
+
+	//Misc
+	void emitToggleAntialiasingEntities(bool toggle);
+	void emitToggleAntialiasingFull(bool toggle);
 
 private:
 	Ui::CoreParameterView *ui;
 
 	bool m_viewSwitch;
 	SwitchButton* _expertSwitch;
+    bool _trackingStarted = false;
+    QString _currentFile = "No Media";
 
 	// IViewWidget interface
 	public slots:
@@ -133,6 +167,7 @@ private:
 	void getNotified();
 	void fillUI();
 	void setStyle();
+
 };
 
 #endif // COREPARAMETERVIEW_H

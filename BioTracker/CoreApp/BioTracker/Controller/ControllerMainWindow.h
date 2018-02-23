@@ -42,14 +42,6 @@ class ControllerMainWindow : public IController {
      */
     void loadCameraDevice(CameraConfiguration conf);
     /**
-     * Receives the command for activating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
-     */
-    void activeTracking();
-    /**
-     * Receives the command for deactivating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
-     */
-    void deactiveTrackring();
-    /**
      * Receives a QStringListModel with the names of all currently loades BioTracker Plugins from the ControllerPlugin class.
      */
     void setTrackerList(QStringListModel* trackerList, QString current);
@@ -100,6 +92,14 @@ public:
 
 	public slots:
     void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+    /**
+    * Receives the command for activating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
+    */
+    void activeTracking();
+    /**
+    * Receives the command for deactivating the Tracking in a BioTracker Plugin from the MainWindow class. This command is given to the ControllerPlayer class of the MediaPlayer-component.
+    */
+    void deactiveTrackring();
 
     // IController interface
   protected:

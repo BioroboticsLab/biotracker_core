@@ -104,7 +104,7 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		Q_EMIT emitDimensionUpdate(_imageX, _imageY);
 	}
 
-	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+//	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
     int noFish = _TrackedTrajectoryMajor->validCount();
     cv::Mat gray;
@@ -121,8 +121,11 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 
     std::vector<cv::Point2f> prevPts = getPoints(_TrackedTrajectoryMajor, framenumber-1);
 
-    //if (!currentPointsOnlyActive.empty()) {
-    if (_lastImage != nullptr && ! _lastImage->empty() && !prevPts.empty()){
+    if (_lastImage == nullptr || _lastImage->empty()) {
+        _lastImage = p_image;
+    }
+
+    if (!prevPts.empty()){
         std::vector<float> err;
 
         // calculate pyramids:

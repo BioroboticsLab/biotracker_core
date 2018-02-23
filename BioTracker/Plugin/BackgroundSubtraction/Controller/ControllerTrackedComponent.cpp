@@ -26,22 +26,11 @@ void ControllerTrackedComponent::connectControllerToController()
 }
 
 void createTrajectories(int count, TrackedTrajectory* all) {
-	//This should be done using a factory, right?
-	for (int i = 0; i < count; i++) {
-		TrackedTrajectory *t = new TrackedTrajectory();
-        t->setValid(true);
-		TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
-		t->add(e);
-		all->add(t, i);
-	}
 }
 
 void ControllerTrackedComponent::createModel()
 {
 	TrackedTrajectory *t = new TrackedTrajectory(this, "All");
-	
-	//Add default trajectories
-	createTrajectories(2, t);
 	m_Model = t;
 }
 
@@ -95,11 +84,6 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 
 	cv::Point newPosPx = cv::Point(position.x(), position.y());
 	cv::Point2f newPosCm = m_areaDescr->pxToCm(newPosPx);
-	// ignore blobs outside the tracking area
-	//if (!m_areaDescr->inTrackingArea(newPosPx)) {
-	//	qDebug() << "Created the entity outside of the tracking area!";
-	//	return;
-	//}
 
 	TrackedTrajectory* newTraj = new TrackedTrajectory();
 	TrackedElement* firstElem = new TrackedElement(newTraj, "n.a.", newTraj->getId());
@@ -133,13 +117,11 @@ void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* tra
 		// ignore blobs outside the tracking area
 		if (!m_areaDescr->inTrackingArea(newPosPx)) {
 			qDebug() << "Attention! You moved the entity outside of the tracking area!";
-			//return;
 		}
 
 		FishPose newPose = FishPose(newPosCm, newPosPx, oldPose.orientation_rad(), oldPose.orientation_deg(), oldPose.width(), oldPose.height(), oldPose.getScore());
 
 		element->setFishPose(newPose);
-		//qDebug() << "plugin-pos:" << position;
 	}
 }
 

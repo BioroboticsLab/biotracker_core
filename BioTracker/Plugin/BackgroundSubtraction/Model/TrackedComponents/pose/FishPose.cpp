@@ -19,10 +19,8 @@ std::string FishPose::toString(bool rectified)
 {
 	std::ostringstream out;
 	if(rectified == false)
-		//out << _position_px.x << "," << _position_px.y << "," << _degAngle << "," << _radAngle;
 		out << _position_px.x << ";" << _position_px.y << ";" << _degAngle << ";" << _radAngle;
 	else
-		//out << _position_cm.x << "," << _position_cm.y << "," << _degAngle << "," << _radAngle;
 		out << _position_cm.x << ";" << _position_cm.y << ";" << _degAngle << ";" << _radAngle;
 	return out.str();
 }

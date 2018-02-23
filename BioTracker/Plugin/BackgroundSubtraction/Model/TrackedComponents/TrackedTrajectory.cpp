@@ -23,7 +23,7 @@ TrackedTrajectory::TrackedTrajectory(QObject *parent, QString name) :
     g_calcValid = 1;
     g_validCount = 0;
     _size = 0;
-    _valid = true;// setValid(true);
+    _valid = true;
 }
 
 void TrackedTrajectory::operate()
@@ -118,9 +118,6 @@ int TrackedTrajectory::size()
     return (_size == 0 ? _size : _size = _TrackedComponents.size());
 }
 
-
-//int calcValid = 1;
-//int validCount = 0;
 int TrackedTrajectory::validCount()
 {
     if (g_calcValid == 1) {

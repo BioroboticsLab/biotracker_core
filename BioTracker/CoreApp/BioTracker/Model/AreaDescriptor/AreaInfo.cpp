@@ -86,6 +86,10 @@ void AreaInfo::rcvPlayerParameters(playerParameters* parameters)
     if (_parms == nullptr || _parms->m_CurrentFilename != parameters->m_CurrentFilename) {
         _rectInitialized = false;
     }
+    if (parameters->m_CurrentFrame == nullptr) {
+        return;
+    }
+
     _parms = parameters;
     std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
     if ((m->size().width != _vdimX || m->size().height != _vdimY) &&

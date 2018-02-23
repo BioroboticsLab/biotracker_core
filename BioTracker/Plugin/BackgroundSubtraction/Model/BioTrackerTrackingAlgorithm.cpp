@@ -23,9 +23,6 @@ BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IModel *parameter, IMod
 
     _lastImage = nullptr;
     _lastFramenumber = -1;
-
-	//This is null so far...
-	//_bd.setAreaInfo(_AreaInfo);
 }
 
 
@@ -90,9 +87,9 @@ void BioTrackerTrackingAlgorithm::sendSelectedImage(std::map<std::string, std::s
         Q_EMIT emitChangeDisplayImage(QString("Dilated"));
         break;
     case 4:
-        sendImage = images->find(std::string("Foreground"))->second;
-        Q_EMIT emitCvMatA(sendImage, QString("Foreground"));
-        Q_EMIT emitChangeDisplayImage(QString("Foreground"));
+        sendImage = images->find(std::string("Difference"))->second;
+        Q_EMIT emitCvMatA(sendImage, QString("Difference"));
+        Q_EMIT emitChangeDisplayImage(QString("Difference"));
         break;
     case 5:
         sendImage = images->find(std::string("Background"))->second;

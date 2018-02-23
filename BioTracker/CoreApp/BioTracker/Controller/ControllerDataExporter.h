@@ -27,6 +27,7 @@ public:
 	void setComponentFactory(IModelTrackedComponentFactory* exp);
 	IModelTrackedComponentFactory* getComponentFactory() { return _factory; };
 	SourceVideoMetadata getSourceMetadata();
+    int getTrialNumber();
     QString generateBasename(bool temporaryFile);
 
 	void loadFile(std::string file);
