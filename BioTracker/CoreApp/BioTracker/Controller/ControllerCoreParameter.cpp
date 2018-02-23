@@ -86,7 +86,7 @@ void ControllerCoreParameter::connectControllerToController()
     {
         IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
         ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ctr);
-        QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+        //QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
     }
 
 }

@@ -2,6 +2,7 @@
 #define COREPARAMETERVIEW_H
 
 #include "Interfaces/IView/IViewWidget.h"
+#include "View/Utility/SwitchButton.h"
 //TODO add default parameters accesible via config
 //#include "Model/CoreViewParameter.h"
 
@@ -67,12 +68,13 @@ public:
 	void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
 
 	//Finalize experiment
-    void on_pushButtonFinalizeExperiment_clicked();
+    //void on_pushButtonFinalizeExperiment_clicked();
 
 	//Misc
-	void on_checkBoxExpertOptions_stateChanged(int v);
-	void on_checkBoxAntialiasingEntities_stateChanged(int v);
-	void on_checkBoxAntialiasingFull_stateChanged(int v);
+	//void on_checkBoxExpertOptions_stateChanged(int v);
+	void toggleExpertOptions(bool toggle);
+	void on_checkBoxAntialiasingEntities_toggled(bool toggle);
+	void on_checkBoxAntialiasingFull_toggled(bool toggle);
 
 public:
 	signals :
@@ -113,7 +115,7 @@ public:
             void emitTrackingAreaAsEllipse(bool b);
 
 			//Finalize Experiment
-            void emitFinalizeExperiment();
+            //void emitFinalizeExperiment();
 
 			//Misc
 			void emitToggleAntialiasingEntities(bool toggle);
@@ -123,6 +125,7 @@ private:
 	Ui::CoreParameterView *ui;
 
 	bool m_viewSwitch;
+	SwitchButton* _expertSwitch;
 
 	// IViewWidget interface
 	public slots:

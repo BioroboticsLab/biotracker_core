@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 
 	//setup toolbars
 	setupUpperToolBar();
+	setupVideoToolBar();
 
 	//resize to full size
 	//QWidget::showFullScreen();
@@ -64,8 +65,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupUpperToolBar() {
 
-	_trackerActivator = new SwitchButton();
-	QObject::connect(_trackerActivator , &SwitchButton::emitSetTracking, this, &MainWindow::receiveSetTracking, Qt::DirectConnection);
+	_trackerActivator = new SwitchButton("not tracking", "tracking");
+	QObject::connect(_trackerActivator , &SwitchButton::emitSetEnabled, this, &MainWindow::receiveSetTracking, Qt::DirectConnection);
 	//QAction* activatorAction = ui->toolBarMenu->addWidget(_trackerActivator);
 
 	ui->toolBarMenu->setStyleSheet("QGroupBox"
@@ -200,12 +201,24 @@ void MainWindow::setupUpperToolBar() {
 	//ui->toolBarMenu->addWidget(chooseTrackerBox);
 
 
+	//add finalize experment button
+	QPushButton* finalizeExperimentButton = new QPushButton("Finalize experiment");
+	ControllerMainWindow* ctr = static_cast<ControllerMainWindow*>(getController());
+	QObject::connect(finalizeExperimentButton, &QPushButton::clicked, ctr, &ControllerMainWindow::emitFinalizeExperiment, Qt::DirectConnection);
+
+	informativeCanvasLayout->addWidget(finalizeExperimentButton);
+
 	//add canvas widget to toolbar
 	informativeCanvas->setLayout(informativeCanvasLayout);
 	//informativeCanvas->hide();
 	informativeCanvas->setEnabled(true);
 	QAction* action = ui->toolBarMenu->addWidget(informativeCanvas);
 	//action->setVisible(false);
+
+}
+
+void MainWindow::setupVideoToolBar() {
+	
 }
 
 void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission){
@@ -272,23 +285,26 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
-	if (_currentCoreParameterView) {
-		CoreParameterView* v = static_cast<CoreParameterView*>(_currentCoreParameterView);
-		QWidget* w = v->getTrackerHook();
+	// if (_currentCoreParameterView) {
+	// 	CoreParameterView* v = static_cast<CoreParameterView*>(_currentCoreParameterView);
+	// 	QWidget* w = v->getTrackerHook();
 
-		if (_currentParameterView) {
-			dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
-		}
+	// 	if (_currentParameterView) {
+	// 		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
+	// 	}
 
-		QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-		dynamic_cast<QTabWidget*>(w)->removeTab(0);
-		dynamic_cast<QTabWidget*>(w)->insertTab(0, pluginParameter, "tracker");
+	// 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
+	// 	dynamic_cast<QTabWidget*>(w)->removeTab(0);
+	// 	dynamic_cast<QTabWidget*>(w)->insertTab(0, pluginParameter, "tracker");
 		
-	}
-	else {
-		qWarning() << "Error adding tracker parameter view";
-		assert(false);
-	}
+	// }
+	// else {
+	// 	qWarning() << "Error adding tracker parameter view";
+	// 	assert(false);
+	// }
+
+	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
+	ui->toolBox->addItem(pluginParameter, "Tracker options");
 }
 
 void MainWindow::addCoreParameterView(IView * coreParameterView)

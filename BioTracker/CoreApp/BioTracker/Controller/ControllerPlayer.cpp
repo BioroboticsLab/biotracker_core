@@ -7,6 +7,7 @@
 #include "Controller/ControllerTrackedComponentCore.h"
 
 #include <QGraphicsItem>
+#include <QToolButton>
 
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IController(parent, context, ctr)
@@ -114,6 +115,8 @@ void ControllerPlayer::connectControllerToController() {
     IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
+    VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
+    vControl->setupVideoToolbar();
 }
 
 void ControllerPlayer::createModel() {

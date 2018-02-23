@@ -7,6 +7,7 @@
 #include "QMap"
 #include "QMetaEnum"
 #include "QStringListModel"
+#include "View/MainWindow.h"
 
 
 namespace Ui {
@@ -28,6 +29,9 @@ class VideoControllWidget : public IViewWidget {
     void setCurrentFrameNumber(size_t numb);
     void setFPS(double fps);
     void setVideoControllsStates(QVector<bool> states);
+
+    MainWindow* getMainWindow();
+    void setupVideoToolbar();
 
 
   public Q_SLOTS:
@@ -58,6 +62,14 @@ class VideoControllWidget : public IViewWidget {
 
     void on_doubleSpinBoxTargetFps_editingFinished();
 
+    void on_actionPlay_Pause_triggered(bool checked = false);
+    void on_actionStop_triggered(bool checked = false);
+    void on_actionNext_frame_triggered(bool checked = false);
+    void on_actionPrev_frame_triggered(bool checked = false);
+    void on_actionScreenshot_triggered(bool checked = false);
+    void on_actionRecord_cam_triggered(bool checked = false);
+    void on_actionRecord_all_triggered(bool checked = false);
+
   private:
     Ui::VideoControllWidget* ui;
 
@@ -69,6 +81,14 @@ class VideoControllWidget : public IViewWidget {
 	bool m_Paus;
 	bool m_RecI;
 	bool m_RecO;
+
+  QAction* action_play_pause;
+  QAction* action_stop;
+  QAction* action_next_frame;
+  QAction* action_prev_frame;
+  QAction* action_rec_cam;
+  QAction* action_rec;
+
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H

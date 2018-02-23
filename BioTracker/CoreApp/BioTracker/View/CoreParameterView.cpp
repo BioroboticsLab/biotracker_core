@@ -30,8 +30,6 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
 	//TODO implement it correctly before enabling again
 	ui->checkBoxIgnoreZoom->hide();
     
-	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(model);
-
 	fillUI();
 	setStyle();
 
@@ -45,7 +43,9 @@ CoreParameterView::~CoreParameterView()
 
 QWidget * CoreParameterView::getTrackerHook()
 {
-	return ui->tabWidgetParameters;
+	//return ui->tabWidgetParameters;
+	//dead code
+	return nullptr;
 }
 
 void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
@@ -53,7 +53,7 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW && permission.second == false) {
-		this->ui->tab_view->setDisabled(true);
+		this->ui->scrollArea_2->setDisabled(true);
 		return;
 	}
 	//does not need to be propagated to shapes; only handled by view
@@ -252,62 +252,62 @@ void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
 	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
 }
 
-void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
-    Q_EMIT emitFinalizeExperiment();
+// void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
+//     Q_EMIT emitFinalizeExperiment();
+// }
+
+// void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
+// {
+// 	//disable
+// 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
+// 		ui->groupBoxTracerDimensions->hide();
+// 		ui->groupBoxMiscellaneous->hide();
+// 		ui->groupBoxTrackDimensions->hide();
+// 		ui->groupBoxTracerDimensions->hide();
+// 		ui->checkBoxTracerFrameNumber->hide();
+// 		ui->checkBoxShowId->hide();
+// 	}
+// 	//enable
+// 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
+// 		ui->groupBoxTracerDimensions->show();
+// 		ui->groupBoxMiscellaneous->show();
+// 		ui->groupBoxTrackDimensions->show();
+// 		ui->groupBoxTracerDimensions->show();
+// 		ui->checkBoxTracerFrameNumber->show();
+// 		ui->checkBoxShowId->show();
+// 	}
+// }
+
+void CoreParameterView::toggleExpertOptions(bool toggle){
+	ui->groupBoxTracerDimensions->setVisible(toggle);
+	ui->groupBoxMiscellaneous->setVisible(toggle);
+	ui->groupBoxTrackDimensions->setVisible(toggle);
+	ui->groupBoxTracerDimensions->setVisible(toggle);
+	ui->checkBoxTracerFrameNumber->setVisible(toggle);
+	ui->checkBoxShowId->setVisible(toggle);
 }
 
-void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
-{
-	//disable
-	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-		ui->groupBoxTracerDimensions->hide();
-		ui->groupBoxMiscellaneous->hide();
-		ui->groupBoxTrackDimensions->hide();
-		ui->groupBoxTracerDimensions->hide();
-		ui->checkBoxTracerFrameNumber->hide();
-		ui->checkBoxShowId->hide();
-	}
-	//enable
-	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-		ui->groupBoxTracerDimensions->show();
-		ui->groupBoxMiscellaneous->show();
-		ui->groupBoxTrackDimensions->show();
-		ui->groupBoxTracerDimensions->show();
-		ui->checkBoxTracerFrameNumber->show();
-		ui->checkBoxShowId->show();
-	}
-}
-
-void CoreParameterView::on_checkBoxAntialiasingEntities_stateChanged(int v)
-{
-	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-		coreParams->m_antialiasingEntities = false;
-	}
-	//enable
-	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-		coreParams->m_antialiasingEntities = true;
-
-	}
-	emitToggleAntialiasingEntities(v);
-}
-
-void CoreParameterView::on_checkBoxAntialiasingFull_stateChanged(int v)
+void CoreParameterView::on_checkBoxAntialiasingEntities_toggled(bool toggle)
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
-	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-		coreParams->m_antialiasingFull = false;
-	}
-	//enable
-	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-		coreParams->m_antialiasingFull = true;
+	coreParams->m_antialiasingEntities = toggle;
+	emitToggleAntialiasingEntities(toggle);
+}
 
-	}
-	emitToggleAntialiasingFull(v);
+void CoreParameterView::on_checkBoxAntialiasingFull_toggled(bool toggle)
+{
+	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
+	coreParams->m_antialiasingFull = toggle;
+	emitToggleAntialiasingFull(toggle);
 }
 
 void CoreParameterView::fillUI() 
 {
+	//add switchbutton for expert options
+	_expertSwitch = new SwitchButton("not advanced", "advanced");
+	ui->widgetParameterLayout->addWidget(_expertSwitch);
+	QObject::connect(_expertSwitch , &SwitchButton::emitSetEnabled, this, &CoreParameterView::toggleExpertOptions, Qt::DirectConnection);
+
 	//setup ui from params
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 
@@ -344,7 +344,7 @@ void CoreParameterView::fillUI()
 	//enable/disable widgets
 
 	//expert options
-	if (ui->checkBoxExpertOptions->isChecked()) {
+	if (_expertSwitch->state()) {
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
@@ -372,8 +372,10 @@ void CoreParameterView::setStyle()
 	ui->groupBoxTrackDimensions->setStyleSheet("QGroupBox { background-color: #90caf9;}");
 	ui->groupBoxTracerDimensions->setStyleSheet("QGroupBox { background-color: #a5d6a7;}");
 
-
-
+	//default groupbox
+	ui->widgetParameter->setStyleSheet("QGroupBox"
+	" {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	"QGroupBox::title {subcontrol-origin: margin; padding: 0 3px; background-color: #e5e5e5; }");
 
 }
 

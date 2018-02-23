@@ -79,11 +79,26 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1046</width>
-        <height>89</height>
+        <width>1092</width>
+        <height>76</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="playback">
          <property name="sizePolicy">
@@ -93,7 +108,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Video Controls</string>
+          <string>Video info</string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -106,7 +121,7 @@
            <number>0</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
            <number>0</number>
@@ -314,6 +329,26 @@
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="line_9">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="lbl_frame">
             <property name="text">
              <string>Current frame:</string>
@@ -344,6 +379,26 @@
              <string>0</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QLabel" name="labelView">
@@ -385,30 +440,27 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
+             <enum>QSizePolicy::Expanding</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>10</width>
-              <height>20</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
-            <property name="toolTip">
-             <string>frames per second</string>
-            </property>
-            <property name="text">
-             <string>fps:</string>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_5">
             <property name="text">
-             <string> source: </string>
+             <string> source fps: </string>
             </property>
            </widget>
           </item>
@@ -438,9 +490,36 @@
            </widget>
           </item>
           <item>
+           <widget class="Line" name="line_8">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string> target:</string>
+             <string> target fps:</string>
             </property>
            </widget>
           </item>
@@ -458,9 +537,36 @@
            </widget>
           </item>
           <item>
+           <widget class="Line" name="line_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="line_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string> current:</string>
+             <string> current fps:</string>
             </property>
            </widget>
           </item>
@@ -486,6 +592,26 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
@@ -494,6 +620,90 @@
     </widget>
    </item>
   </layout>
+  <action name="actionRecord_cam">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/recordCam.png</normaloff>:/Images/resources/recordCam.png</iconset>
+   </property>
+   <property name="text">
+    <string>Record cam</string>
+   </property>
+  </action>
+  <action name="actionRecord_all">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/record.png</normaloff>:/Images/resources/record.png</iconset>
+   </property>
+   <property name="text">
+    <string>Record all</string>
+   </property>
+  </action>
+  <action name="actionScreenshot">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/screenshot.png</normaloff>:/Images/resources/screenshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Screenshot</string>
+   </property>
+   <property name="toolTip">
+    <string>Screenshot</string>
+   </property>
+  </action>
+  <action name="actionNext_frame">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/arrows-skip-forward.png</normaloff>:/Images/resources/arrows-skip-forward.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next frame</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actionPrev_frame">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/arrows-skip-back.png</normaloff>:/Images/resources/arrows-skip-back.png</iconset>
+   </property>
+   <property name="text">
+    <string>Previous frame</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous frame</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/stop.png</normaloff>:/Images/resources/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionPlay_Pause">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/arrow-forward1.png</normaloff>:/Images/resources/arrow-forward1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play/Pause</string>
+   </property>
+   <property name="toolTip">
+    <string>Play/Pause</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../guiresources.qrc"/>

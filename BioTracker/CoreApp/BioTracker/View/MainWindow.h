@@ -47,6 +47,7 @@ class MainWindow : public IViewMainWindow {
     void closeEvent(QCloseEvent *event);
 
     void setupUpperToolBar();
+    void setupVideoToolBar();
 
 Q_SIGNALS:
 	void selectPlugin(QString ct);

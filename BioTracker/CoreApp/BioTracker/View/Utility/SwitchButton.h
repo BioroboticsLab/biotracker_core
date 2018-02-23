@@ -10,10 +10,10 @@ class SwitchButton : public QAbstractButton {
     Q_OBJECT
     Q_PROPERTY(int offset READ offset WRITE setOffset)
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush)
-
+    Q_PROPERTY(bool _switch READ state WRITE setState)
 
 	public:
-		SwitchButton(QWidget* parent = 0);
+		SwitchButton(QString s0, QString s1, QWidget* parent = 0);
 		//~SwitchButton();
 
         QSize sizeHint() const override;
@@ -23,9 +23,11 @@ class SwitchButton : public QAbstractButton {
         void setOffset(int o) {_x = o; update();}
         QBrush brush() const { return _brush;}
         void setBrush(const QBrush &brsh) { _brush = brsh;}
+        bool state() const { return _switch;}
+        void setState(bool toggle) { _switch = toggle;}
 
     signals:
-        void emitSetTracking(bool toggle);
+        void emitSetEnabled(bool toggle);
 
     protected:
         void paintEvent(QPaintEvent* event) override;
@@ -36,6 +38,8 @@ class SwitchButton : public QAbstractButton {
         int _x, _y, _height, _margin;
         QBrush _thumb, _track, _brush;
         QPropertyAnimation *_anim = nullptr;
+        QString _s0;
+        QString _s1;
 
 };
 

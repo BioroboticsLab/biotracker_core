@@ -48,13 +48,15 @@ void SwitchButton::setHeight(int h){
   _height = h - 2 * _margin;
 }
 
-SwitchButton::SwitchButton(QWidget *parent) : QAbstractButton(parent),
+SwitchButton::SwitchButton(QString s0, QString s1, QWidget *parent) : QAbstractButton(parent),
 _height(16),
 _opacity(0.000),
 _switch(false),
 _margin(3),
 _thumb("#d5d5d5"),
-_anim(new QPropertyAnimation(this, "offset", this))
+_anim(new QPropertyAnimation(this, "offset", this)),
+_s0(s0),
+_s1(s1)
 {
     setOffset(_height / 2);
     _y = _height / 2;
@@ -86,7 +88,7 @@ void SwitchButton::paintEvent(QPaintEvent *e) {
         font.setPixelSize(height() - 3 * _margin);
         p.setFont(font);
         QRectF textRect = QRectF(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin);
-        p.drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter,  _switch ? "tracking": "not tracking");
+        p.drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter,  _switch ? _s1: _s0);
     } else {
         p.setBrush(Qt::black);
         p.setOpacity(0.12);
@@ -113,7 +115,7 @@ void SwitchButton::mouseReleaseEvent(QMouseEvent *e) {
             _anim->start();
         }
 
-        emitSetTracking(_switch);
+        emitSetEnabled(_switch);
     }
     QAbstractButton::mouseReleaseEvent(e);
 }

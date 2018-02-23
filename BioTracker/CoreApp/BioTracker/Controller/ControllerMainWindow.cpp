@@ -176,6 +176,11 @@ void ControllerMainWindow::connectControllerToController() {
 	QObject::connect(this, &ControllerMainWindow::emitAddEllAnno, ctrann, &ControllerAnnotations::receiveAddEllAnno, Qt::DirectConnection);
 	QObject::connect(this, &ControllerMainWindow::emitDelSelAnno, ctrann, &ControllerAnnotations::receiveDelSelAnno, Qt::DirectConnection);
 
+    //connect to ControllerDataExporter
+    IController* ictrde = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+    ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ictrde);
+    QObject::connect(this, &ControllerMainWindow::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+
 
 	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
