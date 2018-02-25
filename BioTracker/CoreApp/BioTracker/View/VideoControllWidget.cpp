@@ -77,7 +77,8 @@ void VideoControllWidget::getNotified() {
 
 	ui->fps_label->setText(QString::number(mediaPlayer->getFpsOfSourceFile()));
 	double cfps = mediaPlayer->getCurrentFPS();
-	ui->label_currentFpsNum->setText(QString::number(mediaPlayer->getCurrentFPS()));
+	//ui->label_currentFpsNum->setText(QString::number(mediaPlayer->getCurrentFPS()));
+	ui->lcd_currentFpsNum->display(mediaPlayer->getCurrentFPS());
 
     int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
 
@@ -283,6 +284,8 @@ void VideoControllWidget::setupVideoToolbar(){
             videoToolBar->addSeparator();
             videoToolBar->addAction(ui->actionRecord_all);
             videoToolBar->addSeparator();
+
+			videoToolBar->addWidget(ui->scrollAreaVideoInfo);
         }
     }
 }

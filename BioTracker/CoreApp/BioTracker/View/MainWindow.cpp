@@ -364,9 +364,9 @@ void MainWindow::setTrackerList(QStringListModel* trackerList, QString current) 
 void MainWindow::setCursorPositionLabel(QPoint pos)
 {
 	QString posString = QString("%1, %2").arg(QString::number(pos.x()), QString::number(pos.y()));
-	if(_cursorPosition){
-		_cursorPosition->setText(posString);
-	}
+	//if(_cursorPosition){
+	//	_cursorPosition->setText(posString);
+	//}
 
 	QLabel* currentChild = statusBar()->findChild<QLabel*>("_cursorPosition");
 	currentChild->setText(posString);
