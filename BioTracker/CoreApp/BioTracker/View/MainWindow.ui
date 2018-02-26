@@ -60,16 +60,25 @@
     <item>
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
        <property name="topMargin">
         <number>0</number>
        </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QSplitter" name="mainSplitter">
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="handleWidth">
-          <number>5</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="videoAreaWidget" native="true">
           <property name="sizePolicy">
@@ -219,7 +228,7 @@
               <bool>true</bool>
              </property>
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                <horstretch>0</horstretch>
                <verstretch>100</verstretch>
               </sizepolicy>
@@ -252,6 +261,9 @@
             <width>0</width>
             <height>20</height>
            </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>true</bool>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <property name="spacing">
@@ -410,8 +422,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>476</width>
-                     <height>387</height>
+                     <width>565</width>
+                     <height>383</height>
                     </rect>
                    </property>
                    <property name="sizePolicy">
@@ -430,8 +442,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>476</width>
-                     <height>387</height>
+                     <width>565</width>
+                     <height>383</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -493,7 +505,7 @@
      <x>0</x>
      <y>0</y>
      <width>845</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -568,9 +580,9 @@
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>221</red>
-         <green>221</green>
-         <blue>221</blue>
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
         </color>
        </brush>
       </colorrole>
@@ -588,9 +600,9 @@
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>221</red>
-         <green>221</green>
-         <blue>221</blue>
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
         </color>
        </brush>
       </colorrole>
@@ -599,18 +611,18 @@
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>221</red>
-         <green>221</green>
-         <blue>221</blue>
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>221</red>
-         <green>221</green>
-         <blue>221</blue>
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
         </color>
        </brush>
       </colorrole>
@@ -642,7 +654,6 @@
    </attribute>
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
-   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="toolBarTools">
    <property name="windowTitle">
@@ -667,14 +678,12 @@
     <bool>false</bool>
    </attribute>
    <addaction name="separator"/>
-   <addaction name="separator"/>
    <addaction name="actionAdd_Track"/>
    <addaction name="actionDelete_selected_tracks"/>
    <addaction name="actionSwap_ID_s"/>
    <addaction name="actionSelect_all"/>
    <addaction name="actionChange_the_border_color"/>
    <addaction name="actionChange_the_fill_color"/>
-   <addaction name="separator"/>
    <addaction name="separator"/>
    <addaction name="actionAdd_label_Annotation"/>
    <addaction name="actionAdd_arrow_annotation"/>
@@ -683,23 +692,11 @@
    <addaction name="actionDelete_selected_Annotation"/>
   </widget>
   <widget class="QToolBar" name="toolBarVideo">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <property name="allowedAreas">
-    <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
+   <property name="autoFillBackground">
+    <bool>true</bool>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonIconOnly</enum>
@@ -710,8 +707,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
   </widget>
   <action name="actionOpen_Video">
    <property name="icon">

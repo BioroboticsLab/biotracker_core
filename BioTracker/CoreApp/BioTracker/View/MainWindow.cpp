@@ -49,6 +49,10 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	setupUpperToolBar();
 	setupVideoToolBar();
 
+	ui->toolBox->setStyleSheet("QToolBox::tab {"
+	" background-color: #e5e5e5;}"
+	);
+
 	//resize to full size
 	//QWidget::showFullScreen();
 	QWidget::showMaximized();
@@ -202,7 +206,8 @@ void MainWindow::setupUpperToolBar() {
 
 
 	//add finalize experment button
-	QPushButton* finalizeExperimentButton = new QPushButton("Finalize experiment");
+	QPushButton* finalizeExperimentButton = new QPushButton("Finalize Trial");
+	finalizeExperimentButton->setStyleSheet("padding: 10px;");
 	ControllerMainWindow* ctr = static_cast<ControllerMainWindow*>(getController());
 	QObject::connect(finalizeExperimentButton, &QPushButton::clicked, ctr, &ControllerMainWindow::emitFinalizeExperiment, Qt::DirectConnection);
 
