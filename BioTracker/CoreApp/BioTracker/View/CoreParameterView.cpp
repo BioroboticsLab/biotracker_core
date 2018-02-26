@@ -422,10 +422,11 @@ void CoreParameterView::on_pushButton_startExp_clicked() {
 
 void CoreParameterView::on_pushButton_finalizeExp_clicked() {
 
-    emitStopPlayback();
+    Q_EMIT emitStopPlayback();
+    Q_EMIT emitDisableTracking();
     _trackingStarted = false;
     ui->pushButton_startExp->setText("Start Trial");
-    emitFinalizeExperiment();
+    Q_EMIT emitFinalizeExperiment();
 }
 
 void CoreParameterView::on_label_ExpSrcCnt_clicked() {

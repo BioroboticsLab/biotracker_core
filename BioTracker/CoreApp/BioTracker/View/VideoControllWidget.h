@@ -8,6 +8,7 @@
 #include "QMetaEnum"
 #include "QStringListModel"
 #include "View/MainWindow.h"
+#include <chrono>
 
 
 namespace Ui {
@@ -89,6 +90,7 @@ class VideoControllWidget : public IViewWidget {
   QAction* action_rec_cam;
   QAction* action_rec;
 
+  std::chrono::system_clock::time_point lastFpsSet;
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H
