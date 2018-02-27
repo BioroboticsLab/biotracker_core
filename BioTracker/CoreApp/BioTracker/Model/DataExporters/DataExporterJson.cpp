@@ -141,6 +141,7 @@ void DataExporterJson::write(int idx) {
 void DataExporterJson::finalizeAndReInit() {
     close(); //Not needed, but...
     writeAll();
+    cleanup();
     open(_root);
 }
 
@@ -165,7 +166,7 @@ void DataExporterJson::loadFile(std::string file) {
         prefixes);
 };
 
-void DataExporterJson::writeAll() {
+void DataExporterJson::writeAll(std::string f) {
     //Sanity
     if (!_root) {
         qDebug() << "No output opened!";
@@ -179,6 +180,13 @@ void DataExporterJson::writeAll() {
         cleanup();
         return;
     }
+
+    std::string target = f;
+    if (target.size() <= 1) {
+        target = _finalFile;
+    }
+    if (target.substr(target.size() - 4) != ".json")
+        target += ".json";
 
     boost::property_tree::ptree ptRoot; 
     DataExporterJsonUtil::writeComponentJson(_root, &ptRoot);
@@ -204,14 +212,7 @@ void DataExporterJson::writeAll() {
         ptRoot.put_child("Trajectory_" + std::to_string(i), ptt);
 	}
 
-    write_json(_finalFile, ptRoot);
-
-    //Erase all tracking data from the tracking structure!
-    _root->clear();
-
-    //Remove temporary file
-    QFile ft(_tmpFile.c_str());
-    ft.remove();
+    write_json(target, ptRoot);
 }
 
 void DataExporterJson::close() {

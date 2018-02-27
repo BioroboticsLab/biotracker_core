@@ -20,8 +20,9 @@ CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, I
     ui->lineEditRectHeight->setValidator(new QDoubleValidator(this));
 
     BioTracker::Core::Settings *settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-    double h = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 100), std::numeric_limits<double>::epsilon());
-    double w = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 100), std::numeric_limits<double>::epsilon());
+    double asdf = settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, AREADESCRIPTOR::RECT_H_DEFAULT); //TODO1111
+    double h = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, AREADESCRIPTOR::RECT_H_DEFAULT), std::numeric_limits<double>::epsilon());
+    double w = std::max(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, AREADESCRIPTOR::RECT_W_DEFAULT), std::numeric_limits<double>::epsilon());
     std::string sw = std::to_string(w);
     std::string sh = std::to_string(h);
     sh.erase(sh.find_last_not_of('0') + 1, std::string::npos);

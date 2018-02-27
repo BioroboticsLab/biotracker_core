@@ -53,7 +53,8 @@ class ControllerMainWindow : public IController {
 	void setCoreElementsWidget(IView* widget);
 	void setNotificationBrowserWidget(IView * widget);
 
-	void loadTrajectoryFile(std::string file);
+    void loadTrajectoryFile(std::string file);
+    void saveTrajectoryFile(std::string file);
 
     void deactiveTrackingCheckBox();
     void activeTrackingCheckBox();

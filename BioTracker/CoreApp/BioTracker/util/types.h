@@ -11,7 +11,7 @@
 #define CFG_RECORDSCALEDOUT					"BiotrackerCore/RecordScaledOutput"
 #define CFG_EXPORTER						"BiotrackerCore/DataExporter"
 #define CFG_RECORD_FPS						"BiotrackerCore/Record_FPS"
-#define CFG_RECORD_FPS_VAL					30
+#define CFG_RECORD_FPS_VAL					-1
 #define CFG_CAMERA_DEFAULT_W				"BiotrackerCore/CameraWidth"
 #define CFG_CAMERA_DEFAULT_W_VAL			-1
 #define CFG_CAMERA_DEFAULT_H				"BiotrackerCore/CameraHeight"
@@ -49,8 +49,10 @@ namespace AREADESCRIPTOR
 	const std::string CN_APPERTURE_TYPE = "TRACKERPARAM/CN_CORNERS_APPERTURE_TYPE";
     const std::string DISP_AREA = "TRACKERPARAM/DISPLAY_TRACKING_AREA";
     const std::string DISP_RECT = "TRACKERPARAM/DISPLAY_RECTIFICATION_AREA";
-	const std::string RECT_W = "RECTIFICATION/WIDTH";
+    const std::string RECT_W = "RECTIFICATION/WIDTH";
+    const int RECT_W_DEFAULT = 100;
 	const std::string RECT_H = "RECTIFICATION/HEIGHT";
+    const int RECT_H_DEFAULT = 100;
 }
 
 

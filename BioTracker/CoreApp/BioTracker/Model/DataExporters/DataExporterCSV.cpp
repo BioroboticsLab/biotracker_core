@@ -162,7 +162,7 @@ void DataExporterCSV::loadFile(std::string file)
                 comp = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
             }
         }
-        addChildOfChild(_root, comp, factory, frame);
+        //addChildOfChild(_root, comp, factory, frame);
     }
 }
 
@@ -200,10 +200,11 @@ void DataExporterCSV::finalizeAndReInit() {
 
     close(); //Not needed, but...
     writeAll();
+    cleanup();
     open(_root);
 }
 
-void DataExporterCSV::writeAll() {
+void DataExporterCSV::writeAll(std::string f) {
     //Sanity
     if (!_root) {
         qDebug() << "No output opened!";
@@ -223,9 +224,16 @@ void DataExporterCSV::writeAll() {
         return;
     }
 
+    std::string target = f;
+    if (target.size() <= 4) {
+        target = _finalFile;
+    }
+    if (target.substr(target.size() - 4) != ".csv")
+        target += ".csv";
+
     //Create final file
     std::ofstream o; 
-    o.open(_finalFile, std::ofstream::out);
+    o.open(target, std::ofstream::out);
 
     //write metadata
     ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
@@ -281,17 +289,6 @@ void DataExporterCSV::writeAll() {
         o << std::endl;
     }
     o.close();
-    
-    //Erase all tracking data from the tracking structure!
-    _root->clear();
-
-    //Remove temporary file
-    QFile file(_tmpFile.c_str());
-    file.remove();
-
-    //Tell the controller about the written file
-    QFileInfo fi(_finalFile.c_str());
-    fileWritten(fi);
 }
 
 void DataExporterCSV::close() {

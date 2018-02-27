@@ -17,7 +17,7 @@ public:
     /**
     *  Re-Serialize the entire structure in a clean fashion
     */
-	void writeAll() override;
+	void writeAll(std::string f = "") override;
 
     /**
     *  Close the file 

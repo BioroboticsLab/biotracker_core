@@ -41,6 +41,7 @@ void DataExporterSerialize::write(int idx) {
 void DataExporterSerialize::finalizeAndReInit() {
     close(); //Not needed, but...
     writeAll();
+    cleanup();
     open(_root);
 }
 
@@ -87,7 +88,7 @@ void DataExporterSerialize::loadFile(std::string file){
 	}
 };
 
-void DataExporterSerialize::writeAll() {
+void DataExporterSerialize::writeAll(std::string f) {
     //Sanity
     if (!_root) {
         qDebug() << "No output opened!";
@@ -102,8 +103,15 @@ void DataExporterSerialize::writeAll() {
         return;
     }
 
+    std::string target = f;
+    if (target.size() <= 1) {
+        target = _finalFile;
+    }
+    if (target.substr(target.size() - 4) != ".dat")
+        target += ".dat";
+
     //Create final file
-	QFile file(_finalFile.c_str());
+	QFile file(target.c_str());
 	file.open(QIODevice::WriteOnly);
 	QDataStream out(&file);
 
@@ -142,13 +150,6 @@ void DataExporterSerialize::writeAll() {
             }
         }
     }
-
-    //Erase all tracking data from the tracking structure!
-    _root->clear();
-
-    //Remove temporary file
-    QFile ft(_tmpFile.c_str());
-    ft.remove();
 }
 
 void DataExporterSerialize::close() {
