@@ -33,11 +33,26 @@ int DataExporterGeneric::getMaxLinecount()
 
 void DataExporterGeneric::cleanup()
 {
+    int s = _root->size();
+
     //Erase all tracking data from the tracking structure!
     _root->clear();
 
     //Remove temporary file
     QFile file(_tmpFile.c_str());
     file.remove();
+
+    if (s > 0) {
+        //Tell the controller about the written file
+        QFileInfo fi(_finalFile.c_str());
+        fileWritten(fi);
+    }
     return;
 }
+
+void DataExporterGeneric::finalize()
+{
+    close();
+    writeAll("");
+    cleanup();
+};

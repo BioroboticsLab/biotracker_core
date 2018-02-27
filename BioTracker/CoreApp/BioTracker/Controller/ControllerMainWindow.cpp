@@ -91,9 +91,14 @@ void ControllerMainWindow::setNotificationBrowserWidget(IView* widget)
 
 
 void ControllerMainWindow::loadTrajectoryFile(std::string file) {
-	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
-	static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+    static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
     Q_EMIT emitTrackLoaded(file);
+}
+
+void ControllerMainWindow::saveTrajectoryFile(std::string file) {
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
+    static_cast<ControllerDataExporter*>(ctr)->saveFile(file);
 }
 
 void ControllerMainWindow::deactiveTrackingCheckBox() {

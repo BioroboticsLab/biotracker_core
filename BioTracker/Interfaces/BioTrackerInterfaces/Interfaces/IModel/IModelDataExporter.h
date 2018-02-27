@@ -16,15 +16,12 @@ public:
 
 	virtual void open(IModelTrackedTrajectory *root) = 0;
 	virtual void write(int idx) = 0;
-	virtual void writeAll() = 0;
+	virtual void writeAll(std::string f) = 0;
     virtual void close() = 0;
     virtual void finalizeAndReInit() = 0;
 	void setFps(float fps) { _fps = fps; };
 	void setTitle(std::string title) { _title = title; };
-	void finalize() {
-		close();
-		writeAll();
-	};
+    virtual void finalize() = 0;
 
     virtual void loadFile(std::string file) = 0;
     virtual QString getSuffix() = 0;

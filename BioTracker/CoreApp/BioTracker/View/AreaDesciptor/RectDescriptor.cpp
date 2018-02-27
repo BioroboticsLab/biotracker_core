@@ -89,11 +89,11 @@ void RectDescriptor::setRect(std::vector<cv::Point> rect) {
         if ((dynamic_cast<AreaInfoElement*>(getModel()))->getShowNumbers()) {
             std::string label = "???";
             if (i % 2 == 0) {
-                label = std::to_string(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 0));
+                label = std::to_string(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, AREADESCRIPTOR::RECT_H_DEFAULT));
                 label.erase(label.find_last_not_of('0') + 1, std::string::npos);
             }
             else {
-                label = std::to_string(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 0));
+                label = std::to_string(settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, AREADESCRIPTOR::RECT_W_DEFAULT));
                 label.erase(label.find_last_not_of('0') + 1, std::string::npos);
             }
             std::shared_ptr<QGraphicsSimpleTextItem> ti = std::make_shared<QGraphicsSimpleTextItem>(label.c_str(), this);

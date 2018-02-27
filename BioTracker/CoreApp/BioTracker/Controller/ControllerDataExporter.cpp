@@ -53,12 +53,21 @@ SourceVideoMetadata ControllerDataExporter::getSourceMetadata() {
 }
 
 void ControllerDataExporter::loadFile(std::string file) {
-	if (_factory) {
-		qobject_cast<IModelDataExporter*>(m_Model)->loadFile(file);
-	}
-	else {
-		std::cout << "Can not load tracks for this plugin as it does not provide a factory." << std::endl;
-	}
+    if (_factory) {
+        qobject_cast<IModelDataExporter*>(m_Model)->loadFile(file);
+    }
+    else {
+        std::cout << "Can not load tracks for this plugin as it does not provide a factory." << std::endl;
+    }
+}
+
+void ControllerDataExporter::saveFile(std::string file) {
+    if (_factory) {
+        qobject_cast<IModelDataExporter*>(m_Model)->writeAll(file);
+    }
+    else {
+        std::cout << "Can not save tracks for this plugin as it does not provide a factory." << std::endl;
+    }
 }
 
 void ControllerDataExporter::createView() {

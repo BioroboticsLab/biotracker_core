@@ -10,8 +10,8 @@
 Rectification::Rectification() {
 
 	BioTracker::Core::Settings *_settings = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-    double w = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, 100), std::numeric_limits<double>::epsilon());
-    double h = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, 100), std::numeric_limits<double>::epsilon());
+    double w = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_W, AREADESCRIPTOR::RECT_W_DEFAULT), std::numeric_limits<double>::epsilon());
+    double h = std::max(_settings->getValueOrDefault<double>(AREADESCRIPTOR::RECT_H, AREADESCRIPTOR::RECT_H_DEFAULT), std::numeric_limits<double>::epsilon());
 	initRecitification(w,h);
 	setupRecitification(0,0,0,0);
 }

@@ -160,13 +160,17 @@ void Worker::run() {
 	}
 }
 
-int VideoCoder::toggle(int fps, int w, int h) {
+int VideoCoder::toggle(int w, int h, double fps) {
 
 	//Grab the codec from config file
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string codecStr = codecList[set->getValueOrDefault<int>(CFG_CODEC, 0)].second;
 	m_dropFrames = set->getValueOrDefault<bool>(CFG_DROPFRAMES, CFG_DROPFRAMES_VAL);
 	m_qp = set->getValueOrDefault<int>(CFG_GPU_QP, CFG_GPU_QP_VAL);
+    if (fps == -1) {
+        fps = m_fps;
+    }
+
 
 	if (!m_recording)
 	{

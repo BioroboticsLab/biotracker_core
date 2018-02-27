@@ -30,7 +30,8 @@ public:
     int getTrialNumber();
     QString generateBasename(bool temporaryFile);
 
-	void loadFile(std::string file);
+    void loadFile(std::string file);
+    void saveFile(std::string file);
 
 Q_SIGNALS:
 	void emitResetUndoStack();

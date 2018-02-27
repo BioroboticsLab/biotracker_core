@@ -156,7 +156,14 @@ namespace BioTracker {
 
 				//Grab the codec from config file
 				BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
-				m_fps = set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL);
+                double fps = set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL);
+                if (fps > 0) {
+                    m_fps = fps;
+                }
+                else
+                {
+                    m_fps = 1;
+                }
 
 				// load first image
 				if (this->numFrames() > 0) {
@@ -180,7 +187,7 @@ namespace BioTracker {
 				if (this->numFrames() <= 0) {
 					return false;
 				}
-				m_recording = vCoder->toggle(1, m_w, m_h);
+				m_recording = vCoder->toggle(m_w, m_h, m_fps);
 
 				return m_recording;
 			}
@@ -250,6 +257,14 @@ namespace BioTracker {
 				if (!m_capture.isOpened()) {
 					throw video_open_error(":(");
 				}
+
+                //Grab the fps from config file
+                BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+                double fps = set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL);
+                if (fps != -1) {
+                    m_fps = fps;
+                }
+
 				m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
 				m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 				m_recording = false;
@@ -270,7 +285,7 @@ namespace BioTracker {
 				if (!m_capture.isOpened()) {
 					return false;
 				}
-				m_recording = vCoder->toggle(m_fps, m_w, m_h);
+				m_recording = vCoder->toggle(m_w, m_h, m_fps);
 
 				return m_recording;
 			}
@@ -341,9 +356,9 @@ namespace BioTracker {
 				std::cout << "\nStarting to record on camera no. " << conf._id << std::endl;
 				m_w = conf._width == -1 ? set->getValueOrDefault<int>(CFG_CAMERA_DEFAULT_W, CFG_CAMERA_DEFAULT_W_VAL) : conf._width;
 				m_h = conf._height == -1 ? set->getValueOrDefault<int>(CFG_CAMERA_DEFAULT_H, CFG_CAMERA_DEFAULT_H_VAL) : conf._height;
-				m_fps = conf._fps == -1 ? set->getValueOrDefault<int>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL) : conf._fps;
+				m_fps = conf._fps == -1 ? set->getValueOrDefault<double>(CFG_RECORD_FPS, CFG_RECORD_FPS_VAL) : conf._fps;
 				m_recording = false;
-				vCoder = std::make_shared<VideoCoder>();
+				vCoder = std::make_shared<VideoCoder>(m_fps);
 
 				int fails = 0;
 				while (!m_capture.isOpened() && fails < 5) {
@@ -359,7 +374,7 @@ namespace BioTracker {
 
 				if (m_w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, m_w);
 				if (m_h != -1)     m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
-				if (m_fps != -1) m_capture.set(CV_CAP_PROP_FPS, m_fps);
+				if (m_fps != -1)   m_capture.set(CV_CAP_PROP_FPS, m_fps);
 
 				m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
 				m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -380,7 +395,7 @@ namespace BioTracker {
 				if (!m_capture.isOpened()) {
 					return false;
 				}
-				m_recording = vCoder->toggle(m_fps, m_w, m_h);
+				m_recording = vCoder->toggle(m_w, m_h, m_fps);
 
 				return m_recording;
 			}

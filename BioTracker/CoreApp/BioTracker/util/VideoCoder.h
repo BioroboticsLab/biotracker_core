@@ -105,20 +105,24 @@ class VideoCoder : public QObject
 	Q_OBJECT
 
 public:
-	VideoCoder() {
+	VideoCoder(double fps) {
 #ifdef WITH_CUDA
 		m_nvEncoder = std::make_shared<EncoderInterface>();
 #endif
 		m_recType = 0;
 		m_recording = false;
 		m_dropFrames = false;
+        m_fps = fps;
 	}
+
+    VideoCoder() : VideoCoder(1) {
+    }
 
 	~VideoCoder() {
 		stop();
 	}
 
-	int toggle(int fps, int w, int h);
+	int toggle(int w, int h, double fps = -1);
 
 	void add(std::shared_ptr<cv::Mat> m, int needsConversion = 0);
 
@@ -136,6 +140,7 @@ private:
 	int m_recording;
 	bool m_dropFrames;
 	int m_qp;
+    double m_fps;
 signals:
 	void operate(const QString &);
 };

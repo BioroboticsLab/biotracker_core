@@ -18,6 +18,8 @@ public:
 	 */ 
     void open(IModelTrackedTrajectory *root) override;
 
+    void finalize() override;
+
 protected:
 
     int getMaxLinecount();

@@ -66,7 +66,7 @@ Q_SIGNALS:
 
     void on_actionLoad_trackingdata_triggered();
 
-    //void on_actionSave_tracking_data_triggered();
+    void on_actionSave_trackingdata_triggered();
 
     void on_actionQuit_triggered();
 

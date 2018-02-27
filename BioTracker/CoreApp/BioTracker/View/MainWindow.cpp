@@ -206,12 +206,12 @@ void MainWindow::setupUpperToolBar() {
 
 
 	//add finalize experment button
-	QPushButton* finalizeExperimentButton = new QPushButton("Finalize Trial");
-	finalizeExperimentButton->setStyleSheet("padding: 10px;");
-	ControllerMainWindow* ctr = static_cast<ControllerMainWindow*>(getController());
-	QObject::connect(finalizeExperimentButton, &QPushButton::clicked, ctr, &ControllerMainWindow::emitFinalizeExperiment, Qt::DirectConnection);
+	//QPushButton* finalizeExperimentButton = new QPushButton("Finalize Trial");
+	//finalizeExperimentButton->setStyleSheet("padding: 10px;");
+	//ControllerMainWindow* ctr = static_cast<ControllerMainWindow*>(getController());
+	//QObject::connect(finalizeExperimentButton, &QPushButton::clicked, ctr, &ControllerMainWindow::emitFinalizeExperiment, Qt::DirectConnection);
 
-	informativeCanvasLayout->addWidget(finalizeExperimentButton);
+	//informativeCanvasLayout->addWidget(finalizeExperimentButton);
 
 	//add canvas widget to toolbar
 	informativeCanvas->setLayout(informativeCanvasLayout);
@@ -290,26 +290,9 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
-	// if (_currentCoreParameterView) {
-	// 	CoreParameterView* v = static_cast<CoreParameterView*>(_currentCoreParameterView);
-	// 	QWidget* w = v->getTrackerHook();
-
-	// 	if (_currentParameterView) {
-	// 		dynamic_cast<QWidget*>(_currentParameterView)->setParent(0);
-	// 	}
-
-	// 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-	// 	dynamic_cast<QTabWidget*>(w)->removeTab(0);
-	// 	dynamic_cast<QTabWidget*>(w)->insertTab(0, pluginParameter, "tracker");
-		
-	// }
-	// else {
-	// 	qWarning() << "Error adding tracker parameter view";
-	// 	assert(false);
-	// }
-
 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-	ui->toolBox->addItem(pluginParameter, "Tracker options");
+    ui->toolBox->removeItem(2);
+	ui->toolBox->insertItem(2, pluginParameter, "Tracker options");
 }
 
 void MainWindow::addCoreParameterView(IView * coreParameterView)
@@ -392,7 +375,7 @@ void MainWindow::on_actionOpen_Video_triggered() {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
 
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open video", "", videoFilter, 0, QFileDialog::DontUseNativeDialog);
+                                                    "Open video", "", videoFilter, 0);
 
     if (!filename.isEmpty()) {
         dynamic_cast<ControllerMainWindow*> (getController())->loadVideo(filename);
@@ -403,7 +386,7 @@ void MainWindow::on_actionLoad_Tracker_triggered() {
     static const QString pluginFilter("BioTracker Tracking Plugin files (*.tracker.so *.tracker.dll *.tracker.dylib)");
 
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open BioTracker Tracking Plugin", "", pluginFilter, 0, QFileDialog::DontUseNativeDialog);
+                                                    "Open BioTracker Tracking Plugin", "", pluginFilter, 0);
 
     if (!filename.isEmpty()) {
         qobject_cast<ControllerMainWindow*> (getController())->loadTracker(filename);
@@ -416,7 +399,7 @@ void MainWindow::on_actionOpen_Picture_triggered() {
 
     std::vector<boost::filesystem::path> files;
     for (QString const& path : QFileDialog::getOpenFileNames(this,
-                                                             "Open image files", "", imageFilter, 0, QFileDialog::DontUseNativeDialog)) {
+                                                             "Open image files", "", imageFilter, 0)) {
         files.push_back(boost::filesystem::path(path.toStdString()));
     }
 
@@ -431,13 +414,24 @@ void MainWindow::on_actionLoad_trackingdata_triggered() {
 
 	std::vector<boost::filesystem::path> files;
 	for (QString const& path : QFileDialog::getOpenFileNames(this,
-		"Open image files", "", imageFilter, 0, QFileDialog::DontUseNativeDialog)) {
+		"Open image files", "", imageFilter, 0)) {
 		files.push_back(boost::filesystem::path(path.toStdString()));
 	}
 
 	if (!files.empty()) {
 		qobject_cast<ControllerMainWindow*> (getController())->loadTrajectoryFile(files[0].string());
 	}
+}
+
+void MainWindow::on_actionSave_trackingdata_triggered() {
+    static const QString imageFilter(
+        "tracking data files (*.csv *.dat *.json)");
+
+    boost::filesystem::path file;
+    QString f = QFileDialog::getSaveFileName(this, "Open image files", "", imageFilter, 0);
+
+    qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
+ 
 }
 
 void MainWindow::on_actionOpen_Camera_triggered() {
