@@ -25,6 +25,7 @@
 #include "qdesktopwidget.h"
 
 #include "QToolButton"
+#include "QDesktopServices"
 
 
 
@@ -70,15 +71,15 @@ MainWindow::~MainWindow() {
 void MainWindow::setupUpperToolBar() {
 
 	_trackerActivator = new SwitchButton("not tracking", "tracking");
+	_trackerActivator->setToolTip("Activate/Disable tracking");
 	QObject::connect(_trackerActivator , &SwitchButton::emitSetEnabled, this, &MainWindow::receiveSetTracking, Qt::DirectConnection);
 	//QAction* activatorAction = ui->toolBarMenu->addWidget(_trackerActivator);
 
-	ui->toolBarMenu->setStyleSheet("QGroupBox"
-	" {border: 1px solid #e5e5e5;border-radius: 5px; spacing: 1px; padding: 3px; margin-top: 1ex; /* leave space at the top for the title */}"
-	"QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}"
-	"QToolButton {padding: 5px; margin: 0px}"
-	);
-
+	// ui->toolBarMenu->setStyleSheet("QGroupBox"
+	// " {border: 1px solid #e5e5e5;border-radius: 5px; spacing: 1px; padding: 3px; margin-top: 1ex; /* leave space at the top for the title */}"
+	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}"
+	// "QToolButton {padding: 5px; margin: 0px}"
+	// );
 
 	//infomativeCanvas
 	QWidget* informativeCanvas = new QWidget;
@@ -91,7 +92,7 @@ void MainWindow::setupUpperToolBar() {
 	_mediaBox = new QGroupBox("Load media");
 	//style groupbox (initial red border -> no video loaded)
 	 _mediaBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #ff8a8a;}");
+	 " {border: 1px solid #c8e6c9;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 	QFont font = QFont();
 	font.setPointSize(8);
@@ -130,7 +131,7 @@ void MainWindow::setupUpperToolBar() {
 	_trackerBox = new QGroupBox("Load tracker");
 	//style groupbox
 	_trackerBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #ff8a8a;}");
+	 " {border: 1px solid #c8e6c9;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 
 	QFont font0 = QFont();
@@ -212,7 +213,6 @@ void MainWindow::setupUpperToolBar() {
 	//finalizeExperimentButton->setStyleSheet("padding: 10px;");
 	//ControllerMainWindow* ctr = static_cast<ControllerMainWindow*>(getController());
 	//QObject::connect(finalizeExperimentButton, &QPushButton::clicked, ctr, &ControllerMainWindow::emitFinalizeExperiment, Qt::DirectConnection);
-
 	//informativeCanvasLayout->addWidget(finalizeExperimentButton);
 
 	//add canvas widget to toolbar
@@ -226,11 +226,11 @@ void MainWindow::setupUpperToolBar() {
 
 void MainWindow::checkTrackerGroupBox(){
 	_trackerBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #3fff3f;}");
+	" {border: 1px solid #82c985;}");
 }
 void MainWindow::checkMediaGroupBox(){
 	_mediaBox->setStyleSheet("QGroupBox"
-	" {border: 1px solid #3fff3f;}");
+	" {border: 1px solid #82c985;}");
 }
 
 void MainWindow::setupVideoToolBar() {
@@ -244,6 +244,10 @@ void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 	}
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTREMOVE) {
 		ui->actionDelete_selected_tracks->setEnabled(permission.second);
+		return;
+	}
+	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTSWAP){
+		ui->actionSwap_ID_s->setEnabled(permission.second);
 		return;
 	}
 }
@@ -296,7 +300,7 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 	if (notificationWidget) {
 		notificationWidget->updateGeometry();
 		
-		ui->toolBox->addItem(notificationWidget, QString("Notifications"));
+		ui->notificationTab->layout()->addWidget(notificationWidget);
 
 		notificationWidget->setVisible(1);
 	}
@@ -305,8 +309,8 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-    ui->toolBox->removeItem(2);
-	ui->toolBox->insertItem(2, pluginParameter, "Tracker options");
+    ui->trackerOptions->layout()->removeItem(ui->trackerOptions->layout()->takeAt(0));
+	ui->trackerOptions->layout()->addWidget(pluginParameter);
 }
 
 void MainWindow::addCoreParameterView(IView * coreParameterView)
@@ -378,8 +382,7 @@ void MainWindow::setCursorPositionLabel(QPoint pos)
 void MainWindow::activeTrackingCheckBox() {
     //ui->checkBox_TrackingActivated->setEnabled(true);
 	_trackerActivator->setEnabled(true);
-	_trackerBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #3fff3f;}");
+	checkTrackerGroupBox();
 }
 
 void MainWindow::deactivateTrackingCheckBox() {
@@ -480,6 +483,12 @@ void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
 
 void MainWindow::on_actionQuit_triggered() {
 	qobject_cast<ControllerMainWindow*> (getController())->exit();
+}
+
+void MainWindow::on_actionSettings_triggered() {
+	m_SettingsWindow = new SettingsWindow();
+
+	m_SettingsWindow->show();
 }
 
 void MainWindow::on_rightPanelViewControllerButton_clicked(){
@@ -607,16 +616,10 @@ void MainWindow::on_actionRight_panel_triggered(bool checked){
 	ui->rightPanelViewControllerButton->click();
 }
 
-//////////////////////////////////Extras//////////////////////////////
+//////////////////////////////////Help//////////////////////////////
 
-void MainWindow::on_actionSettings_triggered() {
-	m_SettingsWindow = new SettingsWindow();
-
-	m_SettingsWindow->show();
-}
-
-void MainWindow::closeEvent(QCloseEvent *event) {
-    qobject_cast<ControllerMainWindow*> (getController())->exit();
+void MainWindow::on_actionUser_guide_triggered(){
+	QDesktopServices::openUrl(QUrl("https://github.com/BioroboticsLab/biotracker_core/wiki"));
 }
 
 void MainWindow::on_actionAbout_triggered() {
@@ -727,6 +730,11 @@ void MainWindow::on_actionShortcuts_triggered() {
 	outerWidget->show();
 
 
+}
+
+/////////////
+void MainWindow::closeEvent(QCloseEvent *event) {
+    qobject_cast<ControllerMainWindow*> (getController())->exit();
 }
 
 

@@ -74,13 +74,15 @@ Q_SIGNALS:
 
     void on_actionOpen_Camera_triggered();
 
+//menu->Edit
+
 	void on_actionUndo_triggered();
 
 	void on_actionRedo_triggered();
 
 	void on_actionShowActionList_triggered();
 
-	void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
+    void on_actionSettings_triggered();
 
 //menu->View
     //menu->View->Toolbars
@@ -102,16 +104,19 @@ Q_SIGNALS:
     void on_actionAdd_elliptical_annotation_triggered();
     void on_actionDelete_selected_Annotation_triggered();
 
-//menu->Extras
-	void on_actionSettings_triggered();
+//menu->Help
 
     void on_actionAbout_triggered();
 
     void on_actionShortcuts_triggered();
 
+    void on_actionUser_guide_triggered();
+
 //GUI
 
     void receiveSelectedCameraDevice(CameraConfiguration conf);
+
+    void on_comboBox_TrackerSelect_currentIndexChanged(QString s);
 
     void receiveSetTracking(bool toggle);
 

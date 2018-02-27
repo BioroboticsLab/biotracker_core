@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>9</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
@@ -36,6 +36,9 @@
     <widget class="QScrollArea" name="scrollArea">
      <property name="autoFillBackground">
       <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAsNeeded</enum>
@@ -51,8 +54,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>302</width>
-        <height>479</height>
+        <width>304</width>
+        <height>472</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
