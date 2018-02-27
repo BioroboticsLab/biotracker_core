@@ -19,17 +19,8 @@ VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controlle
                        QSize(), QIcon::Normal, QIcon::Off);
 
     ui->sld_video->setMinimum(0);
-	ui->comboBoxSelectedView->setVisible(false);
-	ui->labelView->setVisible(false);
 	this->setSelectedView("Original");
-
-    ui->button_previousFrame->hide();
-    ui->button_playPause->hide();
-    ui->button_stop->hide();
-    ui->button_nextFrame->hide();
-    ui->button_screenshot->hide();
-    ui->button_record->hide();
-    ui->button_record_cam->hide();
+    updateGeometry();
 }
 
 VideoControllWidget::~VideoControllWidget() {
@@ -37,14 +28,11 @@ VideoControllWidget::~VideoControllWidget() {
 }
 
 void VideoControllWidget::setSelectedView(QString str) {
-    if (!ui->comboBoxSelectedView->findText(str)) {
-        ui->comboBoxSelectedView->addItem(str);
-    }
-    ui->comboBoxSelectedView->setCurrentText(str);
+    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+    controller->changeImageView(str);
 }
 
 void VideoControllWidget::setVideoViewComboboxModel(QStringListModel* comboboxModel) {
-    ui->comboBoxSelectedView->setModel(comboboxModel);
 }
 
 void VideoControllWidget::getNotified() {
@@ -75,10 +63,19 @@ void VideoControllWidget::getNotified() {
     ui->frame_num_edit->setText(QString::number(currentFrameNr));
     ui->sld_video->setValue(currentFrameNr);
 
-	ui->fps_label->setText(QString::number(mediaPlayer->getFpsOfSourceFile()));
+    
+    //Write current fps label every 1/2 second
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    long long dt = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFpsSet).count();
+    int fps = mediaPlayer->getCurrentFPS();
+    if (dt > 500 || fps <= 0){
+        ui->lcd_currentFpsNum->display(fps);
+        lastFpsSet = now;
+    }
+
+    ui->fps_label->setText(QString::number(mediaPlayer->getFpsOfSourceFile()));
 	double cfps = mediaPlayer->getCurrentFPS();
-	//ui->label_currentFpsNum->setText(QString::number(mediaPlayer->getCurrentFPS()));
-	ui->lcd_currentFpsNum->display(mediaPlayer->getCurrentFPS());
+
 
     int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
 
@@ -158,10 +155,7 @@ void VideoControllWidget::on_button_screenshot_clicked() {
 }
 
 void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {
-	QString name = arg1;
-	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-
-	controller->changeImageView(name);
+	/*QString name = arg1;*/
 }
 
 void VideoControllWidget::on_sld_video_sliderReleased() {
@@ -251,25 +245,7 @@ void VideoControllWidget::setupVideoToolbar(){
     if(mw){
         QToolBar* videoToolBar = mw->findChild<QToolBar*>("toolBarVideo");
         if(videoToolBar){
-    //         QToolButton* bPlayPause = new QToolButton;
-    //         	QToolButton* cameraButton = new QToolButton;
-	// cameraButton->setIconSize(QSize(24,24));
-	// cameraButton->setDefaultAction(ui->actionOpen_Camera);
-	// cameraButton->setAutoRaise(true);
-    //         QToolButton* bStop= new QToolButton;
-    //         QToolButton* bNextFrame = new QToolButton;
-    //         QToolButton* bPrevFrame = new QToolButton;
-    //         QToolButton* bScreenshot = new QToolButton("Take screenshot");
-    //         QToolButton* bRecCam = new QToolButton("Record Cam");
-    //         QToolButton* bRec = new QToolButton("Record all");
 
-    //         bPlayPause->setAction(ui->actionPlay_Pause);
-    //         bStop->setAction(ui->actionStop);
-    //         bNextFrame->setAction(ui->actionNext_frame);
-    //         bPrevFrame->setAction(ui->actionLast_frame);
-    //         bScreenshot->setAction(ui->actionScreenshot);
-    //         bRecCam->setAction(ui->actionRecord_cam);
-            // bRec->setAction(ui->actionRecord_all);
             videoToolBar->addAction(ui->actionPrev_frame);
             videoToolBar->addSeparator();
             videoToolBar->addAction(ui->actionPlay_Pause);
