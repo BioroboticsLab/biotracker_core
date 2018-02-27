@@ -31,11 +31,13 @@ void ControllerMainWindow::loadVideo(QString str) {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
     Q_EMIT emitMediaLoaded(str.toStdString());
+    
+    dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
 
 void ControllerMainWindow::loadTracker(QString str) {
     qobject_cast<GuiContext*>(m_BioTrackerContext)->loadBioTrackerPlugin(str);
-
+    dynamic_cast<MainWindow*>(m_View)->checkTrackerGroupBox();
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
@@ -45,6 +47,8 @@ void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> fil
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
     Q_EMIT emitMediaLoaded(str);
+
+    dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
 
 void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
@@ -52,6 +56,8 @@ void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
     Q_EMIT emitMediaLoaded("::Camera");
+
+    dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
 
 void ControllerMainWindow::activeTracking() {

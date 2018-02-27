@@ -74,8 +74,10 @@ void MainWindow::setupUpperToolBar() {
 	//QAction* activatorAction = ui->toolBarMenu->addWidget(_trackerActivator);
 
 	ui->toolBarMenu->setStyleSheet("QGroupBox"
-	" {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
-	"QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
+	" {border: 1px solid #e5e5e5;border-radius: 5px; spacing: 1px; padding: 3px; margin-top: 1ex; /* leave space at the top for the title */}"
+	"QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}"
+	"QToolButton {padding: 5px; margin: 0px}"
+	);
 
 
 	//infomativeCanvas
@@ -86,15 +88,15 @@ void MainWindow::setupUpperToolBar() {
 
 
 	/////////////////////media groupbox
-	QGroupBox* mediaBox = new QGroupBox("Load media");
-	//style groupbox
-	// mediaBox->setStyleSheet("QGroupBox"
-	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	_mediaBox = new QGroupBox("Load media");
+	//style groupbox (initial red border -> no video loaded)
+	 _mediaBox->setStyleSheet("QGroupBox"
+	 " {border: 1px solid #ff8a8a;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 	QFont font = QFont();
 	font.setPointSize(8);
 	font.setBold(true);
-	mediaBox->setFont(font);
+	_mediaBox->setFont(font);
 
 	QHBoxLayout* mediaBoxLayout = new QHBoxLayout;
 	mediaBoxLayout->setContentsMargins(0,0,0,0);
@@ -118,23 +120,23 @@ void MainWindow::setupUpperToolBar() {
 	mediaBoxLayout->addWidget(imageButton);
 	mediaBoxLayout->addWidget(cameraButton);
 
-	mediaBox->setLayout(mediaBoxLayout);
+	_mediaBox->setLayout(mediaBoxLayout);
 
-	informativeCanvasLayout->addWidget(mediaBox);
+	informativeCanvasLayout->addWidget(_mediaBox);
 	//ui->toolBarMenu->addWidget(mediaBox);
 
 
 	////////trackerbox
-	QGroupBox* trackerBox = new QGroupBox("Load tracker");
+	_trackerBox = new QGroupBox("Load tracker");
 	//style groupbox
-	// trackerBox->setStyleSheet("QGroupBox"
-	// " {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
+	_trackerBox->setStyleSheet("QGroupBox"
+	 " {border: 1px solid #ff8a8a;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 
 	QFont font0 = QFont();
 	font0.setPointSize(8);
 	font0.setBold(true);
-	trackerBox->setFont(font0);
+	_trackerBox->setFont(font0);
 
 	QHBoxLayout* trackerBoxLayout = new QHBoxLayout;
 	trackerBoxLayout->setContentsMargins(0,0,0,0);
@@ -145,9 +147,9 @@ void MainWindow::setupUpperToolBar() {
 	trackerButton->setAutoRaise(true);
 
 	trackerBoxLayout->addWidget(trackerButton);
-	trackerBox->setLayout(trackerBoxLayout);
+	_trackerBox->setLayout(trackerBoxLayout);
 
-	informativeCanvasLayout->addWidget(trackerBox);
+	informativeCanvasLayout->addWidget(_trackerBox);
 	//ui->toolBarMenu->addWidget(trackerBox);
 
 
@@ -222,6 +224,15 @@ void MainWindow::setupUpperToolBar() {
 
 }
 
+void MainWindow::checkTrackerGroupBox(){
+	_trackerBox->setStyleSheet("QGroupBox"
+	 " {border: 1px solid #3fff3f;}");
+}
+void MainWindow::checkMediaGroupBox(){
+	_mediaBox->setStyleSheet("QGroupBox"
+	" {border: 1px solid #3fff3f;}");
+}
+
 void MainWindow::setupVideoToolBar() {
 	
 }
@@ -241,6 +252,9 @@ void MainWindow::addVideoControllWidget(IView* widget) {
     QLayout* layout = new QGridLayout();
     layout->addWidget(dynamic_cast<QWidget*>(widget));
     ui->videoControls->setLayout(layout);
+
+	//ui->videoControls->adjustSize();
+
 }
 
 void MainWindow::addVideoView(IView* videoView) {
@@ -381,6 +395,8 @@ void MainWindow::setCursorPositionLabel(QPoint pos)
 void MainWindow::activeTrackingCheckBox() {
     //ui->checkBox_TrackingActivated->setEnabled(true);
 	_trackerActivator->setEnabled(true);
+	_trackerBox->setStyleSheet("QGroupBox"
+	 " {border: 1px solid #3fff3f;}");
 }
 
 void MainWindow::deactivateTrackingCheckBox() {

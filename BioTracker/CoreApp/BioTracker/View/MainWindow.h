@@ -49,6 +49,8 @@ class MainWindow : public IViewMainWindow {
 
     void setupUpperToolBar();
     void setupVideoToolBar();
+    void checkTrackerGroupBox();
+    void checkMediaGroupBox();
     void activateTracking();
 
     void deactivateTracking();
@@ -139,6 +141,9 @@ Q_SIGNALS:
 	QGraphicsObject *_currentCoreView;
     QString _previouslySelectedTracker; 
     SwitchButton* _trackerActivator;
+
+    QGroupBox* _mediaBox;
+    QGroupBox* _trackerBox;
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H
