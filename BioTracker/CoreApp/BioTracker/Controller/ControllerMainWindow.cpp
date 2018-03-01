@@ -35,9 +35,13 @@ void ControllerMainWindow::loadVideo(QString str) {
     dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
 
-void ControllerMainWindow::loadTracker(QString str) {
-    qobject_cast<GuiContext*>(m_BioTrackerContext)->loadBioTrackerPlugin(str);
+void ControllerMainWindow::loadTracker(QString plugin) {
+    Q_EMIT emitOnLoadPlugin(plugin.toStdString());
+    dynamic_cast<MainWindow*>(m_View)->resetTrackerViews();
+    qobject_cast<GuiContext*>(m_BioTrackerContext)->loadBioTrackerPlugin(plugin);
     dynamic_cast<MainWindow*>(m_View)->checkTrackerGroupBox();
+    activeTrackingCheckBox();
+    Q_EMIT emitPluginLoaded(plugin.toStdString());
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {
@@ -218,6 +222,7 @@ void ControllerMainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, b
 
 void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
     Q_EMIT emitOnLoadPlugin(plugin.toStdString());
+    dynamic_cast<MainWindow*>(m_View)->resetTrackerViews();
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
 	dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();

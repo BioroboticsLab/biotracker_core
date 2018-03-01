@@ -270,12 +270,12 @@ void MainWindow::addVideoView(IView* videoView) {
 
 void MainWindow::addTrackerElementsView(IView *elemView)
 {
-	if (_currentElementView && _currentCoreView) {
-		_currentElementView->setParent(0); 
-		_currentCoreView->setParent(0);
-		m_graphView->removeGraphicsItem(_currentElementView);
-		m_graphView->removeGraphicsItem(_currentCoreView);
-	}
+	// if (_currentElementView && _currentCoreView) {
+	// 	_currentElementView->setParent(0); 
+	// 	_currentCoreView->setParent(0);
+	// 	m_graphView->removeGraphicsItem(_currentElementView);
+	// 	m_graphView->removeGraphicsItem(_currentCoreView);
+	// }
 	QGraphicsObject *graphObj = dynamic_cast<QGraphicsObject *>(elemView);
 	graphObj->setParent(ui->trackingArea);
 
@@ -534,6 +534,18 @@ void MainWindow::receiveSetTracking(bool toggle){
 	else{
 		qobject_cast<ControllerMainWindow*> (getController())->deactiveTrackring();
 	}
+}
+
+void MainWindow::resetTrackerViews(){
+	if(_currentElementView && _currentCoreView){
+		_currentElementView->setParent(0); 
+		_currentCoreView->setParent(0);
+		m_graphView->removeGraphicsItem(_currentElementView);
+		m_graphView->removeGraphicsItem(_currentCoreView);
+	}
+
+	_currentElementView = nullptr;
+	_currentCoreView = nullptr;
 }
 
 //////////////////////////view toolbar actions///////////////////////////

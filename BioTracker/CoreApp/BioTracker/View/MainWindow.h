@@ -55,6 +55,8 @@ class MainWindow : public IViewMainWindow {
 
     void deactivateTracking();
 
+    void resetTrackerViews();
+
 Q_SIGNALS:
 	void selectPlugin(QString ct);
 
