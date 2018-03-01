@@ -33,9 +33,11 @@ void ControllerMainWindow::loadVideo(QString str) {
     Q_EMIT emitMediaLoaded(str.toStdString());
 }
 
-void ControllerMainWindow::loadTracker(QString str) {
-    qobject_cast<GuiContext*>(m_BioTrackerContext)->loadBioTrackerPlugin(str);
-
+void ControllerMainWindow::loadTracker(QString plugin) {
+    Q_EMIT emitOnLoadPlugin(plugin.toStdString());
+    qobject_cast<GuiContext*>(m_BioTrackerContext)->loadBioTrackerPlugin(plugin);
+    activeTrackingCheckBox();
+    Q_EMIT emitPluginLoaded(plugin.toStdString());
 }
 
 void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> files) {

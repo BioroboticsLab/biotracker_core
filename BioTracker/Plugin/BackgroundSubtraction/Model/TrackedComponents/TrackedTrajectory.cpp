@@ -115,7 +115,7 @@ IModelTrackedComponent* TrackedTrajectory::getLastChild()
 
 int TrackedTrajectory::size()
 {
-    return (_size == 0 ? _size : _size = _TrackedComponents.size());
+    return (_size == 0 ? _size = _TrackedComponents.size() : _size);
 }
 
 int TrackedTrajectory::validCount()
