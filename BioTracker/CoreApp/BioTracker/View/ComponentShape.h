@@ -101,6 +101,8 @@ class ComponentShape : public QGraphicsObject
 		void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 		void createShapeTracer(QVariant type, IModelTrackedPoint* historyChild, QPointF pos, QPen pen, QBrush brush);
+		double constrainAngle(double x);
+
 
 	private:
 
