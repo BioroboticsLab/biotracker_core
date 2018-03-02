@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	//setup toolbars
 	setupUpperToolBar();
 	setupVideoToolBar();
+	ui->toolBarTools->setEnabled(false);
 
 	ui->toolBox->setStyleSheet("QToolBox::tab {"
 	" background-color: #e5e5e5;}"
@@ -383,6 +384,7 @@ void MainWindow::activeTrackingCheckBox() {
     //ui->checkBox_TrackingActivated->setEnabled(true);
 	_trackerActivator->setEnabled(true);
 	checkTrackerGroupBox();
+	ui->toolBarTools->setEnabled(true);
 }
 
 void MainWindow::deactivateTrackingCheckBox() {
@@ -598,6 +600,12 @@ void MainWindow::on_actionToggle_view_toolbar_triggered(){
 	ui->toolBarTools->setVisible(!currentState);
 	ui->actionToggle_view_toolbar->setText(!currentState?"Hide view toolbar": "Show view toolbar");
 }
+void MainWindow::on_actionToggle_video_toolbar_triggered() {
+	bool currentState = ui->toolBarVideo->isVisible();
+	ui->toolBarVideo->setVisible(!currentState);
+	ui->actionToggle_video_toolbar->setText(!currentState ? "Hide view toolbar" : "Show view toolbar");
+}
+
 void MainWindow::on_actionToggle_compact_menu_toolbar_2_triggered(){
 	// //hide/show compact actions
 	// for(int i = 3; i < ui->toolBarMenu->actions().size(); i++){
@@ -619,6 +627,9 @@ void MainWindow::on_toolBarMenu_visibilityChanged(bool visible){
 }
 void MainWindow::on_toolBarTools_visibilityChanged(bool visible){
 	ui->actionToggle_view_toolbar->setText(visible?"Hide view toolbar": "Show view toolbar");
+}
+void MainWindow::on_toolBarVideo_visibilityChanged(bool visible) {
+	ui->actionToggle_video_toolbar->setText(visible ? "Hide video toolbar" : "Show video toolbar");
 }
 
 void MainWindow::on_actionBottom_panel_triggered(bool checked){

@@ -91,6 +91,7 @@ Q_SIGNALS:
     void on_actionToggle_menu_toolbar_triggered();
     void on_actionToggle_view_toolbar_triggered();
     void on_actionToggle_compact_menu_toolbar_2_triggered();
+	void on_actionToggle_video_toolbar_triggered();
 
 
 //view toolbar actions
@@ -130,6 +131,7 @@ Q_SIGNALS:
 //ui signals
     void on_toolBarMenu_visibilityChanged(bool visible);
     void on_toolBarTools_visibilityChanged(bool visible);
+	void on_toolBarVideo_visibilityChanged(bool visible);
 
   private:
     Ui::MainWindow* ui;

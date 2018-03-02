@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1056</width>
-    <height>98</height>
+    <height>101</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -449,6 +449,9 @@
    </item>
   </layout>
   <action name="actionRecord_cam">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/recordCam.png</normaloff>:/Images/resources/recordCam.png</iconset>
@@ -458,6 +461,9 @@
    </property>
   </action>
   <action name="actionRecord_all">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/record.png</normaloff>:/Images/resources/record.png</iconset>
@@ -467,6 +473,9 @@
    </property>
   </action>
   <action name="actionScreenshot">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/screenshot.png</normaloff>:/Images/resources/screenshot.png</iconset>
@@ -479,6 +488,9 @@
    </property>
   </action>
   <action name="actionNext_frame">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrows-skip-forward.png</normaloff>:/Images/resources/arrows-skip-forward.png</iconset>
@@ -491,6 +503,9 @@
    </property>
   </action>
   <action name="actionPrev_frame">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrows-skip-back.png</normaloff>:/Images/resources/arrows-skip-back.png</iconset>
@@ -506,6 +521,9 @@
    </property>
   </action>
   <action name="actionStop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/stop.png</normaloff>:/Images/resources/stop.png</iconset>
@@ -518,6 +536,9 @@
    </property>
   </action>
   <action name="actionPlay_Pause">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrow-forward1.png</normaloff>:/Images/resources/arrow-forward1.png</iconset>
