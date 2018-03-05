@@ -325,8 +325,8 @@ int MediaPlayer::toggleRecordGraphicsScenes(GraphicsView *gv) {
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	m_recordScaled = set->getValueOrDefault<bool>(CFG_RECORDSCALEDOUT, false);
 	if (!m_recordScaled)
-		m_recd = m_videoc->toggle(30, s1.width(), s1.height());
+		m_recd = m_videoc->toggle(s1.width(), s1.height(), 30);
 	else
-		m_recd = m_videoc->toggle(30, s2.width(), s2.height());
+		m_recd = m_videoc->toggle(s2.width(), s2.height(), 30);
 	return m_recd;
 }

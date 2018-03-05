@@ -21,6 +21,7 @@ desktop.ini
 *.vcxproj.vspscc
 .gitignore.swp
 *.bak_*
+*.ini
 BioTracker.apparmor
 CMakeLists.txt.user.3.2-pre1
 manifest.json
