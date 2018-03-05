@@ -80,6 +80,9 @@
          <property name="handleWidth">
           <number>7</number>
          </property>
+         <property name="childrenCollapsible">
+          <bool>false</bool>
+         </property>
          <widget class="QWidget" name="videoAreaWidget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -422,7 +425,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -442,8 +445,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
-                     <height>302</height>
+                     <width>98</width>
+                     <height>50</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -488,8 +491,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
-                     <height>302</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -518,8 +521,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
-                     <height>302</height>
+                     <width>565</width>
+                     <height>294</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -601,8 +604,8 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
-                     <height>302</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <attribute name="label">

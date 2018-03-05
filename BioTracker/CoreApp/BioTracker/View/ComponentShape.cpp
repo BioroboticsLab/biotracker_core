@@ -85,7 +85,15 @@ QPainterPath ComponentShape::shape() const
 	}
 	else if( this->data(1) == "point") {
 		int dim = m_w <= m_h? m_w : m_h;
-		path.addEllipse(0, 0, dim , dim);
+		// path.addEllipse(0, 0, dim , dim);
+		QRectF ellipse; 
+		//ellipse = QRectF(0, m_h - m_w , m_w,  m_w);
+		qreal origin_x = m_rotationLine.p1().x() - dim /2;
+		qreal origin_y = m_rotationLine.p1().y() - dim /2;
+		ellipse = QRectF(origin_x, origin_y , dim, dim);
+
+		path.addEllipse(ellipse);
+
 	}
 	else if (this->data(1) == "rectangle") {
 		path.addRect(0, 0, m_w, m_h);
@@ -147,7 +155,18 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	//take the smaller of width and height
 	//a point should always have the same height and width
 	if (this->data(1) == "point") {
-		QRectF ellipse = QRectF(0, 0, m_w <= m_h? m_w : m_h ,  m_w <= m_h? m_w : m_h);
+		QRectF ellipse; 
+		if(m_w <= m_h){
+			//ellipse = QRectF(0, m_h - m_w , m_w,  m_w);
+			qreal origin_x = m_rotationLine.p1().x() - m_w /2;
+			qreal origin_y = m_rotationLine.p1().y() - m_w /2;
+			ellipse = QRectF(origin_x, origin_y , m_w, m_w);
+		}
+		else{
+			qreal origin_x = m_rotationLine.p1().x() - m_h /2;
+			qreal origin_y = m_rotationLine.p1().y() - m_h /2;
+			ellipse = QRectF(origin_x, origin_y , m_h,  m_h);
+		}
 		painter->drawEllipse(ellipse);
 	}
 
@@ -239,7 +258,15 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			}
 
 			//update Position
-			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
+			// qreal x,y;
+			// if(data(1) == "point"){
+			// 	x = m_w <= m_h? pointLike->getXpx() - m_w/2 : pointLike->getXpx() - m_h/2;
+			// 	y = m_w <= m_h? pointLike->getYpx() - m_w/2 : pointLike->getYpx() - m_h/2;
+			// 	this->setPos(x,y);
+			// }
+			// else{
+				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
+			// }
 			m_oldPos = this->pos().toPoint();
 
 			//create tracers
@@ -623,7 +650,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
 	//morphing
 	QMenu* morphMenu = new QMenu("Morph into...");
-	if(data(1)=="rect" || data(1) == "ellipse" || data(1) == "point"){
+	if(data(1)=="rectangle" || data(1) == "ellipse" || data(1) == "point"){
 		QAction* morphPoint = morphMenu->addAction("Point", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPoint()));
 		QAction* morphEllipse = morphMenu->addAction("Ellipse", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoEllipse()));
 		QAction* morphRect = morphMenu->addAction("Rectangle", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoRect()));
@@ -642,7 +669,9 @@ void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * histo
 	if (this->data(1) == "point") {
 		QGraphicsEllipseItem* tracePoint = new QGraphicsEllipseItem(m_tracingLayer);
 		tracePoint->setPos(pos);
-		tracePoint->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
+		int dim = m_w <= m_h? m_w : m_h;
+
+		tracePoint->setRect(QRect(-dim * m_tracerProportions / 2, -dim * m_tracerProportions / 2, dim * m_tracerProportions, dim * m_tracerProportions));
 		//tracer orientation
 		float tracerOrientation;
 		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
@@ -983,7 +1012,9 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 			toAngle = -angle - m_rotation;
 			oldAngle = -oldAngle;
 		}
-		Q_EMIT emitEntityRotation(m_trajectory, oldAngle, toAngle, m_currentFramenumber);
+		double toAngleNorm = constrainAngle(toAngle);
+		double oldAngleNorm = constrainAngle(oldAngle);
+		Q_EMIT emitEntityRotation(m_trajectory, oldAngleNorm, toAngleNorm, m_currentFramenumber);
 	}
 
 	update();
@@ -1062,4 +1093,11 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	}
 
 	update();
+}
+
+double ComponentShape::constrainAngle(double x){
+    x = fmod(x,360);
+    if (x < 0)
+        x += 360;
+    return x;
 }

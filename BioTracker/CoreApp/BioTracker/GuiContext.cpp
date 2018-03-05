@@ -87,4 +87,5 @@ void GuiContext::exit() {
     //}
 
 	std::exit(0);
+    qApp->exit();
 }
