@@ -4,6 +4,7 @@
 #include "Model/MediaPlayer.h"
 
 #include <QToolBar>
+#include <QDateTime>
 
 VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controller, IModel* model) :
     IViewWidget(parent, controller, model),
@@ -60,8 +61,15 @@ void VideoControllWidget::getNotified() {
 	}
 
     int currentFrameNr = mediaPlayer->getCurrentFrameNumber();
+    int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
+    int mediaFps = mediaPlayer->getFpsOfSourceFile();
     ui->frame_num_edit->setText(QString::number(currentFrameNr));
     ui->sld_video->setValue(currentFrameNr);
+
+    QString currentVideoTime = QDateTime::fromMSecsSinceEpoch(((float)currentFrameNr / (float) mediaFps) * 1000).toUTC().toString("hh:mm:ss:zzz");
+
+
+    ui->time_edit->setText(currentVideoTime);
 
     
     //Write current fps label every 1/2 second
@@ -73,11 +81,9 @@ void VideoControllWidget::getNotified() {
         lastFpsSet = now;
     }
 
-    ui->fps_label->setText(QString::number(mediaPlayer->getFpsOfSourceFile()));
+    ui->fps_label->setText(QString::number(mediaFps));
 	double cfps = mediaPlayer->getCurrentFPS();
 
-
-    int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
 
     if(totalNumberOfFrames >= 1) {
         ui->sld_video->setEnabled(true);

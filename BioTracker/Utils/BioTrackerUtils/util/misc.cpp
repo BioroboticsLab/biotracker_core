@@ -26,16 +26,37 @@ int split(std::string &txt, std::vector<std::string> &strs, char ch)
 
 std::string getTimeAndDate(std::string prefix, std::string suffix)
 {
-	time_t  timetitle;
-	std::string timeInfo = prefix;
-	time(&timetitle);
-	std::string t = ctime(&timetitle);
-	for (int i = 0; i < t.size(); i++)
-		if (t[i] == ' ' || t[i] == ':')
-			t[i] = '_';
-	timeInfo += t.substr(0, t.size() - 1);
-	timeInfo += suffix;
-	return timeInfo;
+	// time_t  timetitle;
+	// std::string timeInfo = prefix;
+	// time(&timetitle);
+	// std::string t = ctime(&timetitle);
+	// for (int i = 0; i < t.size(); i++)
+	// 	if (t[i] == ' ' || t[i] == ':')
+	// 		t[i] = '_';
+	// timeInfo += t.substr(0, t.size() - 1);
+	// timeInfo += suffix;
+	// return timeInfo;
+
+
+
+
+	time_t rawtime;
+    struct tm * timeinfo;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    char t[30];
+    strftime(t, 30, "%Y-%m-%dT%H:%M:%S", timeinfo); //
+
+	std::string out = prefix;
+
+	std::string timeStampF(t);
+
+	out += timeStampF;
+	out += suffix;
+
+    return out;
 }
 
 std::vector<cv::Point> stringToCVPointVec(std::string arena) {
