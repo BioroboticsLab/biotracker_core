@@ -48,6 +48,7 @@ void SwitchButton::paintEvent(QPaintEvent *e) {
         QRectF textRect = QRectF(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin);
         p.drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter,  _switch ? _s1: _s0);
     } else {
+        p.setRenderHint(QPainter::Antialiasing, true);
         p.setBrush(Qt::black);
         p.setOpacity(0.12);
         p.drawRoundedRect(QRect(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin), 8.0, 8.0);

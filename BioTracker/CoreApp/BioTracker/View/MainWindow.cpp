@@ -93,7 +93,7 @@ void MainWindow::setupUpperToolBar() {
 	_mediaBox = new QGroupBox("Load media");
 	//style groupbox (initial red border -> no video loaded)
 	 _mediaBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #c8e6c9;}");
+	 " {border: 1px solid #e56262;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 	QFont font = QFont();
 	font.setPointSize(8);
@@ -132,7 +132,7 @@ void MainWindow::setupUpperToolBar() {
 	_trackerBox = new QGroupBox("Load tracker");
 	//style groupbox
 	_trackerBox->setStyleSheet("QGroupBox"
-	 " {border: 1px solid #c8e6c9;}");
+	 " {border: 1px solid #e56262;}");
 	// "QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top center; padding: 0 3px;}");
 
 	QFont font0 = QFont();
@@ -394,7 +394,16 @@ void MainWindow::deactivateTrackingCheckBox() {
 
 void MainWindow::on_actionOpen_Video_triggered() {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
+	
+	// QFileDialog dialog(this);
+	// dialog.setNameFilter(videoFilter);
+	// QStringList fileNames;
+	// if (dialog.exec())	
+    // 	fileNames = dialog.selectedFiles();
 
+	// QString filename;
+	// if(fileNames.size() > 0)
+	// 	filename = fileNames[0];
     QString filename = QFileDialog::getOpenFileName(this,
                                                     "Open video", "", videoFilter, 0);
 

@@ -180,6 +180,11 @@ void VideoControllWidget::on_sld_video_actionTriggered(int action)
  */
 void VideoControllWidget::on_sld_video_sliderMoved(int position) {
     ui->frame_num_edit->setText(QString::number(position));
+        
+    MediaPlayer* mediaPlayer = dynamic_cast<MediaPlayer*>(getModel());
+    int mediaFps = mediaPlayer->getFpsOfSourceFile();
+    QString currentVideoTime = QDateTime::fromMSecsSinceEpoch(((float)position / (float) mediaFps) * 1000).toUTC().toString("hh:mm:ss:zzz");
+    ui->time_edit->setText(currentVideoTime);
 }
 
 void VideoControllWidget::on_doubleSpinBoxTargetFps_editingFinished() {
