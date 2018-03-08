@@ -41,16 +41,16 @@ class VideoControllWidget : public IViewWidget {
   private Q_SLOTS:
     void on_DurationChanged(int position);
     void on_PositionChanged(int position);
-    void on_button_nextFrame_clicked();
-    void on_button_playPause_clicked();
-	void on_button_record_clicked();
-	void on_button_record_cam_clicked();
+  //   void on_button_nextFrame_clicked();
+  //   void on_button_playPause_clicked();
+	// void on_button_record_clicked();
+	// void on_button_record_cam_clicked();
 
-    void on_button_stop_clicked();
+  //   void on_button_stop_clicked();
 
-    void on_button_screenshot_clicked();
+  //   void on_button_screenshot_clicked();
 
-    void on_button_previousFrame_clicked();
+  //   void on_button_previousFrame_clicked();
 
 
     void on_comboBoxSelectedView_currentTextChanged(const QString& arg1);

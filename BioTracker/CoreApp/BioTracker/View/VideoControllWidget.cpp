@@ -97,30 +97,30 @@ void VideoControllWidget::getNotified() {
 }
 
 
-void VideoControllWidget::on_button_nextFrame_clicked() {
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->nextFrame();
-}
+// void VideoControllWidget::on_button_nextFrame_clicked() {
+//     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+//     controller->nextFrame();
+// }
 
-void VideoControllWidget::on_button_playPause_clicked() {
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+// void VideoControllWidget::on_button_playPause_clicked() {
+//     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
-    if (m_Paus) {
-        controller->pause();
-    } else {
-        controller->play();
-    }
-}
+//     if (m_Paus) {
+//         controller->pause();
+//     } else {
+//         controller->play();
+//     }
+// }
 
-void VideoControllWidget::on_button_stop_clicked() {
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->stop();
-}
+// void VideoControllWidget::on_button_stop_clicked() {
+//     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+//     controller->stop();
+// }
 
-void VideoControllWidget::on_button_previousFrame_clicked() {
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->prevFrame();
-}
+// void VideoControllWidget::on_button_previousFrame_clicked() {
+//     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+//     controller->prevFrame();
+// }
 
 void VideoControllWidget::on_DurationChanged(int position) {
 
@@ -131,34 +131,34 @@ void VideoControllWidget::on_PositionChanged(int position) {
 }
 
 
-void VideoControllWidget::on_button_record_clicked() {
-	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+// void VideoControllWidget::on_button_record_clicked() {
+// 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
-	int success = controller->recordOutput();
-	if (success == 1) {
-		QPixmap pix(":/Images/resources/recording.png");
-		QIcon icon(pix);
-		ui->actionRecord_all->setIcon(icon);
-		//ui->actionRecord_all->setIconSize(QSize(32,32));
-	}
-	else {
-		QPixmap pix(":/Images/resources/record.png");
-		QIcon icon(pix);
-		ui->actionRecord_all->setIcon(icon);
-		//ui->actionRecord_all->setIconSize(QSize(32, 32));
-	}
-}
+// 	int success = controller->recordOutput();
+// 	if (success == 1) {
+// 		QPixmap pix(":/Images/resources/recording.png");
+// 		QIcon icon(pix);
+// 		ui->actionRecord_all->setIcon(icon);
+// 		//ui->actionRecord_all->setIconSize(QSize(32,32));
+// 	}
+// 	else {
+// 		QPixmap pix(":/Images/resources/record.png");
+// 		QIcon icon(pix);
+// 		ui->actionRecord_all->setIcon(icon);
+// 		//ui->actionRecord_all->setIconSize(QSize(32, 32));
+// 	}
+// }
 
-void VideoControllWidget::on_button_record_cam_clicked() {
-	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+// void VideoControllWidget::on_button_record_cam_clicked() {
+// 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 
-	int success = controller->recordInput();
-}
+// 	int success = controller->recordInput();
+// }
 
-void VideoControllWidget::on_button_screenshot_clicked() {
-    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->takeScreenshot();
-}
+// void VideoControllWidget::on_button_screenshot_clicked() {
+//     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+//     controller->takeScreenshot();
+// }
 
 void VideoControllWidget::on_comboBoxSelectedView_currentTextChanged(const QString& arg1) {
 	/*QString name = arg1;*/

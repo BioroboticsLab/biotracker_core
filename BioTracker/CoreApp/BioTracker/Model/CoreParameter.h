@@ -38,7 +38,7 @@ public:
 	bool m_antialiasingFull = false;
 
 	//Tracing
-	QString m_tracingStyle = "None";
+	QString m_tracingStyle = "No tracing";
 	int m_tracingHistory = 20;
 	int m_tracingSteps = 1;
 	QString m_tracingTimeDegradation = "None";

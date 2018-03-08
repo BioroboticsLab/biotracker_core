@@ -332,7 +332,7 @@ void CoreParameterView::fillUI()
 	//tracer orientation line
 	ui->checkBoxTracerOrientationLine->setChecked(coreParams->m_tracerOrientationLine);
 	//tracing style
-	if (coreParams->m_tracingStyle == "None") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
+	if (coreParams->m_tracingStyle == "No tracing") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
 	//tracing time degradation
 	if (coreParams->m_tracingTimeDegradation == "None") { ui->comboBoxTracingTimeDegradation->setCurrentIndex(0); }
 	//tracing history

@@ -12,7 +12,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
+    <width>525</width>
     <height>677</height>
    </rect>
   </property>
@@ -155,9 +155,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-242</y>
-          <width>317</width>
-          <height>903</height>
+          <y>-103</y>
+          <width>351</width>
+          <height>935</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -297,31 +297,48 @@
                   <number>5</number>
                  </property>
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
-                   <property name="bottomMargin">
-                    <number>6</number>
+                  <widget class="QWidget" name="widgetNoOfTracks" native="true">
+                   <property name="toolTip">
+                    <string>Displays the number of tracks</string>
                    </property>
-                   <item>
-                    <widget class="QLabel" name="labelNumberOfTracksLabel">
-                     <property name="text">
-                      <string>Number of Tracks:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="labelNumberOfTracks">
-                     <property name="font">
-                      <font>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                   <layout class="QHBoxLayout" name="horizontalLayout_2">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="labelNumberOfTracksLabel">
+                      <property name="text">
+                       <string>Number of Objects:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="labelNumberOfTracks">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QGroupBox" name="groupBoxTrackDimensions">
@@ -357,46 +374,148 @@
                      <number>5</number>
                     </property>
                     <item>
-                     <widget class="QWidget" name="widget" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
+                     <widget class="QFrame" name="frame">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
                       </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
+                      <property name="frameShadow">
+                       <enum>QFrame::Sunken</enum>
                       </property>
-                      <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
+                      <layout class="QVBoxLayout" name="verticalLayout">
                        <property name="spacing">
-                        <number>0</number>
+                        <number>2</number>
                        </property>
                        <property name="leftMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="topMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="rightMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="bottomMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <item>
-                        <widget class="QLabel" name="labelTrackDimensionSetter">
-                         <property name="text">
-                          <string>Set for:</string>
+                        <widget class="QWidget" name="widgetTrackHeight" native="true">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>25</height>
+                          </size>
                          </property>
+                         <property name="toolTip">
+                          <string>Set the height</string>
+                         </property>
+                         <layout class="QHBoxLayout" name="layoutTrackHeight">
+                          <property name="spacing">
+                           <number>3</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>3</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="labelTrackHeight">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>14</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>Set the height</string>
+                            </property>
+                            <property name="text">
+                             <string>Height:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QSpinBox" name="spinBoxTrackHeight">
+                            <property name="buttonSymbols">
+                             <enum>QAbstractSpinBox::PlusMinus</enum>
+                            </property>
+                            <property name="minimum">
+                             <number>1</number>
+                            </property>
+                            <property name="maximum">
+                             <number>1000</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
+                        <widget class="QWidget" name="widgetTrackWidth" native="true">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>Set the width</string>
+                         </property>
+                         <layout class="QHBoxLayout" name="layoutTrackWidth">
+                          <property name="spacing">
+                           <number>3</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>3</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="labelTrackWidth">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>Width:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QSpinBox" name="spinboxTrackWidth">
+                            <property name="buttonSymbols">
+                             <enum>QAbstractSpinBox::PlusMinus</enum>
+                            </property>
+                            <property name="minimum">
+                             <number>1</number>
+                            </property>
+                            <property name="maximum">
+                             <number>1000</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QWidget" name="widgetTrackDimensionSetters" native="true">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -404,151 +523,81 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>0</height>
+                           <height>25</height>
                           </size>
                          </property>
                          <property name="toolTip">
-                          <string>Set the width and height for all tracks</string>
+                          <string>Buttons to set the dimensions entered for all or only selected tracks</string>
                          </property>
-                         <property name="text">
-                          <string>All tracks</string>
-                         </property>
+                         <layout class="QHBoxLayout" name="layoutTrackDimensionSetter">
+                          <property name="spacing">
+                           <number>3</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>3</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="labelTrackDimensionSetter">
+                            <property name="text">
+                             <string>Set for:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonTrackDimensionSetterAll">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>Set the width and height for all tracks</string>
+                            </property>
+                            <property name="text">
+                             <string>All tracks</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected">
+                            <property name="toolTip">
+                             <string>Set the width and height only for selected tracks</string>
+                            </property>
+                            <property name="text">
+                             <string>Selected tracks</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="pushButtonTrackDimensionSetterSelected">
+                        <widget class="QPushButton" name="pushButtonDefaultDimensions">
                          <property name="toolTip">
-                          <string>Set the width and height only for selected tracks</string>
+                          <string>Set the dimensions of all tracks back to default</string>
                          </property>
                          <property name="text">
-                          <string>Selected tracks</string>
+                          <string>Default dimensions</string>
                          </property>
                         </widget>
                        </item>
                       </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="widget" native="true">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <layout class="QHBoxLayout" name="layoutTrackHeight">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
-                       <property name="leftMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <widget class="QLabel" name="labelTrackHeight">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>14</height>
-                          </size>
-                         </property>
-                         <property name="text">
-                          <string>Height:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QSpinBox" name="spinBoxTrackHeight">
-                         <property name="buttonSymbols">
-                          <enum>QAbstractSpinBox::PlusMinus</enum>
-                         </property>
-                         <property name="minimum">
-                          <number>1</number>
-                         </property>
-                         <property name="maximum">
-                          <number>1000</number>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="widget" native="true">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <layout class="QHBoxLayout" name="layoutTrackWidth">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
-                       <property name="leftMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <widget class="QLabel" name="labelTrackWidth">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="text">
-                          <string>Width:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QSpinBox" name="spinboxTrackWidth">
-                         <property name="buttonSymbols">
-                          <enum>QAbstractSpinBox::PlusMinus</enum>
-                         </property>
-                         <property name="minimum">
-                          <number>1</number>
-                         </property>
-                         <property name="maximum">
-                          <number>1000</number>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonDefaultDimensions">
-                      <property name="toolTip">
-                       <string>Set the dimensions of all tracks back to default</string>
-                      </property>
-                      <property name="text">
-                       <string>Default dimensions</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="Line" name="line_4">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
                      </widget>
                     </item>
                     <item>
@@ -573,7 +622,7 @@
                        <bool>true</bool>
                       </property>
                       <property name="toolTip">
-                       <string>Set entities are not scaling when zooming</string>
+                       <string>Set to disable entity scaling when zooming</string>
                       </property>
                       <property name="text">
                        <string>Always same size</string>
@@ -627,66 +676,109 @@
                      <number>5</number>
                     </property>
                     <item>
-                     <layout class="QHBoxLayout" name="horizontalLayoutGroupBoxTracksColor">
-                      <item>
-                       <widget class="QLabel" name="labelFillColor">
-                        <property name="text">
-                         <string>Fill:</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pushButtonColorChangeBrush">
-                        <property name="toolTip">
-                         <string>Choose a fill color for all trajectories</string>
-                        </property>
-                        <property name="text">
-                         <string>All tracks</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pushButtonColorchangeBrushSelected">
-                        <property name="toolTip">
-                         <string>Choose a fill color for selected trajectories</string>
-                        </property>
-                        <property name="text">
-                         <string>Selected tracks</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <widget class="QWidget" name="widgetFillColor" native="true">
+                      <property name="toolTip">
+                       <string>Buttons to set the fill color for all or only selected tracks</string>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayoutGroupBoxTracksColor">
+                       <property name="spacing">
+                        <number>3</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>3</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="labelFillColor">
+                         <property name="toolTip">
+                          <string>Buttons to set the fill color for all or only selected tracks</string>
+                         </property>
+                         <property name="text">
+                          <string>Fill:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonColorChangeBrush">
+                         <property name="toolTip">
+                          <string>Choose a fill color for all trajectories</string>
+                         </property>
+                         <property name="text">
+                          <string>All tracks</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonColorchangeBrushSelected">
+                         <property name="toolTip">
+                          <string>Choose a fill color for selected trajectories</string>
+                         </property>
+                         <property name="text">
+                          <string>Selected tracks</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </item>
                     <item>
-                     <layout class="QHBoxLayout" name="borderColor">
-                      <item>
-                       <widget class="QLabel" name="labelBorderColor">
-                        <property name="text">
-                         <string>Border:</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pushButtonColorChangeBorder">
-                        <property name="toolTip">
-                         <string>Choose a border color for all trajectories</string>
-                        </property>
-                        <property name="text">
-                         <string>All tracks</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pushButtonColorChangeBorderSelected">
-                        <property name="toolTip">
-                         <string>Choose a border color for selected trajectories</string>
-                        </property>
-                        <property name="text">
-                         <string>Selected tracks</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <widget class="QWidget" name="widgetBorderColor" native="true">
+                      <property name="toolTip">
+                       <string>Buttons to set the border color for all or only selected tracks</string>
+                      </property>
+                      <layout class="QHBoxLayout" name="borderColor">
+                       <property name="spacing">
+                        <number>3</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>3</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>3</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="labelBorderColor">
+                         <property name="text">
+                          <string>Border:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonColorChangeBorder">
+                         <property name="toolTip">
+                          <string>Choose a border color for all trajectories</string>
+                         </property>
+                         <property name="text">
+                          <string>All tracks</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonColorChangeBorderSelected">
+                         <property name="toolTip">
+                          <string>Choose a border color for selected trajectories</string>
+                         </property>
+                         <property name="text">
+                          <string>Selected tracks</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -728,149 +820,252 @@
                   <number>5</number>
                  </property>
                  <item>
-                  <layout class="QHBoxLayout" name="layoutTracingStyle">
-                   <item>
-                    <widget class="QLabel" name="labelTracingStyle">
-                     <property name="text">
-                      <string>Style:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QComboBox" name="comboBoxTracingStyle">
-                     <property name="toolTip">
-                      <string>Choose the tracing style</string>
-                     </property>
-                     <item>
+                  <widget class="QWidget" name="widgetTracingType" native="true">
+                   <property name="toolTip">
+                    <string>Set the tracer type</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="layoutTracingStyle">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="labelTracingStyle">
                       <property name="text">
-                       <string>None</string>
+                       <string>Type:</string>
                       </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Shape</string>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="comboBoxTracingStyle">
+                      <property name="toolTip">
+                       <string>Choose the tracing type</string>
                       </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Path</string>
+                      <property name="currentText">
+                       <string>No tracing</string>
                       </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>ArrowPath</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                  </layout>
+                      <item>
+                       <property name="text">
+                        <string>No tracing</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Shape</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Path</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Arrow path</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="layoutTracingHistory">
-                   <item>
-                    <widget class="QLabel" name="labelTracingHistoryLength">
-                     <property name="text">
-                      <string>History frames:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="spinBoxTracingHistoryLength">
-                     <property name="toolTip">
-                      <string>Set how many frames to trace</string>
-                     </property>
-                     <property name="wrapping">
-                      <bool>false</bool>
-                     </property>
-                     <property name="buttonSymbols">
-                      <enum>QAbstractSpinBox::PlusMinus</enum>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
-                      <number>1000000</number>
-                     </property>
-                     <property name="value">
-                      <number>10</number>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QWidget" name="widgetTracingHistory" native="true">
+                   <property name="toolTip">
+                    <string>Set the number of frames to trace</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="layoutTracingHistory">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="labelTracingHistoryLength">
+                      <property name="text">
+                       <string>History frames:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="spinBoxTracingHistoryLength">
+                      <property name="toolTip">
+                       <string>Set how many frames to trace</string>
+                      </property>
+                      <property name="wrapping">
+                       <bool>false</bool>
+                      </property>
+                      <property name="buttonSymbols">
+                       <enum>QAbstractSpinBox::PlusMinus</enum>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="maximum">
+                       <number>1000000</number>
+                      </property>
+                      <property name="value">
+                       <number>10</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="layoutTracingSteps">
-                   <item>
-                    <widget class="QLabel" name="labelTracingSteps">
-                     <property name="text">
-                      <string>Steps:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="spinBoxTracingSteps">
-                     <property name="toolTip">
-                      <string>Set the steps to trace (each one, each second,...)</string>
-                     </property>
-                     <property name="buttonSymbols">
-                      <enum>QAbstractSpinBox::PlusMinus</enum>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="value">
-                      <number>1</number>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QWidget" name="widgetTracingSteps" native="true">
+                   <property name="toolTip">
+                    <string>Set the step size to show each Xth tracer (e.g. 5 means show each 5th tracer)</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="layoutTracingSteps">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="labelTracingSteps">
+                      <property name="text">
+                       <string>Steps:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="spinBoxTracingSteps">
+                      <property name="toolTip">
+                       <string>Set the steps to trace (each one, each second,...)</string>
+                      </property>
+                      <property name="buttonSymbols">
+                       <enum>QAbstractSpinBox::PlusMinus</enum>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>1</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="layoutTracingTimeDegradation">
-                   <item>
-                    <widget class="QLabel" name="labelTracingTimeDegradation">
-                     <property name="text">
-                      <string>Time degradation:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QComboBox" name="comboBoxTracingTimeDegradation">
-                     <property name="toolTip">
-                      <string>Choose the gradient style (old to young)</string>
-                     </property>
-                     <item>
+                  <widget class="QWidget" name="widgetTracingTime" native="true">
+                   <property name="toolTip">
+                    <string>Set the time degradation type</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="labelTracingTimeDegradation">
                       <property name="text">
-                       <string>None</string>
+                       <string>Time degradation:</string>
                       </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Transparency</string>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="comboBoxTracingTimeDegradation">
+                      <property name="toolTip">
+                       <string>Choose the gradient style (old to young)</string>
                       </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>False color</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                  </layout>
+                      <item>
+                       <property name="text">
+                        <string>None</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Transparency</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>False color</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="layoutTracerFrameNumber">
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxTracerFrameNumber">
-                     <property name="toolTip">
-                      <string>Show frame number of each tracer</string>
-                     </property>
-                     <property name="text">
-                      <string>Show frame number</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QWidget" name="widgetTracerFrameNumber" native="true">
+                   <property name="toolTip">
+                    <string>Show the frame number of each tracer</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="layoutTracerFrameNumber">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QCheckBox" name="checkBoxTracerFrameNumber">
+                      <property name="toolTip">
+                       <string>Show frame number of each tracer</string>
+                      </property>
+                      <property name="text">
+                       <string>Show frame number</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QGroupBox" name="groupBoxTracerDimensions">
@@ -901,6 +1096,9 @@
                     </property>
                     <item>
                      <widget class="QWidget" name="widgetTracerDimensions" native="true">
+                      <property name="toolTip">
+                       <string>Set the tracer dimensions proportional to entity dimensions</string>
+                      </property>
                       <layout class="QVBoxLayout" name="verticalLayout_2">
                        <property name="spacing">
                         <number>0</number>
@@ -919,6 +1117,21 @@
                        </property>
                        <item>
                         <layout class="QHBoxLayout" name="layoutTracerProportions">
+                         <property name="spacing">
+                          <number>3</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>3</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>3</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>3</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>3</number>
+                         </property>
                          <item>
                           <widget class="QLabel" name="labelTracerProportions">
                            <property name="text">
@@ -929,7 +1142,7 @@
                          <item>
                           <widget class="QDoubleSpinBox" name="spinBoxTracerProportions">
                            <property name="toolTip">
-                            <string>Set the tracer dimensions according to entity dimensions</string>
+                            <string>Set the tracer dimensions proportional to entity dimensions</string>
                            </property>
                            <property name="decimals">
                             <number>2</number>
@@ -953,7 +1166,7 @@
                     <item>
                      <widget class="QCheckBox" name="checkBoxTracerOrientationLine">
                       <property name="toolTip">
-                       <string>Show the orientation lne for tracers</string>
+                       <string>Show the orientation line for tracers</string>
                       </property>
                       <property name="text">
                        <string>Show orientation line</string>
@@ -964,9 +1177,12 @@
                   </widget>
                  </item>
                 </layout>
+                <zorder>widgetTracingSteps</zorder>
+                <zorder>widgetTracingTime</zorder>
+                <zorder>widgetTracerFrameNumber</zorder>
                 <zorder>groupBoxTracerDimensions</zorder>
-                <zorder></zorder>
-                <zorder></zorder>
+                <zorder>widgetTracingType</zorder>
+                <zorder>widgetTracingHistory</zorder>
                </widget>
               </item>
               <item>
@@ -1014,6 +1230,21 @@
                     <string>Set the area dimensions (in cm)</string>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_AreaLayout">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>3</number>
+                    </property>
                     <item>
                      <widget class="QLabel" name="labelAreaSize">
                       <property name="text">
@@ -1250,153 +1481,172 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item alignment="Qt::AlignLeft">
-           <widget class="QLabel" name="label_3">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>70</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
+         <widget class="QWidget" name="widgetExpTrialNo" native="true">
+          <property name="toolTip">
+           <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
 Increments automatically after finalizing. 
 Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
-            </property>
-            <property name="text">
-             <string>Trial No. </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_ExpTrialNo">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item alignment="Qt::AlignLeft">
+            <widget class="QLabel" name="label_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
 Increments automatically after finalizing. 
 Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
-            </property>
-            <property name="text">
-             <string>###</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+             </property>
+             <property name="text">
+              <string>Trial No. </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_ExpTrialNo">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>The trajectory number under which data (tracks, videos, ...) will be saved. 
+Increments automatically after finalizing. 
+Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
+             </property>
+             <property name="text">
+              <string>###</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item alignment="Qt::AlignLeft">
-           <widget class="QLabel" name="label_ExpSrc">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>70</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Source of the video data. 
+         <widget class="QWidget" name="widgetExpSrc" native="true">
+          <property name="toolTip">
+           <string>Source of the video data. 
 Select a source in the &quot;File&quot; menu.</string>
-            </property>
-            <property name="text">
-             <string>Source:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_ExpSrcCnt">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Source of the video data. 
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item alignment="Qt::AlignLeft">
+            <widget class="QLabel" name="label_ExpSrc">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Source of the video data. 
 Select a source in the &quot;File&quot; menu.</string>
-            </property>
-            <property name="text">
-             <string>No Media</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+             </property>
+             <property name="text">
+              <string>Source:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_ExpSrcCnt">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Source of the video data. 
+Select a source in the &quot;File&quot; menu.</string>
+             </property>
+             <property name="text">
+              <string>No Media</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item alignment="Qt::AlignLeft">
-           <widget class="QLabel" name="label_ExpObj">
-            <property name="minimumSize">
-             <size>
-              <width>70</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Number of objects being tracked in a video. 
+         <widget class="QWidget" name="widgetExpObjCnt" native="true">
+          <property name="toolTip">
+           <string>Number of objects being tracked in a video. 
 You can add some by right-clicking the video (if loaded).</string>
-            </property>
-            <property name="text">
-             <string>Objects:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_ExpObjCnt">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Number of objects being tracked in a video. 
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item alignment="Qt::AlignLeft">
+            <widget class="QLabel" name="label_ExpObj">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Number of objects being tracked in a video. 
 You can add some by right-clicking the video (if loaded).</string>
-            </property>
-            <property name="text">
-             <string>###</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+             </property>
+             <property name="text">
+              <string>Objects:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_ExpObjCnt">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Number of objects being tracked in a video. 
+You can add some by right-clicking the video (if loaded).</string>
+             </property>
+             <property name="text">
+              <string>###</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -1413,6 +1663,13 @@ If results are questionable, mediate the selection of tracker
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">

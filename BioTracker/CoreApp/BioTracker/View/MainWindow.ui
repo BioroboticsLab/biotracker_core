@@ -178,6 +178,9 @@
            </item>
            <item>
             <widget class="QWidget" name="bottomPanelViewControllerWidget" native="true">
+             <property name="toolTip">
+              <string>Hide the slider</string>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <property name="spacing">
                <number>0</number>
@@ -423,6 +426,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Choose your visualization options</string>
+                  </property>
                   <property name="frameShape">
                    <enum>QFrame::NoFrame</enum>
                   </property>
@@ -430,14 +436,14 @@
                    <number>1</number>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>4</number>
                   </property>
                   <widget class="QWidget" name="experimentItem">
                    <property name="geometry">
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>558</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -446,6 +452,9 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Manage your experiment</string>
                    </property>
                    <attribute name="label">
                     <string>Experiment</string>
@@ -457,12 +466,12 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>558</width>
                      <height>294</height>
                     </rect>
                    </property>
                    <property name="toolTip">
-                    <string>SetPreferences for tracker and visualization</string>
+                    <string>Set preferences for visualization</string>
                    </property>
                    <attribute name="label">
                     <string>Visualization options</string>
@@ -503,9 +512,12 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>558</width>
                      <height>294</height>
                     </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>Set preferences for the current tracker</string>
                    </property>
                    <attribute name="label">
                     <string>Tracker options</string>
@@ -526,6 +538,9 @@
                     <property name="bottomMargin">
                      <number>0</number>
                     </property>
+                    <item>
+                     <widget class="QWidget" name="widget_trackP" native="true"/>
+                    </item>
                    </layout>
                   </widget>
                   <widget class="QWidget" name="howto">
@@ -533,9 +548,12 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>558</width>
                      <height>294</height>
                     </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>A short stepwise tutorial</string>
                    </property>
                    <attribute name="label">
                     <string>How to use BioTracker</string>
@@ -616,9 +634,12 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>497</width>
+                     <width>558</width>
                      <height>294</height>
                     </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>Displays the notifications of the tracker and main application </string>
                    </property>
                    <attribute name="label">
                     <string>Notifications</string>
@@ -798,6 +819,9 @@ p, li { white-space: pre-wrap; }
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="toolTip">
+    <string>Tools for managing the basic functionalities</string>
+   </property>
    <property name="styleSheet">
     <string notr="true">QGroupBox {
 	border: 1px solid #e5e5e5;
@@ -837,6 +861,9 @@ QToolButton {
    <property name="windowTitle">
     <string>toolBar_2</string>
    </property>
+   <property name="toolTip">
+    <string>Tools to manage the visualization and track properties</string>
+   </property>
    <property name="movable">
     <bool>true</bool>
    </property>
@@ -872,6 +899,9 @@ QToolButton {
   <widget class="QToolBar" name="toolBarVideo">
    <property name="windowTitle">
     <string>toolBar</string>
+   </property>
+   <property name="toolTip">
+    <string>Tools to manage the media properties and to show media info</string>
    </property>
    <property name="autoFillBackground">
     <bool>true</bool>

@@ -153,6 +153,8 @@ Q_SIGNALS:
 
     QGroupBox* _mediaBox;
     QGroupBox* _trackerBox;
+
+    QWidget* _currentTrackerP;
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

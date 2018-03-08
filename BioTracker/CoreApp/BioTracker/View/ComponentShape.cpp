@@ -332,7 +332,7 @@ void ComponentShape::trace()
 		delete m_tracingLayer->childItems()[0];
 	}
 
-	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "None") {
+	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "No tracing") {
 		return;
 	}
 
@@ -398,7 +398,7 @@ void ComponentShape::trace()
 				lastPointDifference = adjustedHistoryPointDifference;
 			}
 			//ARROWPATH
-			else if (m_tracingStyle == "ArrowPath") {
+			else if (m_tracingStyle == "Arrow path") {
 				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 
 				int armLength = std::floor(base.length() / 9) + 2;

@@ -310,8 +310,25 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 void MainWindow::addTrackerParameterView(IView *parameter) 
 {
 	QWidget* pluginParameter = dynamic_cast<QWidget*>(parameter);
-    ui->trackerOptions->layout()->removeItem(ui->trackerOptions->layout()->takeAt(0));
-	ui->trackerOptions->layout()->addWidget(pluginParameter);
+    //ui->trackerOptions->layout()->removeItem(ui->trackerOptions->layout()->takeAt(0));
+	// for (auto widget: ui->trackerOptions->findChildren<QWidget*>("",Qt::FindDirectChildrenOnly)){
+	// 	delete widget;
+	//}
+
+	// while(auto item = ui->trackerOptions->layout()->takeAt(0)){
+	// 	delete item->widget();
+	// }
+
+	// if(_currentTrackerP){
+	// 	_currentTrackerP->deleteLater();
+	// }
+	// _currentTrackerP = pluginParameter;
+
+	if(pluginParameter){
+	 	ui->trackerOptions->layout()->addWidget(pluginParameter);
+	}
+
+	//ui->toolBox->addItem(pluginParameter, "bla");
 }
 
 void MainWindow::addCoreParameterView(IView * coreParameterView)
