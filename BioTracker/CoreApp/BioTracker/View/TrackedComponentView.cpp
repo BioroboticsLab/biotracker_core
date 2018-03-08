@@ -168,35 +168,56 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	m_currentFrameNumber = framenumber;
 
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	if (!all)
+	if (!all){
+		//if root is nullptr, delete all children
+		foreach (auto child, this->childItems()){
+			delete child;
+		}
 		return;
+	}
     
-	//update each shape; shape deletes itself if trajectory is empty or not existant
-	for (int i = 0; i < this->childItems().size(); i++) {
-		ComponentShape* shape = dynamic_cast<ComponentShape*>(this->childItems()[i]);
-		if (shape) {
-			if (!(shape->updateAttributes(framenumber))) {
-				i--;
-			}
+	//update each shape; shape hides itself if trajectory is empty or not existant or currentchild 
+	foreach(auto child, this->childItems()){
+		ComponentShape* shape = dynamic_cast<ComponentShape*>(child);
+		if(shape){
+			shape->updateAttributes(m_currentFrameNumber);
 		}
 	}
 	// check for new trajectories; for each create a new shape
 
 	//if #shapes smaller than #validtracks add new shapes
-	int validTracks = all->validCount();
+	//int validTracks = all->validCount();
 
-	if (this->childItems().size() < validTracks) {
-		int childrenCount = this->childItems().size();
-		// iterate over trajectories form back to increase performance
-		for (int i = all->size()-1; i >= 0 && this->childItems().size() < validTracks; i--) {
+	// if (this->childItems().size() < validTracks) {
+	// 	int childrenCount = this->childItems().size();
+	// 	// iterate over trajectories form back to increase performance
+	// 	for (int i = all->size()-1; i >= 0 && this->childItems().size() < validTracks; i--) {
+	// 		IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
+	// 		//trajectory must not be null, must be valid, and must not be already visualized
+	// 		if (trajectory && trajectory->getValid() && !checkTrajectory(trajectory)) {
+	// 			ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
+	// 			connectShape(newShape);
+	// 		}
+	// 		else {
+	// 			//qDebug() << "error: no trajectory valid -> no shape created";
+	// 		}
+	// 	}
+	// }
+
+	if (this->childItems().size() < all->size()){
+		//iterate over trajectories form back to increase performance
+		for (int i = all->size()-1; i >= 0 && this->childItems().size() < all->size(); i--) {
 			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
-			//trajectory must not be null, must be valid, and must not be already visualized
-			if (trajectory && trajectory->getValid() && !checkTrajectory(trajectory)) {
+			if(trajectory && !checkTrajectory(trajectory)){
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
-				connectShape(newShape);
+	 			connectShape(newShape);
 			}
-			else {
-				//qDebug() << "error: no trajectory valid -> no shape created";
+			else{
+				//already there or nullptr
+			}
+			//all trajectories already have shapes
+			if(all->size() == this->childItems().size()){
+				continue;
 			}
 		}
 	}

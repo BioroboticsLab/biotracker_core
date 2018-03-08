@@ -194,7 +194,16 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 {
 	m_currentFramenumber = frameNumber;
 
-	if (m_trajectory && m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
+	// if trajectory does not exist anymore, delete the shape
+	if(!m_trajectory){
+		this->hide();
+		m_tracingLayer->hide();
+		this->deleteLater();
+		return false;
+	}
+
+
+	if (m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
 		m_id = m_trajectory->getId();
 		//update m_fixed
 		m_fixed = m_trajectory->getFixed();
@@ -278,7 +287,8 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			return true;
 		}
 		else {
-			qDebug() << "no valid tracked component in this trajectory in frame: " << frameNumber;
+			//qDebug() << "no valid tracked component in this trajectory in frame: " << frameNumber;
+			this->hide();
 			return true;
 		}
 		// if polygon TODO
@@ -298,7 +308,7 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 		//trajectory is empty or null or invald or current entity is null
 		this->hide();
 		m_tracingLayer->hide();
-		delete this;
+		//delete this;
 		return false;
 	}
 }
@@ -321,15 +331,16 @@ void ComponentShape::trace()
 
 	// really unefficient to flush each time
 	//flush tracing shape history, open up the memory
-    while (m_tracingLayer->childItems().size() > 0) {
-		delete m_tracingLayer->childItems()[0];
-    }
+    // while (m_tracingLayer->childItems().size() > 0) {
+	// 	delete m_tracingLayer->childItems()[0];
+    // }
 
 	//check if number of tracing children in tracing layer is correct
 	//delete/add the difference
-	int initialSize = m_tracingLayer->childItems().size();
-	while (m_tracingLayer->childItems().size() > 0) {
-		delete m_tracingLayer->childItems()[0];
+	QList<QGraphicsItem *>  tracers = m_tracingLayer->childItems();
+	foreach(QGraphicsItem * tracer, tracers)
+	{
+		delete tracer;
 	}
 
 	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "No tracing") {
