@@ -105,6 +105,7 @@ CMakeFiles
 /BioTracker/CoreApp/BioTracker/debug/placeholder
 /BioTracker/CoreApp/BioTracker/ui_SettingsWindow.h
 /BioTracker/CoreApp/BioTracker/Tracks
+/BioTracker/CoreApp/BioTracker/Screenshots
 /BioTracker/CoreApp/BioTracker/BSTrackerConfig.ini
 /BioTracker/CoreApp/BioTracker/Biotracker_core_autogen/EWIEGA46WW/qrc_guiresources.cpp
 /BioTracker/Plugin/Sample/x64/Debug/Sample.tracker_autogen/*.cache
@@ -125,4 +126,4 @@ CMakeFiles
 .vscode/c_cpp_properties.json
 .vscode/c_cpp_properties.json
 .vscode/c_cpp_properties.json
-Screenshots/ScreenshotThu_Feb_22_17_41_24_2018.png
+/Screenshots

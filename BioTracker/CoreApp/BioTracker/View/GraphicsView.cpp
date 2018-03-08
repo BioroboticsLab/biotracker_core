@@ -29,8 +29,6 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	setViewportUpdateMode(FullViewportUpdate);
 
 	setDragMode(RubberBandDrag);
-
-
 }
 
 void GraphicsView::addGraphicsItem(QGraphicsItem *item)

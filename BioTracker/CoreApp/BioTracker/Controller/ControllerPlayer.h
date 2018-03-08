@@ -81,7 +81,7 @@ class ControllerPlayer : public IController {
 
         void setTargetFps(double fps);
 
-	void takeScreenshot();
+	QString takeScreenshot();
 
 	// IController interface
 	public:

@@ -4,6 +4,7 @@
 #include "Model/MediaPlayer.h"
 
 #include <QToolBar>
+#include "QMessageBox"
 #include <QDateTime>
 
 VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controller, IModel* model) :
@@ -217,7 +218,12 @@ void VideoControllWidget::on_actionPrev_frame_triggered(bool checked){
 }
 void VideoControllWidget::on_actionScreenshot_triggered(bool checked){
     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
-    controller->takeScreenshot();
+    QString filePathStr = controller->takeScreenshot();
+    QFileInfo fi(filePathStr);
+    QString filePathAbs = fi.absoluteFilePath();
+    QString msgText = "The Screenshot has been saved to:\n " + filePathAbs;
+
+    QMessageBox::information(nullptr, "Screenshot taken!", msgText);
 }
 void VideoControllWidget::on_actionRecord_cam_triggered(bool checked){
     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
