@@ -25,8 +25,13 @@
 #include "qdesktopwidget.h"
 
 #include "QToolButton"
+#include "QWizard"
+#include "QWizardPage"
 
 #include "QDesktopServices"
+#include "util/singleton.h"
+#include "settings/Settings.h"
+
 
 
 
@@ -59,6 +64,10 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	//resize to full size
 	//QWidget::showFullScreen();
 	QWidget::showMaximized();
+
+	createIntroductionWizard();
+
+	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/firstlogo.ico"));
 
 	//view actions
 	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();
@@ -235,8 +244,278 @@ void MainWindow::checkMediaGroupBox(){
 	" {border: 1px solid #82c985;}");
 }
 
-void MainWindow::setupVideoToolBar() {
+void MainWindow::setupVideoToolBar(){
 	
+}
+
+//TODO put this in a class
+void MainWindow::createIntroductionWizard(){ 
+	m_introWiz = new QWizard;
+
+	//BioTracker::Core::Settings *disableIntroWiz = GET_CORESETTINGS(CORE_CONFIGURATION);
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	bool disabled = set->getValueOrDefault<bool>("BiotrackerCore/Disable_Wizard", false);
+
+	//dont show again checkbox
+	QCheckBox* noShowCheck = new QCheckBox("Don't show this again");
+	noShowCheck->setChecked(disabled);
+	QObject::connect(noShowCheck, &QCheckBox::toggled, this, &MainWindow::toggleNoShowWiz);
+	
+
+	//intrduction
+	QWizardPage* p1 = new QWizardPage;
+	{
+	p1->setTitle("BioTracker 3 - Introduction");
+
+	QPixmap logoImg(":/Logo/resources/logo/firstlogo.png");	
+	QPixmap scaledImg = logoImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	QLabel* imgLabel = new QLabel;
+	imgLabel->setPixmap(scaledImg);
+	imgLabel->setAttribute(Qt::WA_TranslucentBackground);
+	imgLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
+	QFile file(":/Introduction/resources/introduction/intro.txt");
+	QLabel *introLabel= new QLabel;
+
+	//read introduction text from file
+	QString line;
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+		QTextStream stream(&file);
+		while (!stream.atEnd()){
+			line.append(stream.readLine()+"\n");
+		}
+		introLabel->setText(line);
+	}
+	file.close();
+
+    QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(imgLabel);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(introLabel);
+	layout->addWidget(textScroll);
+	layout->setAlignment(Qt::AlignHCenter);
+    p1->setLayout(layout);
+
+	}
+
+	//overview
+	QWizardPage* p2 = new QWizardPage;
+	{
+	p2->setTitle("BioTracker 3 - Overview");
+	QLabel *label = new QLabel("This is the BioTracker. Don't let yourself be overwhelmed it is actually pretty simple.");
+    label->setWordWrap(true);
+
+    QPixmap overviewImg(":/Introduction/resources/introduction/images/BioTracker.PNG");
+	QPixmap scaledImg = overviewImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	QLabel* imgLabel = new QLabel;
+	imgLabel->setPixmap(scaledImg);
+	imgLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	//imgLabel->setScaledContents(true);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(imgLabel);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(label);
+	layout->addWidget(textScroll);
+	layout->setAlignment(Qt::AlignHCenter);
+    p2->setLayout(layout);
+	}
+
+	//toolbars
+	QWizardPage* p3 = new QWizardPage;
+	{
+	p3->setTitle("BioTracker 3 - Toolbars");
+
+	//image
+    QPixmap overviewImg(":/Introduction/resources/introduction/images/toolbars.png");
+	QPixmap scaledImg = overviewImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QLabel* imgLabel = new QLabel;
+	imgLabel->setPixmap(scaledImg);
+
+	//read toolbar text from file
+	QFile file(":/Introduction/resources/introduction/toolbars.txt");
+	QLabel *label = new QLabel();
+    label->setWordWrap(true);
+
+	QString line;
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+		QTextStream stream(&file);
+		while (!stream.atEnd()){
+			line.append(stream.readLine()+"\n");
+		}
+		label->setText(line);
+	}
+	file.close();
+
+
+    QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(imgLabel);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(label);
+	layout->addWidget(textScroll);
+	layout->setAlignment(Qt::AlignHCenter);    
+	p3->setLayout(layout);
+	}
+
+
+	//right panel - overview
+	QWizardPage* p4 = new QWizardPage;
+	{
+	p4->setTitle("BioTracker 3 - Right panel overview");
+
+	//image
+    QPixmap overviewImg(":/Introduction/resources/introduction/images/right_panel.png");
+	QPixmap scaledImg = overviewImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QLabel* imgLabel = new QLabel;
+	imgLabel->setPixmap(scaledImg);
+
+	//read right panel text from file
+	QFile file(":/Introduction/resources/introduction/right_panel.txt");
+	QLabel *label = new QLabel();
+    label->setWordWrap(true);
+
+	QString line;
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+    QTextStream stream(&file);
+		while (!stream.atEnd()){
+			line.append(stream.readLine()+"\n");
+		}
+		label->setText(line);
+	}
+	file.close();
+
+
+    QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(imgLabel);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(label);
+	layout->addWidget(textScroll);
+	layout->setAlignment(Qt::AlignHCenter);
+
+    p4->setLayout(layout);
+	}
+
+
+	//how to track
+	QWizardPage* p5 = new QWizardPage;
+	{
+	p5->setTitle("BioTracker 3 - Tracking");
+
+	//image
+    QPixmap overviewImg(":/Introduction/resources/introduction/images/tracking.png");
+	QPixmap scaledImg = overviewImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QLabel* imgLabel = new QLabel;
+	imgLabel->setPixmap(scaledImg);
+
+	//read tracking text from file
+	QFile file(":/Introduction/resources/introduction/tracking.txt");
+	QLabel *label = new QLabel();
+    label->setWordWrap(true);
+
+	QString line;
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+    	QTextStream stream(&file);
+		while (!stream.atEnd()){
+			line.append(stream.readLine()+"\n");
+		}
+    	label->setText(line);
+	}
+	file.close();
+
+
+    QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(imgLabel);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(label);
+	layout->addWidget(textScroll);
+	layout->setAlignment(Qt::AlignHCenter);
+
+    p5->setLayout(layout);
+	}
+
+	//context menus
+	QWizardPage* p6 = new QWizardPage;
+	{
+	p6->setTitle("BioTracker 3 - Context menus");
+
+	//images
+    QPixmap contextEntityImg(":/Introduction/resources/introduction/images/context_entity.png");
+	QPixmap scaledImg1 = contextEntityImg.scaled(QSize(300,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QLabel* imgEntityLabel = new QLabel;
+	imgEntityLabel->setPixmap(scaledImg1);
+
+	QPixmap contextVideoImg(":/Introduction/resources/introduction/images/context_video.png");
+	QPixmap scaledImg2 = contextVideoImg.scaled(QSize(300,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QLabel* imgVideoLabel = new QLabel;
+	imgVideoLabel->setPixmap(scaledImg2);
+
+	//read tracking text from file
+	QFile file(":/Introduction/resources/introduction/context_menus.txt");
+	QLabel *label = new QLabel();
+    label->setWordWrap(true);
+
+	QString line;
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+    	QTextStream stream(&file);
+		while (!stream.atEnd()){
+			line.append(stream.readLine()+"\n");
+		}
+    	label->setText(line);
+	}
+	file.close();
+
+
+    QVBoxLayout *outerLayout = new QVBoxLayout;
+	QHBoxLayout *imgLayout = new QHBoxLayout;
+	imgLayout->addWidget(imgEntityLabel);
+	imgLayout->addWidget(imgVideoLabel);
+	QFrame* imgFrame = new QFrame;
+	imgFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	imgFrame->setLayout(imgLayout);
+
+	outerLayout->addWidget(imgFrame);
+	QScrollArea* textScroll = new QScrollArea;
+	textScroll->setFrameShape(QFrame::NoFrame);
+	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	textScroll->setWidget(label);
+	outerLayout->addWidget(textScroll);
+	outerLayout->addWidget(noShowCheck);
+
+	outerLayout->setAlignment(Qt::AlignHCenter);
+
+    p6->setLayout(outerLayout);
+	}
+
+
+	m_introWiz->addPage(p1);
+	m_introWiz->addPage(p2);
+	m_introWiz->addPage(p3);
+	m_introWiz->addPage(p4);
+	m_introWiz->addPage(p5);
+	m_introWiz->addPage(p6);
+	//m_introWiz->addPage(p7);
+
+
+    m_introWiz->setWindowTitle("Introduction");
+	if(!disabled){
+		QRect rec = QApplication::desktop()->availableGeometry();
+		m_introWiz->resize(m_introWiz->width(), rec.height());
+		m_introWiz->show();
+		//m_introWiz->showMaximized();
+	}
 }
 
 void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission){
@@ -306,6 +585,8 @@ void MainWindow::addNotificationBrowser(IView * notificationBrowser)
 
 		notificationWidget->setVisible(1);
 	}
+
+	//createIntroductionWizard();
 }
 
 void MainWindow::addTrackerParameterView(IView *parameter) 
@@ -316,18 +597,18 @@ void MainWindow::addTrackerParameterView(IView *parameter)
 	// 	delete widget;
 	//}
 
-	// while(auto item = ui->trackerOptions->layout()->takeAt(0)){
-	// 	delete item->widget();
-	// }
+	while(auto item = ui->trackerOptions->layout()->takeAt(0)){
+		delete item->widget();
+	}
 
 	// if(_currentTrackerP){
 	// 	_currentTrackerP->deleteLater();
 	// }
 	// _currentTrackerP = pluginParameter;
 
-	if(pluginParameter){
-	 	ui->trackerOptions->layout()->addWidget(pluginParameter);
-	}
+	// if(pluginParameter){
+	  	ui->trackerOptions->layout()->addWidget(pluginParameter);
+	// }
 
 	//ui->toolBox->addItem(pluginParameter, "bla");
 }
@@ -409,6 +690,17 @@ void MainWindow::deactivateTrackingCheckBox() {
     //ui->checkBox_TrackingActivated->setEnabled(false);
 	_trackerActivator->setEnabled(false);
 }
+
+
+//SLOTS
+
+void MainWindow::toggleNoShowWiz(bool toggle){
+	//qDebug() << toggle;
+	//BioTracker::Core::Settings *disableIntroWiz = GET_CORESETTINGS(CORE_CONFIGURATION);
+	BioTracker::Core::Settings *disableIntroWiz = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	disableIntroWiz->setParam("BiotrackerCore/Disable_Wizard", toggle);
+}
+
 
 void MainWindow::on_actionOpen_Video_triggered() {
     static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
@@ -780,6 +1072,10 @@ void MainWindow::on_actionShortcuts_triggered() {
 	outerWidget->show();
 
 
+}
+
+void MainWindow::on_actionShow_introduction_triggered(){
+	m_introWiz->show();
 }
 
 /////////////

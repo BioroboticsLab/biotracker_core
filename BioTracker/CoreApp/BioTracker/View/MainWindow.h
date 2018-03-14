@@ -14,6 +14,7 @@
 #include "util/types.h"
 #include "SettingsWindow.h"
 #include <QCloseEvent>
+#include "QWizard"
 
 #include "Utility/SwitchButton.h"
 
@@ -49,6 +50,10 @@ class MainWindow : public IViewMainWindow {
 
     void setupUpperToolBar();
     void setupVideoToolBar();
+
+    //intro wizard
+    void createIntroductionWizard();
+
     void checkTrackerGroupBox();
     void checkMediaGroupBox();
     void activateTracking();
@@ -61,6 +66,9 @@ Q_SIGNALS:
 	void selectPlugin(QString ct);
 
   private Q_SLOTS:
+
+    void toggleNoShowWiz(bool toggle);
+    
 //menu->File
     void on_actionOpen_Video_triggered();
 
@@ -115,6 +123,7 @@ Q_SIGNALS:
 
     void on_actionUser_guide_triggered();
 
+    void on_actionShow_introduction_triggered();
 //GUI
 
     void receiveSelectedCameraDevice(CameraConfiguration conf);
@@ -155,6 +164,7 @@ Q_SIGNALS:
     QGroupBox* _trackerBox;
 
     QWidget* _currentTrackerP;
+    QWizard* m_introWiz;
 };
 
 #endif // BIOTRACKER3MAINWINDOW_H

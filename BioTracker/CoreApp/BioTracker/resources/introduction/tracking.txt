@@ -1,0 +1,11 @@
+
+1.  Load a medium (video, picture or camera stream)  
+2.  Load a tracker (usually trackers are preloaded from the 'Plugins' directory)  
+3   Choose the desired tracker options
+    (This often takes some time to figure out)
+4.  Insert the objects to track if the tracker does not generate them automatically
+    (If you want to track two objects, add two tracks by right clicking the video or using the button on the left toolbar)
+5.  Go to the Experiment tab and Start a trial.
+    (You can pause the video meanwhile)
+6.  After you are done tracking, finalize the trial.
+7.  The data is only then written to a file.

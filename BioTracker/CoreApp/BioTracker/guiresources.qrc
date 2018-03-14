@@ -27,11 +27,35 @@
         <file>resources/left_toolbar/anno-rect.png</file>
         <file>resources/left_toolbar/anno-del.png</file>
         <file>resources/left_toolbar/add-track.png</file>
-	<file>resources/left_toolbar/color-border.png</file>
-	<file>resources/left_toolbar/color-fill.png</file>
-	<file>resources/left_toolbar/delete-track.png</file>
-	<file>resources/left_toolbar/select-all.png</file>
-	<file>resources/left_toolbar/swap.png</file>
-	
+        <file>resources/left_toolbar/color-border.png</file>
+        <file>resources/left_toolbar/color-fill.png</file>
+        <file>resources/left_toolbar/delete-track.png</file>
+        <file>resources/left_toolbar/select-all.png</file>
+        <file>resources/left_toolbar/swap.png</file>
+
+    </qresource>
+
+    <qresource prefix="/Introduction">
+
+        <file>resources/introduction/intro.txt</file>
+        <file>resources/introduction/images/BioTracker.PNG</file>
+        <file>resources/introduction/toolbars.txt</file>
+        <file>resources/introduction/images/toolbars.png</file>
+        <file>resources/introduction/right_panel.txt</file>
+        <file>resources/introduction/images/right_panel.png</file>
+        <file>resources/introduction/tracking.txt</file>
+        <file>resources/introduction/images/tracking.png</file>
+        <file>resources/introduction/context_menus.txt</file>
+        <file>resources/introduction/images/context_video.png</file>
+        <file>resources/introduction/images/context_entity.png</file>
+
+        
+    </qresource>
+
+        <qresource prefix="/Logo">
+
+        <file>resources/logo/firstlogo.png</file>
+        <file>resources/logo/firstlogo.ico</file>
+        
     </qresource>
 </RCC>

@@ -1,0 +1,8 @@
+The right panel consists of different tabs.
+
+
+- Experiment: Control your experiment. Start/Stop a trial and save your data by finalizing
+- Visualization options: Control the visualization paramters
+- Tracker options: Control the tracker parameters 
+- How to use BioTracker: Show some basic steps on how to use the BioTracker
+- Notifications: Displays notifications bothfrom the loaded tracker and the core application

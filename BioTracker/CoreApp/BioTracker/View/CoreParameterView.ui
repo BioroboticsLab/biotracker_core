@@ -155,8 +155,8 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-103</y>
-          <width>351</width>
+          <y>0</y>
+          <width>344</width>
           <height>935</height>
          </rect>
         </property>
@@ -1653,7 +1653,7 @@ You can add some by right-clicking the video (if loaded).</string>
           <item>
            <widget class="QPushButton" name="pushButton_startExp">
             <property name="toolTip">
-             <string>Starts tracking the video or stop tracking respectively. 
+             <string>Starts tracking the video or pause tracking respectively. 
 If results are questionable, mediate the selection of tracker 
 (drop down menu at the top) and the tracker parameters (&quot;Tracker&quot; tab)</string>
             </property>
@@ -1682,7 +1682,7 @@ but also write back the
 data to the &quot;Tracks&quot; directory and increment the trial count. </string>
             </property>
             <property name="text">
-             <string>Finalize Trial</string>
+             <string>Save Trial and Reset Data</string>
             </property>
            </widget>
           </item>

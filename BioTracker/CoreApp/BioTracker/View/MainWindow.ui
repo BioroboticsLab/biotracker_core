@@ -234,7 +234,7 @@
               <bool>true</bool>
              </property>
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>100</verstretch>
               </sizepolicy>
@@ -443,7 +443,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>558</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -466,7 +466,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>558</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -512,7 +512,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>558</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -548,7 +548,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>558</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -634,7 +634,7 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>558</width>
+                     <width>565</width>
                      <height>294</height>
                     </rect>
                    </property>
@@ -739,6 +739,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionUser_guide"/>
     <addaction name="actionShortcuts"/>
     <addaction name="separator"/>
+    <addaction name="actionShow_introduction"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
@@ -1298,6 +1299,11 @@ QToolButton {
   <action name="actionToggle_video_toolbar">
    <property name="text">
     <string>Hide video toolbar</string>
+   </property>
+  </action>
+  <action name="actionShow_introduction">
+   <property name="text">
+    <string>Show introduction</string>
    </property>
   </action>
  </widget>
