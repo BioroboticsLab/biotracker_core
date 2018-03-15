@@ -34,6 +34,8 @@ class SwitchButton : public QAbstractButton {
     protected:
         void paintEvent(QPaintEvent* event) override;
         void mouseReleaseEvent(QMouseEvent*) override;
+		void enterEvent(QEvent *e) override;
+
 
         bool _switch;
         qreal _opacity;

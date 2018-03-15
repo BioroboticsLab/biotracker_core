@@ -11,6 +11,7 @@
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCommands.h"
 #include "Controller/ControllerGraphicScene.h"
+#include "Controller/ControllerCoreParameter.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -197,6 +198,11 @@ void ControllerMainWindow::connectControllerToController() {
     ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ictrde);
     QObject::connect(this, &ControllerMainWindow::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
 
+	// reset trials
+	IController* ictrcpv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	ControllerCoreParameter *ctrcpv = static_cast<ControllerCoreParameter*>(ictrcpv);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, ctrcpv, &ControllerCoreParameter::receiveResetTrial, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, ctrcpv, &ControllerCoreParameter::receiveResetTrial, Qt::DirectConnection);
 
 	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
@@ -225,7 +231,7 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
     dynamic_cast<MainWindow*>(m_View)->resetTrackerViews();
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
-	dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
+	//dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 	activeTrackingCheckBox();
     Q_EMIT emitPluginLoaded(plugin.toStdString());
 }

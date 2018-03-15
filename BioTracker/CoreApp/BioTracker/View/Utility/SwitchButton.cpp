@@ -55,6 +55,14 @@ void SwitchButton::paintEvent(QPaintEvent *e) {
         p.setOpacity(1.0);
         p.setBrush(QColor("#BDBDBD"));
         p.drawEllipse(QRectF(offset() - (_height / 2), _y - (_height / 2), height(), height()));
+
+		//text
+		p.setPen(Qt::black);
+		QFont font = p.font();
+		font.setPixelSize(height() - 3 * _margin);
+		p.setFont(font);
+		QRectF textRect = QRectF(_margin, _margin, width() - 2 * _margin, height() - 2 * _margin);
+		p.drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter, _switch ? _s1 : _s0);
     }
 }
 
@@ -68,10 +76,10 @@ void SwitchButton::mouseReleaseEvent(QMouseEvent *e) {
     QAbstractButton::mouseReleaseEvent(e);
 }
 
-// void SwitchButton::enterEvent(QEvent *e) {
-//     setCursor(Qt::PointingHandCursor);
-//     QAbstractButton::enterEvent(e);
-// }
+void SwitchButton::enterEvent(QEvent *e) {
+	setCursor(Qt::PointingHandCursor);
+    QAbstractButton::enterEvent(e);
+}
 
 void SwitchButton::animateSwitch(){
     if (_switch) {

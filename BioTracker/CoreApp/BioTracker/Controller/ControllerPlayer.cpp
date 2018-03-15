@@ -5,6 +5,7 @@
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerTrackedComponentCore.h"
+#include "Controller/ControllerCoreParameter.h"
 
 #include <QGraphicsItem>
 #include <QToolButton>
@@ -26,7 +27,6 @@ void ControllerPlayer::loadVideoStream(QString str) {
 void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) {
     qobject_cast<MediaPlayer*>(m_Model)->loadPictures(files);
 	emitPauseState(true);
-
 }
 
 void ControllerPlayer::loadCameraDevice(CameraConfiguration conf) {
@@ -112,11 +112,18 @@ void ControllerPlayer::setTrackingDeactivated() {
 }
 
 void ControllerPlayer::connectControllerToController() {
+	//connect to mainwindow
     IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
     VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
     vControl->setupVideoToolbar();
+
+	////connect to coreparameterview
+	//IController* ictrCpv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	//QPointer< ControllerCoreParameter > ctrCpv = dynamic_cast<ControllerCoreParameter*>(ictrCpv);
+
+	//QObject::connect(this, &ControllerPlayer::emitPauseState, ctrCpv, &ControllercoreParameter)
 }
 
 void ControllerPlayer::createModel() {

@@ -42,6 +42,7 @@ Q_SIGNALS:
 	void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
     void receiveFileWritten(QFileInfo fname);
+	void receiveTrialStarted(bool started);
 
 protected:
 	void createModel() override;
@@ -53,5 +54,6 @@ private Q_SLOTS:
 
 private:
 	IModelTrackedComponentFactory* _factory;
+	bool _trialStarted = false;
 };
 

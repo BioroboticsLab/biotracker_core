@@ -512,7 +512,7 @@ void MainWindow::createIntroductionWizard(){
     m_introWiz->setWindowTitle("Introduction");
 	if(!disabled){
 		QRect rec = QApplication::desktop()->availableGeometry();
-		m_introWiz->resize(m_introWiz->width(), rec.height());
+		//m_introWiz->resize(m_introWiz->width(), rec.height());
 		m_introWiz->show();
 		//m_introWiz->showMaximized();
 	}
@@ -535,8 +535,13 @@ void MainWindow::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permi
 
 void MainWindow::addVideoControllWidget(IView* widget) {
     QLayout* layout = new QGridLayout();
-    layout->addWidget(dynamic_cast<QWidget*>(widget));
-    ui->videoControls->setLayout(layout);
+    //layout->addWidget(dynamic_cast<QWidget*>(widget));
+
+	QWidget* controlW = dynamic_cast<QWidget*>(widget);
+	if (controlW) {
+		layout->addWidget(controlW->findChild<QSlider *>("sld_video"));
+	}
+	ui->videoControls->setLayout(layout);
 
 	//ui->videoControls->adjustSize();
 

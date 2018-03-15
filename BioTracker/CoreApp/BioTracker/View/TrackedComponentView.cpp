@@ -168,7 +168,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	m_currentFrameNumber = framenumber;
 
 	IModelTrackedTrajectory *all = dynamic_cast<IModelTrackedTrajectory *>(getModel());
-	if (!all){
+	if (!all || all->size() == 0){
 		//if root is nullptr, delete all children
 		foreach (auto child, this->childItems()){
 			delete child;

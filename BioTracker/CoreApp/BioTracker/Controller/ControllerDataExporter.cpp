@@ -159,7 +159,9 @@ int ControllerDataExporter::getTrialNumber() {
 
 QString ControllerDataExporter::generateBasename(bool temporaryFile) {
 
-    QString path = (temporaryFile ? CFG_DIR_TEMP : CFG_DIR_TRACKS);
+	QString resultPath = (_trialStarted ? CFG_DIR_TRIALS : CFG_DIR_TRACKS);
+
+    QString path = (temporaryFile ? CFG_DIR_TEMP : resultPath);
     int maxVal = getTrialNumber();
     std::string current = "Export_"+std::to_string(maxVal+1)+"_";
 
@@ -174,5 +176,10 @@ void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
     int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
         str,
         QMessageBox::Ok);
+}
+
+void ControllerDataExporter::receiveTrialStarted(bool started)
+{
+	_trialStarted = started;
 }
 

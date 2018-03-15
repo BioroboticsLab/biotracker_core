@@ -156,8 +156,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>344</width>
-          <height>935</height>
+          <width>316</width>
+          <height>844</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1649,6 +1649,41 @@ You can add some by right-clicking the video (if loaded).</string>
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="widget" native="true">
+          <property name="toolTip">
+           <string>Current status of the trial. If paused the tracking is deactivated.</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QLabel" name="label_ExpStL">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Trial Status</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_ExpSt">
+             <property name="text">
+              <string>No Trial started!</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
            <widget class="QPushButton" name="pushButton_startExp">
@@ -1659,6 +1694,25 @@ If results are questionable, mediate the selection of tracker
             </property>
             <property name="text">
              <string>Start Trial</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="trialHelpButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>?</string>
             </property>
            </widget>
           </item>
@@ -1679,7 +1733,8 @@ If results are questionable, mediate the selection of tracker
              <string>Finalizes the current trial.
  Clicking this will not only stop the trial, 
 but also write back the 
-data to the &quot;Tracks&quot; directory and increment the trial count. </string>
+data to the &quot;Tracks&quot; directory and increment the trial count.
+If no trial is active this button saves and resets the current data. </string>
             </property>
             <property name="text">
              <string>Save Trial and Reset Data</string>

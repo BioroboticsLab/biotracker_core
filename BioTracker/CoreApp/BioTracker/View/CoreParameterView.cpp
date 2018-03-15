@@ -387,6 +387,15 @@ void CoreParameterView::setStyle()
 
 }
 
+void CoreParameterView::resetTrial()
+{
+	_trialActive = false;
+	_trialStarted = false;
+	Q_EMIT emitTrialStarted(false);
+	ui->pushButton_startExp->setText("Start Trial");
+
+}
+
 void CoreParameterView::getNotified()
 {
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
@@ -400,38 +409,67 @@ void CoreParameterView::getNotified()
 /************EXPERIMENT TAB*******************/
 
 void CoreParameterView::on_pushButton_startExp_clicked() {
-    if (!_trackingStarted) {
+    if (!_trialActive) {
         if (_currentFile == "No Media"){
             int ret = QMessageBox::information(this, tr("BioTracker"),
                 tr("Please select a source video first. \nYou can do so in the \"File\" menu."),
                 QMessageBox::Ok);
         }
         else {
+			if (!_trialStarted) {
+				_trialStarted = true;
+				emitTrialStarted(true);
+				emitFinalizeExperiment();
+				QMessageBox::information(0, "New trial", "You started a new trial! Previous data was saved and reset.\n\nGo to the timespot in the video you want to track at."
+					"\n\nPlease add the number of objects you want to track as trajectories.\nResume the video." );
+			}
+			else {
+				emitStartPlayback();
+			}
+			emitDeactivateTrackingSwitch();
             emitEnableTracking();
-            emitStartPlayback();
-            ui->pushButton_startExp->setText("Stop Trial");
-            _trackingStarted = true;
+            ui->pushButton_startExp->setText("Pause Trial");
+			ui->label_ExpSt->setText("Active - tracking");
+            _trialActive = true;
         }
     }
     else {
+
         emitDisableTracking();
-        emitStopPlayback();
-        ui->pushButton_startExp->setText("Start Trial");
-        _trackingStarted = false;
+        emitPausePlayback();
+        ui->pushButton_startExp->setText("Resume Trial");
+		ui->label_ExpSt->setText("Paused - not tracking");
+        _trialActive = false;
     }
 }
 
 void CoreParameterView::on_pushButton_finalizeExp_clicked() {
 
     Q_EMIT emitStopPlayback();
+	Q_EMIT emitActivateTrackingSwitch();
     Q_EMIT emitDisableTracking();
-    _trackingStarted = false;
+    _trialActive = false;
+	_trialStarted = false;
     ui->pushButton_startExp->setText("Start Trial");
+	ui->label_ExpSt->setText("No Trial started!");
     Q_EMIT emitFinalizeExperiment();
+	Q_EMIT emitTrialStarted(false);
+
 }
 
 void CoreParameterView::on_label_ExpSrcCnt_clicked() {
     //Event does not exist
+}
+
+void CoreParameterView::on_trialHelpButton_clicked()
+{
+	QMessageBox::information(0, "Trials", "'Start Trial' will cause all the previous data to be saved and then reset.\n\n"
+		"Go to the time spot you want to track and create a trajectory for each object you want to track.\n"
+		"Resume the video and the tracker will track your objects.\n\n"
+		"If you want to pause the tracking you can just pause the video. Resuming the video will continue the tracking.\n"
+		"If you want to pause the video and resume without tracking you will have to click 'Pause Trial' causing the tracking to be disabled.\n"
+		"You can now watch the video without tracking.\n\n"
+		"'Resume trial' will cause the tracking to be activated AND the video to be resumed");
 }
 
 void CoreParameterView::rcvPlayerParameters(playerParameters* parameters) {

@@ -88,6 +88,9 @@ void ControllerCoreParameter::connectControllerToController()
         IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
         ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ctr);
         QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrialStarted, deController, &ControllerDataExporter::receiveTrialStarted, Qt::DirectConnection);
+
+
     }
     //Media Player
     {
@@ -97,6 +100,7 @@ void ControllerCoreParameter::connectControllerToController()
         QObject::connect(mp, &MediaPlayer::fwdPlayerParameters, view, &CoreParameterView::rcvPlayerParameters);
         QObject::connect(view, &CoreParameterView::emitStartPlayback, mpc, &ControllerPlayer::play);
         QObject::connect(view, &CoreParameterView::emitStopPlayback, mpc, &ControllerPlayer::stop);
+		QObject::connect(view, &CoreParameterView::emitPausePlayback, mpc, &ControllerPlayer::pause);
     }
     //Main Window
     {
@@ -104,6 +108,8 @@ void ControllerCoreParameter::connectControllerToController()
         ControllerMainWindow *mwc = static_cast<ControllerMainWindow*>(ctr);
         QObject::connect(view, &CoreParameterView::emitEnableTracking, mwc, &ControllerMainWindow::activeTracking);
         QObject::connect(view, &CoreParameterView::emitDisableTracking, mwc, &ControllerMainWindow::deactiveTrackring);
+		QObject::connect(view, &CoreParameterView::emitActivateTrackingSwitch, mwc, &ControllerMainWindow::activeTrackingCheckBox);
+		QObject::connect(view, &CoreParameterView::emitDeactivateTrackingSwitch, mwc, &ControllerMainWindow::deactiveTrackingCheckBox);
     }
 
     view->triggerUpdate();
@@ -114,9 +120,15 @@ void ControllerCoreParameter::changeAreaDescriptorType(QString type) {
         dynamic_cast<CoreParameterView*>(m_View)->areaDescriptorTypeChanged(type);
 }
 
+void ControllerCoreParameter::receiveResetTrial()
+{
+	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
+	view->resetTrial();
+}
+
 void ControllerCoreParameter::triggerUpdate() {
 
-    CoreParameterView* view = static_cast<CoreParameterView*>(m_View); view->triggerUpdate(); 
+    CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
     view->triggerUpdate();
 }
 

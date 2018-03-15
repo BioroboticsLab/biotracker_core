@@ -93,6 +93,7 @@ public:
     void on_pushButton_startExp_clicked();
     void on_pushButton_finalizeExp_clicked();
     void on_label_ExpSrcCnt_clicked();
+	void on_trialHelpButton_clicked();
 public slots:
     void rcvPlayerParameters(playerParameters* parameters);
 
@@ -105,8 +106,13 @@ public:
     */
     void emitEnableTracking();
     void emitDisableTracking();
+	void emitActivateTrackingSwitch();
+	void emitDeactivateTrackingSwitch();
     void emitStartPlayback();
     void emitStopPlayback();
+	void emitPausePlayback();
+	void emitTrialStarted(bool started);
+
 
 	//Enable view
     void emitViewSwitch(bool lever);
@@ -155,7 +161,8 @@ private:
 
 	bool m_viewSwitch;
 	SwitchButton* _expertSwitch;
-    bool _trackingStarted = false;
+    bool _trialActive = false;
+	bool _trialStarted = false;
     QString _currentFile = "No Media";
 
 	// IViewWidget interface
@@ -164,6 +171,7 @@ private:
 	void getNotified();
 	void fillUI();
 	void setStyle();
+	void resetTrial();
 
 };
 

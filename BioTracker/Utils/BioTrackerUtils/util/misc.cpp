@@ -47,7 +47,7 @@ std::string getTimeAndDate(std::string prefix, std::string suffix)
     timeinfo = localtime ( &rawtime );
 
     char t[30];
-    strftime(t, 30, "%Y-%m-%dT%H:%M:%S", timeinfo); //
+    strftime(t, 30, "%Y-%m-%dT%H_%M_%S", timeinfo); //
 
 	std::string out = prefix;
 
