@@ -82,6 +82,10 @@ std::string DataExporterCSV::writeComponentCSV(IModelTrackedComponent* comp, int
             if (!comp->metaObject()->property(i).isStored()) {
                 continue;
             }
+            if (!comp->getValid()) {
+                ss << _separator;
+                continue;
+            }
             std::string str = comp->metaObject()->property(i).name();
             QVariant v = comp->metaObject()->property(i).read(comp);
             std::string val = v.toString().toStdString();

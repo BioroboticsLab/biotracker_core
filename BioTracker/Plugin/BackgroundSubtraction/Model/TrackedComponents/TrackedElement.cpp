@@ -55,8 +55,12 @@ void TrackedElement::setTime(qint64 t) {
     _time = t;
     std::string::size_type sz = 0;
     long long ll = t / 1000;
+    long long remainder = t % 1000;
     std::time_t tm(ll);
-    _timeSysclck = std::chrono::system_clock::from_time_t(tm);
+
+    _timeSysclck = std::chrono::system_clock::from_time_t(tm); 
+    std::chrono::duration<long long, std::milli> dur(remainder);
+    _timeSysclck += dur;
 };
 
 qint64 TrackedElement::getTime() {
@@ -79,7 +83,7 @@ FishPose TrackedElement::getFishPose()
 
 void  TrackedElement::setX(float val) {
 	_x = val;
-	FishPose pnew(cv::Point(_x, _pose.position_cm().y), cv::Point(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
+	FishPose pnew(cv::Point2f(_x, _pose.position_cm().y), cv::Point2f(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
     _ypx = _pose.position_px().y;
     _xpx = _pose.position_px().x;
 	_pose = pnew;
@@ -87,7 +91,7 @@ void  TrackedElement::setX(float val) {
 
 void  TrackedElement::setY(float val) {
 	_y = val;
-	FishPose pnew(cv::Point(_pose.position_cm().x, _y), cv::Point(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
+	FishPose pnew(cv::Point2f(_pose.position_cm().x, _y), cv::Point2f(-1, -1), _rad, _deg, _pose.width(), _pose.height(), _pose.getScore());
     _ypx = _pose.position_px().y;
     _xpx = _pose.position_px().x;
 	_pose = pnew;
