@@ -105,15 +105,19 @@ void DataExporterCSV::setProperty(IModelTrackedComponent* comp, std::string key,
 
 void DataExporterCSV::addChildOfChild(IModelTrackedTrajectory *root, IModelTrackedComponent* child, IModelTrackedComponentFactory* factory, int idx) {
     IModelTrackedTrajectory *traj = dynamic_cast<IModelTrackedTrajectory *>(root->getChild(child->getId()));
+
     if (traj) {
         traj->add(child, idx);
     }
     else
     {
-        IModelTrackedTrajectory *ntraj = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory("0"));
-        ntraj->add(child, idx);
-        root->add(ntraj, child->getId());
+        traj = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory("0"));
+        traj->setValid(false);
+        traj->add(child, idx);
+        root->add(traj, child->getId());
     }
+    
+    traj->setValid(child->getValid());
 }
 
 void DataExporterCSV::loadFile(std::string file)
@@ -274,7 +278,7 @@ void DataExporterCSV::writeAll(std::string f) {
         for (int i = 0; i < _root->size(); i++) {
 
             IModelTrackedTrajectory *t = dynamic_cast<IModelTrackedTrajectory *>(_root->getChild(i));
-            if (t) {
+            if (t && t->validCount() > 0) {
                 IModelTrackedPoint *e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
                 if (e) {
                     std::string line = writeComponentCSV(e, trajNumber);

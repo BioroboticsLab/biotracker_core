@@ -160,7 +160,6 @@ void BioTrackerTrackingAlgorithm::doTracking(std::shared_ptr<cv::Mat> p_image, u
 		if (t && t->getValid() && !t->getFixed()) {
 			TrackedElement *e = new TrackedElement(t, "n.a.", t->getId());
 
-			//does this work? trajnumber is not traj-id with new id system
 			e->setFishPose(std::get<0>(poses)[trajNumber]);
 			e->setTime(start);
 			t->add(e, framenumber);

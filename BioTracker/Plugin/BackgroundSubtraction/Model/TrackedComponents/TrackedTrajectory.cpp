@@ -49,7 +49,7 @@ void TrackedTrajectory::add(IModelTrackedComponent *comp, int pos)
 	else if (_size <= pos) {
         while (_size < pos)
         {
-            _TrackedComponents.append(0);
+            _TrackedComponents.append(nullptr);
             _size++;
         }
 
