@@ -108,7 +108,7 @@ void DataExporterCSV::addChildOfChild(IModelTrackedTrajectory *root, IModelTrack
     {
         IModelTrackedTrajectory *ntraj = static_cast<IModelTrackedTrajectory*>(factory->getNewTrackedTrajectory("0"));
         ntraj->add(child, idx);
-        root->add(ntraj, idx);
+        root->add(ntraj, child->getId());
     }
 }
 
