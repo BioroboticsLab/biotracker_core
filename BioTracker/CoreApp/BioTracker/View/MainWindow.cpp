@@ -1041,6 +1041,7 @@ void MainWindow::on_actionShortcuts_triggered() {
 	QLinkedList<QPair<QString, QString>> scList;
 
 	//TODO import this from file
+	scList.append(QPair<QString,QString>(QString("F11"), QString("Toggle fullscreen")));
     scList.append(QPair<QString,QString>(QString("CTRL + Z"), QString("Undo")));
     scList.append(QPair<QString,QString>(QString("CTRL + Y"), QString("Redo")));
     scList.append(QPair<QString,QString>(QString("CTRL + A"), QString("Select all")));

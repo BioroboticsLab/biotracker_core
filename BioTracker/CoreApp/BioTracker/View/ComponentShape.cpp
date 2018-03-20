@@ -17,11 +17,14 @@
 #include "QSlider"
 #include "QLineEdit"
 #include "QAbstractSlider"
+#include "QComboBox"
+#include "QSpinBox"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QtWidgets/QHeaderView>
 #include <QLinkedList>
 #include <qpair.h>
+//#include <QOverload>
 
 
 ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
@@ -367,17 +370,23 @@ void ComponentShape::trace()
 			QColor timeDegradationPenColor;
 
 			if (m_tracingTimeDegradation == "Transparency") {
-				timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+
+				float tr = (float)m_transparency;
+				float trForThis = tr != 0 ? tr - (tr / (float)m_tracingLength) * (i-1) : 0.0f;
+
+				timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), trForThis);
 				timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
 
-				timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
+				timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), trForThis);
 				timeDegradationBrush = QBrush(timeDegradationBrushColor);
 
 			}
 			else if (m_tracingTimeDegradation == "False color") {
 				float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
 				timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationPenColor.setAlpha(m_transparency);
 				timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationBrushColor.setAlpha(m_transparency);
 				timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
 				timeDegradationBrush = QBrush(timeDegradationBrushColor);
 			}
@@ -405,7 +414,7 @@ void ComponentShape::trace()
 
 				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 				QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
-				lineItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
+				lineItem->setPen(QPen(timeDegradationPenColor, m_penWidth, m_penStyle));
 
 				lastPointDifference = adjustedHistoryPointDifference;
 			}
@@ -426,9 +435,9 @@ void ComponentShape::trace()
 				QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
 				baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
 				QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
-				arm0Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
+				arm0Item->setPen(timeDegradationPen);
 				QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
-				arm1Item->setPen(QPen(m_penColor, m_penWidth, m_penStyle));
+				arm1Item->setPen(timeDegradationPen);
 
 				lastPointDifference = adjustedHistoryPointDifference;
 			}
@@ -659,7 +668,48 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	menu.addMenu(transparencyMenu);
 
 	//
-	QAction *showProperties = menu.addSeparator();
+	menu.addSeparator();
+
+	//tracing
+	QMenu* tracingMenu = new QMenu("Tracing");
+	//tracing type
+	QWidgetAction* typeBox = new QWidgetAction(this);
+	QComboBox* typeCombo = new QComboBox;
+	QStringList types;
+	types << "No tracing" << "Shape" << "Path" << "Arrow Path";
+	typeCombo->addItems(types);
+	typeCombo->setCurrentText(m_tracingStyle);
+	QObject::connect(typeCombo, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &ComponentShape::receiveTracingStyle);
+	typeBox->setDefaultWidget(typeCombo);
+	tracingMenu->addAction(typeBox);
+	//tracingHistory
+	QWidgetAction* historyBox = new QWidgetAction(this);
+	QSpinBox* historySpinBox = new QSpinBox;
+	historySpinBox->setValue(m_tracingLength);
+	QObject::connect(historySpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingLength);
+	historyBox->setDefaultWidget(historySpinBox);
+	tracingMenu->addAction(historyBox);
+	//tracingSteps
+	QWidgetAction* stepsBox = new QWidgetAction(this);
+	QSpinBox* stepsSpinBox = new QSpinBox;
+	stepsSpinBox->setValue(m_tracingSteps);
+	QObject::connect(stepsSpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingSteps);
+	stepsBox->setDefaultWidget(stepsSpinBox);
+	tracingMenu->addAction(stepsBox);
+	//tracingDegradation
+	QWidgetAction* degrBox = new QWidgetAction(this);
+	QComboBox* degrCombo = new QComboBox;
+	QStringList degrTypes;
+	degrTypes << "None" << "Transparency" << "False color";
+	degrCombo->addItems(degrTypes);
+	degrCombo->setCurrentText(m_tracingTimeDegradation);
+	QObject::connect(degrCombo, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &ComponentShape::receiveTracingTimeDegradation);
+	degrBox->setDefaultWidget(degrCombo);
+	tracingMenu->addAction(degrBox);
+
+	menu.addMenu(tracingMenu);
+
+	menu.addSeparator();
 
 	//removing
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
