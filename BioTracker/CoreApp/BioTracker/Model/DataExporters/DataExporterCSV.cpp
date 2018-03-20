@@ -218,7 +218,7 @@ void DataExporterCSV::writeAll(std::string f) {
     int max = getMaxLinecount();
 
     //There is nothing to write
-    if (max <= 1)
+    if (max <= 0)
     {
         cleanup();
         return;

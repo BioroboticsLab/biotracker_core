@@ -100,6 +100,7 @@ Q_SIGNALS:
     void on_actionToggle_view_toolbar_triggered();
     void on_actionToggle_compact_menu_toolbar_2_triggered();
 	void on_actionToggle_video_toolbar_triggered();
+    void on_actionToggle_fullscreen_triggered();
 
 
 //view toolbar actions

@@ -452,9 +452,8 @@ void CoreParameterView::on_pushButton_finalizeExp_clicked() {
 	_trialStarted = false;
     ui->pushButton_startExp->setText("Start Trial");
 	ui->label_ExpSt->setText("No Trial started!");
-    Q_EMIT emitFinalizeExperiment();
 	Q_EMIT emitTrialStarted(false);
-
+    Q_EMIT emitFinalizeExperiment();
 }
 
 void CoreParameterView::on_label_ExpSrcCnt_clicked() {

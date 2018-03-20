@@ -145,7 +145,8 @@ void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
 
 int ControllerDataExporter::getTrialNumber() {
     //Get all existing files and parse highest export number
-    QStringList allFiles = QDir(CFG_DIR_TRACKS).entryList(QDir::NoDotAndDotDot | QDir::Files);
+    QString basePath = _trialStarted ? CFG_DIR_TRIALS : CFG_DIR_TRACKS;
+    QStringList allFiles = QDir(basePath).entryList(QDir::NoDotAndDotDot | QDir::Files);
 
     int maxVal = 0;
     foreach(QString s, allFiles) {

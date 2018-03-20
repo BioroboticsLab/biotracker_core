@@ -963,6 +963,16 @@ void MainWindow::on_actionRight_panel_triggered(bool checked){
 	ui->rightPanelViewControllerButton->click();
 }
 
+void MainWindow::on_actionToggle_fullscreen_triggered(){
+	if(isFullScreen()){
+		showNormal();
+	}
+	else{
+		showFullScreen();
+	}
+}
+
+
 //////////////////////////////////Help//////////////////////////////
 
 void MainWindow::on_actionUser_guide_triggered(){

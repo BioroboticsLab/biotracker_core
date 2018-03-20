@@ -15,6 +15,7 @@
 #include "QGraphicsProxyWidget"
 #include "QVBoxLayout"
 #include "QSlider"
+#include "QLineEdit"
 #include "QAbstractSlider"
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -609,6 +610,28 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	infoLabel->setAlignment(Qt::AlignCenter);
 	infoBox->setDefaultWidget(infoLabel);
 	menu.addAction(infoBox);
+
+	menu.addSeparator();
+	//set object name - line edit
+	QWidgetAction* objectNameAction = new QWidgetAction(this);
+	QLineEdit* objectEdit = new QLineEdit();
+
+	if(objectName() == ""){
+		objectEdit->setPlaceholderText("no object name set");
+	}
+	else{
+		objectEdit->setText(objectName());
+	}
+	objectEdit->setAlignment(Qt::AlignHCenter);
+	objectEdit->setFrame(false);
+	objectEdit->setToolTip("Change the trajectory's name. This will not be saved in the data output (yet)!");
+		
+	QObject::connect(objectEdit, &QLineEdit::textEdited, this, &ComponentShape::setObjectNameContext);
+
+	objectNameAction->setDefaultWidget(objectEdit);
+	menu.addAction(objectNameAction);
+
+	//show info window for current frame
 	menu.addSeparator();
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 
@@ -624,6 +647,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	transparencySlider->setMinimum(0);
 	transparencySlider->setMaximum(255);
 	transparencySlider->setSingleStep(1);
+	transparencySlider->setTickPosition(QSlider::TicksBothSides);
 	transparencySlider->setTickInterval(64);
 	transparencySlider->setValue(m_transparency);
 
@@ -887,6 +911,14 @@ void ComponentShape::createInfoWindow()
 
 	
 }
+
+void ComponentShape::setObjectNameContext(QString name){
+	setObjectName(name);
+	m_trajectory->setObjectName(name);
+	//_objNameBuffer = name;
+}
+
+//void ComponentShape::setObjectName
 
 void ComponentShape::morphIntoRect(){
 	setData(1, "rectangle");
