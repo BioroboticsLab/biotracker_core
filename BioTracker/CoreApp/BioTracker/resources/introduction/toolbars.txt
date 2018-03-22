@@ -3,7 +3,7 @@ First of all, there are the toolbars.
 The upper toolbar controls the loading of media, trackers and tracks.
 Additionaly you can switch between the loaded trackers and control the activation of the tracking.
 
-The right toolbar controls the tracks and lets you add annotations to each frame of the video.
+The left toolbar controls the tracks and lets you add annotations to each frame of the video.
 
 The lower/video toolbar controls the video and shows playback information.
 Screenshots and recording are both possible.

@@ -120,6 +120,10 @@ void ControllerMainWindow::activeTrackingCheckBox() {
     dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 }
 
+void ControllerMainWindow::receiveSaveTrajData(){
+    dynamic_cast<MainWindow*>(m_View)->saveDataToFile();
+}
+
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow

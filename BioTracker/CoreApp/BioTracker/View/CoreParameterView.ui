@@ -156,8 +156,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>316</width>
-          <height>844</height>
+          <width>293</width>
+          <height>935</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -972,6 +972,9 @@
                       <property name="minimum">
                        <number>1</number>
                       </property>
+                      <property name="maximum">
+                       <number>100000</number>
+                      </property>
                       <property name="value">
                        <number>1</number>
                       </property>
@@ -1504,7 +1507,7 @@ Resets when removing the tracks from the &quot;Tracks&quot; folder.</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1562,7 +1565,7 @@ Select a source in the &quot;File&quot; menu.</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1615,7 +1618,7 @@ You can add some by right-clicking the video (if loaded).</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1645,6 +1648,13 @@ You can add some by right-clicking the video (if loaded).</string>
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_addTraj">
+             <property name="text">
+              <string>Add a trajectory</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -1664,12 +1674,12 @@ You can add some by right-clicking the video (if loaded).</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
              <property name="text">
-              <string>Trial Status</string>
+              <string>Trial Status:</string>
              </property>
             </widget>
            </item>
@@ -1737,11 +1747,18 @@ data to the &quot;Tracks&quot; directory and increment the trial count.
 If no trial is active this button saves and resets the current data. </string>
             </property>
             <property name="text">
-             <string>Save Trial and Reset Data</string>
+             <string>Finalize and Save Trial and Reset Data</string>
             </property>
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_saveData">
+          <property name="text">
+           <string>Save Data</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_2">

@@ -608,7 +608,9 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
 	QMenu menu;
 	
-	// create the info box
+	/*
+	 create the info box
+	*/
 	QWidgetAction* infoBox = new QWidgetAction(this);
 
 	QString info = QString("ID: ");
@@ -620,8 +622,12 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	infoBox->setDefaultWidget(infoLabel);
 	menu.addAction(infoBox);
 
+	//
 	menu.addSeparator();
-	//set object name - line edit
+
+	/* 
+	 create set object name - line edit
+	*/
 	QWidgetAction* objectNameAction = new QWidgetAction(this);
 	QLineEdit* objectEdit = new QLineEdit();
 
@@ -640,15 +646,21 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	objectNameAction->setDefaultWidget(objectEdit);
 	menu.addAction(objectNameAction);
 
-	//show info window for current frame
+	/* 
+	 show info window for current frame
+	*/
 	menu.addSeparator();
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 
-	//coloring
+	/* 
+	 coloring
+	*/
 	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
 	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()));
 
-	//transparency slider
+	/* 
+	 transparency slider
+	*/
 	QMenu* transparencyMenu = new QMenu("Transparency");
 	QWidgetAction* sliderBox = new QWidgetAction(this);
 	QSlider* transparencySlider = new QSlider(Qt::Horizontal);
@@ -670,7 +682,9 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//
 	menu.addSeparator();
 
-	//tracing
+	/* 
+	 tracing menu
+	*/
 	QMenu* tracingMenu = new QMenu("Tracing");
 	//tracing type
 	QWidgetAction* typeBox = new QWidgetAction(this);
@@ -681,21 +695,32 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	typeCombo->setCurrentText(m_tracingStyle);
 	QObject::connect(typeCombo, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &ComponentShape::receiveTracingStyle);
 	typeBox->setDefaultWidget(typeCombo);
-	tracingMenu->addAction(typeBox);
+	QMenu* tracingTypeMenu = new QMenu("Type");
+	tracingTypeMenu->addAction(typeBox);
+	tracingMenu->addMenu(tracingTypeMenu);
+
 	//tracingHistory
 	QWidgetAction* historyBox = new QWidgetAction(this);
 	QSpinBox* historySpinBox = new QSpinBox;
 	historySpinBox->setValue(m_tracingLength);
+	historySpinBox->setPrefix("History: ");
+	historySpinBox->setMinimum(1);
+	historySpinBox->setMaximum(100000);
 	QObject::connect(historySpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingLength);
 	historyBox->setDefaultWidget(historySpinBox);
 	tracingMenu->addAction(historyBox);
+
 	//tracingSteps
 	QWidgetAction* stepsBox = new QWidgetAction(this);
 	QSpinBox* stepsSpinBox = new QSpinBox;
 	stepsSpinBox->setValue(m_tracingSteps);
+	stepsSpinBox->setPrefix("Steps: ");
+	stepsSpinBox->setMinimum(1);
+	stepsSpinBox->setMaximum(100000);
 	QObject::connect(stepsSpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingSteps);
 	stepsBox->setDefaultWidget(stepsSpinBox);
 	tracingMenu->addAction(stepsBox);
+
 	//tracingDegradation
 	QWidgetAction* degrBox = new QWidgetAction(this);
 	QComboBox* degrCombo = new QComboBox;
@@ -705,13 +730,18 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	degrCombo->setCurrentText(m_tracingTimeDegradation);
 	QObject::connect(degrCombo, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &ComponentShape::receiveTracingTimeDegradation);
 	degrBox->setDefaultWidget(degrCombo);
-	tracingMenu->addAction(degrBox);
+	QMenu* tracingTimeDegrMenu = new QMenu("Time degradation");
+	tracingTimeDegrMenu->addAction(degrBox);
+	tracingMenu->addMenu(tracingTimeDegrMenu);
 
 	menu.addMenu(tracingMenu);
 
+	//
 	menu.addSeparator();
 
-	//removing
+	/* 
+	 removing
+	*/
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
 	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
 	if (!m_pRemovable) { 
@@ -719,11 +749,15 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 		removeTrackEntityAction->setEnabled(false);
 	}
 
-	//fixing
+	/* 
+	 fixing
+	*/
 	QString fixText = m_fixed?"Unfix track":"Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
-	//marking
+	/* 
+	marking
+	*/
 	QString markText = m_marked?"Unmark":"Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
@@ -731,9 +765,11 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	unmarkAction->setVisible(m_marked);
 	
 	//
-	QAction *sep2 = menu.addSeparator();
+	menu.addSeparator();
 
-	//morphing
+	/* 
+	 morphing
+	*/
 	QMenu* morphMenu = new QMenu("Morph into...");
 	if(data(1)=="rectangle" || data(1) == "ellipse" || data(1) == "point"){
 		QAction* morphPoint = morphMenu->addAction("Point", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPoint()));
@@ -745,7 +781,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	}
 	menu.addMenu(morphMenu);
 
-	
+	//
 	QAction *selectedAction = menu.exec(event->screenPos());
 }
 

@@ -43,7 +43,7 @@ IView *ControllerTrackedComponent::getTrackingElementsWidget()
 void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
 	trajectory->setValid(false);
-	qDebug() << "track" << trajectory->getId() << "set invalid";
+	qDebug() << "TRACKER: Track" << trajectory->getId() << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
@@ -52,7 +52,7 @@ void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(false);
-		qDebug() << "track" << id << "set invalid";
+		qDebug() << "TRACKER: Track" << id << "set invalid";
 	}
 }
 
@@ -62,20 +62,20 @@ void ControllerTrackedComponent::receiveValidateTrajectory(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(true);
-		qDebug() << "track" << id << "validated";
+		qDebug() << "TRACKER: Track" << id << "validated";
 	}
 }
 
 void ControllerTrackedComponent::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(true);
-	qDebug() << "track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
+	qDebug() << "TRACKER: Track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(false);
-	qDebug() << "Track " << trajectory->getId() << " entity #" << frameNumber << "deleted (set invalid)";
+	qDebug() << "TRACKER: Track " << trajectory->getId() << " entity #" << frameNumber << "deleted (set invalid)";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
@@ -138,14 +138,14 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 			traj0->setId(traj1Id);
 			traj1->setId(traj0Id);
 
-			qDebug() << "Swap IDs " << traj0Id << "and " << traj1Id;
+			qDebug() << "TRACKER: Swap IDs " << traj0Id << "and " << traj1Id;
 		}
 	}
 }
 
 void ControllerTrackedComponent::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
 {
-	qDebug() << "Fix trajectory " << trajectory->getId();
+	qDebug() << "TRACKER: Fix trajectory " << trajectory->getId();
 	trajectory->setFixed(toggle);
 }
 

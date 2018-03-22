@@ -262,7 +262,7 @@ void MainWindow::createIntroductionWizard(){
 	QObject::connect(noShowCheck, &QCheckBox::toggled, this, &MainWindow::toggleNoShowWiz);
 	
 
-	//intrduction
+	//introduction
 	QWizardPage* p1 = new QWizardPage;
 	{
 	p1->setTitle("BioTracker 3 - Introduction");
@@ -278,6 +278,7 @@ void MainWindow::createIntroductionWizard(){
 
 	QFile file(":/Introduction/resources/introduction/intro.txt");
 	QLabel *introLabel= new QLabel;
+	introLabel->setWordWrap(true);
 
 	//read introduction text from file
 	QString line;
@@ -296,6 +297,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(introLabel);
+	textScroll->setWidgetResizable(true);
 	layout->addWidget(textScroll);
 	layout->setAlignment(Qt::AlignHCenter);
     p1->setLayout(layout);
@@ -323,6 +325,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(label);
+	textScroll->setWidgetResizable(true);
 	layout->addWidget(textScroll);
 	layout->setAlignment(Qt::AlignHCenter);
     p2->setLayout(layout);
@@ -337,6 +340,7 @@ void MainWindow::createIntroductionWizard(){
     QPixmap overviewImg(":/Introduction/resources/introduction/images/toolbars.png");
 	QPixmap scaledImg = overviewImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	QLabel* imgLabel = new QLabel;
+	
 	imgLabel->setPixmap(scaledImg);
 
 	//read toolbar text from file
@@ -361,6 +365,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(label);
+	textScroll->setWidgetResizable(true);
 	layout->addWidget(textScroll);
 	layout->setAlignment(Qt::AlignHCenter);    
 	p3->setLayout(layout);
@@ -400,6 +405,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(label);
+	textScroll->setWidgetResizable(true);
 	layout->addWidget(textScroll);
 	layout->setAlignment(Qt::AlignHCenter);
 
@@ -440,6 +446,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(label);
+	textScroll->setWidgetResizable(true);
 	layout->addWidget(textScroll);
 	layout->setAlignment(Qt::AlignHCenter);
 
@@ -491,6 +498,7 @@ void MainWindow::createIntroductionWizard(){
 	textScroll->setFrameShape(QFrame::NoFrame);
 	textScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	textScroll->setWidget(label);
+	textScroll->setWidgetResizable(true);
 	outerLayout->addWidget(textScroll);
 	outerLayout->addWidget(noShowCheck);
 
@@ -696,6 +704,15 @@ void MainWindow::deactivateTrackingCheckBox() {
 	_trackerActivator->setEnabled(false);
 }
 
+void MainWindow::saveDataToFile(){
+	static const QString fileFilter(
+        "tracking data files (*.csv *.dat *.json)");
+
+    boost::filesystem::path file;
+    QString f = QFileDialog::getSaveFileName(this, "Save trajectory data to file", "", fileFilter, 0);
+
+    qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
+}
 
 //SLOTS
 
@@ -769,14 +786,7 @@ void MainWindow::on_actionLoad_trackingdata_triggered() {
 }
 
 void MainWindow::on_actionSave_trackingdata_triggered() {
-    static const QString imageFilter(
-        "tracking data files (*.csv *.dat *.json)");
-
-    boost::filesystem::path file;
-    QString f = QFileDialog::getSaveFileName(this, "Open image files", "", imageFilter, 0);
-
-    qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
- 
+	saveDataToFile();
 }
 
 void MainWindow::on_actionOpen_Camera_triggered() {

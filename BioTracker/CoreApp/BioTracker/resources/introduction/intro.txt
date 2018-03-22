@@ -1,4 +1,4 @@
-The BioTracker is a open-source tracking software.
-It is designed to be highly modular.
+The BioTracker is a open-source tracking software. It is designed to be modular regarding trackers.
+
 Load a tracker, load a medium and start tracking!
 

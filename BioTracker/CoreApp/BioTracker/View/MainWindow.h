@@ -54,6 +54,8 @@ class MainWindow : public IViewMainWindow {
     //intro wizard
     void createIntroductionWizard();
 
+    void saveDataToFile();
+    
     void checkTrackerGroupBox();
     void checkMediaGroupBox();
     void activateTracking();

@@ -472,7 +472,7 @@ void TrackedComponentView::contextMenuEvent(QGraphicsSceneContextMenuEvent * eve
 	infoBox->setDefaultWidget(infoLabel);
 	menu.addAction(infoBox);
 	menu.addSeparator();
-	QAction *addComponentAction = menu.addAction("Add entity here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()));
+	QAction *addComponentAction = menu.addAction("Add trajectory here", dynamic_cast<TrackedComponentView*>(this), SLOT(addTrajectory()));
 	QAction *swapIdsAction = menu.addAction("Swap ID's", dynamic_cast<TrackedComponentView*>(this), SLOT(swapIds()));
 	QAction *unmarkAllAction = menu.addAction("Unmark all...", dynamic_cast<TrackedComponentView*>(this), SLOT(unmarkAll()));
 	QAction *removeSelectedAction = menu.addAction("Remove selected tracks", dynamic_cast<TrackedComponentView*>(this), SLOT(removeTrajectories()));

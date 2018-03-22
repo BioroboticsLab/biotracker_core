@@ -102,6 +102,8 @@ public:
     */
     void deactiveTrackring();
 
+    void receiveSaveTrajData();
+
     // IController interface
   protected:
     void createModel() override;

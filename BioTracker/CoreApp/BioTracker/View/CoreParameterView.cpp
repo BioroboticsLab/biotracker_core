@@ -420,6 +420,7 @@ void CoreParameterView::on_pushButton_startExp_clicked() {
 				_trialStarted = true;
 				emitTrialStarted(true);
 				emitFinalizeExperiment();
+				emitPausePlayback();
 				QMessageBox::information(0, "New trial", "You started a new trial! Previous data was saved and reset.\n\nGo to the timespot in the video you want to track at."
 					"\n\nPlease add the number of objects you want to track as trajectories.\nResume the video." );
 			}
@@ -469,6 +470,14 @@ void CoreParameterView::on_trialHelpButton_clicked()
 		"If you want to pause the video and resume without tracking you will have to click 'Pause Trial' causing the tracking to be disabled.\n"
 		"You can now watch the video without tracking.\n\n"
 		"'Resume trial' will cause the tracking to be activated AND the video to be resumed");
+}
+
+void CoreParameterView::on_pushButton_saveData_clicked(){
+	emitSaveDataToFile();
+}
+
+void CoreParameterView::on_pushButton_addTraj_clicked(){
+	emitAddTrack();
 }
 
 void CoreParameterView::rcvPlayerParameters(playerParameters* parameters) {

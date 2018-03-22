@@ -81,9 +81,9 @@ public:
 	void on_checkBoxAntialiasingEntities_toggled(bool toggle);
 	void on_checkBoxAntialiasingFull_toggled(bool toggle);
 
-    /*
-    EXPERIMENT TAB
-    */
+/*
+EXPERIMENT TAB
+*/
 
     //label_ExpTrialNo
     //label_ExpSrcCnt
@@ -94,6 +94,8 @@ public:
     void on_pushButton_finalizeExp_clicked();
     void on_label_ExpSrcCnt_clicked();
 	void on_trialHelpButton_clicked();
+	void on_pushButton_saveData_clicked();
+	void on_pushButton_addTraj_clicked();
 public slots:
     void rcvPlayerParameters(playerParameters* parameters);
 
@@ -112,13 +114,14 @@ public:
     void emitStopPlayback();
 	void emitPausePlayback();
 	void emitTrialStarted(bool started);
+	void emitSaveDataToFile();
 
 
 	//Enable view
     void emitViewSwitch(bool lever);
 	//Select all tracks
     //void emitSelectAll();
-	//Set number of tracks
+	//Add tracks
 	void emitAddTrack();
 	//Ignore zoom
 	void emitIgnoreZoom(bool toggle);
