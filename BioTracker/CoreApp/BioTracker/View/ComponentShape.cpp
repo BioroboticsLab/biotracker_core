@@ -1,4 +1,5 @@
 #include "ComponentShape.h"
+#include <cmath>
 #include "QBrush"
 #include "QPainter"
 #include "QMenu"
