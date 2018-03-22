@@ -85,6 +85,8 @@ class ComponentShape : public QGraphicsObject
 		void receiveTransparency(int alpha);
 		//Dimensions
 		void receiveDimensions(int width, int height);
+		void receiveHeight(int height);
+		void receiveWidth(int width);
 		void setDimensionsToDefault();
 		void receiveToggleOrientationLine(bool toggle);
 		void receiveShowId(bool toggle);

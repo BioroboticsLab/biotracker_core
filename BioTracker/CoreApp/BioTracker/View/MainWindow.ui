@@ -822,7 +822,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <widget class="QToolBar" name="toolBarMenu">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Menu toolbar</string>
    </property>
    <property name="toolTip">
     <string>Tools for managing the basic functionalities</string>
@@ -864,7 +864,7 @@ QToolButton {
   </widget>
   <widget class="QToolBar" name="toolBarTools">
    <property name="windowTitle">
-    <string>toolBar_2</string>
+    <string>View toolbar</string>
    </property>
    <property name="toolTip">
     <string>Tools to manage the visualization and track properties</string>
@@ -903,7 +903,7 @@ QToolButton {
   </widget>
   <widget class="QToolBar" name="toolBarVideo">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Video toolbar</string>
    </property>
    <property name="toolTip">
     <string>Tools to manage the media properties and to show media info</string>
@@ -1172,7 +1172,7 @@ QToolButton {
     <string>Delete selected track</string>
    </property>
    <property name="toolTip">
-    <string>Delete the selected entities</string>
+    <string>Delete the selected trajectories</string>
    </property>
    <property name="shortcut">
     <string>Del</string>

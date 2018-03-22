@@ -19,6 +19,8 @@
 #include "QAbstractSlider"
 #include "QComboBox"
 #include "QSpinBox"
+#include "QDoubleSpinBox"
+#include "QCheckBox"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QtWidgets/QHeaderView>
@@ -412,14 +414,20 @@ void ComponentShape::trace()
 			//PATH
 			else if (m_tracingStyle == "Path") {
 
-				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
-				QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
-				lineItem->setPen(QPen(timeDegradationPenColor, m_penWidth, m_penStyle));
+				if(lastPointDifference != adjustedHistoryPointDifference){
 
-				lastPointDifference = adjustedHistoryPointDifference;
+					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+					QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
+					lineItem->setPen(QPen(timeDegradationPenColor, m_penWidth, m_penStyle));
+
+					lastPointDifference = adjustedHistoryPointDifference;
+				}
 			}
 			//ARROWPATH
 			else if (m_tracingStyle == "Arrow path") {
+
+				if(lastPointDifference != adjustedHistoryPointDifference){
+
 				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 
 				int armLength = std::floor(base.length() / 9) + 2;
@@ -440,6 +448,8 @@ void ComponentShape::trace()
 				arm1Item->setPen(timeDegradationPen);
 
 				lastPointDifference = adjustedHistoryPointDifference;
+
+				}
 			}
 
 			//add framenumber to each tracer
@@ -651,6 +661,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	*/
 	menu.addSeparator();
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
+	menu.addSeparator();
 
 	/* 
 	 coloring
@@ -681,8 +692,59 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
 	//
 	menu.addSeparator();
+	/*
+	 dimension menu
+	*/
+	QMenu* dimensionMenu = new QMenu("Dimensions");
 
-	/* 
+	//Width
+	QWidgetAction* widthBox = new QWidgetAction(this);
+	QSpinBox* widthSpin = new QSpinBox;
+	widthSpin->setPrefix("Width: ");
+	widthSpin->setMinimum(1);
+	widthSpin->setMaximum(100000);
+	widthSpin->setValue(m_w);
+	QObject::connect(widthSpin,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveWidth);
+	widthBox->setDefaultWidget(widthSpin);
+	dimensionMenu->addAction(widthBox);
+
+	//Height
+	QWidgetAction* heightBox = new QWidgetAction(this);
+	QSpinBox* heightSpin = new QSpinBox;
+	heightSpin->setPrefix("Height: ");
+	heightSpin->setMinimum(1);
+	heightSpin->setMaximum(100000);
+	heightSpin->setValue(m_w);
+	QObject::connect(heightSpin,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveHeight);
+	heightBox->setDefaultWidget(heightSpin);
+	dimensionMenu->addAction(heightBox);
+
+	//
+	menu.addMenu(dimensionMenu);
+
+	/*
+	toggle orientation line
+	*/
+	QWidgetAction* orientationBox = new QWidgetAction(this);
+	QCheckBox* orientationCheck = new QCheckBox();
+	orientationCheck->setText("Show orientation line");
+	orientationCheck->setChecked(m_orientationLine);
+	QObject::connect(orientationCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveToggleOrientationLine);
+	orientationBox->setDefaultWidget(orientationCheck);
+	menu.addAction(orientationBox);
+
+	/*
+	toggle id
+	*/
+	QWidgetAction* idBox = new QWidgetAction(this);
+	QCheckBox* idCheck = new QCheckBox();
+	idCheck->setText("Show ID");
+	idCheck->setChecked(m_showId);
+	QObject::connect(idCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveShowId);
+	idBox->setDefaultWidget(idCheck);
+	menu.addAction(idBox);
+
+	/*
 	 tracing menu
 	*/
 	QMenu* tracingMenu = new QMenu("Tracing");
@@ -702,10 +764,10 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//tracingHistory
 	QWidgetAction* historyBox = new QWidgetAction(this);
 	QSpinBox* historySpinBox = new QSpinBox;
-	historySpinBox->setValue(m_tracingLength);
 	historySpinBox->setPrefix("History: ");
 	historySpinBox->setMinimum(1);
 	historySpinBox->setMaximum(100000);
+	historySpinBox->setValue(m_tracingLength);
 	QObject::connect(historySpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingLength);
 	historyBox->setDefaultWidget(historySpinBox);
 	tracingMenu->addAction(historyBox);
@@ -713,10 +775,10 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//tracingSteps
 	QWidgetAction* stepsBox = new QWidgetAction(this);
 	QSpinBox* stepsSpinBox = new QSpinBox;
-	stepsSpinBox->setValue(m_tracingSteps);
 	stepsSpinBox->setPrefix("Steps: ");
 	stepsSpinBox->setMinimum(1);
 	stepsSpinBox->setMaximum(100000);
+	stepsSpinBox->setValue(m_tracingSteps);
 	QObject::connect(stepsSpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingSteps);
 	stepsBox->setDefaultWidget(stepsSpinBox);
 	tracingMenu->addAction(stepsBox);
@@ -733,6 +795,38 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QMenu* tracingTimeDegrMenu = new QMenu("Time degradation");
 	tracingTimeDegrMenu->addAction(degrBox);
 	tracingMenu->addMenu(tracingTimeDegrMenu);
+
+	//toggle orientation line
+	QWidgetAction* trOrientationBox = new QWidgetAction(this);
+	QCheckBox* trOrientationCheck = new QCheckBox();
+	trOrientationCheck->setText("Show tracer orientation line");
+	trOrientationCheck->setChecked(m_tracingOrientationLine);
+	QObject::connect(trOrientationCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveTracerOrientationLine);
+	trOrientationBox->setDefaultWidget(trOrientationCheck);
+	tracingMenu->addAction(trOrientationBox);
+
+	//tracer number
+	QWidgetAction* trNumberBox = new QWidgetAction(this);
+	QCheckBox* trNumberCheck = new QCheckBox();
+	trNumberCheck->setText("Show framenumber on tracers");
+	trNumberCheck->setChecked(m_tracerFrameNumber);
+	QObject::connect(trNumberCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveTracerFrameNumber);
+	trNumberBox->setDefaultWidget(trNumberCheck);
+	tracingMenu->addAction(trNumberBox);
+
+	//tracer proportions
+	QWidgetAction* propBox = new QWidgetAction(this);
+	QDoubleSpinBox* propSpinBox = new QDoubleSpinBox;
+	propSpinBox->setPrefix("Proportions: ");
+	propSpinBox->setDecimals(2);
+	propSpinBox->setSingleStep(0.001f);
+	propSpinBox->setMinimum(0.01f);
+	propSpinBox->setMaximum(99.99f);
+	propSpinBox->setValue(m_tracerProportions);
+	QObject::connect(propSpinBox,  QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &ComponentShape::receiveTracerProportions);
+	propBox->setDefaultWidget(propSpinBox);
+	tracingMenu->addAction(propBox);
+
 
 	menu.addMenu(tracingMenu);
 
@@ -1084,6 +1178,21 @@ void ComponentShape::receiveDimensions(int width, int height)
 	m_useDefaultDimensions = false;
 	m_w = width;
 	m_h = height;
+	updateAttributes(m_currentFramenumber);
+	trace();
+	update();
+}
+
+void ComponentShape::receiveHeight(int height){
+	m_useDefaultDimensions = false;
+	m_h = height;
+	updateAttributes(m_currentFramenumber);
+	trace();
+	update();
+}
+void ComponentShape::receiveWidth(int width){
+	m_useDefaultDimensions = false;
+	m_w = width;
 	updateAttributes(m_currentFramenumber);
 	trace();
 	update();
