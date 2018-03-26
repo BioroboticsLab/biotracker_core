@@ -308,7 +308,7 @@ void MainWindow::createIntroductionWizard(){
 	QWizardPage* p2 = new QWizardPage;
 	{
 	p2->setTitle("BioTracker 3 - Overview");
-	QLabel *label = new QLabel("This is the BioTracker. Don't let yourself be overwhelmed it is actually pretty simple.");
+	QLabel *label = new QLabel("This is the BioTracker. Don't let yourself be overwhelmed as it is actually pretty simple.");
     label->setWordWrap(true);
 
     QPixmap overviewImg(":/Introduction/resources/introduction/images/BioTracker.PNG");

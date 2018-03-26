@@ -17,6 +17,11 @@
         <file>resources/upper_toolbar/file-picture.png</file>
         <file>resources/upper_toolbar/file-play.png</file>
         <file>resources/upper_toolbar/tracker.png</file>
+        <file>resources/upper_toolbar/tracker2.png</file>
+        <file>resources/upper_toolbar/tracker3.png</file>
+        <file>resources/upper_toolbar/tracker4.png</file>
+        <file>resources/upper_toolbar/tracker5.png</file>
+        <file>resources/upper_toolbar/save.png</file>
         <file>resources/upper_toolbar/redo2.png</file>
         <file>resources/upper_toolbar/undo2.png</file>
         <file>resources/upper_toolbar/upload.png</file>
