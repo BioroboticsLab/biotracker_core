@@ -1069,7 +1069,7 @@ QToolButton {
     <string>Save Trajectory</string>
    </property>
    <property name="toolTip">
-    <string>Save current trajectory to file</string>
+    <string>Save current trajectory data to file</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -1097,7 +1097,7 @@ QToolButton {
     <string>Add Track</string>
    </property>
    <property name="toolTip">
-    <string>Add a Trajectory</string>
+    <string>Add a Trajectory for an object</string>
    </property>
    <property name="shortcut">
     <string>+</string>

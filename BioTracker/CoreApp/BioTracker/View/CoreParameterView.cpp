@@ -392,7 +392,7 @@ void CoreParameterView::resetTrial()
 	_trialActive = false;
 	_trialStarted = false;
 	Q_EMIT emitTrialStarted(false);
-	ui->pushButton_startExp->setText("Start Trial");
+	ui->pushButton_startExp->setText("Start a new Trial");
 
 }
 
@@ -445,13 +445,12 @@ void CoreParameterView::on_pushButton_startExp_clicked() {
 }
 
 void CoreParameterView::on_pushButton_finalizeExp_clicked() {
-
     Q_EMIT emitStopPlayback();
 	Q_EMIT emitActivateTrackingSwitch();
     Q_EMIT emitDisableTracking();
     _trialActive = false;
 	_trialStarted = false;
-    ui->pushButton_startExp->setText("Start Trial");
+    ui->pushButton_startExp->setText("Start a new Trial");
 	ui->label_ExpSt->setText("No Trial started!");
 	Q_EMIT emitTrialStarted(false);
     Q_EMIT emitFinalizeExperiment();
@@ -463,7 +462,7 @@ void CoreParameterView::on_label_ExpSrcCnt_clicked() {
 
 void CoreParameterView::on_trialHelpButton_clicked()
 {
-	QMessageBox::information(0, "Trials", "'Start Trial' will cause all the previous data to be saved and then reset.\n\n"
+	QMessageBox::information(0, "Trials", "'Start a new Trial' will cause all the previous data to be saved and then reset.\n\n"
 		"Go to the time spot you want to track and create a trajectory for each object you want to track.\n"
 		"Resume the video and the tracker will track your objects.\n\n"
 		"If you want to pause the tracking you can just pause the video. Resuming the video will continue the tracking.\n"
@@ -475,6 +474,11 @@ void CoreParameterView::on_trialHelpButton_clicked()
 void CoreParameterView::on_pushButton_saveData_clicked(){
 	emitSaveDataToFile();
 }
+
+void CoreParameterView::on_pushButton_resetData_clicked(){
+    Q_EMIT emitFinalizeExperiment();
+}
+
 
 void CoreParameterView::on_pushButton_addTraj_clicked(){
 	emitAddTrack();

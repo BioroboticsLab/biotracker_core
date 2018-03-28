@@ -27,6 +27,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QLinkedList>
 #include <qpair.h>
+#include "View/Utility/Tracer.h"
 //#include <QOverload>
 
 
@@ -52,6 +53,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_trajectoryWasActiveOnce = false;
 
 	m_tracingLayer = new QGraphicsRectItem();
+	m_tracingLayer->setZValue(-1);
 	this->scene()->addItem(m_tracingLayer);
 
 	m_rotationLine = QLineF();
@@ -408,7 +410,11 @@ void ComponentShape::trace()
 					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
 				}
 
-				createShapeTracer(this->data(1), historyChild, adjustedHistoryPointDifference, timeDegradationPen, timeDegradationBrush);
+				//createShapeTracer(this->data(1), historyChild, adjustedHistoryPointDifference, timeDegradationPen, timeDegradationBrush);
+				float tracerDeg = historyChild->hasDeg() ? historyChild->getDeg() : 0.0;
+				float tracerW = m_w * m_tracerProportions;
+				float tracerH = m_h * m_tracerProportions;
+				Tracer* tracer = new Tracer(this->data(1), tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
 
 			}
 
@@ -878,55 +884,6 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
 	//
 	QAction *selectedAction = menu.exec(event->screenPos());
-}
-
-void ComponentShape::createShapeTracer(QVariant type, IModelTrackedPoint * historyChild, QPointF pos, QPen pen, QBrush brush)
-{
-	if (this->data(1) == "point") {
-		QGraphicsEllipseItem* tracePoint = new QGraphicsEllipseItem(m_tracingLayer);
-		tracePoint->setPos(pos);
-		int dim = m_w <= m_h? m_w : m_h;
-
-		tracePoint->setRect(QRect(-dim * m_tracerProportions / 2, -dim * m_tracerProportions / 2, dim * m_tracerProportions, dim * m_tracerProportions));
-		//tracer orientation
-		float tracerOrientation;
-		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
-		else { tracerOrientation = -historyChild->getDeg(); }
-		tracePoint->setRotation(tracerOrientation);
-		//set colors
-		tracePoint->setPen(pen);
-		tracePoint->setBrush(brush);
-
-		qDebug() << m_tracingLayer->childItems().size();
-
-	}
-	else if (this->data(1) == "ellipse") {
-		QGraphicsEllipseItem* traceEllipse = new QGraphicsEllipseItem(m_tracingLayer);
-		traceEllipse->setPos(pos);
-		traceEllipse->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
-		//set orientation
-		float tracerOrientation;
-		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
-		else { tracerOrientation = -historyChild->getDeg(); }
-		traceEllipse->setRotation(tracerOrientation);
-		//set colors
-		traceEllipse->setPen(pen);
-		traceEllipse->setBrush(brush);
-	}
-	else if (this->data(1) == "rectangle") {
-		QGraphicsRectItem* traceRect = new QGraphicsRectItem(m_tracingLayer);
-		traceRect->setPos(pos);
-		traceRect->setRect(QRect(-m_w * m_tracerProportions / 2, -m_h * m_tracerProportions / 2, m_w * m_tracerProportions, m_h * m_tracerProportions));
-		//set orientation
-		float tracerOrientation;
-		if (m_h > m_w) { tracerOrientation = -90 - historyChild->getDeg(); }
-		else { tracerOrientation = -historyChild->getDeg(); }
-		traceRect->setRotation(tracerOrientation);
-		//set colors
-		traceRect->setPen(pen);
-		traceRect->setBrush(brush);
-	}
-	//TODO polygons
 }
 
 //SLOTS

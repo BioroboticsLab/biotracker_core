@@ -164,6 +164,6 @@ void ControllerCoreParameter::setCorePermission(std::pair<ENUMS::COREPERMISSIONS
 }
 
 int ControllerCoreParameter::getTrialNumber() {
-    return (static_cast<ControllerDataExporter*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT)))->getTrialNumber();
+    return (static_cast<ControllerDataExporter*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT)))->getNumber(true);
 }
 

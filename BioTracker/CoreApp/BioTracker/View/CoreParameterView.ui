@@ -12,7 +12,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
+    <width>583</width>
     <height>677</height>
    </rect>
   </property>
@@ -156,7 +156,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>293</width>
+          <width>328</width>
           <height>935</height>
          </rect>
         </property>
@@ -1650,8 +1650,11 @@ You can add some by right-clicking the video (if loaded).</string>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_addTraj">
+             <property name="toolTip">
+              <string>Add a Trajectory for an object</string>
+             </property>
              <property name="text">
-              <string>Add a trajectory</string>
+              <string>Add a Trajectory</string>
              </property>
             </widget>
            </item>
@@ -1703,7 +1706,7 @@ If results are questionable, mediate the selection of tracker
 (drop down menu at the top) and the tracker parameters (&quot;Tracker&quot; tab)</string>
             </property>
             <property name="text">
-             <string>Start Trial</string>
+             <string>Start a new Trial</string>
             </property>
            </widget>
           </item>
@@ -1729,6 +1732,27 @@ If results are questionable, mediate the selection of tracker
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QPushButton" name="pushButton_finalizeExp">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finalizes the current trial and resets the data.&lt;/p&gt;&lt;p&gt;Clicking this will not only stop the trial, but also write back the trajectory data to the &amp;quot;Trials&amp;quot; directory and increment the trial count.&lt;/p&gt;&lt;p&gt;If no trial is active this button saves and resets the current data. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Finalize Trial (Save Data and Reset)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="Line" name="line_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -1736,27 +1760,22 @@ If results are questionable, mediate the selection of tracker
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QPushButton" name="pushButton_finalizeExp">
-            <property name="toolTip">
-             <string>Finalizes the current trial.
- Clicking this will not only stop the trial, 
-but also write back the 
-data to the &quot;Tracks&quot; directory and increment the trial count.
-If no trial is active this button saves and resets the current data. </string>
-            </property>
-            <property name="text">
-             <string>Finalize and Save Trial and Reset Data</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QPushButton" name="pushButton_saveData">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save current trajectory data to file.&lt;/p&gt;&lt;p&gt;No data is reset!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Save Trajectory Data to file</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_saveData">
+         <widget class="QPushButton" name="pushButton_resetData">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the current trajectory data.&lt;/p&gt;&lt;p&gt;Data is saved automatically first. No data is ever deleted permanently!&lt;/p&gt;&lt;p&gt;If a trial is active, the trial mode will still be active. Trial data will be saved in the &amp;quot;Trials&amp;quot; directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
-           <string>Save Data</string>
+           <string>Reset Trajectory Data</string>
           </property>
          </widget>
         </item>

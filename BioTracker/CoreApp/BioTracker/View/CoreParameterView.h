@@ -95,6 +95,7 @@ EXPERIMENT TAB
     void on_label_ExpSrcCnt_clicked();
 	void on_trialHelpButton_clicked();
 	void on_pushButton_saveData_clicked();
+	void on_pushButton_resetData_clicked();
 	void on_pushButton_addTraj_clicked();
 public slots:
     void rcvPlayerParameters(playerParameters* parameters);

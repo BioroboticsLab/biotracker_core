@@ -49,6 +49,7 @@ void GraphicsView::addPixmapItem(QGraphicsItem *item)
 {
 	m_BackgroundImage = item;
 	m_GraphicsScene->addItem(item);
+	item->setZValue(-5);
 
 	update();
 }
