@@ -409,7 +409,8 @@ void CoreParameterView::getNotified()
 /************EXPERIMENT TAB*******************/
 
 void CoreParameterView::on_pushButton_startExp_clicked() {
-    if (!_trialActive) {
+    if (!_trialActive) {    
+
         if (_currentFile == "No Media"){
             int ret = QMessageBox::information(this, tr("BioTracker"),
                 tr("Please select a source video first. \nYou can do so in the \"File\" menu."),
@@ -417,6 +418,15 @@ void CoreParameterView::on_pushButton_startExp_clicked() {
         }
         else {
 			if (!_trialStarted) {
+                QMessageBox::StandardButton reply;
+                reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to start a new trial?"
+                                                                    "\nThis will reset the previous tracking data!",
+                                              QMessageBox::Yes|QMessageBox::No);
+                if (reply == QMessageBox::No) {
+                    qDebug() << "CORE: New trial aborted";
+                    return;
+                }
+
 				_trialStarted = true;
 				emitTrialStarted(true);
 				emitFinalizeExperiment();
@@ -445,6 +455,17 @@ void CoreParameterView::on_pushButton_startExp_clicked() {
 }
 
 void CoreParameterView::on_pushButton_finalizeExp_clicked() {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to finalize the trial?"
+                                                        "\nThis will save the current trial tracking"
+                                                        " data in a new file in the 'Trials' directory"
+                                                        " and reset it afterwards!",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No) {
+        qDebug() << "CORE: Finalize trial aborted!";
+        return;
+    }
+
     Q_EMIT emitStopPlayback();
 	Q_EMIT emitActivateTrackingSwitch();
     Q_EMIT emitDisableTracking();
@@ -476,6 +497,14 @@ void CoreParameterView::on_pushButton_saveData_clicked(){
 }
 
 void CoreParameterView::on_pushButton_resetData_clicked(){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to reset the current tracking data?"
+                                                        "This will firstly save the data and then reset it!",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No) {
+        qDebug() << "CORE: Data reset aborted";
+        return;
+    }
     Q_EMIT emitFinalizeExperiment();
 }
 
