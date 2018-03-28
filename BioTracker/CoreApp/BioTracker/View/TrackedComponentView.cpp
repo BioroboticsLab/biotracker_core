@@ -589,7 +589,8 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	QObject::connect(shape, SIGNAL(emitMoveElement(IModelTrackedTrajectory*,QPoint, QPoint, uint, int)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveMoveElement(IModelTrackedTrajectory*, QPoint, QPoint, uint, int)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveToggleFixTrack(IModelTrackedTrajectory*,bool)), Qt::DirectConnection);
 	QObject::connect(shape, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), Qt::DirectConnection);
-	
+    QObject::connect(shape, &ComponentShape::emitGoToFrame, dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), &ControllerTrackedComponentCore::emitGoToFrame, Qt::DirectConnection);
+
 
 	QObject::connect(shape, SIGNAL(broadcastMove()), this, SLOT(receiveBroadcastMove()), Qt::DirectConnection);
 

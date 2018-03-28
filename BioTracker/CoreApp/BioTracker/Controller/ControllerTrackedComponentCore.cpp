@@ -1,6 +1,7 @@
 #include "ControllerTrackedComponentCore.h"
 #include "ControllerMainWindow.h"
 #include "ControllerCoreParameter.h"
+#include "ControllerPlayer.h"
 #include "Model/null_Model.h"
 #include "Model/CoreParameter.h"
 #include "View/TrackedComponentView.h"
@@ -68,6 +69,11 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), ctrCC, SLOT(receiveSwapIdCommand(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), ctrCC, SLOT(receiveFixTrackCommand(IModelTrackedTrajectory*, bool)));
 	QObject::connect(this, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), ctrCC, SLOT(receiveEntityRotation(IModelTrackedTrajectory*, double, double, uint)));
+
+    //connect to controllerPlayer
+    IController * ctrIP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+    QPointer< ControllerPlayer > ctrP = qobject_cast<ControllerPlayer*>(ctrIP);
+    QObject::connect(this, &ControllerTrackedComponentCore::emitGoToFrame, ctrP, &ControllerPlayer::setGoToFrame);
 
 
     // Tell the Visualization to reset upon loading a new plugin

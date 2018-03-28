@@ -45,6 +45,7 @@ class ControllerTrackedComponentCore : public IController
 		void emitSelectAll();
 		void emitChangeColorBorder();
 		void emitChangeColorFill();
+        void emitGoToFrame(int frame);
 
 	public Q_SLOTS:
 

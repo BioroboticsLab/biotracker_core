@@ -6,8 +6,8 @@
 #include "QMenu"
 #include "QGraphicsSceneContextMenuEvent"
 
-Tracer::Tracer(QVariant type, float orientation, QPointF pos, float w, float h, QPen pen, QBrush brush, QAbstractGraphicsShapeItem* parent)
-:QAbstractGraphicsShapeItem(parent), _type(type.toString()), _w(w), _h(h)
+Tracer::Tracer(QVariant type, int frame, float orientation, QPointF pos, float w, float h, QPen pen, QBrush brush, QAbstractGraphicsShapeItem* parent)
+:QAbstractGraphicsShapeItem(parent), _type(type.toString()), _frame(frame), _w(w), _h(h)
 {
     setPos(pos);
     setPen(pen);
@@ -48,4 +48,9 @@ void Tracer::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QMenu menu;
     menu.addAction("Go to frame ", dynamic_cast<Tracer*>(this), SLOT(goToFrame()));
     menu.exec(event->screenPos());
+}
+
+void Tracer::goToFrame()
+{
+    Q_EMIT emitGoToFrame(_frame);
 }

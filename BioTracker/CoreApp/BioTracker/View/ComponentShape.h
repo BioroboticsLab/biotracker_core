@@ -51,6 +51,7 @@ class ComponentShape : public QGraphicsObject
 		void emitMoveElement(IModelTrackedTrajectory* trajectory, QPoint oldPos, QPoint newPos, uint frameNumber, int sizeOfStackToMove);
 		void emitToggleFixTrack(IModelTrackedTrajectory* trajectory, bool toggle);
 		void emitEntityRotation(IModelTrackedTrajectory* trajectory, double oldAngleDeg, double newAngleDeg, uint frameNumber);
+        void emitGoToFrame(int frame);
 		void broadcastMove();
 
 	public Q_SLOTS:

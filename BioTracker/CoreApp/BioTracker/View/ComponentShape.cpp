@@ -53,7 +53,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_trajectoryWasActiveOnce = false;
 
 	m_tracingLayer = new QGraphicsRectItem();
-	m_tracingLayer->setZValue(-1);
+    m_tracingLayer->setZValue(3);
 	this->scene()->addItem(m_tracingLayer);
 
 	m_rotationLine = QLineF();
@@ -414,8 +414,10 @@ void ComponentShape::trace()
 				float tracerDeg = historyChild->hasDeg() ? historyChild->getDeg() : 0.0;
 				float tracerW = m_w * m_tracerProportions;
 				float tracerH = m_h * m_tracerProportions;
-				Tracer* tracer = new Tracer(this->data(1), tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
+                int tracerNumber = m_currentFramenumber - i;
 
+                Tracer* tracer = new Tracer(this->data(1), tracerNumber, tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
+                QObject::connect(tracer, &Tracer::emitGoToFrame, this, &ComponentShape::emitGoToFrame);
 			}
 
 			//PATH
