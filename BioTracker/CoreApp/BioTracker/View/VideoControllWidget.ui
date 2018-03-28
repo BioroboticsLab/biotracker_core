@@ -271,6 +271,28 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QSpinBox" name="frame_num_spin">
+                  <property name="minimumSize">
+                   <size>
+                    <width>60</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
+                  </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="displayIntegerBase">
+                   <number>10</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLineEdit" name="frame_num_edit">
                   <property name="enabled">
                    <bool>false</bool>
@@ -292,6 +314,9 @@
                   </property>
                   <property name="text">
                    <string>0</string>
+                  </property>
+                  <property name="frame">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>

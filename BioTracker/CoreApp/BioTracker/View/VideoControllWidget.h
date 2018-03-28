@@ -63,6 +63,9 @@ class VideoControllWidget : public IViewWidget {
 
     void on_doubleSpinBoxTargetFps_editingFinished();
 
+    void on_frame_num_spin_editingFinished();
+
+
     void on_actionPlay_Pause_triggered(bool checked = false);
     void on_actionStop_triggered(bool checked = false);
     void on_actionNext_frame_triggered(bool checked = false);

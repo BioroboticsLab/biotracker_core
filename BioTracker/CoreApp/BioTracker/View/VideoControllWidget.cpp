@@ -64,7 +64,9 @@ void VideoControllWidget::getNotified() {
     int currentFrameNr = mediaPlayer->getCurrentFrameNumber();
     int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
     int mediaFps = mediaPlayer->getFpsOfSourceFile();
-    ui->frame_num_edit->setText(QString::number(currentFrameNr));
+    //ui->frame_num_edit->setText(QString::number(currentFrameNr));
+    ui->frame_num_spin->setMaximum(totalNumberOfFrames);
+    ui->frame_num_spin->setValue(currentFrameNr);
     ui->sld_video->setValue(currentFrameNr);
 
     QString currentVideoTime = QDateTime::fromMSecsSinceEpoch(((float)currentFrameNr / (float) mediaFps) * 1000).toUTC().toString("hh:mm:ss:zzz");
@@ -180,8 +182,8 @@ void VideoControllWidget::on_sld_video_actionTriggered(int action)
  * If the video slider is moved, this function sets the value to the current frame number lable
  */
 void VideoControllWidget::on_sld_video_sliderMoved(int position) {
-    ui->frame_num_edit->setText(QString::number(position));
-        
+    //ui->frame_num_edit->setText(QString::number(position));
+    ui->frame_num_spin->setValue(position);
     MediaPlayer* mediaPlayer = dynamic_cast<MediaPlayer*>(getModel());
     int mediaFps = mediaPlayer->getFpsOfSourceFile();
     QString currentVideoTime = QDateTime::fromMSecsSinceEpoch(((float)position / (float) mediaFps) * 1000).toUTC().toString("hh:mm:ss:zzz");
@@ -193,6 +195,13 @@ void VideoControllWidget::on_doubleSpinBoxTargetFps_editingFinished() {
     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
     controller->setTargetFps(val);
 }
+
+void VideoControllWidget::on_frame_num_spin_editingFinished(){
+    int val = ui->frame_num_spin->value();
+    ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+    controller->setGoToFrame(val);
+}
+
 
 //actions
 void VideoControllWidget::on_actionPlay_Pause_triggered(bool checked){
