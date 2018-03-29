@@ -7,6 +7,7 @@
 #include "settings/Settings.h"
 #include "util/types.h"
 #include <qmessagebox.h>
+#include "QDesktopServices"
 
 
 ControllerDataExporter::ControllerDataExporter(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -174,9 +175,29 @@ void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
     QString str = "Exported file:\n";
     str += fname.absoluteFilePath();
 
-    int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
-        str,
-        QMessageBox::Ok);
+//    int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
+//        str,
+//        QMessageBox::Ok);
+    QMessageBox msgBox;
+    msgBox.setText("File saved!");
+    msgBox.setInformativeText(str);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    QPushButton *goToFileDirButton = msgBox.addButton(tr("Show in folder"), QMessageBox::ActionRole);
+    QPushButton *openFileButton = msgBox.addButton(tr("Open file"), QMessageBox::ActionRole);
+
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == goToFileDirButton) {
+        QUrl fileDirUrl = QUrl::fromLocalFile(fname.absolutePath());
+        QDesktopServices::openUrl(fileDirUrl);
+    }
+    else if (msgBox.clickedButton() == openFileButton){
+        QUrl fileUrl = QUrl::fromLocalFile(fname.absoluteFilePath());
+        QDesktopServices::openUrl(fileUrl);
+    }
+
 }
 
 void ControllerDataExporter::receiveTrialStarted(bool started)
