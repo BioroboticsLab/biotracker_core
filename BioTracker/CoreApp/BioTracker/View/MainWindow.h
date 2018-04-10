@@ -104,6 +104,13 @@ Q_SIGNALS:
 	void on_actionToggle_video_toolbar_triggered();
     void on_actionToggle_fullscreen_triggered();
 
+//menu->Go to
+	void on_actionOpen_Plugins_directory_triggered();
+	void on_actionOpen_Track_directory_triggered();
+	void on_actionOpen_Trial_directory_triggered();
+	void on_actionOpen_Screenshot_directory_triggered();
+	void on_actionOpen_Videos_directory_triggered();
+
 
 //view toolbar actions
     void on_actionAdd_Track_triggered();

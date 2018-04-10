@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QDataStream>
+#include <QPolygonF>
 #include <ostream>
 
 
@@ -217,19 +218,22 @@ class IModelTrackedPolygon : public IModelComponentTemporal2D
 public:
 
 	/**
-	* The constructor of the IModelTrackedPoint class is able to receive a QObject as parent.
+	* The constructor of the IModelTrackedPolygon class is able to receive a QObject as parent.
 	*/
 	IModelTrackedPolygon(QObject *parent = 0);
 
 	// TODO: check if overlapping needed?
-	// List of Polygons; first one is the outer Polygon the others are inner Polygons (holes)
-	virtual void  setPolygon(QList<QList<QPoint>> polygons) = 0;
+	// List of QPolygons; first one is the outer Polygon the others are inner Polygons (holes)
+	virtual void  setPolygon(QList<QPolygonF> polygons) = 0;
 
 	// Get list of Polygons; first one is the outer Polygon the others are inner Polygons (holes)
 	virtual QList<QList<QPoint>> getPolygon() = 0;
 
 	// Check if list of Polygons exists; first one is the outer Polygon the others are inner Polygons (holes)
 	virtual float hasPolygon() = 0;
+
+protected:
+	QList<QPolygonF> _polygon;
 };
 
 class IModelTrackedEllipse : public IModelTrackedPoint

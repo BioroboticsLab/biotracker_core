@@ -21,7 +21,6 @@
 #include "QComboBox"
 #include "QSpinBox"
 #include "QDoubleSpinBox"
-#include "QCheckBox"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QtWidgets/QHeaderView>
@@ -734,24 +733,19 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	/*
 	toggle orientation line
 	*/
-	QWidgetAction* orientationBox = new QWidgetAction(this);
-	QCheckBox* orientationCheck = new QCheckBox();
-	orientationCheck->setText("Show orientation line");
-	orientationCheck->setChecked(m_orientationLine);
-	QObject::connect(orientationCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveToggleOrientationLine);
-	orientationBox->setDefaultWidget(orientationCheck);
-	menu.addAction(orientationBox);
+
+	QAction *showOrientationAction = menu.addAction("Show orientation line", dynamic_cast<ComponentShape*>(this), SLOT(receiveToggleOrientationLine(bool)));
+	showOrientationAction->setCheckable(true);
+	showOrientationAction->setChecked(m_orientationLine);
 
 	/*
 	toggle id
 	*/
-	QWidgetAction* idBox = new QWidgetAction(this);
-	QCheckBox* idCheck = new QCheckBox();
-	idCheck->setText("Show ID");
-	idCheck->setChecked(m_showId);
-	QObject::connect(idCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveShowId);
-	idBox->setDefaultWidget(idCheck);
-	menu.addAction(idBox);
+
+	QAction *showIDAction = menu.addAction("Show ID", dynamic_cast<ComponentShape*>(this), SLOT(receiveShowId(bool)));
+	showIDAction->setCheckable(true);
+	showIDAction->setChecked(m_showId);
+
 
 	/*
 	 tracing menu
@@ -806,22 +800,15 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	tracingMenu->addMenu(tracingTimeDegrMenu);
 
 	//toggle orientation line
-	QWidgetAction* trOrientationBox = new QWidgetAction(this);
-	QCheckBox* trOrientationCheck = new QCheckBox();
-	trOrientationCheck->setText("Show tracer orientation line");
-	trOrientationCheck->setChecked(m_tracingOrientationLine);
-	QObject::connect(trOrientationCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveTracerOrientationLine);
-	trOrientationBox->setDefaultWidget(trOrientationCheck);
-	tracingMenu->addAction(trOrientationBox);
+
+	QAction *showTrOrientationAction = tracingMenu->addAction("Show tracer orientation line", dynamic_cast<ComponentShape*>(this), SLOT(receiveTracerOrientationLine(bool)));
+	showTrOrientationAction->setCheckable(true);
+	showTrOrientationAction->setChecked(m_tracingOrientationLine);
 
 	//tracer number
-	QWidgetAction* trNumberBox = new QWidgetAction(this);
-	QCheckBox* trNumberCheck = new QCheckBox();
-	trNumberCheck->setText("Show framenumber on tracers");
-	trNumberCheck->setChecked(m_tracerFrameNumber);
-	QObject::connect(trNumberCheck,  &QCheckBox::toggled, this, &ComponentShape::receiveTracerFrameNumber);
-	trNumberBox->setDefaultWidget(trNumberCheck);
-	tracingMenu->addAction(trNumberBox);
+	QAction *showTrNumberAction = tracingMenu->addAction("Show framenumber on tracers", dynamic_cast<ComponentShape*>(this), SLOT(receiveTracerFrameNumber(bool)));
+	showTrNumberAction->setCheckable(true);
+	showTrNumberAction->setChecked(m_tracerFrameNumber);
 
 	//tracer proportions
 	QWidgetAction* propBox = new QWidgetAction(this);

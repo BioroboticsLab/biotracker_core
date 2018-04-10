@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+#include "util/types.h"
+
 #include "Controller/ControllerMainWindow.h"
 #include "View/CoreParameterView.h"
 #include "VideoControllWidget.h"
@@ -714,7 +716,7 @@ void MainWindow::saveDataToFile(){
     qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
 }
 
-//SLOTS
+////////////////////////////////////////////////SLOTS/////////////////////////////////////
 
 void MainWindow::toggleNoShowWiz(bool toggle){
 	//qDebug() << toggle;
@@ -723,108 +725,9 @@ void MainWindow::toggleNoShowWiz(bool toggle){
 	disableIntroWiz->setParam("BiotrackerCore/Disable_Wizard", toggle);
 }
 
-
-void MainWindow::on_actionOpen_Video_triggered() {
-    static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
-	
-	// QFileDialog dialog(this);
-	// dialog.setNameFilter(videoFilter);
-	// QStringList fileNames;
-	// if (dialog.exec())	
-    // 	fileNames = dialog.selectedFiles();
-
-	// QString filename;
-	// if(fileNames.size() > 0)
-	// 	filename = fileNames[0];
-    QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open video", "", videoFilter, 0);
-
-    if (!filename.isEmpty()) {
-        dynamic_cast<ControllerMainWindow*> (getController())->loadVideo(filename);
-    }
-}
-
-void MainWindow::on_actionLoad_Tracker_triggered() {
-    static const QString pluginFilter("BioTracker Tracking Plugin files (*.tracker.so *.tracker.dll *.tracker.dylib)");
-
-    QString filename = QFileDialog::getOpenFileName(this,
-                                                    "Open BioTracker Tracking Plugin", "", pluginFilter, 0);
-
-    if (!filename.isEmpty()) {
-        qobject_cast<ControllerMainWindow*> (getController())->loadTracker(filename);
-    }
-}
-
-void MainWindow::on_actionOpen_Picture_triggered() {
-    static const QString imageFilter(
-        "image files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)");
-
-    std::vector<boost::filesystem::path> files;
-    for (QString const& path : QFileDialog::getOpenFileNames(this,
-                                                             "Open image files", "", imageFilter, 0)) {
-        files.push_back(boost::filesystem::path(path.toStdString()));
-    }
-
-    if (!files.empty()) {
-        qobject_cast<ControllerMainWindow*> (getController())->loadPictures(files);
-    }
-}
-
-void MainWindow::on_actionLoad_trackingdata_triggered() {
-	static const QString imageFilter(
-		"tracking data files (*.csv *.dat *.json)");
-
-	std::vector<boost::filesystem::path> files;
-	for (QString const& path : QFileDialog::getOpenFileNames(this,
-		"Open tracking file", "", imageFilter, 0)) {
-		files.push_back(boost::filesystem::path(path.toStdString()));
-	}
-
-	if (!files.empty()) {
-		qobject_cast<ControllerMainWindow*> (getController())->loadTrajectoryFile(files[0].string());
-	}
-}
-
-void MainWindow::on_actionSave_trackingdata_triggered() {
-	saveDataToFile();
-}
-
-void MainWindow::on_actionOpen_Camera_triggered() {
-    m_CameraDevice = new CameraDevice();
-
-    m_CameraDevice->show();
-
-    QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
-}
-
-void MainWindow::on_actionUndo_triggered()
-{
-	qobject_cast<ControllerMainWindow*> (getController())->emitUndoCommand();
-}
-
-void MainWindow::on_actionRedo_triggered()
-{
-	qobject_cast<ControllerMainWindow*> (getController())->emitRedoCommand();
-}
-
-void MainWindow::on_actionShowActionList_triggered()
-{
-	qobject_cast<ControllerMainWindow*> (getController())->emitShowActionListCommand();
-}
-
 void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {
     qobject_cast<ControllerMainWindow*> (getController())->loadCameraDevice(conf);
 
-}
-
-void MainWindow::on_actionQuit_triggered() {
-	qobject_cast<ControllerMainWindow*> (getController())->exit();
-}
-
-void MainWindow::on_actionSettings_triggered() {
-	m_SettingsWindow = new SettingsWindow();
-
-	m_SettingsWindow->show();
 }
 
 void MainWindow::on_rightPanelViewControllerButton_clicked(){
@@ -855,6 +758,7 @@ void MainWindow::on_bottomPanelViewControllerButton_clicked(){
 	ui->videoControls->setVisible(ui->bottomPanelViewControllerButton->text() == "^");
 	ui->bottomPanelViewControllerButton->setText(ui->bottomPanelViewControllerButton->text() == "v"?"^":"v");
 }
+
 void MainWindow::activateTracking() {
     _trackerActivator->setState(true);
 }
@@ -884,7 +788,7 @@ void MainWindow::resetTrackerViews(){
 	_currentCoreView = nullptr;
 }
 
-//////////////////////////view toolbar actions///////////////////////////
+//////////////////////////utility toolbar actions///////////////////////////
 void MainWindow::on_actionAdd_Track_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitAddTrack();
 }
@@ -920,10 +824,112 @@ void MainWindow::on_actionDelete_selected_Annotation_triggered(){
 	qobject_cast<ControllerMainWindow*> (getController())->emitDelSelAnno();
 }
 
+
+///////////////////////////////menu->file/////////////////////////////
+
+void MainWindow::on_actionOpen_Video_triggered() {
+	static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
+
+	// QFileDialog dialog(this);
+	// dialog.setNameFilter(videoFilter);
+	// QStringList fileNames;
+	// if (dialog.exec())	
+	// 	fileNames = dialog.selectedFiles();
+
+	// QString filename;
+	// if(fileNames.size() > 0)
+	// 	filename = fileNames[0];
+	QString filename = QFileDialog::getOpenFileName(this,
+		"Open video", "", videoFilter, 0);
+
+	if (!filename.isEmpty()) {
+		dynamic_cast<ControllerMainWindow*> (getController())->loadVideo(filename);
+	}
+}
+
+void MainWindow::on_actionLoad_Tracker_triggered() {
+	static const QString pluginFilter("BioTracker Tracking Plugin files (*.tracker.so *.tracker.dll *.tracker.dylib)");
+
+	QString filename = QFileDialog::getOpenFileName(this,
+		"Open BioTracker Tracking Plugin", "", pluginFilter, 0);
+
+	if (!filename.isEmpty()) {
+		qobject_cast<ControllerMainWindow*> (getController())->loadTracker(filename);
+	}
+}
+
+void MainWindow::on_actionOpen_Picture_triggered() {
+	static const QString imageFilter(
+		"image files (*.png *.jpg *.jpeg *.gif *.bmp *.jpe *.ppm *.tiff *.tif *.sr *.ras *.pbm *.pgm *.jp2 *.dib)");
+
+	std::vector<boost::filesystem::path> files;
+	for (QString const& path : QFileDialog::getOpenFileNames(this,
+		"Open image files", "", imageFilter, 0)) {
+		files.push_back(boost::filesystem::path(path.toStdString()));
+	}
+
+	if (!files.empty()) {
+		qobject_cast<ControllerMainWindow*> (getController())->loadPictures(files);
+	}
+}
+
+void MainWindow::on_actionLoad_trackingdata_triggered() {
+	static const QString imageFilter(
+		"tracking data files (*.csv *.dat *.json)");
+
+	std::vector<boost::filesystem::path> files;
+	for (QString const& path : QFileDialog::getOpenFileNames(this,
+		"Open tracking file", "", imageFilter, 0)) {
+		files.push_back(boost::filesystem::path(path.toStdString()));
+	}
+
+	if (!files.empty()) {
+		qobject_cast<ControllerMainWindow*> (getController())->loadTrajectoryFile(files[0].string());
+	}
+}
+
+void MainWindow::on_actionSave_trackingdata_triggered() {
+	saveDataToFile();
+}
+
+void MainWindow::on_actionOpen_Camera_triggered() {
+	m_CameraDevice = new CameraDevice();
+
+	m_CameraDevice->show();
+
+	QObject::connect(m_CameraDevice, &CameraDevice::emitSelectedCameraDevice, this, &MainWindow::receiveSelectedCameraDevice);
+}
+
+void MainWindow::on_actionQuit_triggered() {
+	qobject_cast<ControllerMainWindow*> (getController())->exit();
+}
+
+///////////////////////////////menu->edit/////////////////////////////
+
+void MainWindow::on_actionUndo_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitUndoCommand();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitRedoCommand();
+}
+
+void MainWindow::on_actionShowActionList_triggered()
+{
+	qobject_cast<ControllerMainWindow*> (getController())->emitShowActionListCommand();
+}
+
+void MainWindow::on_actionSettings_triggered() {
+	m_SettingsWindow = new SettingsWindow();
+
+	m_SettingsWindow->show();
+}
+
 ///////////////////////////////menu->view/////////////////////////////
 
-
-//toolbars actions
+//toggle toolbars actions
 void MainWindow::on_actionToggle_menu_toolbar_triggered(){
 	bool currentState = ui->toolBarMenu->isVisible();
 	ui->toolBarMenu->setVisible(!currentState);
@@ -982,8 +988,26 @@ void MainWindow::on_actionToggle_fullscreen_triggered(){
 	}
 }
 
+//////////////////////////////////menu->Go to//////////////////////////////////
 
-//////////////////////////////////Help//////////////////////////////
+void MainWindow::on_actionOpen_Plugins_directory_triggered() {
+	QDesktopServices::openUrl(QUrl::fromLocalFile(CFG_DIR_PLUGINS));
+}
+void MainWindow::on_actionOpen_Track_directory_triggered() {
+	QDesktopServices::openUrl(QUrl::fromLocalFile(CFG_DIR_TRACKS));
+}
+void MainWindow::on_actionOpen_Trial_directory_triggered() {
+	QDesktopServices::openUrl(QUrl::fromLocalFile(CFG_DIR_TRIALS));
+}
+void MainWindow::on_actionOpen_Screenshot_directory_triggered() {
+	QDesktopServices::openUrl(QUrl::fromLocalFile(CFG_DIR_SCREENSHOTS));
+}
+void MainWindow::on_actionOpen_Videos_directory_triggered() {
+	QDesktopServices::openUrl(QUrl::fromLocalFile(CFG_DIR_VIDEOS));
+}
+
+
+//////////////////////////////////menu->Help//////////////////////////////
 
 void MainWindow::on_actionUser_guide_triggered(){
 	QDesktopServices::openUrl(QUrl("https://github.com/BioroboticsLab/biotracker_core/wiki"));
