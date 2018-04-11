@@ -277,7 +277,7 @@ void MainWindow::createIntroductionWizard(){
 	imgLabel->setPixmap(scaledImg);
 	imgLabel->setAttribute(Qt::WA_TranslucentBackground);
 	imgLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
+    imgLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QFile file(":/Introduction/resources/introduction/intro.txt");
 	QLabel *introLabel= new QLabel;

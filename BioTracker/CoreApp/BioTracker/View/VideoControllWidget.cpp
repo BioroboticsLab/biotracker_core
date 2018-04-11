@@ -4,8 +4,9 @@
 #include "Model/MediaPlayer.h"
 
 #include <QToolBar>
-#include "QMessageBox"
+#include <QMessageBox>
 #include <QDateTime>
+#include <QDesktopServices>
 
 VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controller, IModel* model) :
     IViewWidget(parent, controller, model),
@@ -232,7 +233,27 @@ void VideoControllWidget::on_actionScreenshot_triggered(bool checked){
     QString filePathAbs = fi.absoluteFilePath();
     QString msgText = "The Screenshot has been saved to:\n " + filePathAbs;
 
-    QMessageBox::information(nullptr, "Screenshot taken!", msgText);
+    //QMessageBox::information(nullptr, "Screenshot taken!", msgText);
+
+    QMessageBox msgBox;
+    msgBox.setText("You took a screenshot!");
+    msgBox.setInformativeText(msgText);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    QPushButton *goToFileDirButton = msgBox.addButton(tr("Show in folder"), QMessageBox::ActionRole);
+    QPushButton *openFileButton = msgBox.addButton(tr("Open screenshot"), QMessageBox::ActionRole);
+
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == goToFileDirButton) {
+        QUrl fileDirUrl = QUrl::fromLocalFile(fi.absolutePath());
+        QDesktopServices::openUrl(fileDirUrl);
+    }
+    else if (msgBox.clickedButton() == openFileButton){
+        QUrl fileUrl = QUrl::fromLocalFile(filePathAbs);
+        QDesktopServices::openUrl(fileUrl);
+    }
 }
 void VideoControllWidget::on_actionRecord_cam_triggered(bool checked){
     ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());

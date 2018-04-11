@@ -384,11 +384,18 @@ void TrackedComponentView::receiveColorChangeBrushAll()
 {
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose fill color"), QColorDialog::ShowAlphaChannel);;
-	foreach(childItem, childrenItems) {
+    const QColorDialog::ColorDialogOptions options = QFlag(QColorDialog::ShowAlphaChannel || QColorDialog::DontUseNativeDialog);
+    QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose fill color"), options);
+//    QColorDialog* cDialog = new QColorDialog(Qt::white);
+//    cDialog->show();
+//    cDialog->activateWindow();
+//    cDialog->raise();
+//    cDialog->setFocus();
+
+    foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
-			childShape->changeBrushColor(color);
+            childShape->changeBrushColor(color);
 		}
 	}
 }
@@ -398,7 +405,7 @@ void TrackedComponentView::receiveColorChangeBorderAll()
 {	
 	QList<QGraphicsItem*> childrenItems = this->childItems();
 	QGraphicsItem* childItem;
-	QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);;
+    QColor color = QColorDialog::getColor(Qt::white, nullptr, QString("Choose border color"), QColorDialog::ShowAlphaChannel);;
 	foreach(childItem, childrenItems) {
 		ComponentShape* childShape = dynamic_cast<ComponentShape*>(childItem);
 		if (childShape) {
