@@ -13,6 +13,7 @@ Q_OBJECT
 public:
 	ControllerAnnotations(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	virtual ~ControllerAnnotations();
+	void cleanup();
 
 	// IController interface
 public:

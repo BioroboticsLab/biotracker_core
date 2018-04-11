@@ -69,7 +69,8 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 
 	createIntroductionWizard();
 
-	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/firstlogo.ico"));
+	//set window icon
+	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT3-big.ico"));
 
 	//view actions
 	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();
@@ -269,7 +270,7 @@ void MainWindow::createIntroductionWizard(){
 	{
 	p1->setTitle("BioTracker 3 - Introduction");
 
-	QPixmap logoImg(":/Logo/resources/logo/firstlogo.png");	
+	QPixmap logoImg(":/Logo/resources/logo/BT3-big.png");	
 	QPixmap scaledImg = logoImg.scaled(QSize(600,400),Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 	QLabel* imgLabel = new QLabel;

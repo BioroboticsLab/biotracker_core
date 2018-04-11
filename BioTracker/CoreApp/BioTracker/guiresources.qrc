@@ -37,11 +37,8 @@
         <file>resources/left_toolbar/delete-track.png</file>
         <file>resources/left_toolbar/select-all.png</file>
         <file>resources/left_toolbar/swap.png</file>
-
     </qresource>
-
     <qresource prefix="/Introduction">
-
         <file>resources/introduction/intro.txt</file>
         <file>resources/introduction/images/BioTracker.PNG</file>
         <file>resources/introduction/toolbars.txt</file>
@@ -53,14 +50,12 @@
         <file>resources/introduction/context_menus.txt</file>
         <file>resources/introduction/images/context_video.png</file>
         <file>resources/introduction/images/context_entity.png</file>
-
-        
     </qresource>
-
-        <qresource prefix="/Logo">
-
+    <qresource prefix="/Logo">
         <file>resources/logo/firstlogo.png</file>
         <file>resources/logo/firstlogo.ico</file>
-        
+        <file>resources/logo/BT3-big.ico</file>
+        <file>resources/logo/BT3-big.png</file>
+        <file>resources/logo/BT3-small.png</file>
     </qresource>
 </RCC>

@@ -13,6 +13,11 @@ ControllerAnnotations::~ControllerAnnotations()
 	delete getView();
 }
 
+void ControllerAnnotations::cleanup() {
+	// Delete the model to trigger serialization
+	delete getModel();
+}
+
 void ControllerAnnotations::reset(std::string filepath)
 {
 	// Replace the model with a fresh one.
@@ -117,34 +122,38 @@ void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 
 void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &pos)
 {
-	auto model = static_cast<Annotations*>(getModel());
-	bool handled = true;
 
-	switch (actionQueued)
-	{
-	case ActionQueued::CreateArrow:
-		model->startArrow(pos, model->getCurrentFrame());
-		break;
-	case ActionQueued::CreateLabel:
-		model->startLabel(pos, model->getCurrentFrame());
-		break;
-	case ActionQueued::CreateRect:
-		model->startRect(pos, model->getCurrentFrame());
-		break;
-	case ActionQueued::CreateEllipse:
-		model->startEllipse(pos, model->getCurrentFrame());
-		break;
-	default:
-		if (model->tryStartDragging(pos))
+	if (event->button() == Qt::LeftButton) {
+		auto model = static_cast<Annotations*>(getModel());
+		bool handled = true;
+
+		switch (actionQueued)
+		{
+		case ActionQueued::CreateArrow:
+			model->startArrow(pos, model->getCurrentFrame());
+			break;
+		case ActionQueued::CreateLabel:
+			model->startLabel(pos, model->getCurrentFrame());
+			break;
+		case ActionQueued::CreateRect:
+			model->startRect(pos, model->getCurrentFrame());
+			break;
+		case ActionQueued::CreateEllipse:
+			model->startEllipse(pos, model->getCurrentFrame());
+			break;
+		default:
+			if (model->tryStartDragging(pos))
+				updateView();
+			else
+				handled = false;
 			updateView();
-		else
-			handled = false;
-			updateView();
-		break;
+			break;
+		}
+		if (handled)
+			event->accept();
+		actionQueued = ActionQueued::None;
 	}
-	if (handled)
-		event->accept();
-	actionQueued = ActionQueued::None;
+	
 }
 
 void ControllerAnnotations::mouseReleaseEvent(QMouseEvent*event, const QPoint &pos)
