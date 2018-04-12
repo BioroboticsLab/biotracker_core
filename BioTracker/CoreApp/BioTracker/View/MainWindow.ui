@@ -78,7 +78,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="handleWidth">
-          <number>7</number>
+          <number>10</number>
          </property>
          <property name="childrenCollapsible">
           <bool>false</bool>
@@ -313,6 +313,9 @@
                 <property name="spacing">
                  <number>0</number>
                 </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
                 <property name="topMargin">
                  <number>0</number>
                 </property>
@@ -443,7 +446,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>737</width>
+                     <width>743</width>
                      <height>304</height>
                     </rect>
                    </property>
@@ -466,7 +469,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>737</width>
+                     <width>743</width>
                      <height>304</height>
                     </rect>
                    </property>
@@ -512,7 +515,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>737</width>
+                     <width>743</width>
                      <height>304</height>
                     </rect>
                    </property>
@@ -548,7 +551,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>737</width>
+                     <width>743</width>
                      <height>304</height>
                     </rect>
                    </property>
@@ -637,7 +640,7 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>737</width>
+                     <width>743</width>
                      <height>304</height>
                     </rect>
                    </property>

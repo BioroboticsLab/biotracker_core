@@ -22,6 +22,8 @@
 #define CFG_GPU_QP_VAL						15
 #define CFG_SER_CSVSEP						"Serializers/CSV_SEPARATOR"
 #define CFG_SER_CSVSEP_VAL					";"
+#define CFG_DEFAULT_LOC_MAN_SAVE			"BiotrackerCore/DefaultLocationManualSave"
+#define CFG_DEFAULT_LOC_MAN_SAVE_VAL		""
 
 
 #define CFG_DIR_PLUGINS						"./Plugins/"

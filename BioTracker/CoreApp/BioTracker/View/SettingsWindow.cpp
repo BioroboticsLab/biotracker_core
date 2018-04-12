@@ -2,6 +2,8 @@
 
 #include "settings/Settings.h"
 
+#include <QFileDialog>
+
 SettingsWindow::SettingsWindow(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::SettingsForm)
@@ -37,6 +39,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 	int qp = set->getValueOrDefault<int>(CFG_GPU_QP, CFG_GPU_QP_VAL);
 	ui->lineEdit_qp->setText(std::to_string(qp).c_str());
 
+	std::string locStr= set->getValueOrDefault<std::string>(CFG_DEFAULT_LOC_MAN_SAVE, CFG_DEFAULT_LOC_MAN_SAVE_VAL);
+	ui->lineEditLocationManSave->setText(QString::fromStdString(locStr));
+
 #ifndef WITH_CUDA
 	ui->lineEdit_qp->setVisible(false);
 	ui->label_qp->setVisible(false);
@@ -64,8 +69,19 @@ void SettingsWindow::on_buttonSaveClose_clicked() {
 	int qp = (ui->lineEdit_qp->text()).toInt();
 	set->setParam(CFG_GPU_QP, qp);
 
+	std::string defaultManSave = (ui->lineEditLocationManSave->text()).toStdString();
+	set->setParam(CFG_DEFAULT_LOC_MAN_SAVE, defaultManSave);
+
 	this->close();
 }
+
+void SettingsWindow::on_pushButtonSetNewLocManSave_clicked() {
+	QString dirStr = QFileDialog::getExistingDirectory(this, tr("Select Directory"), "", QFileDialog::ShowDirsOnly);
+	if (dirStr) {
+		ui->lineEditLocationManSave->setText(dirStr);
+	}
+}
+
 
 
 SettingsWindow::~SettingsWindow()

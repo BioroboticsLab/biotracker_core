@@ -64,7 +64,6 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	);
 
 	//resize to full size
-	//QWidget::showFullScreen();
 	QWidget::showMaximized();
 
 	createIntroductionWizard();
@@ -712,9 +711,16 @@ void MainWindow::saveDataToFile(){
         "tracking data files (*.csv *.dat *.json)");
 
     boost::filesystem::path file;
-    QString f = QFileDialog::getSaveFileName(this, "Save trajectory data to file", "", fileFilter, 0);
 
-    qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
+	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
+	std::string locStr = set->getValueOrDefault<std::string>(CFG_DEFAULT_LOC_MAN_SAVE, "");
+	QString locStrQ = QString::fromStdString(locStr);
+
+    QString f = QFileDialog::getSaveFileName(this, "Save trajectory data to file", locStrQ, fileFilter, 0);
+
+	if (f != "") {
+		qobject_cast<ControllerMainWindow*> (getController())->saveTrajectoryFile(f.toStdString());
+	}
 }
 
 ////////////////////////////////////////////////SLOTS/////////////////////////////////////
