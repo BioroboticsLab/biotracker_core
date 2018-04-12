@@ -205,9 +205,10 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	// }
 
 	if (this->childItems().size() < all->size()){
-		//iterate over trajectories form back to increase performance
+		//iterate over trajectories from back to increase performance
 		for (int i = all->size()-1; i >= 0 && this->childItems().size() < all->size(); i--) {
 			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
+			//check if trajectory already has shape object
 			if(trajectory && !checkTrajectory(trajectory)){
 				ComponentShape* newShape = new ComponentShape(this, trajectory, trajectory->getId());
 	 			connectShape(newShape);
@@ -581,14 +582,15 @@ void TrackedComponentView::connectShape(ComponentShape* shape) {
 	//TODO bad code clean up
 	IModelTrackedTrajectory* trajectory = shape->getTrajectory();
 
-	IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(trajectory->getLastChild());
+	IModelTrackedPoint* point = dynamic_cast<IModelTrackedPoint*>(trajectory->getChild(m_currentFrameNumber));
 	if (point) { shape->setData(1, "point"); }
-	IModelTrackedEllipse* ellipse = dynamic_cast<IModelTrackedEllipse*>(trajectory->getLastChild());
+	IModelTrackedEllipse* ellipse = dynamic_cast<IModelTrackedEllipse*>(trajectory->getChild(m_currentFrameNumber));
 	if (ellipse) { shape->setData(1, "ellipse"); }
-	IModelTrackedRectangle* rectangle = dynamic_cast<IModelTrackedRectangle*>(trajectory->getLastChild());
+	IModelTrackedRectangle* rectangle = dynamic_cast<IModelTrackedRectangle*>(trajectory->getChild(m_currentFrameNumber));
 	if (rectangle) { shape->setData(1, "rectangle"); }
-	IModelTrackedPolygon* polygon = dynamic_cast<IModelTrackedPolygon*>(trajectory->getLastChild());
+	IModelTrackedPolygon* polygon = dynamic_cast<IModelTrackedPolygon*>(trajectory->getChild(m_currentFrameNumber));
 	if (polygon) { shape->setData(1, "polygon"); }
+
 
 	//connect slots/signals
 	QObject::connect(shape, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), dynamic_cast<ControllerTrackedComponentCore*>(this->getController()), SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);

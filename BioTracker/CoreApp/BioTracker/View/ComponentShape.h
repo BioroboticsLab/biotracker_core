@@ -70,6 +70,7 @@ class ComponentShape : public QGraphicsObject
 		void morphIntoRect();
 		void morphIntoEllipse();
 		void morphIntoPoint();
+		void morphIntoPolygon();
 
 
 

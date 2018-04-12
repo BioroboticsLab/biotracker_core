@@ -227,7 +227,7 @@ public:
 	virtual void  setPolygon(QList<QPolygonF> polygons) = 0;
 
 	// Get list of Polygons; first one is the outer Polygon the others are inner Polygons (holes)
-	virtual QList<QList<QPoint>> getPolygon() = 0;
+	virtual QList<QPolygonF> getPolygon() = 0;
 
 	// Check if list of Polygons exists; first one is the outer Polygon the others are inner Polygons (holes)
 	virtual float hasPolygon() = 0;

@@ -52,7 +52,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_trajectoryWasActiveOnce = false;
 
 	m_tracingLayer = new QGraphicsRectItem();
-    m_tracingLayer->setZValue(3);
+	m_tracingLayer->setZValue(3);
 	this->scene()->addItem(m_tracingLayer);
 
 	m_rotationLine = QLineF();
@@ -66,7 +66,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 }
 
 ComponentShape::~ComponentShape() {
-    delete m_tracingLayer;
+	delete m_tracingLayer;
 }
 
 QRectF ComponentShape::boundingRect() const
@@ -77,6 +77,7 @@ QRectF ComponentShape::boundingRect() const
 	else if (this->data(1) == "polygon") {
 		//outer polygon bounding rect
 		return m_polygons[0].boundingRect();
+		//return(QRect(0, 0, 1000, 1000));
 	}
 	else {
 		qDebug() << "Could not create a bounding rect for current track" << m_id;
@@ -111,7 +112,7 @@ QPainterPath ComponentShape::shape() const
 		path.addPolygon(m_polygons[0]);
 	}
 	else {
-		qDebug() << "Could not create a shape (interaction area) for current track " << m_id;
+		qDebug() << "Could not create a interaction area for trajectory " << m_id;
 		assert(0);
 	}
 	return path;
@@ -123,8 +124,8 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	Q_UNUSED(widget);
 
    
-    if (m_currentFramenumber < 0)
-        return;
+	if (m_currentFramenumber < 0)
+		return;
 	//Antialiasing
 	if (m_antialiasing) {
 		painter->setRenderHint(QPainter::Antialiasing);
@@ -210,7 +211,7 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 		return false;
 	}
 
-
+	// check if trajectory is valid and current entity exists
 	if (m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
 		m_id = m_trajectory->getId();
 		//update m_fixed
@@ -231,7 +232,7 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 		//type checker
 		bool hasType = false;
 
-		//if point, ellipse, rectangle and valid or frameNumber = 0 (for initial entities)
+		//if point, ellipse, rectangle and valid or frameNumber = 0 (for initial entities that are invalid)
 		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
 		if (pointLike && (pointLike->getValid() || m_currentFramenumber == 0)) {
 			hasType = true;
@@ -275,16 +276,35 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			}
 
 			//update Position
-			// qreal x,y;
-			// if(data(1) == "point"){
-			// 	x = m_w <= m_h? pointLike->getXpx() - m_w/2 : pointLike->getXpx() - m_h/2;
-			// 	y = m_w <= m_h? pointLike->getYpx() - m_w/2 : pointLike->getYpx() - m_h/2;
-			// 	this->setPos(x,y);
-			// }
-			// else{
-				this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
-			// }
+			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
 			m_oldPos = this->pos().toPoint();
+
+	
+			/*
+			-for morphing into polygon:
+			-construct polygon from pos and width,height 
+			-pentagon
+
+			  x / \
+			   /   \
+			   |   |
+			   \_ _/
+
+			*/
+			m_polygons = QList<QPolygonF>();
+
+			QPolygonF polygon;
+			QPointF startPoint = QPointF( m_w/2, 0);
+			polygon << startPoint;
+			polygon << QPointF( m_w, m_h / 2);
+			polygon << QPointF( 3 * m_w / 4, m_h);
+			polygon << QPointF( m_w / 4, m_h);
+			polygon << QPointF( 0, m_h / 2);
+			polygon << startPoint;
+
+			if (polygon.isClosed()) {
+				m_polygons.append(polygon);
+			}
 
 			//create tracers
 			trace();
@@ -295,18 +315,36 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			return true;
 		}
 		else {
-			//qDebug() << "no valid tracked component in this trajectory in frame: " << frameNumber;
 			this->hide();
 			return true;
 		}
-		// if polygon TODO
+		// if polygon
 		IModelTrackedPolygon* polygons = dynamic_cast<IModelTrackedPolygon*>(m_trajectory->getChild(frameNumber));
 		if (polygons && (polygons->getValid() || m_currentFramenumber == 0)){
 			hasType = true;
-			qDebug() << "TODO polygon update";
+			//update polygon
+			if (polygons->hasPolygon()) {
+				m_polygons = polygons->getPolygon();
+			}
+			//also update position
+			this->setPos(polygons->getXpx() - m_w / 2, polygons->getYpx() - m_h / 2);
+			m_oldPos = this->pos().toPoint();
+
+			//update width and height or use defaults --> for morphing
+			if (m_useDefaultDimensions) {
+				m_w = m_polygons[0].boundingRect().width();
+				m_h = m_polygons[0].boundingRect().height();
+			}
+
+			//create tracers
+			trace();
+
+			this->show();
+			update();
+
 			return true;
 		}
- 		//has no type
+		//has no type
 		if (!hasType){
 			qDebug() << "The current entity has no known type";
 
@@ -339,9 +377,9 @@ void ComponentShape::trace()
 
 	// really unefficient to flush each time
 	//flush tracing shape history, open up the memory
-    // while (m_tracingLayer->childItems().size() > 0) {
+	// while (m_tracingLayer->childItems().size() > 0) {
 	// 	delete m_tracingLayer->childItems()[0];
-    // }
+	// }
 
 	//check if number of tracing children in tracing layer is correct
 	//delete/add the difference
@@ -413,10 +451,10 @@ void ComponentShape::trace()
 				float tracerDeg = historyChild->hasDeg() ? historyChild->getDeg() : 0.0;
 				float tracerW = m_w * m_tracerProportions;
 				float tracerH = m_h * m_tracerProportions;
-                int tracerNumber = m_currentFramenumber - i;
+				int tracerNumber = m_currentFramenumber - i;
 
-                Tracer* tracer = new Tracer(this->data(1), tracerNumber, tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
-                QObject::connect(tracer, &Tracer::emitGoToFrame, this, &ComponentShape::emitGoToFrame);
+				Tracer* tracer = new Tracer(this->data(1), tracerNumber, tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
+				QObject::connect(tracer, &Tracer::emitGoToFrame, this, &ComponentShape::emitGoToFrame);
 			}
 
 			//PATH
@@ -464,7 +502,7 @@ void ComponentShape::trace()
 			if (m_tracerFrameNumber) {
 				uint tracerNumber = m_currentFramenumber - i;
 				QFont font = QFont();
-				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions * 0.2;
+				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions;
 				font.setPixelSize(fontPixelSize);
 				//font.setBold(true);
 				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
@@ -722,7 +760,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	heightSpin->setPrefix("Height: ");
 	heightSpin->setMinimum(1);
 	heightSpin->setMaximum(100000);
-	heightSpin->setValue(m_w);
+	heightSpin->setValue(m_h);
 	QObject::connect(heightSpin,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveHeight);
 	heightBox->setDefaultWidget(heightSpin);
 	dimensionMenu->addAction(heightBox);
@@ -861,10 +899,11 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	 morphing
 	*/
 	QMenu* morphMenu = new QMenu("Morph into...");
-	if(data(1)=="rectangle" || data(1) == "ellipse" || data(1) == "point"){
+	if(data(1)=="rectangle" || data(1) == "ellipse" || data(1) == "point" || data(1) == "polygon"){
 		QAction* morphPoint = morphMenu->addAction("Point", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPoint()));
 		QAction* morphEllipse = morphMenu->addAction("Ellipse", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoEllipse()));
 		QAction* morphRect = morphMenu->addAction("Rectangle", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoRect()));
+		QAction* morphPoylgon = morphMenu->addAction("Polygon", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPolygon()));
 	}
 	else{
 		morphMenu->setEnabled(false);
@@ -1063,6 +1102,14 @@ void ComponentShape::morphIntoPoint(){
 	trace();
 }
 
+void ComponentShape::morphIntoPolygon()
+{
+	setData(1, "polygon");
+
+	update();
+	trace();
+}
+
 void ComponentShape::receiveTracingLength(int tracingLength)
 {
 	m_tracingLength = tracingLength;
@@ -1137,6 +1184,7 @@ void ComponentShape::receiveHeight(int height){
 	trace();
 	update();
 }
+
 void ComponentShape::receiveWidth(int width){
 	m_useDefaultDimensions = false;
 	m_w = width;
@@ -1176,29 +1224,28 @@ void ComponentShape::receiveShowId(bool toggle)
 void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 {
 	m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-	m_rotationHandleLayer->setRotation(-angle);
-
-	double oldAngle = m_rotation;
+	//m_rotationHandleLayer->setRotation(-angle);
 
 	this->setTransformOriginPoint(m_w / 2, m_h / 2);
-	this->setRotation(m_rotation + angle);
-
-	double toAngle;
+	if (m_h > m_w) {
+		m_rotationHandleLayer->setRotation(-angle + 90);
+		this->setRotation(m_rotation + angle - 90);
+	}
+	else {
+		m_rotationHandleLayer->setRotation(-angle);
+		this->setRotation(m_rotation + angle);
+	}
 
 	if (rotateEntity) {
 
 		this->pos();
 
-		if (m_h > m_w) {
-			toAngle += -90 - m_rotation;
-			oldAngle += -90;
-		}
-		else {
-			toAngle = -angle - m_rotation;
-			oldAngle = -oldAngle;
-		}
+		double toAngle = -angle - m_rotation ;
+		double oldAngle = -m_rotation;
+
 		double toAngleNorm = constrainAngle(toAngle);
 		double oldAngleNorm = constrainAngle(oldAngle);
+		qDebug() << toAngleNorm;
 		Q_EMIT emitEntityRotation(m_trajectory, oldAngleNorm, toAngleNorm, m_currentFramenumber);
 	}
 
@@ -1281,8 +1328,8 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 }
 
 double ComponentShape::constrainAngle(double x){
-    x = fmod(x,360);
-    if (x < 0)
-        x += 360;
-    return x;
+	x = fmod(x,360);
+	if (x < 0)
+		x += 360;
+	return x;
 }
