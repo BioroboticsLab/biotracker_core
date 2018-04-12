@@ -77,7 +77,6 @@ QRectF ComponentShape::boundingRect() const
 	else if (this->data(1) == "polygon") {
 		//outer polygon bounding rect
 		return m_polygons[0].boundingRect();
-		//return(QRect(0, 0, 1000, 1000));
 	}
 	else {
 		qDebug() << "Could not create a bounding rect for current track" << m_id;
@@ -198,7 +197,6 @@ bool ComponentShape::advance()
 }
 
 //enables possibility for plugin to change width, height, rotation, position, etc..
-//TODO for polygons
 bool ComponentShape::updateAttributes(uint frameNumber)
 {
 	m_currentFramenumber = frameNumber;
@@ -246,7 +244,7 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 			//update rotation
 			if(pointLike->hasDeg()){
 				this->setTransformOriginPoint(m_w / 2, m_h / 2);
-				if (m_h > m_w) {
+				if (m_h > m_w || data(1) == "polygon") {
 					m_rotation = -90 - pointLike->getDeg();
 					this->setRotation(m_rotation);
 				}
@@ -257,7 +255,7 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 
 				//update rotation line
 				m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
-				if (m_h > m_w) {
+				if (m_h > m_w || data(1) == "polygon") {
 					m_rotationLine.setAngle(-90);
 				}
 				else {
@@ -1088,25 +1086,24 @@ void ComponentShape::setObjectNameContext(QString name){
 
 void ComponentShape::morphIntoRect(){
 	setData(1, "rectangle");
-	update();
+	updateAttributes(m_currentFramenumber);
 	trace();
 }
 void ComponentShape::morphIntoEllipse(){
 	setData(1, "ellipse");
-	update();
+	updateAttributes(m_currentFramenumber);
 	trace();
 }
 void ComponentShape::morphIntoPoint(){
 	setData(1, "point");
-	update();
+	updateAttributes(m_currentFramenumber);
 	trace();
 }
-
 void ComponentShape::morphIntoPolygon()
 {
 	setData(1, "polygon");
 
-	update();
+	updateAttributes(m_currentFramenumber);
 	trace();
 }
 
@@ -1227,7 +1224,7 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 	//m_rotationHandleLayer->setRotation(-angle);
 
 	this->setTransformOriginPoint(m_w / 2, m_h / 2);
-	if (m_h > m_w) {
+	if (m_h > m_w || data(1) == "polygon") {
 		m_rotationHandleLayer->setRotation(-angle + 90);
 		this->setRotation(m_rotation + angle - 90);
 	}
