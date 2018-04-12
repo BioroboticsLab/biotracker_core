@@ -77,7 +77,7 @@ void SettingsWindow::on_buttonSaveClose_clicked() {
 
 void SettingsWindow::on_pushButtonSetNewLocManSave_clicked() {
 	QString dirStr = QFileDialog::getExistingDirectory(this, tr("Select Directory"), "", QFileDialog::ShowDirsOnly);
-	if (dirStr) {
+	if (dirStr != "") {
 		ui->lineEditLocationManSave->setText(dirStr);
 	}
 }
