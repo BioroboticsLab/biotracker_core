@@ -204,3 +204,11 @@ void ControllerAnnotations::receiveDelSelAnno(){
 	}
 }
 
+void ControllerAnnotations::receiveSetAnnoColor(QColor color)
+{
+	AnnotationsView* view = dynamic_cast<AnnotationsView*>(m_View);
+	if (view) {
+		view->setColor(color);
+	}
+}
+

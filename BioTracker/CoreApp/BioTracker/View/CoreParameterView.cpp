@@ -9,6 +9,7 @@
 #include <limits>
 #include "Controller/ControllerCoreParameter.h"
 #include <qmessagebox.h>
+#include <QColorDialog>
 
 CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, IModel *model) :
 	IViewWidget(parent, controller, model),
@@ -61,7 +62,7 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW && permission.second == false) {
-		this->ui->scrollArea_2->setDisabled(true);
+		this->ui->visualizationScroll->setDisabled(true);
 		return;
 	}
 	//does not need to be propagated to shapes; only handled by view
@@ -260,37 +261,34 @@ void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
 	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
 }
 
-// void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
-//     Q_EMIT emitFinalizeExperiment();
-// }
+void CoreParameterView::on_pushButtonAnnoColor_clicked()
+{
+	QPalette pal = ui->pushButtonAnnoColor->palette();
+	QColor oldColor = pal.color(QPalette::Button);
+	QColor newAnnoColor = QColorDialog::getColor(oldColor, Q_NULLPTR ,"Set new annotation color", QColorDialog::ShowAlphaChannel);
 
-// void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
-// {
-// 	//disable
-// 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-// 		ui->groupBoxTracerDimensions->hide();
-// 		ui->groupBoxMiscellaneous->hide();
-// 		ui->groupBoxTrackDimensions->hide();
-// 		ui->groupBoxTracerDimensions->hide();
-// 		ui->checkBoxTracerFrameNumber->hide();
-// 		ui->checkBoxShowId->hide();
-// 	}
-// 	//enable
-// 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-// 		ui->groupBoxTracerDimensions->show();
-// 		ui->groupBoxMiscellaneous->show();
-// 		ui->groupBoxTrackDimensions->show();
-// 		ui->groupBoxTracerDimensions->show();
-// 		ui->checkBoxTracerFrameNumber->show();
-// 		ui->checkBoxShowId->show();
-// 	}
-// }
+	if (newAnnoColor.isValid()) {
+		QPalette pal = ui->pushButtonAnnoColor->palette();
+		pal.setColor(QPalette::Button, newAnnoColor);
+		ui->pushButtonAnnoColor->setAutoFillBackground(true);
+		ui->pushButtonAnnoColor->setPalette(pal);
+		ui->pushButtonAnnoColor->update();
+		ui->pushButtonAnnoColor->setAutoFillBackground(true);
+		ui->pushButtonAnnoColor->setFlat(true);
+
+		Q_EMIT emitSetAnnoColor(newAnnoColor);
+	}
+
+	
+}
 
 void CoreParameterView::toggleExpertOptions(bool toggle){
 	ui->groupBoxTracerDimensions->setVisible(toggle);
 	ui->groupBoxMiscellaneous->setVisible(toggle);
 	ui->groupBoxTrackDimensions->setVisible(toggle);
 	ui->groupBoxTracerDimensions->setVisible(toggle);
+	ui->groupBoxAnno->setVisible(toggle);
+
 	ui->checkBoxTracerFrameNumber->setVisible(toggle);
 	ui->checkBoxShowId->setVisible(toggle);
 }
@@ -349,6 +347,14 @@ void CoreParameterView::fillUI()
 	//track height
 	if (coreParams->m_trackHeight) { ui->spinBoxTrackHeight->setValue(coreParams->m_trackHeight); }
 
+	//annotation color button
+	QPalette pal = ui->pushButtonAnnoColor->palette();
+	pal.setColor(QPalette::Button, Qt::yellow);
+	ui->pushButtonAnnoColor->setAutoFillBackground(true);
+	ui->pushButtonAnnoColor->setPalette(pal);
+	ui->pushButtonAnnoColor->setFlat(true);
+	ui->pushButtonAnnoColor->update();
+
 	//enable/disable widgets
 
 	//expert options
@@ -356,6 +362,7 @@ void CoreParameterView::fillUI()
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
+		ui->groupBoxAnno->show();
 		ui->checkBoxTracerFrameNumber->show();
 		ui->checkBoxShowId->show();
 	}
@@ -363,8 +370,10 @@ void CoreParameterView::fillUI()
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
 		ui->groupBoxTrackDimensions->hide();
+		ui->groupBoxAnno->hide();
 		ui->checkBoxTracerFrameNumber->hide();
 		ui->checkBoxShowId->hide();
+
 	}
 }
 
@@ -375,16 +384,16 @@ void CoreParameterView::setStyle()
 	ui->groupBoxRectificationParm->setStyleSheet("QGroupBox { background-color: #d1c4e9; }");
 	ui->groupBoxTracing->setStyleSheet("QGroupBox { background-color: #c8e6c9; }");
 	ui->groupBoxMiscellaneous->setStyleSheet("QGroupBox { background-color: #ffecb3; }");
+	ui->groupBoxAnno->setStyleSheet("QGroupBox { background-color: #fad8ba; }");
 
 	//expert options are slightly darker
 	ui->groupBoxTrackDimensions->setStyleSheet("QGroupBox { background-color: #90caf9;}");
 	ui->groupBoxTracerDimensions->setStyleSheet("QGroupBox { background-color: #a5d6a7;}");
 
-	//default groupbox
+	//default groupbox style
 	ui->widgetParameter->setStyleSheet("QGroupBox"
-	" {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
-	"QGroupBox::title {subcontrol-origin: margin; padding: 0 3px; background-color: #e5e5e5; }");
-
+	" {border: 1px solid #e5e5e5; border-radius: 5px; margin-top: 1ex; /* leave space at the top for the title */}"
+	"QGroupBox::title {subcontrol-origin: margin; padding: -1px 3px; background-color: #e5e5e5; }");
 }
 
 void CoreParameterView::resetTrial()

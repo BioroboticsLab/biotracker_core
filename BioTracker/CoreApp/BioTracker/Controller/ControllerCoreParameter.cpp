@@ -5,6 +5,7 @@
 #include "ControllerGraphicScene.h"
 #include "ControllerPlayer.h"
 #include "ControllerMainWindow.h"
+#include "ControllerAnnotations.h"
 #include "View/CoreParameterView.h"
 #include "View/TrackedComponentView.h"
 #include "Model/CoreParameter.h"
@@ -83,6 +84,14 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitDisplayRectification, adController, &ControllerAreaDescriptor::setDisplayRectificationDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
     }
+
+	//Connections to the Annotations
+	{
+		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
+		ControllerAnnotations *annoController = static_cast<ControllerAnnotations*>(ctr);
+		QObject::connect(view, &CoreParameterView::emitSetAnnoColor, annoController, &ControllerAnnotations::receiveSetAnnoColor, Qt::DirectConnection);
+	}
+
     //Connections to the DataExporter
     {
         IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);

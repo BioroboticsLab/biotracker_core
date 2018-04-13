@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	createIntroductionWizard();
 
 	//set window icon
-	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT3-big_non_transparent.ico"));
+	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT3-big_non_transparent_rounded.ico"));
 
 	//view actions
 	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();

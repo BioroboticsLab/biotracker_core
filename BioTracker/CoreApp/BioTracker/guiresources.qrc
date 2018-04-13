@@ -59,5 +59,7 @@
         <file>resources/logo/BT3-small.png</file>
         <file>resources/logo/BT3-big_non_transparent.ico</file>
         <file>resources/logo/BT3-big_non_transparent.png</file>
+        <file>resources/logo/BT-3_non_transparent_rounded.ico</file>
+        <file>resources/logo/BT-3_non_transparent_rounded.png</file>
     </qresource>
 </RCC>

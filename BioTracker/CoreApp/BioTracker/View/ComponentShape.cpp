@@ -230,9 +230,9 @@ bool ComponentShape::updateAttributes(uint frameNumber)
 		//type checker
 		bool hasType = false;
 
-		//if point, ellipse, rectangle and valid or frameNumber = 0 (for initial entities that are invalid)
+		//if point, ellipse, rectangle and valid
 		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-		if (pointLike && (pointLike->getValid() || m_currentFramenumber == 0)) {
+		if (pointLike && (pointLike->getValid())) {
 			hasType = true;
 			//update width and height or use defaults
 			if (m_useDefaultDimensions) {

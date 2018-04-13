@@ -72,6 +72,9 @@ public:
 	void on_checkBoxDisplayRectification_stateChanged(int v);
 	void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
 
+	//Annotations
+	void on_pushButtonAnnoColor_clicked();
+
 	//Finalize experiment
     //void on_pushButtonFinalizeExperiment_clicked();
 
@@ -152,6 +155,9 @@ public:
 	void emitDisplayTrackingArea(bool b);
 	void emitDisplayRectification(bool b);
     void emitTrackingAreaAsEllipse(bool b);
+
+	//Annotations
+	void emitSetAnnoColor(QColor color);
 
 	//Finalize Experiment
     void emitFinalizeExperiment();

@@ -33,6 +33,7 @@ public Q_SLOTS:
 	void receiveAddArrAnno();
 	void receiveAddEllAnno();
 	void receiveDelSelAnno();
+	void receiveSetAnnoColor(QColor color);
 
 protected:
 	void createModel(std::string filepath = "");
