@@ -122,7 +122,7 @@ void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 
 void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &pos)
 {
-
+	// left-click: add annotation in pos or try start dragging annotation
 	if (event->button() == Qt::LeftButton) {
 		auto model = static_cast<Annotations*>(getModel());
 		bool handled = true;
@@ -142,16 +142,35 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 			model->startEllipse(pos, model->getCurrentFrame());
 			break;
 		default:
-			if (model->tryStartDragging(pos))
+			if (model->tryStartDragging(pos)) {
 				updateView();
-			else
+			}
+			else {
 				handled = false;
+			}
 			updateView();
 			break;
 		}
 		if (handled)
 			event->accept();
 		actionQueued = ActionQueued::None;
+	}
+
+	// right-click: set text for annotation in pos 
+	else if (event->button() == Qt::RightButton) {
+		auto model = static_cast<Annotations*>(getModel());
+		bool handled = true;
+
+		if (model->trySetText(pos)) {
+			updateView();
+		}
+		else {
+			handled = false;
+		}
+		if (handled) {
+			event->accept();
+		}
+
 	}
 	
 }

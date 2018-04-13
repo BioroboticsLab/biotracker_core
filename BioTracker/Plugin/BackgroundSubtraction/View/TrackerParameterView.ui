@@ -348,7 +348,7 @@
          <item>
           <widget class="QComboBox" name="comboBoxSendImage">
            <property name="toolTip">
-            <string>Choose with image to display</string>
+            <string>Choose which image to display for the next frames. Tracking must be actived.</string>
            </property>
            <property name="currentText">
             <string>Original</string>

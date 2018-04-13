@@ -67,6 +67,6 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	if (model->selection)
 	{
 		painter->setPen(QPen(Qt::red, 6, Qt::SolidLine, Qt::RoundCap));
-		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle);
+		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle, "");
 	}
 }

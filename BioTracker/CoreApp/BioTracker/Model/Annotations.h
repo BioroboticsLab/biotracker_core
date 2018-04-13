@@ -41,12 +41,18 @@ public:
 		// Position in pixels.
 		QPoint origin{ 0, 0 };
 		size_t startFrame{ 0 };
+		// Possible text for each annotation
+		QString text{ "" };
 		// Name that identifies this type of annotation and is used for serialization.
 		virtual std::string name() const = 0;
 		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const = 0;
 		// Saving requires writing properties to vector of strings.
 		virtual std::vector<std::string> serializeToVector() const;
 		virtual void deserializeFrom(std::queue<std::string> &args);
+		// Set text. Called when right clicking.
+		virtual void setText(QString newText) { text = newText; };
+		// Get text.Called when right clicking.
+		virtual QString getText() { return text; };
 		// Called either during dragging or when the mouse is released.
 		// Needs to update positional data.
 		virtual bool onEndAnnotation(QPoint currentPosition) { origin = currentPosition;  return true; };
@@ -59,7 +65,7 @@ public:
 			return nullptr;
 		}
 		// Static, so that the view can use it to draw special handles.
-		static void drawHandleLocation(QPainter *painter, QPoint pos);
+		static void drawHandleLocation(QPainter *painter, QPoint pos, QString text);
 	protected:
 		bool isHandleAtPosition(const QPoint &handle, const QPoint &pos);
 	};
@@ -134,8 +140,10 @@ public:
 	void startLabel(QPoint origin, size_t currentFrame);
 	void startRect(QPoint origin, size_t currentFrame);
 	void startEllipse(QPoint origin, size_t currentFrame);
-	// Called by the controller on mouse-clicks.
+	// Called by the controller on left mouse-clicks.
 	bool tryStartDragging(QPoint cursor);
+	// Called by the controller on left mouse-clicks.
+	bool trySetText(QPoint cursor);
 	// Called by the controller during mouse-drags to update the current annotation.
 	bool updateAnnotation(QPoint cursor);
 	// Called on mouse-release.

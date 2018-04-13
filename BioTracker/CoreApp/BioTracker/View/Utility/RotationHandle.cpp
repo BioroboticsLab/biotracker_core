@@ -11,7 +11,7 @@ RotationHandle::RotationHandle(QPoint origin, QAbstractGraphicsShapeItem* parent
 	QAbstractGraphicsShapeItem(parent), _origin(origin)
 {
 	setFlag(ItemIsMovable);
-	setPen(QPen(Qt::blue));
+	setPen(QPen(Qt::black));
 	setBrush(QBrush(Qt::red));
 	//setFlag(QGraphicsItem::ItemIsSelectable);	
 	//setFlag(ItemIgnoresTransformations);
