@@ -94,6 +94,9 @@ class VideoControllWidget : public IViewWidget {
   QAction* action_rec;
 
   std::chrono::system_clock::time_point lastFpsSet;
+
+  uint	_fpsSum = 0;
+  int	_fpsCounter = 0;
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H

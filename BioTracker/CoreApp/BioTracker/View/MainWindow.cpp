@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	createIntroductionWizard();
 
 	//set window icon
-	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT3-big_non_transparent_rounded.ico"));
+	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT-3_non_transparent_rounded.ico"));
 
 	//view actions
 	//QAction* dockWidgetHider = ui->dockWidgetAlgorithm->toggleViewAction();
@@ -1087,7 +1087,7 @@ void MainWindow::on_actionShortcuts_triggered() {
     scList.append(QPair<QString,QString>(QString("CTRL + Y"), QString("Redo")));
     scList.append(QPair<QString,QString>(QString("CTRL + A"), QString("Select all")));
 	scList.append(QPair<QString,QString>(QString("+"), QString("Add track")));
-    scList.append(QPair<QString,QString>(QString("DELETE"), QString("Delete all selected tracks")));
+    scList.append(QPair<QString,QString>(QString("DELETE"), QString("Delete all selected trajectories")));
     scList.append(QPair<QString,QString>(QString("Space"), QString("Play")));
     scList.append(QPair<QString,QString>(QString("Left Arrow"), QString("Previous Frame")));
     scList.append(QPair<QString,QString>(QString("Right Arrow"), QString("Next Frame")));

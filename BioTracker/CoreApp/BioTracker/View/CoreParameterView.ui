@@ -1235,7 +1235,7 @@
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QWidget" name="" native="true">
+                        <widget class="QWidget" name="widget" native="true">
                          <layout class="QHBoxLayout" name="layoutTracerProportions">
                           <property name="spacing">
                            <number>3</number>

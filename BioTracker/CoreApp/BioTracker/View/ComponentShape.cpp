@@ -1242,7 +1242,6 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 
 		double toAngleNorm = constrainAngle(toAngle);
 		double oldAngleNorm = constrainAngle(oldAngle);
-		qDebug() << toAngleNorm;
 		Q_EMIT emitEntityRotation(m_trajectory, oldAngleNorm, toAngleNorm, m_currentFramenumber);
 	}
 

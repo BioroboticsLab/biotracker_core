@@ -62,13 +62,20 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW && permission.second == false) {
-		this->ui->visualizationScroll->setDisabled(true);
+		//disable everything but the area descriptor groupbox
+		ui->checkBoxEnableCoreView->setEnabled(false);
+		ui->groupBoxTracks->setEnabled(false);
+		ui->groupBoxTracing->setEnabled(false);
+		ui->groupBoxMiscellaneous->setEnabled(false);
+		ui->groupBoxAnno->setEnabled(false);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(false);
 		return;
 	}
 	//does not need to be propagated to shapes; only handled by view
 	//TODO: move this to controller
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD  && permission.second == false) {
-		//this->ui->pushButtonAddTrack->setDisabled(true);
+		this->ui->pushButton_addTraj->setDisabled(true);
 		return;
 	}
 
@@ -95,13 +102,28 @@ void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v)
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	//disable
 	if (ui->checkBoxEnableCoreView->checkState() == Qt::Unchecked) {
-		ui->widgetParameter->setEnabled(false);
+		//disable all groupboxes but the area descriptor one
+		ui->groupBoxTracks->setEnabled(false);
+		ui->groupBoxTracing->setEnabled(false);
+		ui->groupBoxMiscellaneous->setEnabled(false);
+		ui->groupBoxAnno->setEnabled(false);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(false);
+		
+		
 		emitViewSwitch(false);
 		coreParams->m_viewSwitch = false;
 	}
 	//enable
 	else if (ui->checkBoxEnableCoreView->checkState() == Qt::Checked){
-		ui->widgetParameter->setEnabled(true);
+		//enable all groupboxes
+		ui->groupBoxTracks->setEnabled(true);
+		ui->groupBoxTracing->setEnabled(true);
+		ui->groupBoxMiscellaneous->setEnabled(true);
+		ui->groupBoxAnno->setEnabled(true);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(true);
+
 		emitViewSwitch(true);
 		coreParams->m_viewSwitch = true;
 	}

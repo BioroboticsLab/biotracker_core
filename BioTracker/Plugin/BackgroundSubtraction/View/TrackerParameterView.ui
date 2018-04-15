@@ -103,7 +103,7 @@
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>Biarization Threshold</string>
+                  <string>Binarization Threshold</string>
                  </property>
                 </widget>
                </item>

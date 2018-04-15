@@ -83,6 +83,11 @@ void VideoControllWidget::getNotified() {
     if (dt > 500 || fps <= 0){
         ui->lcd_currentFpsNum->display(fps);
         lastFpsSet = now;
+
+		// for average fps calculation
+		_fpsSum += fps;
+		_fpsCounter += 1;
+
     }
 
     ui->fps_label->setText(QString::number(mediaFps));
@@ -210,8 +215,11 @@ void VideoControllWidget::on_actionPlay_Pause_triggered(bool checked){
 
     if (m_Paus) {
         controller->pause();
+		qDebug() << "The average fps of this run was: " << _fpsSum / _fpsCounter;
     } else {
         controller->play();
+		_fpsSum = 0;
+		_fpsCounter = 0;
     }
 }
 void VideoControllWidget::on_actionStop_triggered(bool checked){
