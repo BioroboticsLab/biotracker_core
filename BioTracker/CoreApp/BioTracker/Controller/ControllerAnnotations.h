@@ -2,6 +2,7 @@
 
 #include "Interfaces/IController/IController.h"
 #include "QString"
+#include <QColor>
 #include <QMouseEvent>
 #include <QKeyEvent>
 
