@@ -446,8 +446,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <property name="sizePolicy">
@@ -469,8 +469,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>50</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -515,8 +515,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -619,7 +619,8 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Load a tracker (usually trackers are preloaded from the 'Plugins' directory)  &lt;/li&gt;
 &lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the desired tracker options     &lt;/li&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:8pt; font-style:italic;&quot;&gt;(This often takes some time to figure out)&lt;/span&gt;&lt;/p&gt;
-&lt;li style=&quot; font-family:'Ubuntu'; font-size:8pt; font-style:italic;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-style:normal;&quot;&gt;You can manage the tracking and trials in the 'Experiment' tab&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can also set up a rectification in the 'Visualization options' tab&lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can manage the tracking and trials in the 'Experiment' tab&lt;/li&gt;
 &lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Insert the objects to track if the tracker does not generate them automatically&lt;/li&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:8pt; font-style:italic;&quot;&gt;(If you want to track two objects, add two tracks by right clicking the video or using the button on the left toolbar)&lt;/span&gt;&lt;/p&gt;
 &lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Start tracking by having the tracking activated and playing the video!&lt;/li&gt;&lt;/ol&gt;
@@ -640,8 +641,8 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <property name="toolTip">

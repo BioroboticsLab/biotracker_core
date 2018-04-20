@@ -155,7 +155,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-263</y>
+          <y>0</y>
           <width>333</width>
           <height>938</height>
          </rect>
@@ -201,7 +201,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Enable core visualization</string>
+            <string>Enable core visualization of tracking data</string>
            </property>
            <property name="checked">
             <bool>true</bool>

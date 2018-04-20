@@ -1,5 +1,8 @@
 #include "ComponentShape.h"
 #include <cmath>
+
+#include "View/Utility/Tracer.h"
+
 #include "QBrush"
 #include "QPainter"
 #include "QMenu"
@@ -26,11 +29,16 @@
 #include <QtWidgets/QHeaderView>
 #include <QLinkedList>
 #include <qpair.h>
-#include "View/Utility/Tracer.h"
 //#include <QOverload>
 
 
-ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory* trajectory, int id):
+/*
+*	This is the cpp file of the ComponentShape class
+*	Collapse/Fold all methods to have a better overview.
+*/
+
+ComponentShape::ComponentShape(QGraphicsObject* parent,
+	IModelTrackedTrajectory* trajectory, int id) :
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
 {
 	setData(0, m_id);
@@ -42,24 +50,29 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 	m_penStyle = Qt::SolidLine;
 	m_penStylePrev = Qt::SolidLine;
 	m_marked = false;
+
+	//set default permissions
 	m_pMovable = true;
 	m_pRemovable = true;
 	m_pSwappable = true;
 	m_pRotatable = true;
+
 	m_fixed = false;
 	m_currentFramenumber = 0;
 	m_rotation = 0;
-	m_trajectoryWasActiveOnce = false;
+	//m_trajectoryWasActiveOnce = false;
 
+	//create tracing layer
 	m_tracingLayer = new QGraphicsRectItem();
 	m_tracingLayer->setZValue(3);
 	this->scene()->addItem(m_tracingLayer);
 
+	//create orientation line
 	m_rotationLine = QLineF();
 
+	//set flags
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
-
 	setAcceptedMouseButtons(Qt::LeftButton);
 
 	setVisible(true);
@@ -68,6 +81,8 @@ ComponentShape::ComponentShape(QGraphicsObject* parent, IModelTrackedTrajectory*
 ComponentShape::~ComponentShape() {
 	delete m_tracingLayer;
 }
+
+//*****************************QGraphicsItem interface***************************************
 
 QRectF ComponentShape::boundingRect() const
 {
@@ -91,14 +106,14 @@ QPainterPath ComponentShape::shape() const
 	if (this->data(1) == "ellipse") {
 		path.addEllipse(0, 0, m_w, m_h);
 	}
-	else if( this->data(1) == "point") {
-		int dim = m_w <= m_h? m_w : m_h;
+	else if (this->data(1) == "point") {
+		int dim = m_w <= m_h ? m_w : m_h;
 		// path.addEllipse(0, 0, dim , dim);
-		QRectF ellipse; 
+		QRectF ellipse;
 		//ellipse = QRectF(0, m_h - m_w , m_w,  m_w);
-		qreal origin_x = m_rotationLine.p1().x() - dim /2;
-		qreal origin_y = m_rotationLine.p1().y() - dim /2;
-		ellipse = QRectF(origin_x, origin_y , dim, dim);
+		qreal origin_x = m_rotationLine.p1().x() - dim / 2;
+		qreal origin_y = m_rotationLine.p1().y() - dim / 2;
+		ellipse = QRectF(origin_x, origin_y, dim, dim);
 
 		path.addEllipse(ellipse);
 
@@ -117,12 +132,13 @@ QPainterPath ComponentShape::shape() const
 	return path;
 }
 
-void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void ComponentShape::paint(QPainter * painter,
+	const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
-   
+
 	if (m_currentFramenumber < 0)
 		return;
 	//Antialiasing
@@ -163,17 +179,17 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	//take the smaller of width and height
 	//a point should always have the same height and width
 	if (this->data(1) == "point") {
-		QRectF ellipse; 
-		if(m_w <= m_h){
+		QRectF ellipse;
+		if (m_w <= m_h) {
 			//ellipse = QRectF(0, m_h - m_w , m_w,  m_w);
-			qreal origin_x = m_rotationLine.p1().x() - m_w /2;
-			qreal origin_y = m_rotationLine.p1().y() - m_w /2;
-			ellipse = QRectF(origin_x, origin_y , m_w, m_w);
+			qreal origin_x = m_rotationLine.p1().x() - m_w / 2;
+			qreal origin_y = m_rotationLine.p1().y() - m_w / 2;
+			ellipse = QRectF(origin_x, origin_y, m_w, m_w);
 		}
-		else{
-			qreal origin_x = m_rotationLine.p1().x() - m_h /2;
-			qreal origin_y = m_rotationLine.p1().y() - m_h /2;
-			ellipse = QRectF(origin_x, origin_y , m_h,  m_h);
+		else {
+			qreal origin_x = m_rotationLine.p1().x() - m_h / 2;
+			qreal origin_y = m_rotationLine.p1().y() - m_h / 2;
+			ellipse = QRectF(origin_x, origin_y, m_h, m_h);
 		}
 		painter->drawEllipse(ellipse);
 	}
@@ -186,7 +202,7 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	}
 
 	// draw id in center
-	if (m_showId){
+	if (m_showId) {
 		painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
 	}
 }
@@ -194,387 +210,6 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 bool ComponentShape::advance()
 {
 	return false;
-}
-
-//enables possibility for plugin to change width, height, rotation, position, etc..
-bool ComponentShape::updateAttributes(uint frameNumber)
-{
-	m_currentFramenumber = frameNumber;
-
-	// if trajectory does not exist anymore, delete the shape
-	if(!m_trajectory){
-		this->hide();
-		m_tracingLayer->hide();
-		this->deleteLater();
-		return false;
-	}
-
-	// check if trajectory is valid and current entity exists
-	if (m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
-		m_id = m_trajectory->getId();
-		//update m_fixed
-		m_fixed = m_trajectory->getFixed();
-		if (!m_fixed)
-		{
-			if(this->isSelected()){m_penStyle = Qt::DashLine;}
-			else{m_penStyle = Qt::SolidLine;}
-		}
-		else {
-			if(this->isSelected()){m_penStyle = Qt::DashDotLine;}
-			else{m_penStyle = Qt::DotLine;}
-		}
-		
-		//update dimensions
-		prepareGeometryChange();
-
-		//type checker
-		bool hasType = false;
-
-		//if point, ellipse, rectangle and valid
-		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-		if (pointLike && (pointLike->getValid())) {
-			hasType = true;
-			//update width and height or use defaults
-			if (m_useDefaultDimensions) {
-				if (pointLike->hasW()) {m_w = pointLike->getW();}
-				else { m_w = m_wDefault; }
-				if (pointLike->hasH()) {m_h = pointLike->getH();}
-				else { m_h = m_hDefault; }
-			}
-			//update rotation
-			if(pointLike->hasDeg()){
-				this->setTransformOriginPoint(m_w / 2, m_h / 2);
-				if (m_h > m_w || data(1) == "polygon") {
-					m_rotation = -90 - pointLike->getDeg();
-					this->setRotation(m_rotation);
-				}
-				else {
-					m_rotation = -pointLike->getDeg();
-					this->setRotation(m_rotation);
-				}
-
-				//update rotation line
-				m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
-				if (m_h > m_w || data(1) == "polygon") {
-					m_rotationLine.setAngle(-90);
-				}
-				else {
-					m_rotationLine.setAngle(0);
-				}
-				qreal length = (m_w + m_h) / 2 * 3;
-				m_rotationLine.setLength(length);
-
-				//update rotation handle
-				m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
-				m_rotationHandleLayer->setRotation(0);
-				m_rotationHandle->setPos(m_rotationLine.p2());
-			}
-			else{
-				m_rotationLine = QLineF();
-			}
-
-			//update Position
-			this->setPos(pointLike->getXpx() - m_w/2, pointLike->getYpx() - m_h/2);
-			m_oldPos = this->pos().toPoint();
-
-	
-			/*
-			-for morphing into polygon:
-			-construct polygon from pos and width,height 
-			-pentagon
-
-			  x / \
-			   /   \
-			   |   |
-			   \_ _/
-
-			*/
-			m_polygons = QList<QPolygonF>();
-
-			QPolygonF polygon;
-			QPointF startPoint = QPointF( m_w/2, 0);
-			polygon << startPoint;
-			polygon << QPointF( m_w, m_h / 2);
-			polygon << QPointF( 3 * m_w / 4, m_h);
-			polygon << QPointF( m_w / 4, m_h);
-			polygon << QPointF( 0, m_h / 2);
-			polygon << startPoint;
-
-			if (polygon.isClosed()) {
-				m_polygons.append(polygon);
-			}
-
-			//create tracers
-			trace();
-
-			this->show();
-			update();
-
-			return true;
-		}
-		else {
-			this->hide();
-			return true;
-		}
-		// if polygon
-		IModelTrackedPolygon* polygons = dynamic_cast<IModelTrackedPolygon*>(m_trajectory->getChild(frameNumber));
-		if (polygons && (polygons->getValid() || m_currentFramenumber == 0)){
-			hasType = true;
-			//update polygon
-			if (polygons->hasPolygon()) {
-				m_polygons = polygons->getPolygon();
-			}
-			//also update position
-			this->setPos(polygons->getXpx() - m_w / 2, polygons->getYpx() - m_h / 2);
-			m_oldPos = this->pos().toPoint();
-
-			//update width and height or use defaults --> for morphing
-			if (m_useDefaultDimensions) {
-				m_w = m_polygons[0].boundingRect().width();
-				m_h = m_polygons[0].boundingRect().height();
-			}
-
-			//create tracers
-			trace();
-
-			this->show();
-			update();
-
-			return true;
-		}
-		//has no type
-		if (!hasType){
-			qDebug() << "The current entity has no known type";
-
-		}
-	}
-	else{
-		//trajectory is empty or null or invald or current entity is null
-		this->hide();
-		m_tracingLayer->hide();
-		//delete this;
-		return false;
-	}
-}
-
-void ComponentShape::trace()
-{
-	//TRACING
-
-	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
-	//return if current entity is not existant
-	if (!currentChild)
-		return;
-
-	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
-
-	//update the tracing layer
-	m_tracingLayer->setPos(this->pos());
-	m_tracingLayer->setFlag(QGraphicsItem::ItemHasNoContents);
-	m_tracingLayer->show();
-
-	// really unefficient to flush each time
-	//flush tracing shape history, open up the memory
-	// while (m_tracingLayer->childItems().size() > 0) {
-	// 	delete m_tracingLayer->childItems()[0];
-	// }
-
-	//check if number of tracing children in tracing layer is correct
-	//delete/add the difference
-	QList<QGraphicsItem *>  tracers = m_tracingLayer->childItems();
-	foreach(QGraphicsItem * tracer, tracers)
-	{
-		delete tracer;
-	}
-
-	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "No tracing") {
-		return;
-	}
-
-	QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
-
-	for (int i = 1; i <= m_tracingLength && i <= m_currentFramenumber; i += m_tracingSteps) {
-			
-		IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber - i));
-		if (historyChild && historyChild->getValid()) {
-
-			//positioning
-			QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
-			QPointF historyPointDifference = historyPoint - currentPoint;
-			QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
-
-			//time degradation colors
-			QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-			QBrush timeDegradationBrush = QBrush(m_brushColor);
-			QColor timeDegradationBrushColor;
-			QColor timeDegradationPenColor;
-
-			if (m_tracingTimeDegradation == "Transparency") {
-
-				float tr = (float)m_transparency;
-				float trForThis = tr != 0 ? tr - (tr / (float)m_tracingLength) * (i-1) : 0.0f;
-
-				timeDegradationPenColor = QColor(m_penColor.red(), m_penColor.green(), m_penColor.blue(), trForThis);
-				timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
-
-				timeDegradationBrushColor = QColor(m_brushColor.red(), m_brushColor.green(), m_brushColor.blue(), trForThis);
-				timeDegradationBrush = QBrush(timeDegradationBrushColor);
-
-			}
-			else if (m_tracingTimeDegradation == "False color") {
-				float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
-				timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-				timeDegradationPenColor.setAlpha(m_transparency);
-				timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
-				timeDegradationBrushColor.setAlpha(m_transparency);
-				timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
-				timeDegradationBrush = QBrush(timeDegradationBrushColor);
-			}
-
-			if (m_tracingStyle == "Shape") {
-
-
-				//orientation line
-				if (m_tracingOrientationLine) {
-					QLineF orientationLine = QLineF();
-					orientationLine.setP1(adjustedHistoryPointDifference);
-					orientationLine.setAngle(historyChild->getDeg());
-					qreal length = (m_w + m_h) / 2 / m_tracerProportions * 3;
-					orientationLine.setLength(15);
-
-					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine, m_tracingLayer);
-				}
-
-				//createShapeTracer(this->data(1), historyChild, adjustedHistoryPointDifference, timeDegradationPen, timeDegradationBrush);
-				float tracerDeg = historyChild->hasDeg() ? historyChild->getDeg() : 0.0;
-				float tracerW = m_w * m_tracerProportions;
-				float tracerH = m_h * m_tracerProportions;
-				int tracerNumber = m_currentFramenumber - i;
-
-				Tracer* tracer = new Tracer(this->data(1), tracerNumber, tracerDeg, adjustedHistoryPointDifference, tracerW, tracerH, timeDegradationPen, timeDegradationBrush, m_tracingLayer);
-				QObject::connect(tracer, &Tracer::emitGoToFrame, this, &ComponentShape::emitGoToFrame);
-			}
-
-			//PATH
-			else if (m_tracingStyle == "Path") {
-
-				if(lastPointDifference != adjustedHistoryPointDifference){
-
-					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
-					QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
-					lineItem->setPen(QPen(timeDegradationPenColor, m_penWidth, m_penStyle));
-
-					lastPointDifference = adjustedHistoryPointDifference;
-				}
-			}
-			//ARROWPATH
-			else if (m_tracingStyle == "Arrow path") {
-
-				if(lastPointDifference != adjustedHistoryPointDifference){
-
-				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
-
-				int armLength = std::floor(base.length() / 9) + 2;
-
-				QLineF arm0 = base.normalVector();
-				arm0.setLength(armLength);
-				arm0.setAngle(base.angle() + 20);
-
-				QLineF arm1 = base.normalVector();
-				arm1.setLength(armLength);
-				arm1.setAngle(base.angle() - 20);
-
-				QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
-				baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
-				QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
-				arm0Item->setPen(timeDegradationPen);
-				QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
-				arm1Item->setPen(timeDegradationPen);
-
-				lastPointDifference = adjustedHistoryPointDifference;
-
-				}
-			}
-
-			//add framenumber to each tracer
-			if (m_tracerFrameNumber) {
-				uint tracerNumber = m_currentFramenumber - i;
-				QFont font = QFont();
-				int fontPixelSize = (int)((m_w + m_h) / 2) * m_tracerProportions;
-				font.setPixelSize(fontPixelSize);
-				//font.setBold(true);
-				QGraphicsSimpleTextItem* tracerNumberText = new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
-				tracerNumberText->setFont(font);
-				tracerNumberText->setBrush(QBrush(Qt::white)); //sloooow
-				QPen pen = QPen(Qt::black);
-				pen.setWidth(0);
-				tracerNumberText->setPen(pen); //sloooow
-				tracerNumberText->setPos(adjustedHistoryPointDifference + QPointF(-m_w * m_tracerProportions / 3.5f, -m_h * m_tracerProportions / 7));
-			}
-		}
-	}
-}
-
-IModelTrackedTrajectory * ComponentShape::getTrajectory()
-{
-	return m_trajectory;
-}
-
-void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
-{
-	m_permissions.insert(permission);
-
-
-	switch (permission.first)
-	{
-		case ENUMS::COREPERMISSIONS::COMPONENTMOVE:
-			m_pMovable = permission.second;
-			this->setFlag(ItemIsMovable, permission.second);
-			break;
-		case ENUMS::COREPERMISSIONS::COMPONENTREMOVE:
-			m_pRemovable = permission.second;
-			break;
-		case ENUMS::COREPERMISSIONS::COMPONENTSWAP:
-			m_pSwappable = permission.second;
-			break;
-		case ENUMS::COREPERMISSIONS::COMPONENTROTATE:
-			m_pRotatable = permission.second;
-			
-			if (m_pRotatable) {
-				m_rotationHandleLayer->setVisible(m_orientationLine);
-				m_rotationHandle->setVisible(m_orientationLine);
-			}
-			else {
-				m_rotationHandleLayer->hide();
-				m_rotationHandle->hide();
-			}
-			break;
-	}
-}
-
-int ComponentShape::getId()
-{
-	return m_id;
-}
-
-bool ComponentShape::isSwappable()
-{
-	return m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP];
-}
-
-bool ComponentShape::isRemovable()
-{
-	return m_pRemovable;
-}
-
-bool ComponentShape::isRotatable()
-{
-	return m_pRotatable;
-}
-
-QPoint ComponentShape::getOldPos()
-{
-	return m_oldPos;
 }
 
 void ComponentShape::mousePressEvent(QGraphicsSceneMouseEvent * event)
@@ -608,7 +243,7 @@ void ComponentShape::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 		if (m_dragged) {
 
 			//broadcast move so other selected elements get moved too
-			// TODO? maybe unconventional and slow but couldn't find another way; Dropevents in view and dropevents in shape didn't seem to work
+			//maybe unconventional and slow but couldn't find another way; Dropevents in view and dropevents in shape didn't seem to work
 			broadcastMove();
 		}
 		else {
@@ -629,7 +264,8 @@ void ComponentShape::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
-QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant ComponentShape::itemChange(GraphicsItemChange change,
+	const QVariant &value)
 {
 	if (change == ItemSelectedHasChanged && scene()) {
 		if (this->isSelected()) {
@@ -661,9 +297,9 @@ QVariant ComponentShape::itemChange(GraphicsItemChange change, const QVariant &v
 void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
 	QMenu menu;
-	
+
 	/*
-	 create the info box
+	create the info box
 	*/
 	QWidgetAction* infoBox = new QWidgetAction(this);
 
@@ -679,42 +315,42 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//
 	menu.addSeparator();
 
-	/* 
-	 create set object name - line edit
+	/*
+	create set object name - line edit
 	*/
 	QWidgetAction* objectNameAction = new QWidgetAction(this);
 	QLineEdit* objectEdit = new QLineEdit();
 
-	if(objectName() == ""){
+	if (objectName() == "") {
 		objectEdit->setPlaceholderText("no object name set");
 	}
-	else{
+	else {
 		objectEdit->setText(objectName());
 	}
 	objectEdit->setAlignment(Qt::AlignHCenter);
 	objectEdit->setFrame(false);
 	objectEdit->setToolTip("Change the trajectory's name. This will not be saved in the data output (yet)!");
-		
+
 	QObject::connect(objectEdit, &QLineEdit::textEdited, this, &ComponentShape::setObjectNameContext);
 
 	objectNameAction->setDefaultWidget(objectEdit);
 	menu.addAction(objectNameAction);
 
-	/* 
-	 show info window for current frame
+	/*
+	show info window for current frame
 	*/
 	menu.addSeparator();
 	QAction *showInfoAction = menu.addAction("Show full info", dynamic_cast<ComponentShape*>(this), SLOT(createInfoWindow()));
 	menu.addSeparator();
 
-	/* 
-	 coloring
+	/*
+	coloring
 	*/
-	QAction *changeBrushColorAction = menu.addAction("Change fill color",dynamic_cast<ComponentShape*>(this),SLOT(changeBrushColor()));
+	QAction *changeBrushColorAction = menu.addAction("Change fill color", dynamic_cast<ComponentShape*>(this), SLOT(changeBrushColor()));
 	QAction *changePenColorAction = menu.addAction("Change border color", dynamic_cast<ComponentShape*>(this), SLOT(changePenColor()));
 
-	/* 
-	 transparency slider
+	/*
+	transparency slider
 	*/
 	QMenu* transparencyMenu = new QMenu("Transparency");
 	QWidgetAction* sliderBox = new QWidgetAction(this);
@@ -737,7 +373,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//
 	menu.addSeparator();
 	/*
-	 dimension menu
+	dimension menu
 	*/
 	QMenu* dimensionMenu = new QMenu("Dimensions");
 
@@ -748,7 +384,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	widthSpin->setMinimum(1);
 	widthSpin->setMaximum(100000);
 	widthSpin->setValue(m_w);
-	QObject::connect(widthSpin,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveWidth);
+	QObject::connect(widthSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveWidth);
 	widthBox->setDefaultWidget(widthSpin);
 	dimensionMenu->addAction(widthBox);
 
@@ -759,7 +395,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	heightSpin->setMinimum(1);
 	heightSpin->setMaximum(100000);
 	heightSpin->setValue(m_h);
-	QObject::connect(heightSpin,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveHeight);
+	QObject::connect(heightSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveHeight);
 	heightBox->setDefaultWidget(heightSpin);
 	dimensionMenu->addAction(heightBox);
 
@@ -784,7 +420,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
 
 	/*
-	 tracing menu
+	tracing menu
 	*/
 	QMenu* tracingMenu = new QMenu("Tracing");
 	//tracing type
@@ -807,7 +443,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	historySpinBox->setMinimum(1);
 	historySpinBox->setMaximum(100000);
 	historySpinBox->setValue(m_tracingLength);
-	QObject::connect(historySpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingLength);
+	QObject::connect(historySpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingLength);
 	historyBox->setDefaultWidget(historySpinBox);
 	tracingMenu->addAction(historyBox);
 
@@ -818,7 +454,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	stepsSpinBox->setMinimum(1);
 	stepsSpinBox->setMaximum(100000);
 	stepsSpinBox->setValue(m_tracingSteps);
-	QObject::connect(stepsSpinBox,  QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingSteps);
+	QObject::connect(stepsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ComponentShape::receiveTracingSteps);
 	stepsBox->setDefaultWidget(stepsSpinBox);
 	tracingMenu->addAction(stepsBox);
 
@@ -855,7 +491,7 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	propSpinBox->setMinimum(0.01f);
 	propSpinBox->setMaximum(99.99f);
 	propSpinBox->setValue(m_tracerProportions);
-	QObject::connect(propSpinBox,  QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &ComponentShape::receiveTracerProportions);
+	QObject::connect(propSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &ComponentShape::receiveTracerProportions);
 	propBox->setDefaultWidget(propSpinBox);
 	tracingMenu->addAction(propBox);
 
@@ -865,45 +501,45 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	//
 	menu.addSeparator();
 
-	/* 
-	 removing
+	/*
+	removing
 	*/
 	QAction *removeTrackAction = menu.addAction("Remove track", dynamic_cast<ComponentShape*>(this), SLOT(removeTrack()));
 	QAction *removeTrackEntityAction = menu.addAction("Remove track entity", dynamic_cast<ComponentShape*>(this), SLOT(removeTrackEntity()));
-	if (!m_pRemovable) { 
+	if (!m_pRemovable) {
 		removeTrackAction->setEnabled(false);
 		removeTrackEntityAction->setEnabled(false);
 	}
 
-	/* 
-	 fixing
+	/*
+	fixing
 	*/
-	QString fixText = m_fixed?"Unfix track":"Fix Track";
+	QString fixText = m_fixed ? "Unfix track" : "Fix Track";
 	QAction *fixTrackAction = menu.addAction(fixText, dynamic_cast<ComponentShape*>(this), SLOT(toggleFixTrack()));
 
-	/* 
+	/*
 	marking
 	*/
-	QString markText = m_marked?"Unmark":"Mark";
+	QString markText = m_marked ? "Unmark" : "Mark";
 	QAction *markAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(markShape()));
 	QAction *unmarkAction = menu.addAction(markText, dynamic_cast<ComponentShape*>(this), SLOT(unmarkShape()));
 	markAction->setVisible(!m_marked);
 	unmarkAction->setVisible(m_marked);
-	
+
 	//
 	menu.addSeparator();
 
-	/* 
-	 morphing
+	/*
+	morphing
 	*/
 	QMenu* morphMenu = new QMenu("Morph into...");
-	if(data(1)=="rectangle" || data(1) == "ellipse" || data(1) == "point" || data(1) == "polygon"){
+	if (data(1) == "rectangle" || data(1) == "ellipse" || data(1) == "point" || data(1) == "polygon") {
 		QAction* morphPoint = morphMenu->addAction("Point", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPoint()));
 		QAction* morphEllipse = morphMenu->addAction("Ellipse", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoEllipse()));
 		QAction* morphRect = morphMenu->addAction("Rectangle", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoRect()));
 		QAction* morphPoylgon = morphMenu->addAction("Polygon", dynamic_cast<ComponentShape*>(this), SLOT(morphIntoPolygon()));
 	}
-	else{
+	else {
 		morphMenu->setEnabled(false);
 	}
 	menu.addMenu(morphMenu);
@@ -912,7 +548,463 @@ void ComponentShape::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 	QAction *selectedAction = menu.exec(event->screenPos());
 }
 
-//SLOTS
+
+//*************************************************************************
+
+/// updates this with data from new current entity
+bool ComponentShape::updateAttributes(uint frameNumber)
+{
+	m_currentFramenumber = frameNumber;
+
+	// if trajectory does not exist anymore, delete the shape
+	if (!m_trajectory) {
+		this->hide();
+		m_tracingLayer->hide();
+		this->deleteLater();
+		return false;
+	}
+
+	// check if trajectory is valid and current entity exists
+	if (m_trajectory->size() != 0 && m_trajectory->getValid() && m_trajectory->getChild(frameNumber)) {
+		m_id = m_trajectory->getId();
+		//update m_fixed
+		m_fixed = m_trajectory->getFixed();
+		if (!m_fixed)
+		{
+			if (this->isSelected()) { m_penStyle = Qt::DashLine; }
+			else { m_penStyle = Qt::SolidLine; }
+		}
+		else {
+			if (this->isSelected()) { m_penStyle = Qt::DashDotLine; }
+			else { m_penStyle = Qt::DotLine; }
+		}
+
+		//update dimensions
+		prepareGeometryChange();
+
+		//type checker
+		bool hasType = false;
+
+		//if point, ellipse, rectangle and valid
+		IModelTrackedPoint* pointLike = dynamic_cast<IModelTrackedPoint*>(m_trajectory->getChild(m_currentFramenumber));
+		if (pointLike && (pointLike->getValid())) {
+			hasType = true;
+			//update width and height or use defaults
+			if (m_useDefaultDimensions) {
+				if (pointLike->hasW()) { m_w = pointLike->getW(); }
+				else { m_w = m_wDefault; }
+				if (pointLike->hasH()) { m_h = pointLike->getH(); }
+				else { m_h = m_hDefault; }
+			}
+			//update rotation
+			if (pointLike->hasDeg()) {
+				this->setTransformOriginPoint(m_w / 2, m_h / 2);
+				if (m_h > m_w || data(1) == "polygon") {
+					m_rotation = -90 - pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+				else {
+					m_rotation = -pointLike->getDeg();
+					this->setRotation(m_rotation);
+				}
+
+				//update rotation line
+				m_rotationLine.setP1(QPointF(m_w / 2, m_h / 2));
+				if (m_h > m_w || data(1) == "polygon") {
+					m_rotationLine.setAngle(-90);
+				}
+				else {
+					m_rotationLine.setAngle(0);
+				}
+				qreal length = (m_w + m_h) / 2 * 3;
+				m_rotationLine.setLength(length);
+
+				//update rotation handle
+				m_rotationHandleLayer->setTransformOriginPoint(m_w / 2, m_h / 2);
+				m_rotationHandleLayer->setRotation(0);
+				m_rotationHandle->setPos(m_rotationLine.p2());
+			}
+			else {
+				m_rotationLine = QLineF();
+			}
+
+			//update Position
+			this->setPos(pointLike->getXpx() - m_w / 2, pointLike->getYpx() - m_h / 2);
+			m_oldPos = this->pos().toPoint();
+
+
+			/*
+			-when morphing into polygon:
+			-construct polygon from pos and width,height
+			-pentagon
+
+			  x / \
+			   /   \
+			   |   |
+			   \_ _/
+
+			*/
+			m_polygons = QList<QPolygonF>();
+
+			QPolygonF polygon;
+			QPointF startPoint = QPointF(m_w / 2, 0);
+			polygon << startPoint;
+			polygon << QPointF(m_w, m_h / 2);
+			polygon << QPointF(3 * m_w / 4, m_h);
+			polygon << QPointF(m_w / 4, m_h);
+			polygon << QPointF(0, m_h / 2);
+			polygon << startPoint;
+
+			if (polygon.isClosed()) {
+				m_polygons.append(polygon);
+			}
+
+			//create tracers
+			trace();
+
+			this->show();
+			update();
+
+			return true;
+		}
+		else {
+			this->hide();
+			return true;
+		}
+		// if polygon
+		IModelTrackedPolygon* polygons = dynamic_cast<IModelTrackedPolygon*>(m_trajectory->getChild(frameNumber));
+		if (polygons && (polygons->getValid() || m_currentFramenumber == 0)) {
+			hasType = true;
+			//update polygon
+			if (polygons->hasPolygon()) {
+				m_polygons = polygons->getPolygon();
+			}
+			//also update position
+			this->setPos(polygons->getXpx() - m_w / 2, polygons->getYpx() - m_h / 2);
+			m_oldPos = this->pos().toPoint();
+
+			//update width and height or use defaults --> for morphing
+			if (m_useDefaultDimensions) {
+				m_w = m_polygons[0].boundingRect().width();
+				m_h = m_polygons[0].boundingRect().height();
+			}
+
+			//create tracers
+			trace();
+
+			this->show();
+			update();
+
+			return true;
+		}
+		//has no type
+		if (!hasType) {
+			qDebug() << "The current entity has no known type";
+
+		}
+	}
+	else {
+		//trajectory is empty or null or invald or current entity is null
+		this->hide();
+		m_tracingLayer->hide();
+		//delete this;
+		return false;
+	}
+}
+
+/// attemps to draw tracers, if _tracingStyle is set tracers are drawn
+void ComponentShape::trace()
+{
+	//TRACING
+
+	IModelTrackedPoint* currentChild = dynamic_cast<IModelTrackedPoint*>
+		(m_trajectory->getChild(m_currentFramenumber));
+	//return if current entity is not existant
+	if (!currentChild)
+		return;
+
+	QPointF currentPoint = QPointF(currentChild->getXpx(), currentChild->getYpx());
+
+	//update the tracing layer
+	m_tracingLayer->setPos(this->pos());
+	m_tracingLayer->setFlag(QGraphicsItem::ItemHasNoContents);
+	m_tracingLayer->show();
+
+	// really unefficient to flush each time
+	//flush tracing shape history, open up the memory --> thats slow
+	QList<QGraphicsItem *>  tracers = m_tracingLayer->childItems();
+	foreach(QGraphicsItem * tracer, tracers)
+	{
+		delete tracer;
+	}
+
+	//return if tracing disabled
+	if (m_trajectory->size() == 0 || m_tracingLength <= 0 || m_tracingStyle == "No tracing") {
+		return;
+	}
+
+	QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
+
+	//create each n'th (m_tracingSteps) tracer of tracing history (m_tracingLength)
+	for (int i = 1; i <= m_tracingLength && i <= m_currentFramenumber; i += m_tracingSteps) {
+
+		IModelTrackedPoint* historyChild = dynamic_cast<IModelTrackedPoint*>
+			(m_trajectory->getChild(m_currentFramenumber - i));
+		if (historyChild && historyChild->getValid()) {
+
+			//positioning
+			QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
+			QPointF historyPointDifference = historyPoint - currentPoint;
+			QPointF adjustedHistoryPointDifference = historyPointDifference +
+				QPointF(m_w / 2, m_h / 2);
+
+			//time degradation colors
+			QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+			QBrush timeDegradationBrush = QBrush(m_brushColor);
+			QColor timeDegradationBrushColor;
+			QColor timeDegradationPenColor;
+
+			if (m_tracingTimeDegradation == "Transparency") {
+
+				float tr = (float)m_transparency;
+				float trForThis = tr != 0 ? tr - (tr / (float)m_tracingLength) * (i - 1) : 0.0f;
+
+				timeDegradationPenColor = QColor(m_penColor.red(),
+					m_penColor.green(), m_penColor.blue(), trForThis);
+				timeDegradationPen = QPen(timeDegradationPenColor, m_penWidth, Qt::SolidLine);
+
+				timeDegradationBrushColor = QColor(m_brushColor.red(),
+					m_brushColor.green(), m_brushColor.blue(), trForThis);
+				timeDegradationBrush = QBrush(timeDegradationBrushColor);
+
+			}
+			else if (m_tracingTimeDegradation == "False color") {
+				float hue = (240.0f - ((240.0f / (float)m_tracingLength) * i));
+				timeDegradationPenColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationPenColor.setAlpha(m_transparency);
+				timeDegradationBrushColor = QColor::fromHsv((int)hue, 255.0f, 255.0f);
+				timeDegradationBrushColor.setAlpha(m_transparency);
+				timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
+				timeDegradationBrush = QBrush(timeDegradationBrushColor);
+			}
+
+			// check tracing type
+
+			//SHAPE
+			if (m_tracingStyle == "Shape") {
+
+				//orientation line
+				if (m_tracingOrientationLine) {
+					QLineF orientationLine = QLineF();
+					orientationLine.setP1(adjustedHistoryPointDifference);
+					orientationLine.setAngle(historyChild->getDeg());
+					qreal length = (m_w + m_h) / 2 / m_tracerProportions * 3;
+					orientationLine.setLength(15);
+
+					QGraphicsLineItem* orientationItem = new QGraphicsLineItem(orientationLine,
+						m_tracingLayer);
+				}
+
+				float tracerDeg = historyChild->hasDeg() ? historyChild->getDeg() : 0.0;
+				float tracerW = m_w * m_tracerProportions;
+				float tracerH = m_h * m_tracerProportions;
+				int tracerNumber = m_currentFramenumber - i;
+
+				Tracer* tracer = new Tracer(this->data(1), tracerNumber, tracerDeg,
+					adjustedHistoryPointDifference, tracerW, tracerH,
+					timeDegradationPen, timeDegradationBrush, m_tracingLayer);
+
+				QObject::connect(tracer, &Tracer::emitGoToFrame,
+					this, &ComponentShape::emitGoToFrame);
+			}
+
+			//PATH
+			else if (m_tracingStyle == "Path") {
+
+				if (lastPointDifference != adjustedHistoryPointDifference) {
+
+					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+					QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);
+					lineItem->setPen(QPen(timeDegradationPenColor, m_penWidth, m_penStyle));
+
+					lastPointDifference = adjustedHistoryPointDifference;
+				}
+			}
+
+			//ARROWPATH
+			else if (m_tracingStyle == "Arrow path") {
+
+				if (lastPointDifference != adjustedHistoryPointDifference) {
+
+					QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
+
+					int armLength = std::floor(base.length() / 9) + 2;
+
+					QLineF arm0 = base.normalVector();
+					arm0.setLength(armLength);
+					arm0.setAngle(base.angle() + 20);
+
+					QLineF arm1 = base.normalVector();
+					arm1.setLength(armLength);
+					arm1.setAngle(base.angle() - 20);
+
+					QGraphicsLineItem* baseItem = new QGraphicsLineItem(base, m_tracingLayer);
+					baseItem->setPen(QPen(timeDegradationBrushColor, m_penWidth, m_penStyle));
+					QGraphicsLineItem* arm0Item = new QGraphicsLineItem(arm0, m_tracingLayer);
+					arm0Item->setPen(timeDegradationPen);
+					QGraphicsLineItem* arm1Item = new QGraphicsLineItem(arm1, m_tracingLayer);
+					arm1Item->setPen(timeDegradationPen);
+
+					lastPointDifference = adjustedHistoryPointDifference;
+
+				}
+			}
+
+			//add framenumber to each tracer
+			if (m_tracerFrameNumber) {
+				uint tracerNumber = m_currentFramenumber - i;
+				QFont font = QFont();
+				int fontPixelSize = (int)((m_w + m_h) / 5) * m_tracerProportions;
+				font.setPixelSize(fontPixelSize);
+				//font.setBold(true);
+				QGraphicsSimpleTextItem* tracerNumberText =
+					new QGraphicsSimpleTextItem(QString::number(tracerNumber), m_tracingLayer);
+				tracerNumberText->setFont(font);
+				tracerNumberText->setBrush(QBrush(Qt::white)); //sloooow
+				QPen pen = QPen(Qt::black);
+				pen.setWidth(0);
+				tracerNumberText->setPen(pen); //sloooow
+				tracerNumberText->setPos(adjustedHistoryPointDifference +
+					QPointF(-m_w * m_tracerProportions / 2.0f, -m_h * m_tracerProportions / 5));
+			}
+		}
+	}
+}
+
+IModelTrackedTrajectory * ComponentShape::getTrajectory()
+{
+	return m_trajectory;
+}
+
+void ComponentShape::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
+{
+	m_permissions.insert(permission);
+
+
+	switch (permission.first)
+	{
+	case ENUMS::COREPERMISSIONS::COMPONENTMOVE:
+		m_pMovable = permission.second;
+		this->setFlag(ItemIsMovable, permission.second);
+		break;
+	case ENUMS::COREPERMISSIONS::COMPONENTREMOVE:
+		m_pRemovable = permission.second;
+		break;
+	case ENUMS::COREPERMISSIONS::COMPONENTSWAP:
+		m_pSwappable = permission.second;
+		break;
+	case ENUMS::COREPERMISSIONS::COMPONENTROTATE:
+		m_pRotatable = permission.second;
+
+		if (m_pRotatable) {
+			m_rotationHandleLayer->setVisible(m_orientationLine);
+			m_rotationHandle->setVisible(m_orientationLine);
+		}
+		else {
+			m_rotationHandleLayer->hide();
+			m_rotationHandle->hide();
+		}
+		break;
+	}
+}
+
+int ComponentShape::getId()
+{
+	return m_id;
+}
+
+bool ComponentShape::isSwappable()
+{
+	return m_permissions[ENUMS::COREPERMISSIONS::COMPONENTSWAP];
+}
+
+bool ComponentShape::isRemovable()
+{
+	return m_pRemovable;
+}
+
+bool ComponentShape::isRotatable()
+{
+	return m_pRotatable;
+}
+
+QPoint ComponentShape::getOldPos()
+{
+	return m_oldPos;
+}
+
+//set default members from core params
+void ComponentShape::setMembers(CoreParameter* coreParams)
+{
+	//from coreParams
+	m_antialiasing = coreParams->m_antialiasingEntities;
+
+
+	m_tracingStyle = coreParams->m_tracingStyle;
+	m_tracingTimeDegradation = coreParams->m_tracingTimeDegradation;
+	m_tracingLength = coreParams->m_tracingHistory;
+	m_tracingSteps = coreParams->m_tracingSteps;
+	m_tracerProportions = coreParams->m_tracerProportions;
+	m_tracingOrientationLine = coreParams->m_tracerOrientationLine;
+	m_tracerFrameNumber = coreParams->m_tracerFrameNumber;
+
+	m_orientationLine = coreParams->m_trackOrientationLine;
+	m_showId = coreParams->m_trackShowId;
+
+	m_brushColor = *(coreParams->m_colorBrush);
+	m_penColor = *(coreParams->m_colorBorder);
+
+	m_dragged = false;
+	setFlag(QGraphicsItem::ItemIgnoresTransformations, coreParams->m_ignoreZoom);
+
+	// set dimensions and default dimensions
+	if (coreParams->m_trackWidth > 0) {
+		m_w = coreParams->m_trackWidth;
+		m_wDefault = coreParams->m_trackWidth;
+	}
+	if (coreParams->m_trackHeight > 0) {
+		m_h = coreParams->m_trackHeight;
+		m_hDefault = coreParams->m_trackHeight;
+	}
+
+	//initialize helpers
+	m_rotationHandleLayer = new QGraphicsRectItem(this);
+	m_rotationHandleLayer->setPos(0, 0);
+	m_rotationHandleLayer->setFlag(QGraphicsItem::ItemHasNoContents);
+
+	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
+	m_rotationHandle->setAntialiasing(m_antialiasing);
+	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
+
+	if (m_pRotatable) {
+		m_rotationHandleLayer->setVisible(m_orientationLine);
+		m_rotationHandle->setVisible(m_orientationLine);
+	}
+
+	update();
+}
+
+double ComponentShape::constrainAngle(double x) {
+	x = fmod(x, 360);
+	if (x < 0)
+		x += 360;
+	return x;
+}
+
+
+//################################SLOTS#############################
+
+//**************************context menu actions********************
 
 void ComponentShape::changeBrushColor()
 {
@@ -992,7 +1084,7 @@ bool ComponentShape::removeTrackEntity()
 }
 
 void ComponentShape::markShape(int penwidth)
-{	
+{
 	if (!m_marked) {
 		m_penWidth = 3;
 	}
@@ -1007,7 +1099,7 @@ void ComponentShape::markShape(int penwidth)
 void ComponentShape::unmarkShape()
 {
 	m_marked = false;
-	m_penWidth = 0;
+	m_penWidth = 2;
 
 	trace();
 	update();
@@ -1016,7 +1108,7 @@ void ComponentShape::unmarkShape()
 void ComponentShape::toggleFixTrack()
 {
 	//if traj is currently fixed-> emit flase, else emit true
-	bool fixToggle = m_fixed?false:true;
+	bool fixToggle = m_fixed ? false : true;
 	Q_EMIT emitToggleFixTrack(m_trajectory, fixToggle);
 	update();
 	trace();
@@ -1026,7 +1118,7 @@ void ComponentShape::toggleFixTrack()
 void ComponentShape::createInfoWindow()
 {
 	QTableWidget* infoTable = new QTableWidget();
-	
+
 	infoTable->setRowCount(0);
 	infoTable->setColumnCount(2);
 
@@ -1035,16 +1127,16 @@ void ComponentShape::createInfoWindow()
 	infoTable->verticalHeader()->hide();
 
 	QLinkedList<QPair<QString, QString>> infoList;
-	infoList.append(QPair<QString,QString>("ID", QString::number(m_id)));
-	infoList.append(QPair<QString,QString>("Framenumber", QString::number(m_currentFramenumber)));
-	infoList.append(QPair<QString,QString>("Seen for frames", QString::number(m_trajectory->validCount())));
-	infoList.append(QPair<QString,QString>("Width", QString::number(m_w)));
-	infoList.append(QPair<QString,QString>("Height", QString::number(m_h)));
-	infoList.append(QPair<QString,QString>("Orientation (in Degrees)", QString::number(m_rotation)));
-	infoList.append(QPair<QString,QString>("Fixed", QString::number(m_fixed)));
+	infoList.append(QPair<QString, QString>("ID", QString::number(m_id)));
+	infoList.append(QPair<QString, QString>("Framenumber", QString::number(m_currentFramenumber)));
+	infoList.append(QPair<QString, QString>("Seen for frames", QString::number(m_trajectory->validCount())));
+	infoList.append(QPair<QString, QString>("Width", QString::number(m_w)));
+	infoList.append(QPair<QString, QString>("Height", QString::number(m_h)));
+	infoList.append(QPair<QString, QString>("Orientation (in Degrees)", QString::number(m_rotation)));
+	infoList.append(QPair<QString, QString>("Fixed", QString::number(m_fixed)));
 
 	QLinkedList<QPair<QString, QString>>::const_iterator info;
-	for(info = infoList.constBegin(); info != infoList.constEnd(); ++info){
+	for (info = infoList.constBegin(); info != infoList.constEnd(); ++info) {
 		infoTable->insertRow(infoTable->rowCount());
 
 
@@ -1060,7 +1152,7 @@ void ComponentShape::createInfoWindow()
 
 	//infoTable->horizontalHeader()->setStretchLastSection( true ); 
 	infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	
+
 	QWidget* infoWidget = new QWidget();
 	const QString title = QString("Information for track %1 on frame %2").arg(QString::number(m_id), QString::number(m_currentFramenumber));
 	infoWidget->setWindowTitle(title);
@@ -1073,28 +1165,26 @@ void ComponentShape::createInfoWindow()
 
 	infoWidget->show();
 
-	
+
 }
 
-void ComponentShape::setObjectNameContext(QString name){
+// this is only visual, the object name is not set in the exported file 
+void ComponentShape::setObjectNameContext(QString name) {
 	setObjectName(name);
 	m_trajectory->setObjectName(name);
-	//_objNameBuffer = name;
 }
 
-//void ComponentShape::setObjectName
-
-void ComponentShape::morphIntoRect(){
+void ComponentShape::morphIntoRect() {
 	setData(1, "rectangle");
 	updateAttributes(m_currentFramenumber);
 	trace();
 }
-void ComponentShape::morphIntoEllipse(){
+void ComponentShape::morphIntoEllipse() {
 	setData(1, "ellipse");
 	updateAttributes(m_currentFramenumber);
 	trace();
 }
-void ComponentShape::morphIntoPoint(){
+void ComponentShape::morphIntoPoint() {
 	setData(1, "point");
 	updateAttributes(m_currentFramenumber);
 	trace();
@@ -1107,6 +1197,9 @@ void ComponentShape::morphIntoPolygon()
 	trace();
 }
 
+//************************************************************************ 
+
+//*************************** SLOTS to set members*****************************
 void ComponentShape::receiveTracingLength(int tracingLength)
 {
 	m_tracingLength = tracingLength;
@@ -1174,7 +1267,7 @@ void ComponentShape::receiveDimensions(int width, int height)
 	update();
 }
 
-void ComponentShape::receiveHeight(int height){
+void ComponentShape::receiveHeight(int height) {
 	m_useDefaultDimensions = false;
 	m_h = height;
 	updateAttributes(m_currentFramenumber);
@@ -1182,7 +1275,7 @@ void ComponentShape::receiveHeight(int height){
 	update();
 }
 
-void ComponentShape::receiveWidth(int width){
+void ComponentShape::receiveWidth(int width) {
 	m_useDefaultDimensions = false;
 	m_w = width;
 	updateAttributes(m_currentFramenumber);
@@ -1237,7 +1330,7 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 
 		this->pos();
 
-		double toAngle = -angle - m_rotation ;
+		double toAngle = -angle - m_rotation;
 		double oldAngle = -m_rotation;
 
 		double toAngleNorm = constrainAngle(toAngle);
@@ -1248,6 +1341,7 @@ void ComponentShape::receiveShapeRotation(double angle, bool rotateEntity)
 	update();
 }
 
+//currently disabled
 void ComponentShape::receiveIgnoreZoom(bool toggle)
 {
 	setFlag(QGraphicsItem::ItemIgnoresTransformations, toggle);
@@ -1255,7 +1349,7 @@ void ComponentShape::receiveIgnoreZoom(bool toggle)
 	update();
 }
 
-void ComponentShape::receiveTransparency(int alpha){
+void ComponentShape::receiveTransparency(int alpha) {
 	m_transparency = alpha;
 	m_brushColor.setAlpha(alpha);
 	m_penColor.setAlpha(alpha);
@@ -1271,61 +1365,4 @@ void ComponentShape::receiveTransparency(int alpha){
 	trace();
 	update();
 
-}
-//set members from core params
-void ComponentShape::setMembers(CoreParameter* coreParams)
-{
-	//from coreParams
-	m_antialiasing = coreParams->m_antialiasingEntities;
-
-
-	m_tracingStyle = coreParams->m_tracingStyle;
-	m_tracingTimeDegradation = coreParams->m_tracingTimeDegradation;
-	m_tracingLength = coreParams->m_tracingHistory;
-	m_tracingSteps = coreParams->m_tracingSteps;
-	m_tracerProportions = coreParams->m_tracerProportions;
-	m_tracingOrientationLine = coreParams->m_tracerOrientationLine;
-	m_tracerFrameNumber = coreParams->m_tracerFrameNumber;
-
-	m_orientationLine = coreParams->m_trackOrientationLine;
-	m_showId = coreParams->m_trackShowId;
-
-	m_brushColor = *(coreParams->m_colorBrush);
-	m_penColor = *(coreParams->m_colorBorder);
-
-	m_dragged = false;
-	setFlag(QGraphicsItem::ItemIgnoresTransformations, coreParams->m_ignoreZoom);
-
-	// set dimensions and default dimensions
-	if (coreParams->m_trackWidth > 0) {
-		m_w = coreParams->m_trackWidth;
-		m_wDefault = coreParams->m_trackWidth;
-	}
-	if (coreParams->m_trackHeight > 0) {
-		m_h = coreParams->m_trackHeight;
-		m_hDefault = coreParams->m_trackHeight;
-	}
-
-	//initialize helpers
-	m_rotationHandleLayer = new QGraphicsRectItem(this);
-	m_rotationHandleLayer->setPos(0,0);
-	m_rotationHandleLayer->setFlag(QGraphicsItem::ItemHasNoContents);
-
-	m_rotationHandle = new RotationHandle(QPoint(m_w / 2, m_h / 2), m_rotationHandleLayer);
-	m_rotationHandle->setAntialiasing(m_antialiasing);
-	QObject::connect(m_rotationHandle, &RotationHandle::emitShapeRotation, this, &ComponentShape::receiveShapeRotation);
-
-	if (m_pRotatable) {
-		m_rotationHandleLayer->setVisible(m_orientationLine);
-		m_rotationHandle->setVisible(m_orientationLine);
-	}
-
-	update();
-}
-
-double ComponentShape::constrainAngle(double x){
-	x = fmod(x,360);
-	if (x < 0)
-		x += 360;
-	return x;
 }

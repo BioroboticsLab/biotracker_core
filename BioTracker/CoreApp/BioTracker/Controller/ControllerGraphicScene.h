@@ -15,7 +15,7 @@
 /**
  * The ControllerGraphicScene class controlls the component for rendering TextureObjects and TrackedComponents on a GraphhicsView.
  * Each PixmapItem represents a cv::Mat. The cv::Mat comes from the TextureObjects-Component of BioTracker.
- * The GraphicsItem represents the compositum structure of IViewTrackedComponent classes. These structure comes from the Plugin and handed over by the PluginController of the MainApplication.
+ * The GraphicsItem represents the compositum structure of IViewTrackedComponent classes. These structure comes from the ControllerTrackedComponentCore or the Plugin and handed over by the PluginController of the MainApplication.
  *
  */
 class ControllerGraphicScene : public IController {

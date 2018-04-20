@@ -62,4 +62,7 @@
         <file>resources/logo/BT-3_non_transparent_rounded.ico</file>
         <file>resources/logo/BT-3_non_transparent_rounded.png</file>
     </qresource>
+    <qresource prefix="/Shortcuts">
+        <file>resources/shortcuts.txt</file>
+    </qresource>
 </RCC>

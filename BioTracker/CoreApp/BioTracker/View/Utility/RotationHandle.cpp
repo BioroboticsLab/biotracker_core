@@ -6,7 +6,6 @@
 #include "QGraphicsScene"
 #include "qdebug.h"
 
-
 RotationHandle::RotationHandle(QPoint origin, QAbstractGraphicsShapeItem* parent) :
 	QAbstractGraphicsShapeItem(parent), _origin(origin)
 {
@@ -28,7 +27,7 @@ QRectF RotationHandle::boundingRect() const
 
 void RotationHandle::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-	if(m_antialiasing){
+	if (m_antialiasing) {
 		painter->setRenderHint(QPainter::Antialiasing);
 	}
 	painter->setPen(this->pen());
@@ -44,10 +43,10 @@ void RotationHandle::mousePressEvent(QGraphicsSceneMouseEvent * event)
 	if (event->button() == Qt::LeftButton) {
 		// handle left mouse button here
 
-		//unselect all selected items so they wont get moved
+		//unselect all selected items so this can be moved
 		QList<QGraphicsItem *> allSelectedItems = scene()->selectedItems();
 		QGraphicsItem* item;
-		foreach (item, allSelectedItems) {
+		foreach(item, allSelectedItems) {
 			item->setSelected(false);
 		}
 
@@ -83,7 +82,7 @@ void RotationHandle::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 	double angleDeg = qRadiansToDegrees(angleRad);
 
 	Q_EMIT emitShapeRotation(angleDeg);
-	 
+
 	update();
 
 	//pass on

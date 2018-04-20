@@ -3,6 +3,7 @@
   ** This file is part of the BioTracker Framework
   ** by Andreas Jörg and BioTracker in version 2.
   **
+  **
   ****************************************************************************/
 
 
@@ -20,12 +21,13 @@
 #include <memory>
 #include <queue>
 
-/*
-	Model to handle annotations, including serialization.
-	Annotations will be drawn on top of the video. Their position is defined in image coordinates.
-*/
+  /**
+  *	Model to handle annotations, including serialization.
+  *	Annotations will be drawn on top of the video. Their position is defined in image coordinates.
+  *	Here the annotations are actually created, serialized and deserialized.
+  */
 class Annotations : public IModel {
-    Q_OBJECT
+	Q_OBJECT
 public:
 	Annotations(std::string filepath = "") : filepath(filepath) { deserialize(); }
 	virtual ~Annotations();
@@ -38,23 +40,23 @@ public:
 	{
 		Annotation(QPoint origin = { 0,0 }, size_t startFrame = 0) : origin(origin), startFrame(startFrame) {}
 		virtual ~Annotation() = default;
-		// Position in pixels.
+		/// Position in pixels.
 		QPoint origin{ 0, 0 };
 		size_t startFrame{ 0 };
-		// Possible text for each annotation
+		/// Possible text for each annotation
 		QString text{ "" };
-		// Name that identifies this type of annotation and is used for serialization.
+		/// Name that identifies this type of annotation and is used for serialization.
 		virtual std::string name() const = 0;
 		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const = 0;
-		// Saving requires writing properties to vector of strings.
+		/// Saving requires writing properties to vector of strings.
 		virtual std::vector<std::string> serializeToVector() const;
 		virtual void deserializeFrom(std::queue<std::string> &args);
-		// Set text. Called when right clicking.
+		/// Set text. Called when right clicking.
 		virtual void setText(QString newText) { text = newText; };
-		// Get text.Called when right clicking.
+		/// Get text.Called when right clicking.
 		virtual QString getText() { return text; };
 		// Called either during dragging or when the mouse is released.
-		// Needs to update positional data.
+		//Needs to update positional data.
 		virtual bool onEndAnnotation(QPoint currentPosition) { origin = currentPosition;  return true; };
 		virtual QRectF boundingRect() const { return QRect(origin, origin).marginsAdded({ 20, 20, 20, 20 }); }
 		// Used for mouse-click events.
@@ -70,7 +72,7 @@ public:
 		bool isHandleAtPosition(const QPoint &handle, const QPoint &pos);
 	};
 
-	// A label marks a position.
+	/// A label marks a position.
 	struct AnnotationLabel : public Annotation
 	{
 		using Annotation::Annotation;
@@ -82,7 +84,7 @@ public:
 		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const override;
 	};
 
-	// An arrow defines a vector between two positions.
+	/// An arrow defines a vector between two positions.
 	struct AnnotationArrow : public Annotation
 	{
 		using Annotation::Annotation;
@@ -99,7 +101,7 @@ public:
 		QPoint arrowHead;
 	};
 
-	// A rectangle defined by two points (top-left and bottom-right)
+	/// A rectangle defined by two points (top-left and bottom-right)
 	struct AnnotationRect : public Annotation
 	{
 		using Annotation::Annotation;
@@ -115,7 +117,7 @@ public:
 
 		QPoint bottomRight;
 	};
-	// An ellipse defined by two points (top-left and bottom-right)
+	/// An ellipse defined by two points (top-left and bottom-right)
 	struct AnnotationEllipse : public Annotation
 	{
 		using Annotation::Annotation;
@@ -135,38 +137,38 @@ public:
 
 	void serialize() const;
 	void deserialize();
-	// Called by the controller to begin a new annotation.
+	/// Called by the controller to begin a new annotation.
 	void startArrow(QPoint origin, size_t currentFrame);
 	void startLabel(QPoint origin, size_t currentFrame);
 	void startRect(QPoint origin, size_t currentFrame);
 	void startEllipse(QPoint origin, size_t currentFrame);
-	// Called by the controller on left mouse-clicks.
+	/// Called by the controller on left mouse-clicks.
 	bool tryStartDragging(QPoint cursor);
-	// Called by the controller on left mouse-clicks.
+	/// Called by the controller on left mouse-clicks.
 	bool trySetText(QPoint cursor);
-	// Called by the controller during mouse-drags to update the current annotation.
+	/// Called by the controller during mouse-drags to update the current annotation.
 	bool updateAnnotation(QPoint cursor);
-	// Called on mouse-release.
+	/// Called on mouse-release.
 	bool endAnnotation(QPoint cursor);
-	// Removes the currently selected (through tryStartDragging) annotation.
+	/// Removes the currently selected (through tryStartDragging) annotation.
 	bool removeSelection();
-	// The current frame is required for the view to highlight annotations.
+	/// The current frame is required for the view to highlight annotations.
 	void setCurrentFrame(size_t currentFrame) { this->currentFrame = currentFrame; }
 	size_t getCurrentFrame() const { return currentFrame; }
 private:
-	// The current frame is required by the view.
-	size_t currentFrame{ 0 };
-	// filepath of the original source image.
-	std::string filepath;
-	// The resulting filename will add a suffix to the original source path.
-	std::string getFilename() const;
-	// Whether the annotations need to be serialized on exit.
-	mutable bool dirty{ false };
+	size_t currentFrame{ 0 };							/**< The current frame is required by the view. */
 
-	std::vector<std::shared_ptr<Annotation>> annotations;
-	// Held temporarily during events - not yet 'created'.
-	std::shared_ptr<Annotation> currentAnnotation;
-	// Valid during drag & drop or after mouse selection.
+	std::string filepath;								/**< filepath of the original source image.  */
+
+	std::string getFilename() const;					/**< The resulting filename will add a suffix to the original source path. */
+
+	mutable bool dirty{ false };						/**< Whether the annotations need to be serialized on exit.  */
+
+	std::vector<std::shared_ptr<Annotation>> annotations;/**< vector of all annotations  */
+
+	std::shared_ptr<Annotation> currentAnnotation;		/**< Held temporarily during events - not yet 'created'.  */
+
+	/// Valid during drag & drop or after mouse selection.
 	struct SelectionData
 	{
 		// Annotation from the annotations vector above. Defines validity of the whole struct.
@@ -177,7 +179,7 @@ private:
 		Annotation *operator->() { return annotation.lock().get(); }
 		void reset() { return annotation.reset(); }
 	} selection;
-	
+
 	friend class AnnotationsView;
 };
 

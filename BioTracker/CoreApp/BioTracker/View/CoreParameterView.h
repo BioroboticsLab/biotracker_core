@@ -11,6 +11,12 @@ namespace Ui {
 	class CoreParameterView;
 }
 
+/**
+*	This class contains the 'Experiment' tab and the 'Visualisation options' tab in the GUI
+*	It basically displays the current set parameters
+*	The
+*/
+
 class CoreParameterView : public IViewWidget
 {
 	Q_OBJECT
@@ -22,16 +28,16 @@ public:
 	QWidget* getTrackerHook();
 	void setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 
-    // Triggers re-sending essential signals
-    void triggerUpdate();
+	// Triggers re-sending essential signals
+	void triggerUpdate();
 
-    void areaDescriptorTypeChanged(QString type);
+	void areaDescriptorTypeChanged(QString type);
 
 	private slots:
 
-/* 
-    VIEW TAB
-*/
+	/*
+		VIEW TAB
+	*/
 	//Enable view
 	void on_checkBoxEnableCoreView_stateChanged(int v);
 	//Tracing
@@ -55,7 +61,7 @@ public:
 	void on_pushButtonColorChangeBorderSelected_clicked();
 	void on_pushButtonColorChangeBrush_clicked();
 	void on_pushButtonColorchangeBrushSelected_clicked();
-	
+
 	//Track dimensions
 	void on_checkBoxTrackOrientationLine_stateChanged(int v);
 	void on_checkBoxShowId_stateChanged(int v);
@@ -76,7 +82,7 @@ public:
 	void on_pushButtonAnnoColor_clicked();
 
 	//Finalize experiment
-    //void on_pushButtonFinalizeExperiment_clicked();
+	//void on_pushButtonFinalizeExperiment_clicked();
 
 	//Misc
 	//void on_checkBoxExpertOptions_stateChanged(int v);
@@ -84,102 +90,106 @@ public:
 	void on_checkBoxAntialiasingEntities_toggled(bool toggle);
 	void on_checkBoxAntialiasingFull_toggled(bool toggle);
 
-/*
-EXPERIMENT TAB
-*/
+	/*
+	EXPERIMENT TAB
+	*/
 
-    //label_ExpTrialNo
-    //label_ExpSrcCnt
-    //label_ExpObjCnt
-    //pushButton_startExp
-    //pushButton_finalizeExp
-    void on_pushButton_startExp_clicked();
-    void on_pushButton_finalizeExp_clicked();
-    void on_label_ExpSrcCnt_clicked();
+	//label_ExpTrialNo
+	//label_ExpSrcCnt
+	//label_ExpObjCnt
+	//pushButton_startExp
+	//pushButton_finalizeExp
+	void on_pushButton_startExp_clicked();
+	void on_pushButton_finalizeExp_clicked();
+	void on_label_ExpSrcCnt_clicked();
 	void on_trialHelpButton_clicked();
 	void on_pushButton_saveData_clicked();
 	void on_pushButton_resetData_clicked();
 	void on_pushButton_addTraj_clicked();
-public slots:
-    void rcvPlayerParameters(playerParameters* parameters);
+	public slots:
+	void rcvPlayerParameters(playerParameters* parameters);
 
 
 public:
 	signals :
 
-    /*
-    EXPERIMENT TAB
-    */
-    void emitEnableTracking();
-    void emitDisableTracking();
-	void emitActivateTrackingSwitch();
-	void emitDeactivateTrackingSwitch();
-    void emitStartPlayback();
-    void emitStopPlayback();
-	void emitPausePlayback();
-	void emitTrialStarted(bool started);
-	void emitSaveDataToFile();
+			/*
+			EXPERIMENT TAB
+			*/
+			void emitEnableTracking();
+			void emitDisableTracking();
+			void emitActivateTrackingSwitch();
+			void emitDeactivateTrackingSwitch();
+			void emitStartPlayback();
+			void emitStopPlayback();
+			void emitPausePlayback();
+			void emitTrialStarted(bool started);
+			void emitSaveDataToFile();
 
 
-	//Enable view
-    void emitViewSwitch(bool lever);
-	//Select all tracks
-    //void emitSelectAll();
-	//Add tracks
-	void emitAddTrack();
-	//Ignore zoom
-	void emitIgnoreZoom(bool toggle);
-	//Track color
-	void emitColorChangeBorderAll();
-	void emitColorChangeBorderSelected();
-	void emitColorChangeBrushAll();
-	void emitColorChangeBrushSelected();
-	//Track dimensions
-	void emitTrackOrientationLine(bool toggle);
-	void emitTrackShowId(bool toggle);
-	void emitTrackDimensionsAll(int width, int height);
-	void emitTrackDimensionsSelected(int width, int height);
-	void emitTrackDimensionsSetDefault();
-	//Tracing
-	void emitTracingHistoryLength(int history);
-	void emitTracingStyle(QString style);
-	void emitTracingSteps(int steps);
-	void emitTracingTimeDegradation(QString degradation);
-	void emitTracerFrameNumber(bool toggle);
-	//Tracing dimensions
-	void emitTracerProportions(float proportion);
-	void emitTracerOrientationLine(bool toggle);
+			//Enable view
+			void emitViewSwitch(bool lever);
+			//Select all tracks
+			//void emitSelectAll();
+			//Add tracks
+			void emitAddTrack();
+			//Ignore zoom
+			void emitIgnoreZoom(bool toggle);
+			//Track color
+			void emitColorChangeBorderAll();
+			void emitColorChangeBorderSelected();
+			void emitColorChangeBrushAll();
+			void emitColorChangeBrushSelected();
+			//Track dimensions
+			void emitTrackOrientationLine(bool toggle);
+			void emitTrackShowId(bool toggle);
+			void emitTrackDimensionsAll(int width, int height);
+			void emitTrackDimensionsSelected(int width, int height);
+			void emitTrackDimensionsSetDefault();
+			//Tracing
+			void emitTracingHistoryLength(int history);
+			void emitTracingStyle(QString style);
+			void emitTracingSteps(int steps);
+			void emitTracingTimeDegradation(QString degradation);
+			void emitTracerFrameNumber(bool toggle);
+			//Tracing dimensions
+			void emitTracerProportions(float proportion);
+			void emitTracerOrientationLine(bool toggle);
 
-	//Area descriptor
-	void emitRectDimensions(double w, double h);
-	void emitDisplayTrackingArea(bool b);
-	void emitDisplayRectification(bool b);
-    void emitTrackingAreaAsEllipse(bool b);
+			//Area descriptor
+			void emitRectDimensions(double w, double h);
+			void emitDisplayTrackingArea(bool b);
+			void emitDisplayRectification(bool b);
+			void emitTrackingAreaAsEllipse(bool b);
 
-	//Annotations
-	void emitSetAnnoColor(QColor color);
+			//Annotations
+			void emitSetAnnoColor(QColor color);
 
-	//Finalize Experiment
-    void emitFinalizeExperiment();
+			//Finalize Experiment
+			void emitFinalizeExperiment();
 
-	//Misc
-	void emitToggleAntialiasingEntities(bool toggle);
-	void emitToggleAntialiasingFull(bool toggle);
+			//Misc
+			void emitToggleAntialiasingEntities(bool toggle);
+			void emitToggleAntialiasingFull(bool toggle);
 
 private:
-	Ui::CoreParameterView *ui;
+	Ui::CoreParameterView *ui;			/**< processed ui file  */
 
-	bool m_viewSwitch;
-	SwitchButton* _expertSwitch;
-    bool _trialActive = false;
-	bool _trialStarted = false;
-    QString _currentFile = "No Media";
+	bool m_viewSwitch;					/**< switch to enable/disable visualization options tab  */
+	SwitchButton* _expertSwitch;		/**< switch to expand visualization options tab  */
+	bool _trialActive = false;			/**< currently trial active?  */
+	bool _trialStarted = false;			/**< was trial started?  */
+	QString _currentFile = "No Media";	/**< show media name in experiment tab  */
 
 	// IViewWidget interface
 	public slots:
 
 	void getNotified();
+
+	/// fills the ui elements with the current default parameters
 	void fillUI();
+
+	/// styles the "visualisation options" tab
 	void setStyle();
 	void resetTrial();
 

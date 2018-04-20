@@ -1,6 +1,6 @@
 The right panel consists of different tabs.
 
-- Experiment: Control your experiment. Start/Stop a trial and save your data by finalizing.
+- Experiment: Control your experiment. Start/stop a trial and save/reset your data.
 - Visualization options: Control the visualization parameters.
 - Tracker options: Control the tracker parameters.
 - How to use BioTracker: Show some basic steps on how to use the BioTracker.

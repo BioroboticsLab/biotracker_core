@@ -8,6 +8,11 @@
 
 class GraphicsView;
 
+/**
+*	This view inherits from IView and QGraphicsItem.
+*	It is responsible for drawing the annotations.
+*	It is shown on to of the media panel.
+*/
 class AnnotationsView : public IView, public QGraphicsItem
 {
 public:
@@ -29,6 +34,6 @@ protected:
 	void connectModelView() override {};
 
 	//members
-	QColor _annoColor = QColor(Qt::yellow);
+	QColor _annoColor = QColor(Qt::yellow);						/**< color of all annotations  */
 };
 
