@@ -54,8 +54,8 @@ void AreaInfo::reset(int w, int h) {
     {
         std::vector<QPoint> pts = toQPointVector(vertices[0]);
         std::vector<QPoint> pts2 = toQPointVector(vertices[1]);
-        _apperture->setVertices(QVecToCvVec(pts));
-        _rect->setVertices(QVecToCvVec(pts2));
+        _apperture->setVertices(QVecToCvVec(pts2));
+        _rect->setVertices(QVecToCvVec(pts));
     }
 }
 

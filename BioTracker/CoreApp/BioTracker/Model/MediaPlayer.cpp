@@ -51,11 +51,11 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 
     // Handel PlayerStateMachine results
 	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
-	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters, Qt::BlockingQueuedConnection);
 
     // Handle next state operation
-    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone);
-    QObject::connect(this, &MediaPlayer::runPlayerOperation, m_Player, &MediaPlayerStateMachine::receiveRunPlayerOperation);
+    QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone, Qt::BlockingQueuedConnection);
+    QObject::connect(this, &MediaPlayer::runPlayerOperation, m_Player, &MediaPlayerStateMachine::receiveRunPlayerOperation, Qt::BlockingQueuedConnection);
 
     // Move the PlayerStateMachine to the Thread
     m_Player->moveToThread(m_PlayerThread);
@@ -281,6 +281,7 @@ void MediaPlayer::rcvPauseState(bool state) {
     }
 }
 
+int xxx = 0;
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNAL when tracking is not active
 	end = std::chrono::system_clock::now();
@@ -292,10 +293,11 @@ void MediaPlayer::receivePlayerOperationDone() {
         m_currentFPS = 0;
     }
 
+    if (xxx < 100)
     if(m_trackingDone == true || !m_TrackingIsActive)
 		Q_EMIT runPlayerOperation();
 
-
+    xxx++;
 	start = std::chrono::system_clock::now();
 }
 
