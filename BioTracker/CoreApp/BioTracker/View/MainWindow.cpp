@@ -28,11 +28,18 @@
 #include "QWizard"
 #include "QWizardPage"
 #include "QDesktopServices"
+#include "QSplashScreen"
 
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
 	IViewMainWindow(parent, controller, model),
 	ui(new Ui::MainWindow) {
+
+    //start splashscreen
+    QPixmap splashPix(":/Logo/resources/logo/BT3-big.png");
+    QSplashScreen splash(splashPix.scaledToHeight(300, Qt::SmoothTransformation));
+    splash.show();
+
 	_previouslySelectedTracker = "";
 	_currentParameterView = 0;
 	_currentCoreParameterView = 0;
@@ -64,6 +71,8 @@ MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) 
 	//set window icon
 	QApplication::setWindowIcon(QIcon(":/Logo/resources/logo/BT-3_non_transparent_rounded.ico"));
 
+
+    splash.finish(this);
 }
 
 MainWindow::~MainWindow() {

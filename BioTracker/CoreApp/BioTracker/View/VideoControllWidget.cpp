@@ -68,6 +68,7 @@ void VideoControllWidget::getNotified() {
 	int mediaFps = mediaPlayer->getFpsOfSourceFile();
 	//ui->frame_num_edit->setText(QString::number(currentFrameNr));
 	ui->frame_num_spin->setMaximum(totalNumberOfFrames);
+    ui->frame_num_spin->setSuffix(QString(" / ") + QString::number(totalNumberOfFrames));
 	ui->frame_num_spin->setValue(currentFrameNr);
 	ui->sld_video->setValue(currentFrameNr);
 
@@ -318,7 +319,12 @@ void VideoControllWidget::setupVideoToolbar() {
 			videoToolBar->addAction(ui->actionRecord_all);
 			videoToolBar->addSeparator();
 
-			videoToolBar->addWidget(ui->scrollAreaVideoInfo);
+            QAction* infoWidgetAction = videoToolBar->addWidget(ui->scrollAreaVideoInfo);
+            QWidget* infoWidget = videoToolBar->widgetForAction(infoWidgetAction);
+            QWidget* playbackWidget = infoWidget->findChild<QWidget*>("playback");
+            if(playbackwidget){
+                playbackWidget->setStyleSheet("QWidget{background-color:#F7F7F7;}");
+            }
 		}
 	}
 }
