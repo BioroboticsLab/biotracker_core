@@ -322,7 +322,7 @@ void VideoControllWidget::setupVideoToolbar() {
             QAction* infoWidgetAction = videoToolBar->addWidget(ui->scrollAreaVideoInfo);
             QWidget* infoWidget = videoToolBar->widgetForAction(infoWidgetAction);
             QWidget* playbackWidget = infoWidget->findChild<QWidget*>("playback");
-            if(playbackwidget){
+            if(playbackWidget){
                 playbackWidget->setStyleSheet("QWidget{background-color:#F7F7F7;}");
             }
 		}
