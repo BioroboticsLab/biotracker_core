@@ -98,11 +98,6 @@ void DataExporterSerialize::writeAll(std::string f) {
         _ofs.close();
     }
 
-    if (getMaxLinecount() <= 1) {
-        cleanup();
-        return;
-    }
-
     std::string target = f;
     if (target.size() <= 1) {
         target = _finalFile;

@@ -225,13 +225,6 @@ void DataExporterCSV::writeAll(std::string f) {
     //Find max length of all tracks
     int max = getMaxLinecount();
 
-    //There is nothing to write
-    if (max <= 1)
-    {
-        cleanup();
-        return;
-    }
-
     std::string target = f;
     if (target.size() <= 4) {
         target = _finalFile;
