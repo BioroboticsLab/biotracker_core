@@ -41,6 +41,10 @@ public:
 			//	("display", value<std::string>(), "display to use")
 			//	;
 
+			// For "Open with ..."
+			positional_options_description unnamed;
+			unnamed.add("video", 1);
+
 			// Declare an options description instance which will include
 			// all the options
 			options_description all("Allowed options");
@@ -53,7 +57,7 @@ public:
 
 
 			variables_map vm;
-			store(parse_command_line(ac, av, all), vm);
+			store(command_line_parser(ac, av).options(all).positional(unnamed).run(), vm);
 
 			if (vm.count("help")) {
 				std::cout << visible;
