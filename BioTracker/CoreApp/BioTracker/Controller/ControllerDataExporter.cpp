@@ -1,6 +1,7 @@
 #include "ControllerDataExporter.h"
 #include "Controller/ControllerCommands.h"
 #include "Controller/ControllerTrackedComponentCore.h"
+#include "Controller/ControllerPlayer.h"
 #include "Model/DataExporters/DataExporterCSV.h"
 #include "Model/DataExporters/DataExporterSerialize.h"
 #include "Model/DataExporters/DataExporterJson.h"
@@ -31,11 +32,14 @@ void ControllerDataExporter::connectControllerToController() {
     QObject::connect(this, &ControllerDataExporter::emitResetUndoStack, ctrcmd, &ControllerCommands::receiveClear, Qt::DirectConnection);
 
     //connect to view controller
-    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE
-    );
+    IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 	ControllerTrackedComponentCore *tccController = dynamic_cast<ControllerTrackedComponentCore*>(ctr);
 
 	QObject::connect(this, &ControllerDataExporter::emitViewUpdate, tccController, &ControllerTrackedComponentCore::receiveUpdateView, Qt::DirectConnection);
+
+
+    ControllerPlayer* cPl = dynamic_cast<ControllerPlayer*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER));
+    QObject::connect(cPl, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
 }
 
 void ControllerDataExporter::createModel() {

@@ -397,7 +397,22 @@ void MainWindow::on_actionOpen_Video_triggered() {
                                                     "Open video", "", videoFilter, 0);
 
     if (!filename.isEmpty()) {
-        dynamic_cast<ControllerMainWindow*> (getController())->loadVideo(filename);
+        dynamic_cast<ControllerMainWindow*> (getController())->loadVideo({ filename.toStdString().c_str()});
+    }
+}
+
+void MainWindow::on_actionOpen_Video_batch_triggered() {
+    static const QString videoFilter("Video files (*.avi *.wmv *.mp4 *.mkv *.mov)");
+
+    std::vector<boost::filesystem::path> files;
+
+    for (QString const& path : QFileDialog::getOpenFileNames(this,
+        "Open image files", "", videoFilter, 0)) {
+        files.push_back(boost::filesystem::path(path.toStdString()));
+    }
+
+    if (!files.empty()) {
+        qobject_cast<ControllerMainWindow*> (getController())->loadVideo(files);
     }
 }
 

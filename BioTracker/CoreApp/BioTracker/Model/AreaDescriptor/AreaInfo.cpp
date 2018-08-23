@@ -54,14 +54,14 @@ void AreaInfo::reset(int w, int h) {
     {
         std::vector<QPoint> pts = toQPointVector(vertices[0]);
         std::vector<QPoint> pts2 = toQPointVector(vertices[1]);
-        _apperture->setVertices(QVecToCvVec(pts));
-        _rect->setVertices(QVecToCvVec(pts2));
+        _apperture->setVertices(QVecToCvVec(pts2));
+        _rect->setVertices(QVecToCvVec(pts));
     }
 }
 
 void AreaInfo::loadAreas() {
 
-    QVector<QString> pair = getVertices(_parms ? _parms->m_CurrentFilename : "");
+    QVector<QString> pair = getVertices(_parms ? _parms->m_CurrentFilename : "", true);
 
     if (pair[1] == QString(DEFAULT_RECT)) {
         if (_parms) {
@@ -118,7 +118,13 @@ void AreaInfo::updateRectification() {
                 QVector<QString>{
                 cvPointsToString(_rect->getVertices()).c_str(),
                 cvPointsToString(_apperture->getVertices()).c_str(),
-                QString(myType()), QString(vertices[3])});  //TODO
+                QString(myType()), QString(vertices[3]) });
+
+            setVertices("Last",
+                QVector<QString>{
+                cvPointsToString(_rect->getVertices()).c_str(),
+                cvPointsToString(_apperture->getVertices()).c_str(),
+                QString(myType()), QString(vertices[3]) });
         }
     }
     else {

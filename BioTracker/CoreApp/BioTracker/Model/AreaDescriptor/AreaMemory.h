@@ -11,7 +11,7 @@ namespace AreaMemory
 #define DEFAULT_AREA        "10,10;10,100;100,100;100,10"
 #define DEFAULT_PAIR        QVector<QString>{DEFAULT_AREA, DEFAULT_RECT, "0", "0"}
 
-    QVector<QString> getVertices(QString file);
+    QVector<QString> getVertices(QString file, bool useLast = false);
     void setVertices(QString file, QVector<QString> values);
     std::vector<QPoint> toQPointVector(QString vertices);
 };

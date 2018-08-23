@@ -51,7 +51,7 @@ class MediaPlayerStateMachine : public IModel {
      */
     void receiveRunPlayerOperation();
 
-    void receiveLoadVideoCommand(QString fileDir);
+    void receiveLoadVideoCommand(std::vector<boost::filesystem::path> files);
     void receiveLoadPictures(std::vector<boost::filesystem::path> files);
     void receiveLoadCameraDevice(CameraConfiguration conf);
 
@@ -75,6 +75,8 @@ class MediaPlayerStateMachine : public IModel {
      * When the state operation got finished, this SIGNAL is emmited and received by the MediaPlayer class.
      */
     void emitPlayerOperationDone();
+
+    void emitNextMediaInBatch();
 
   private:
     void updatePlayerParameter();

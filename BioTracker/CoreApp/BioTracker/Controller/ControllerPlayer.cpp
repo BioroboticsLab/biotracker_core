@@ -18,8 +18,8 @@ ControllerPlayer::~ControllerPlayer()
 {
 }
 
-void ControllerPlayer::loadVideoStream(QString str) {
-    qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(str);
+void ControllerPlayer::loadVideoStream(std::vector<boost::filesystem::path> files) {
+    qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(files);
 	emitPauseState(true);
 }
 
@@ -136,7 +136,8 @@ void ControllerPlayer::connectModelToController() {
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
     QObject::connect(this, &ControllerPlayer::emitPauseState, qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::rcvPauseState);
 	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalVisualizeCurrentModel, this, &ControllerPlayer::receiveVisualizeCurrentModel);
-	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatch, this, &ControllerPlayer::emitNextMediaInBatch);
 
 }
 

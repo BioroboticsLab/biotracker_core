@@ -25,12 +25,12 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 
 }
 
-void ControllerMainWindow::loadVideo(QString str) {
+void ControllerMainWindow::loadVideo(std::vector<boost::filesystem::path> files) {
 
-    Q_EMIT emitOnLoadMedia(str.toStdString());
+    Q_EMIT emitOnLoadMedia(files.front().string());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
-    qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
-    Q_EMIT emitMediaLoaded(str.toStdString());
+    qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(files);
+    Q_EMIT emitMediaLoaded(files.front().string());
     
     dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
@@ -201,8 +201,9 @@ void ControllerMainWindow::connectControllerToController() {
 	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string *video = (std::string*)(set->readValue("video"));
-	if (video)
-		loadVideo(video->c_str());
+    if (video) 
+        loadVideo({ video->c_str() });
+        
 }
 
 void ControllerMainWindow::receiveCursorPosition(QPoint pos)

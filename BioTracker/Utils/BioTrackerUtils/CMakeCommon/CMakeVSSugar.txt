@@ -1,0 +1,15 @@
+set(_util_src_root_path ${CMAKE_CURRENT_SOURCE_DIR})
+file(
+    GLOB_RECURSE _util_source_list 
+    LIST_DIRECTORIES false
+    "${_util_src_root_path}/*.c*"
+    "${_util_src_root_path}/*.h*"
+    "${_util_src_root_path}/*.ui*"
+)
+
+foreach(_util_source IN ITEMS ${_util_source_list})
+    get_filename_component(_util_source_path "${_util_source}" PATH)
+    file(RELATIVE_PATH _util_source_path_rel "${_util_src_root_path}" "${_util_source_path}")
+    string(REPLACE "/" "\\" _util_group_path "${_util_source_path_rel}")
+    source_group("${_util_group_path}" FILES "${_util_source}")
+endforeach()

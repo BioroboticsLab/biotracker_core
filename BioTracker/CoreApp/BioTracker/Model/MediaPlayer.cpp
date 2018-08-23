@@ -49,7 +49,7 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 
 	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
-    // Handel PlayerStateMachine results
+    // Handle PlayerStateMachine results
 	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
 	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters);
 
@@ -57,6 +57,9 @@ MediaPlayer::MediaPlayer(QObject* parent) :
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerOperationDone, this, &MediaPlayer::receivePlayerOperationDone);
     QObject::connect(this, &MediaPlayer::runPlayerOperation, m_Player, &MediaPlayerStateMachine::receiveRunPlayerOperation);
 
+    //Handle progressing in batch
+    QObject::connect(m_Player, &MediaPlayerStateMachine::emitNextMediaInBatch, this, &MediaPlayer::emitNextMediaInBatch);
+    
     // Move the PlayerStateMachine to the Thread
     m_Player->moveToThread(m_PlayerThread);
 
@@ -191,7 +194,7 @@ void MediaPlayer::takeScreenshot(GraphicsView *gv) {
     //TODO duplicated code
     QRectF rscene = gv->sceneRect(); //0us
     QRectF rview = gv->rect(); //0us
-    QPixmap *pix;
+    QPixmap *pix = nullptr;
     if (!m_recordScaled)
         pix = new QPixmap(rscene.size().toSize()); //17us
     else
@@ -207,6 +210,9 @@ void MediaPlayer::takeScreenshot(GraphicsView *gv) {
     QImage image = pix->toImage(); //8724us
 
     image.save(getTimeAndDate(CFG_DIR_SCREENSHOTS+std::string("/Screenshot"), ".png").c_str());
+
+	if (paint != nullptr) delete paint;
+	if (pix != nullptr) delete pix;
 }
 
 void MediaPlayer::receiveTrackingPaused() {
@@ -267,6 +273,8 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 		cv::cvtColor(*mat, *mat, CV_BGR2RGB);
 		m_videoc->add(mat,1);
 		
+		if (paint != nullptr) delete paint;
+		if (pix != nullptr) delete pix;
 	}
 
     Q_EMIT notifyView();

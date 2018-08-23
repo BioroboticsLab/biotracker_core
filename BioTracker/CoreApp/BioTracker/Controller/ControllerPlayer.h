@@ -24,7 +24,7 @@ class ControllerPlayer : public IController {
 		/**
 		* Hands over the file path of a video to the IModel class MediaPlayer.
 		*/
-		void loadVideoStream(QString str);
+		void loadVideoStream(std::vector<boost::filesystem::path> files);
 		/**
 		* Hands over the file path of pictures to the IModel class MediaPlayer.
 		*/
@@ -90,7 +90,7 @@ class ControllerPlayer : public IController {
 	signals:
 		void emitPauseState(bool state);
 		void signalCurrentFrameNumberToPlugin(uint frameNumber);
-
+        void emitNextMediaInBatch();
 
 	public Q_SLOTS:
 		/**

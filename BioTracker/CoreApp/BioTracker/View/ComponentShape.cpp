@@ -179,7 +179,19 @@ void ComponentShape::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 
 	// draw id in center
 	if (m_showId){
-		painter->drawText(this->boundingRect(), Qt::AlignCenter, QString::number(m_id));
+        QFont font = painter->font();
+
+        /* twice the size than the current font size */
+        font.setPointSize(font.pointSize() * 2);
+
+        /* set the modified font to the painter */
+        painter->setFont(font);
+        QPen penHText(QColor("#000000"));//Here lines are also drawn using this color
+        painter->setPen(penHText);
+        QRectF r = this->boundingRect();
+        r.setWidth(100);
+        r.moveLeft(10);
+		painter->drawText(r, Qt::AlignCenter, "Tabeetha");// QString::number(m_id)
 	}
 }
 
@@ -336,7 +348,7 @@ void ComponentShape::trace()
 		return;
 	}
 
-	QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
+    QPointF lastPointDifference = QPointF(0, 0);// +QPointF(m_h / 2, m_w / 2);
 
 	for (int i = 1; i <= m_tracingLength && i <= m_currentFramenumber; i += m_tracingSteps) {
 			
@@ -346,7 +358,8 @@ void ComponentShape::trace()
 			//positioning
 			QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
 			QPointF historyPointDifference = historyPoint - currentPoint;
-			QPointF adjustedHistoryPointDifference = historyPointDifference + QPointF(m_w / 2, m_h / 2);
+            //MARKER
+            QPointF adjustedHistoryPointDifference = historyPointDifference;// +QPointF(m_w / 2, m_h / 2);
 
 			//time degradation colors
 			QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);
@@ -390,6 +403,7 @@ void ComponentShape::trace()
 
 			//PATH
 			else if (m_tracingStyle == "Path") {
+                QColor timeDegradationBrushColor = QColor(0,255, 0, (200.0f - (200.0f / (float)m_tracingLength) * i) + 30);
 
 				QLineF base = QLineF(lastPointDifference, adjustedHistoryPointDifference);
 				QGraphicsLineItem* lineItem = new QGraphicsLineItem(base, m_tracingLayer);

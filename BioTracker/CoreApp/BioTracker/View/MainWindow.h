@@ -63,6 +63,8 @@ Q_SIGNALS:
   private Q_SLOTS:
 //menu->File
     void on_actionOpen_Video_triggered();
+    
+    void on_actionOpen_Video_batch_triggered();
 
     void on_actionLoad_Tracker_triggered();
 

@@ -28,7 +28,7 @@ class ControllerMainWindow : public IController {
     /**
      * Receives the a string containing the video file path from the MainWindow class. The string is then given to the ControllerPlayer class of the MediaPlayer-Component.
      */
-    void loadVideo(QString str);
+    void loadVideo(std::vector<boost::filesystem::path> files);
     /**
      * Receives the a string containing the Plugin file path from the MainWindow class. The string is then given to the BioTrackerContext class which will hand it over to the ControllerPlugin class.
      */

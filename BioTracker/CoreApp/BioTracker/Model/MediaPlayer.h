@@ -36,7 +36,7 @@ class MediaPlayer : public IModel {
     /**
     * Emit the path to a video stream. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
     */
-    void loadVideoStream(QString str);
+    void loadVideoStream(std::vector<boost::filesystem::path> files);
     /**
     * Emit the path to pictures. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
     */
@@ -94,6 +94,8 @@ class MediaPlayer : public IModel {
 	void toggleRecordImageStreamCommand();
 
 	void fwdPlayerParameters(playerParameters* parameters);
+
+    void emitNextMediaInBatch();
 
   public:
     void setTrackingActive();
