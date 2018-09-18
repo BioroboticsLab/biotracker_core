@@ -34,9 +34,9 @@ add_definitions( -DMyBT_VERSION="${Boost_LIB_VERSION}" )
 
 
 add_subdirectory(Interfaces/BioTrackerInterfaces)
+add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(Plugin/BackgroundSubtraction)
 add_subdirectory(Plugin/LukasKanade)
-add_subdirectory(Utils/BioTrackerUtils)
 add_subdirectory(CoreApp/BioTracker)
 
 
