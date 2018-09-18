@@ -289,7 +289,6 @@ void MediaPlayer::rcvPauseState(bool state) {
     }
 }
 
-int xxx = 0;
 void MediaPlayer::receivePlayerOperationDone() {
     // Only emit this SIGNAL when tracking is not active
 	end = std::chrono::system_clock::now();
@@ -301,11 +300,9 @@ void MediaPlayer::receivePlayerOperationDone() {
         m_currentFPS = 0;
     }
 
-    if (xxx < 100)
     if(m_trackingDone == true || !m_TrackingIsActive)
 		Q_EMIT runPlayerOperation();
 
-    xxx++;
 	start = std::chrono::system_clock::now();
 }
 
