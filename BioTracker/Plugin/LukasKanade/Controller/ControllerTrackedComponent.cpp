@@ -52,7 +52,7 @@ IView *ControllerTrackedComponent::getTrackingElementsWidget()
 void ControllerTrackedComponent::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
 	trajectory->setValid(false);
-	qDebug() << "Trajectory" << trajectory->getId() << "set invalid";
+	qDebug() << "TRACKER: Trajectory" << trajectory->getId() << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
@@ -61,7 +61,7 @@ void ControllerTrackedComponent::receiveRemoveTrajectoryId(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(false);
-		qDebug() << "Track" << id << "set invalid";
+		qDebug() << "TRACKER: Track" << id << "set invalid";
 	}
 }
 
@@ -71,20 +71,20 @@ void ControllerTrackedComponent::receiveValidateTrajectory(int id)
 	if (allTraj) {
 		IModelTrackedComponent* traj = allTraj->getChild(id - 1);
 		traj->setValid(true);
-		qDebug() << "Track" << id << "validated";
+		qDebug() << "TRACKER: Track" << id << "validated";
 	}
 }
 
 void ControllerTrackedComponent::receiveValidateEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(true);
-	qDebug() << "Track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
+	qDebug() << "TRACKER: Track " << trajectory->getId() << " entity #" << frameNumber << "set valid";
 }
 
 void ControllerTrackedComponent::receiveRemoveTrackEntity(IModelTrackedTrajectory * trajectory, uint frameNumber)
 {
 	trajectory->getChild(frameNumber)->setValid(false);
-	qDebug() << "Track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
+	qDebug() << "TRACKER: Track " << trajectory->getId() << " entity #" << frameNumber << "set invalid";
 }
 
 void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
@@ -101,7 +101,7 @@ void ControllerTrackedComponent::receiveAddTrajectory(QPoint position)
 	TrackedTrajectory* allTraj = qobject_cast<TrackedTrajectory*>(m_Model);
 	if (allTraj) {
 		allTraj->add(newTraj);
-		qDebug() << "Track added at" << firstElem->getX() << "," << firstElem->getY();
+		qDebug() << "TRACKER: Track added at" << firstElem->getX() << "," << firstElem->getY();
 	}
 }
 
@@ -117,7 +117,7 @@ void ControllerTrackedComponent::receiveMoveElement(IModelTrackedTrajectory* tra
             //qDebug() << "plugin-pos:" << position;
         }
         else {
-            qDebug() << "Entity to move not found (moved and deleted?): " << position;
+            qDebug() << "TRACKER: Entity to move not found (moved and deleted?): " << position;
         }
 	}
 }
@@ -136,7 +136,7 @@ void ControllerTrackedComponent::receiveSwapIds(IModelTrackedTrajectory * trajec
 		traj0->setId(traj1Id);
 		traj1->setId(traj0Id);
 
-		qDebug() << "Swap IDs " << traj0Id << "and " << traj1Id;
+		qDebug() << "TRACKER: Swap IDs " << traj0Id << "and " << traj1Id;
 	}
 }
 

@@ -41,16 +41,16 @@ class VideoControllWidget : public IViewWidget {
   private Q_SLOTS:
     void on_DurationChanged(int position);
     void on_PositionChanged(int position);
-    void on_button_nextFrame_clicked();
-    void on_button_playPause_clicked();
-	void on_button_record_clicked();
-	void on_button_record_cam_clicked();
+  //   void on_button_nextFrame_clicked();
+  //   void on_button_playPause_clicked();
+	// void on_button_record_clicked();
+	// void on_button_record_cam_clicked();
 
-    void on_button_stop_clicked();
+  //   void on_button_stop_clicked();
 
-    void on_button_screenshot_clicked();
+  //   void on_button_screenshot_clicked();
 
-    void on_button_previousFrame_clicked();
+  //   void on_button_previousFrame_clicked();
 
 
     void on_comboBoxSelectedView_currentTextChanged(const QString& arg1);
@@ -62,6 +62,9 @@ class VideoControllWidget : public IViewWidget {
 	void on_sld_video_actionTriggered(int action);
 
     void on_doubleSpinBoxTargetFps_editingFinished();
+
+    void on_frame_num_spin_editingFinished();
+
 
     void on_actionPlay_Pause_triggered(bool checked = false);
     void on_actionStop_triggered(bool checked = false);
@@ -91,6 +94,9 @@ class VideoControllWidget : public IViewWidget {
   QAction* action_rec;
 
   std::chrono::system_clock::time_point lastFpsSet;
+
+  uint	_fpsSum = 0;
+  int	_fpsCounter = 0;
 };
 
 #endif // BIOTRACKER3VIDEOCONTROLLWIDGET_H

@@ -29,8 +29,6 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	setViewportUpdateMode(FullViewportUpdate);
 
 	setDragMode(RubberBandDrag);
-
-
 }
 
 void GraphicsView::addGraphicsItem(QGraphicsItem *item)
@@ -51,6 +49,7 @@ void GraphicsView::addPixmapItem(QGraphicsItem *item)
 {
 	m_BackgroundImage = item;
 	m_GraphicsScene->addItem(item);
+	item->setZValue(-5);
 
 	update();
 }

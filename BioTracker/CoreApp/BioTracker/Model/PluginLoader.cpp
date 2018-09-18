@@ -55,7 +55,7 @@ bool PluginLoader::loadPluginFromFilename(QString filename) {
 		retval = false;
 	}
 
-	qDebug() << "Plugin loaded: " << m_PluginLoader->fileName();
+	qDebug() << "CORE: Plugin loaded: " << m_PluginLoader->fileName();
 
 	m_isPluginLoaded = retval;
 

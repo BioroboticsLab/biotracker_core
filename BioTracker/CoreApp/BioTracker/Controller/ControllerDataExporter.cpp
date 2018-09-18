@@ -8,6 +8,7 @@
 #include "settings/Settings.h"
 #include "util/types.h"
 #include <qmessagebox.h>
+#include "QDesktopServices"
 
 
 ControllerDataExporter::ControllerDataExporter(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
@@ -147,9 +148,10 @@ void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
     }
 }
 
-int ControllerDataExporter::getTrialNumber() {
-    //Get all existing files and parse highest export number
-    QStringList allFiles = QDir(CFG_DIR_TRACKS).entryList(QDir::NoDotAndDotDot | QDir::Files);
+int ControllerDataExporter::getNumber(bool trial) {
+    //Get all existing files of trial or track directory and parse highest export number
+    QString basePath = trial ? CFG_DIR_TRIALS : CFG_DIR_TRACKS;
+    QStringList allFiles = QDir(basePath).entryList(QDir::NoDotAndDotDot | QDir::Files);
 
     int maxVal = 0;
     foreach(QString s, allFiles) {
@@ -163,8 +165,10 @@ int ControllerDataExporter::getTrialNumber() {
 
 QString ControllerDataExporter::generateBasename(bool temporaryFile) {
 
-    QString path = (temporaryFile ? CFG_DIR_TEMP : CFG_DIR_TRACKS);
-    int maxVal = getTrialNumber();
+	QString resultPath = (_trialStarted ? CFG_DIR_TRIALS : CFG_DIR_TRACKS);
+
+    QString path = (temporaryFile ? CFG_DIR_TEMP : resultPath);
+    int maxVal = getNumber(_trialStarted ? true : false);
     std::string current = "Export_"+std::to_string(maxVal+1)+"_";
 
     return QString(getTimeAndDate(path.toStdString() + current, "").c_str());
@@ -175,8 +179,33 @@ void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
     QString str = "Exported file:\n";
     str += fname.absoluteFilePath();
 
-    int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
-        str,
-        QMessageBox::Ok);
+//    int ret = QMessageBox::information(nullptr, QString("Trajectory Exporting"),
+//        str,
+//        QMessageBox::Ok);
+    QMessageBox msgBox;
+    msgBox.setText("File saved!");
+    msgBox.setInformativeText(str);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    QPushButton *goToFileDirButton = msgBox.addButton(tr("Show in folder"), QMessageBox::ActionRole);
+    QPushButton *openFileButton = msgBox.addButton(tr("Open file"), QMessageBox::ActionRole);
+
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == goToFileDirButton) {
+        QUrl fileDirUrl = QUrl::fromLocalFile(fname.absolutePath());
+        QDesktopServices::openUrl(fileDirUrl);
+    }
+    else if (msgBox.clickedButton() == openFileButton){
+        QUrl fileUrl = QUrl::fromLocalFile(fname.absoluteFilePath());
+        QDesktopServices::openUrl(fileUrl);
+    }
+
+}
+
+void ControllerDataExporter::receiveTrialStarted(bool started)
+{
+	_trialStarted = started;
 }
 

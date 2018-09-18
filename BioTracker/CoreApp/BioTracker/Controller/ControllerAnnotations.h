@@ -2,24 +2,33 @@
 
 #include "Interfaces/IController/IController.h"
 #include "QString"
+#include <QColor>
 #include <QMouseEvent>
 #include <QKeyEvent>
 
 struct playerParameters;
 
+/**
+* The  ControllerAnnotations inherits IController
+* It is the management unit of the annotation component.
+* It controls user input -> creates new annotations in model, forwards moves and deletes them
+*/
 class ControllerAnnotations : public IController
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 	ControllerAnnotations(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	virtual ~ControllerAnnotations();
+	void cleanup();
 
 	// IController interface
 public:
 	void connectControllerToController() override;
 
-public Q_SLOTS:
-    void reset(std::string filepath);
+	public Q_SLOTS:
+
+	/// 
+	void reset(std::string filepath);
 	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
 	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
 	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);
@@ -32,6 +41,7 @@ public Q_SLOTS:
 	void receiveAddArrAnno();
 	void receiveAddEllAnno();
 	void receiveDelSelAnno();
+	void receiveSetAnnoColor(QColor color);
 
 protected:
 	void createModel(std::string filepath = "");

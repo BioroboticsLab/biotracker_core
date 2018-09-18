@@ -75,7 +75,7 @@ void ControllerCommands::receiveUndo()
 		_undoStack->undo();
 	}
 	else {
-		qDebug() << "Cannot undo the last command!";
+		qDebug() << "CORE: Cannot undo the last command!";
 	}
 }
 
@@ -85,7 +85,7 @@ void ControllerCommands::receiveRedo()
 		_undoStack->redo();
 	}
 	else {
-		qDebug() << "Cannot redo the next command!";
+		qDebug() << "CORE: Csannot redo the next command!";
 	}
 }
 

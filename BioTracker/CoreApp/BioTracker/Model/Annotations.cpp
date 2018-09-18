@@ -3,6 +3,9 @@
 #include <math.h>
 #include <fstream>
 
+#include <QDebug>
+#include <QInputDialog>
+
 Annotations::~Annotations() 
 {
 	serialize();
@@ -26,7 +29,7 @@ void Annotations::serialize() const
 			outfile << annotation.get() << std::endl;
 		}
 	}
-
+	
 	dirty = !outfile.good();
 }
 
@@ -104,7 +107,7 @@ std::ostream& operator<<(std::ostream& stream, const Annotations::Annotation *an
 	return stream;
 }
 
-void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos)
+void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos, QString text)
 {
 	QPen original{ painter->pen() };
 	QPen dotted{ original };
@@ -113,6 +116,31 @@ void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos)
 	painter->setPen(dotted);
 	const int radius = 20;
 	painter->drawEllipse(pos, radius, radius);
+
+	//text slighy other color --> hue + 20
+	//so text can be read when annotation is also contrasting with the background
+	QPen textPen{ original };
+	QColor textColor{ dotted.color() };
+	textColor.setHsv(textColor.hsvHue() + 20, textColor.hsvSaturation(), textColor.value());
+	textPen.setColor(textColor);
+	painter->setPen(textPen);
+
+	//font
+	QFont font= painter->font();
+	font.setPointSize(15);
+	painter->setFont(font);
+
+	//calculate text width to position variably
+	QFontMetrics fm(font);
+	int width = fm.width(text);
+	int height = fm.height();
+
+	//text position under origin handle
+	QPoint textPos = pos + QPoint(-width / 2, 20 + height);
+
+	//draw text
+	painter->drawText(textPos, text);
+
 	painter->setPen(original);
 }
 
@@ -125,22 +153,26 @@ bool Annotations::Annotation::isHandleAtPosition(const QPoint &handle, const QPo
 
 void Annotations::Annotation::deserializeFrom(std::queue<std::string> &args)
 {
-	if (args.size() < 3) return;
+	if (args.size() < 4) return;
 	startFrame = std::stoi(args.front()); args.pop();
+	text = QString::fromStdString(args.front()); args.pop();
 	const int x = std::stoi(args.front()); args.pop();
 	const int y = std::stoi(args.front()); args.pop();
 	origin = QPoint(x, y);
+	
 }
 
 std::vector<std::string> Annotations::Annotation::serializeToVector() const
 {
-	return { name(), std::to_string(startFrame), std::to_string(origin.x()), std::to_string(origin.y()) };
+	return { name(), std::to_string(startFrame), text.toStdString(), std::to_string(origin.x()), std::to_string(origin.y()) };
 }
 
 void Annotations::AnnotationLabel::deserializeFrom(std::queue<std::string> &args)
 {
 	Annotation::deserializeFrom(args);
-	if (args.size() < 0) return;
+	if (args.size() < 0) {
+		return;
+	}
 }
 
 std::vector<std::string> Annotations::AnnotationLabel::serializeToVector() const
@@ -158,9 +190,10 @@ void Annotations::AnnotationLabel::paint(QPainter * painter, const QStyleOptionG
 	const int len = 20;
 	painter->drawLine(this->origin + QPoint(-len, -len), this->origin + QPoint(+len, +len));
 	painter->drawLine(this->origin + QPoint(-len, len), this->origin + QPoint(+len, -len));
+
 	painter->setPen(original);
 	
-	Annotation::drawHandleLocation(painter, origin);
+	Annotation::drawHandleLocation(painter, origin, text);
 }
 
 void Annotations::AnnotationArrow::deserializeFrom(std::queue<std::string> &args)
@@ -201,8 +234,8 @@ void Annotations::AnnotationArrow::paint(QPainter * painter, const QStyleOptionG
 		painter->drawPoint(this->arrowHead);
 		painter->restore();
 	}
-	Annotation::drawHandleLocation(painter, origin);
-	Annotation::drawHandleLocation(painter, arrowHead);
+	Annotation::drawHandleLocation(painter, origin, text );
+	Annotation::drawHandleLocation(painter, arrowHead, "");
 }
 
 QPoint *Annotations::AnnotationArrow::getHandleForPosition(const QPoint &pos)
@@ -250,8 +283,8 @@ void Annotations::AnnotationRect::paint(QPainter * painter, const QStyleOptionGr
 		painter->drawPoint(this->bottomRight);
 		painter->restore();
 	}
-	Annotation::drawHandleLocation(painter, origin);
-	Annotation::drawHandleLocation(painter, bottomRight);
+	Annotation::drawHandleLocation(painter, origin, text);
+	Annotation::drawHandleLocation(painter, bottomRight, "");
 }
 
 QPoint * Annotations::AnnotationRect::getHandleForPosition(const QPoint & pos)
@@ -299,8 +332,8 @@ void Annotations::AnnotationEllipse::paint(QPainter * painter, const QStyleOptio
 		painter->drawPoint(this->bottomRight);
 		painter->restore();
 	}
-	Annotation::drawHandleLocation(painter, origin);
-	Annotation::drawHandleLocation(painter, bottomRight);
+	Annotation::drawHandleLocation(painter, origin, text);
+	Annotation::drawHandleLocation(painter, bottomRight, "");
 }
 
 QPoint * Annotations::AnnotationEllipse::getHandleForPosition(const QPoint & pos)
@@ -352,8 +385,31 @@ bool Annotations::tryStartDragging(QPoint cursor)
 	selection.reset();
 	for (auto &annotation : annotations)
 	{
-		if (!(selection.handle = annotation->getHandleForPosition(cursor))) continue;
+		if (!(selection.handle = annotation->getHandleForPosition(cursor))) {
+			continue;
+		}
 		selection.annotation = annotation;
+		return true;
+	}
+	return false;
+}
+
+bool Annotations::trySetText(QPoint cursor) {
+	selection.reset();
+	for (auto &annotation : annotations)
+	{
+		if (!(selection.handle = annotation->getHandleForPosition(cursor))) {
+			continue;
+		}
+		selection.annotation = annotation;
+
+		bool ok;
+		QString annoText = QInputDialog::getText(Q_NULLPTR, tr("Set annotation text"),
+												tr("Annotation text:"), QLineEdit::Normal, annotation->getText(), &ok);
+		if (ok) {
+			annotation->setText(annoText);
+			dirty = true;
+		}
 		return true;
 	}
 	return false;

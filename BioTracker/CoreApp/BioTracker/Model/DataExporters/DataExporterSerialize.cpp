@@ -31,7 +31,7 @@ std::string DataExporterSerialize::writeTrackpoint(IModelTrackedPoint *e, int tr
 
 void DataExporterSerialize::write(int idx) {
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE: No output opened!";
         return;
     }
 
@@ -91,7 +91,7 @@ void DataExporterSerialize::loadFile(std::string file){
 void DataExporterSerialize::writeAll(std::string f) {
     //Sanity
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE: No output opened!";
         return;
     }
     if (_ofs.is_open()) {

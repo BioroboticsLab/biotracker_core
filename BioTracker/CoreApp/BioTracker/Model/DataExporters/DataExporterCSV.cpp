@@ -176,7 +176,7 @@ void DataExporterCSV::loadFile(std::string file)
 
 void DataExporterCSV::write(int idx) {
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE:  No output opened!";
         return;
     }
 
@@ -215,7 +215,7 @@ void DataExporterCSV::finalizeAndReInit() {
 void DataExporterCSV::writeAll(std::string f) {
     //Sanity
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE: No output opened!";
         return;
     }
     if (_ofs.is_open()) {
@@ -226,7 +226,7 @@ void DataExporterCSV::writeAll(std::string f) {
     int max = getMaxLinecount();
 
     //There is nothing to write
-    if (max <= 1)
+    if (max <= 0)
     {
         cleanup();
         return;

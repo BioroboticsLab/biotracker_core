@@ -1,0 +1,19 @@
+F11: Toggle fullscreen
+
+CTRL + Z: Undo
+CTRL + Y: Redo
+
+CTRL + A: Select all trajectories
++: Add trajectory
+DELETE: Delete all selected trajectories
+
+SPACE: Play medium
+Left Arrow: Previous Frame
+Right Arrow: Next Frame
+CTRL + Space: Stop medium
+
+ALT + L: Add label annotation
+ALT + A: Add arrow annotation
+ALT + E: Add ellipse annotation
+ALT + R: Add rect annotation
+ALT + DELETE: Delete selected annotation

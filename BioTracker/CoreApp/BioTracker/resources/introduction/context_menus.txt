@@ -1,0 +1,4 @@
+Both the video and each entity can be right-clicked to open a context menu.
+
+Please keep this in mind as many functionalities are in these context menus!
+

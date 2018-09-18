@@ -5,29 +5,35 @@
 #include "Interfaces/IModel/IModel.h"
 #include "qcolor.h"
 
+/**
+* This model includes the default visualization options the TrackedcomponentView
+* uses to create its ComponentsShapes.
+* Other shared paramters can also be added.
+* It is a runtime shared storage.
+*/
 class CoreParameter : public IModel
 {
 	Q_OBJECT
 public:
 	CoreParameter(QObject *parent = 0);
 
-	void setAll(
-		bool viewSwitch,
-		QString tracingStyle,
-		int tracingHistory,
-		int tracingSteps,
-		QColor* colorBorder,
-		QColor* colorBrush)
-	{
-		m_viewSwitch = viewSwitch;
-		m_tracingStyle = tracingStyle;
-		m_tracingHistory = tracingHistory;
-		m_tracingSteps = tracingSteps;
-		m_colorBorder = colorBorder;
-		m_colorBrush = colorBrush;
+	//void setAll(
+	//	bool viewSwitch,
+	//	QString tracingStyle,
+	//	int tracingHistory,
+	//	int tracingSteps,
+	//	QColor* colorBorder,
+	//	QColor* colorBrush)
+	//{
+	//	m_viewSwitch = viewSwitch;
+	//	m_tracingStyle = tracingStyle;
+	//	m_tracingHistory = tracingHistory;
+	//	m_tracingSteps = tracingSteps;
+	//	m_colorBorder = colorBorder;
+	//	m_colorBrush = colorBrush;
 
-		Q_EMIT notifyView();
-	};
+	//	Q_EMIT notifyView();
+	//};
 	void setTrackNumber(int number);
 
 
@@ -38,7 +44,7 @@ public:
 	bool m_antialiasingFull = false;
 
 	//Tracing
-	QString m_tracingStyle = "None";
+	QString m_tracingStyle = "No tracing";
 	int m_tracingHistory = 20;
 	int m_tracingSteps = 1;
 	QString m_tracingTimeDegradation = "None";

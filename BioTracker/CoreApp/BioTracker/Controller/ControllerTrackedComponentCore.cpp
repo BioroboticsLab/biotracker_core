@@ -1,6 +1,7 @@
 #include "ControllerTrackedComponentCore.h"
 #include "ControllerMainWindow.h"
 #include "ControllerCoreParameter.h"
+#include "ControllerPlayer.h"
 #include "Model/null_Model.h"
 #include "Model/CoreParameter.h"
 #include "View/TrackedComponentView.h"
@@ -23,8 +24,8 @@ ControllerTrackedComponentCore::ControllerTrackedComponentCore(QObject *parent, 
 void ControllerTrackedComponentCore::createView()
 {
 	//This occurs when there has been a previous plugin to visualize
-    if (m_View != nullptr)
-        delete m_View;
+	if (m_View != nullptr)
+		delete m_View;
 
 	m_View = new TrackedComponentView(0, this, m_Model);
 }
@@ -41,8 +42,8 @@ void ControllerTrackedComponentCore::connectControllerToController()
 
 	//connect to view
 	TrackedComponentView* view = static_cast<TrackedComponentView*>(m_View);
-	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint, int)), this, SLOT(receiveAddTrajectory(QPoint, int)));
-	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
+	QObject::connect(view, SIGNAL(emitAddTrajectory(QPoint, int)), this, SIGNAL(emitAddTrajectory(QPoint, int)));
+	QObject::connect(view, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitDimensionUpdate(int, int)), view, SLOT(rcvDimensionUpdate(int, int)));
 
 	QObject::connect(this, SIGNAL(emitAddTrack()), view, SLOT(addTrajectory()));
@@ -69,15 +70,19 @@ void ControllerTrackedComponentCore::connectControllerToController()
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), ctrCC, SLOT(receiveFixTrackCommand(IModelTrackedTrajectory*, bool)));
 	QObject::connect(this, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, double, uint)), ctrCC, SLOT(receiveEntityRotation(IModelTrackedTrajectory*, double, double, uint)));
 
+	//connect to controllerPlayer
+	IController * ctrIP = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
+	QPointer< ControllerPlayer > ctrP = qobject_cast<ControllerPlayer*>(ctrIP);
+	QObject::connect(this, &ControllerTrackedComponentCore::emitGoToFrame, ctrP, &ControllerPlayer::setGoToFrame);
 
-    // Tell the Visualization to reset upon loading a new plugin
-    QObject::connect(ctrMainWindow, &ControllerMainWindow::emitTrackLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
+
+	// Tell the Visualization to reset upon loading a new plugin
+	QObject::connect(ctrMainWindow, &ControllerMainWindow::emitTrackLoaded, this, &ControllerTrackedComponentCore::receiveOnPluginLoaded);
 
 }
 
 void ControllerTrackedComponentCore::receiveOnPluginLoaded() {
 }
-
 
 void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)
 {
@@ -89,36 +94,6 @@ void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERM
 		//This should never happen, actually
 		assert(false);
 	}
-}
-
-void ControllerTrackedComponentCore::receiveRemoveTrajectory(IModelTrackedTrajectory* trajectory)
-{
-	emitRemoveTrajectory(trajectory);
-}
-
-void ControllerTrackedComponentCore::receiveRemoveTrackEntity(IModelTrackedTrajectory* trajectory, uint frameNumber)
-{
-	emitRemoveTrackEntity(trajectory, frameNumber);
-}
-
-void ControllerTrackedComponentCore::receiveAddTrajectory(QPoint pos, int id)
-{
-	emitAddTrajectory(pos, id);
-}
-
-void ControllerTrackedComponentCore::receiveMoveElement(IModelTrackedTrajectory * trajectory, QPoint oldPos, QPoint newPos, uint frameNumber, int toMove)
-{
-	emitMoveElement(trajectory, oldPos, newPos, frameNumber, toMove);
-}
-
-void ControllerTrackedComponentCore::receiveSwapIds(IModelTrackedTrajectory * trajectory0, IModelTrackedTrajectory * trajectory1)
-{
-	emitSwapIds(trajectory0, trajectory1);
-}
-
-void ControllerTrackedComponentCore::receiveToggleFixTrack(IModelTrackedTrajectory * trajectory, bool toggle)
-{
-	emitToggleFixTrack(trajectory, toggle);
 }
 
 void ControllerTrackedComponentCore::receiveUpdateView()
@@ -155,7 +130,7 @@ void ControllerTrackedComponentCore::addModel(IModel* model)
 	m_View->setNewModel(m_Model);
 
 	TrackedComponentView* view = dynamic_cast<TrackedComponentView*>(m_View);
-	
+
 	//signal initial track number to core params
 	IModelTrackedTrajectory *iModel = dynamic_cast<IModelTrackedTrajectory *>(getModel());
 	if (iModel) {

@@ -9,6 +9,7 @@
 #include <limits>
 #include "Controller/ControllerCoreParameter.h"
 #include <qmessagebox.h>
+#include <QColorDialog>
 
 CoreParameterView::CoreParameterView(QWidget *parent, IController *controller, IModel *model) :
 	IViewWidget(parent, controller, model),
@@ -61,13 +62,20 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 
 	//first check if permission is for view, if not pass permission to shapes -> view has all permissions, shapes only certain ones
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTVIEW && permission.second == false) {
-		this->ui->scrollArea_2->setDisabled(true);
+		//disable everything but the area descriptor groupbox
+		ui->checkBoxEnableCoreView->setEnabled(false);
+		ui->groupBoxTracks->setEnabled(false);
+		ui->groupBoxTracing->setEnabled(false);
+		ui->groupBoxMiscellaneous->setEnabled(false);
+		ui->groupBoxAnno->setEnabled(false);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(false);
 		return;
 	}
 	//does not need to be propagated to shapes; only handled by view
 	//TODO: move this to controller
 	if (permission.first == ENUMS::COREPERMISSIONS::COMPONENTADD  && permission.second == false) {
-		//this->ui->pushButtonAddTrack->setDisabled(true);
+		this->ui->pushButton_addTraj->setDisabled(true);
 		return;
 	}
 
@@ -94,13 +102,28 @@ void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v)
 	CoreParameter* coreParams = dynamic_cast<CoreParameter*>(getModel());
 	//disable
 	if (ui->checkBoxEnableCoreView->checkState() == Qt::Unchecked) {
-		ui->widgetParameter->setEnabled(false);
+		//disable all groupboxes but the area descriptor one
+		ui->groupBoxTracks->setEnabled(false);
+		ui->groupBoxTracing->setEnabled(false);
+		ui->groupBoxMiscellaneous->setEnabled(false);
+		ui->groupBoxAnno->setEnabled(false);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(false);
+		
+		
 		emitViewSwitch(false);
 		coreParams->m_viewSwitch = false;
 	}
 	//enable
 	else if (ui->checkBoxEnableCoreView->checkState() == Qt::Checked){
-		ui->widgetParameter->setEnabled(true);
+		//enable all groupboxes
+		ui->groupBoxTracks->setEnabled(true);
+		ui->groupBoxTracing->setEnabled(true);
+		ui->groupBoxMiscellaneous->setEnabled(true);
+		ui->groupBoxAnno->setEnabled(true);
+		ui->groupBoxRectificationParm->setEnabled(true);
+		_expertSwitch->setEnabled(true);
+
 		emitViewSwitch(true);
 		coreParams->m_viewSwitch = true;
 	}
@@ -260,37 +283,34 @@ void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
 	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
 }
 
-// void CoreParameterView::on_pushButtonFinalizeExperiment_clicked() {
-//     Q_EMIT emitFinalizeExperiment();
-// }
+void CoreParameterView::on_pushButtonAnnoColor_clicked()
+{
+	QPalette pal = ui->pushButtonAnnoColor->palette();
+	QColor oldColor = pal.color(QPalette::Button);
+	QColor newAnnoColor = QColorDialog::getColor(oldColor, Q_NULLPTR ,"Set new annotation color", QColorDialog::ShowAlphaChannel);
 
-// void CoreParameterView::on_checkBoxExpertOptions_stateChanged(int v)
-// {
-// 	//disable
-// 	if (ui->checkBoxExpertOptions->checkState() == Qt::Unchecked) {
-// 		ui->groupBoxTracerDimensions->hide();
-// 		ui->groupBoxMiscellaneous->hide();
-// 		ui->groupBoxTrackDimensions->hide();
-// 		ui->groupBoxTracerDimensions->hide();
-// 		ui->checkBoxTracerFrameNumber->hide();
-// 		ui->checkBoxShowId->hide();
-// 	}
-// 	//enable
-// 	else if (ui->checkBoxExpertOptions->checkState() == Qt::Checked) {
-// 		ui->groupBoxTracerDimensions->show();
-// 		ui->groupBoxMiscellaneous->show();
-// 		ui->groupBoxTrackDimensions->show();
-// 		ui->groupBoxTracerDimensions->show();
-// 		ui->checkBoxTracerFrameNumber->show();
-// 		ui->checkBoxShowId->show();
-// 	}
-// }
+	if (newAnnoColor.isValid()) {
+		QPalette pal = ui->pushButtonAnnoColor->palette();
+		pal.setColor(QPalette::Button, newAnnoColor);
+		ui->pushButtonAnnoColor->setAutoFillBackground(true);
+		ui->pushButtonAnnoColor->setPalette(pal);
+		ui->pushButtonAnnoColor->update();
+		ui->pushButtonAnnoColor->setAutoFillBackground(true);
+		ui->pushButtonAnnoColor->setFlat(true);
+
+		Q_EMIT emitSetAnnoColor(newAnnoColor);
+	}
+
+	
+}
 
 void CoreParameterView::toggleExpertOptions(bool toggle){
 	ui->groupBoxTracerDimensions->setVisible(toggle);
 	ui->groupBoxMiscellaneous->setVisible(toggle);
 	ui->groupBoxTrackDimensions->setVisible(toggle);
 	ui->groupBoxTracerDimensions->setVisible(toggle);
+	ui->groupBoxAnno->setVisible(toggle);
+
 	ui->checkBoxTracerFrameNumber->setVisible(toggle);
 	ui->checkBoxShowId->setVisible(toggle);
 }
@@ -332,7 +352,7 @@ void CoreParameterView::fillUI()
 	//tracer orientation line
 	ui->checkBoxTracerOrientationLine->setChecked(coreParams->m_tracerOrientationLine);
 	//tracing style
-	if (coreParams->m_tracingStyle == "None") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
+	if (coreParams->m_tracingStyle == "No tracing") { ui->comboBoxTracingStyle->setCurrentIndex(0); }
 	//tracing time degradation
 	if (coreParams->m_tracingTimeDegradation == "None") { ui->comboBoxTracingTimeDegradation->setCurrentIndex(0); }
 	//tracing history
@@ -349,6 +369,14 @@ void CoreParameterView::fillUI()
 	//track height
 	if (coreParams->m_trackHeight) { ui->spinBoxTrackHeight->setValue(coreParams->m_trackHeight); }
 
+	//annotation color button
+	QPalette pal = ui->pushButtonAnnoColor->palette();
+	pal.setColor(QPalette::Button, Qt::yellow);
+	ui->pushButtonAnnoColor->setAutoFillBackground(true);
+	ui->pushButtonAnnoColor->setPalette(pal);
+	ui->pushButtonAnnoColor->setFlat(true);
+	ui->pushButtonAnnoColor->update();
+
 	//enable/disable widgets
 
 	//expert options
@@ -356,6 +384,7 @@ void CoreParameterView::fillUI()
 		ui->groupBoxTracerDimensions->show();
 		ui->groupBoxMiscellaneous->show();
 		ui->groupBoxTrackDimensions->show();
+		ui->groupBoxAnno->show();
 		ui->checkBoxTracerFrameNumber->show();
 		ui->checkBoxShowId->show();
 	}
@@ -363,8 +392,10 @@ void CoreParameterView::fillUI()
 		ui->groupBoxTracerDimensions->hide();
 		ui->groupBoxMiscellaneous->hide();
 		ui->groupBoxTrackDimensions->hide();
+		ui->groupBoxAnno->hide();
 		ui->checkBoxTracerFrameNumber->hide();
 		ui->checkBoxShowId->hide();
+
 	}
 }
 
@@ -375,15 +406,24 @@ void CoreParameterView::setStyle()
 	ui->groupBoxRectificationParm->setStyleSheet("QGroupBox { background-color: #d1c4e9; }");
 	ui->groupBoxTracing->setStyleSheet("QGroupBox { background-color: #c8e6c9; }");
 	ui->groupBoxMiscellaneous->setStyleSheet("QGroupBox { background-color: #ffecb3; }");
+	ui->groupBoxAnno->setStyleSheet("QGroupBox { background-color: #fad8ba; }");
 
 	//expert options are slightly darker
 	ui->groupBoxTrackDimensions->setStyleSheet("QGroupBox { background-color: #90caf9;}");
 	ui->groupBoxTracerDimensions->setStyleSheet("QGroupBox { background-color: #a5d6a7;}");
 
-	//default groupbox
+	//default groupbox style
 	ui->widgetParameter->setStyleSheet("QGroupBox"
-	" {border: 1px solid #e5e5e5;border-radius: 5px;margin-top: 1ex; /* leave space at the top for the title */}"
-	"QGroupBox::title {subcontrol-origin: margin; padding: 0 3px; background-color: #e5e5e5; }");
+	" {border: 1px solid #e5e5e5; border-radius: 5px; margin-top: 1ex; /* leave space at the top for the title */}"
+	"QGroupBox::title {subcontrol-origin: margin; padding: -1px 3px; background-color: #e5e5e5; }");
+}
+
+void CoreParameterView::resetTrial()
+{
+	_trialActive = false;
+	_trialStarted = false;
+	Q_EMIT emitTrialStarted(false);
+	ui->pushButton_startExp->setText("Start a new Trial");
 
 }
 
@@ -400,38 +440,108 @@ void CoreParameterView::getNotified()
 /************EXPERIMENT TAB*******************/
 
 void CoreParameterView::on_pushButton_startExp_clicked() {
-    if (!_trackingStarted) {
+    if (!_trialActive) {    
+
         if (_currentFile == "No Media"){
             int ret = QMessageBox::information(this, tr("BioTracker"),
                 tr("Please select a source video first. \nYou can do so in the \"File\" menu."),
                 QMessageBox::Ok);
         }
         else {
+			if (!_trialStarted) {
+                QMessageBox::StandardButton reply;
+                reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to start a new trial?"
+                                                                    "\nThis will reset the previous tracking data!",
+                                              QMessageBox::Yes|QMessageBox::No);
+                if (reply == QMessageBox::No) {
+                    qDebug() << "CORE: New trial aborted";
+                    return;
+                }
+
+				_trialStarted = true;
+				emitTrialStarted(true);
+				emitFinalizeExperiment();
+				emitPausePlayback();
+				QMessageBox::information(0, "New trial", "You started a new trial! Previous data was saved and reset.\n\nGo to the timespot in the video you want to track at."
+					"\n\nPlease add the number of objects you want to track as trajectories.\nResume the video." );
+			}
+			else {
+				emitStartPlayback();
+			}
+			emitDeactivateTrackingSwitch();
             emitEnableTracking();
-            emitStartPlayback();
-            ui->pushButton_startExp->setText("Stop Trial");
-            _trackingStarted = true;
+            ui->pushButton_startExp->setText("Pause Trial");
+			ui->label_ExpSt->setText("Active - tracking");
+            _trialActive = true;
         }
     }
     else {
+
         emitDisableTracking();
-        emitStopPlayback();
-        ui->pushButton_startExp->setText("Start Trial");
-        _trackingStarted = false;
+        emitPausePlayback();
+        ui->pushButton_startExp->setText("Resume Trial");
+		ui->label_ExpSt->setText("Paused - not tracking");
+        _trialActive = false;
     }
 }
 
 void CoreParameterView::on_pushButton_finalizeExp_clicked() {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to finalize the trial?"
+                                                        "\nThis will save the current trial tracking"
+                                                        " data in a new file in the 'Trials' directory"
+                                                        " and reset it afterwards!",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No) {
+        qDebug() << "CORE: Finalize trial aborted!";
+        return;
+    }
 
     Q_EMIT emitStopPlayback();
+	Q_EMIT emitActivateTrackingSwitch();
     Q_EMIT emitDisableTracking();
-    _trackingStarted = false;
-    ui->pushButton_startExp->setText("Start Trial");
+    _trialActive = false;
+	_trialStarted = false;
+    ui->pushButton_startExp->setText("Start a new Trial");
+	ui->label_ExpSt->setText("No Trial started!");
+	Q_EMIT emitTrialStarted(false);
     Q_EMIT emitFinalizeExperiment();
 }
 
 void CoreParameterView::on_label_ExpSrcCnt_clicked() {
     //Event does not exist
+}
+
+void CoreParameterView::on_trialHelpButton_clicked()
+{
+	QMessageBox::information(0, "Trials", "'Start a new Trial' will cause all the previous data to be saved and then reset.\n\n"
+		"Go to the time spot you want to track and create a trajectory for each object you want to track.\n"
+		"Resume the video and the tracker will track your objects.\n\n"
+		"If you want to pause the tracking you can just pause the video. Resuming the video will continue the tracking.\n"
+		"If you want to pause the video and resume without tracking you will have to click 'Pause Trial' causing the tracking to be disabled.\n"
+		"You can now watch the video without tracking.\n\n"
+		"'Resume trial' will cause the tracking to be activated AND the video to be resumed");
+}
+
+void CoreParameterView::on_pushButton_saveData_clicked(){
+	emitSaveDataToFile();
+}
+
+void CoreParameterView::on_pushButton_resetData_clicked(){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to reset the current tracking data?"
+                                                        "This will firstly save the data and then reset it!",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No) {
+        qDebug() << "CORE: Data reset aborted";
+        return;
+    }
+    Q_EMIT emitFinalizeExperiment();
+}
+
+
+void CoreParameterView::on_pushButton_addTraj_clicked(){
+	emitAddTrack();
 }
 
 void CoreParameterView::rcvPlayerParameters(playerParameters* parameters) {

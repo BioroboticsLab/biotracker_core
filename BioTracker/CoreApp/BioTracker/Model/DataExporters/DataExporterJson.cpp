@@ -131,7 +131,7 @@ std::string DataExporterJson::writeTrackpoint(IModelTrackedPoint *e, int trajNum
 
 void DataExporterJson::write(int idx) {
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE: No output opened!";
         return;
     }
 
@@ -169,7 +169,7 @@ void DataExporterJson::loadFile(std::string file) {
 void DataExporterJson::writeAll(std::string f) {
     //Sanity
     if (!_root) {
-        qDebug() << "No output opened!";
+        qDebug() << "CORE: No output opened!";
         return;
     }
     if (_ofs.is_open()) {

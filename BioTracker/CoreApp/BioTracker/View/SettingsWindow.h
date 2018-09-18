@@ -27,6 +27,8 @@ public:
 	//void on_pushButton_clicked();
 	void on_buttonSaveClose_clicked();
 
+	void on_pushButtonSetNewLocManSave_clicked();
+
 	//void on_comboBox_currentIndexChanged(int index);
 
 Q_SIGNALS:
