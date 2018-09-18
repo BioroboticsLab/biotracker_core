@@ -252,7 +252,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 		//reopenVideoWriter(); //4us
 		QRectF rscene = m_gv->sceneRect(); //0us
 		QRectF rview = m_gv->rect(); //0us
-		QPixmap *pix;
+		QPixmap *pix = nullptr;
 		if (!m_recordScaled)
 			pix = new QPixmap(rscene.size().toSize()); //17us
 		else
