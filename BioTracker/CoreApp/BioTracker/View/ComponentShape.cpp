@@ -29,7 +29,6 @@
 #include <QtWidgets/QHeaderView>
 #include <QLinkedList>
 #include <qpair.h>
-//#include <QOverload>
 
 
 /*
@@ -42,6 +41,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent,
 	QGraphicsObject(parent), m_trajectory(trajectory), m_id(id), m_parent(parent)
 {
 	setData(0, m_id);
+	setData(1, "point");
 
 	m_polygons = QList<QPolygonF>();
 	m_useDefaultDimensions = true;
@@ -94,7 +94,8 @@ QRectF ComponentShape::boundingRect() const
 		return m_polygons[0].boundingRect();
 	}
 	else {
-		qDebug() << "Could not create a bounding rect for current track" << m_id;
+		//Note: This log might not appear (on console) as the application dies of assert before the buffer is served
+		qDebug() << "Could not create a bounding rect for current track " << m_id;
 		assert(0);
 	}
 
@@ -743,7 +744,7 @@ void ComponentShape::trace()
 		return;
 	}
 
-	QPointF lastPointDifference = QPointF(0, 0) + QPointF(m_h / 2, m_w / 2);
+	QPointF lastPointDifference = QPointF(0, 0);// + QPointF(m_h / 2, m_w / 2);
 
 	//create each n'th (m_tracingSteps) tracer of tracing history (m_tracingLength)
 	for (int i = 1; i <= m_tracingLength && i <= m_currentFramenumber; i += m_tracingSteps) {
@@ -755,8 +756,7 @@ void ComponentShape::trace()
 			//positioning
 			QPointF historyPoint = QPointF(historyChild->getXpx(), historyChild->getYpx());
 			QPointF historyPointDifference = historyPoint - currentPoint;
-			QPointF adjustedHistoryPointDifference = historyPointDifference +
-				QPointF(m_w / 2, m_h / 2);
+			QPointF adjustedHistoryPointDifference = historyPointDifference;
 
 			//time degradation colors
 			QPen timeDegradationPen = QPen(m_penColor, m_penWidth, m_penStyle);

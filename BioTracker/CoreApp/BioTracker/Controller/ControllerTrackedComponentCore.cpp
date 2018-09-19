@@ -82,6 +82,7 @@ void ControllerTrackedComponentCore::connectControllerToController()
 }
 
 void ControllerTrackedComponentCore::receiveOnPluginLoaded() {
+	receiveUpdateView();
 }
 
 void ControllerTrackedComponentCore::setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission)

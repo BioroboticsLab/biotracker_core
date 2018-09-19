@@ -308,7 +308,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 	if (this->childItems().size() < all->size()) {
 
 		//iterate over trajectories from back to increase performance
-		for (int i = all->size() - 1; i >= 0 && this->childItems().size() < all->size(); i--) {
+		for (int i = all->size() - 1; i >= 0 && this->childItems().size() <= all->size(); i--) {
 			IModelTrackedTrajectory* trajectory = dynamic_cast<IModelTrackedTrajectory*>(all->getChild(i));
 
 			//check if trajectory already has shape object
@@ -322,7 +322,7 @@ void TrackedComponentView::updateShapes(uint framenumber) {
 
 			//all trajectories already have shapes
 			if (all->size() == this->childItems().size()) {
-				continue;
+				break;
 			}
 		}
 	}
