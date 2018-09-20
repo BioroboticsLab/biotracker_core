@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_PLUGINS));
 	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_VIDEOS));
     boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_TRACKS));
+	boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_TRIALS));
     boost::filesystem::create_directory(boost::filesystem::path(CFG_DIR_SCREENSHOTS));
 
     BioTracker3App bioTracker3(&app);

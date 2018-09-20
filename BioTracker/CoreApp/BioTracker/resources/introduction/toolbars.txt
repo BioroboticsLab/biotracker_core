@@ -1,0 +1,12 @@
+First of all, there are the toolbars.
+
+The upper toolbar controls the loading of media, trackers and trajectories.
+Additionaly you can switch between the loaded trackers and control the activation of the tracking.
+
+The utility toolbar controls the trajectories and lets you add annotations to each frame of the video.
+It offers basic functionalites for an efficient use.
+
+The media toolbar controls the video and shows playback information.
+Screenshots and recordings are both possible.
+
+You can move all toolbars to your preferred position or hide them if neccessary.

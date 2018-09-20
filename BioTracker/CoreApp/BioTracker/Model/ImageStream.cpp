@@ -246,17 +246,21 @@ namespace BioTracker {
 			* @brief ImageStreamVideo
 			* @param filename path to the file
 			*/
-			explicit ImageStream3Video(const boost::filesystem::path &filename)
-				: m_capture(filename.string())
+			explicit ImageStream3Video(const std::vector<boost::filesystem::path> &files)
+				: m_capture(files.front().string())
 				, m_num_frames(static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT)))
 				, m_fps(m_capture.get(CV_CAP_PROP_FPS))
-				, m_fileName(filename.string()) {
-				if (!boost::filesystem::exists(filename)) {
-					throw file_not_found("Could not find file " + filename.string());
+				, m_fileName(files.front().string()) {
+
+				if (!boost::filesystem::exists(files.front())) {
+					throw file_not_found("Could not find file " + files.front().string());
 				}
 				if (!m_capture.isOpened()) {
 					throw video_open_error(":(");
 				}
+
+                m_batch = files;
+                m_batch.erase(m_batch.begin(), m_batch.begin()+1);
 
                 //Grab the fps from config file
                 BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
@@ -325,6 +329,7 @@ namespace BioTracker {
 			const size_t     m_num_frames;
 			const std::string m_fileName;
 			std::shared_ptr<VideoCoder> vCoder;
+            std::vector<boost::filesystem::path> m_batch;
 			double m_fps;
 			double m_w;
 			double m_h;
@@ -449,10 +454,9 @@ namespace BioTracker {
 			return std::make_shared<ImageStream3Pictures>(std::move(filenames));
 		}
 
-		std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
-			&filename) {
+		std::shared_ptr<ImageStream> make_ImageStream3Video(const std::vector<boost::filesystem::path> &files) {
 			try {
-				return std::make_shared<ImageStream3Video>(filename);
+				return std::make_shared<ImageStream3Video>(files);
 			}
 			catch (const video_open_error &) {
 				return make_ImageStream3NoMedia();

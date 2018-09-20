@@ -165,7 +165,7 @@ std::shared_ptr<ImageStream> make_ImageStream3NoMedia();
 std::shared_ptr<ImageStream> make_ImageStream3Pictures(
     std::vector<boost::filesystem::path> filenames);
 
-std::shared_ptr<ImageStream> make_ImageStream3Video(const boost::filesystem::path
+std::shared_ptr<ImageStream> make_ImageStream3Video(const std::vector<boost::filesystem::path>
                                                     &filename);
 
 std::shared_ptr<ImageStream> make_ImageStream3Camera(CameraConfiguration conf);

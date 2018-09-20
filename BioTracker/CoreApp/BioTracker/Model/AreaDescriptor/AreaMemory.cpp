@@ -16,7 +16,7 @@ namespace AreaMemory{
 
     QMap<QString, QVector<QString>> map;
 
-    QVector<QString> getVertices(QString file) {
+    QVector<QString> getVertices(QString file, bool useLast) {
         if (map.size() == 0) {
             std::ifstream o;
             o.open(CFG_AREA_DEFINITIONS, std::ifstream::in);
@@ -40,8 +40,12 @@ namespace AreaMemory{
         std::string f = file.toStdString();
         if (map.contains(file))
             return map.value(file);
-        else
-            return DEFAULT_PAIR;
+        else {
+            if (useLast && map.contains("Last")) {
+                return map.value("Last");
+            }else
+                return DEFAULT_PAIR;
+        }
     }
 
     void setVertices(QString file, QVector<QString> values) {

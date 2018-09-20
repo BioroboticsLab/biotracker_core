@@ -24,7 +24,7 @@ class ControllerPlayer : public IController {
 		/**
 		* Hands over the file path of a video to the IModel class MediaPlayer.
 		*/
-		void loadVideoStream(QString str);
+		void loadVideoStream(std::vector<boost::filesystem::path> files);
 		/**
 		* Hands over the file path of pictures to the IModel class MediaPlayer.
 		*/
@@ -64,10 +64,6 @@ class ControllerPlayer : public IController {
 		*/
 		void pause();
 		/**
-		* Tells the IModel class MediaPlayer to jump directly to the specified image frame by the parameter frame.
-		*/
-		void setGoToFrame(int frame);
-		/**
 		* If the user changes the ImageView in the comboBox represented in the VideoControllWidget it passes the selected ImageView name to the ControllerTextureObject class of the TextureObject-Component.
 		*/
 		void changeImageView(QString str);
@@ -81,7 +77,7 @@ class ControllerPlayer : public IController {
 
         void setTargetFps(double fps);
 
-	void takeScreenshot();
+	QString takeScreenshot();
 
 	// IController interface
 	public:
@@ -90,7 +86,7 @@ class ControllerPlayer : public IController {
 	signals:
 		void emitPauseState(bool state);
 		void signalCurrentFrameNumberToPlugin(uint frameNumber);
-
+        void emitNextMediaInBatch();
 
 	public Q_SLOTS:
 		/**
@@ -109,6 +105,10 @@ class ControllerPlayer : public IController {
 		void receiveChangeDisplayImage(QString str);
 
 		void receiveCurrentFrameNumberToPlugin(uint frameNumber);
+        /**
+        * Tells the IModel class MediaPlayer to jump directly to the specified image frame by the parameter frame.
+        */
+        void setGoToFrame(int frame);
 
 	protected:
 		void createModel() override;

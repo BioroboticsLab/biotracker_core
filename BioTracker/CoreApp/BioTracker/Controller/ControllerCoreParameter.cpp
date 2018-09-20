@@ -5,6 +5,7 @@
 #include "ControllerGraphicScene.h"
 #include "ControllerPlayer.h"
 #include "ControllerMainWindow.h"
+#include "ControllerAnnotations.h"
 #include "View/CoreParameterView.h"
 #include "View/TrackedComponentView.h"
 #include "Model/CoreParameter.h"
@@ -43,7 +44,7 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitViewSwitch, tcview, &TrackedComponentView::receiveViewSwitch, Qt::DirectConnection);
 		//Tracks
 		//QObject::connect(view, &CoreParameterView::emitSelectAll, tcview, &TrackedComponentView::receiveSelectAll, Qt::DirectConnection);
-		//QObject::connect(view, &CoreParameterView::emitAddTrack, tcview, &TrackedComponentView::addTrajectory, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitAddTrack, tcview, &TrackedComponentView::addTrajectory, Qt::DirectConnection);
 
 		//Track dimensions
 		QObject::connect(view, &CoreParameterView::emitTrackOrientationLine, tcview, &TrackedComponentView::receiveTrackOrientationLine, Qt::DirectConnection);
@@ -83,11 +84,22 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitDisplayRectification, adController, &ControllerAreaDescriptor::setDisplayRectificationDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
     }
+
+	//Connections to the Annotations
+	{
+		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
+		ControllerAnnotations *annoController = static_cast<ControllerAnnotations*>(ctr);
+		QObject::connect(view, &CoreParameterView::emitSetAnnoColor, annoController, &ControllerAnnotations::receiveSetAnnoColor, Qt::DirectConnection);
+	}
+
     //Connections to the DataExporter
     {
         IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
         ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ctr);
         QObject::connect(view, &CoreParameterView::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrialStarted, deController, &ControllerDataExporter::receiveTrialStarted, Qt::DirectConnection);
+
+
     }
     //Media Player
     {
@@ -97,6 +109,7 @@ void ControllerCoreParameter::connectControllerToController()
         QObject::connect(mp, &MediaPlayer::fwdPlayerParameters, view, &CoreParameterView::rcvPlayerParameters);
         QObject::connect(view, &CoreParameterView::emitStartPlayback, mpc, &ControllerPlayer::play);
         QObject::connect(view, &CoreParameterView::emitStopPlayback, mpc, &ControllerPlayer::stop);
+		QObject::connect(view, &CoreParameterView::emitPausePlayback, mpc, &ControllerPlayer::pause);
     }
     //Main Window
     {
@@ -104,6 +117,9 @@ void ControllerCoreParameter::connectControllerToController()
         ControllerMainWindow *mwc = static_cast<ControllerMainWindow*>(ctr);
         QObject::connect(view, &CoreParameterView::emitEnableTracking, mwc, &ControllerMainWindow::activeTracking);
         QObject::connect(view, &CoreParameterView::emitDisableTracking, mwc, &ControllerMainWindow::deactiveTrackring);
+		QObject::connect(view, &CoreParameterView::emitActivateTrackingSwitch, mwc, &ControllerMainWindow::activeTrackingCheckBox);
+		QObject::connect(view, &CoreParameterView::emitDeactivateTrackingSwitch, mwc, &ControllerMainWindow::deactiveTrackingCheckBox);
+		QObject::connect(view, &CoreParameterView::emitSaveDataToFile, mwc, &ControllerMainWindow::receiveSaveTrajData);
     }
 
     view->triggerUpdate();
@@ -114,9 +130,15 @@ void ControllerCoreParameter::changeAreaDescriptorType(QString type) {
         dynamic_cast<CoreParameterView*>(m_View)->areaDescriptorTypeChanged(type);
 }
 
+void ControllerCoreParameter::receiveResetTrial()
+{
+	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
+	view->resetTrial();
+}
+
 void ControllerCoreParameter::triggerUpdate() {
 
-    CoreParameterView* view = static_cast<CoreParameterView*>(m_View); view->triggerUpdate(); 
+    CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
     view->triggerUpdate();
 }
 
@@ -151,6 +173,6 @@ void ControllerCoreParameter::setCorePermission(std::pair<ENUMS::COREPERMISSIONS
 }
 
 int ControllerCoreParameter::getTrialNumber() {
-    return (static_cast<ControllerDataExporter*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT)))->getTrialNumber();
+    return (static_cast<ControllerDataExporter*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT)))->getNumber(true);
 }
 

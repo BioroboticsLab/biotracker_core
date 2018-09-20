@@ -19,6 +19,11 @@ void AnnotationsView::prepareUpdate()
 	prepareGeometryChange();
 }
 
+void AnnotationsView::setColor(QColor color)
+{
+	_annoColor = color;
+}
+
 QRectF AnnotationsView::boundingRect() const
 {
 	auto model = static_cast<const Annotations*>(getModel());
@@ -42,7 +47,7 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	for (auto &annotation : model->annotations)
 	{
 		if (model->getCurrentFrame() == annotation->startFrame)
-			painter->setPen(QPen(Qt::yellow, 6, Qt::SolidLine, Qt::RoundCap));
+			painter->setPen(QPen(_annoColor, 6, Qt::SolidLine, Qt::RoundCap));
 		else
 		{
 			QColor transparentGray = Qt::gray;
@@ -54,7 +59,7 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 
 	if (model->currentAnnotation)
 	{
-		QColor transparentYellow = Qt::yellow;
+		QColor transparentYellow = _annoColor;
 		transparentYellow.setAlphaF(0.5);
 		painter->setPen(QPen(transparentYellow, 6, Qt::SolidLine, Qt::RoundCap));
 		model->currentAnnotation->paint(painter, option, widget);
@@ -62,6 +67,6 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	if (model->selection)
 	{
 		painter->setPen(QPen(Qt::red, 6, Qt::SolidLine, Qt::RoundCap));
-		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle);
+		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle, "");
 	}
 }

@@ -29,26 +29,28 @@ MediaPlayerStateMachine::MediaPlayerStateMachine(QObject* parent) :
 	setNextState(IPlayerState::PLAYER_STATES::STATE_INITIAL);
 }
 
+int x = 0;
 void MediaPlayerStateMachine::receiveRunPlayerOperation() {
 
 	if (m_NextPlayerState != m_States.value(IPlayerState::PLAYER_STATES::STATE_WAIT)) {
 
 		m_CurrentPlayerState = m_NextPlayerState;
 
+        x++;
+        if (x % 100 == 0) {
+            emitNextMediaInBatch();
+        }
+
 		m_CurrentPlayerState->operate();
 		updatePlayerParameter();
 		emitSignals();
-
 	}
 
 }
 
-void MediaPlayerStateMachine::receiveLoadVideoCommand(QString fileDir) {
-	std::string filenameStr = fileDir.toStdString();
+void MediaPlayerStateMachine::receiveLoadVideoCommand(std::vector<boost::filesystem::path> files) {
 
-	boost::filesystem::path filename{ filenameStr };
-
-	m_stream = BioTracker::Core::make_ImageStream3Video(filename);
+	m_stream = BioTracker::Core::make_ImageStream3Video(files);
 
 	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
 

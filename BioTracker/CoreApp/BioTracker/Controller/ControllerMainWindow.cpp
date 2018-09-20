@@ -11,6 +11,7 @@
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCommands.h"
 #include "Controller/ControllerGraphicScene.h"
+#include "Controller/ControllerCoreParameter.h"
 #include "GuiContext.h"
 
 #include "QPluginLoader"
@@ -25,12 +26,12 @@ ControllerMainWindow::ControllerMainWindow(QObject* parent, IBioTrackerContext* 
 
 }
 
-void ControllerMainWindow::loadVideo(QString str) {
+void ControllerMainWindow::loadVideo(std::vector<boost::filesystem::path> files) {
 
-    Q_EMIT emitOnLoadMedia(str.toStdString());
+    Q_EMIT emitOnLoadMedia(files.front().string());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
-    qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(str);
-    Q_EMIT emitMediaLoaded(str.toStdString());
+    qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(files);
+    Q_EMIT emitMediaLoaded(files.front().string());
     
     dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }
@@ -119,6 +120,10 @@ void ControllerMainWindow::activeTrackingCheckBox() {
     dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 }
 
+void ControllerMainWindow::receiveSaveTrajData(){
+    dynamic_cast<MainWindow*>(m_View)->saveDataToFile();
+}
+
 void ControllerMainWindow::createModel()
 {
     // no model for MainWindow
@@ -197,12 +202,18 @@ void ControllerMainWindow::connectControllerToController() {
     ControllerDataExporter *deController = static_cast<ControllerDataExporter*>(ictrde);
     QObject::connect(this, &ControllerMainWindow::emitFinalizeExperiment, deController, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
 
+	// reset trials
+	IController* ictrcpv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	ControllerCoreParameter *ctrcpv = static_cast<ControllerCoreParameter*>(ictrcpv);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, ctrcpv, &ControllerCoreParameter::receiveResetTrial, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, ctrcpv, &ControllerCoreParameter::receiveResetTrial, Qt::DirectConnection);
 
 	//
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string *video = (std::string*)(set->readValue("video"));
-	if (video)
-		loadVideo(video->c_str());
+    if (video) 
+        loadVideo({ video->c_str() });
+        
 }
 
 void ControllerMainWindow::receiveCursorPosition(QPoint pos)
@@ -225,7 +236,7 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
     dynamic_cast<MainWindow*>(m_View)->resetTrackerViews();
 	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLUGIN);
 	qobject_cast<ControllerPlugin*>(ctr)->selectPlugin(plugin);
-	dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
+	//dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 	activeTrackingCheckBox();
     Q_EMIT emitPluginLoaded(plugin.toStdString());
 }

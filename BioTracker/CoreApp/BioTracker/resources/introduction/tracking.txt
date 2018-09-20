@@ -1,0 +1,13 @@
+We are assuming that you have a tracking experiment, want to start a trial and save the data afterwards.
+
+1.  Load a medium (video, picture or camera stream)  
+2.  Load a tracker (usually trackers are preloaded from the 'Plugins' directory)  
+3.   Choose the desired tracker options
+    (This often takes some time to figure out)
+4.  Go to the Experiment tab and click 'Start a new trial'.
+    (The video gets paused when you starta new trial)
+5.	You can also setup a rectification in the 'Visualization options' tab
+6.  Insert the objects to track if the tracker does not generate them automatically
+    (If you want to track two objects, add two tracks by right clicking the video or using the button on the left toolbar)
+7.  After you are done tracking, finalize and save the trial.
+8.  The data is then written to a file.

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1056</width>
-    <height>98</height>
+    <height>101</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -163,7 +163,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <property name="spacing">
-              <number>5</number>
+              <number>0</number>
              </property>
              <property name="leftMargin">
               <number>0</number>
@@ -177,6 +177,62 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
+             <item alignment="Qt::AlignRight">
+              <widget class="QWidget" name="widget_2" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Current time:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="time_edit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>100</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Displays the current time (in hours:minutes:seconds:milliseconds)</string>
+                  </property>
+                  <property name="text">
+                   <string>00:00:00:00</string>
+                  </property>
+                  <property name="cursorPosition">
+                   <number>11</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
              <item alignment="Qt::AlignRight">
               <widget class="QWidget" name="widget_3" native="true">
                <property name="sizePolicy">
@@ -215,27 +271,24 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="frame_num_edit">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
+                 <widget class="QSpinBox" name="frame_num_spin">
+                  <property name="minimumSize">
                    <size>
                     <width>60</width>
                     <height>30</height>
                    </size>
                   </property>
-                  <property name="toolTip">
-                   <string>Displays the current frame</string>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
-                  <property name="text">
-                   <string>0</string>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="displayIntegerBase">
+                   <number>10</number>
                   </property>
                  </widget>
                 </item>
@@ -266,7 +319,7 @@
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
-                <item>
+                <item alignment="Qt::AlignVCenter">
                  <widget class="QLabel" name="label_5">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -449,6 +502,9 @@
    </item>
   </layout>
   <action name="actionRecord_cam">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/recordCam.png</normaloff>:/Images/resources/recordCam.png</iconset>
@@ -458,6 +514,9 @@
    </property>
   </action>
   <action name="actionRecord_all">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/record.png</normaloff>:/Images/resources/record.png</iconset>
@@ -467,6 +526,9 @@
    </property>
   </action>
   <action name="actionScreenshot">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/screenshot.png</normaloff>:/Images/resources/screenshot.png</iconset>
@@ -479,6 +541,9 @@
    </property>
   </action>
   <action name="actionNext_frame">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrows-skip-forward.png</normaloff>:/Images/resources/arrows-skip-forward.png</iconset>
@@ -491,6 +556,9 @@
    </property>
   </action>
   <action name="actionPrev_frame">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrows-skip-back.png</normaloff>:/Images/resources/arrows-skip-back.png</iconset>
@@ -506,6 +574,9 @@
    </property>
   </action>
   <action name="actionStop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/stop.png</normaloff>:/Images/resources/stop.png</iconset>
@@ -518,6 +589,9 @@
    </property>
   </action>
   <action name="actionPlay_Pause">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../guiresources.qrc">
      <normaloff>:/Images/resources/arrow-forward1.png</normaloff>:/Images/resources/arrow-forward1.png</iconset>

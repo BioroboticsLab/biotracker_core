@@ -1,28 +1,16 @@
 ##############################################################
 #### Biotracker: Interfaces
 ##############################################################
-
+	
 set(INCLUDE_DIRS
 	${INCLUDE_DIRS}
-	${OpenCV_INCLUDE_DIRS} 
+	${OpenCV_INCLUDE_DIRS}
 	${Qt5Core_INCLUDE_DIRS}
 	${Qt5Gui_INCLUDE_DIRS}
 	${Qt5Xml_INCLUDE_DIRS}
 	${Qt5Network_INCLUDE_DIRS}
 	${Qt5Widgets_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
-	)
-
-set(QTLIBS 
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Xml
-    Qt5::Network
-    Qt5::Widgets
-	)
-set(LIBS 
-    ${OpenCV_LIBRARIES}
-    ${QTLIBS} 
 	)
 	
 # Visual studio out-of-source friendly source groups
@@ -41,14 +29,17 @@ foreach(_plugin_source IN ITEMS ${_plugin_source_list})
     source_group("${_plugin_group_path}" FILES "${_plugin_source}")
 endforeach()
 
-set(CMAKE_INCLUDE_CURRENT_DIR OFF)
-
-include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
-
 message("Configuring Biotracker_interfaces...")
 set(EXE_NAME Biotracker_interfaces)
 add_library(${EXE_NAME} STATIC ${_plugin_source_list} )
-target_link_libraries(${EXE_NAME} ${LIBS})
+target_include_directories(${EXE_NAME} PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(${EXE_NAME} ${OpenCV_LIBRARIES})
+target_link_libraries(${EXE_NAME} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets)
 
-
+set_target_properties(${EXE_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(${EXE_NAME} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
 

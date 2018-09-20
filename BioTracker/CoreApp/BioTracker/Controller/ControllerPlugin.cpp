@@ -42,27 +42,27 @@ void ControllerPlugin::addToPluginList(QString str) {
 }
 
 void ControllerPlugin::loadPluginFromFileName(QString str) {
-    PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
+	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
 
-    if(loader->loadPluginFromFilename(str)) {
+	if (loader->loadPluginFromFilename(str)) {
 
-        createPlugin();
+		createPlugin();
 
 		// Add Plugin name to Main Window
 		IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 		QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
 
-        ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData(),
+		ctrMainWindow->setTrackerList(qobject_cast<PluginLoader*>(m_Model)->getPluginMetaData(),
 			qobject_cast<PluginLoader*>(m_Model)->getCurrentPluginName());
 
-        //Add Tracker Parameter to Main Window
+		//Add Tracker Parameter to Main Window
 		IView *parms = m_BioTrackerPlugin->getTrackerParameterWidget();
-        ctrMainWindow->setTrackerParamterWidget(parms);
+		ctrMainWindow->setTrackerParamterWidget(parms);
 
 		//Add Tracker tracked components (Elements) to Main Window
 		IView *elems = m_BioTrackerPlugin->getTrackerElementsWidget();
-		ctrMainWindow->setTrackerElementsWidget(elems); 
-        
+		ctrMainWindow->setTrackerElementsWidget(elems);
+
 		IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
 		QPointer< ControllerTrackedComponentCore > ctrTrackedComponentCore = qobject_cast<ControllerTrackedComponentCore*>(ctrB);
 
@@ -77,17 +77,17 @@ void ControllerPlugin::loadPluginFromFileName(QString str) {
 		ctrDataExp->setComponentFactory(m_BioTrackerPlugin->getComponentFactory());
 
 		m_BioTrackerPlugin->sendCorePermissions();
-		
+
 	}
 }
 
 void ControllerPlugin::selectPlugin(QString str) {
 	if (str.isEmpty())
-		return; 
+		return;
 	PluginLoader* loader = qobject_cast<PluginLoader*>(m_Model);
 
 	if (loader->getCurrentPluginName() != str)
-        loadPluginFromFileName(loader->getPluginMap().find(str)->second);
+		loadPluginFromFileName(loader->getPluginMap().find(str)->second);
 }
 
 void ControllerPlugin::createModel() {
@@ -115,11 +115,11 @@ void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 
 	BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
 	std::string *usePlugins = (std::string*)(set->readValue("usePlugins"));
-	if(usePlugins) {
+	if (usePlugins) {
 		addToPluginList(usePlugins->c_str());
 	}
 
-} 
+}
 
 void ControllerPlugin::connectControllerToController() {
 
@@ -127,7 +127,7 @@ void ControllerPlugin::connectControllerToController() {
 	IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
 
-    ctrMainWindow->deactiveTrackingCheckBox();
+	ctrMainWindow->deactiveTrackingCheckBox();
 
 	loadPluginsFromPluginSubfolder();
 
@@ -199,7 +199,7 @@ void ControllerPlugin::connectPlugin() {
 
 	IController* ctrB = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
 	ControllerTextureObject* ctrTexture = qobject_cast<ControllerTextureObject*>(ctrB);
-	
+
 	IController* ctrAreaDesc = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 	ControllerAreaDescriptor* ctAreaDesc = qobject_cast<ControllerAreaDescriptor*>(ctrAreaDesc);
 
@@ -221,7 +221,7 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctDataEx, SLOT(receiveTrackingDone(uint)));
 
 	QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
-					 ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
+		ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
 	//TODO whyy do this two times??
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), model, SLOT(receiveTrackingOperationDone()));
@@ -232,7 +232,7 @@ void ControllerPlugin::connectPlugin() {
 
 	QObject::connect(ctAreaDesc, SIGNAL(updateAreaDescriptor(IModelAreaDescriptor*)), obj, SLOT(receiveAreaDescriptor(IModelAreaDescriptor*)));
 
-	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView, 
+	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCompView,
 		SLOT(setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)));
 
 	QObject::connect(obj, SIGNAL(emitCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool>)), ctrCoreParam,
@@ -245,15 +245,15 @@ void ControllerPlugin::connectPlugin() {
 
 
 	// data model actions
-	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj, 
+	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj,
 		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), obj,
 		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj, 
+	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj,
 		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), obj, 
+	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), obj,
 		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj, 
+	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj,
 		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
 		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
@@ -274,6 +274,59 @@ void ControllerPlugin::connectPlugin() {
 void ControllerPlugin::disconnectPlugin() {
 
 }
+
+//first send all the commands currently in the command queue then the next image can be sent
+void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
+	m_currentFrameNumber = number;
+
+	//Prevent calling the plugin if none is loaded
+	if (m_BioTrackerPlugin) {
+		while (!m_editQueue.isEmpty()) {
+			queueElement edit = m_editQueue.dequeue();
+
+			switch (edit.type)
+			{
+			case EDIT::REMOVE_TRACK:
+				emitRemoveTrajectory(edit.trajectory0);
+				break;
+			case EDIT::REMOVE_TRACK_ID:
+				emitRemoveTrajectoryId(edit.id);
+				break;
+			case EDIT::REMOVE_ENTITY:
+				emitRemoveTrackEntity(edit.trajectory0, edit.frameNumber);
+				break;
+			case EDIT::ADD:
+				emitAddTrajectory(edit.pos);
+				break;
+			case EDIT::MOVE:
+				emitMoveElement(edit.trajectory0, edit.frameNumber, edit.pos);
+				break;
+			case EDIT::SWAP:
+				emitSwapIds(edit.trajectory0, edit.trajectory1);
+				break;
+			case EDIT::FIX:
+				emitToggleFixTrack(edit.trajectory0, edit.toggle);
+				break;
+			case EDIT::VALIDATE:
+				emitValidateTrajectory(edit.id);
+				break;
+			case EDIT::VALIDATE_ENTITY:
+				emitValidateEntity(edit.trajectory0, edit.frameNumber);
+				break;
+			case  EDIT::ROTATE_ENTITY:
+				emitEntityRotation(edit.trajectory0, edit.angle, edit.frameNumber);
+				break;
+			}
+		}
+		m_BioTrackerPlugin->receiveCurrentFrameFromMainApp(mat, number);
+	}
+}
+
+
+
+//############################SLOTS##################################################
+
+//  receivers of commands
 
 void ControllerPlugin::receiveRemoveTrajectory(IModelTrackedTrajectory * trajectory)
 {
@@ -426,6 +479,8 @@ void ControllerPlugin::receiveEntityRotation(IModelTrackedTrajectory * trajector
 	}
 }
 
+//*********************************************************************
+
 void ControllerPlugin::receivePauseState(bool state)
 {
 	m_paused = state;
@@ -435,52 +490,6 @@ void ControllerPlugin::receiveCurrentFrameNumberToPlugin(uint frameNumber)
 {
 	m_currentFrameNumber = frameNumber;
 	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
-}
-
-void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
-	m_currentFrameNumber = number;
-
-	//Prevent calling the plugin if none is loaded
-	if (m_BioTrackerPlugin) {
-		while (!m_editQueue.isEmpty()) {
-			queueElement edit = m_editQueue.dequeue();
-
-			switch (edit.type)
-			{
-			case EDIT::REMOVE_TRACK:
-				emitRemoveTrajectory(edit.trajectory0);
-				break;
-			case EDIT::REMOVE_TRACK_ID:
-				emitRemoveTrajectoryId(edit.id);
-				break;
-			case EDIT::REMOVE_ENTITY:
-				emitRemoveTrackEntity(edit.trajectory0, edit.frameNumber);
-				break;
-			case EDIT::ADD:
-				emitAddTrajectory(edit.pos);
-				break;
-			case EDIT::MOVE:
-				emitMoveElement(edit.trajectory0, edit.frameNumber, edit.pos);
-				break;
-			case EDIT::SWAP:
-				emitSwapIds(edit.trajectory0, edit.trajectory1);
-				break;
-			case EDIT::FIX:
-				emitToggleFixTrack(edit.trajectory0, edit.toggle);
-				break;
-			case EDIT::VALIDATE:
-				emitValidateTrajectory(edit.id);
-				break;
-			case EDIT::VALIDATE_ENTITY:
-				emitValidateEntity(edit.trajectory0, edit.frameNumber);
-				break;
-			case  EDIT::ROTATE_ENTITY:
-				emitEntityRotation(edit.trajectory0, edit.angle, edit.frameNumber);
-				break;
-			}
-		}
-		m_BioTrackerPlugin->receiveCurrentFrameFromMainApp(mat, number);
-	}
 }
 
 void ControllerPlugin::receiveTrackingDone() {

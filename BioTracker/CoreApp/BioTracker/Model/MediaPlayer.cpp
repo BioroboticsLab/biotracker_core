@@ -187,7 +187,7 @@ int MediaPlayer::reopenVideoWriter() {
 	return m_recd;
 }
 
-void MediaPlayer::takeScreenshot(GraphicsView *gv) {
+QString MediaPlayer::takeScreenshot(GraphicsView *gv) {
     //TODO duplicated code
     QRectF rscene = gv->sceneRect(); //0us
     QRectF rview = gv->rect(); //0us
@@ -206,7 +206,11 @@ void MediaPlayer::takeScreenshot(GraphicsView *gv) {
 
     QImage image = pix->toImage(); //8724us
 
-    image.save(getTimeAndDate(CFG_DIR_SCREENSHOTS+std::string("/Screenshot"), ".png").c_str());
+	QString filePath = getTimeAndDate(CFG_DIR_SCREENSHOTS+std::string("/Screenshot"), ".png").c_str();
+
+    image.save(filePath);
+
+	return filePath;
 }
 
 void MediaPlayer::receiveTrackingPaused() {

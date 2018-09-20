@@ -188,25 +188,38 @@ void ControllerAreaDescriptor::mousePressEvent(QMouseEvent *event, const QPoint 
 {
 	auto model = static_cast<AreaInfo*>(getModel());
 
-	int verticeRect = model->_rect->getVerticeAtLocation(pos);
-	if (verticeRect >= 0) {
-		_watchingVertice = verticeRect;
-		_watchingVerticeType = BiotrackerTypes::AreaType::RECT;
-		event->accept();
+	//check if rectification vertice is grabbed and visible
+	RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
+	int verticeRect = -1;
+	if (rd->isVisible()) {
+		verticeRect = model->_rect->getVerticeAtLocation(pos);
+		if (verticeRect >= 0) {
+			_watchingVertice = verticeRect;
+			_watchingVerticeType = BiotrackerTypes::AreaType::RECT;
+			event->accept();
+		}
 	}
 
-	int verticeApp = model->_apperture->getVerticeAtLocation(pos);
-	if (verticeApp >= 0) {
-		_watchingVertice = verticeApp;
-		_watchingVerticeType = BiotrackerTypes::AreaType::APPERTURE;
-		event->accept();
+
+	//check if apperture vertice is grabbed and visible
+	AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
+	int verticeApp = -1;
+	if (ad->isVisible()) {
+		verticeApp = model->_apperture->getVerticeAtLocation(pos);
+		if (verticeApp >= 0) {
+			_watchingVertice = verticeApp;
+			_watchingVerticeType = BiotrackerTypes::AreaType::APPERTURE;
+			event->accept();
+		}
 	}
 
+	//else none is grabbed
 	if (verticeRect < 0 && verticeApp < 0) {
 		_watchingVertice = -1;
 		_watchingVerticeType = BiotrackerTypes::AreaType::NONE;
 	}
 
+	//disable use entire screen when one vertice is grabbed
     if (verticeRect > 0 || verticeApp > 0) {
         AreaInfo* area = static_cast<AreaInfo*>(getModel());
         area->setUseEntireScreen(false);

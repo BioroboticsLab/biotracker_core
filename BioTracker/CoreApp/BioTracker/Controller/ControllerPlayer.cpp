@@ -5,6 +5,7 @@
 #include "Controller/ControllerPlugin.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerTrackedComponentCore.h"
+#include "Controller/ControllerCoreParameter.h"
 
 #include <QGraphicsItem>
 #include <QToolButton>
@@ -18,15 +19,14 @@ ControllerPlayer::~ControllerPlayer()
 {
 }
 
-void ControllerPlayer::loadVideoStream(QString str) {
-    qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(str);
+void ControllerPlayer::loadVideoStream(std::vector<boost::filesystem::path> files) {
+    qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(files);
 	emitPauseState(true);
 }
 
 void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) {
     qobject_cast<MediaPlayer*>(m_Model)->loadPictures(files);
 	emitPauseState(true);
-
 }
 
 void ControllerPlayer::loadCameraDevice(CameraConfiguration conf) {
@@ -97,7 +97,7 @@ void ControllerPlayer::setTargetFps(double fps) {
     return qobject_cast<MediaPlayer*>(m_Model)->setTargetFPS(fps);
 }
 
-void ControllerPlayer::takeScreenshot() {
+QString ControllerPlayer::takeScreenshot() {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::GRAPHICSVIEW);
     QPointer< ControllerGraphicScene > ctrTextureObject = qobject_cast<ControllerGraphicScene*>(ctr);
     return qobject_cast<MediaPlayer*>(m_Model)->takeScreenshot(dynamic_cast<GraphicsView *>(ctrTextureObject->getView()));
@@ -112,11 +112,18 @@ void ControllerPlayer::setTrackingDeactivated() {
 }
 
 void ControllerPlayer::connectControllerToController() {
+	//connect to mainwindow
     IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
     QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
     mainWin->addVideoControllWidget(m_View);
     VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
     vControl->setupVideoToolbar();
+
+	////connect to coreparameterview
+	//IController* ictrCpv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
+	//QPointer< ControllerCoreParameter > ctrCpv = dynamic_cast<ControllerCoreParameter*>(ictrCpv);
+
+	//QObject::connect(this, &ControllerPlayer::emitPauseState, ctrCpv, &ControllercoreParameter)
 }
 
 void ControllerPlayer::createModel() {
@@ -136,7 +143,8 @@ void ControllerPlayer::connectModelToController() {
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::trackCurrentImage, this, &ControllerPlayer::receiveImageToTracker);
     QObject::connect(this, &ControllerPlayer::emitPauseState, qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::rcvPauseState);
 	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalVisualizeCurrentModel, this, &ControllerPlayer::receiveVisualizeCurrentModel);
-	QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::signalCurrentFrameNumberToPlugin, this, &ControllerPlayer::receiveCurrentFrameNumberToPlugin);
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatch, this, &ControllerPlayer::emitNextMediaInBatch);
 
 }
 
