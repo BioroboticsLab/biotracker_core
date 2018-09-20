@@ -1,6 +1,6 @@
 #include "Annotations.h"
 
-#include <math.h>
+#include <cmath>
 #include <fstream>
 
 Annotations::~Annotations() 
