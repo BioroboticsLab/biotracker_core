@@ -17,9 +17,6 @@ set (QT_DIR_CMAKE $ENV{QT_DIR})
 
 set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 
-if(CMAKE_SYSTEM MATCHES "Windows")
-	set(Boost_USE_MULTITHREADED ON)
-endif()
 find_package(Boost REQUIRED system filesystem chrono thread timer program_options)
 
 exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "log --pretty=format:%h -n 1" OUTPUT_VARIABLE VERSION )
