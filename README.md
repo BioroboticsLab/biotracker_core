@@ -14,25 +14,17 @@ Building the Biotracker 3 needs:
 
 ##  Building Biotracker 3 (Windows x64)
 
-Following example will use Visual Studio 2015, OpenCv 3.2, QT 5.9 and boost_1_64, all x64.
-You will need to tell CMake where to find the libraries. You can do this via GUI when asked or set enviromental variables.
-
-Set:  
-- QT_DIR_CMAKE64, E.g. E:\Software\Libraries\QT\5.9\msvc2015_64\lib\cmake\Qt5  
-- CV_DIR_CMAKE64, E.g. E:\Software\Libraries\opencv\build  
-- BOOST_LIBRARYDIR, E.g. E:\Software\Libraries\boost_1_65_1\stage64\lib  
-- BOOST_ROOT, E.g. E:\Software\Libraries\boost_1_65_1  
-Note that your path's and library version may differ.
-
-Building with NVEnc is comming soon. Meanwhile ignore "HMNVLibDir=Not Found", it will build with CPU encoding only.  
-
-Now configure, generate, open and build for Debug/Release. The build is dynamically linked, which means you will need to supply the DLL's to your newly build binary. Qt offers the windeployqt utility. Usage sample, console:  
-C:\Users\Hauke>E:\Software\Libraries\QT\5.9\msvc2015_64\bin\windeployqt.exe E:\Development\Hauke\biotracker_core\BioTracker\CoreApp\BioTracker\Release\Biotracker_core.exe   
-OpenCv does not come with such a utility and you need to copy the DLL's manually from e.g.:   
-E:\Software\Libraries\opencv\build\bin\Release (or Debug, respectively)  
-Boost libraries are not needed to be copied.  
-
-Congratulations! You build the Biotracker 3!
+Note: Building with NVEnc is comming soon. Meanwhile ignore "HMNVLibDir=Not Found", it will build with CPU encoding only.  
+  
+Install and configure the dependencies. E.g. use vcpkg: https://github.com/BioroboticsLab/RF_vcpkg  
+Get the boost packages:  
+vcpkg install  boost-property-tree:x64-windows-14.13 boost-bimap:x64-windows-14.13 boost-assign:x64-windows-14.13 boost-system:x64-windows-14.13 boost-filesystem:x64-windows-14.13 boost-chrono:x64-windows-14.13 boost-timer:x64-windows-14.13 boost-program-options:x64-windows-14.13  
+vcpkg install openblas:x64-windows-14.13 opencv[opengl,ffmpeg,ximea,cuda]:x64-windows-14.13  
+... and Qt systemwide using Qt5_dir  
+Now call cmake with some switches to include vcpkg: -DCMAKE_TOOLCHAIN_FILE=C:/RF_vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-14.13  
+... and build. You might need to copy flang DLL files, as their vcpkg integration is not yet complete.  
+  
+Congratulations! You build the Biotracker 3!  
 
 ##  Building Biotracker 3 (Linux)
 
