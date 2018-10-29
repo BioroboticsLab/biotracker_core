@@ -19,7 +19,7 @@
 
 class CLI {
 public:
-	static int optionParser(int ac, char* av[])
+	static void optionParser(int ac, char* av[])
 	{
 
 		BioTracker::Core::Settings *set = BioTracker::Util::TypedSingleton<BioTracker::Core::Settings>::getInstance(CORE_CONFIGURATION);
