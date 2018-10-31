@@ -1,6 +1,6 @@
 #include "EllipseDescriptor.h"
 #include "Model/AreaDescriptor/AreaInfoElement.h"
-#include "util/misc.h"
+#include "Utility/misc.h"
 
 #include "QBrush"
 #include "QPainter"

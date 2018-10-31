@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IConfig.h"
+#include "Utility/IConfig.h"
 #include <QString>
 #include <map>
 

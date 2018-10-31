@@ -8,13 +8,13 @@
 #include <iostream>
 #include <memory>
 
-#include "util/misc.h"
+#include "Utility/misc.h"
 #ifdef WITH_CUDA
 #include "EncoderInterface.h"
 #endif
 
-#include "util/types.h"
-#include "util/Config.h"
+#include "types.h"
+#include "Config.h"
 
 #define MAXIMUMQUEUE 30
 

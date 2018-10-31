@@ -8,7 +8,7 @@
 
 #include "util/Exceptions.h"
 #include "QSharedPointer"
-#include "util/misc.h"
+#include "Utility/misc.h"
 #include "View/CameraDevice.h"
 #include "util/VideoCoder.h"
 

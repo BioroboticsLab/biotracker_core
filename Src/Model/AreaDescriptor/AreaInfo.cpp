@@ -2,7 +2,7 @@
 
 #include "Rectification.h"
 
-#include "util/misc.h"
+#include "Utility/misc.h"
 #include <qvector.h>
 #include "AreaMemory.h"
 

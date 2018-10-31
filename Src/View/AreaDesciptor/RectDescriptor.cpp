@@ -4,7 +4,7 @@
 #include "QPainter"
 #include <QGraphicsSceneHoverEvent>
 
-#include "util/misc.h"
+#include "Utility/misc.h"
 #include "Model/AreaDescriptor/AreaInfoElement.h"
 #include "Model/AreaDescriptor/AreaInfo.h"
 #include <QGraphicsRectItem>
