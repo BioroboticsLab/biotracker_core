@@ -1,5 +1,4 @@
 GeneratedFiles/
-CMakeLists.txt.user
 desktop.ini
 *.swp
 *.opensdf
@@ -16,12 +15,10 @@ desktop.ini
 .gitignore.swp
 *.bak_*
 *.ini
-*.json
 
 # ignore editor ~ files
 .tags*
 Doxyfile
-CMakeCache.txt
 Makefile
 cmake_install.cmake
 doxygen_sqlite3.db
@@ -58,7 +55,6 @@ doxygen_sqlite3.db
 *.db
 *.opendb
 CMakeFiles
-*.txt
 /BioTracker/*.vspx
 *.cache
 *.csv

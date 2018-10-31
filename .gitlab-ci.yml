@@ -1,0 +1,115 @@
+stages:
+  - build
+  - package
+  
+.base ubuntu-18.04: &base_ubuntu_18_04
+  tags: [ linux, docker ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:ubuntu-18.04
+
+.base windows: &base_windows
+  tags: [ windows, docker ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:windows
+
+build ubuntu-18.04:
+  stage: build
+  <<: *base_ubuntu_18_04
+  variables:
+    CC: gcc-8
+    CXX: g++-8
+  artifacts:
+    paths:
+      - dependencies
+      - build
+    expire_in: 1 day
+  before_script:
+    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3608/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
+    - 7z e artifacts.zip
+    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3610/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
+    - 7z e artifacts.zip
+    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3474/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
+    - 7z e artifacts.zip
+    - 7z e '*.tar.xz' -y; rm *.tar.xz; 7z x '*.tar'; rm *.tar
+    - mkdir dependencies
+    - name='BT_Interfaces'; mv $name-* dependencies/$name
+    - name='BT_Utility'; mv $name-* dependencies/$name
+    - name='RF_behavior_loader'; mv $name-* dependencies/$name
+    - export CMAKE_PREFIX_PATH="$(pwd)/dependencies"
+  script:
+    - cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH="dependencies"
+    - ninja -C build
+
+build windows:
+  stage: build
+  <<: *base_windows
+  artifacts:
+    paths:
+      - build
+      - dependencies
+    expire_in: 1 day
+  before_script:
+    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3608/jobs/artifacts/master/download?job=package%20windows"'
+    - 7z e artifacts.zip
+    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3610/jobs/artifacts/master/download?job=package%20windows"'
+    - 7z e artifacts.zip
+    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3474/jobs/artifacts/master/download?job=package%20windows"'
+    - 7z e artifacts.zip
+    - 7z e *.tar.xz; Remove-Item -Force *.tar.xz; 7z x *.tar; Remove-Item -Force *.tar
+    - New-Item -ItemType Directory -Force 'dependencies'
+    - $name='BT_Interfaces'; Move-Item -Force "$name-*" dependencies/$name
+    - $name='BT_Utility'; Move-Item -Force "$name-*" dependencies/$name
+    - $name='RF_behavior_loader'; Move-Item -Force "$name-*" dependencies/$name
+    - $env:PACKAGE_DIR = ("$env:TMP/pkg" -Replace "\\","/")
+    - $wd = (Get-Item -Path '.').FullName
+    - $env:CMAKE_PREFIX_PATH="$wd/dependencies;$env:VCPKG_INSTALL_DIR"
+    - $env:PATH += ";$env:VCPKG_INSTALL_DIR/bin;$wd/dependencies/BT_Interfaces/bin/"
+    - C:/VsDevEnv.ps1 -arch=amd64
+  script:
+    - cmake -Bbuild "-H." -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH="$Env:VCPKG_INSTALL_DIR" -DCPACK_PACKAGE_DIRECTORY="$env:package_dir" -DPACKAGE_WINDOWS_MSI=ON -DINSTALL_SHARED_LIBRARIES='bt_interfaces;jpeg62;libpng16;tiff;flang;flangrti;libomp;zlib1;openblas;lzma;boost_system*;boost_program_options*;boost_filesystem*' -DINSTALL_OPENCV_COMPONENTS='calib3d;videoio;imgcodecs;imgproc;core;ffmpeg;features2d;flann' -DCMAKE_SUPPRESS_REGENERATION=ON -DCMAKE_SKIP_PACKAGE_ALL_DEPENDENCY=ON
+    - ninja -C build
+    
+.package windows: &package_windows
+  stage: package
+  artifacts:
+    paths:
+      - build/*.msi
+    expire_in: 1 week
+
+package windows:
+  <<: *base_windows
+  dependencies: 
+    - build windows
+  <<: *package_windows
+  before_script:
+    - $env:PACKAGE_DIR = ("$env:TMP/pkg" -Replace "\\","/")
+    - $wd = (Get-Item -Path '.').FullName
+    - $env:PATH += ";$env:VCPKG_INSTALL_DIR/bin;$wd/dependencies/BT_Interfaces/bin"
+  script:
+    - ninja -C build package
+    - Copy-Item "$env:package_dir/*" build -Recurse
+    
+
+package ubuntu-18.04:
+  stage: package
+  tags: [ linux, docker_privileged ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:ubuntu-18.04
+  dependencies:
+    - build ubuntu-18.04
+  artifacts:
+    paths:
+      - build/*.AppImage
+    expire_in: 1 week
+  before_script:
+      - apt-get update
+      - apt-get install -y fuse
+      - curl -sSL -o /usr/local/bin/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+      - chmod +x /usr/local/bin/linuxdeployqt
+  script:
+    - mkdir -p build/appdir/usr/bin
+    - mkdir -p build/appdir/usr/share/applications
+    - mkdir -p build/appdir/usr/share/icons/hicolor/256x256
+    - cp build/Src/BioTracker build/appdir/usr/bin
+    - cp Src/BioTracker.desktop build/appdir/usr/share/applications
+    - cp Src/resources/logo/BT3-big.png build/appdir/usr/share/icons/hicolor/256x256
+    - cd build
+    - linuxdeployqt appdir/usr/share/applications/BioTracker.desktop -appimage -no-translations
+    

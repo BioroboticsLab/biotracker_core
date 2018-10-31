@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=BioTracker
+Exec=BioTracker
+Icon=BT3-big
+Comment=Tracking application
+Terminal=true
+Categories=Science;

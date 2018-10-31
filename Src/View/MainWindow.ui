@@ -1,0 +1,1378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1022</width>
+    <height>565</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BioTracker</string>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>30</width>
+    <height>30</height>
+   </size>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QSplitter" name="mainSplitter">
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="handleWidth">
+          <number>10</number>
+         </property>
+         <property name="childrenCollapsible">
+          <bool>false</bool>
+         </property>
+         <widget class="QWidget" name="videoAreaWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="trackingArea">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>100</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" name="videoViewLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="videoInfoWidget" native="true">
+             <property name="toolTip">
+              <string>Current cursor position in pixels (top-left is 0,0)</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="bottomPanelViewControllerWidget" native="true">
+             <property name="toolTip">
+              <string>Hide the slider</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="bottomPanelViewControllerButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>v</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="videoControls" native="true">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>200</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="rightPanelWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>true</bool>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="rightPanelLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
+             </property>
+             <item>
+              <widget class="QWidget" name="rightPanelViewControllerWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="rightPanelViewControllerButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>15</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>50</weight>
+                    <italic>false</italic>
+                    <bold>false</bold>
+                    <underline>false</underline>
+                    <strikeout>false</strikeout>
+                    <kerning>true</kerning>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>&gt;</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>false</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                  <property name="autoDefault">
+                   <bool>false</bool>
+                  </property>
+                  <property name="default">
+                   <bool>false</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widgetParameterAreaOuterCanvas" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QComboBox" name="comboBox_TrackerSelect">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Select the desired tracker</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolBox" name="toolBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>1</number>
+                  </property>
+                  <property name="currentIndex">
+                   <number>3</number>
+                  </property>
+                  <widget class="QWidget" name="experimentItem">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>743</width>
+                     <height>304</height>
+                    </rect>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Manage your experiment</string>
+                   </property>
+                   <attribute name="label">
+                    <string>Experiment</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_6"/>
+                  </widget>
+                  <widget class="QWidget" name="visualizationTool">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>743</width>
+                     <height>304</height>
+                    </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>Set preferences for visualization</string>
+                   </property>
+                   <attribute name="label">
+                    <string>Visualization options</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_4">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QWidget" name="widget_alg" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="trackerOptions">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>743</width>
+                     <height>304</height>
+                    </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>Set preferences for the current tracker</string>
+                   </property>
+                   <attribute name="label">
+                    <string>Tracker options</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_5">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QWidget" name="widget_trackP" native="true"/>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="howto">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>743</width>
+                     <height>304</height>
+                    </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>A short stepwise tutorial</string>
+                   </property>
+                   <attribute name="label">
+                    <string>How to use the BioTracker</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_3">
+                    <item>
+                     <widget class="QTextBrowser" name="textBrowser">
+                      <property name="palette">
+                       <palette>
+                        <active>
+                         <colorrole role="Base">
+                          <brush brushstyle="SolidPattern">
+                           <color alpha="255">
+                            <red>238</red>
+                            <green>238</green>
+                            <blue>236</blue>
+                           </color>
+                          </brush>
+                         </colorrole>
+                        </active>
+                        <inactive>
+                         <colorrole role="Base">
+                          <brush brushstyle="SolidPattern">
+                           <color alpha="255">
+                            <red>238</red>
+                            <green>238</green>
+                            <blue>236</blue>
+                           </color>
+                          </brush>
+                         </colorrole>
+                        </inactive>
+                        <disabled>
+                         <colorrole role="Base">
+                          <brush brushstyle="SolidPattern">
+                           <color alpha="255">
+                            <red>239</red>
+                            <green>235</green>
+                            <blue>231</blue>
+                           </color>
+                          </brush>
+                         </colorrole>
+                        </disabled>
+                       </palette>
+                      </property>
+                      <property name="autoFillBackground">
+                       <bool>true</bool>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="html">
+                       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;The BioTracker is a modular tracking software consisting of a core management framework and various trackers which you can 'plug in'. You can track on videos, picture and camera streams.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt; font-weight:600;&quot;&gt;Basic steps&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Load a medium (video, picture or camera stream)  &lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Load a tracker (usually trackers are preloaded from the 'Plugins' directory)  &lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the desired tracker options     &lt;/li&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:8pt; font-style:italic;&quot;&gt;(This often takes some time to figure out)&lt;/span&gt;&lt;/p&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can also set up a rectification in the 'Visualization options' tab&lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can manage the tracking and trials in the 'Experiment' tab&lt;/li&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Insert the objects to track if the tracker does not generate them automatically&lt;/li&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:8pt; font-style:italic;&quot;&gt;(If you want to track two objects, add two tracks by right clicking the video or using the button on the left toolbar)&lt;/span&gt;&lt;/p&gt;
+&lt;li style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Start tracking by having the tracking activated and playing the video!&lt;/li&gt;&lt;/ol&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;More information on how to use the BioTracker can be found in the &lt;/span&gt;&lt;a href=&quot;https://github.com/BioroboticsLab/biotracker_core/wiki&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;user guide&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:9pt;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="openExternalLinks">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="notificationTab">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>743</width>
+                     <height>304</height>
+                    </rect>
+                   </property>
+                   <property name="toolTip">
+                    <string>Displays the notifications of the tracker and main application </string>
+                   </property>
+                   <attribute name="label">
+                    <string>Notifications</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_9">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1022</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen_Video"/>
+    <addaction name="actionOpen_Video_batch"/>
+    <addaction name="actionOpen_Picture"/>
+    <addaction name="actionOpen_Camera"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_Tracker"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_trackingdata"/>
+    <addaction name="actionSave_trackingdata"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowActionList"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuToolbars">
+     <property name="title">
+      <string>Toolbars</string>
+     </property>
+     <addaction name="actionToggle_menu_toolbar"/>
+     <addaction name="actionToggle_video_toolbar"/>
+     <addaction name="actionToggle_view_toolbar"/>
+     <addaction name="separator"/>
+     <addaction name="actionToggle_compact_menu_toolbar_2"/>
+    </widget>
+    <addaction name="menuToolbars"/>
+    <addaction name="separator"/>
+    <addaction name="actionRight_panel"/>
+    <addaction name="actionBottom_panel"/>
+    <addaction name="actionToggle_fullscreen"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionUser_guide"/>
+    <addaction name="actionShortcuts"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_introduction"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuGo_to">
+    <property name="title">
+     <string>Go to</string>
+    </property>
+    <addaction name="actionOpen_Plugins_directory"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_Track_directory"/>
+    <addaction name="actionOpen_Trial_directory"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_Screenshot_directory"/>
+    <addaction name="actionOpen_Videos_directory"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuGo_to"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>212</red>
+         <green>212</green>
+         <blue>212</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </disabled>
+    </palette>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBarMenu">
+   <property name="windowTitle">
+    <string>Menu toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Tools for managing the basic functionalities</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QGroupBox {
+	border: 1px solid #e5e5e5;
+	border-radius: 5px; 
+	spacing: 1px; 
+	padding: 3px; 
+	margin-top: 1ex; /* leave space at the top for the title */}
+
+QGroupBox::title{
+	subcontrol-origin: margin;
+	subcontrol-position: top center; 
+	padding: 0 3px;}
+
+QToolButton {
+	padding: 5px; 
+	margin: 0px}</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarTools">
+   <property name="windowTitle">
+    <string>View toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Tools to manage the visualization and track properties</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionAdd_Track"/>
+   <addaction name="actionDelete_selected_tracks"/>
+   <addaction name="actionSwap_ID_s"/>
+   <addaction name="actionSelect_all"/>
+   <addaction name="actionChange_the_border_color"/>
+   <addaction name="actionChange_the_fill_color"/>
+   <addaction name="separator"/>
+   <addaction name="actionAdd_label_Annotation"/>
+   <addaction name="actionAdd_arrow_annotation"/>
+   <addaction name="actionAdd_rectangular_annotation"/>
+   <addaction name="actionAdd_elliptical_annotation"/>
+   <addaction name="actionDelete_selected_Annotation"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarVideo">
+   <property name="windowTitle">
+    <string>Video toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Tools to manage the media properties and to show media info</string>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>BottomToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="actionOpen_Video">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/file-play.png</normaloff>:/Images/resources/upper_toolbar/file-play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Video...</string>
+   </property>
+   <property name="iconText">
+    <string>Open Video</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Video file from your computer</string>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="shortcut">
+    <string/>
+   </property>
+  </action>
+  <action name="actionOpen_Picture">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/file-picture.png</normaloff>:/Images/resources/upper_toolbar/file-picture.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Picture...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Picture from your computer</string>
+   </property>
+  </action>
+  <action name="actionLoad_tracking_data">
+   <property name="text">
+    <string>&amp;Load tracking data...</string>
+   </property>
+  </action>
+  <action name="actionSave_tracking_data">
+   <property name="text">
+    <string>&amp;Save tracking data...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="toolTip">
+    <string> Close BioTracker program</string>
+   </property>
+  </action>
+  <action name="actionLoad_Tracker">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/tracker2.png</normaloff>:/Images/resources/upper_toolbar/tracker2.png</iconset>
+   </property>
+   <property name="text">
+    <string>L&amp;oad Tracker...</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Tracker file from your computer</string>
+   </property>
+  </action>
+  <action name="actionOpen_Camera">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/video-camera.png</normaloff>:/Images/resources/upper_toolbar/video-camera.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Camera...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Camera stream</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Show settings</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/undo2.png</normaloff>:/Images/resources/upper_toolbar/undo2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo the last entity action</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/redo2.png</normaloff>:/Images/resources/upper_toolbar/redo2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo the next entity action if possible</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionShowActionList">
+   <property name="text">
+    <string>Show command list</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the action list containing all actions</string>
+   </property>
+  </action>
+  <action name="actionLoad_trackingdata">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/upload.png</normaloff>:/Images/resources/upper_toolbar/upload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Trajectory</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Trajectory file (loaded tracker needed)</string>
+   </property>
+  </action>
+  <action name="actionSave_trackingdata">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/upper_toolbar/save.png</normaloff>:/Images/resources/upper_toolbar/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Trajectory</string>
+   </property>
+   <property name="toolTip">
+    <string>Save current trajectory data to file</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>Show program info</string>
+   </property>
+  </action>
+  <action name="actionShortcuts">
+   <property name="text">
+    <string>Shortcuts</string>
+   </property>
+   <property name="toolTip">
+    <string>Show list of available shortcuts</string>
+   </property>
+  </action>
+  <action name="actionAdd_Track">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/add-track.png</normaloff>:/Images/resources/left_toolbar/add-track.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Track</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a Trajectory for an object</string>
+   </property>
+   <property name="shortcut">
+    <string>+</string>
+   </property>
+  </action>
+  <action name="actionAdd_label_Annotation">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/anno-label.png</normaloff>:/Images/resources/left_toolbar/anno-label.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add label Annotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a label annotation to the position of the next left click in the video</string>
+   </property>
+  </action>
+  <action name="actionAdd_rectangular_annotation">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/anno-rect.png</normaloff>:/Images/resources/left_toolbar/anno-rect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add rectangular annotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a rectangular annotation to the position of the next left click in the video</string>
+   </property>
+  </action>
+  <action name="actionAdd_arrow_annotation">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/anno-arrow.png</normaloff>:/Images/resources/left_toolbar/anno-arrow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add arrow annotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a arrow annotation to the position of the next left click in the video</string>
+   </property>
+  </action>
+  <action name="actionAdd_elliptical_annotation">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/anno-ellipse.png</normaloff>:/Images/resources/left_toolbar/anno-ellipse.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add elliptical annotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a elliptical annotation to the position of the next left click in the video</string>
+   </property>
+  </action>
+  <action name="actionDelete_selected_Annotation">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/anno-del.png</normaloff>:/Images/resources/left_toolbar/anno-del.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete selected Annotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Deletes the currently selected annotation</string>
+   </property>
+  </action>
+  <action name="actionDelete_selected_tracks">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/delete-track.png</normaloff>:/Images/resources/left_toolbar/delete-track.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete selected track</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the selected trajectories</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionChange_the_border_color">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/color-border.png</normaloff>:/Images/resources/left_toolbar/color-border.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change the border color</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the border color of selected entities</string>
+   </property>
+  </action>
+  <action name="actionChange_the_fill_color">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/color-fill.png</normaloff>:/Images/resources/left_toolbar/color-fill.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change the fill color</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the fill color of selected entities</string>
+   </property>
+  </action>
+  <action name="actionToggle_compact_menu_toolbar_2">
+   <property name="text">
+    <string>Toggle compact menu toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle compact/informative menu toolbar</string>
+   </property>
+  </action>
+  <action name="actionToggle_menu_toolbar">
+   <property name="text">
+    <string>Hide menu toolbar</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle menu toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show menu toolbar</string>
+   </property>
+  </action>
+  <action name="actionToggle_view_toolbar">
+   <property name="text">
+    <string>Hide view toolbar</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle view toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show view toolbar</string>
+   </property>
+  </action>
+  <action name="actionRight_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Right panel</string>
+   </property>
+  </action>
+  <action name="actionBottom_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Bottom panel</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle hide/show bottom panel</string>
+   </property>
+  </action>
+  <action name="actionSelect_all">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/select-all.png</normaloff>:/Images/resources/left_toolbar/select-all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select all</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all tracks</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionSwap_ID_s">
+   <property name="icon">
+    <iconset resource="../guiresources.qrc">
+     <normaloff>:/Images/resources/left_toolbar/swap.png</normaloff>:/Images/resources/left_toolbar/swap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Swap ID's</string>
+   </property>
+   <property name="toolTip">
+    <string>Swap ID's of two selected tracks</string>
+   </property>
+  </action>
+  <action name="actionUser_guide">
+   <property name="text">
+    <string>User guide</string>
+   </property>
+  </action>
+  <action name="actionVideo_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Video panel</string>
+   </property>
+  </action>
+  <action name="actionToggle_video_toolbar">
+   <property name="text">
+    <string>Hide video toolbar</string>
+   </property>
+  </action>
+  <action name="actionShow_introduction">
+   <property name="text">
+    <string>Show introduction</string>
+   </property>
+  </action>
+  <action name="actionToggle_fullscreen">
+   <property name="text">
+    <string>Toggle fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionOpen_Track_directory">
+   <property name="text">
+    <string>Open Tracks directory</string>
+   </property>
+  </action>
+  <action name="actionOpen_Trial_directory">
+   <property name="text">
+    <string>Open Trials directory</string>
+   </property>
+  </action>
+  <action name="actionOpen_Screenshot_directory">
+   <property name="text">
+    <string>Open Screenshots directory</string>
+   </property>
+  </action>
+  <action name="actionOpen_Videos_directory">
+   <property name="text">
+    <string>Open Videos directory</string>
+   </property>
+  </action>
+  <action name="actionOpen_Plugins_directory">
+   <property name="text">
+    <string>Open Plugins directory</string>
+   </property>
+  </action>
+  <action name="actionOpen_Video_batch">
+   <property name="text">
+    <string>Open Video Batch...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../guiresources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
