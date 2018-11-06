@@ -3,8 +3,11 @@
 ##############################################################
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
-
-include(BT_Utility/VSSugar)
+if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+    include(BT_Utility/VSSugar)
+else()
+    include(${BT_Utility_SOURCE_DIR}/cmake/VSSugar.cmake)
+endif()
 VSSourceGroups(${CMAKE_CURRENT_LIST_DIR})
 
 add_definitions(-DBIORACKER_GIT_HASH="${GIT_HASH}")

@@ -21,8 +21,10 @@ set(CMAKE_AUTORCC ON)
 
 set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 
-find_package(BT_Utility 0.1.1 REQUIRED)
-find_package(RF_behavior_loader 0.1.1 REQUIRED)
+if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+    find_package(BT_Utility 0.1.1 REQUIRED)
+    find_package(RF_behavior_loader 0.1.1 REQUIRED)
+endif()
 
 add_subdirectory(Src)
 
