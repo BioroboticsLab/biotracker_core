@@ -3,7 +3,7 @@
 ##############################################################
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
-if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+if( CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR )
     include(BT_Utility/VSSugar)
 else()
     include(${BT_Utility_SOURCE_DIR}/cmake/VSSugar.cmake)
