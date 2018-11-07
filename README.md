@@ -1,5 +1,7 @@
 # README
 
+[![Build Status](https://git.imp.fu-berlin.de/bioroboticslab/biotracker/biotracker/badges/master/build.svg)](https://git.imp.fu-berlin.de/bioroboticslab/biotracker/biotracker/pipelines)
+
 ## Running Biotracker 3 from prebuild binaries:
 
 Binaries are distributed via Github: https://github.com/BioroboticsLab/biotracker_core/releases
