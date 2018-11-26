@@ -62,7 +62,8 @@ build windows:
     - $wd = (Get-Item -Path '.').FullName
     - $env:CMAKE_PREFIX_PATH="$wd/dependencies;$env:VCPKG_INSTALL_DIR"
     - $env:PATH += ";$env:VCPKG_INSTALL_DIR/bin;$wd/dependencies/BT_Interfaces/bin/"
-    - C:/VsDevEnv.ps1 -arch=amd64
+    - . /Library.ps1
+    - VSDevEnv -arch=amd64 -vcvars_ver="14.15"
   script:
     - cmake -Bbuild "-H." -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH="$Env:VCPKG_INSTALL_DIR" -DCPACK_PACKAGE_DIRECTORY="$env:package_dir" -DPACKAGE_WINDOWS_MSI=ON -DINSTALL_SHARED_LIBRARIES='bt_interfaces;jpeg62;libpng16;tiff;flang;flangrti;libomp;zlib1;openblas;lzma;boost_system*;boost_program_options*;boost_filesystem*' -DINSTALL_OPENCV_COMPONENTS='calib3d;videoio;imgcodecs;imgproc;core;ffmpeg;features2d;flann' -DCMAKE_SUPPRESS_REGENERATION=ON -DCMAKE_SKIP_PACKAGE_ALL_DEPENDENCY=ON
     - ninja -C build
