@@ -1,109 +1,106 @@
 stages:
   - build
   - package
-  
-.base ubuntu-18.04: &base_ubuntu_18_04
-  tags: [ linux, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:ubuntu-18.04
+  - deploy
 
-.base windows: &base_windows
+
+.ubuntu-18.04:
+  tags: [ linux, docker ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-ubuntu18.04
+
+.windows:
   tags: [ windows, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:windows
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows
+
+.windows[cuda]:
+  tags: [ windows, docker ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:cuda-devel-windows
+
+
+.gcc8: &gcc8
+  CC: gcc-8
+  CXX: g++-8
+
+.msvc15.9: &msvc15_9
+  VSDevEnv -arch=amd64 -vcvars_ver="14.16"
+
+.pylon5: &pylon5
+  WITH_PYLON5: 1
+
+.debug: &debug
+  CMAKE_BUILD_TYPE: Debug
+
+.release: &release
+  CMAKE_BUILD_TYPE: Release
+
+
+.build ubuntu-18.04:
+  extends: .ubuntu-18.04
+  stage: build
+  artifacts:
+    paths:
+      - vendor
+      - build
+    expire_in: 1 day
+  script:
+    - cmake -Bbuild -H. -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" -G Ninja -DCMAKE_SUPPRESS_REGENERATION=ON -DCMAKE_SKIP_PACKAGE_ALL_DEPENDENCY=ON
+    - ninja -C build
+
+.build windows:
+  extends: .windows
+  stage: build
+  artifacts:
+    paths:
+      - vendor
+      - build
+    expire_in: 1 day
+  script:
+    - cmake -Bbuild "-H." -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" -G Ninja -DPACKAGE_WINDOWS_MSI=ON -DINSTALL_REQUIRED_SYSTEM_LIBRARIES=ON -DINSTALL_SHARED_LIBRARIES='flang;flangrti;libomp;zlib1;tiff;tiffxx;jpeg62;libpng16;lzma;openblas' -DINSTALL_OPENCV_COMPONENTS='core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab' -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET="$env:VCPKG_TRIPLET" -DCMAKE_SUPPRESS_REGENERATION=ON -DCMAKE_SKIP_PACKAGE_ALL_DEPENDENCY=ON -DCPACK_PACKAGE_DIRECTORY="${env:PACKAGE_DIR}"
+    - ninja -C build
 
 build ubuntu-18.04:
-  stage: build
-  <<: *base_ubuntu_18_04
+  extends: .build ubuntu-18.04
   variables:
-    CC: gcc-8
-    CXX: g++-8
-  artifacts:
-    paths:
-      - dependencies
-      - build
-    expire_in: 1 day
+    <<: [ *gcc8, *release ]
   before_script:
-    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3608/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
-    - 7z e artifacts.zip
-    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3610/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
-    - 7z e artifacts.zip
-    - 'curl -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3474/jobs/artifacts/master/download?job=package%20ubuntu-18.04"'
-    - 7z e artifacts.zip
-    - 7z e '*.tar.xz' -y; rm *.tar.xz; 7z x '*.tar'; rm *.tar
-    - mkdir dependencies
-    - name='BT_Interfaces'; mv $name-* dependencies/$name
-    - name='BT_Utility'; mv $name-* dependencies/$name
-    - name='RF_behavior_loader'; mv $name-* dependencies/$name
-    - export CMAKE_PREFIX_PATH="$(pwd)/dependencies"
-  script:
-    - cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH="dependencies"
-    - ninja -C build
+    - . /etc/profile.d/robofish.sh
+    - gitlab-fetch-artifacts bioroboticslab%2biotracker%2Finterfaces master package%20ubuntu-18.04
+    - cmake-integrate-package BT_Interfaces
+    - gitlab-fetch-artifacts bioroboticslab%2Fbiotracker%2Futility master package%20ubuntu-18.04
+    - cmake-integrate-package BT_Utility
+    - gitlab-fetch-artifacts bioroboticslab%2Fbiotracker%2Fbehavior_loader master package%20ubuntu-18.04
+    - cmake-integrate-package robofish-behavior_loader
 
 build windows:
-  stage: build
-  <<: *base_windows
-  artifacts:
-    paths:
-      - build
-      - dependencies
-    expire_in: 1 day
+  extends: .build windows
+  variables:
+    <<: [ *release ]
   before_script:
-    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3608/jobs/artifacts/master/download?job=package%20windows"'
-    - 7z e artifacts.zip
-    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3610/jobs/artifacts/master/download?job=package%20windows"'
-    - 7z e artifacts.zip
-    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3474/jobs/artifacts/master/download?job=package%20windows"'
-    - 7z e artifacts.zip
-    - 7z e *.tar.xz; Remove-Item -Force *.tar.xz; 7z x *.tar; Remove-Item -Force *.tar
-    - New-Item -ItemType Directory -Force 'dependencies'
-    - $name='BT_Interfaces'; Move-Item -Force "$name-*" dependencies/$name
-    - $name='BT_Utility'; Move-Item -Force "$name-*" dependencies/$name
-    - $name='RF_behavior_loader'; Move-Item -Force "$name-*" dependencies/$name
-    - $env:PACKAGE_DIR = ("$env:TMP/pkg" -Replace "\\","/")
-    - $wd = (Get-Item -Path '.').FullName
-    - $env:CMAKE_PREFIX_PATH="$wd/dependencies;$env:VCPKG_INSTALL_DIR"
-    - $env:PATH += ";$env:VCPKG_INSTALL_DIR/bin;$wd/dependencies/BT_Interfaces/bin/"
-    - . /Library.ps1
-    - VSDevEnv -arch=amd64 -vcvars_ver="14.15"
-  script:
-    - cmake -Bbuild "-H." -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_PREFIX_PATH="$Env:VCPKG_INSTALL_DIR" -DCPACK_PACKAGE_DIRECTORY="$env:package_dir" -DPACKAGE_WINDOWS_MSI=ON -DINSTALL_SHARED_LIBRARIES='bt_interfaces;jpeg62;libpng16;tiff;flang;flangrti;libomp;zlib1;openblas;lzma;boost_system*;boost_program_options*;boost_filesystem*' -DINSTALL_OPENCV_COMPONENTS='calib3d;videoio;imgcodecs;imgproc;core;ffmpeg;features2d;flann' -DCMAKE_SUPPRESS_REGENERATION=ON -DCMAKE_SKIP_PACKAGE_ALL_DEPENDENCY=ON
-    - ninja -C build
+    - . $Profile
+    - *msvc15_9
+    - GitLab-Fetch-Artifacts bioroboticslab%2biotracker%2Finterfaces master package%20windows
+    - CMake-Integrate-Package BT_Interfaces
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Futility master package%20windows
+    - CMake-Integrate-Package BT_Utility
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Fbehavior_loader master package%20windows
+    - CMake-Integrate-Package robofish-behavior_loader
+    - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
+    - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
+    - $env:PATH += ";$(resolve-path vendor/robofish-interfaces/bin)"
     
-.package windows: &package_windows
-  stage: package
-  artifacts:
-    paths:
-      - build/*.msi
-    expire_in: 1 week
-
-package windows:
-  <<: *base_windows
-  dependencies: 
-    - build windows
-  <<: *package_windows
-  before_script:
-    - $env:PACKAGE_DIR = ("$env:TMP/pkg" -Replace "\\","/")
-    - $wd = (Get-Item -Path '.').FullName
-    - $env:PATH += ";$env:VCPKG_INSTALL_DIR/bin;$wd/dependencies/BT_Interfaces/bin"
-  script:
-    - ninja -C build package
-    - Copy-Item "$env:package_dir/*" build -Recurse
-    
-
 package ubuntu-18.04:
-  stage: package
-  tags: [ linux, docker_privileged ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:ubuntu-18.04
+  extends: .ubuntu-18.04
   dependencies:
     - build ubuntu-18.04
+  stage: package
+  tags: [ linux, docker_privileged ]
   artifacts:
     paths:
       - build/*.AppImage
     expire_in: 1 week
   before_script:
-      - apt-get update
-      - apt-get install -y fuse
-      - curl -sSL -o /usr/local/bin/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-      - chmod +x /usr/local/bin/linuxdeployqt
+    - . /etc/profile.d/robofish.sh
+    - cmake-enable-package-discovery BT_Interfaces
   script:
     - mkdir -p build/appdir/usr/bin
     - mkdir -p build/appdir/usr/share/applications
@@ -113,4 +110,23 @@ package ubuntu-18.04:
     - cp Src/resources/logo/BT3-big.png build/appdir/usr/share/icons/hicolor/256x256
     - cd build
     - linuxdeployqt appdir/usr/share/applications/BioTracker.desktop -appimage -no-translations
-    
+
+.package windows:
+  extends: .windows
+  stage: package
+  artifacts:
+    paths:
+      - build/*.msi
+    expire_in: 1 week
+  script:
+    - ninja -C build package
+    - Copy-Item "$env:PACKAGE_DIR/*" build -Recurse
+
+package windows:
+  extends: .package windows
+  dependencies:
+    - build windows
+  before_script:
+    - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
+    - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
+    - $env:PATH += ";$(resolve-path vendor/robofish-interfaces/bin)"

@@ -23,7 +23,7 @@ set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 
 if( CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR )
     find_package(BT_Utility 0.1.1 REQUIRED)
-    find_package(RF_behavior_loader 0.1.1 REQUIRED)
+    find_package(robofish-behavior_loader 0.1.1 REQUIRED)
 endif()
 
 add_subdirectory(Src)

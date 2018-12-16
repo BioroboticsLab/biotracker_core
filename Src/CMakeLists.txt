@@ -19,7 +19,7 @@ add_executable (${TN})
 target_include_directories(${TN} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 target_link_libraries (${TN} BT_Utility)
-target_link_libraries (${TN} RF_behavior_loader)
+target_link_libraries (${TN} robofish-behavior_loader)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Xml Network Widgets Multimedia MultimediaWidgets OpenGL)
 target_link_libraries (${TN} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets)
