@@ -90,7 +90,7 @@ QVariant TrackedComponentView::itemChange(GraphicsItemChange change, const QVari
 }
 
 void TrackedComponentView::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-	// right clicking the view unselects all selected items so do this to avoid this behaviour
+	// right clicking the view unselects all selected items so do this to avoid this behavior
 	if (event->button() != Qt::LeftButton) {
 		event->accept();
 		return;
