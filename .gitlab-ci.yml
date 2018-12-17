@@ -86,7 +86,7 @@ build windows:
     - CMake-Integrate-Package robofish-behavior_loader
     - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
     - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
-    - $env:PATH += ";$(resolve-path vendor/robofish-interfaces/bin)"
+    - $env:PATH += ";$(resolve-path vendor/BT_Interfaces/bin)"
 
 package ubuntu-18.04:
   extends: .ubuntu-18.04
@@ -129,4 +129,4 @@ package windows:
   before_script:
     - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
     - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
-    - $env:PATH += ";$(resolve-path vendor/robofish-interfaces/bin)"
+    - $env:PATH += ";$(resolve-path vendor/BT_Interfaces/bin)"
