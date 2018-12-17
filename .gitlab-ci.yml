@@ -64,7 +64,7 @@ build ubuntu-18.04:
     <<: [ *gcc8, *release ]
   before_script:
     - . /etc/profile.d/robofish.sh
-    - gitlab-fetch-artifacts bioroboticslab%2biotracker%2Finterfaces master package%20ubuntu-18.04
+    - gitlab-fetch-artifacts bioroboticslab%2Fbiotracker%2Finterfaces master package%20ubuntu-18.04
     - cmake-integrate-package BT_Interfaces
     - gitlab-fetch-artifacts bioroboticslab%2Fbiotracker%2Futility master package%20ubuntu-18.04
     - cmake-integrate-package BT_Utility
@@ -78,7 +78,7 @@ build windows:
   before_script:
     - . $Profile
     - *msvc15_9
-    - GitLab-Fetch-Artifacts bioroboticslab%2biotracker%2Finterfaces master package%20windows
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Finterfaces master package%20windows
     - CMake-Integrate-Package BT_Interfaces
     - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Futility master package%20windows
     - CMake-Integrate-Package BT_Utility
