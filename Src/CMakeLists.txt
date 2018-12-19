@@ -90,7 +90,7 @@ endif()
 set(CPACK_PACKAGE_NAME "${target}")
 set(CPACK_PACKAGE_VENDOR "Biorobotics Lab / FU Berlin")
 
-set(CPACK_PACKAGE_VERSION ${Version})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     option(PACKAGE_WINDOWS_MSI "Create .msi package" OFF)

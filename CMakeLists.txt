@@ -1,11 +1,11 @@
 ﻿cmake_minimum_required(VERSION 3.13)
 
-file(READ version.txt Version)
+file(READ VERSION PROJECT_VERSION)
 exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "log --pretty=format:%h -n 1" OUTPUT_VARIABLE GIT_HASH)
 exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "describe --tags --abbrev=0" OUTPUT_VARIABLE GIT_TAG)
 
 project(BioTracker
-    VERSION ${Version}
+    VERSION ${PROJECT_VERSION}
     LANGUAGES CXX
 )
 
