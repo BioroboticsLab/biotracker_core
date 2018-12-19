@@ -1,13 +1,11 @@
-﻿cmake_minimum_required(VERSION 3.12)
+﻿cmake_minimum_required(VERSION 3.13)
 
-cmake_policy(SET CMP0020 NEW)
-cmake_policy(SET CMP0054 NEW)
-
+file(READ version.txt Version)
 exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "log --pretty=format:%h -n 1" OUTPUT_VARIABLE GIT_HASH)
 exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "describe --tags --abbrev=0" OUTPUT_VARIABLE GIT_TAG)
 
 project(BioTracker
-    VERSION ${GIT_TAG}
+    VERSION ${Version}
     LANGUAGES CXX
 )
 
@@ -22,8 +20,8 @@ set(CMAKE_AUTORCC ON)
 set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 
 if( CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR )
-    find_package(BT_Utility 0.1.1 REQUIRED)
-    find_package(robofish-behavior_loader 0.1.1 REQUIRED)
+    find_package(biotracker-utility 0.2 REQUIRED)
+    find_package(robofish-behavior_loader 0.2 REQUIRED)
 endif()
 
 add_subdirectory(Src)
