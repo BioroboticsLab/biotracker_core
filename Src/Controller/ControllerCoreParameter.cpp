@@ -89,7 +89,7 @@ void ControllerCoreParameter::connectControllerToController()
 	{
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 		ControllerAnnotations *annoController = static_cast<ControllerAnnotations*>(ctr);
-		QObject::connect(view, &CoreParameterView::emitSetAnnoColor, annoController, &ControllerAnnotations::receiveSetAnnoColor, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitSetAnnoColor, annoController, &ControllerAnnotations::receiveSetAnnotationColor, Qt::DirectConnection);
 	}
 
     //Connections to the DataExporter

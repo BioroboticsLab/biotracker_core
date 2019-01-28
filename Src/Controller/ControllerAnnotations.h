@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Model/Annotations.h"
 #include "IControllerCfg.h"
 #include "QString"
 #include <QColor>
@@ -36,12 +37,12 @@ public:
 	void setPlayerParameters(playerParameters* parameters);
 
 	//annotation receivers
-	void receiveAddLabelAnno();
-	void receiveAddRectAnno();
-	void receiveAddArrAnno();
-	void receiveAddEllAnno();
-	void receiveDelSelAnno();
-	void receiveSetAnnoColor(QColor color);
+	void receiveAddLabelAnnotation();
+	void receiveAddRectAnnotation();
+	void receiveAddArrowAnnotation();
+	void receiveAddEllipseAnnotation();
+	void receiveDeleteSelectedAnnotation();
+	void receiveSetAnnotationColor(QColor color);
 
 protected:
 	void createModel(std::string filepath = "");
@@ -59,6 +60,7 @@ protected:
 	};
 	ActionQueued actionQueued{ ActionQueued::None };
 	void updateView();
+	Annotations::TrackedPoint snapToTrajectory(const QPoint &point);
 Q_SIGNALS:
 	void onRepaintRequired();
 };

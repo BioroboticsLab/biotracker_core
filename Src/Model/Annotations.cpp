@@ -1,10 +1,16 @@
 #include "Annotations.h"
+#include "Interfaces/IModel/IModelTrackedComponent.h"
+#include "Interfaces/IModel/IModelTrackedTrajectory.h"
 
 #include <math.h>
 #include <fstream>
 
 #include <QDebug>
+#include <QFile>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Annotations::~Annotations() 
 {
@@ -13,98 +19,84 @@ Annotations::~Annotations()
 
 std::string Annotations::getFilename() const
 {
-	return filepath + ".annotations.csv";
+	return filepath + ".annotations.json";
 }
 
 void Annotations::serialize() const
 {
 	if (!dirty || filepath.empty()) return;
 
-	std::ofstream outfile(getFilename(), std::ios_base::out | std::ios_base::trunc);
-	if (!outfile.good()) return;
-
-	if (!annotations.empty()) {
-		for (auto & annotation : annotations)
-		{
-			outfile << annotation.get() << std::endl;
-		}
+	QJsonArray serializedAnnotations;
+	for (auto & annotation : annotations)
+	{
+		serializedAnnotations.append(QJsonObject::fromVariantMap(annotation->serializeToMap()));
 	}
+	QJsonDocument jsonDocument(serializedAnnotations);
+	QFile outfile { QString::fromStdString(getFilename()) };
+	if (!outfile.open(QFile::WriteOnly))
+		return;
+	outfile.write(jsonDocument.toJson());
 	
-	dirty = !outfile.good();
+	dirty = false;
 }
 
 void Annotations::deserialize()
 {
 	if (filepath.empty()) return;
-	std::ifstream infile(getFilename(), std::ios_base::in);
-	if (!infile.good()) return;
-	annotations.clear();
-	// Implements a simple CSV-reader.
-	// Could be replaced by library functionality.
-	std::string line;
-	while (std::getline(infile, line))
-	{
-		try
-		{
-			std::string::size_type begin = 0;
-			std::queue<std::string> args;
-			do
-			{
-				switch (line[begin])
-				{
-				case '"':
-				{
-					const auto end = line.find('"', begin + 1);
-					if (end == std::string::npos) throw("parse error");
-					args.push(line.substr(begin + 1, end - begin - 1));
-					begin = end + 1;
-					break;
-				}
-				case ',':
-					++begin;
-					break;
-				default:
-				{
-					auto end = line.find('"', begin + 1);
-					if (end == std::string::npos)
-						end = line.size();
-					args.push(line.substr(begin + 1, end - begin - 1));
-					begin = end + 1;
-					break;
-				}
-				}
-			} while (begin < line.size());
+	QFile infile { QString::fromStdString(getFilename()) };
+	if (!infile.open(QFile::ReadOnly)) return;
+	const QJsonDocument jsonDocument { QJsonDocument::fromJson(infile.readAll()) };
+	const QJsonArray jsonArray(jsonDocument.array());
 
-			if (!args.empty())
-			{
-				const std::string type = args.front();
-				args.pop();
-				std::shared_ptr<Annotation> annotation;
-				if (type == "arrow")
-					annotation = std::make_shared<AnnotationArrow>();
-				else if (type == "label")
-					annotation = std::make_shared<AnnotationLabel>();
-				else if (type == "rect")
-					annotation = std::make_shared<AnnotationRect>();
-				else if (type == "ellipse")
-					annotation = std::make_shared<AnnotationEllipse>();
-				if (annotation)
-				{
-					annotation->deserializeFrom(args);
-					annotations.push_back(annotation);
-				}
-			}
+	for (const auto & serializedAnnotation : jsonArray)
+	{
+		const auto jsonObject { serializedAnnotation.toObject() };
+		const QString type { jsonObject["type"].toString() };
+
+		std::shared_ptr<Annotation> annotation;
+		if (type == "arrow")
+			annotation = std::make_shared<AnnotationArrow>();
+		else if (type == "label")
+			annotation = std::make_shared<AnnotationLabel>();
+		else if (type == "rect")
+			annotation = std::make_shared<AnnotationRect>();
+		else if (type == "ellipse")
+			annotation = std::make_shared<AnnotationEllipse>();
+		if (annotation)
+		{
+			annotation->deserializeFrom(jsonObject.toVariantMap());
+			annotations.push_back(annotation);
 		}
-		catch (...) {}
+	}
+
+	dirty = false;
+}
+
+void Annotations::updateTrackedAnnotations(const QList<IModelTrackedComponent*> &trackedComponents)
+{
+	for (auto &annotation : annotations)
+	{
+		annotation->updateTrackedPositions(getCurrentFrame(), trackedComponents);
 	}
 }
 
-std::ostream& operator<<(std::ostream& stream, const Annotations::Annotation *annotation)
+void Annotations::TrackedPoint::update(int currentFrameID, const QList<IModelTrackedComponent*> &trackedComponents)
 {
-	const std::vector<std::string> serialized = annotation->serializeToVector();
-	for (auto &str : serialized)
-		stream << "\"" << str << "\",";
-	return stream;
+	if (!isLinkedToTrack) return;
+
+	for (const auto &trackedComponent : trackedComponents)
+	{
+		const auto trackedTrajectory = dynamic_cast<IModelTrackedTrajectory *> (trackedComponent);
+		if (trackedTrajectory == nullptr) continue;
+		if (trackedTrajectory->getId() != trackID) continue;
+
+		const auto &childComponent = trackedTrajectory->getChild(currentFrameID);
+		const auto point = dynamic_cast<IModelComponentEuclidian2D*> (childComponent);
+		if (point == nullptr) return;
+
+		position = QPoint(static_cast<int>(point->getXpx()), static_cast<int>(point->getYpx()));
+		return;
+	}
 }
 
 void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos, QString text)
@@ -151,34 +143,38 @@ bool Annotations::Annotation::isHandleAtPosition(const QPoint &handle, const QPo
 	return euclidian <= 20.0;
 }
 
-void Annotations::Annotation::deserializeFrom(std::queue<std::string> &args)
+void Annotations::Annotation::deserializeFrom(const QMap<QString, QVariant> &map)
 {
-	if (args.size() < 4) return;
-	startFrame = std::stoi(args.front()); args.pop();
-	text = QString::fromStdString(args.front()); args.pop();
-	const int x = std::stoi(args.front()); args.pop();
-	const int y = std::stoi(args.front()); args.pop();
-	origin = QPoint(x, y);
-	
-}
-
-std::vector<std::string> Annotations::Annotation::serializeToVector() const
-{
-	return { name(), std::to_string(startFrame), text.toStdString(), std::to_string(origin.x()), std::to_string(origin.y()) };
-}
-
-void Annotations::AnnotationLabel::deserializeFrom(std::queue<std::string> &args)
-{
-	Annotation::deserializeFrom(args);
-	if (args.size() < 0) {
-		return;
+	text = map.value("comment", text).toString();
+	startFrame = map.value("start_frame", static_cast<int>(startFrame)).toInt();
+	endFrame = map.value("end_frame", static_cast<int>(endFrame)).toInt();
+	origin.position.setY(map.value("origin_x", origin.x()).toInt());
+	origin.position.setY(map.value("origin_y", origin.y()).toInt());
+	if (map.contains("origin_track_id"))
+	{
+		origin.isLinkedToTrack = true;
+		origin.trackID = map.value("origin_track_id").toInt();
 	}
 }
 
-std::vector<std::string> Annotations::AnnotationLabel::serializeToVector() const
+QMap<QString, QVariant> Annotations::Annotation::serializeToMap() const
 {
-	auto base = Annotations::Annotation::serializeToVector();
-	return base;
+	QMap<QString, QVariant> map;
+	map["type"] = QString::fromStdString(name());
+	map["comment"] = text;
+	map["start_frame"] = static_cast<int>(startFrame);
+	map["end_frame"] = static_cast<int>(endFrame);
+
+	if (origin.isLinkedToTrack)
+	{
+		map["origin_track_id"] = origin.trackID;
+	}
+	else
+	{
+		map["origin_x"] = origin.x();
+		map["origin_y"] = origin.y();
+	}
+	return map;
 }
 
 void Annotations::AnnotationLabel::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
@@ -188,41 +184,51 @@ void Annotations::AnnotationLabel::paint(QPainter * painter, const QStyleOptionG
 	thin.setWidthF(1.0);
 	painter->setPen(thin);
 	const int len = 20;
-	painter->drawLine(this->origin + QPoint(-len, -len), this->origin + QPoint(+len, +len));
-	painter->drawLine(this->origin + QPoint(-len, len), this->origin + QPoint(+len, -len));
+	painter->drawLine(*this->origin + QPoint(-len, -len), *this->origin + QPoint(+len, +len));
+	painter->drawLine(*this->origin + QPoint(-len, len), *this->origin + QPoint(+len, -len));
 
 	painter->setPen(original);
 	
 	Annotation::drawHandleLocation(painter, origin, text);
 }
 
-void Annotations::AnnotationArrow::deserializeFrom(std::queue<std::string> &args)
+void Annotations::AnnotationArrow::deserializeFrom(const QMap<QString, QVariant> &map)
 {
-	Annotation::deserializeFrom(args);
-	if (args.size() < 2) return;
-	const int x = std::stoi(args.front()); args.pop();
-	const int y = std::stoi(args.front()); args.pop();
-	arrowHead = QPoint(x, y);
+	Annotation::deserializeFrom(map);
+	arrowHead.position.setX(map.value("end_x", arrowHead.x()).toInt());
+	arrowHead.position.setY(map.value("end_y", arrowHead.y()).toInt());
+	if (map.contains("end_track_id"))
+	{
+		arrowHead.isLinkedToTrack = true;
+		arrowHead.trackID = map.value("end_track_id").toInt();
+	}
 }
 
-std::vector<std::string> Annotations::AnnotationArrow::serializeToVector() const
+QMap<QString, QVariant> Annotations::AnnotationArrow::serializeToMap() const
 {
-	auto base = Annotations::Annotation::serializeToVector();
-	decltype(base) suffix { std::to_string(arrowHead.x()), std::to_string(arrowHead.y()) };
-	base.insert(base.end(), suffix.begin(), suffix.end());
+	auto base = Annotations::Annotation::serializeToMap();
+	if (arrowHead.isLinkedToTrack)
+	{
+		base["end_track_id"] = arrowHead.trackID;
+	}
+	else
+	{
+		base["end_x"] = arrowHead.x();
+		base["end_y"] = arrowHead.y();
+	}
 	return base;
 }
 
 void Annotations::AnnotationArrow::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
 {
-	painter->drawLine(this->origin, this->arrowHead);
+	painter->drawLine(this->origin.getPoint(), this->arrowHead.getPoint());
 	// Draw the origin slightly bigger.
 	{
 		painter->save();
 		QPen thick{ painter->pen() };
 		thick.setWidthF(thick.widthF()* 2.5f);
 		painter->setPen(thick);
-		painter->drawPoint(this->origin);
+		painter->drawPoint(this->origin.getPoint());
 		painter->restore();
 	}
 	// Draw the arrowhead slightly thinner.
@@ -231,39 +237,28 @@ void Annotations::AnnotationArrow::paint(QPainter * painter, const QStyleOptionG
 		QPen thin{ painter->pen() };
 		thin.setWidthF(thin.widthF()* 0.5f);
 		painter->setPen(thin);
-		painter->drawPoint(this->arrowHead);
+		painter->drawPoint(this->arrowHead.getPoint());
 		painter->restore();
 	}
 	Annotation::drawHandleLocation(painter, origin, text );
 	Annotation::drawHandleLocation(painter, arrowHead, "");
 }
 
-QPoint *Annotations::AnnotationArrow::getHandleForPosition(const QPoint &pos)
+Annotations::TrackedPoint *Annotations::AnnotationArrow::getHandleForPosition(const QPoint &pos)
 {
 	if (isHandleAtPosition(arrowHead, pos)) return &arrowHead;
 	return Annotation::getHandleForPosition(pos);
 }
 
-void Annotations::AnnotationRect::deserializeFrom(std::queue<std::string>& args)
+void Annotations::AnnotationArrow::updateTrackedPositions(int currentFrameID, const QList<IModelTrackedComponent*> &trackedComponents)
 {
-	Annotation::deserializeFrom(args);
-	if (args.size() < 2) return;
-	const int x = std::stoi(args.front()); args.pop();
-	const int y = std::stoi(args.front()); args.pop();
-	bottomRight = QPoint(x, y);
-}
-
-std::vector<std::string> Annotations::AnnotationRect::serializeToVector() const
-{
-	auto base = Annotations::Annotation::serializeToVector();
-	decltype(base) suffix{ std::to_string(bottomRight.x()), std::to_string(bottomRight.y()) };
-	base.insert(base.end(), suffix.begin(), suffix.end());
-	return base;
+	Annotation::updateTrackedPositions(currentFrameID, trackedComponents);
+	arrowHead.update(currentFrameID, trackedComponents);
 }
 
 void Annotations::AnnotationRect::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
 {
-	QRect rect{ origin, bottomRight };
+	QRect rect{ origin.getPoint(), arrowHead.getPoint() };
 	painter->drawRect(rect);
 	// Draw the origin slightly bigger.
 	{
@@ -271,7 +266,7 @@ void Annotations::AnnotationRect::paint(QPainter * painter, const QStyleOptionGr
 		QPen thick{ painter->pen() };
 		thick.setWidthF(thick.widthF()* 2.5f);
 		painter->setPen(thick);
-		painter->drawPoint(this->origin);
+		painter->drawPoint(origin.getPoint());
 		painter->restore();
 	}
 	// Draw the bottom right point slightly thinner.
@@ -280,39 +275,16 @@ void Annotations::AnnotationRect::paint(QPainter * painter, const QStyleOptionGr
 		QPen thin{ painter->pen() };
 		thin.setWidthF(thin.widthF()* 0.5f);
 		painter->setPen(thin);
-		painter->drawPoint(this->bottomRight);
+		painter->drawPoint(arrowHead.getPoint());
 		painter->restore();
 	}
 	Annotation::drawHandleLocation(painter, origin, text);
-	Annotation::drawHandleLocation(painter, bottomRight, "");
-}
-
-QPoint * Annotations::AnnotationRect::getHandleForPosition(const QPoint & pos)
-{
-	if (isHandleAtPosition(bottomRight, pos)) return &bottomRight;
-	return Annotation::getHandleForPosition(pos);
-}
-
-void Annotations::AnnotationEllipse::deserializeFrom(std::queue<std::string>& args)
-{
-	Annotation::deserializeFrom(args);
-	if (args.size() < 2) return;
-	const int x = std::stoi(args.front()); args.pop();
-	const int y = std::stoi(args.front()); args.pop();
-	bottomRight = QPoint(x, y);
-}
-
-std::vector<std::string> Annotations::AnnotationEllipse::serializeToVector() const
-{
-	auto base = Annotations::Annotation::serializeToVector();
-	decltype(base) suffix{ std::to_string(bottomRight.x()), std::to_string(bottomRight.y()) };
-	base.insert(base.end(), suffix.begin(), suffix.end());
-	return base;
+	Annotation::drawHandleLocation(painter, arrowHead, "");
 }
 
 void Annotations::AnnotationEllipse::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) const
 {
-	QRect rect{ origin, bottomRight };
+	QRect rect{ origin.getPoint(), arrowHead.getPoint() };
 	painter->drawEllipse(rect);
 	// Draw the origin slightly bigger.
 	{
@@ -320,7 +292,7 @@ void Annotations::AnnotationEllipse::paint(QPainter * painter, const QStyleOptio
 		QPen thick{ painter->pen() };
 		thick.setWidthF(thick.widthF()* 2.5f);
 		painter->setPen(thick);
-		painter->drawPoint(this->origin);
+		painter->drawPoint(origin.getPoint());
 		painter->restore();
 	}
 	// Draw the bottom right point slightly thinner.
@@ -329,19 +301,12 @@ void Annotations::AnnotationEllipse::paint(QPainter * painter, const QStyleOptio
 		QPen thin{ painter->pen() };
 		thin.setWidthF(thin.widthF()* 0.5f);
 		painter->setPen(thin);
-		painter->drawPoint(this->bottomRight);
+		painter->drawPoint(arrowHead.getPoint());
 		painter->restore();
 	}
 	Annotation::drawHandleLocation(painter, origin, text);
-	Annotation::drawHandleLocation(painter, bottomRight, "");
+	Annotation::drawHandleLocation(painter, arrowHead, "");
 }
-
-QPoint * Annotations::AnnotationEllipse::getHandleForPosition(const QPoint & pos)
-{
-	if (isHandleAtPosition(bottomRight, pos)) return &bottomRight;
-	return Annotation::getHandleForPosition(pos);
-}
-
 
 void Annotations::startArrow(QPoint origin, size_t currentFrame)
 {
@@ -363,7 +328,7 @@ void Annotations::startEllipse(QPoint origin, size_t currentFrame)
 	currentAnnotation = std::make_shared<AnnotationEllipse>(origin, currentFrame);
 }
 
-bool Annotations::updateAnnotation(QPoint cursor)
+bool Annotations::updateAnnotation(TrackedPoint cursor)
 {
 	if (currentAnnotation)
 	{
@@ -415,7 +380,7 @@ bool Annotations::trySetText(QPoint cursor) {
 	return false;
 }
 
-bool Annotations::endAnnotation(QPoint cursor)
+bool Annotations::endAnnotation(TrackedPoint cursor)
 {
 	if (currentAnnotation)
 	{
@@ -446,4 +411,25 @@ bool Annotations::removeSelection()
 		else
 			++iter;
 	}
+	return true;
+}
+
+bool Annotations::updateSelectionStartFrame()
+{
+	if (!selection) return false;
+	Annotation *selectedAnnotation{ selection.annotation.lock().get() };
+	selectedAnnotation->startFrame = getCurrentFrame();
+	if (selectedAnnotation->endFrame < selectedAnnotation->startFrame)
+		selectedAnnotation->endFrame = selectedAnnotation->startFrame;
+	return true;
+}
+
+bool Annotations::updateSelectionEndFrame()
+{
+	if (!selection) return false;
+	Annotation *selectedAnnotation{ selection.annotation.lock().get() };
+	selectedAnnotation->endFrame = getCurrentFrame();
+	if (selectedAnnotation->startFrame > selectedAnnotation->endFrame)
+		selectedAnnotation->startFrame = selectedAnnotation->endFrame;
+	return true;
 }

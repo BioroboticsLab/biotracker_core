@@ -2,10 +2,17 @@
 #include "View/MainWindow.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerPlayer.h"
+#include "Controller/ControllerTrackedComponentCore.h"
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 #include "Model/Annotations.h"
 #include "View/AnnotationsView.h"
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
+
+#include <QGuiApplication>
+
+#include <cmath>
+#include <limits>
+#include <iostream>
 
 ControllerAnnotations::~ControllerAnnotations()
 {
@@ -109,6 +116,14 @@ void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 			else
 				handled = false;
 			break;
+		case Qt::Key::Key_Q:
+			if (!model->updateSelectionStartFrame())
+				handled = false;
+			break;
+		case Qt::Key::Key_W:
+			if (!model->updateSelectionEndFrame())
+				handled = false;
+			break;
 		default:
 			handled = false;
 			break;
@@ -175,11 +190,61 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 	
 }
 
+Annotations::TrackedPoint ControllerAnnotations::snapToTrajectory(const QPoint &originalPoint)
+{
+	auto model = static_cast<Annotations*>(getModel());
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+	auto trackedComponentCoreController = qobject_cast<ControllerTrackedComponentCore*>(ctr);
+	auto trackedTrajectoryModel = dynamic_cast<IModelTrackedTrajectory *>(trackedComponentCoreController->getModel());
+
+	if (trackedTrajectoryModel && QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ControlModifier))
+	{
+		auto minDistance = std::numeric_limits<float>::infinity();
+		QPoint closestPoint {0, 0};
+		int closestTrackID { 0 };
+		auto allChildren = trackedTrajectoryModel->getChildNodes();
+
+		for (const auto &childNode : allChildren)
+		{
+			// Top level nodes are likely trajectories.
+			const auto childTrajectory = dynamic_cast<IModelTrackedTrajectory *> (childNode);
+			// Not a trajectory? Don't know how to handle.
+			if (childTrajectory == nullptr)
+				continue;
+			
+			for (size_t i = 0; i < childTrajectory->size(); ++i)
+			{
+				if (i != model->getCurrentFrame())
+					continue;
+				const auto &childComponent = childTrajectory->getChild(i);
+				const auto point = dynamic_cast<IModelComponentEuclidian2D*> (childComponent);
+				if (point == nullptr)
+					continue;
+				float distance = std::sqrt(std::pow(point->getXpx() - originalPoint.x(), 2) + std::pow(point->getYpx() - originalPoint.y(), 2));
+				if (distance < minDistance)
+				{
+					minDistance = distance;
+					closestPoint = QPoint(static_cast<int>(point->getXpx()), static_cast<int>(point->getYpx()));
+					closestTrackID = childTrajectory->getId();
+				}
+			}
+		}
+
+		if (minDistance < 100.0f)
+		{
+			return Annotations::TrackedPoint(closestPoint, closestTrackID);
+		}
+	}
+	return Annotations::TrackedPoint(originalPoint);
+}
+
 void ControllerAnnotations::mouseReleaseEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
 
-	if (model->endAnnotation(pos))
+	Annotations::TrackedPoint trackedPoint = snapToTrajectory(pos);
+
+	if ((event->button() == Qt::LeftButton) && (model->endAnnotation(trackedPoint) || model->updateAnnotation(trackedPoint)))
 	{
 		updateView();
 		event->accept();
@@ -190,7 +255,9 @@ void ControllerAnnotations::mouseMoveEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
 
-	if (event->buttons() == Qt::LeftButton &&  model->updateAnnotation(pos))
+	Annotations::TrackedPoint trackedPoint = snapToTrajectory(pos);
+
+	if ((event->buttons() & Qt::LeftButton) &&  model->updateAnnotation(trackedPoint))
 	{
 		updateView();
 		event->accept();
@@ -201,29 +268,35 @@ void ControllerAnnotations::setPlayerParameters(playerParameters* parameters)
 {
 	auto model = static_cast<Annotations*>(getModel());
 	model->setCurrentFrame(parameters->m_CurrentFrameNumber);
-	emit(onRepaintRequired());
+
+	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+	auto trackedComponentCoreController = qobject_cast<ControllerTrackedComponentCore*>(ctr);
+	auto trackedTrajectoryModel = dynamic_cast<IModelTrackedTrajectory *>(trackedComponentCoreController->getModel());
+	if (trackedTrajectoryModel != nullptr)
+		model->updateTrackedAnnotations(trackedTrajectoryModel->getChildNodes());
+	updateView();
 }
 
-void ControllerAnnotations::receiveAddLabelAnno(){
+void ControllerAnnotations::receiveAddLabelAnnotation(){
 	actionQueued = ActionQueued::CreateLabel;
 }
-void ControllerAnnotations::receiveAddRectAnno(){
+void ControllerAnnotations::receiveAddRectAnnotation(){
 	actionQueued = ActionQueued::CreateRect;
 }
-void ControllerAnnotations::receiveAddArrAnno(){
+void ControllerAnnotations::receiveAddArrowAnnotation(){
 	actionQueued = ActionQueued::CreateArrow;
 }
-void ControllerAnnotations::receiveAddEllAnno(){
+void ControllerAnnotations::receiveAddEllipseAnnotation(){
 	actionQueued = ActionQueued::CreateEllipse;
 }
-void ControllerAnnotations::receiveDelSelAnno(){
+void ControllerAnnotations::receiveDeleteSelectedAnnotation(){
 	auto model = static_cast<Annotations*>(getModel());
 	if (model->removeSelection()){
 		updateView();
 	}
 }
 
-void ControllerAnnotations::receiveSetAnnoColor(QColor color)
+void ControllerAnnotations::receiveSetAnnotationColor(QColor color)
 {
 	AnnotationsView* view = dynamic_cast<AnnotationsView*>(m_View);
 	if (view) {

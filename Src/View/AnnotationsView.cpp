@@ -44,9 +44,12 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 {
 	setZValue(-1);
 	auto model = static_cast<const Annotations*>(getModel());
+	const auto currentFrame = model->getCurrentFrame();
 	for (auto &annotation : model->annotations)
 	{
-		if (model->getCurrentFrame() == annotation->startFrame)
+		// Is the current frame in the annotation's range?
+		if ((currentFrame >= annotation->startFrame && currentFrame <= annotation->endFrame)
+			|| (currentFrame == annotation->startFrame && annotation->startFrame > annotation->endFrame))
 			painter->setPen(QPen(_annoColor, 6, Qt::SolidLine, Qt::RoundCap));
 		else
 		{

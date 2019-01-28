@@ -190,11 +190,11 @@ void ControllerMainWindow::connectControllerToController() {
     IController* ictrann = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::ANNOTATIONS);
 	ControllerAnnotations *ctrann = static_cast<ControllerAnnotations*>(ictrann);
 
-    QObject::connect(this, &ControllerMainWindow::emitAddLabelAnno, ctrann, &ControllerAnnotations::receiveAddLabelAnno, Qt::DirectConnection);
-	QObject::connect(this, &ControllerMainWindow::emitAddRectAnno, ctrann, &ControllerAnnotations::receiveAddRectAnno, Qt::DirectConnection);
-	QObject::connect(this, &ControllerMainWindow::emitAddArrAnno, ctrann, &ControllerAnnotations::receiveAddArrAnno, Qt::DirectConnection);
-	QObject::connect(this, &ControllerMainWindow::emitAddEllAnno, ctrann, &ControllerAnnotations::receiveAddEllAnno, Qt::DirectConnection);
-	QObject::connect(this, &ControllerMainWindow::emitDelSelAnno, ctrann, &ControllerAnnotations::receiveDelSelAnno, Qt::DirectConnection);
+    QObject::connect(this, &ControllerMainWindow::emitAddLabelAnno, ctrann, &ControllerAnnotations::receiveAddLabelAnnotation, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddRectAnno, ctrann, &ControllerAnnotations::receiveAddRectAnnotation, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddArrAnno, ctrann, &ControllerAnnotations::receiveAddArrowAnnotation, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitAddEllAnno, ctrann, &ControllerAnnotations::receiveAddEllipseAnnotation, Qt::DirectConnection);
+	QObject::connect(this, &ControllerMainWindow::emitDelSelAnno, ctrann, &ControllerAnnotations::receiveDeleteSelectedAnnotation, Qt::DirectConnection);
 
     //connect to ControllerDataExporter
     IController* ictrde = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
