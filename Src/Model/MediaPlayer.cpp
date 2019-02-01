@@ -240,45 +240,52 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
 	m_TotalNumbFrames = param->m_TotalNumbFrames;
 
     m_CurrentFrame = param->m_CurrentFrame;
+    const bool isValidFrame = !!m_CurrentFrame;
 
-    Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
+    if (isValidFrame)
+    {
+        Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
 
-	if (m_TrackingIsActive) {
-        m_trackingDone = false;
-		Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
-	}
-	else {
-		Q_EMIT signalVisualizeCurrentModel(m_CurrentFrameNumber);
-		Q_EMIT signalCurrentFrameNumberToPlugin(m_CurrentFrameNumber);
-	}
+        if (m_TrackingIsActive) {
+            m_trackingDone = false;
+            Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
+        }
+        else {
+            Q_EMIT signalVisualizeCurrentModel(m_CurrentFrameNumber);
+            Q_EMIT signalCurrentFrameNumberToPlugin(m_CurrentFrameNumber);
+        }
 
-	if (m_recd) {
-		//reopenVideoWriter(); //4us
-		QRectF rscene = m_gv->sceneRect(); //0us
-		QRectF rview = m_gv->rect(); //0us
-		QPixmap *pix;
-		if (!m_recordScaled)
-			pix = new QPixmap(rscene.size().toSize()); //17us
-		else
-			pix = new QPixmap(rview.size().toSize()); //17us
+        if (m_recd) {
+            //reopenVideoWriter(); //4us
+            QRectF rscene = m_gv->sceneRect(); //0us
+            QRectF rview = m_gv->rect(); //0us
+            QPixmap *pix;
+            if (!m_recordScaled)
+                pix = new QPixmap(rscene.size().toSize()); //17us
+            else
+                pix = new QPixmap(rview.size().toSize()); //17us
 
-		QPainter *paint = new QPainter(pix); //21us
-        
-		if(!m_recordScaled)
-			m_gv->scene()->render(paint); //8544us
-		else
-			m_gv->render(paint);// , m_gv->scene()->sceneRect(), QRect());// , Qt::AspectRatioMode::IgnoreAspectRatio);
+            QPainter *paint = new QPainter(pix); //21us
+            
+            if(!m_recordScaled)
+                m_gv->scene()->render(paint); //8544us
+            else
+                m_gv->render(paint);// , m_gv->scene()->sceneRect(), QRect());// , Qt::AspectRatioMode::IgnoreAspectRatio);
 
-		QImage image = pix->toImage(); //8724us
-		int x = image.format(); //0us
-		std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
+            QImage image = pix->toImage(); //8724us
+            int x = image.format(); //0us
+            std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
 
-		cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
-		cv::cvtColor(*mat, *mat, CV_BGR2RGB);
-		m_videoc->add(mat,1);
-		
-	}
-
+            cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
+            cv::cvtColor(*mat, *mat, CV_BGR2RGB);
+            m_videoc->add(mat,1);
+            
+        }
+    }
+    else
+    {
+        qDebug() << "MediaPlayer: Received player parameters with invalid image.";
+    }
     Q_EMIT notifyView();
 }
 
