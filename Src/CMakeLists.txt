@@ -26,9 +26,8 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Xml Network Widgets Multimedia Mul
 target_link_libraries (${target} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets Qt5::Multimedia Qt5::MultimediaWidgets Qt5::OpenGL)
 
 find_package(Boost REQUIRED system filesystem chrono thread timer program_options)
-target_link_libraries(${target} 
-  ${Boost_PROGRAM_OPTIONS_LIBRARY}
-)
+target_include_directories(${target} PUBLIC ${Boost_INCLUDE_DIRS}) 
+target_link_libraries(${target} ${Boost_LIBRARIES})
 
 option(WITH_PYLON5 "Support Pylon 5 cameras" OFF)
 if(WITH_PYLON5)
