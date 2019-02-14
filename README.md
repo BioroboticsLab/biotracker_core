@@ -33,7 +33,7 @@ Building the Robotracker needs:
 - opencv (> 3.0)  
 - QT (>= 5.4)  
 - Boost 
-- CMake (>= 3.12)  
+- CMake (>= 3.13)  
 - Buildtools (Tested: MSVC buildtools or g++)  
 - recommendet: ninja  
 
