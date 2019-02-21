@@ -1,5 +1,6 @@
 #include "NotificationLogBrowser.h"
 #include "QVBoxLayout"
+#include "QScrollBar"
 
 
 NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *controller, IModel *model) :
@@ -46,6 +47,13 @@ void NotificationLogBrowser::outputMessage(QtMsgType type, const QString & msg)
 	case QtFatalMsg:
 		browser->append(tr("<span style='color:red; font-weight:bold'>- %1 </span>").arg(msg));
 		break;
+	}
+
+	QScrollBar *sb = browser->verticalScrollBar();
+	int value = sb->value();
+	int max = sb->maximum();
+	if(max - value <= 15){
+		sb->setValue(sb->maximum());
 	}
 }
 void  NotificationLogBrowser::getNotified() {

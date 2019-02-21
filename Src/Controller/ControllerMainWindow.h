@@ -101,6 +101,9 @@ public:
 			void emitAddEllAnno();
 			void emitDelSelAnno();
 
+			//signal to video control widget
+			void emitFilesCount(int i);
+
 			public slots:
 			void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
 			/**

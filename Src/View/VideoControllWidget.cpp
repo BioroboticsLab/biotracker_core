@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDesktopServices>
+#include <QString>
 
 VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controller, IModel* model) :
 	IViewWidget(parent, controller, model),
@@ -75,7 +76,6 @@ void VideoControllWidget::getNotified() {
 
 
 	ui->time_edit->setText(currentVideoTime);
-
 
 	//Write current fps label every 1/2 second
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
@@ -180,9 +180,8 @@ void VideoControllWidget::on_sld_video_actionTriggered(int action)
 	controller->setGoToFrame(position);
 }
 
-
 /**
- * If the video slider is moved, this function sets the value to the current frame number lable
+ * If the video slider is moved, this function sets the value to the current frame number label
  */
 void VideoControllWidget::on_sld_video_sliderMoved(int position) {
 	//ui->frame_num_edit->setText(QString::number(position));
@@ -204,7 +203,6 @@ void VideoControllWidget::on_frame_num_spin_editingFinished() {
 	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
 	controller->setGoToFrame(val);
 }
-
 
 //actions
 void VideoControllWidget::on_actionPlay_Pause_triggered(bool checked) {
@@ -317,4 +315,17 @@ void VideoControllWidget::setupVideoToolbar() {
 			videoToolBar->addWidget(ui->scrollAreaVideoInfo);
 		}
 	}
+}
+
+void VideoControllWidget::videoChanged(const std::string path) {
+	ui->video_label->setText(QString::fromStdString(path));
+
+	int currNumber =  ui->video_bCurr->text().toInt();
+	ui->video_bCurr->setText(QString::number(currNumber + 1));
+
+}
+
+void VideoControllWidget::getMaxBatchNumber(int number){
+	ui->video_bCurr->setText("1");
+	ui->video_bMax->setText(QString::number(number));
 }

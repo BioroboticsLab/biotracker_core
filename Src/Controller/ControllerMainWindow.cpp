@@ -31,6 +31,9 @@ void ControllerMainWindow::loadVideo(std::vector<boost::filesystem::path> files)
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(files);
     Q_EMIT emitMediaLoaded(files.front().string());
+    qDebug() << "Video loaded: " << QString::fromStdString(files.front().string());
+
+    Q_EMIT emitFilesCount((int)files.size());
     
     dynamic_cast<MainWindow*>(m_View)->checkMediaGroupBox();
 }

@@ -6,6 +6,8 @@
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Controller/ControllerCoreParameter.h"
+#include "Controller/ControllerMainWindow.h"
+
 
 #include <QGraphicsItem>
 #include <QToolButton>
@@ -113,11 +115,17 @@ void ControllerPlayer::setTrackingDeactivated() {
 
 void ControllerPlayer::connectControllerToController() {
 	//connect to mainwindow
-    IController* ctrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
-    QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ctrM->getView());
+    IController* ictrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+    ControllerMainWindow* ctrM = qobject_cast<ControllerMainWindow*>(ictrM);
+    QPointer< MainWindow > mainWin = dynamic_cast<MainWindow*>(ictrM->getView());
     mainWin->addVideoControllWidget(m_View);
     VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
     vControl->setupVideoToolbar();
+
+    //QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatchLoaded, vControl, &VideoControllWidget::videoChanged);
+    QObject::connect(ctrM, &ControllerMainWindow::emitMediaLoaded, vControl, &VideoControllWidget::videoChanged);
+    QObject::connect(ctrM, &ControllerMainWindow::emitFilesCount, vControl, &VideoControllWidget::getMaxBatchNumber);
+
 
 	////connect to coreparameterview
 	//IController* ictrCpv = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
@@ -169,6 +177,10 @@ void ControllerPlayer::receiveNextMediaInBatchLoaded(const std::string path){
     for(int i=0; i<_trackCountEndOfBatch; i++){
         trCC->emitAddTrack();
     }
+
+    //set video name in video control widget
+    VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
+    vControl->videoChanged(path);
 }
 
 void ControllerPlayer::receiveTrackCount(int trackNo){

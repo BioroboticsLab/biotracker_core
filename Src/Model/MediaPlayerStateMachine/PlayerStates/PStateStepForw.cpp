@@ -37,7 +37,7 @@ void PStateStepForw::operate() {
         stateFw = true;
     }
 
-    m_StateParameters.m_Forw = true;
+    m_StateParameters.m_Forw = stateFw;
 
     m_Player->setNextState(IPlayerState::STATE_WAIT);
 }

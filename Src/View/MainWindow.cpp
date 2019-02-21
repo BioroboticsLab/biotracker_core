@@ -995,7 +995,6 @@ void MainWindow::on_actionShortcuts_triggered() {
 	scTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Description"));
 	scTable->verticalHeader()->hide();
 
-
 	QLinkedList<QPair<QString, QString>> scList;
 
 	//read from file in resources and add to linked list

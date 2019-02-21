@@ -176,14 +176,17 @@ void DataExporterCSV::loadFile(std::string file)
 }
 
 void DataExporterCSV::write(int idx) {
+
+    //_ofs = QTextStream(_oFileTmp);
+
     if (!_root) {
         qDebug() << "CORE:  No output opened!";
         return;
     }
 
     //TODO there is some duplicated code here
-    _ofs << std::to_string(idx)
-        << _separator + std::to_string((long long)((((double)idx) / _fps) * 1000));
+    _ofs << QString::fromStdString(std::to_string(idx))
+        << QString::fromStdString(_separator) + QString::fromStdString(std::to_string((long long)((((double)idx) / _fps) * 1000)));
 
     //Write single trajectory
     int trajNumber = 0;
@@ -197,12 +200,14 @@ void DataExporterCSV::write(int idx) {
             else
                 e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
             if (e && e->getValid()) {
-                _ofs << writeComponentCSV(e, trajNumber);
+                _ofs << QString::fromStdString(writeComponentCSV(e, trajNumber));
             }
             trajNumber++;
         }
     }
-    _ofs << std::endl;
+    //qDebug() << "line written into temp file";
+    //_ofs << std::endl;
+    _ofs << endl;
 }
 
 void DataExporterCSV::finalizeAndReInit() {
@@ -219,9 +224,14 @@ void DataExporterCSV::writeAll(std::string f) {
         qDebug() << "CORE: No output opened!";
         return;
     }
+    /*
     if (_ofs.is_open()) {
         _ofs.close();
     }
+    */
+   if (_oFileTmp->isOpen()) {
+        _oFileTmp->close();
+   }
 
     //Find max length of all tracks
     int max = getMaxLinecount();
@@ -240,17 +250,50 @@ void DataExporterCSV::writeAll(std::string f) {
     if (target.substr(target.size() - 4) != ".csv")
         target += ".csv";
 
+    //std::this_thread::sleep_for (std::chrono::seconds(1));
+
+    /*
     //Create final file
     std::ofstream o; 
-    o.open(target, std::ofstream::out);
+    o.exceptions(std::ios::failbit | std::ios::badbit);
+
+    if(o.good()){
+        qDebug() << "good";
+    }
+    else{
+        qDebug() << "bad";
+    }
+    */
+
+    //QT-Ansatz, weil std ofstream oft hängt bei open 
+    QFile outFile(QString::fromStdString(target));
+    outFile.open(QIODevice::WriteOnly);
+
+
+    if(!outFile.isOpen()){
+        qWarning() << "File could not be opened! " << QString::fromStdString(target);
+    }
+
+    QTextStream o(&outFile);
+
+    /*
+    try {
+        //target = "C:/Users/Jonas/Desktop/blubb.csv";
+        target = "C:/Users/Jonas/AppData/Roaming/FU Berlin/BioTracker/Tracks/blubbbbbb.csv";
+        o.open(target, std::ofstream::out | std::ofstream::app); // hier ist ein fehler im batch processing
+    }
+    catch (std::ofstream::failure e) {
+        qDebug() << "Exception opening/reading file";
+    }
+    */
 
     //write metadata
     ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
     SourceVideoMetadata d = ctr->getSourceMetadata();
-    o << "# Source name: " << d.name << std::endl;
-    o << "# Source FPS: " << d.fps << std::endl;
+    o << "# Source name: " << QString::fromStdString(d.name) << endl;
+    o << "# Source FPS: " << QString::fromStdString(d.fps) << endl;
     QVariant vv(QDateTime::currentDateTime());
-    o << "# Generation time: " << vv.toString().toStdString() << std::endl;
+    o << "# Generation time: " << QString::fromStdString(vv.toString().toStdString()) << endl;
 
     //write header
     int vcount = _root->validCount();
@@ -260,7 +303,7 @@ void DataExporterCSV::writeAll(std::string f) {
         IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
         std::string header = getHeader(ptraj, vcount);
         headerCount = static_cast<int>(getHeaderElements(ptraj).size());
-        o << header << "\n";
+        o << QString::fromStdString(header) << QString("\n");
         delete ptraj;
     }
 
@@ -271,8 +314,8 @@ void DataExporterCSV::writeAll(std::string f) {
     //idx is the frame number
     for (int idx = 0; idx < max; idx++) {
 
-        o << std::to_string(idx)
-            << _separator + std::to_string((((float)idx) / _fps) * 1000);
+        o << QString::fromStdString(std::to_string(idx))
+            << QString::fromStdString(_separator) + QString::fromStdString(std::to_string((((float)idx) / _fps) * 1000));
 
         int linecnt = 0;
         //i is the track number
@@ -283,7 +326,7 @@ void DataExporterCSV::writeAll(std::string f) {
                 IModelTrackedPoint *e = dynamic_cast<IModelTrackedPoint*>(t->getChild(idx));
                 if (e) {
                     std::string line = writeComponentCSV(e, trajNumber);
-                    o << line;
+                    o << QString::fromStdString(line);
                     linecnt++;
                 }
                 trajNumber++;
@@ -292,19 +335,29 @@ void DataExporterCSV::writeAll(std::string f) {
         int count = _root->validCount();
         while (linecnt < count) {
             for (int i = 0; i<headerCount; i++)
-                o << _separator;
+                o << QString::fromStdString(_separator);
             linecnt++;
         }
-        o << std::endl;
+        //o << std::endl;
+        o << endl;
     }
-    o.close();
+    //o.close();
+    outFile.close();
+
+    qDebug() << "CORE: Tracks saved in: " << QString::fromStdString(target);
 }
 
 void DataExporterCSV::close() {
-    if(_ofs.is_open())
+    /*
+    if(_ofs.is_open()){
         _ofs.close();
-        
+    }
+    */
+    if(_oFileTmp->isOpen()){
+        _oFileTmp->close();
+    }
     //Remove temporary file
     QFile file(_tmpFile.c_str());
     file.remove();
+    _oFileTmp->remove();
 }

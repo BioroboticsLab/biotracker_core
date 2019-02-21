@@ -39,8 +39,8 @@ void ControllerDataExporter::connectControllerToController() {
 	QObject::connect(this, &ControllerDataExporter::emitViewUpdate, tccController, &ControllerTrackedComponentCore::receiveUpdateView, Qt::DirectConnection);
 
 
-    // ControllerPlayer* cPl = dynamic_cast<ControllerPlayer*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER));
-    // QObject::connect(cPl, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
+    //ControllerPlayer* cPl = dynamic_cast<ControllerPlayer*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER));
+    //QObject::connect(cPl, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
 }
 
 void ControllerDataExporter::createModel() {

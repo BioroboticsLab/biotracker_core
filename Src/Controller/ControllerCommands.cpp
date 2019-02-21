@@ -85,7 +85,7 @@ void ControllerCommands::receiveRedo()
 		_undoStack->redo();
 	}
 	else {
-		qDebug() << "CORE: Csannot redo the next command!";
+		qDebug() << "CORE: Cannot redo the next command!";
 	}
 }
 

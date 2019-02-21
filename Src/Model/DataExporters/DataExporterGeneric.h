@@ -7,6 +7,7 @@
 #include "util/Config.h"
 #include <iostream>
 #include <fstream>
+#include <QFile>
 
 class DataExporterGeneric : public IModelDataExporter
 {
@@ -31,7 +32,10 @@ protected:
     ControllerDataExporter *_parent = nullptr;
     Config *_cfg;
 
-    std::ofstream _ofs;
+    //std::ofstream::open blocks the program very often (~80% of the time)
+    //std::ofstream _ofs;
+    QFile* _oFileTmp;
+    QTextStream _ofs;
 
     //Name of the temporary file to write to
     std::string _tmpFile;

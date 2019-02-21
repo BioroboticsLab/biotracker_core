@@ -59,3 +59,4 @@ CMakeFiles
 *.cache
 *.csv
 build
+biotracker_workspace.code-workspace

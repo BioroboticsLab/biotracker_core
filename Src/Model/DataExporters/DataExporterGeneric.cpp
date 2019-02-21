@@ -2,7 +2,8 @@
 #include "util/types.h"
 #include "Utility/misc.h"
 #include <qdebug.h>
-#include <qfile.h>
+#include <QFile>
+#include <QTextStream>
 #include <qdatetime.h>
 
 DataExporterGeneric::DataExporterGeneric(QObject *parent) :
@@ -18,7 +19,23 @@ void DataExporterGeneric::open(IModelTrackedTrajectory *root) {
     
     _tmpFile = _parent->generateBasename(true).toStdString() + ".tmp" + getSuffix().toStdString();
     _finalFile = _parent->generateBasename(false).toStdString() + getSuffix().toStdString();
-    _ofs.open(_tmpFile, std::ofstream::out);
+
+
+    //_ofs.open(_tmpFile, std::ofstream::out);
+
+    //QFile _oFileTmp(QString::fromStdString(_tmpFile));
+    _oFileTmp = new QFile(QString::fromStdString(_tmpFile));
+    _oFileTmp->open(QIODevice::WriteOnly);
+    
+    if(!_oFileTmp->isOpen()){
+        qWarning() << "File could not be opened! " << QString::fromStdString(_tmpFile);
+    }
+
+    _ofs.setDevice(_oFileTmp);
+
+    if(_ofs.device()){
+        qDebug() << "QTextStream has device";
+    }
 }
 
 int DataExporterGeneric::getMaxLinecount()
@@ -49,7 +66,7 @@ void DataExporterGeneric::cleanup()
     if (s > 0) {
         //Tell the controller about the written file
         QFileInfo fi(_finalFile.c_str());
-        fileWritten(fi);
+        Q_EMIT fileWritten(fi);
     }
     return;
 }

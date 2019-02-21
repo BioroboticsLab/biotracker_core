@@ -35,7 +35,7 @@ void DataExporterSerialize::write(int idx) {
         return;
     }
 
-    _ofs << std::endl;
+    _ofs << endl;
 }
 
 void DataExporterSerialize::finalizeAndReInit() {
@@ -92,8 +92,8 @@ void DataExporterSerialize::writeAll(std::string f) {
         qDebug() << "CORE: No output opened!";
         return;
     }
-    if (_ofs.is_open()) {
-        _ofs.close();
+    if (_oFileTmp->isOpen()) {
+        _oFileTmp->close();
     }
 
     if (getMaxLinecount() <= 1) {
@@ -151,7 +151,7 @@ void DataExporterSerialize::writeAll(std::string f) {
 }
 
 void DataExporterSerialize::close() {
-    _ofs.close();
+    _oFileTmp->close();
 
     if ((!_root || _root->size() == 0) && _tmpFile!="" ) {
         //Remove temporary file

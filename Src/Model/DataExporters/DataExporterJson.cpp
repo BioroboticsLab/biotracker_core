@@ -136,7 +136,7 @@ void DataExporterJson::write(int idx) {
         return;
     }
 
-    _ofs << std::endl;
+    _ofs << endl;
 }
 
 void DataExporterJson::finalizeAndReInit() {
@@ -173,8 +173,8 @@ void DataExporterJson::writeAll(std::string f) {
         qDebug() << "CORE: No output opened!";
         return;
     }
-    if (_ofs.is_open()) {
-        _ofs.close();
+    if (_oFileTmp->isOpen()) {
+        _oFileTmp->close();
     }
 
     if (getMaxLinecount() <= 1) {
@@ -217,7 +217,7 @@ void DataExporterJson::writeAll(std::string f) {
 }
 
 void DataExporterJson::close() {
-    _ofs.close();
+    _oFileTmp->close();
 
     if ((!_root || _root->size() == 0) &&_tmpFile!="" ) {
         //Remove temporary file

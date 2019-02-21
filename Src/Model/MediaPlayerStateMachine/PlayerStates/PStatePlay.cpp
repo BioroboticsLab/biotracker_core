@@ -40,13 +40,13 @@ void PStatePlay::operate() {
         m_FrameNumber = m_ImageStream->currentFrameNumber(); 
         nextState = IPlayerState::STATE_PLAY;
     } else if (m_ImageStream->hasNextInBatch()){
-        Q_EMIT emitNextMediaInBatch("Samplestring"); 
+        Q_EMIT emitNextMediaInBatch(m_ImageStream->currentFilename()); 
         m_ImageStream->stepToNextInBatch();
         m_ImageStream->nextFrame();
         m_Mat = m_ImageStream->currentFrame();
         m_FrameNumber = m_ImageStream->currentFrameNumber();    
         nextState = IPlayerState::STATE_PLAY;
-        Q_EMIT emitNextMediaInBatchLoaded("Samplestring"); 
+        Q_EMIT emitNextMediaInBatchLoaded(m_ImageStream->currentFilename());
     } else
     {
         nextState = IPlayerState::STATE_INITIAL_STREAM;

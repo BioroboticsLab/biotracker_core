@@ -1079,7 +1079,7 @@ bool ComponentShape::removeTrackEntity()
 		Q_EMIT emitRemoveTrackEntity(m_trajectory, m_currentFramenumber);
 	}
 	else {
-		qDebug() << "track entity is not removable";
+		qDebug() << "Track entity is not removable";
 	}
 	return m_pRemovable;
 }

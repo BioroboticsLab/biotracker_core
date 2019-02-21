@@ -293,6 +293,8 @@ void ControllerPlugin::disconnectPlugin() {
 void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number) {
 	m_currentFrameNumber = number;
 
+	//qDebug() << "Core send: " << number;
+
 	//Prevent calling the plugin if none is loaded
 	if (m_BioTrackerPlugin) {
 		while (!m_editQueue.isEmpty()) {
