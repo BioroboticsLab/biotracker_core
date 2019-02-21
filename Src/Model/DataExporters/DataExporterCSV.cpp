@@ -4,7 +4,7 @@
 #include <qdebug.h>
 #include <qfile.h>
 #include <qdatetime.h>
-
+#include <fstream>
 
 using namespace BioTrackerUtilsMisc; //split
 
@@ -123,7 +123,7 @@ void DataExporterCSV::addChildOfChild(IModelTrackedTrajectory *root, IModelTrack
 
 void DataExporterCSV::loadFile(std::string file)
 {
-    std::ifstream ifs(file, std::ifstream::in);
+    std::ifstream ifs (file, std::ifstream::in);
 
     std::string line = "# ";
     while (line.substr(0, 1) == "#") {
