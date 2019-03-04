@@ -43,8 +43,8 @@ The [dockerfile](https://git.imp.fu-berlin.de/bioroboticslab/robofish/docker) do
   
 Install and configure those dependencies. A shorthand to the dockerfile is using [vcpkg](https://git.imp.fu-berlin.de/bioroboticslab/robofish/vcpkg) 
 Get the boost and opencv packages:  
-` vcpkg install boost-property-tree:x64-windows-14.13 boost-bimap:x64-windows-14.13 boost-assign:x64-windows-14.13 boost-system:x64-windows-14.13 boost-filesystem:x64-windows-14.13 boost-chrono:x64-windows-14.13 boost-timer:x64-windows-14.13 boost-program-options:x64-windows-14.13 `  
-`vcpkg install openblas:x64-windows-14.13 opencv[opengl,ffmpeg,ximea,cuda]:x64-windows-14.13 `  
+` vcpkg install boost-property-tree:x64-windows-14.16 boost-bimap:x64-windows-14.16 boost-assign:x64-windows-14.16 boost-system:x64-windows-14.16 boost-filesystem:x64-windows-14.16 boost-chrono:x64-windows-14.16 boost-timer:x64-windows-14.16 boost-program-options:x64-windows-14.16 `  
+`vcpkg install openblas:x64-windows-14.16 opencv[opengl,ffmpeg,ximea,cuda]:x64-windows-14.16 `  
 ... and Qt systemwide using Qt5_dir  
 Now call cmake with some switches to include vcpkg:   `-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-14.16`  
 ... and build. You might need to copy flang DLL files, as their vcpkg integration is not yet complete.   
