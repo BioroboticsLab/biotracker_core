@@ -28,6 +28,7 @@
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+/*
 // Get the default Qt message handler.
 static const QtMessageHandler QT_DEFAULT_MESSAGE_HANDLER = qInstallMessageHandler(0);
 
@@ -46,6 +47,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
     (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
 }
+*/
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -81,7 +83,7 @@ int main(int argc, char* argv[]) {
 	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
     qRegisterMetaTypeStreamOperators<QList<IModelTrackedComponent*>>("QList<IModelTrackedComponent*>");
     
-    qInstallMessageHandler(myMessageOutput);
+    //qInstallMessageHandler(myMessageOutput);
 
     QDir qd;
 	qd.mkpath(IConfig::configLocation);

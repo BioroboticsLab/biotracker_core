@@ -184,6 +184,12 @@ void DataExporterCSV::write(int idx) {
         return;
     }
 
+    //check if tmp filestream has device (file loaded)
+    if (!_ofs.device()){
+        qDebug() << "CORE:  Tmp file not found";
+        return;
+    }
+
     //TODO there is some duplicated code here
     _ofs << QString::fromStdString(std::to_string(idx))
         << QString::fromStdString(_separator) + QString::fromStdString(std::to_string((long long)((((double)idx) / _fps) * 1000)));
