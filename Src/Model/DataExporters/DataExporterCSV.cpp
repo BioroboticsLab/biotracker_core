@@ -186,7 +186,12 @@ void DataExporterCSV::write(int idx) {
 
     //check if tmp filestream has device (file loaded)
     if (!_ofs.device()){
-        qDebug() << "CORE:  Tmp file not found";
+        qDebug() << "CORE:  Tmp file not found!";
+        return;
+    }
+
+    if(!_oFileTmp->isOpen()){
+        qDebug() << "CORE:  Tmp file not open!"; //most likely the last frame, which was processed by the tracker after the next batch was loaded (meaning reinit of the dataexporter). THe last frame of each video is not written to the tmp
         return;
     }
 
@@ -227,16 +232,15 @@ void DataExporterCSV::finalizeAndReInit() {
 void DataExporterCSV::writeAll(std::string f) {
     //Sanity
     if (!_root) {
-        qDebug() << "CORE: No output opened!";
+        qDebug() << "CORE:  No output opened!";
         return;
     }
-    /*
-    if (_ofs.is_open()) {
-        _ofs.close();
-    }
-    */
+
    if (_oFileTmp->isOpen()) {
         _oFileTmp->close();
+   }
+   if (_ofs.device()){
+       _ofs.setDevice(0);
    }
 
     //Find max length of all tracks
@@ -256,20 +260,6 @@ void DataExporterCSV::writeAll(std::string f) {
     if (target.substr(target.size() - 4) != ".csv")
         target += ".csv";
 
-    //std::this_thread::sleep_for (std::chrono::seconds(1));
-
-    /*
-    //Create final file
-    std::ofstream o; 
-    o.exceptions(std::ios::failbit | std::ios::badbit);
-
-    if(o.good()){
-        qDebug() << "good";
-    }
-    else{
-        qDebug() << "bad";
-    }
-    */
 
     //QT-Ansatz, weil std ofstream oft hängt bei open 
     QFile outFile(QString::fromStdString(target));
@@ -306,7 +296,7 @@ void DataExporterCSV::writeAll(std::string f) {
     IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
     int headerCount = 0;
     if (factory != nullptr) {
-        IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
+        IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0")); // do this with signals/slots
         std::string header = getHeader(ptraj, vcount);
         headerCount = static_cast<int>(getHeaderElements(ptraj).size());
         o << QString::fromStdString(header) << QString("\n");
@@ -348,7 +338,7 @@ void DataExporterCSV::writeAll(std::string f) {
         o << endl;
     }
     //o.close();
-    outFile.close();
+      outFile.close();
 
     qDebug() << "CORE: Tracks saved in: " << QString::fromStdString(target);
 }
@@ -361,6 +351,11 @@ void DataExporterCSV::close() {
     */
     if(_oFileTmp->isOpen()){
         _oFileTmp->close();
+    }
+
+    //remove tmp file from filestream
+    if (_ofs.device()){
+        _ofs.setDevice(0);
     }
     //Remove temporary file
     QFile file(_tmpFile.c_str());

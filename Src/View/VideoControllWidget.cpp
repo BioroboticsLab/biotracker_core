@@ -317,15 +317,15 @@ void VideoControllWidget::setupVideoToolbar() {
 	}
 }
 
-void VideoControllWidget::videoChanged(const std::string path) {
-	ui->video_label->setText(QString::fromStdString(path));
+void VideoControllWidget::mediumChanged(const std::string path) {
+	ui->medium_label->setText(QString::fromStdString(path));
 
-	int currNumber =  ui->video_bCurr->text().toInt();
-	ui->video_bCurr->setText(QString::number(currNumber + 1));
+	int currNumber =  ui->medium_bCurr->text().toInt();
+	ui->medium_bCurr->setText(QString::number(currNumber + 1));
 
 }
 
 void VideoControllWidget::getMaxBatchNumber(int number){
-	ui->video_bCurr->setText("1");
-	ui->video_bMax->setText(QString::number(number));
+	ui->medium_bCurr->setText("1");
+	ui->medium_bMax->setText(QString::number(number));
 }

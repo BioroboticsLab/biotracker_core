@@ -37,7 +37,7 @@ class VideoControllWidget : public IViewWidget {
 
   public Q_SLOTS:
     void getNotified();
-    void videoChanged(const std::string path);
+    void mediumChanged(const std::string path);
     void getMaxBatchNumber(int number);
 
   private Q_SLOTS:

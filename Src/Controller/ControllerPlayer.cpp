@@ -122,8 +122,8 @@ void ControllerPlayer::connectControllerToController() {
     VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
     vControl->setupVideoToolbar();
 
-    //QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatchLoaded, vControl, &VideoControllWidget::videoChanged);
-    QObject::connect(ctrM, &ControllerMainWindow::emitMediaLoaded, vControl, &VideoControllWidget::videoChanged);
+    //QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatchLoaded, vControl, &VideoControllWidget::mediumChanged);
+    QObject::connect(ctrM, &ControllerMainWindow::emitMediaLoaded, vControl, &VideoControllWidget::mediumChanged);
     QObject::connect(ctrM, &ControllerMainWindow::emitFilesCount, vControl, &VideoControllWidget::getMaxBatchNumber);
 
 
@@ -178,9 +178,11 @@ void ControllerPlayer::receiveNextMediaInBatchLoaded(const std::string path){
         trCC->emitAddTrack();
     }
 
+    qDebug() << "CORE:  Video loaded: " << QString::fromStdString(path);
+
     //set video name in video control widget
-    VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
-    vControl->videoChanged(path);
+    //VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
+    //vControl->mediumChanged(path);
 }
 
 void ControllerPlayer::receiveTrackCount(int trackNo){

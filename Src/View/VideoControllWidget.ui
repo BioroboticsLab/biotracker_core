@@ -246,7 +246,7 @@ QFrame[frameShape=&quot;5&quot;]
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="video_bCurr">
+                 <widget class="QLabel" name="medium_bCurr">
                   <property name="text">
                    <string>0</string>
                   </property>
@@ -260,7 +260,7 @@ QFrame[frameShape=&quot;5&quot;]
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="video_bMax">
+                 <widget class="QLabel" name="medium_bMax">
                   <property name="text">
                    <string>0</string>
                   </property>
@@ -274,7 +274,7 @@ QFrame[frameShape=&quot;5&quot;]
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="video_label">
+                 <widget class="QLabel" name="medium_label">
                   <property name="text">
                    <string>none</string>
                   </property>

@@ -786,7 +786,7 @@ void MainWindow::on_actionOpen_Video_batch_triggered() {
     std::vector<boost::filesystem::path> files;
 
     for (QString const& path : QFileDialog::getOpenFileNames(this,
-        "Open image files", "", videoFilter, 0)) {
+        "Open video files", "", videoFilter, 0)) {
         files.push_back(boost::filesystem::path(path.toStdString()));
     }
 

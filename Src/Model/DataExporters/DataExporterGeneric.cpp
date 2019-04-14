@@ -33,8 +33,8 @@ void DataExporterGeneric::open(IModelTrackedTrajectory *root) {
 
     _ofs.setDevice(_oFileTmp);
 
-    if(_ofs.device()){
-        qDebug() << "QTextStream has device";
+    if(!_ofs.device()){
+        qDebug() << "Failed to assign device to tmp-QTextStream";
     }
 }
 
