@@ -191,7 +191,7 @@ void DataExporterCSV::write(int idx) {
     }
 
     if(!_oFileTmp->isOpen()){
-        qDebug() << "CORE:  Tmp file not open!"; //most likely the last frame, which was processed by the tracker after the next batch was loaded (meaning reinit of the dataexporter). THe last frame of each video is not written to the tmp
+        qDebug() << "CORE:  Tmp file not open!"; //most likely the last frame, which was processed by the tracker after the next batch was loaded (meaning reinit of the dataexporter). The last frame of each video is not written to the tmp
         return;
     }
 

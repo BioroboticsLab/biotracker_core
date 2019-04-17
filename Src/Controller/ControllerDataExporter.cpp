@@ -21,8 +21,11 @@ ControllerDataExporter::~ControllerDataExporter()
 }
 
 void ControllerDataExporter::cleanup() {
-    if (m_Model)
+    _closing = true;
+
+    if (m_Model){
    	    qobject_cast<IModelDataExporter*>(m_Model)->finalize();
+    }
 }
 
 void ControllerDataExporter::connectControllerToController() {
@@ -37,7 +40,6 @@ void ControllerDataExporter::connectControllerToController() {
 	ControllerTrackedComponentCore *tccController = dynamic_cast<ControllerTrackedComponentCore*>(ctr);
 
 	QObject::connect(this, &ControllerDataExporter::emitViewUpdate, tccController, &ControllerTrackedComponentCore::receiveUpdateView, Qt::DirectConnection);
-
 
     //ControllerPlayer* cPl = dynamic_cast<ControllerPlayer*>(m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER));
     //QObject::connect(cPl, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
@@ -178,26 +180,34 @@ void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
     QString str = "Exported file:\n";
     str += fname.absoluteFilePath();
 
-    QMessageBox msgBox;
-    msgBox.setText("File saved!");
-    msgBox.setInformativeText(str);
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    QPushButton *goToFileDirButton = msgBox.addButton(tr("Show in folder"), QMessageBox::ActionRole);
-    QPushButton *openFileButton = msgBox.addButton(tr("Open file"), QMessageBox::ActionRole);
+    QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
+    msgBox->setText("File saved!");
+    msgBox->setInformativeText(str);
+    msgBox->setStandardButtons(QMessageBox::Ok);
+    msgBox->setDefaultButton(QMessageBox::Ok);
+    QPushButton *goToFileDirButton = msgBox->addButton(tr("Show in folder"), QMessageBox::ActionRole);
+    QPushButton *openFileButton = msgBox->addButton(tr("Open file"), QMessageBox::ActionRole);
 
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.exec();
+    msgBox->setIcon(QMessageBox::Information);
 
-    if (msgBox.clickedButton() == goToFileDirButton) {
+    // is modal if program is closing, else not
+    if(_closing){
+        msgBox->setModal(true);
+        msgBox->exec();
+    }
+    else{
+        msgBox->setModal(false);
+        msgBox->show();
+    }
+    
+    if (msgBox->clickedButton() == goToFileDirButton) {
         QUrl fileDirUrl = QUrl::fromLocalFile(fname.absolutePath());
         QDesktopServices::openUrl(fileDirUrl);
     }
-    else if (msgBox.clickedButton() == openFileButton){
+    else if (msgBox->clickedButton() == openFileButton) {
         QUrl fileUrl = QUrl::fromLocalFile(fname.absoluteFilePath());
         QDesktopServices::openUrl(fileUrl);
     }
-
 }
 
 void ControllerDataExporter::receiveTrialStarted(bool started)

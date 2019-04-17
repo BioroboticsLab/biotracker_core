@@ -55,5 +55,6 @@ private Q_SLOTS:
 private:
 	IModelTrackedComponentFactory* _factory;
 	bool _trialStarted = false;
+	bool _closing = false;
 };
 
