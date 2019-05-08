@@ -48,6 +48,11 @@ void ControllerAreaDescriptor::createView()
 
 	int v = _cfg->AppertureType;
 	trackingAreaType(v);
+
+	// set the rectification dimensions
+	double h = std::max(_cfg->RectificationHeight, std::numeric_limits<double>::epsilon());
+    double w = std::max(_cfg->RectificationWidth, std::numeric_limits<double>::epsilon());
+	setRectificationDimensions(w, h);
 }
 
 void ControllerAreaDescriptor::connectModelToController()
@@ -260,7 +265,9 @@ void ControllerAreaDescriptor::setRectificationDimensions(double w, double h) {
 	triggerUpdateAreaDescriptor();
 
     RectDescriptor* rd = static_cast<RectDescriptor*>(getView());
-    rd->updateRect();
+	if(rd){
+    	rd->updateRect();
+	}
 }
 
 void ControllerAreaDescriptor::setDisplayRectificationDefinition(bool b) {

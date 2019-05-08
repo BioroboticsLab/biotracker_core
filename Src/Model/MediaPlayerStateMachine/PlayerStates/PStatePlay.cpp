@@ -50,7 +50,7 @@ void PStatePlay::operate() {
     } else
     {
         nextState = IPlayerState::STATE_INITIAL_STREAM;
-        
+        qDebug() << "CORE:  Last medium ended";
     }
 
     //If fps is limited, wait the neccessary time
