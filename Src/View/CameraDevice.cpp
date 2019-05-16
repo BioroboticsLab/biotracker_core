@@ -50,7 +50,7 @@ void CameraDevice::on_buttonBox_accepted()
     this->close();
 }
 
-void CameraDevice::on_pushButton_clicked()
+void CameraDevice::on_showPreviewButton_clicked()
 {
 	int id = ui->comboBox->currentIndex();
 	if (m_ximeaId != id)

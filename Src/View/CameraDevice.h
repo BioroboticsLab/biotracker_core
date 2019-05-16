@@ -24,7 +24,7 @@ public:
 private Q_SLOTS:
     void on_buttonBox_accepted();
 
-	void on_pushButton_clicked();
+	void on_showPreviewButton_clicked();
 
     void on_comboBox_currentIndexChanged(int index);
 
