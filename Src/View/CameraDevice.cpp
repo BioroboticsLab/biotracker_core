@@ -35,7 +35,7 @@ CameraConfiguration CameraDevice::grabUICameraConfiguration() {
 	std::string sf = ui->lineEdit_3->text().toStdString();
 	int x, y, f;
 	x = (sx == "Default" ? -1 : std::stoi(sx));
-	y = (sx == "Default" ? -1 : std::stoi(sy));
+	y = (sy == "Default" ? -1 : std::stoi(sy));
 	f = (sf == "Default" ? -1 : std::stoi(sf));
 
 	CameraConfiguration conf(id, x, y, f, false, "");
