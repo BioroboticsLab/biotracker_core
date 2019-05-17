@@ -21,25 +21,25 @@ find_path(Pylon5_INCLUDE_DIR pylon/PylonBase.h
 find_library(Pylon5_Base_LIBRARY
              NAMES
                 pylonbase
-                PylonBase_MD_VC120_v5_0 PylonBase_v5_1 PylonBase_v5_2
+                PylonBase_v5_2
              PATHS ${Pylon5_LIBRARY_DIR})
 
 find_library(Pylon5_Utility_LIBRARY
              NAMES
                 pylonutility
-                PylonUtility_MD_VC120_v5_0 PylonUtility_v5_1 PylonUtility_v5_2
+                PylonUtility_v5_2
              PATHS ${Pylon5_LIBRARY_DIR})
 
 find_library(Pylon5_GenAPI_LIBRARY
              NAMES
-                GenApi_gcc_v3_0_Basler_pylon_v5_0
-                GenApi_MD_VC120_v3_0_Basler_pylon_v5_0 GenApi_MD_VC141_v3_1_Basler_pylon_v5_1 GenApi_MD_VC141_v3_1_Basler_pylon
+                GenApi_gcc_v3_1_Basler_pylon
+                GenApi_MD_VC141_v3_1_Basler_pylon
              PATHS ${Pylon5_LIBRARY_DIR})
 
 find_library(Pylon5_GCBase_LIBRARY
              NAMES
-                GCBase_gcc_v3_0_Basler_pylon_v5_0
-                GCBase_MD_VC120_v3_0_Basler_pylon_v5_0 GCBase_MD_VC141_v3_1_Basler_pylon_v5_1 GCBase_MD_VC141_v3_1_Basler_pylon
+                GCBase_gcc_v3_1_Basler_pylon
+                GCBase_MD_VC141_v3_1_Basler_pylon
              PATHS ${Pylon5_LIBRARY_DIR})
 
 include(FindPackageHandleStandardArgs)
