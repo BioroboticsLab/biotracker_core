@@ -40,24 +40,3 @@ const std::vector<std::string> exporterList = {
     std::string("Serialize"),
     std::string("Json")
 };
-
-class CameraConfiguration
-{
-public:
-	CameraConfiguration() :
-		_id(0), _width(-1), _height(-1), _fps(30), _recordInput(false), _fourcc("X264") {
-	}
-	CameraConfiguration(int p_id, int p_width, int p_height, double p_fps, bool p_recordInput, std::string p_fourcc) :
-		_id(p_id), _width(p_width), _height(p_height), _fps(p_fps), _recordInput(p_recordInput), _fourcc(p_fourcc) {
-	}
-
-	int _id;
-	int _width;
-	int _height;
-	bool _recordInput;
-	double _fps;
-	std::string _fourcc;
-};
-
-
-

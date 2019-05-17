@@ -7,6 +7,7 @@
 #include "QCameraViewfinder"
 #include "QPointer"
 #include "util/types.h"
+#include "util/camera/base.h"
 #include <opencv2/opencv.hpp>
 
 namespace Ui {

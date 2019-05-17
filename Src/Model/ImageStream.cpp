@@ -385,7 +385,7 @@ namespace BioTracker {
 			*/
 			explicit ImageStream3Camera(Config *cfg, CameraConfiguration conf)
 				: ImageStream(0, cfg)
-				, m_capture(conf._id)
+				, m_capture(conf._selector.index)
 				, m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
 				// Give the camera some extra time to get ready:
 				// Somehow opening it on first try sometimes does not succeed.
@@ -393,7 +393,7 @@ namespace BioTracker {
 				// So, stubbornly try it a few times until it works.
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-				qDebug() << "\nStarting to record on camera no. " << conf._id;
+				qDebug() << "\nStarting to record on camera no. " << conf._selector.index;
 				m_w = conf._width == -1 ? _cfg->CameraWidth : conf._width;
 				m_h = conf._height == -1 ? _cfg->CameraHeight : conf._height;
 				m_fps = conf._fps == -1 ? _cfg->RecordFPS : conf._fps;
@@ -402,7 +402,7 @@ namespace BioTracker {
 
 				int fails = 0;
 				while (!m_capture.isOpened() && fails < 5) {
-					m_capture.open(conf._id);
+					m_capture.open(conf._selector.index);
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 					fails++;
 				}

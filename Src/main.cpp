@@ -9,6 +9,7 @@
 #include <QFile> 
 #include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 #include "util/types.h"
+#include "util/camera/base.h"
 
 #include "util/CLIcommands.h"
 #include "Interfaces/IModel/IModelTrackedComponent.h"

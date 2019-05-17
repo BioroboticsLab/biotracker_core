@@ -12,6 +12,7 @@
 #include "QGraphicsObject"
 #include "View/GraphicsView.h"
 #include "util/types.h"
+#include "util/camera/base.h"
 #include "SettingsWindow.h"
 #include <QCloseEvent>
 #include "QWizard"

@@ -14,6 +14,7 @@
 #include "boost/filesystem.hpp"
 #include <vector>
 #include "util/types.h"
+#include "util/camera/base.h"
 
   /**
    * The ControllerMainWindow class controlls the IView class MainWindow.

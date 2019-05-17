@@ -18,6 +18,7 @@
 
 #include "util/ParamNames.h" // GUIPARAM::MediaType
 #include "util/types.h"
+#include "util/camera/base.h"
 #include "util/Config.h"
 
 namespace BioTracker {

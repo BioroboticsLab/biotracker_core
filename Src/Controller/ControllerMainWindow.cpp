@@ -15,7 +15,6 @@
 #include "GuiContext.h"
 
 #include "QPluginLoader"
-#include "util/types.h"
 
 #include <chrono>
 #include <thread>
