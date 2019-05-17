@@ -19,7 +19,7 @@
 
 class CLI {
 public:
-	static int optionParser(int ac, char* av[], Config* cfg)
+	static void optionParser(int ac, char* av[], Config* cfg)
 	{
 		//Taken from http://www.boost.org/doc/libs/1_64_0/libs/program_options/example/option_groups.cpp
 		using namespace boost;
@@ -62,13 +62,16 @@ public:
 				exit(0);
 			}
 			if (vm.count("usePlugin")) {
-				cfg->UsePlugins = QString(vm["usePlugin"].as<std::string>().c_str());
+				auto str = vm["usePlugin"].as<std::string>();
+				cfg->UsePlugins = QString(str.c_str());
 			}
 			if (vm.count("video")) {
-				cfg->LoadVideo = QString(vm["video"].as<std::string>().c_str());
+				auto str = vm["video"].as<std::string>();
+				cfg->LoadVideo = QString(str.c_str());
 			}
 			if (vm.count("cfg")) {
-				cfg->CfgCustomLocation = QString(vm["cfg"].as<std::string>().c_str());
+				auto str = vm["cfg"].as<std::string>();
+				cfg->CfgCustomLocation = QString(str.c_str());
 			}
 		}
 		catch (std::exception& e) {
