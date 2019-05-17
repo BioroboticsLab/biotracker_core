@@ -90,6 +90,7 @@ void CameraDevice::on_showPreviewButton_clicked()
         cv::resize(mat, scaled, cv::Size{width, height});
         if (scaled.type() == CV_8UC1)
             cv::cvtColor(scaled, scaled, cv::COLOR_GRAY2RGB);
+        cv::cvtColor(scaled, scaled, cv::COLOR_BGR2RGB);
 
         ui->label_NoImage->setPixmap(QPixmap::fromImage(QImage(scaled.data, scaled.cols, scaled.rows, static_cast<int>(scaled.step1()), QImage::Format_RGB888)));
         m_capture.release();
