@@ -375,7 +375,7 @@ namespace BioTracker {
 
 
 		/*********************************************************/
-		class ImageStream3Camera : public ImageStream {
+		class ImageStream3OpenCVCamera : public ImageStream {
 		public:
 			/**
 			* @throw file_not_found when device does not exists
@@ -383,7 +383,7 @@ namespace BioTracker {
 			* @brief ImageStreamCamera
 			* @param device_id according to the VideoCapture class of OpenCV
 			*/
-			explicit ImageStream3Camera(Config *cfg, CameraConfiguration conf)
+			explicit ImageStream3OpenCVCamera(Config *cfg, CameraConfiguration conf)
 				: ImageStream(0, cfg)
 				, m_capture(conf._selector.index)
 				, m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
@@ -500,7 +500,12 @@ namespace BioTracker {
 
 		std::shared_ptr<ImageStream> make_ImageStream3Camera(Config *cfg, CameraConfiguration conf) {
 			try {
-				return std::make_shared<ImageStream3Camera>(cfg, conf);
+				switch (conf._selector.type) {
+				case CameraType::OpenCV:
+					return std::make_shared<ImageStream3OpenCVCamera>(cfg, conf);
+				default:
+					throw std::logic_error("Missing image stream implementation");
+				}
 			}
 			catch (const device_open_error &) {
 				return make_ImageStream3NoMedia();
