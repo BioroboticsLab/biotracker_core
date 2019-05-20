@@ -69,9 +69,6 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 
     include(WinDeployQt5)
     deploy_qt5(${target} DESTINATION .)
-	
-	#boost_program_options;boost_filesystem;bt_interfaces;
-	#calib3d;videoio;imgcodecs;imgproc;core;
     set(INSTALL_CUDA_COMPONENTS "" CACHE STRING "CUDA components to install")
     locate_cuda(shared_libraries COMPONENTS ${INSTALL_CUDA_COMPONENTS})
 
