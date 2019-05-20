@@ -67,8 +67,11 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         include(InstallRequiredSystemLibraries)
     endif()
 
-    include(WinDeployQt5)
-    deploy_qt5(${target} DESTINATION .)
+    if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+        include(WinDeployQt5)
+        deploy_qt5(${target} DESTINATION .)
+    endif()
+
     set(INSTALL_CUDA_COMPONENTS "" CACHE STRING "CUDA components to install")
     locate_cuda(shared_libraries COMPONENTS ${INSTALL_CUDA_COMPONENTS})
 
