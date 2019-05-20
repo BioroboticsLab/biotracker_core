@@ -277,7 +277,6 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
             std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
 
             cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
-            cv::cvtColor(*mat, *mat, CV_BGR2RGB);
             m_videoc->add(mat,1);
 
             delete pix;
