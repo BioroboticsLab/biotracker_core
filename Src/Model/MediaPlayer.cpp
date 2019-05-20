@@ -279,7 +279,8 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
             cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
             cv::cvtColor(*mat, *mat, CV_BGR2RGB);
             m_videoc->add(mat,1);
-            
+
+            delete pix;
         }
     }
     else
