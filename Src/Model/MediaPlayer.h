@@ -201,6 +201,8 @@ class MediaPlayer : public IModel {
 
 	bool m_useCuda;
 	GraphicsView *m_gv;
+	QImage m_image;
+	QPainter m_painter;
 	std::shared_ptr<cv::VideoWriter> m_videoWriter;
 	std::shared_ptr<VideoCoder> m_videoc;
 

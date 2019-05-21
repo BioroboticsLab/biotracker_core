@@ -256,30 +256,30 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
         }
 
         if (m_recd) {
-            //reopenVideoWriter(); //4us
-            QRectF rscene = m_gv->sceneRect(); //0us
-            QRectF rview = m_gv->rect(); //0us
-            QPixmap *pix;
+            QRectF rscene = m_gv->sceneRect();
+            QRectF rview = m_gv->rect();
+            QSize size;
             if (!m_recordScaled)
-                pix = new QPixmap(rscene.size().toSize()); //17us
+                size = rscene.size().toSize();
             else
-                pix = new QPixmap(rview.size().toSize()); //17us
-
-            QPainter *paint = new QPainter(pix); //21us
+                size = rview.size().toSize();
+            if (m_image.size() != size) {
+                m_image = QImage(size, QImage::Format_RGB32);
+                if (m_painter.isActive())
+                    m_painter.end();
+                m_painter.begin(&m_image);
+            }
             
             if(!m_recordScaled)
-                m_gv->scene()->render(paint); //8544us
+                m_gv->scene()->render(&m_painter);
             else
-                m_gv->render(paint);// , m_gv->scene()->sceneRect(), QRect());// , Qt::AspectRatioMode::IgnoreAspectRatio);
+                m_gv->render(&m_painter);
 
-            QImage image = pix->toImage(); //8724us
-            int x = image.format(); //0us
-            std::shared_ptr<cv::Mat> mat = std::make_shared<cv::Mat>(image.height(), image.width(), CV_8UC(image.depth()/8), (uchar*)image.bits(), image.bytesPerLine()); //1us
+            auto view = cv::Mat(m_image.height(), m_image.width(), CV_8UC(m_image.depth() / 8), m_image.bits(), m_image.bytesPerLine());
 
-            cv::cvtColor(*mat, *mat, CV_BGR2RGB); //16898 us
-            m_videoc->add(mat,1);
-
-            delete pix;
+            auto copy = std::make_shared<cv::Mat>(view.clone());
+            cv::cvtColor(*copy, *copy, CV_BGR2RGB);
+            m_videoc->add(copy);
         }
     }
     else
