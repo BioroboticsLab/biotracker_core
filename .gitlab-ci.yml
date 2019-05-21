@@ -85,6 +85,23 @@ build windows:
     - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
     - $env:PATH += ";$(resolve-path vendor/biotracker-interfaces/bin)"
 
+build windows[pylon5]:
+  extends: .build windows
+  variables:
+    <<: [ *release, *pylon5 ]
+  before_script:
+    - . $Profile
+    - *msvc15_9
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Finterfaces master package%20windows
+    - CMake-Integrate-Package biotracker-interfaces
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Futility master package%20windows
+    - CMake-Integrate-Package biotracker-utility
+    - GitLab-Fetch-Artifacts bioroboticslab%2Fbiotracker%2Fbehavior_loader master package%20windows
+    - CMake-Integrate-Package robofish-behavior_loader
+    - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
+    - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
+    - $env:PATH += ";$(resolve-path vendor/biotracker-interfaces/bin)"
+
 package ubuntu-18.04:
   extends: .ubuntu-18.04
   dependencies:
@@ -123,6 +140,15 @@ package windows:
   extends: .package windows
   dependencies:
     - build windows
+  before_script:
+    - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
+    - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
+    - $env:PATH += ";$(resolve-path vendor/biotracker-interfaces/bin)"
+
+package windows[pylon5]:
+  extends: .package windows
+  dependencies:
+    - build windows[pylon5]
   before_script:
     - $env:PACKAGE_DIR = ("${env:TMP}/pkg" -Replace "\\","/")
     - $env:PATH += ";${env:VCPKG_INSTALL_DIR}/bin"
