@@ -33,7 +33,7 @@ find_package(Boost REQUIRED system filesystem chrono thread timer program_option
 target_include_directories(${target} PUBLIC ${Boost_INCLUDE_DIRS}) 
 target_link_libraries(${target} ${Boost_LIBRARIES})
 
-option(WITH_PYLON5 "Support Pylon 5 cameras" OFF)
+option(WITH_PYLON5 "Support Pylon 5 cameras" $ENV{WITH_PYLON5})
 if(WITH_PYLON5)
     find_package(Pylon5)
     if(Pylon5_FOUND)
