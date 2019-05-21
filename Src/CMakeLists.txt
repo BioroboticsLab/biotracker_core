@@ -13,6 +13,10 @@ VSSourceGroups(${CMAKE_CURRENT_LIST_DIR})
 add_definitions(-DBIORACKER_GIT_HASH="${GIT_HASH}")
 add_definitions(-DBIOTRACKER_GIT_TAG="${GIT_TAG}")
 
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 set(target BioTracker)
 add_executable (${target})
 set_target_properties(${target} PROPERTIES OUTPUT_NAME BioTracker)
@@ -186,6 +190,13 @@ PRIVATE
     "View/Utility/SwitchButton.cpp"
     "View/Utility/Tracer.cpp"
 )
+
+if(WITH_PYLON5)
+    target_sources(${target}
+    PRIVATE
+        "util/camera/pylon.cpp"
+    )
+endif()
 
 
 

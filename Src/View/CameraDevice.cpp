@@ -4,6 +4,9 @@
 #include "QCameraInfo"
 #include "util/types.h"
 #include "util/camera/base.h"
+#if HAS_PYLON
+#include "util/camera/pylon.h"
+#endif
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include "opencv2/highgui/highgui.hpp"
@@ -96,6 +99,38 @@ void CameraDevice::on_showPreviewButton_clicked()
         m_capture.release();
         break;
     }
+#if HAS_PYLON
+    case CameraType::Pylon:
+    {
+        Pylon::PylonAutoInitTerm pylon;
+        auto camera = Pylon::CInstantCamera{getPylonDevice(conf._selector.index)};
+        camera.Open();
+        for (auto num_tries = 0; !camera.IsOpen() && num_tries < 50; ++num_tries)
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (!camera.IsOpen())
+        {
+            ui->label_NoImage->setText("Error loading camera");
+            return;
+        }
+
+        Pylon::CGrabResultPtr grab_result;
+        camera.GrabOne(5000, grab_result);
+        auto view = toOpenCV(grab_result);
+
+        auto height = conf._height != -1 ? conf._height : ui->label_NoImage->height();
+        auto ar = view.rows ? static_cast<float>(view.cols) / view.rows : 1;
+        auto width = conf._width != -1 ? conf._width : static_cast<int>(height * ar);
+
+        cv::Mat scaled;
+        cv::resize(view, scaled, cv::Size{width, height});
+        if (scaled.type() == CV_8UC1)
+            cv::cvtColor(scaled, scaled, cv::COLOR_GRAY2RGB);
+
+        ui->label_NoImage->setPixmap(QPixmap::fromImage(QImage(scaled.data, scaled.cols, scaled.rows, static_cast<int>(scaled.step1()), QImage::Format_RGB888)));
+        break;
+    }
+#endif
     default:
         throw std::logic_error("Missing preview implementation");
     }
@@ -124,6 +159,23 @@ void CameraDevice::listAllCameras()
                 QVariant::fromValue(CameraSelector{CameraType::OpenCV, CV_CAP_XIAPI}));
         }
     }
+
+#if HAS_PYLON
+    {
+        Pylon::PylonAutoInitTerm pylon;
+
+        auto &factory = Pylon::CTlFactory::GetInstance();
+        Pylon::DeviceInfoList_t devices;
+        factory.EnumerateDevices(devices);
+
+        for (int index = 0; index < devices.size(); ++index)
+        {
+            ui->comboBox->addItem(
+                QString{devices[index].GetFriendlyName()},
+                QVariant::fromValue(CameraSelector{CameraType::Pylon, index}));
+        }
+    }
+#endif
 }
 
 void CameraDevice::on_buttonBox_rejected()

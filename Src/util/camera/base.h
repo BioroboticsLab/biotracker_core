@@ -7,6 +7,9 @@
 enum class CameraType
 {
 	OpenCV,
+#if HAS_PYLON
+	Pylon,
+#endif
 };
 
 struct CameraSelector

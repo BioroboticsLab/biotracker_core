@@ -5,6 +5,7 @@
 #include <stdexcept>  // std::invalid_argument
 #include <chrono>
 #include <thread>
+#include <limits>
 
 #include "util/Exceptions.h"
 #include "QSharedPointer"
@@ -13,6 +14,12 @@
 #include "util/VideoCoder.h"
 
 #include "Controller/IControllerCfg.h"
+
+#if HAS_PYLON
+#include "util/camera/pylon.h"
+#include <opencv2/opencv.hpp>
+#endif
+#include <iostream>
 
 namespace BioTracker {
 	namespace Core {
@@ -477,6 +484,131 @@ namespace BioTracker {
 			bool m_recording;
 		};
 
+#if HAS_PYLON
+		/*********************************************************/
+		class ImageStream3PylonCamera : public ImageStream {
+		public:
+			explicit ImageStream3PylonCamera(Config* cfg, CameraConfiguration conf)
+				: ImageStream(0, cfg)
+				, m_camera(getPylonDevice(conf._selector.index), Pylon::Cleanup_Delete)
+			{
+				m_w =  conf._width == -1 ? _cfg->CameraWidth : conf._width;
+				m_h = conf._height == -1 ? _cfg->CameraHeight : conf._height;
+				m_fps = conf._fps == -1 ? _cfg->RecordFPS : conf._fps;
+
+				m_camera.MaxNumBuffer = 1;
+				m_camera.Open();
+
+				if (!m_camera.IsOpen()) {
+					qWarning() << "Unable to open camera!";
+					throw device_open_error("Error loading camera");
+				}
+
+				GenApi::CBooleanPtr(m_camera.GetNodeMap().GetNode("AcquisitionFrameRateEnable"))->SetValue(1);
+
+				setFrameRate(m_fps);
+				auto const actual_fps = getFrameRate();
+				qInfo() << "Actual framerate:" << actual_fps;
+				if (std::abs(actual_fps - m_fps) > 0.1) {
+					throw device_open_error("Error setting framerate");
+				}
+
+				qDebug() << "\nStarting to record on camera " << m_camera.GetDeviceInfo().GetFriendlyName();
+				m_camera.StartGrabbing(Pylon::GrabStrategy_LatestImages, Pylon::GrabLoop_ProvidedByUser);
+				nextFrame_impl();
+
+				m_recording = false;
+				m_encoder = std::make_shared<VideoCoder>(m_fps, _cfg);
+			}
+			GuiParam::MediaType type() const override
+			{
+				return GuiParam::MediaType::Camera;
+			}
+
+			size_t numFrames() const override
+			{
+				return (std::numeric_limits<short>::max)();
+			}
+
+			bool toggleRecord() override
+			{
+				if (!m_camera.IsOpen()) {
+					return false;
+				}
+				m_recording = m_encoder->toggle(m_w, m_h, m_fps);
+
+				return m_recording;
+			}
+
+			double fps() const override
+			{
+				return m_fps;
+			}
+
+			std::string currentFilename() const override
+			{
+				return std::string(m_camera.GetDeviceInfo().GetFriendlyName());
+			}
+
+		private:
+
+			bool nextFrame_impl() override
+			{
+				Pylon::CGrabResultPtr grabbed;
+				for (auto i = 0; i < m_frame_stride; ++i)
+					m_camera.RetrieveResult(100, grabbed, Pylon::TimeoutHandling_Return);
+
+				if (!grabbed->GrabSucceeded()) {
+					qCritical() << "Unable to grab frame:" << grabbed->GetErrorDescription();
+					return false;
+				}
+
+				auto view = toOpenCV(grabbed);
+				auto scaled = std::make_shared<cv::Mat>();
+				cv::resize(view, *scaled, cv::Size{m_w, m_h});
+				if (scaled->type() == CV_8UC1)
+            		cv::cvtColor(*scaled, *scaled, cv::COLOR_GRAY2BGR);
+				set_current_frame(scaled);
+				if (m_recording && m_encoder)
+					m_encoder->add(scaled);
+
+				return !scaled->empty();
+			}
+
+			bool setFrameNumber_impl(size_t) override
+			{
+				return false;
+			}
+
+			double getFrameRate()
+			{
+				if (m_camera.IsUsb()) {
+					return GenApi::CFloatPtr(m_camera.GetNodeMap().GetNode("AcquisitionFrameRate"))->GetValue();
+				}
+
+				throw std::logic_error("Unsupported device class");
+			}
+
+			void setFrameRate(double value)
+			{
+				if (m_camera.IsUsb()) {
+					GenApi::CFloatPtr(m_camera.GetNodeMap().GetNode("AcquisitionFrameRate")) ->SetValue(value);
+				} else {
+					throw std::logic_error("Unsupported camera type");
+				}
+			}
+
+			Pylon::PylonAutoInitTerm m_pylon;
+			Pylon::CInstantCamera m_camera;
+			double m_fps;
+			int m_w;
+			int m_h;
+			bool m_recording;
+
+			std::shared_ptr<VideoCoder> m_encoder;
+		};
+#endif
+
 		/*********************************************************/
 
 
@@ -503,6 +635,10 @@ namespace BioTracker {
 				switch (conf._selector.type) {
 				case CameraType::OpenCV:
 					return std::make_shared<ImageStream3OpenCVCamera>(cfg, conf);
+#if HAS_PYLON
+				case CameraType::Pylon:
+					return std::make_shared<ImageStream3PylonCamera>(cfg, conf);
+#endif
 				default:
 					throw std::logic_error("Missing image stream implementation");
 				}
