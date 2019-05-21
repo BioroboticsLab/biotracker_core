@@ -77,6 +77,11 @@ void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem:
 }
 
 void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) {
+	m_stream.reset();
+	for (auto x: m_States) {
+		x->changeImageStream(m_stream);
+	}
+
 	m_stream = BioTracker::Core::make_ImageStream3Camera(_cfg, conf);
 
 	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
