@@ -19,6 +19,7 @@ ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context,
 	m_BioTrackerPlugin = NULL;
 
 	m_TrackingThread = new QThread(this);
+   m_TrackingThread->setObjectName("TrackingThread");
 	m_TrackingThread->start();
 }
 

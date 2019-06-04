@@ -29,6 +29,7 @@ MediaPlayer::MediaPlayer(QObject* parent) :
     //    // Do not set a Parent for MediaPlayerStateMachine in order to run the Player in the QThread!
 
     m_PlayerThread = new QThread(this);
+    m_PlayerThread->setObjectName("PlayerThread");
     m_Player = new MediaPlayerStateMachine();
 	m_Player->setConfig(_cfg);
 
