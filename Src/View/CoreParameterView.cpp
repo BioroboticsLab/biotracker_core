@@ -507,10 +507,6 @@ void CoreParameterView::on_pushButton_finalizeExp_clicked() {
     Q_EMIT emitFinalizeExperiment();
 }
 
-void CoreParameterView::on_label_ExpSrcCnt_clicked() {
-    //Event does not exist
-}
-
 void CoreParameterView::on_trialHelpButton_clicked()
 {
 	QMessageBox::information(0, "Trials", "'Start a new Trial' will cause all the previous data to be saved and then reset.\n\n"

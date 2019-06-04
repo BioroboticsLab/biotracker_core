@@ -100,7 +100,6 @@ public:
 	//pushButton_finalizeExp
 	void on_pushButton_startExp_clicked();
 	void on_pushButton_finalizeExp_clicked();
-	void on_label_ExpSrcCnt_clicked();
 	void on_trialHelpButton_clicked();
 	void on_pushButton_saveData_clicked();
 	void on_pushButton_resetData_clicked();

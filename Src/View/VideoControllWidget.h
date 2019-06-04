@@ -52,9 +52,6 @@ class VideoControllWidget : public IViewWidget {
 
   //   void on_button_previousFrame_clicked();
 
-
-    void on_comboBoxSelectedView_currentTextChanged(const QString& arg1);
-
     void on_sld_video_sliderReleased();
 
     void on_sld_video_sliderMoved(int position);

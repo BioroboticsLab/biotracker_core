@@ -88,7 +88,6 @@ class MediaPlayerStateMachine : public IModel {
   private:
     IPlayerState* m_CurrentPlayerState;
     IPlayerState* m_NextPlayerState;
-    QThread m_StateThread;
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*> m_States;
     std::shared_ptr<BioTracker::Core::ImageStream> m_ImageStream;
 
