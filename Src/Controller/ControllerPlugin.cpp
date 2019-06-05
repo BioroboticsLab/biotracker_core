@@ -239,9 +239,6 @@ void ControllerPlugin::connectPlugin() {
 	QObject::connect(obj, SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
 		ctrTexture, SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
 
-	//TODO whyy do this two times??
-	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), model, SLOT(receiveTrackingOperationDone()));
-
 	QObject::connect(obj, SIGNAL(emitTrackingDone(uint)), ctrCompView, SLOT(receiveVisualizeTrackingModel(uint)));
 
 	QObject::connect(obj, SIGNAL(emitChangeDisplayImage(QString)), ctrPlayer, SLOT(receiveChangeDisplayImage(QString)));
@@ -262,29 +259,30 @@ void ControllerPlugin::connectPlugin() {
 
 	// data model actions
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj,
-		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::DirectConnection);
+		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), obj,
-		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
+		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)));
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj,
-		SLOT(receiveAddTrajectory(QPoint)), Qt::DirectConnection);
+		SLOT(receiveAddTrajectory(QPoint)));
 	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), obj,
-		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), Qt::DirectConnection);
+		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)));
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj,
-		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::DirectConnection);
+		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
-		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::DirectConnection);
+		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)));
 
 	QObject::connect(this, SIGNAL(emitRemoveTrajectoryId(int)), obj,
-		SIGNAL(emitRemoveTrajectoryId(int)), Qt::DirectConnection);
+		SIGNAL(emitRemoveTrajectoryId(int)));
 	QObject::connect(this, SIGNAL(emitValidateTrajectory(int)), obj,
-		SIGNAL(emitValidateTrajectory(int)), Qt::DirectConnection);
+		SIGNAL(emitValidateTrajectory(int)));
 	QObject::connect(this, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), obj,
-		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), Qt::DirectConnection);
+		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)));
 	QObject::connect(this, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), obj,
-		SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), Qt::DirectConnection);
+		SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)));
 
+	connect(this, &ControllerPlugin::frameRetrieved, m_BioTrackerPlugin, &IBioTrackerPlugin::receiveCurrentFrameFromMainApp);
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
-		SLOT(receiveCurrentFrameNumberFromMainApp(uint)), Qt::DirectConnection);
+		SLOT(receiveCurrentFrameNumberFromMainApp(uint)));
 }
 
 void ControllerPlugin::disconnectPlugin() {
@@ -334,7 +332,7 @@ void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, ui
 				break;
 			}
 		}
-		m_BioTrackerPlugin->receiveCurrentFrameFromMainApp(mat, number);
+		emit frameRetrieved(mat, number);
 	}
 }
 

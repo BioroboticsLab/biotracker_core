@@ -73,6 +73,7 @@ signals:
 	void emitEntityRotation(IModelTrackedTrajectory* trajectory0, double angle, uint frameNumber);
 
 	void emitUpdateView();
+	void frameRetrieved(std::shared_ptr<cv::Mat> mat, uint frameNumber);
 	void signalCurrentFrameNumberToPlugin(uint frameNumber);
 
 	// IController interface

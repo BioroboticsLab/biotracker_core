@@ -139,12 +139,6 @@ class MediaPlayer : public IModel {
     void receivePlayerOperationDone();
 
     /**
-     * If a BioTracker Plugin is done with executing its tracking algorithm this SLOT will be triggerd. As soon as this SLOT is triggered, the MediaPlayerStateMachine will be
-     * advised to execute the next state.
-     */
-    void receiveTrackingOperationDone();
-
-    /**
     * 
     */
     void receiveTrackingPaused();
@@ -196,7 +190,6 @@ class MediaPlayer : public IModel {
 
 	bool m_recd;
 	bool m_recordScaled;
-	bool m_trackingDone;
     bool _paused = true;
 
 	bool m_useCuda;

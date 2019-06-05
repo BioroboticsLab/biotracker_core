@@ -11,7 +11,6 @@ using namespace BioTrackerUtilsMisc; //getTimeAndDate
 MediaPlayer::MediaPlayer(QObject* parent) :
     IModel(parent) {
 	_cfg = static_cast<IControllerCfg*>(parent)->getConfig();
-	m_trackingDone = true;
 	m_currentFPS = 0;
 	m_fpsOfSourceFile = 0;
 	_imagew = 0;
@@ -54,7 +53,7 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 	QObject::connect(this, &MediaPlayer::toggleRecordImageStreamCommand, m_Player, &MediaPlayerStateMachine::receivetoggleRecordImageStream);
 
     // Handle PlayerStateMachine results
-	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters, Qt::BlockingQueuedConnection);
+	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::receivePlayerParameters);
 	QObject::connect(m_Player, &MediaPlayerStateMachine::emitPlayerParameters, this, &MediaPlayer::fwdPlayerParameters);
 
     // Handle next state operation
@@ -218,7 +217,6 @@ QString MediaPlayer::takeScreenshot(GraphicsView *gv) {
 }
 
 void MediaPlayer::receiveTrackingPaused() {
-    m_trackingDone = true;
 }
 
 void MediaPlayer::receivePlayerParameters(playerParameters* param) {
@@ -245,12 +243,11 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
         Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
 
         if (m_TrackingIsActive) {
-            m_trackingDone = false;
-            Q_EMIT trackCurrentImage(m_CurrentFrame, m_CurrentFrameNumber);
+            Q_EMIT trackCurrentImage(m_CurrentFrame, static_cast<uint>(m_CurrentFrameNumber));
         }
         else {
-            Q_EMIT signalVisualizeCurrentModel(m_CurrentFrameNumber);
-            Q_EMIT signalCurrentFrameNumberToPlugin(m_CurrentFrameNumber);
+            Q_EMIT signalVisualizeCurrentModel(static_cast<uint>(m_CurrentFrameNumber));
+            Q_EMIT signalCurrentFrameNumberToPlugin(static_cast<uint>(m_CurrentFrameNumber));
         }
 
         if (m_recd) {
@@ -297,7 +294,6 @@ void MediaPlayer::rcvPauseState(bool state) {
 }
 
 void MediaPlayer::receivePlayerOperationDone() {
-    // Only emit this SIGNAL when tracking is not active
 	end = std::chrono::system_clock::now();
 	long s = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     if (!_paused) {
@@ -307,18 +303,9 @@ void MediaPlayer::receivePlayerOperationDone() {
         m_currentFPS = 0;
     }
 
-    if(m_trackingDone == true || !m_TrackingIsActive)
-		Q_EMIT runPlayerOperation();
+    emit runPlayerOperation();
 
-
-	start = std::chrono::system_clock::now();
-}
-
-void MediaPlayer::receiveTrackingOperationDone() {
-    // Only emit this SIGNAL when tracking is active
-    if (m_TrackingIsActive) {
-        m_trackingDone = true;
-    }
+    start = std::chrono::system_clock::now();
 }
 
 void MediaPlayer::receiveChangeDisplayImage(QString str) {
