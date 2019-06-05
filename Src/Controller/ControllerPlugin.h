@@ -150,7 +150,7 @@ protected:
 	void  receivePauseState(bool state);
 	/**
 	*
-	* Receive current frame from media play to send it to the plugin
+	* Receive current frame number from media play to send it to the plugin
 	*/
 	void  receiveCurrentFrameNumberToPlugin(uint frameNumber);
 
