@@ -1235,7 +1235,7 @@
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QWidget" name="widget" native="true">
+                        <widget class="QWidget" name="widget_1" native="true">
                          <layout class="QHBoxLayout" name="layoutTracerProportions">
                           <property name="spacing">
                            <number>3</number>
@@ -2046,7 +2046,7 @@ You can add some by right-clicking the video (if loaded).</string>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true">
+         <widget class="QWidget" name="widget_4" native="true">
           <property name="toolTip">
            <string>Current status of the trial. If paused the tracking is deactivated.</string>
           </property>

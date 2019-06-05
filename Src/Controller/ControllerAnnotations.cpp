@@ -216,7 +216,7 @@ Annotations::TrackedPoint ControllerAnnotations::snapToTrajectory(const QPoint &
 			{
 				if (i != model->getCurrentFrame())
 					continue;
-				const auto &childComponent = childTrajectory->getChild(i);
+				const auto &childComponent = childTrajectory->getChild(static_cast<int>(i));
 				const auto point = dynamic_cast<IModelComponentEuclidian2D*> (childComponent);
 				if (point == nullptr)
 					continue;

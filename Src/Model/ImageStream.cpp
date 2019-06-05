@@ -217,7 +217,7 @@ namespace BioTracker {
 
 		private:
 			virtual bool nextFrame_impl() override {
-				m_currentFrame += m_frame_stride;
+				m_currentFrame += static_cast<int>(m_frame_stride);
 				if (this->numFrames() > m_currentFrame) {
 
 					const std::string &filename = m_picture_files[m_currentFrame].string();
@@ -235,7 +235,7 @@ namespace BioTracker {
 				const std::string &filename = m_picture_files[frame_number].string();
 				std::shared_ptr<cv::Mat> new_frame = std::make_shared<cv::Mat>(cv::imread(filename));
 				this->set_current_frame(new_frame);
-				m_currentFrame = frame_number;
+				m_currentFrame = static_cast<int>(frame_number);
 				if (m_recording) {
 					if (vCoder) vCoder->add(new_frame);
 				}

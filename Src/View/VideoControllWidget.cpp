@@ -63,8 +63,8 @@ void VideoControllWidget::getNotified() {
 		ui->actionRecord_cam->setIcon(QIcon(":/Images/resources/recordCam.png"));
 	}
 
-	int currentFrameNr = mediaPlayer->getCurrentFrameNumber();
-	int totalNumberOfFrames = mediaPlayer->getTotalNumberOfFrames();
+	int currentFrameNr = static_cast<int>(mediaPlayer->getCurrentFrameNumber());
+	int totalNumberOfFrames = static_cast<int>(mediaPlayer->getTotalNumberOfFrames());
 	int mediaFps = mediaPlayer->getFpsOfSourceFile();
 	//ui->frame_num_edit->setText(QString::number(currentFrameNr));
 	ui->frame_num_spin->setMaximum(totalNumberOfFrames);

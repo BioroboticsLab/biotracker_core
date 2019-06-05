@@ -76,7 +76,7 @@ void Annotations::updateTrackedAnnotations(const QList<IModelTrackedComponent*> 
 {
 	for (auto &annotation : annotations)
 	{
-		annotation->updateTrackedPositions(getCurrentFrame(), trackedComponents);
+		annotation->updateTrackedPositions(static_cast<int>(getCurrentFrame()), trackedComponents);
 	}
 }
 

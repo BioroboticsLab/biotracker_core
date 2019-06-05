@@ -25,7 +25,7 @@ void MutexLinkedList::push(std::shared_ptr<ImageBuffer> imbuffer, bool dropFrame
 	_Access.lock();
 
 	images.push_back(imbuffer);
-	unsigned long s = images.size();
+	unsigned long s = static_cast<unsigned long>(images.size());
 	unsigned long w = imbuffer->getWidth();
 	unsigned long h = imbuffer->getHeight();
 	//if (s*w*h / 1024 / 1024 > BUFFER_HARDLIMIT) {
@@ -62,7 +62,7 @@ void MutexLinkedList::MutexLinkedList::clear() {
 int MutexLinkedList::size() {
 	int tsize = 0;
 	_Access.lock();
-	tsize = images.size();
+	tsize = static_cast<int>(images.size());
 	_Access.unlock();
 	return tsize;
 }

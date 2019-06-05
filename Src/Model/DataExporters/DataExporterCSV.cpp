@@ -138,11 +138,11 @@ void DataExporterCSV::loadFile(std::string file)
     }
     IModelTrackedComponent* dummy = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
     std::vector<std::string> headerElsStr = getHeaderElements(dummy);
-    int headerEls = headerElsStr.size();
+    int headerEls = static_cast<int>(headerElsStr.size());
 
     std::vector<std::string> strs;
     split(line, strs, _separator[0]);
-    int idcnt = (strs.size() - 2) / headerEls;
+    int idcnt = (static_cast<int>(strs.size()) - 2) / headerEls;
 
     //Add data lines
     while (!ifs.eof()) {
@@ -259,7 +259,7 @@ void DataExporterCSV::writeAll(std::string f) {
     if (factory != nullptr) {
         IModelTrackedComponent *ptraj = static_cast<IModelTrackedComponent*>(factory->getNewTrackedElement("0"));
         std::string header = getHeader(ptraj, vcount);
-        headerCount = getHeaderElements(ptraj).size();
+        headerCount = static_cast<int>(getHeaderElements(ptraj).size());
         o << header << "\n";
         delete ptraj;
     }
