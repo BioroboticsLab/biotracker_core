@@ -58,6 +58,7 @@ add_definitions( -DMyCV_VERSION="${OpenCV_VERSION}" )
 add_definitions( -DMyBT_VERSION="${Boost_LIB_VERSION}" )
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    target_compile_definitions(${target} PRIVATE NOMINMAX)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
