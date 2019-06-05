@@ -213,7 +213,7 @@ QString MediaPlayer::takeScreenshot(GraphicsView *gv) {
 
     QImage image = pix->toImage(); //8724us
 
-	QString filePath = getTimeAndDate(_cfg->DirScreenshots.toStdString(), ".png").c_str();
+    auto filePath = QString::fromStdString(getTimeAndDate(_cfg->DirScreenshots.toStdString(), ".png"));
 
     image.save(filePath);
 
