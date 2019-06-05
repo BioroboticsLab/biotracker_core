@@ -117,7 +117,7 @@ void ControllerPlugin::loadPluginsFromPluginSubfolder() {
 	QFileInfoList fl = d.entryInfoList(nameFilter, QDir::Filter::Files);
 	
 	//Grab list of behaviors from config & registry
-	std::vector<std::string> list = _cfg->UseRegistryLocations==true ? PluginLoader::queryRegistryBehaviors(REGISTRY_PATH) : std::vector<std::string>();
+	std::vector<std::string> list = _cfg->UseRegistryLocations==1 ? PluginLoader::queryRegistryBehaviors(REGISTRY_PATH) : std::vector<std::string>();
 	//Search directories
 	std::vector<std::string> filesFromFolders = PluginLoader::searchDirectoriesForPlugins(list, TRACKER_SUFFIX);
 	for(auto x: filesFromFolders)
