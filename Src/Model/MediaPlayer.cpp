@@ -195,23 +195,20 @@ int MediaPlayer::reopenVideoWriter() {
 }
 
 QString MediaPlayer::takeScreenshot(GraphicsView *gv) {
-    //TODO duplicated code
-    QRectF rscene = gv->sceneRect(); //0us
-    QRectF rview = gv->rect(); //0us
-    QPixmap *pix;
+    QRectF rscene = gv->sceneRect();
+    QRectF rview = gv->rect();
+    QSize size;
     if (!m_recordScaled)
-        pix = new QPixmap(rscene.size().toSize()); //17us
+        size = rscene.size().toSize();
     else
-        pix = new QPixmap(rview.size().toSize()); //17us
-
-    QPainter *paint = new QPainter(pix); //21us
+        size = rview.size().toSize();
+    auto image = QImage(size, QImage::Format_RGB32);
+    auto painter = QPainter(&image);
 
     if (!m_recordScaled)
-        gv->scene()->render(paint); //8544us
+        gv->scene()->render(&painter);
     else
-        gv->render(paint);
-
-    QImage image = pix->toImage(); //8724us
+        gv->render(&painter);
 
     auto filePath = QString::fromStdString(getTimeAndDate(_cfg->DirScreenshots.toStdString(), ".png"));
 
