@@ -581,7 +581,7 @@ namespace BioTracker {
 				nextFrame_impl();
 
 				m_recording = false;
-				m_encoder = std::make_shared<VideoCoder>(m_fps, _cfg);
+				m_encoder = std::make_unique<VideoCoder>(m_fps, _cfg);
 			}
 			~ImageStream3PylonCamera()
 			{
@@ -674,7 +674,7 @@ namespace BioTracker {
 			cv::Size m_imageSize;
 			bool m_recording;
 
-			std::shared_ptr<VideoCoder> m_encoder;
+			std::unique_ptr<VideoCoder> m_encoder;
 		};
 #endif
 
