@@ -4,8 +4,11 @@
 #include <cassert>    // assert
 #include <stdexcept>  // std::invalid_argument
 #include <chrono>
+#include <mutex>
 #include <thread>
 #include <limits>
+
+#include <boost/circular_buffer.hpp>
 
 #include "util/Exceptions.h"
 #include "QSharedPointer"
@@ -487,14 +490,57 @@ namespace BioTracker {
 #if HAS_PYLON
 		/*********************************************************/
 		class ImageStream3PylonCamera : public ImageStream {
+		private:
+			class ImageCache : public Pylon::CImageEventHandler
+			{
+			private:
+				boost::circular_buffer<Pylon::CGrabResultPtr> grabResults_m;
+				mutable std::mutex mutex_m;
+
+			public:
+				ImageCache(std::size_t n)
+				: grabResults_m(n)
+				{}
+
+				void push_back(Pylon::CGrabResultPtr const& grabResult)
+				{
+					std::scoped_lock lock(mutex_m);
+					grabResults_m.push_back(grabResult);
+				}
+
+				Pylon::CGrabResultPtr const& front() const
+				{
+					std::scoped_lock lock(mutex_m);
+					return grabResults_m.front();
+				}
+
+				void pop_front()
+				{
+					std::scoped_lock lock(mutex_m);
+					grabResults_m.pop_front();
+				}
+
+				std::size_t size() const
+				{
+					std::scoped_lock lock(mutex_m);
+					return grabResults_m.size();
+				}
+
+				void OnImageGrabbed([[maybe_unused]] Pylon::CInstantCamera& camera, Pylon::CGrabResultPtr const& grabResult) override
+				{
+					push_back(grabResult);
+				}
+			};
+
+			ImageCache m_images;
 		public:
 			explicit ImageStream3PylonCamera(Config* cfg, CameraConfiguration conf)
 				: ImageStream(0, cfg)
+				, m_images(m_frame_stride + static_cast<size_t>(std::ceil(m_frame_stride / 2.)))
 				, m_camera(getPylonDevice(conf._selector.index), Pylon::Cleanup_Delete)
 			{
 				m_fps = conf._fps == -1 ? _cfg->RecordFPS : conf._fps;
 
-				m_camera.MaxNumBuffer = 1;
 				m_camera.Open();
 
 				if (!m_camera.IsOpen()) {
@@ -529,11 +575,16 @@ namespace BioTracker {
 				}
 
 				qDebug() << "\nStarting to record on camera " << m_camera.GetDeviceInfo().GetFriendlyName();
-				m_camera.StartGrabbing(Pylon::GrabStrategy_LatestImages, Pylon::GrabLoop_ProvidedByUser);
+				m_camera.RegisterImageEventHandler(&m_images, Pylon::ERegistrationMode::RegistrationMode_Append, Pylon::ECleanup::Cleanup_None);
+				m_camera.StartGrabbing(Pylon::GrabStrategy_OneByOne, Pylon::GrabLoop_ProvidedByInstantCamera);
 				nextFrame_impl();
 
 				m_recording = false;
 				m_encoder = std::make_shared<VideoCoder>(m_fps, _cfg);
+			}
+			~ImageStream3PylonCamera()
+			{
+				m_camera.DeregisterImageEventHandler(&m_images);
 			}
 			GuiParam::MediaType type() const override
 			{
@@ -569,9 +620,12 @@ namespace BioTracker {
 
 			bool nextFrame_impl() override
 			{
-				Pylon::CGrabResultPtr grabbed;
-				for (auto i = 0; i < m_frame_stride; ++i)
-					m_camera.RetrieveResult(100, grabbed, Pylon::TimeoutHandling_Return);
+				while (m_images.size() < m_frame_stride)
+					std::this_thread::sleep_for(std::chrono::milliseconds(1000) / m_fps / 2); // Half of a frame intervals
+				for (auto i = std::size_t{1}; i < m_frame_stride; ++i)
+					m_images.pop_front();
+				Pylon::CGrabResultPtr grabbed = m_images.front();
+				m_images.pop_front();
 
 				if (!grabbed->GrabSucceeded()) {
 					qCritical() << "Unable to grab frame:" << grabbed->GetErrorDescription();
