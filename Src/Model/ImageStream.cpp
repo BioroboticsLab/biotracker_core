@@ -492,8 +492,6 @@ namespace BioTracker {
 				: ImageStream(0, cfg)
 				, m_camera(getPylonDevice(conf._selector.index), Pylon::Cleanup_Delete)
 			{
-				m_w =  conf._width == -1 ? _cfg->CameraWidth : conf._width;
-				m_h = conf._height == -1 ? _cfg->CameraHeight : conf._height;
 				m_fps = conf._fps == -1 ? _cfg->RecordFPS : conf._fps;
 
 				m_camera.MaxNumBuffer = 1;
@@ -504,10 +502,18 @@ namespace BioTracker {
 					throw device_open_error("Error loading camera");
 				}
 
-				if (m_w == -1)
-					m_w = GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorWidth"))->GetValue();
-				if (m_h == -1)
-					m_h = GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorHeight"))->GetValue();
+				m_imageSize = {
+					[&]() -> int {
+						if (conf._width != -1)       return conf._width;
+						if (_cfg->CameraWidth != -1) return _cfg->CameraWidth;
+						return GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorWidth"))->GetValue();
+					}(),
+					[&]() -> int {
+						if (conf._height != -1)       return conf._height;
+						if (_cfg->CameraHeight != -1) return _cfg->CameraHeight;
+						return GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorHeight"))->GetValue();
+					}()
+				};
 
 				GenApi::CBooleanPtr(m_camera.GetNodeMap().GetNode("AcquisitionFrameRateEnable"))->SetValue(1);
 
@@ -544,7 +550,7 @@ namespace BioTracker {
 				if (!m_camera.IsOpen()) {
 					return false;
 				}
-				m_recording = m_encoder->toggle(m_w, m_h, m_fps);
+				m_recording = m_encoder->toggle(m_imageSize.width, m_imageSize.height, m_fps);
 
 				return m_recording;
 			}
@@ -574,7 +580,7 @@ namespace BioTracker {
 
 				auto view = toOpenCV(grabbed);
 				auto scaled = std::make_shared<cv::Mat>();
-				cv::resize(view, *scaled, cv::Size{m_w, m_h});
+				cv::resize(view, *scaled, m_imageSize);
 				if (scaled->type() == CV_8UC1)
             		cv::cvtColor(*scaled, *scaled, cv::COLOR_GRAY2BGR);
 				set_current_frame(scaled);
@@ -610,8 +616,7 @@ namespace BioTracker {
 			Pylon::PylonAutoInitTerm m_pylon;
 			Pylon::CInstantCamera m_camera;
 			double m_fps;
-			int m_w;
-			int m_h;
+			cv::Size m_imageSize;
 			bool m_recording;
 
 			std::shared_ptr<VideoCoder> m_encoder;
