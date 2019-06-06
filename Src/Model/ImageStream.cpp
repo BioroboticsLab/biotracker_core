@@ -572,6 +572,7 @@ namespace BioTracker {
 					if (std::abs(actual_fps - m_fps) > 0.1) {
 						throw device_open_error("Error setting framerate");
 					}
+					m_fps = actual_fps;
 				}
 
 				qDebug() << "\nStarting to record on camera " << m_camera.GetDeviceInfo().GetFriendlyName();
