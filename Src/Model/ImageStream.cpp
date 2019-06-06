@@ -504,13 +504,22 @@ namespace BioTracker {
 					throw device_open_error("Error loading camera");
 				}
 
+				if (m_w == -1)
+					m_w = GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorWidth"))->GetValue();
+				if (m_h == -1)
+					m_h = GenApi::CIntegerPtr(m_camera.GetNodeMap().GetNode("SensorHeight"))->GetValue();
+
 				GenApi::CBooleanPtr(m_camera.GetNodeMap().GetNode("AcquisitionFrameRateEnable"))->SetValue(1);
 
-				setFrameRate(m_fps);
-				auto const actual_fps = getFrameRate();
-				qInfo() << "Actual framerate:" << actual_fps;
-				if (std::abs(actual_fps - m_fps) > 0.1) {
-					throw device_open_error("Error setting framerate");
+				if (m_fps == -1) {
+					m_fps = getFrameRate();
+				} else {
+					setFrameRate(m_fps);
+					auto const actual_fps = getFrameRate();
+					qInfo() << "Actual framerate:" << actual_fps;
+					if (std::abs(actual_fps - m_fps) > 0.1) {
+						throw device_open_error("Error setting framerate");
+					}
 				}
 
 				qDebug() << "\nStarting to record on camera " << m_camera.GetDeviceInfo().GetFriendlyName();
