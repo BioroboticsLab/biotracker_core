@@ -540,9 +540,9 @@ namespace BioTracker {
 				return GuiParam::MediaType::Camera;
 			}
 
-			size_t numFrames() const override
+			std::size_t numFrames() const override
 			{
-				return (std::numeric_limits<short>::max)();
+				return std::numeric_limits<std::size_t>::max();
 			}
 
 			bool toggleRecord() override
