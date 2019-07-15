@@ -93,7 +93,7 @@ def build(args):
     command += ['-S', '.']
     command += ['-B', 'build']
     command += ['-G', 'Ninja']
-    command += define('CMAKE_PREFIX_PATH', 'vendor')
+    command += define('CMAKE_PREFIX_PATH', Path('vendor').resolve())
     command += define_env('CMAKE_BUILD_TYPE')
     command += define('CMAKE_SUPPRESS_REGENERATION', 'ON')
     command += define('CMAKE_SKIP_PACKAGE_ALL_DEPENDENCY', 'ON')
