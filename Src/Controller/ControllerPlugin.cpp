@@ -11,7 +11,7 @@
 #include "Controller/ControllerCoreParameter.h"
 #include "Controller/ControllerCommands.h"
 
-#define REGISTRY_PATH "SOFTWARE\\FUBioroboticsLab\\Robofish\\BioTracker\\Plugins"
+#define REGISTRY_PATH "SOFTWARE\\FUBioroboticsLab\\BioTracker\\Plugins"
 #define TRACKER_SUFFIX ".bio_tracker"
 
 ControllerPlugin::ControllerPlugin(QObject* parent, IBioTrackerContext* context, ENUMS::CONTROLLERTYPE ctr) :

@@ -103,9 +103,9 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         set(CPACK_GENERATOR "WIX")
         set(CPACK_WIX_UPGRADE_GUID "e47473db-3d71-4c42-8a58-d3eac87aa0bd")
 
-        set(CPACK_PACKAGE_INSTALL_DIRECTORY "RoboFish/${target}")
+        set(CPACK_PACKAGE_INSTALL_DIRECTORY "BioTracker/BioTracker")
 
-        set(CPACK_WIX_PROGRAM_MENU_FOLDER "RoboFish")
+        set(CPACK_WIX_PROGRAM_MENU_FOLDER "BioTracker")
 
         set_property(INSTALL "$<TARGET_FILE_NAME:${target}>"
             PROPERTY CPACK_START_MENU_SHORTCUTS "${target}"

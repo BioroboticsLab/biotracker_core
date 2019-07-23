@@ -38,7 +38,7 @@
 
         <DirectoryRef Id="TARGETDIR">
             <Component Id="CMakeRegistry">
-                <RegistryKey Root="HKLM" Key="Software\FUBioroboticsLab\Robofish\BioTracker">
+                <RegistryKey Root="HKLM" Key="Software\FUBioroboticsLab\BioTracker">
                     <RegistryValue Type="string" Name="InstallDir"
                         Value="[INSTALL_ROOT]" KeyPath="yes"/>
                  </RegistryKey>
