@@ -233,7 +233,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     m_CurrentFrame = param->m_CurrentFrame;
     m_CurrentFrameNumber = param->m_CurrentFrameNumber;
     m_fpsOfSourceFile = param->m_fpsSourceVideo;
-	m_TotalNumbFrames = param->m_TotalNumbFrames;
+    m_TotalNumbFrames = param->m_TotalNumbFrames;
 
     m_CurrentFrame = param->m_CurrentFrame;
     const bool isValidFrame = !!m_CurrentFrame;
