@@ -70,6 +70,11 @@ if system() == 'Windows':
         if 'CUDA_PATH' in env:
             env['PATH'] += f"{pathsep}{env['CUDA_PATH']}/bin"
 
+if system() == 'Linux':
+
+    def setup_qt5():
+        env['PATH'] += f"{pathsep}{env['Qt5_DIR']}/../../../bin/"
+
 
 def setup_dependencies():
     for path in Path('vendor').glob('*/bin'):
@@ -123,6 +128,8 @@ def package(args):
         command = ['ninja', '-C', 'build', 'package']
 
     if system() == 'Linux':
+        setup_qt5()
+
         makedirs('build/appdir/usr/bin')
         makedirs('build/appdir/usr/share/applications')
         makedirs('build/appdir/usr/share/icons/hicolor/256x256')
