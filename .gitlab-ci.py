@@ -73,6 +73,7 @@ if system() == 'Windows':
 if system() == 'Linux':
 
     def setup_qt5():
+        env['PATH'] += f"{pathsep}/usr/lib/x86_64-linux-gnu"
         env['PATH'] += f"{pathsep}{env['Qt5_DIR']}/../../../bin/"
 
 
