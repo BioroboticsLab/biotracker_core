@@ -1,7 +1,7 @@
 #include "AreaInfoElement.h"
 
-#include <cv.h>
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 AreaInfoElement::AreaInfoElement(int type) : 
     _areaType(BiotrackerTypes::AreaType::NONE),

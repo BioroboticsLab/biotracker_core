@@ -180,8 +180,8 @@ int VideoCoder::toggle(int w, int h, double fps) {
 
 		//Check which one to use
 		if (codecStr == "X264") {
-			int codec = CV_FOURCC('X', 'V', 'I', 'D');
-			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate(videoDir+"CameraCapture", ".avi"), codec, fps, CvSize(w, h), 1);
+			int codec = cv::VideoWriter::fourcc('X', 'V', 'I', 'D');
+			vWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate(videoDir+"CameraCapture", ".avi"), codec, fps, cv::Size(w, h), 1);
 			m_recording = vWriter->isOpened();
             vWriter->set(cv::VIDEOWRITER_PROP_QUALITY, 100);
 			std::cout << "Video is open:" << m_recording << std::endl;

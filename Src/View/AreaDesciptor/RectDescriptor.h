@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AreaDescriptor.h"
-#include "cv.h"
+#include <opencv2/opencv.hpp>
 #include <QBrush>
 #include "util/types.h"
 #include <QObject>

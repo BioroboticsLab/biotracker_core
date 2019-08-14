@@ -15,7 +15,7 @@ void TextureObject::set(const cv::Mat &img) {
 		return;
     if (img.channels() == 3) {
         img.convertTo(img, CV_8UC3);
-        cv::cvtColor(img, m_img, CV_BGR2RGB);
+        cv::cvtColor(img, m_img, cv::ColorConversionCodes::COLOR_BGR2RGB);
     } else if (img.channels() == 1) {
         // convert grayscale to "color"
         cv::Mat img8U;
@@ -36,7 +36,7 @@ void TextureObject::set(const cv::Mat &img) {
             const double convertedMin = abs(static_cast<int>(min * sizeRatio));
             img.convertTo(img8U, CV_8U, sizeRatio, convertedMin);
         }
-        cv::cvtColor(img8U, m_img, CV_GRAY2RGB);
+        cv::cvtColor(img8U, m_img, cv::ColorConversionCodes::COLOR_GRAY2RGB);
     } else {
         m_img = img;
     }

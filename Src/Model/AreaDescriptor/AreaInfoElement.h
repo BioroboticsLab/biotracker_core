@@ -1,6 +1,6 @@
 #pragma once
 #include "Interfaces/IModel/IModel.h"
-#include <cv.h>
+#include <opencv2/opencv.hpp>
 #include <QPoint>
 #include "util/types.h"
 

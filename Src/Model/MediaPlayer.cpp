@@ -185,8 +185,8 @@ int MediaPlayer::reopenVideoWriter() {
 			_imagew = r.width();
 			_imageh = r.height();
 
-			int codec = CV_FOURCC('X', '2', '6', '4');
-			m_videoWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./ViewCapture", ".avi"), codec, 30, CvSize(r.width(), r.height()), 1);
+			int codec = cv::VideoWriter::fourcc('X', '2', '6', '4');
+			m_videoWriter = std::make_shared<cv::VideoWriter>(getTimeAndDate("./ViewCapture", ".avi"), codec, 30, cv::Size(r.width(), r.height()), 1);
 			m_recd = m_videoWriter->isOpened();
 		}
 	}
@@ -273,7 +273,7 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
             auto view = cv::Mat(m_image.height(), m_image.width(), CV_8UC(m_image.depth() / 8), m_image.bits(), m_image.bytesPerLine());
 
             auto copy = std::make_shared<cv::Mat>(view.clone());
-            cv::cvtColor(*copy, *copy, CV_BGR2RGB);
+            cv::cvtColor(*copy, *copy, cv::ColorConversionCodes::COLOR_BGR2RGB);
             m_videoc->add(copy);
         }
     }

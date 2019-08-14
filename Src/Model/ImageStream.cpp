@@ -315,8 +315,8 @@ namespace BioTracker {
 			void openMedia(std::vector<boost::filesystem::path> files){
 
 				m_capture.open(files.front().string());
-				m_num_frames = static_cast<size_t>(m_capture.get(CV_CAP_PROP_FRAME_COUNT));
-				m_fps = m_capture.get(CV_CAP_PROP_FPS);
+				m_num_frames = static_cast<size_t>(m_capture.get(cv::CAP_PROP_FRAME_COUNT));
+				m_fps = m_capture.get(cv::CAP_PROP_FPS);
 				m_fileName = files.front().string();
 
 				if (!boost::filesystem::exists(files.front())) {
@@ -335,8 +335,8 @@ namespace BioTracker {
                     m_fps = fps;
                 }
 
-				m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
-				m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+				m_w = m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
+				m_h = m_capture.get(cv::CAP_PROP_FRAME_HEIGHT);
 				m_recording = false;
 				vCoder = std::make_shared<VideoCoder>(m_fps, _cfg);
 
@@ -367,7 +367,7 @@ namespace BioTracker {
 				}
 				else {
 					// adjust frame position ("0-based index of the frame to be decoded/captured next.")
-					m_capture.set(CV_CAP_PROP_POS_FRAMES, static_cast<double>(frame_number));
+					m_capture.set(cv::CAP_PROP_POS_FRAMES, static_cast<double>(frame_number));
 					return this->nextFrame_impl();
 				}
 			}
@@ -396,7 +396,7 @@ namespace BioTracker {
 			explicit ImageStream3OpenCVCamera(Config *cfg, CameraConfiguration conf)
 				: ImageStream(0, cfg)
 				, m_capture(conf._selector.index)
-				, m_fps(m_capture.get(CV_CAP_PROP_FPS)) {
+				, m_fps(m_capture.get(cv::CAP_PROP_FPS)) {
 				// Give the camera some extra time to get ready:
 				// Somehow opening it on first try sometimes does not succeed.
 				// Workaround: http://stackoverflow.com/questions/22019064/unable-to-read-frames-from-videocapture-from-secondary-webcam-with-opencv?rq=1
@@ -422,13 +422,13 @@ namespace BioTracker {
 					throw device_open_error(":(");
 				}
 
-				if (m_w != -1)     m_capture.set(CV_CAP_PROP_FRAME_WIDTH, m_w);
-				if (m_h != -1)     m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
-				if (m_fps != -1)   m_capture.set(CV_CAP_PROP_FPS, m_fps);
+				if (m_w != -1)     m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_w);
+				if (m_h != -1)     m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_h);
+				if (m_fps != -1)   m_capture.set(cv::CAP_PROP_FPS, m_fps);
 
-				m_w = m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
-				m_h = m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
-				m_fps = m_capture.get(CV_CAP_PROP_FPS);
+				m_w = m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
+				m_h = m_capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+				m_fps = m_capture.get(cv::CAP_PROP_FPS);
 				qDebug() << "Cam open: " << m_capture.isOpened() << " w/h:" << m_w << "/" << m_h << " fps:" << m_fps;
 				// load first image
 				if (this->numFrames() > 0) {

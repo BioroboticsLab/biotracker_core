@@ -66,11 +66,11 @@ void CameraDevice::on_showPreviewButton_clicked()
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         if (conf._width != -1)
-            m_capture.set(CV_CAP_PROP_FRAME_WIDTH, conf._width);
+            m_capture.set(cv::CAP_PROP_FRAME_WIDTH, conf._width);
         if (conf._height != -1)
-            m_capture.set(CV_CAP_PROP_FRAME_HEIGHT, conf._height);
+            m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, conf._height);
         if (conf._fps != -1)
-            m_capture.set(CV_CAP_PROP_FPS, conf._fps);
+            m_capture.set(cv::CAP_PROP_FPS, conf._fps);
 
         if (!m_capture.isOpened())
         {
@@ -151,12 +151,12 @@ void CameraDevice::listAllCameras()
     }
 
     {
-        cv::VideoCapture ximea_camera(CV_CAP_XIAPI);
+        cv::VideoCapture ximea_camera(cv::CAP_XIAPI);
         if (ximea_camera.isOpened())
         {
             ui->comboBox->addItem(
                 "XIMEA default",
-                QVariant::fromValue(CameraSelector{CameraType::OpenCV, CV_CAP_XIAPI}));
+                QVariant::fromValue(CameraSelector{CameraType::OpenCV, cv::CAP_XIAPI}));
         }
     }
 

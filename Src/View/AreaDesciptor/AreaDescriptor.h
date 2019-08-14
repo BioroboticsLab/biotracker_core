@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Interfaces/IView/IViewTrackedComponent.h"
-#include <cv.h>
+#include <opencv2/opencv.hpp>
 #include "util/Config.h"
 
 class AreaDescriptor : public QObject, public IView, public QGraphicsItem
