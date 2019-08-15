@@ -47,7 +47,7 @@ Get the boost and opencv packages:
 `vcpkg install openblas:x64-windows-14.16 opencv[opengl,ffmpeg,ximea,cuda]:x64-windows-14.16 `  
 ... and Qt systemwide using Qt5_dir  
 Now call cmake with some switches to include vcpkg:   `-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-14.16`  
-... and build. You might need to copy flang DLL files, as their vcpkg integration is not yet complete.   
+... and build.
 Proceed withe the build steps as in the linux section.
 
 ##  Building BioTracker (Linux)
