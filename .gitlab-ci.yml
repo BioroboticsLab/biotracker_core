@@ -59,7 +59,7 @@ build windows-1809:
       --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package windows-1809'
       --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package windows-1809'
       --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package windows-1809'
-    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;lzma;openblas;boost_system-vc141-mt-x64-1_68;boost_filesystem-vc141-mt-x64-1_68;boost_program_options-vc141-mt-x64-1_68'
+    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;lzma;openblas;boost_system-vc141-mt-x64-1_70;boost_filesystem-vc141-mt-x64-1_70;boost_program_options-vc141-mt-x64-1_70'
     - $env:INSTALL_OPENCV_COMPONENTS = 'core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab;ffmpeg'
 
 build windows-1809[pylon5]:
@@ -72,7 +72,7 @@ build windows-1809[pylon5]:
       --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package windows-1809'
       --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package windows-1809'
       --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package windows-1809'
-    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;lzma;openblas;boost_system-vc141-mt-x64-1_68;boost_filesystem-vc141-mt-x64-1_68;boost_program_options-vc141-mt-x64-1_68'
+    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;lzma;openblas;boost_system-vc141-mt-x64-1_70;boost_filesystem-vc141-mt-x64-1_70;boost_program_options-vc141-mt-x64-1_70'
     - $env:INSTALL_OPENCV_COMPONENTS = 'core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab;ffmpeg'
 
 
