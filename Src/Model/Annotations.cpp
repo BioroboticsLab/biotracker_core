@@ -148,7 +148,7 @@ void Annotations::Annotation::deserializeFrom(const QMap<QString, QVariant> &map
 	text = map.value("comment", text).toString();
 	startFrame = map.value("start_frame", static_cast<int>(startFrame)).toInt();
 	endFrame = map.value("end_frame", static_cast<int>(endFrame)).toInt();
-	origin.position.setY(map.value("origin_x", origin.x()).toInt());
+	origin.position.setX(map.value("origin_x", origin.x()).toInt());
 	origin.position.setY(map.value("origin_y", origin.y()).toInt());
 	if (map.contains("origin_track_id"))
 	{
