@@ -107,7 +107,12 @@ void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 		case Qt::Key::Key_E:
 			actionQueued = ActionQueued::CreateEllipse;
 			break;
-		case Qt::Key::Key_Delete:
+		case Qt::Key::Key_H:
+			model->toggleHideAnnotations();
+			handled = true;
+			break;
+		case Qt::Key::Key_Delete: // Fallthrough.
+		case Qt::Key::Key_Backspace:
 			// Remove existing selected annotation at current frame.
 			if (model->removeSelection())
 			{

@@ -47,6 +47,8 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	const auto currentFrame = model->getCurrentFrame();
 	for (auto &annotation : model->annotations)
 	{
+		if (annotation->isHidden())
+			continue;
 		// Is the current frame in the annotation's range?
 		if ((currentFrame >= annotation->startFrame && currentFrame <= annotation->endFrame)
 			|| (currentFrame == annotation->startFrame && annotation->startFrame > annotation->endFrame))

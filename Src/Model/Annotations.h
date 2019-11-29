@@ -104,12 +104,18 @@ public:
 		{
 			origin.update(currentFrameID, trackedComponents);
 		}
+		// Visually disable annotations and interactions with them.
+		// This will not be serialized.
+		void setHidden(bool hidden=true) { this->hidden = hidden; }
+		bool isHidden() const { return hidden; }
 	protected:
 		bool isHandleAtPosition(const QPoint &handle, const QPoint &pos);
 		bool isHandleAtPosition(const TrackedPoint &handle, const QPoint &pos)
 		{
 			return isHandleAtPosition(*handle, pos);
 		}
+	private:
+		bool hidden { false };
 	};
 
 	/// A label marks a position.
@@ -185,6 +191,8 @@ public:
 	size_t getCurrentFrame() const { return currentFrame; }
 	// Called when trajectories or displayed frames have changed.
 	void updateTrackedAnnotations(const QList<IModelTrackedComponent*> &trackedComponents);
+	// Used to hide existing annotations, or if all are hidden, unhide them.
+	void toggleHideAnnotations();
 private:
 	size_t currentFrame{ 0 };							/**< The current frame is required by the view. */
 

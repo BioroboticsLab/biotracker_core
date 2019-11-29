@@ -353,6 +353,8 @@ bool Annotations::tryStartDragging(QPoint cursor)
 	bool annotationFound = false;
 	for (auto &annotation : annotations)
 	{
+		if (annotation->isHidden())
+			continue;
 		auto handle = annotation->getHandleForPosition(cursor);
 		if (!handle) // Nothing found?
 			continue;
@@ -372,6 +374,8 @@ bool Annotations::trySetText(QPoint cursor) {
 	selection.reset();
 	for (auto &annotation : annotations)
 	{
+		if (annotation->isHidden())
+			continue;
 		if (!(selection.handle = annotation->getHandleForPosition(cursor))) {
 			continue;
 		}
@@ -441,4 +445,24 @@ bool Annotations::updateSelectionEndFrame()
 	if (selectedAnnotation->startFrame > selectedAnnotation->endFrame)
 		selectedAnnotation->startFrame = selectedAnnotation->endFrame;
 	return true;
+}
+
+void Annotations::toggleHideAnnotations()
+{
+	bool allWereHidden = true;
+	for (auto &annotation : annotations)
+	{
+		if (!annotation->isHidden())
+		{
+			allWereHidden = false;
+			annotation->setHidden(true);
+		}
+	}
+
+	if (allWereHidden)
+	{
+		for (auto &annotation : annotations)
+			annotation->setHidden(false);
+	}
+
 }
