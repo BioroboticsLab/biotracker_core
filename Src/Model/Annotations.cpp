@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QVector2D>
 
 Annotations::~Annotations() 
 {
@@ -104,7 +105,7 @@ void Annotations::Annotation::drawHandleLocation(QPainter *painter, QPoint pos, 
 	QPen original{ painter->pen() };
 	QPen dotted{ original };
 	dotted.setStyle(Qt::PenStyle::DotLine);
-	dotted.setWidthF(dotted.widthF() / 2.0);
+	dotted.setWidthF(dotted.widthF() / 4.0);
 	painter->setPen(dotted);
 	const int radius = 20;
 	painter->drawEllipse(pos, radius, radius);
@@ -348,15 +349,23 @@ bool Annotations::updateAnnotation(TrackedPoint cursor)
 bool Annotations::tryStartDragging(QPoint cursor)
 {
 	selection.reset();
+	float currentDistance = std::numeric_limits<float>::max();
+	bool annotationFound = false;
 	for (auto &annotation : annotations)
 	{
-		if (!(selection.handle = annotation->getHandleForPosition(cursor))) {
+		auto handle = annotation->getHandleForPosition(cursor);
+		if (!handle) // Nothing found?
 			continue;
-		}
+		const float distance = QVector2D {handle->getPoint() - cursor}.length();
+		if (distance >= currentDistance) // Point is farther?
+			continue;
+		// New best point found!
+		currentDistance = distance;
+		selection.handle = handle;
 		selection.annotation = annotation;
-		return true;
+		annotationFound = true;
 	}
-	return false;
+	return annotationFound;
 }
 
 bool Annotations::trySetText(QPoint cursor) {

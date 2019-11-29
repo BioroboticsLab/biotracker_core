@@ -132,7 +132,10 @@ void ControllerAnnotations::keyPressEvent(QKeyEvent *event)
 
 	
 	if (handled)
+	{
+		updateView();
 		event->accept();
+	}
 }
 
 void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &pos)
@@ -178,6 +181,7 @@ void ControllerAnnotations::mousePressEvent(QMouseEvent *event, const QPoint &po
 
 		if (model->trySetText(pos)) {
 			updateView();
+            model->serialize();
 		}
 		else {
 			handled = false;
@@ -241,10 +245,11 @@ Annotations::TrackedPoint ControllerAnnotations::snapToTrajectory(const QPoint &
 void ControllerAnnotations::mouseReleaseEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
+	const bool isAltModifierActive = QGuiApplication::queryKeyboardModifiers().testFlag(Qt::AltModifier);
 
 	Annotations::TrackedPoint trackedPoint = snapToTrajectory(pos);
 
-	if ((event->button() == Qt::LeftButton) && (model->endAnnotation(trackedPoint) || model->updateAnnotation(trackedPoint)))
+	if ((event->button() == Qt::LeftButton) && !isAltModifierActive && (model->endAnnotation(trackedPoint) || model->updateAnnotation(trackedPoint)))
 	{
 		updateView();
 		event->accept();
@@ -254,10 +259,11 @@ void ControllerAnnotations::mouseReleaseEvent(QMouseEvent*event, const QPoint &p
 void ControllerAnnotations::mouseMoveEvent(QMouseEvent*event, const QPoint &pos)
 {
 	auto model = static_cast<Annotations*>(getModel());
+	const bool isAltModifierActive = QGuiApplication::queryKeyboardModifiers().testFlag(Qt::AltModifier);
 
 	Annotations::TrackedPoint trackedPoint = snapToTrajectory(pos);
 
-	if ((event->buttons() & Qt::LeftButton) &&  model->updateAnnotation(trackedPoint))
+	if ((event->buttons() & Qt::LeftButton) && !isAltModifierActive && model->updateAnnotation(trackedPoint))
 	{
 		updateView();
 		event->accept();

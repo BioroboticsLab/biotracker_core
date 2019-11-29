@@ -50,12 +50,12 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 		// Is the current frame in the annotation's range?
 		if ((currentFrame >= annotation->startFrame && currentFrame <= annotation->endFrame)
 			|| (currentFrame == annotation->startFrame && annotation->startFrame > annotation->endFrame))
-			painter->setPen(QPen(_annoColor, 6, Qt::SolidLine, Qt::RoundCap));
+			painter->setPen(QPen(_annoColor, 3, Qt::SolidLine, Qt::RoundCap));
 		else
 		{
 			QColor transparentGray = Qt::gray;
 			transparentGray.setAlphaF(0.25);
-			painter->setPen(QPen(transparentGray, 6, Qt::SolidLine, Qt::RoundCap));
+			painter->setPen(QPen(transparentGray, 3, Qt::SolidLine, Qt::RoundCap));
 		}
 		annotation->paint(painter, option, widget);
 	}
@@ -64,12 +64,12 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	{
 		QColor transparentYellow = _annoColor;
 		transparentYellow.setAlphaF(0.5);
-		painter->setPen(QPen(transparentYellow, 6, Qt::SolidLine, Qt::RoundCap));
+		painter->setPen(QPen(transparentYellow, 3, Qt::SolidLine, Qt::RoundCap));
 		model->currentAnnotation->paint(painter, option, widget);
 	}
 	if (model->selection)
 	{
-		painter->setPen(QPen(Qt::red, 6, Qt::SolidLine, Qt::RoundCap));
+		painter->setPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap));
 		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle, "");
 	}
 }
