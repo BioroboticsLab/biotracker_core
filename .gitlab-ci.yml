@@ -3,6 +3,10 @@ stages:
   - package
   - deploy
 
+.centos-7:
+  tags: [ linux, docker ]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:centos-7
+
 .ubuntu-18.04:
   tags: [ linux, docker ]
   image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-ubuntu18.04
@@ -37,6 +41,17 @@ stages:
       - build
     expire_in: 1 day
   script: ./.gitlab-ci.py build
+
+build centos-7:
+  extends: .centos-7
+  <<: *build
+  variables:
+    <<: [ *release ]
+  before_script:
+    - ./.gitlab-ci.py prepare
+      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package centos-7'
+      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
+      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
 
 build ubuntu-18.04:
   extends: .ubuntu-18.04
@@ -84,6 +99,12 @@ build windows-1809[pylon5]:
       - build/*.msi
     expire_in: 1 week
   script: ./.gitlab-ci.py package
+
+package centos-7:
+  extends: .centos-7
+  dependencies:
+    - build centos-7
+  <<: *package
 
 package ubuntu-18.04:
   extends: .ubuntu-18.04
