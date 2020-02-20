@@ -7,10 +7,6 @@ stages:
   tags: [ linux, docker ]
   image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:centos-7
 
-.ubuntu-18.04:
-  tags: [ linux, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-ubuntu18.04
-
 .windows-1809:
   tags: [ windows-1809, docker ]
   image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows1809
@@ -53,17 +49,6 @@ build centos-7:
       --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
       --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
 
-build ubuntu-18.04:
-  extends: .ubuntu-18.04
-  <<: *build
-  variables:
-    <<: [ *gcc8, *release ]
-  before_script:
-    - ./.gitlab-ci.py prepare
-      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package ubuntu-18.04'
-      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package ubuntu-18.04'
-      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package ubuntu-18.04'
-
 build windows-1809:
   extends: .windows-1809
   <<: *build
@@ -105,13 +90,6 @@ package centos-7:
   dependencies:
     - build centos-7
   <<: *package
-
-package ubuntu-18.04:
-  extends: .ubuntu-18.04
-  dependencies:
-    - build ubuntu-18.04
-  <<: *package
-  tags: [ linux, docker_privileged ]
 
 package windows-1809:
   extends: .windows-1809
