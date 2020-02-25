@@ -3,12 +3,6 @@
 ##############################################################
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
-if( CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR )
-    include(biotracker-utility/VSSugar)
-else()
-    include(${biotracker-utility_SOURCE_DIR}/cmake/VSSugar.cmake)
-endif()
-VSSourceGroups(${CMAKE_CURRENT_LIST_DIR})
 
 add_definitions(-DBIORACKER_GIT_HASH="${GIT_HASH}")
 add_definitions(-DBIOTRACKER_GIT_TAG="${GIT_TAG}")
