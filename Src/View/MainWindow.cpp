@@ -958,11 +958,8 @@ void MainWindow::on_actionAbout_triggered() {
 	std::string version = "";
 	version = "BioTracker3<br><br>";
 
-	version = "Version: ";
-	version += BIOTRACKER_GIT_TAG;
-	version += " (";
-	version += BIORACKER_GIT_HASH;
-	version += ")";
+	version = "Source Version: ";
+	version += SOURCE_VERSION;
 	version += +"<br><br>";
 
 	version += "External libraries used:<br><br>";

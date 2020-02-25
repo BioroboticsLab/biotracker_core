@@ -4,9 +4,6 @@
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-add_definitions(-DBIORACKER_GIT_HASH="${GIT_HASH}")
-add_definitions(-DBIOTRACKER_GIT_TAG="${GIT_TAG}")
-
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
@@ -14,6 +11,8 @@ endif()
 set(target BioTracker)
 add_executable (${target})
 set_target_properties(${target} PROPERTIES OUTPUT_NAME BioTracker)
+
+target_compile_definitions(${target} PRIVATE SOURCE_VERSION="${SOURCE_VERSION}")
 
 target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
@@ -88,8 +87,7 @@ endif()
 
 set(CPACK_PACKAGE_NAME "${target}")
 set(CPACK_PACKAGE_VENDOR "Biorobotics Lab / FU Berlin")
-
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_VERSION ${SOURCE_VERSION})
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     option(PACKAGE_WINDOWS_MSI "Create .msi package" OFF)
