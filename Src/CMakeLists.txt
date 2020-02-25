@@ -94,6 +94,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     if(PACKAGE_WINDOWS_MSI)
         set(CPACK_GENERATOR "WIX")
         set(CPACK_WIX_UPGRADE_GUID "e47473db-3d71-4c42-8a58-d3eac87aa0bd")
+        set(CPACK_WIX_PRODUCT_VERSION "0.0.0")
 
         set(CPACK_PACKAGE_INSTALL_DIRECTORY "BioTracker/BioTracker")
 
@@ -108,7 +109,8 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         )
 		
 	    set(CPACK_WIX_LICENSE_RTF ${CMAKE_SOURCE_DIR}/Src/cmake/WIX/licence.rtf)
-	    set(CPACK_WIX_TEMPLATE "${CMAKE_SOURCE_DIR}/Src/cmake/WIX/WIX.template.in")
+	    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/WIX/WIX.template.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake/WIX/WIX.template")
+	    set(CPACK_WIX_TEMPLATE "${CMAKE_CURRENT_BINARY_DIR}/cmake/WIX/WIX.template")
     endif()
 endif()
 
