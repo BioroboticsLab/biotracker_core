@@ -26,8 +26,8 @@ find_package(Boost REQUIRED COMPONENTS filesystem program_options)
 target_include_directories(${target} PUBLIC ${Boost_INCLUDE_DIRS}) 
 target_link_libraries(${target} ${Boost_LIBRARIES})
 
-option(WITH_PYLON5 "Support Pylon 5 cameras" $ENV{WITH_PYLON5})
-if(WITH_PYLON5)
+option(WITH_PYLON "Support Pylon cameras" $ENV{WITH_PYLON})
+if(WITH_PYLON)
     find_package(Pylon5 REQUIRED)
     target_compile_definitions(${target} PRIVATE HAS_PYLON=1)
     target_link_libraries(${target} Pylon5::Base Pylon5::Utility Pylon5::GenAPI Pylon5::GCBase)
@@ -187,7 +187,7 @@ PRIVATE
     "View/Utility/Tracer.cpp"
 )
 
-if(WITH_PYLON5)
+if(WITH_PYLON)
     target_sources(${target}
     PRIVATE
         "util/camera/pylon.cpp"

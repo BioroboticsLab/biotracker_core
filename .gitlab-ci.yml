@@ -25,8 +25,8 @@ stages:
 .debug: &debug
   CMAKE_BUILD_TYPE: Debug
 
-.pylon5: &pylon5
-  WITH_PYLON5: 1
+.pylon: &pylon
+  WITH_PYLON: 1
 
 
 .build: &build
@@ -62,11 +62,11 @@ build windows-1809:
     - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;lzma;openblas;boost_system-vc141-mt-x64-1_70;boost_filesystem-vc141-mt-x64-1_70;boost_program_options-vc141-mt-x64-1_70'
     - $env:INSTALL_OPENCV_COMPONENTS = 'core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab;ffmpeg'
 
-build windows-1809[pylon5]:
+build windows-1809[pylon]:
   extends: .windows-1809
   <<: *build
   variables:
-    <<: [ *msvc15_9, *release, *pylon5 ]
+    <<: [ *msvc15_9, *release, *pylon ]
   before_script:
     - ./.gitlab-ci.py prepare
       --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package windows-1809'
@@ -97,8 +97,8 @@ package windows-1809:
     - build windows-1809
   <<: *package
 
-package windows-1809[pylon5]:
+package windows-1809[pylon]:
   extends: .windows-1809
   dependencies:
-    - build windows-1809[pylon5]
+    - build windows-1809[pylon]
   <<: *package
