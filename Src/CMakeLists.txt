@@ -28,10 +28,13 @@ target_link_libraries(${target} ${Boost_LIBRARIES})
 
 option(WITH_PYLON "Support Pylon cameras" $ENV{WITH_PYLON})
 if(WITH_PYLON)
+    list(APPEND FEATURES pylon)
     find_package(Pylon5 REQUIRED)
     target_compile_definitions(${target} PRIVATE HAS_PYLON=1)
     target_link_libraries(${target} Pylon5::Base Pylon5::Utility Pylon5::GenAPI Pylon5::GCBase)
 endif()
+
+string(JOIN "," VARIANT ${FEATURES})
 
 IF("${HMNVLibDir}" MATCHES "Not Found")
 ELSE()
@@ -115,6 +118,12 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 endif()
 
 include(CPack)
+
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
+if (NOT "${VARIANT}" STREQUAL "")
+    string(APPEND CPACK_PACKAGE_FILE_NAME "[${VARIANT}]")
+endif()
+string(APPEND CPACK_PACKAGE_FILE_NAME "-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
 
 target_sources(${target}
 PRIVATE
