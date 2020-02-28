@@ -49,6 +49,17 @@ build centos-7:
       --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
       --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
 
+build centos-7[pylon]:
+  extends: .centos-7
+  <<: *build
+  variables:
+    <<: [ *release, *pylon ]
+  before_script:
+    - ./.gitlab-ci.py prepare
+      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package centos-7'
+      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
+      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
+
 build windows-1809:
   extends: .windows-1809
   <<: *build
@@ -89,6 +100,12 @@ package centos-7:
   extends: .centos-7
   dependencies:
     - build centos-7
+  <<: *package
+
+package centos-7[pylon]:
+  extends: .centos-7
+  dependencies:
+    - build centos-7[pylon]
   <<: *package
 
 package windows-1809:
