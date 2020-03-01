@@ -1,8 +1,9 @@
 #pragma once
 
+#include <QList>
+#include <QPoint>
+
 #include <opencv2/opencv.hpp>
-#include <QtCore/QList>
-#include <QtCore/QPoint>
 
 /**
  *	Rectification class normalizing the tracking image

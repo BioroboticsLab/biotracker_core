@@ -1,34 +1,35 @@
 #include "ComponentShape.h"
+
 #include <cmath>
+#include <cassert>
 
-#include "View/Utility/Tracer.h"
-
-#include "QBrush"
-#include "QPainter"
-#include "QMenu"
-#include "QAction"
-#include "QGraphicsScene"
-#include "QGraphicsSceneContextMenuEvent"
-#include "QDebug"
-#include "QColorDialog"
-#include "qwidgetaction.h"
-#include "qlabel.h"
-#include "assert.h"
-#include "QTime"
-#include "qlistwidget.h"
-#include "QGraphicsProxyWidget"
-#include "QVBoxLayout"
-#include "QSlider"
-#include "QLineEdit"
-#include "QAbstractSlider"
-#include "QComboBox"
-#include "QSpinBox"
-#include "QDoubleSpinBox"
+#include <QBrush>
+#include <QPainter>
+#include <QMenu>
+#include <QAction>
+#include <QGraphicsScene>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QDebug>
+#include <QColorDialog>
+#include <QWidgetAction>
+#include <QLabel>
+#include <QTime>
+#include <QListWidget>
+#include <QGraphicsProxyWidget>
+#include <QVBoxLayout>
+#include <QSlider>
+#include <QLineEdit>
+#include <QAbstractSlider>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QTableWidget>
 #include <QTableWidgetItem>
-#include <QtWidgets/QHeaderView>
+#include <QHeaderView>
 #include <QLinkedList>
-#include <qpair.h>
+#include <QPair>
+
+#include "View/Utility/Tracer.h"
 
 
 /*

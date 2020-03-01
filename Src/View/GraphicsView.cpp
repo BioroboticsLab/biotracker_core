@@ -1,16 +1,13 @@
 #include "GraphicsView.h"
-#include "QTimeLine"
-#include "QWheelEvent"
-#include "../Controller/ControllerGraphicScene.h"
 
-#include <Model/Annotations.h>
-
-#include <qpixmap.h>
+#include <QTimeLine>
+#include <QWheelEvent>
 #include <QGraphicsItem>
 #include <QScrollBar>
-#include <QDebug>
-#include <QtOpenGL/QGLWidget>
-#include <QStringBuilder>
+
+#include "../Controller/ControllerGraphicScene.h"
+#include "../Model/Annotations.h"
+
 
 GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *model) :
 	IViewGraphicsView(parent, controller, model)
@@ -19,7 +16,6 @@ GraphicsView::GraphicsView(QWidget *parent, IController *controller, IModel *mod
 	m_BackgroundImage = NULL; 
 
 	this->setScene(m_GraphicsScene);
-	//this->setViewport(new QGLWidget());
 	
 	this->setBackgroundBrush(QBrush(Qt::white));
 

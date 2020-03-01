@@ -1,32 +1,31 @@
 #include "MainWindow.h"
+
+#include <QFileDialog>
+#include <QLayout>
+#include <QGraphicsObject>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QHeaderView>
+#include <QLinkedList>
+#include <QMessageBox>
+#include <QToolButton>
+#include <QWizard>
+#include <QWizardPage>
+#include <QDesktopServices>
+#include <QDesktopWidget>
+
 #include "ui_MainWindow.h"
 
 #include "util/types.h"
 
-#include "Controller/ControllerMainWindow.h"
+#include "Model/null_Model.h"
 #include "View/CoreParameterView.h"
-#include "VideoControllWidget.h"
 #include "View/GraphicsView.h"
 #include "View/AnnotationsView.h"
-#include "Model/null_Model.h"
+#include "Controller/ControllerMainWindow.h"
 #include "Controller/null_Controller.h"
 
-
-#include "qfiledialog.h"
-#include "QLayout"
-#include "QGraphicsObject"
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QtWidgets/QHeaderView>
-#include <QLinkedList>
-#include "qtextedit.h"
-#include <qmessagebox.h>
-#include "qdesktopwidget.h"
-#include "QToolButton"
-#include "QWizard"
-#include "QWizardPage"
-#include "QDesktopServices"
-
+#include "VideoControllWidget.h"
 
 MainWindow::MainWindow(QWidget* parent, IController* controller, IModel* model) :
 	IViewMainWindow(parent, controller, model),
