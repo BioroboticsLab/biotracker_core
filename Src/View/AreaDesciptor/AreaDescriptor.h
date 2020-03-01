@@ -7,6 +7,7 @@
 class AreaDescriptor : public QObject, public IView, public QGraphicsItem
 {
     Q_OBJECT
+	Q_INTERFACES(QGraphicsItem)
 public:
     AreaDescriptor(IController *controller, IModel *model);
 	~AreaDescriptor();
