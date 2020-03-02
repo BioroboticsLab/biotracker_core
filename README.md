@@ -29,7 +29,7 @@ This will enable you to only build your own plugin without having to care about 
 
 ##  Build dependencies
 
-Building the Robotracker needs: 
+Building the BioTracker needs: 
 - opencv (> 3.0)  
 - QT (>= 5.4)  
 - Boost 
