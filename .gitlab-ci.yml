@@ -9,7 +9,7 @@ stages:
 
 .windows-1809:
   tags: [ windows-1809, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows1809
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows-1809
 
 
 .gcc8: &gcc8
