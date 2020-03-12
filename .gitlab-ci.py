@@ -131,6 +131,7 @@ def package(args):
         setup_qt5()
 
         makedirs('build/appdir/usr/bin')
+        makedirs('build/appdir/usr/lib')
         makedirs('build/appdir/usr/share/applications')
         makedirs('build/appdir/usr/share/icons/hicolor/256x256')
         shutil.copy('build/Src/BioTracker', 'build/appdir/usr/bin')
@@ -145,6 +146,31 @@ def package(args):
             'appdir/usr/share/applications/BioTracker.desktop', '-appimage',
             '-no-translations'
         ]
+
+        if "WITH_PYLON" in env and env['WITH_PYLON'] == "1":
+            shutil.copy('/opt/pylon5/lib64/libbxapi-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libgxapi-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/liblog4cpp_gcc_v3_1_Basler_pylon.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libpylon_TL_bcon-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libpylon_TL_camemu-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libpylon_TL_gige-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libpylon_TL_usb-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libpylonutility-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/libuxapi-5.2.0.so', 'build/appdir/usr/lib')
+            shutil.copy('/opt/pylon5/lib64/pylon-libusb-1.0.so', 'build/appdir/usr/lib')
+
+            command += [
+                '-executable=appdir/usr/lib/libbxapi-5.2.0.so',
+                '-executable=appdir/usr/lib/libgxapi-5.2.0.so',
+                '-executable=appdir/usr/lib/liblog4cpp_gcc_v3_1_Basler_pylon.so',
+                '-executable=appdir/usr/lib/libpylon_TL_bcon-5.2.0.so',
+                '-executable=appdir/usr/lib/libpylon_TL_camemu-5.2.0.so',
+                '-executable=appdir/usr/lib/libpylon_TL_gige-5.2.0.so',
+                '-executable=appdir/usr/lib/libpylon_TL_usb-5.2.0.so',
+                '-executable=appdir/usr/lib/libpylonutility-5.2.0.so',
+                '-executable=appdir/usr/lib/libuxapi-5.2.0.so',
+                '-executable=appdir/usr/lib/pylon-libusb-1.0.so',
+            ]
 
     setup_dependencies()
     check_call(command, cwd=cwd)

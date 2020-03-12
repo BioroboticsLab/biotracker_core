@@ -106,6 +106,8 @@ package centos-7[pylon]:
   extends: .centos-7
   dependencies:
     - build centos-7[pylon]
+  variables:
+    <<: [ *pylon ]
   <<: *package
 
 package windows-1809:
