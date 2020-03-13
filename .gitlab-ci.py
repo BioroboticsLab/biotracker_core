@@ -108,7 +108,7 @@ def build(args):
             'CMAKE_TOOLCHAIN_FILE',
             env['VCPKG_DIR'] + '/scripts/buildsystems/vcpkg.cmake')
         command += define('VCPKG_TARGET_TRIPLET', env['VCPKG_TRIPLET'])
-        command += define('PACKAGE_WINDOWS_MSI', 'ON')
+        command += define('PACKAGE_MSI', 'ON')
         command += define('INSTALL_REQUIRED_SYSTEM_LIBRARIES', 'ON')
         command += define_env('INSTALL_SHARED_LIBRARIES')
         command += define_env('INSTALL_OPENCV_COMPONENTS')
