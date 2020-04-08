@@ -109,7 +109,7 @@ def build(args):
             env['VCPKG_DIR'] + '/scripts/buildsystems/vcpkg.cmake')
         command += define('VCPKG_TARGET_TRIPLET', env['VCPKG_TRIPLET'])
         command += define('PACKAGE_MSI', 'ON')
-        command += define('INSTALL_REQUIRED_SYSTEM_LIBRARIES', 'ON')
+        command += define('INSTALL_SYSTEM_LIBRARIES', 'ON')
         command += define_env('INSTALL_SHARED_LIBRARIES')
         command += define_env('INSTALL_OPENCV_COMPONENTS')
         command += define_env('CPACK_PACKAGE_DIRECTORY')

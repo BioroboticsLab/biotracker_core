@@ -58,12 +58,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
+option(INSTALL_SYSTEM_LIBRARIES "Install system libraries" OFF)
+
 include(Locate)
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     install(TARGETS ${target} DESTINATION .)
 
-    option(INSTALL_REQUIRED_SYSTEM_LIBRARIES "Install required system libraries" OFF)
-    if(INSTALL_REQUIRED_SYSTEM_LIBRARIES)
+    if(INSTALL_SYSTEM_LIBRARIES)
         set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
         set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
         include(InstallRequiredSystemLibraries)
