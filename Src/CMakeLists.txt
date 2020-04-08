@@ -95,6 +95,12 @@ set(CPACK_PACKAGE_NAME "${target}")
 set(CPACK_PACKAGE_VENDOR "Biorobotics Lab / FU Berlin")
 set(CPACK_PACKAGE_VERSION ${SOURCE_VERSION})
 
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
+if(NOT "${VARIANT}" STREQUAL "")
+    string(APPEND CPACK_PACKAGE_FILE_NAME "[${VARIANT}]")
+endif()
+string(APPEND CPACK_PACKAGE_FILE_NAME "-${CPACK_PACKAGE_VERSION}")
+
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     option(PACKAGE_MSI "Create MSI package" OFF)
     if(PACKAGE_MSI)
@@ -120,11 +126,42 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     endif()
 endif()
 
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
-if(NOT "${VARIANT}" STREQUAL "")
-    string(APPEND CPACK_PACKAGE_FILE_NAME "[${VARIANT}]")
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+    include(GNUInstallDirs)
+
+    install(TARGETS ${target} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/BioTracker.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo/BT3-big.png DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256")
+
+    set_target_properties(${target} PROPERTIES
+        INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+
+    if(WITH_PYLON)
+        install(DIRECTORY "${Pylon5_LIBRARY_DIR}/" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+    endif()
+
+    install(FILES "${Boost_SYSTEM_LIBRARY_RELEASE}" "${Boost_FILESYSTEM_LIBRARY_RELEASE}" "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+    get_target_property(shared_library biotracker-interfaces LOCATION)
+    install(FILES "${shared_library}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+    option(PACKAGE_APPIMAGE "Create AppImage package" OFF)
+
+    if(PACKAGE_APPIMAGE)
+        find_program(LINUXDEPLOYQT_EXECUTABLE linuxdeployqt)
+        if(NOT LINUXDEPLOYQT_EXECUTABLE)
+            message(FATAL_ERROR "AppImage packaging tool \"linuxdeployqt\" not found")
+        endif()
+        set(CPACK_GENERATOR "External;${CPACK_GENERATOR}")
+        set(APPIMAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackLinuxDeployQt.cmake.in "${CMAKE_BINARY_DIR}/CPackExternal.cmake" @ONLY)
+        set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${CMAKE_BINARY_DIR}/CPackExternal.cmake")
+        set(CPACK_EXTERNAL_ENABLE_STAGING ON)
+        set_target_properties(${target} PROPERTIES
+            INSTALL_RPATH_USE_LINK_PATH ON)
+    endif()
 endif()
-string(APPEND CPACK_PACKAGE_FILE_NAME "-${CPACK_PACKAGE_VERSION}")
+
 if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     string(APPEND CPACK_PACKAGE_FILE_NAME "-${CMAKE_SYSTEM_NAME}")
 endif()
