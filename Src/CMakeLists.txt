@@ -75,6 +75,8 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         deploy_qt5(${target} DESTINATION .)
     endif()
 
+    install(FILES "${Boost_SYSTEM_LIBRARY_RELEASE}" "${Boost_FILESYSTEM_LIBRARY_RELEASE}" "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}" DESTINATION .)
+
     set(INSTALL_CUDA_COMPONENTS "" CACHE STRING "CUDA components to install")
     locate_cuda(shared_libraries COMPONENTS ${INSTALL_CUDA_COMPONENTS})
 
