@@ -22,9 +22,9 @@ target_link_libraries (${target} robofish-behavior_loader)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Xml Network Widgets Multimedia MultimediaWidgets OpenGL)
 target_link_libraries (${target} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets Qt5::Multimedia Qt5::MultimediaWidgets Qt5::OpenGL)
 
-find_package(Boost REQUIRED COMPONENTS filesystem program_options)
-target_include_directories(${target} PUBLIC ${Boost_INCLUDE_DIRS}) 
-target_link_libraries(${target} ${Boost_LIBRARIES})
+set(Boost_REALPATH ON)
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
+target_link_libraries(${target} Boost::system Boost::filesystem Boost::program_options)
 
 option(WITH_PYLON "Support Pylon cameras" $ENV{WITH_PYLON})
 if(WITH_PYLON)
