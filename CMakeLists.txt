@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.13)
 
-exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "describe --dirty --always --exclude '*'" OUTPUT_VARIABLE SOURCE_VERSION)
+exec_program("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "describe --dirty --always" OUTPUT_VARIABLE SOURCE_VERSION)
 
 project(BioTracker
     LANGUAGES CXX
