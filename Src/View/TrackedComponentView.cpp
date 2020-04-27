@@ -95,6 +95,24 @@ void TrackedComponentView::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 		event->accept();
 		return;
 	}
+	else if (event->button() == Qt::LeftButton) {
+		QList<QGraphicsItem *> allSelected = this->scene()->selectedItems();
+		if (!allSelected.isEmpty()){
+			int size = allSelected.size();
+			if (size == 1) {
+    			ComponentShape* selectedItem = dynamic_cast<ComponentShape*>(allSelected.at(0));
+				if (selectedItem && selectedItem->isSelected() && (event->modifiers() == Qt::ControlModifier)) {
+					IModelTrackedTrajectory* shapeTrajectory = selectedItem->getTrajectory();
+					//calculate the current pos and emit it to the commands component
+					selectedItem->emitMoveElement(shapeTrajectory, selectedItem->pos().toPoint() + QPoint(selectedItem->m_w / 2, selectedItem->m_h / 2),
+						event->pos().toPoint(), m_currentFrameNumber, 0);
+					selectedItem->setPos(event->pos());
+				}
+			}
+
+				
+		}
+	}
 	QGraphicsItem::mousePressEvent(event);
 }
 
