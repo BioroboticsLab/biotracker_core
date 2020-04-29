@@ -23,6 +23,17 @@ VideoControllWidget::VideoControllWidget(QWidget* parent, IController* controlle
 		QSize(), QIcon::Normal, QIcon::Off);
 
 	ui->sld_video->setMinimum(0);
+
+	QList<QKeySequence> pl_pa_list({QKeySequence(Qt::Key_Space),QKeySequence(Qt::Key_S)});
+	QList<QKeySequence> st_list({QKeySequence(Qt::CTRL + Qt::Key_Space),QKeySequence(Qt::CTRL + Qt::Key_S)});
+	QList<QKeySequence> prev_list({QKeySequence(Qt::Key_Left),QKeySequence(Qt::Key_A)});
+	QList<QKeySequence> ne_list({QKeySequence(Qt::Key_Right),QKeySequence(Qt::Key_D)});
+
+	ui->actionPlay_Pause->setShortcuts(pl_pa_list);
+	ui->actionStop->setShortcuts(st_list);
+	ui->actionPrev_frame->setShortcuts(prev_list);
+	ui->actionNext_frame->setShortcuts(ne_list);
+	
 	this->setSelectedView("Original");
 	updateGeometry();
 }

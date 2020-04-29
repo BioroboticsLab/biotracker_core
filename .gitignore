@@ -60,3 +60,4 @@ CMakeFiles
 *.csv
 build
 biotracker_workspace.code-workspace
+*.code-workspace
