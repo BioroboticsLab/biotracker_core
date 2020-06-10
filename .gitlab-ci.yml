@@ -3,31 +3,21 @@ stages:
   - package
   - deploy
 
-.centos-7:
-  tags: [ linux, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:centos-7
+.centos:
+  tags: [linux, docker]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:centos
 
-.windows-1809:
-  tags: [ windows-1809, docker ]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows-1809
-
-
-.gcc8: &gcc8
-  CC: gcc-8
-  CXX: g++-8
-
-.msvc15.9: &msvc15_9
-  VCVARS_VER: '14.16'
+.windows:
+  tags: [windows, docker]
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows
+  before_script:
+    - . $Profile.AllUsersAllHosts
 
 .release: &release
   CMAKE_BUILD_TYPE: Release
 
-.debug: &debug
-  CMAKE_BUILD_TYPE: Debug
-
 .pylon: &pylon
   WITH_PYLON: 1
-
 
 .build: &build
   stage: build
@@ -36,56 +26,10 @@ stages:
       - vendor
       - build
     expire_in: 1 day
-  script: ./.gitlab-ci.py build
-
-build centos-7:
-  extends: .centos-7
-  <<: *build
-  variables:
-    <<: [ *release ]
-  before_script:
-    - ./.gitlab-ci.py prepare
-      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package centos-7'
-      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
-      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
-
-build centos-7[pylon]:
-  extends: .centos-7
-  <<: *build
-  variables:
-    <<: [ *release, *pylon ]
-  before_script:
-    - ./.gitlab-ci.py prepare
-      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package centos-7'
-      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package centos-7'
-      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package centos-7'
-
-build windows-1809:
-  extends: .windows-1809
-  <<: *build
-  variables:
-    <<: [ *msvc15_9, *release ]
-  before_script:
-    - ./.gitlab-ci.py prepare
-      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package windows-1809'
-      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package windows-1809'
-      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package windows-1809'
-    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;webp;lzma;openblas;avformat-58;avcodec-58;avutil-56;swscale-5;swresample-3'
-    - $env:INSTALL_OPENCV_COMPONENTS = 'core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab'
-
-build windows-1809[pylon]:
-  extends: .windows-1809
-  <<: *build
-  variables:
-    <<: [ *msvc15_9, *release, *pylon ]
-  before_script:
-    - ./.gitlab-ci.py prepare
-      --dependency biotracker-interfaces    bioroboticslab/biotracker/interfaces      master 'package windows-1809'
-      --dependency biotracker-utility       bioroboticslab/biotracker/utility         master 'package windows-1809'
-      --dependency robofish-behavior_loader bioroboticslab/biotracker/behavior_loader master 'package windows-1809'
-    - $env:INSTALL_SHARED_LIBRARIES = 'zlib1;tiff;jpeg62;libpng16;webp;lzma;openblas;avformat-58;avcodec-58;avutil-56;swscale-5;swresample-3'
-    - $env:INSTALL_OPENCV_COMPONENTS = 'core;calib3d;features2d;flann;highgui;imgcodecs;imgproc;ml;objdetect;photo;shape;stitching;superres;video;videoio;videostab'
-
+  script:
+    - ./ci/prepare.py
+    - ./ci/configure.py
+    - ./ci/compile.py
 
 .package: &package
   stage: package
@@ -94,30 +38,55 @@ build windows-1809[pylon]:
       - build/*.AppImage
       - build/*.msi
     expire_in: 1 week
-  script: ./.gitlab-ci.py package
+  script:
+    - ./ci/package.py
 
-package centos-7:
-  extends: .centos-7
-  dependencies:
-    - build centos-7
-  <<: *package
-
-package centos-7[pylon]:
-  extends: .centos-7
-  dependencies:
-    - build centos-7[pylon]
+build centos:
+  extends: .centos
+  <<: *build
   variables:
-    <<: [ *pylon ]
+    <<: [*release]
+
+build centos[pylon]:
+  extends: .centos
+  <<: *build
+  variables:
+    <<: [*release, *pylon]
+
+build windows:
+  extends: .windows
+  <<: *build
+  variables:
+    <<: [*release]
+
+build windows[pylon]:
+  extends: .windows
+  <<: *build
+  variables:
+    <<: [*release, *pylon]
+
+package centos:
+  extends: .centos
+  dependencies:
+    - build centos
   <<: *package
 
-package windows-1809:
-  extends: .windows-1809
+package centos[pylon]:
+  extends: .centos
   dependencies:
-    - build windows-1809
+    - build centos[pylon]
+  variables:
+    <<: [*pylon]
   <<: *package
 
-package windows-1809[pylon]:
-  extends: .windows-1809
+package windows:
+  extends: .windows
   dependencies:
-    - build windows-1809[pylon]
+    - build windows
+  <<: *package
+
+package windows[pylon]:
+  extends: .windows
+  dependencies:
+    - build windows[pylon]
   <<: *package
