@@ -5,11 +5,11 @@ stages:
 
 .centos:
   tags: [linux, docker]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:centos
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/auto/ci/centos:latest
 
 .windows:
   tags: [windows, docker]
-  image: git.imp.fu-berlin.de:5000/bioroboticslab/robofish/docker:devel-windows
+  image: git.imp.fu-berlin.de:5000/bioroboticslab/auto/ci/windows:latest-devel
   before_script:
     - . $Profile.AllUsersAllHosts
 
