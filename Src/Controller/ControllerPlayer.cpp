@@ -24,6 +24,9 @@ ControllerPlayer::~ControllerPlayer()
 void ControllerPlayer::loadVideoStream(std::vector<boost::filesystem::path> files) {
     qobject_cast<MediaPlayer*>(m_Model)->loadVideoStream(files);
 	emitPauseState(true);
+
+    // if (_cfg->AutoPlay)
+        // this->play();
 }
 
 void ControllerPlayer::loadPictures(std::vector<boost::filesystem::path> files) {

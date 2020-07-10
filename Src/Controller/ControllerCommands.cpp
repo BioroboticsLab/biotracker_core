@@ -12,9 +12,9 @@ ControllerCommands::~ControllerCommands()
 
 void ControllerCommands::receiveAddTrackCommand(QPoint pos, int id) {
 	AddTrackCommand* addCmd = new AddTrackCommand(id, pos);
-	QObject::connect(addCmd, &AddTrackCommand::emitAddTrajectory, this, &ControllerCommands::emitAddTrajectory);
-	QObject::connect(addCmd, &AddTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory);
-	QObject::connect(addCmd, &AddTrackCommand::emitRemoveTrajectoryId, this, &ControllerCommands::emitRemoveTrajectoryId);
+	QObject::connect(addCmd, &AddTrackCommand::emitAddTrajectory, this, &ControllerCommands::emitAddTrajectory, Qt::DirectConnection);
+	QObject::connect(addCmd, &AddTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory, Qt::DirectConnection);
+	QObject::connect(addCmd, &AddTrackCommand::emitRemoveTrajectoryId, this, &ControllerCommands::emitRemoveTrajectoryId, Qt::DirectConnection);
 
 	_undoStack->push(addCmd);
 }
@@ -22,8 +22,8 @@ void ControllerCommands::receiveAddTrackCommand(QPoint pos, int id) {
 void ControllerCommands::receiveRemoveTrackCommand(IModelTrackedTrajectory * traj)
 {
 	RemoveTrackCommand* rmtCmd = new RemoveTrackCommand(traj);
-	QObject::connect(rmtCmd, &RemoveTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory);
-	QObject::connect(rmtCmd, &RemoveTrackCommand::emitRemoveTrajectory, this, &ControllerCommands::emitRemoveTrajectory);
+	QObject::connect(rmtCmd, &RemoveTrackCommand::emitValidateTrajectory, this, &ControllerCommands::emitValidateTrajectory, Qt::DirectConnection);
+	QObject::connect(rmtCmd, &RemoveTrackCommand::emitRemoveTrajectory, this, &ControllerCommands::emitRemoveTrajectory, Qt::DirectConnection);
 
 	_undoStack->push(rmtCmd);
 }
@@ -31,8 +31,8 @@ void ControllerCommands::receiveRemoveTrackCommand(IModelTrackedTrajectory * tra
 void ControllerCommands::receiveRemoveTrackEntityCommand(IModelTrackedTrajectory * traj, uint frameNumber)
 {
 	RemoveElementCommand* rmeCmd = new RemoveElementCommand(traj, frameNumber);
-	QObject::connect(rmeCmd, &RemoveElementCommand::emitValidateEntity, this, &ControllerCommands::emitValidateEntity);
-	QObject::connect(rmeCmd, &RemoveElementCommand::emitRemoveElement, this, &ControllerCommands::emitRemoveTrackEntity);
+	QObject::connect(rmeCmd, &RemoveElementCommand::emitValidateEntity, this, &ControllerCommands::emitValidateEntity, Qt::DirectConnection);
+	QObject::connect(rmeCmd, &RemoveElementCommand::emitRemoveElement, this, &ControllerCommands::emitRemoveTrackEntity, Qt::DirectConnection);
 
 	_undoStack->push(rmeCmd);
 }
@@ -40,7 +40,7 @@ void ControllerCommands::receiveRemoveTrackEntityCommand(IModelTrackedTrajectory
 void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory* traj, QPoint oldPos, QPoint newPos, uint frameNumber, int toMove)
 {
 	MoveElementCommand* mvCmd = new MoveElementCommand(traj, frameNumber, oldPos, newPos, toMove);
-	QObject::connect(mvCmd, &MoveElementCommand::emitMoveElement, this, &ControllerCommands::emitMoveElement);
+	QObject::connect(mvCmd, &MoveElementCommand::emitMoveElement, this, &ControllerCommands::emitMoveElement, Qt::DirectConnection);
 
 	_undoStack->push(mvCmd);
 }
@@ -48,7 +48,7 @@ void ControllerCommands::receiveMoveElementCommand(IModelTrackedTrajectory* traj
 void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, IModelTrackedTrajectory * traj1)
 {
 	SwapTrackIdCommand* swapCmd = new SwapTrackIdCommand(traj0, traj1);
-	QObject::connect(swapCmd, &SwapTrackIdCommand::emitSwapIds, this, &ControllerCommands::emitSwapIds);
+	QObject::connect(swapCmd, &SwapTrackIdCommand::emitSwapIds, this, &ControllerCommands::emitSwapIds, Qt::DirectConnection);
 
 	_undoStack->push(swapCmd);
 }
@@ -56,7 +56,7 @@ void ControllerCommands::receiveSwapIdCommand(IModelTrackedTrajectory * traj0, I
 void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, bool toggle)
 {
 	FixTrackCommand* fixCmd = new FixTrackCommand(traj, toggle);
-	QObject::connect(fixCmd, &FixTrackCommand::emitFixTrack, this, &ControllerCommands::emitToggleFixTrack);
+	QObject::connect(fixCmd, &FixTrackCommand::emitFixTrack, this, &ControllerCommands::emitToggleFixTrack, Qt::DirectConnection);
 
 	_undoStack->push(fixCmd);
 }
@@ -64,7 +64,7 @@ void ControllerCommands::receiveFixTrackCommand(IModelTrackedTrajectory * traj, 
 void ControllerCommands::receiveEntityRotation(IModelTrackedTrajectory * traj,double oldAngleDeg, double newAngleDeg, uint frameNumber)
 {
 	RotateEntityCommand* rotCmd = new RotateEntityCommand(traj, oldAngleDeg, newAngleDeg, frameNumber);
-	QObject::connect(rotCmd, &RotateEntityCommand::emitEntityRotation, this, &ControllerCommands::emitEntityRotation);
+	QObject::connect(rotCmd, &RotateEntityCommand::emitEntityRotation, this, &ControllerCommands::emitEntityRotation, Qt::DirectConnection);
 
 	_undoStack->push(rotCmd);
 }

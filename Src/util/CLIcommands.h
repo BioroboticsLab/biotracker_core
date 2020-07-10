@@ -14,6 +14,7 @@
 
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <QDebug>
 #include "util/types.h"
 #include "util/Config.h"
 
@@ -32,6 +33,8 @@ public:
 				("usePlugin", value<std::string>(), "Uses plugin from given filepath")
 				("video", value<std::string>(), "Loads a video from given filepath")
 				("cfg", value<std::string>(), "Provide custom path to a config file")
+				("autoPlay,a", "Automatically play video")
+				("autoTrack,t",value<int>(), "Automatically enable tracking with the set number of tracks")
 				;
 
 			options_description gui("GUI options");
@@ -72,6 +75,14 @@ public:
 			if (vm.count("cfg")) {
 				auto str = vm["cfg"].as<std::string>();
 				cfg->CfgCustomLocation = QString(str.c_str());
+			}
+
+			if (vm.count("autoPlay")) {
+				cfg->AutoPlay = true;
+			}
+
+			if(vm.count("autoTrack")){
+				cfg->AutoTrack = vm["autoTrack"].as<int>();
 			}
 		}
 		catch (std::exception& e) {

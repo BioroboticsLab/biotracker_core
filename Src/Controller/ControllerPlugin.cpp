@@ -139,7 +139,6 @@ void ControllerPlugin::connectControllerToController() {
 	// Add Plugin name to Main Window
 	IController* ctrA = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
 	QPointer< ControllerMainWindow > ctrMainWindow = qobject_cast<ControllerMainWindow*>(ctrA);
-
 	ctrMainWindow->deactiveTrackingCheckBox();
 
 	loadPluginsFromPluginSubfolder();

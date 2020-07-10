@@ -37,6 +37,8 @@ public:
     QString LoadVideo = "";
     QString UsePlugins = "";
     QString CfgCustomLocation = "";
+    bool AutoPlay = false;
+    int AutoTrack = -1;
 
     void load(QString dir, QString file = "config.ini") override;
     void save(QString dir, QString file) override;
