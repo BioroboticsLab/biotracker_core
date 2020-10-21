@@ -282,6 +282,7 @@ void ControllerPlugin::connectPlugin() {
 	connect(this, &ControllerPlugin::frameRetrieved, m_BioTrackerPlugin, &IBioTrackerPlugin::receiveCurrentFrameFromMainApp);
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
 		SLOT(receiveCurrentFrameNumberFromMainApp(uint)));
+
 }
 
 void ControllerPlugin::disconnectPlugin() {

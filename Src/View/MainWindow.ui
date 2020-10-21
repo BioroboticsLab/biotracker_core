@@ -439,15 +439,15 @@
                    <number>1</number>
                   </property>
                   <property name="currentIndex">
-                   <number>3</number>
+                   <number>4</number>
                   </property>
                   <widget class="QWidget" name="experimentItem">
                    <property name="geometry">
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <property name="sizePolicy">
@@ -469,8 +469,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>50</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -515,8 +515,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -551,7 +551,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
+                     <width>696</width>
                      <height>304</height>
                     </rect>
                    </property>
@@ -641,7 +641,7 @@ p, li { white-space: pre-wrap; }
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>743</width>
+                     <width>696</width>
                      <height>304</height>
                     </rect>
                    </property>

@@ -252,21 +252,6 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
 	//dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 	activeTrackingCheckBox();
     Q_EMIT emitPluginLoaded(plugin.toStdString());
-
-    // add as many tracks as set in CLI for autotracking
-    IController* ctrTCC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
-    QPointer< ControllerTrackedComponentCore > trTCC = qobject_cast<ControllerTrackedComponentCore*>(ctrTCC);
-
-    if(_cfg->AutoTrack != -1){
-        for(int i=0;i<_cfg->AutoTrack; i++){
-            trTCC->emitAddTrack();
-        }
-    }
-
-    //activate tracking if autotracking activated in cfg
-    if (_cfg->AutoTrack != -1)
-        this->activeTracking();
-
 }
 
 void ControllerMainWindow::onNewMediumLoaded(const std::string path)

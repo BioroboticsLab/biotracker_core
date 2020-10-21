@@ -75,6 +75,27 @@ void GuiContext::connectController()
     {
         i.value()->connectComponents();
     }
+    //activate tracking if autotracking activated in cfg and autoplay if in cfg 
+    ControllerMainWindow *contMW = static_cast<ControllerMainWindow*>(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::MAINWINDOW));
+    ControllerPlayer *contP = static_cast<ControllerPlayer*>(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLAYER));
+    ControllerPlugin *contPlg = static_cast<ControllerPlugin*>(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLUGIN));
+
+    if (_cfg->AutoTrack != -1){
+        contMW->activeTracking();
+
+        // add as many tracks as set in CLI for autotracking
+        qDebug() << "CORE: CtrPlugin: Adding " << _cfg->AutoTrack << " tracks ";
+        for(int i = 0; i < _cfg->AutoTrack; i++){
+            contPlg->emitAddTrajectory(QPoint(0,0));
+        }
+
+        if(_cfg->AutoPlay){
+            contP->play();
+        }
+    }
+    else if (_cfg->AutoTrack==-1 && _cfg->AutoPlay){
+        contP->play();
+    }
 }
 
 void GuiContext::exit() {
