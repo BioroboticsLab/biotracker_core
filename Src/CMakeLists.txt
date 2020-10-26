@@ -24,7 +24,7 @@ target_link_libraries (${target} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::W
 
 set(Boost_REALPATH ON)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
-target_link_libraries(${target} Boost::system Boost::filesystem Boost::program_options)
+target_link_libraries(${target} Boost::headers Boost::system Boost::filesystem Boost::program_options)
 
 option(WITH_PYLON "Support Pylon cameras" $ENV{WITH_PYLON})
 if(WITH_PYLON)
