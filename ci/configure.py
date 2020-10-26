@@ -67,6 +67,8 @@ if __name__ == "__main__":
     command += define("CMAKE_SKIP_PACKAGE_ALL_DEPENDENCY", "ON")
     command += define_env("VCPKG_TARGET_TRIPLET")
 
+    command += define("Boost_USE_STATIC_LIBS", "ON")
+
     if system() == "Windows":
         command += define("PACKAGE_MSI", "ON")
         command += define("INSTALL_SYSTEM_LIBRARIES", "ON")

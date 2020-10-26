@@ -22,7 +22,6 @@ target_link_libraries (${target} robofish-behavior_loader)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Xml Network Widgets Multimedia MultimediaWidgets OpenGL)
 target_link_libraries (${target} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets Qt5::Multimedia Qt5::MultimediaWidgets Qt5::OpenGL)
 
-set(Boost_REALPATH ON)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
 target_link_libraries(${target} Boost::headers Boost::system Boost::filesystem Boost::program_options)
 
@@ -74,8 +73,6 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         include(WinDeployQt5)
         deploy_qt5(${target} DESTINATION .)
     endif()
-
-    locate_boost(shared_libraries COMPONENTS system filesystem program_options)
 
     set(INSTALL_CUDA_COMPONENTS "" CACHE STRING "CUDA components to install")
     locate_cuda(shared_libraries COMPONENTS ${INSTALL_CUDA_COMPONENTS})
@@ -139,8 +136,6 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     if(WITH_PYLON)
         install(DIRECTORY "${Pylon5_LIBRARY_DIR}/" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
     endif()
-
-    install(FILES "${Boost_SYSTEM_LIBRARY_RELEASE}" "${Boost_FILESYSTEM_LIBRARY_RELEASE}" "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
     get_target_property(shared_library biotracker-interfaces LOCATION)
     install(FILES "${shared_library}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
