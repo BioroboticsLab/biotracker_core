@@ -116,24 +116,3 @@ function(locate_cudnn VAR)
         message(FATAL_ERROR "Platform not supported")
     endif()
 endfunction()
-
-function(locate_boost VAR)
-    cmake_parse_arguments(ARG "" "" "COMPONENTS" ${ARGN})
-
-    if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-        foreach(component ${ARG_COMPONENTS})
-            string(TOUPPER ${component} uppercomponent)
-            execute_process(
-                COMMAND dumpbin.exe /HEADERS "${Boost_${uppercomponent}_LIBRARY_RELEASE}"
-                OUTPUT_VARIABLE _importlib_headers
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-            string(REGEX MATCH "DLL name *: *([^\r\n]*)" match "${_importlib_headers}")
-            get_filename_component(dll_name "${CMAKE_MATCH_1}" NAME_WE)
-            locate_shared_library_anyof(${VAR} "${dll_name}")
-        endforeach()
-        set(${VAR} ${${VAR}} PARENT_SCOPE)
-    else()
-        message(FATAL_ERROR "Platform not supported")
-    endif()
-endfunction()
