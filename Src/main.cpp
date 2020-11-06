@@ -16,6 +16,12 @@
 #include "util/Config.h"
 #include <QDir>
 
+#include <boost/filesystem.hpp>
+
+#if HAS_PYLON
+       #include <GenApi/GenApi.h>
+#endif
+
 //This will hide the console. 
 //See https://stackoverflow.com/questions/2139637/hide-console-of-windows-application
 #ifdef _WIN32
@@ -53,6 +59,16 @@ int main(int argc, char* argv[]) {
     QString cfgLoc = cfg->CfgCustomLocation.isEmpty()?Config::configLocation:cfg->CfgCustomLocation;
     cfg->load(cfgLoc, "config.ini");
     cfg->save(cfgLoc, "config.ini");
+
+#if HAS_PYLON
+    const auto cache = boost::filesystem::path{QStandardPaths::writableLocation(QStandardPaths::CacheLocation).toStdString()};
+    const auto genicamCache = cache / "genicam_xml_cache";
+
+    boost::filesystem::create_directories(genicamCache);
+    GenICam::SetGenICamCacheFolder(GenICam::gcstring{genicamCache.c_str()});
+
+    qputenv(GENICAM_CACHE_VERSION, QByteArray::fromStdString(genicamCache.string()));
+#endif
 
     qRegisterMetaType<cv::Mat>("cv::Mat");
     qRegisterMetaType<std::shared_ptr<cv::Mat>>("std::shared_ptr<cv::Mat>");
