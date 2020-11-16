@@ -636,8 +636,6 @@ namespace BioTracker {
 				auto view = toOpenCV(grabbed);
 				auto scaled = std::make_shared<cv::Mat>();
 				cv::resize(view, *scaled, m_imageSize);
-				if (scaled->type() == CV_8UC1)
-            		cv::cvtColor(*scaled, *scaled, cv::COLOR_GRAY2BGR);
 				set_current_frame(scaled);
 				if (m_recording && m_encoder)
 					m_encoder->add(scaled);
