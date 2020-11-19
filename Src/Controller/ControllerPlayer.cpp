@@ -8,9 +8,9 @@
 #include "Controller/ControllerCoreParameter.h"
 #include "Controller/ControllerMainWindow.h"
 
-
 #include <QGraphicsItem>
 #include <QToolButton>
+
 
 ControllerPlayer::ControllerPlayer(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
     IControllerCfg(parent, context, ctr)
@@ -123,8 +123,8 @@ void ControllerPlayer::connectControllerToController() {
     vControl->setupVideoToolbar();
 
     //QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatchLoaded, vControl, &VideoControllWidget::mediumChanged);
-    QObject::connect(ctrM, &ControllerMainWindow::emitMediaLoaded, vControl, &VideoControllWidget::mediumChanged);
-    QObject::connect(ctrM, &ControllerMainWindow::emitFilesCount, vControl, &VideoControllWidget::getMaxBatchNumber);
+    // QObject::connect(ctrM, &ControllerMainWindow::emitMediaLoaded, vControl, &VideoControllWidget::mediumChanged);
+    // QObject::connect(ctrM, &ControllerMainWindow::emitFilesCount, vControl, &VideoControllWidget::getMaxBatchNumber);
 
 
 	////connect to coreparameterview
@@ -207,4 +207,16 @@ void ControllerPlayer::receiveChangeDisplayImage(QString str) {
 void ControllerPlayer::receiveCurrentFrameNumberToPlugin(uint frameNumber)
 {
 	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
+}
+
+void ControllerPlayer::receiveMediumChanged(const std::string path)
+{
+    VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
+    vControl->mediumChanged(path);
+}
+
+void ControllerPlayer::receiveMaxBatchNumber(int i)
+{
+    VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
+    vControl->getMaxBatchNumber(i);
 }

@@ -223,10 +223,36 @@ void ControllerMainWindow::connectControllerToController() {
 	QObject::connect(cont3, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerMainWindow::emitOnLoadMedia, Qt::DirectConnection);
 	QObject::connect(cont3, &ControllerPlayer::emitNextMediaInBatchLoaded, this, &ControllerMainWindow::emitMediaLoaded, Qt::DirectConnection);
 
+    // updater for media label in video control widget
+    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, cont3, &ControllerPlayer::receiveMediumChanged);
+    QObject::connect(this, &ControllerMainWindow::emitFilesCount, cont3, &ControllerPlayer::receiveMaxBatchNumber);
+
 	//Load video as per CLI
-    if (!_cfg->LoadVideo.isEmpty()) 
-        loadVideo({ _cfg->LoadVideo.toStdString().c_str() });
-        
+    if (!_cfg->LoadVideo.isEmpty())
+    {
+        QDir videoDir(_cfg->LoadVideo);
+        //if path is directory do batch processing
+        if (videoDir.exists())
+        {
+            qDebug() << "CORE:   Loading all video files in: " << _cfg->LoadVideo;
+            std::vector<boost::filesystem::path> files;
+
+            QStringList filters;
+            filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.mov";
+            for (QFileInfo const& fileInfo : videoDir.entryInfoList(filters, QDir::Files | QDir::NoSymLinks, QDir::Name)) 
+            {
+                files.push_back(boost::filesystem::path(fileInfo.absoluteFilePath().toStdString()));
+            }
+            if (!files.empty()) {
+                loadVideo(files);
+            }
+        }
+        else
+        {
+            loadVideo({ _cfg->LoadVideo.toStdString().c_str() });
+        } 
+    }
+    
 }
 
 void ControllerMainWindow::receiveCursorPosition(QPoint pos)

@@ -111,6 +111,8 @@ class ControllerPlayer : public IControllerCfg {
         */
         void setGoToFrame(int frame);
 
+		void receiveMediumChanged(const std::string path);
+		void receiveMaxBatchNumber(int i);
 		
         void receiveNextMediaInBatch(const std::string path);
         void receiveNextMediaInBatchLoaded(const std::string path);
