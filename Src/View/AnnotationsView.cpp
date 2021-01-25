@@ -56,8 +56,8 @@ void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 		else
 		{
 			QColor transparentGray = Qt::gray;
-			transparentGray.setAlphaF(0.25);
-			painter->setPen(QPen(transparentGray, 3, Qt::SolidLine, Qt::RoundCap));
+			transparentGray.setAlphaF(0.2);
+			painter->setPen(QPen(transparentGray, 2.5, Qt::DashLine, Qt::RoundCap));
 		}
 		annotation->paint(painter, option, widget);
 	}
