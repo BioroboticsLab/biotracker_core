@@ -434,6 +434,7 @@ bool Annotations::updateSelectionStartFrame()
 	selectedAnnotation->startFrame = getCurrentFrame();
 	if (selectedAnnotation->endFrame < selectedAnnotation->startFrame)
 		selectedAnnotation->endFrame = selectedAnnotation->startFrame;
+	dirty = true;	
 	return true;
 }
 
@@ -444,6 +445,7 @@ bool Annotations::updateSelectionEndFrame()
 	selectedAnnotation->endFrame = getCurrentFrame();
 	if (selectedAnnotation->startFrame > selectedAnnotation->endFrame)
 		selectedAnnotation->startFrame = selectedAnnotation->endFrame;
+	dirty = true;	
 	return true;
 }
 
