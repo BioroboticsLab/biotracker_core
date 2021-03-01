@@ -121,6 +121,7 @@ Q_SIGNALS:
 	void on_actionOpen_Trial_directory_triggered();
 	void on_actionOpen_Screenshot_directory_triggered();
 	void on_actionOpen_Videos_directory_triggered();
+	void on_actionOpen_Config_directory_triggered();
 
 
 	//view toolbar actions

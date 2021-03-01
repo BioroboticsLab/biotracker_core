@@ -439,15 +439,15 @@
                    <number>1</number>
                   </property>
                   <property name="currentIndex">
-                   <number>4</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="experimentItem">
                    <property name="geometry">
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>696</width>
+                     <height>304</height>
                     </rect>
                    </property>
                    <property name="sizePolicy">
@@ -551,8 +551,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>696</width>
-                     <height>304</height>
+                     <width>98</width>
+                     <height>87</height>
                     </rect>
                    </property>
                    <property name="toolTip">
@@ -762,6 +762,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="actionOpen_Screenshot_directory"/>
     <addaction name="actionOpen_Videos_directory"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_Config_directory"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1367,6 +1369,11 @@ QToolButton {
   <action name="actionOpen_Video_batch">
    <property name="text">
     <string>Open Video Batch...</string>
+   </property>
+  </action>
+  <action name="actionOpen_Config_directory">
+   <property name="text">
+    <string>Open Configuration directory</string>
    </property>
   </action>
  </widget>

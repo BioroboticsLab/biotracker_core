@@ -945,6 +945,10 @@ void MainWindow::on_actionOpen_Screenshot_directory_triggered() {
 void MainWindow::on_actionOpen_Videos_directory_triggered() {
 	QDesktopServices::openUrl(QUrl::fromLocalFile(_cfg->DirVideos));
 }
+void MainWindow::on_actionOpen_Config_directory_triggered() {
+	QFileInfo fi(_cfg->AreaDefinitions);
+	QDesktopServices::openUrl(QUrl::fromLocalFile(fi.absolutePath()));
+}
 
 
 //////////////////////////////////menu->Help slots//////////////////////////////
