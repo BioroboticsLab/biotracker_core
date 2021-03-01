@@ -155,9 +155,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-254</y>
           <width>333</width>
-          <height>938</height>
+          <height>959</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1459,12 +1459,12 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="checkBoxDisplayTrackingArea">
+                  <widget class="QCheckBox" name="checkBoxDisplayRectification">
                    <property name="toolTip">
-                    <string>Show the tracking area</string>
+                    <string>Show the rectification area</string>
                    </property>
                    <property name="text">
-                    <string>Display tracking area definition</string>
+                    <string>Display Rectification definition</string>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
@@ -1485,12 +1485,12 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="checkBoxDisplayRectification">
+                  <widget class="QCheckBox" name="checkBoxDisplayTrackingArea">
                    <property name="toolTip">
-                    <string>Show the rectification area</string>
+                    <string>Show the tracking area</string>
                    </property>
                    <property name="text">
-                    <string>Display Rectification definition</string>
+                    <string>Display tracking area definition</string>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
@@ -1511,13 +1511,40 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="checkboxTrackingAreaAsEllipse">
-                   <property name="toolTip">
-                    <string>Set the trackingarea to ellipse</string>
-                   </property>
-                   <property name="text">
-                    <string>Tracking area as ellipse</string>
-                   </property>
+                  <widget class="QWidget" name="trackingAreaTypeLayout" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_14">
+                    <item>
+                     <widget class="QRadioButton" name="radioButtonRect">
+                      <property name="text">
+                       <string>Rect</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButtonEllipse">
+                      <property name="text">
+                       <string>Ellipse</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButtonPolygon">
+                      <property name="text">
+                       <string>Polygon:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="spinBoxVertices">
+                      <property name="minimum">
+                       <number>4</number>
+                      </property>
+                      <property name="value">
+                       <number>5</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>

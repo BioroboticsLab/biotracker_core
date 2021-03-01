@@ -38,6 +38,9 @@ public:
 	void setVerticeAtLocation(const QPoint &pos, int vertice);
 	int getVerticeAtLocation(const QPoint &pos);
 
+	void changeTrArNumberOfVertices(const int number);
+
+
 	virtual QPoint *getHandleForPosition(const QPoint &pos)
 	{
 		if (isHandleAtPosition(_origin, pos)) return &_origin;

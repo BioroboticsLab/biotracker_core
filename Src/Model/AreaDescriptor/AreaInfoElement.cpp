@@ -18,7 +18,7 @@ AreaInfoElement::~AreaInfoElement()
 
 bool AreaInfoElement::insideElement(cv::Point p) {
 
-	if (_type == 0) {
+	if (_type == 0 || _type == 2) {
 
 		return cv::pointPolygonTest(_v, p, true) > 0;
 	}
@@ -53,20 +53,57 @@ int AreaInfoElement::getVerticeAtLocation(const QPoint &pos) {
 				return i;
 		}
 	}
+	else if (_type == 2) {
+		int numberOfVertices = _v.size();
+		for (int i = 0; i < numberOfVertices; i++) {
+			if (isHandleAtPosition(_v[i], pos))
+				return i;
+		}
+	}
 
 	return -1;
 }
 
-void AreaInfoElement::setVerticeAtLocation(const QPoint &pos, int vertice) {
-	if (_type == 0 && vertice >= 0 && vertice <4) {
-		_v[vertice] = cv::Point2f(pos.x(), pos.y());
+//Moving vertices
+void AreaInfoElement::setVerticeAtLocation(const QPoint &pos, int vertex) {
+	int numberOfVertices = _v.size();
+	//Move existing vertices
+	if (_type == 0 && vertex >= 0 && vertex < 4) {
+		_v[vertex] = cv::Point2f(pos.x(), pos.y());
 	}
-	else if (_type > 0 && vertice >= 0 && vertice < 2) {
-		_v[vertice] = cv::Point2f(pos.x(), pos.y());
+	else if (_type == 1 && vertex >= 0 && vertex < 2) {
+		_v[vertex] = cv::Point2f(pos.x(), pos.y());
 	}
+	else if (_type == 2 && vertex >= 0 && vertex < numberOfVertices) {
+		_v[vertex] = cv::Point2f(pos.x(), pos.y());
+	}
+	// //Add new vertex to polygon
+	// else if (_type == 2 && vertex == numberOfVertices) {
+	// 	_v.push_back(cv::Point2f(pos.x(), pos.y()));
+	// }
 
 	Q_EMIT updatedVertices();
 
+}
+
+void AreaInfoElement::changeTrArNumberOfVertices(int number) {
+	int numberOfVertices = _v.size();
+	
+	// add more vertices
+	while (numberOfVertices < number) {
+		cv::Point2f first = _v[0];
+		cv::Point2f last = _v[numberOfVertices-1];
+		_v.push_back((first+last) * .5);
+		numberOfVertices = _v.size();
+	}
+
+	// remove last vertices (down to 4)
+	while (numberOfVertices > number && numberOfVertices > 4) {
+		_v.pop_back();
+		numberOfVertices = _v.size();
+	}
+
+	Q_EMIT updatedVertices();
 }
 
 bool AreaInfoElement::isHandleAtPosition(const cv::Point2f &handle, const QPoint &pos) {

@@ -4,6 +4,7 @@
 #include "View/AreaDesciptor/AreaDescriptor.h"
 #include "View/AreaDesciptor/RectDescriptor.h"
 #include "View/AreaDesciptor/EllipseDescriptor.h"
+#include "View/AreaDesciptor/PolygonDescriptor.h"
 #include "util/types.h"
 
 #include "ControllerGraphicScene.h"
@@ -16,6 +17,7 @@
 
 #include "Model/AreaDescriptor/AreaMemory.h"
 using namespace AreaMemory;
+using namespace BioTrackerUtilsMisc; //split
 
 ControllerAreaDescriptor::ControllerAreaDescriptor(QObject *parent, IBioTrackerContext *context, ENUMS::CONTROLLERTYPE ctr) :
 	IControllerCfg(parent, context, ctr)
@@ -81,7 +83,7 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
         QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<RectDescriptor*>(m_ViewApperture), &RectDescriptor::receiveDragUpdate);
 		_cfg->AppertureType = 0;
 	}
-	else if (v > 0) {
+	else if (v == 1) {
 		m_ViewApperture = new EllipseDescriptor(this, area->_apperture.get());
 		area->_apperture->setType(1);
 		static_cast<EllipseDescriptor*>(m_ViewApperture)->setBrush(QBrush(Qt::red));
@@ -89,6 +91,15 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
         QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<EllipseDescriptor*>(m_ViewApperture), &EllipseDescriptor::receiveDragUpdate);
 		_cfg->AppertureType = 1;
 	}
+	else if (v == 2) {
+		m_ViewApperture = new PolygonDescriptor(this, area->_apperture.get());
+		area->_apperture->setType(2);
+		static_cast<PolygonDescriptor*>(m_ViewApperture)->setBrush(QBrush(Qt::red));
+        static_cast<PolygonDescriptor*>(m_ViewApperture)->setDimensions(_w, _h);
+        QObject::connect(this, &ControllerAreaDescriptor::currentVectorDrag, static_cast<PolygonDescriptor*>(m_ViewApperture), &PolygonDescriptor::receiveDragUpdate);
+		_cfg->AppertureType = 2;
+	}
+
 
     if (!_visibleApperture)
         static_cast<AreaDescriptor*>(m_ViewApperture)->hide();
@@ -117,6 +128,9 @@ void ControllerAreaDescriptor::rcvPlayerParameters(playerParameters* parameters)
         QVector<QString> v = getVertices(_currentFilename, _cfg->AreaDefinitions);
         if (!v.empty()) {
             changeAreaDescriptorType(v[2]);
+			std::vector<std::string> strVerts;
+			int numberOfVerts = split(v[1].toStdString(),strVerts,';');
+			changeNumberOfVerts(numberOfVerts);
         }
     }
     
@@ -146,6 +160,7 @@ void ControllerAreaDescriptor::connectControllerToController()
         IController* ctrParms = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::COREPARAMETER);
         auto parmsController = qobject_cast<ControllerCoreParameter*>(ctrParms);
         QObject::connect(this, &ControllerAreaDescriptor::changeAreaDescriptorType, parmsController, &ControllerCoreParameter::changeAreaDescriptorType, Qt::DirectConnection);
+		QObject::connect(this, &ControllerAreaDescriptor::changeNumberOfVerts, parmsController, &ControllerCoreParameter::changeNumberOfVerts, Qt::DirectConnection);
 
 
 		AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
@@ -282,14 +297,21 @@ void ControllerAreaDescriptor::setDisplayTrackingAreaDefinition(bool b) {
 	ad->setVisible(b);
 }
 
-void ControllerAreaDescriptor::setTrackingAreaAsEllipse(bool b) {
-	//Not passing b as a parameter for clarification reasons
-	if (b) {
-		trackingAreaType(1);
-	}
-	else {
-		trackingAreaType(0);
-	}
+// void ControllerAreaDescriptor::setTrackingAreaAsEllipse(bool b) {
+// 	//Not passing b as a parameter for clarification reasons
+// 	if (b) {
+// 		trackingAreaType(1);
+// 	}
+// 	else {
+// 		trackingAreaType(0);
+// 	}
+// }
+
+void ControllerAreaDescriptor::setTrackingAreaType(int type) {
+	trackingAreaType(type);
 }
 
-
+void ControllerAreaDescriptor::setTrArNumberOfVertices(int v) {
+	AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
+	area->_apperture->changeTrArNumberOfVertices(v);
+}

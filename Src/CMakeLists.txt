@@ -215,6 +215,7 @@ PRIVATE
     "View/AreaDesciptor/AreaDescriptor.cpp"
     "View/AreaDesciptor/EllipseDescriptor.cpp"
     "View/AreaDesciptor/RectDescriptor.cpp"
+    "View/AreaDesciptor/PolygonDescriptor.cpp"
     "View/AnnotationsView.cpp"
     "View/CameraDevice.cpp"
     "View/ComponentShape.cpp"

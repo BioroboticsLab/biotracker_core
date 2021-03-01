@@ -19,12 +19,15 @@ signals:
 	void updateAreaDescriptor(IModelAreaDescriptor *ad);
     void currentVectorDrag(BiotrackerTypes::AreaType vectorType, int id, double x, double y);
     void changeAreaDescriptorType(QString type);
+	void changeNumberOfVerts(int i);
 
 public slots:
 	void setRectificationDimensions(double w, double h);
 	void setDisplayRectificationDefinition(bool b);
 	void setDisplayTrackingAreaDefinition(bool b);
-	void setTrackingAreaAsEllipse(bool b);
+	// void setTrackingAreaAsEllipse(bool b);
+	void setTrackingAreaType(int type);
+	void setTrArNumberOfVertices(int v);
     void rcvPlayerParameters(playerParameters* parameters);
 
 private slots:

@@ -84,16 +84,26 @@ void CoreParameterView::setPermission(std::pair<ENUMS::COREPERMISSIONS, bool> pe
 void CoreParameterView::triggerUpdate() {
     on_checkBoxDisplayTrackingArea_stateChanged(0);
     on_checkBoxDisplayRectification_stateChanged(0);
-    on_checkboxTrackingAreaAsEllipse_stateChanged(0);
+    // on_checkboxTrackingAreaAsEllipse_stateChanged(0);
 }
 
 void CoreParameterView::areaDescriptorTypeChanged(QString type) {
-    if (type != "0") {
-        ui->checkboxTrackingAreaAsEllipse->setChecked(true);
+    if (type == "0") {
+        ui->radioButtonRect->setChecked(true);
     }
-    else {
-        ui->checkboxTrackingAreaAsEllipse->setChecked(false);
+    else if (type == "1"){
+        ui->radioButtonEllipse->setChecked(true);
     }
+	else if (type == "2"){
+        ui->radioButtonPolygon->setChecked(true);
+    }
+}
+
+void CoreParameterView::trAreaNumberOfVertsChanged(int i){
+	ui->spinBoxVertices->blockSignals(true); //Shush, block your signals
+	ui->spinBoxVertices->setValue(i);
+	ui->spinBoxVertices->blockSignals(false); //OK, emit from now on
+	
 }
 
 void CoreParameterView::on_checkBoxEnableCoreView_stateChanged(int v) 
@@ -278,8 +288,27 @@ void CoreParameterView::on_checkBoxDisplayRectification_stateChanged(int v) {
 	Q_EMIT emitDisplayRectification(ui->checkBoxDisplayRectification->isChecked());
 }
 
-void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
-	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
+// void CoreParameterView::on_checkboxTrackingAreaAsEllipse_stateChanged(int v) {
+// 	Q_EMIT emitTrackingAreaAsEllipse(ui->checkboxTrackingAreaAsEllipse->isChecked());
+// }
+
+void CoreParameterView::on_radioButtonRect_toggled(bool checked){
+	if (checked)
+		Q_EMIT emitTrackingAreaType(0);
+}
+
+void CoreParameterView::on_radioButtonEllipse_toggled(bool checked){
+	if (checked)
+		Q_EMIT emitTrackingAreaType(1);
+}
+
+void CoreParameterView::on_radioButtonPolygon_toggled(bool checked){
+	if (checked)
+		Q_EMIT emitTrackingAreaType(2);
+}
+
+void CoreParameterView::on_spinBoxVertices_valueChanged(int i){
+	Q_EMIT emitTrArNumberOfVertices(i);	
 }
 
 void CoreParameterView::on_pushButtonAnnoColor_clicked()
@@ -533,7 +562,6 @@ void CoreParameterView::on_pushButton_resetData_clicked(){
     }
     Q_EMIT emitFinalizeExperiment();
 }
-
 
 void CoreParameterView::on_pushButton_addTraj_clicked(){
 	emitAddTrack();

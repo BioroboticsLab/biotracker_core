@@ -29,7 +29,8 @@ void ControllerCoreParameter::connectModelToController()
 
 void ControllerCoreParameter::connectControllerToController()
 {
-	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);view->triggerUpdate();
+	CoreParameterView* view = static_cast<CoreParameterView*>(m_View);
+	view->triggerUpdate();
 	//Connections to the trackedComponentCore
 	{
 		IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
@@ -82,7 +83,9 @@ void ControllerCoreParameter::connectControllerToController()
 		QObject::connect(view, &CoreParameterView::emitRectDimensions, adController, &ControllerAreaDescriptor::setRectificationDimensions, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitDisplayTrackingArea, adController, &ControllerAreaDescriptor::setDisplayTrackingAreaDefinition, Qt::DirectConnection);
 		QObject::connect(view, &CoreParameterView::emitDisplayRectification, adController, &ControllerAreaDescriptor::setDisplayRectificationDefinition, Qt::DirectConnection);
-		QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
+		// QObject::connect(view, &CoreParameterView::emitTrackingAreaAsEllipse, adController, &ControllerAreaDescriptor::setTrackingAreaAsEllipse, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrackingAreaType, adController, &ControllerAreaDescriptor::setTrackingAreaType, Qt::DirectConnection);
+		QObject::connect(view, &CoreParameterView::emitTrArNumberOfVertices, adController, &ControllerAreaDescriptor::setTrArNumberOfVertices, Qt::DirectConnection);
     }
 
 	//Connections to the Annotations
@@ -128,6 +131,11 @@ void ControllerCoreParameter::connectControllerToController()
 void ControllerCoreParameter::changeAreaDescriptorType(QString type) {
     if (dynamic_cast<CoreParameterView*>(m_View))
         dynamic_cast<CoreParameterView*>(m_View)->areaDescriptorTypeChanged(type);
+}
+
+void ControllerCoreParameter::changeNumberOfVerts(int i) {
+    if (dynamic_cast<CoreParameterView*>(m_View))
+        dynamic_cast<CoreParameterView*>(m_View)->trAreaNumberOfVertsChanged(i);
 }
 
 void ControllerCoreParameter::receiveResetTrial()

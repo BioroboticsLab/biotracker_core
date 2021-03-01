@@ -31,6 +31,7 @@ public:
 	void triggerUpdate();
 
 	void areaDescriptorTypeChanged(QString type);
+	void trAreaNumberOfVertsChanged(int i);
 
 	private slots:
 
@@ -65,7 +66,6 @@ public:
 	void on_checkBoxTrackOrientationLine_stateChanged(int v);
 	void on_checkBoxShowId_stateChanged(int v);
 
-
 	void on_pushButtonTrackDimensionSetterAll_clicked();
 	void on_pushButtonTrackDimensionSetterSelected_clicked();
 	void on_pushButtonDefaultDimensions_clicked();
@@ -75,7 +75,11 @@ public:
 	void on_lineEditRectHeight_textChanged(QString s);
 	void on_checkBoxDisplayTrackingArea_stateChanged(int v);
 	void on_checkBoxDisplayRectification_stateChanged(int v);
-	void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
+	// void on_checkboxTrackingAreaAsEllipse_stateChanged(int v);
+	void on_radioButtonRect_toggled(bool checked);
+	void on_radioButtonEllipse_toggled(bool checked);
+	void on_radioButtonPolygon_toggled(bool checked);
+	void on_spinBoxVertices_valueChanged(int i);
 
 	//Annotations
 	void on_pushButtonAnnoColor_clicked();
@@ -158,7 +162,9 @@ public:
 			void emitRectDimensions(double w, double h);
 			void emitDisplayTrackingArea(bool b);
 			void emitDisplayRectification(bool b);
-			void emitTrackingAreaAsEllipse(bool b);
+			// void emitTrackingAreaAsEllipse(bool b);
+			void emitTrackingAreaType(int t);
+			void emitTrArNumberOfVertices(int v);
 
 			//Annotations
 			void emitSetAnnoColor(QColor color);

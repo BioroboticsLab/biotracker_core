@@ -26,6 +26,7 @@ signals:
 	public slots:
 	void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
     void changeAreaDescriptorType(QString type);
+	void changeNumberOfVerts(int i);
 	void receiveResetTrial();
 
     //Forwarded from data exporter
