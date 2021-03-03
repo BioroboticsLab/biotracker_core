@@ -47,9 +47,9 @@ def extract_cmake_package(artifacts, name):
 
 if __name__ == "__main__":
     if system() == "Windows":
-        job_stem = "package windows"
+        job_stem = "package: [windows]"
     elif system() == "Linux":
-        job_stem = "package centos"
+        job_stem = "package: [centos]"
     else:
         assert False
 
