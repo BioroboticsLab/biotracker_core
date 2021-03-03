@@ -115,6 +115,7 @@ void ControllerMainWindow::loadTrajectoryFile(std::string file) {
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::DATAEXPORT);
     static_cast<ControllerDataExporter*>(ctr)->loadFile(file);
     Q_EMIT emitTrackLoaded(file);
+    qDebug() << "CORE:  Tracking file loaded: " << QString::fromStdString(file);
 }
 
 void ControllerMainWindow::saveTrajectoryFile(std::string file) {

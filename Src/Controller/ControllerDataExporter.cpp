@@ -64,7 +64,7 @@ void ControllerDataExporter::loadFile(std::string file) {
         qobject_cast<IModelDataExporter*>(m_Model)->loadFile(file);
     }
     else {
-        std::cout << "Can not load tracks for this plugin as it does not provide a factory." << std::endl;
+        std::cout << "Cannot load tracks for this plugin as it does not provide a factory." << std::endl;
     }
 }
 
@@ -73,7 +73,7 @@ void ControllerDataExporter::saveFile(std::string file) {
         qobject_cast<IModelDataExporter*>(m_Model)->writeAll(file);
     }
     else {
-        std::cout << "Can not save tracks for this plugin as it does not provide a factory." << std::endl;
+        std::cout << "Cannot save tracks for this plugin as it does not provide a factory." << std::endl;
     }
 }
 

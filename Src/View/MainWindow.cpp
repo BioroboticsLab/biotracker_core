@@ -827,7 +827,7 @@ void MainWindow::on_actionLoad_trackingdata_triggered() {
 
 	std::vector<boost::filesystem::path> files;
 	for (QString const& path : QFileDialog::getOpenFileNames(this,
-		"Open tracking file", "", imageFilter, 0)) {
+		"Open tracking file", _cfg->DirTracks, imageFilter, 0)) {
 		files.push_back(boost::filesystem::path(path.toStdString()));
 	}
 

@@ -258,26 +258,26 @@ void ControllerPlugin::connectPlugin() {
 
 	// data model actions
 	QObject::connect(this, SIGNAL(emitRemoveTrajectory(IModelTrackedTrajectory*)), obj,
-		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)));
+		SLOT(receiveRemoveTrajectory(IModelTrackedTrajectory*)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), obj,
-		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)));
+		SIGNAL(emitRemoveTrackEntity(IModelTrackedTrajectory*, uint)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitAddTrajectory(QPoint)), obj,
-		SLOT(receiveAddTrajectory(QPoint)));
+		SLOT(receiveAddTrajectory(QPoint)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), obj,
-		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)));
+		SIGNAL(emitMoveElement(IModelTrackedTrajectory*, uint, QPoint)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), obj,
-		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)));
+		SLOT(receiveSwapIds(IModelTrackedTrajectory*, IModelTrackedTrajectory*)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), obj,
-		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)));
+		SIGNAL(emitToggleFixTrack(IModelTrackedTrajectory*, bool)), Qt::BlockingQueuedConnection);
 
 	QObject::connect(this, SIGNAL(emitRemoveTrajectoryId(int)), obj,
-		SIGNAL(emitRemoveTrajectoryId(int)));
+		SIGNAL(emitRemoveTrajectoryId(int)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitValidateTrajectory(int)), obj,
-		SIGNAL(emitValidateTrajectory(int)));
+		SIGNAL(emitValidateTrajectory(int)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), obj,
-		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)));
+		SIGNAL(emitValidateEntity(IModelTrackedTrajectory*, uint)), Qt::BlockingQueuedConnection);
 	QObject::connect(this, SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), obj,
-		SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)));
+		SIGNAL(emitEntityRotation(IModelTrackedTrajectory*, double, uint)), Qt::BlockingQueuedConnection);
 
 	connect(this, &ControllerPlugin::frameRetrieved, m_BioTrackerPlugin, &IBioTrackerPlugin::receiveCurrentFrameFromMainApp);
 	QObject::connect(this, SIGNAL(signalCurrentFrameNumberToPlugin(uint)), obj,
