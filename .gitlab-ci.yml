@@ -41,52 +41,52 @@ stages:
   script:
     - ./ci/package.py
 
-build centos:
+"build: [centos]":
   extends: .centos
   <<: *build
   variables:
     <<: [*release]
 
-build centos[pylon]:
+"build [pylon]: [centos]":
   extends: .centos
   <<: *build
   variables:
     <<: [*release, *pylon]
 
-build windows:
+"build: [windows]":
   extends: .windows
   <<: *build
   variables:
     <<: [*release]
 
-build windows[pylon]:
+"build [pylon]: [windows]":
   extends: .windows
   <<: *build
   variables:
     <<: [*release, *pylon]
 
-package centos:
+"package: [centos]":
   extends: .centos
   dependencies:
-    - build centos
+    - "build: [centos]"
   <<: *package
 
-package centos[pylon]:
+"package [pylon]: [centos]":
   extends: .centos
   dependencies:
-    - build centos[pylon]
+    - "build [pylon]: [centos]"
   variables:
     <<: [*pylon]
   <<: *package
 
-package windows:
+"package: [windows]":
   extends: .windows
   dependencies:
-    - build windows
+    - "build: [windows]"
   <<: *package
 
-package windows[pylon]:
+"package [pylon]: [windows]":
   extends: .windows
   dependencies:
-    - build windows[pylon]
+    - "build [pylon]: [windows]"
   <<: *package
