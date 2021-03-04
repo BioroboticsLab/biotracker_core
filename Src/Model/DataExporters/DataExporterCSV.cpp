@@ -6,6 +6,8 @@
 #include <qdatetime.h>
 #include <fstream>
 
+#include "qmessagebox.h"
+
 using namespace BioTrackerUtilsMisc; //split
 
 DataExporterCSV::DataExporterCSV(QObject *parent) :
@@ -126,12 +128,53 @@ void DataExporterCSV::loadFile(std::string file)
     std::ifstream ifs (file, std::ifstream::in);
 
     std::string line = "# ";
+
+    // first line is "# Source name: "
+    // check if file video file has same path or same name as loaded video
+    ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
+    SourceVideoMetadata d = ctr->getSourceMetadata();
+
+    getline(ifs, line);
+
+    QString loadedMediaName = QString::fromStdString(d.name);
+    QString sourceName;
+    if (line.length() > 14){
+        sourceName = QString::fromStdString(line.substr(15,  std::string::npos));
+    }
+    else{
+        sourceName = QString("");
+        qDebug() << QString("CORE:  No media source file in tracking file found!");
+    }
+
+    QFileInfo loadedMediaPath(loadedMediaName);
+    QFileInfo sourceNamePath(sourceName);
+
+    QString loadedName = loadedMediaPath.fileName();
+    QString sourceFileName = sourceNamePath.fileName();
+
+    if (loadedMediaPath != sourceNamePath){
+        qDebug() << "CORE:  Paths of currently loaded medium and tracked medium in track file are different!";
+        
+        // if file names also differ, display a warning 
+        if(loadedName != sourceFileName){
+            QString msg = QString("The currently loaded medium file path and the"
+                                  "media path found in tracking file differ!\n\n"
+                                  "(current media path):\n%1\n\n" 
+                                  "(found media path):\n%2").arg(loadedMediaName).arg(sourceName);
+            QMessageBox q = QMessageBox(QMessageBox::Warning, 
+                QString("Loaded medium and tracked medium differ!"),  
+                msg,
+                QMessageBox::Ok);
+            q.exec();
+        }
+    }
+
+    // skip all other lines with #
     while (line.substr(0, 1) == "#") {
         getline(ifs, line);
     }
 
     //parse header
-    ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
     IModelTrackedComponentFactory* factory = ctr ? ctr->getComponentFactory() : nullptr;
     if (!factory) {
         return;
