@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <QDebug>
 
 AreaInfoElement::AreaInfoElement(int type) : 
     _areaType(BiotrackerTypes::AreaType::NONE),
@@ -18,9 +19,11 @@ AreaInfoElement::~AreaInfoElement()
 
 bool AreaInfoElement::insideElement(cv::Point p) {
 
-	if (_type == 0 || _type == 2) {
-
-		return cv::pointPolygonTest(_v, p, true) > 0;
+	if (_type == 0) {
+		auto start = _v.begin();
+		auto end = _v.begin() + 4;
+		std::vector<cv::Point> rectV(start, end);
+		return cv::pointPolygonTest(rectV, p, true) > 0;
 	}
 	else if (_type == 1) {
 		float rx = std::abs(_v[1].x - _v[0].x) / 2;
@@ -36,6 +39,9 @@ bool AreaInfoElement::insideElement(cv::Point p) {
 		bool inShape = val <= 1;
 
 		return inShape;
+	}
+	else if (_type == 2){
+		return cv::pointPolygonTest(_v, p, true) > 0;
 	}
 	return false;
 }

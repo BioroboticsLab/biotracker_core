@@ -155,7 +155,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-254</y>
+          <y>-284</y>
           <width>333</width>
           <height>959</height>
          </rect>
@@ -1493,7 +1493,7 @@
                     <string>Display tracking area definition</string>
                    </property>
                    <property name="checked">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>

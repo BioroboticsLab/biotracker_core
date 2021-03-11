@@ -79,7 +79,7 @@ void AreaInfo::loadAreas() {
     std::vector<cv::Point> p = stringToCVPointVec(pair[0].toStdString());
     _rect->setVertices(p);
 
-    p = stringToCVPointVec(pair[1].toStdString());;
+    p = stringToCVPointVec(pair[1].toStdString());
     _apperture->setVertices(p);
 }
 
