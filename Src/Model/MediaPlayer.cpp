@@ -62,6 +62,7 @@ MediaPlayer::MediaPlayer(QObject* parent) :
 
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitNextMediaInBatch, this, &MediaPlayer::emitNextMediaInBatch, Qt::DirectConnection);
     QObject::connect(m_Player, &MediaPlayerStateMachine::emitNextMediaInBatchLoaded, this, &MediaPlayer::emitNextMediaInBatchLoaded, Qt::DirectConnection);
+    QObject::connect(m_Player, &MediaPlayerStateMachine::emitEndOfPlayback, this, &MediaPlayer::emitEndOfPlayback, Qt::DirectConnection);
 
     // Move the PlayerStateMachine to the Thread
     m_Player->moveToThread(m_PlayerThread);

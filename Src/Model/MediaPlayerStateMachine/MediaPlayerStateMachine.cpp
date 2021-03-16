@@ -30,6 +30,7 @@ MediaPlayerStateMachine::MediaPlayerStateMachine(QObject* parent) :
 	for (i = m_States.begin(); i != m_States.end(); i++) {
 		QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatch, this, &MediaPlayerStateMachine::emitNextMediaInBatch, Qt::DirectConnection);
 		QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatchLoaded, this, &MediaPlayerStateMachine::emitNextMediaInBatchLoaded, Qt::DirectConnection);
+		QObject::connect(i.value(), &IPlayerState::emitEndOfPlayback, this, &MediaPlayerStateMachine::emitEndOfPlayback, Qt::DirectConnection);
 	}
 
 	setNextState(IPlayerState::PLAYER_STATES::STATE_INITIAL);

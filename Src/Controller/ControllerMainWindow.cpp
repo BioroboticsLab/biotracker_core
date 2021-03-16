@@ -223,6 +223,7 @@ void ControllerMainWindow::connectControllerToController() {
     ControllerPlayer *cont3 = static_cast<ControllerPlayer*>(ctr3);
 	QObject::connect(cont3, &ControllerPlayer::emitNextMediaInBatch, this, &ControllerMainWindow::emitOnLoadMedia, Qt::DirectConnection);
 	QObject::connect(cont3, &ControllerPlayer::emitNextMediaInBatchLoaded, this, &ControllerMainWindow::emitMediaLoaded, Qt::DirectConnection);
+    QObject::connect(cont3, &ControllerPlayer::emitEndOfPlayback, this, &ControllerMainWindow::receiveEndOfPlayback, Qt::QueuedConnection);
 
     // updater for media label in video control widget
     QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, cont3, &ControllerPlayer::receiveMediumChanged);
@@ -279,6 +280,13 @@ void ControllerMainWindow::rcvSelectPlugin(QString plugin) {
 	//dynamic_cast<MainWindow*>(m_View)->activeTrackingCheckBox();
 	activeTrackingCheckBox();
     Q_EMIT emitPluginLoaded(plugin.toStdString());
+}
+
+void ControllerMainWindow::receiveEndOfPlayback(){
+    if (_cfg->AutoClose){
+        qDebug() << "CORE: Closing the BioTracker...";
+        this->exit();
+    }
 }
 
 void ControllerMainWindow::onNewMediumLoaded(const std::string path)

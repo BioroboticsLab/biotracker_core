@@ -155,7 +155,7 @@ void ControllerPlayer::connectModelToController() {
 
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatch, this, &ControllerPlayer::receiveNextMediaInBatch, Qt::DirectConnection);
     QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitNextMediaInBatchLoaded, this, &ControllerPlayer::receiveNextMediaInBatchLoaded, Qt::DirectConnection);
-
+    QObject::connect(qobject_cast<MediaPlayer*>(m_Model), &MediaPlayer::emitEndOfPlayback, this, &ControllerPlayer::emitEndOfPlayback, Qt::DirectConnection);
     
     IController* ctrTRCC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
     QPointer< ControllerTrackedComponentCore > trCC = qobject_cast<ControllerTrackedComponentCore*>(ctrTRCC);
@@ -184,6 +184,15 @@ void ControllerPlayer::receiveNextMediaInBatchLoaded(const std::string path){
     //VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
     //vControl->mediumChanged(path);
 }
+
+// void ControllerPlayer::receiveEndOfPlayback(){
+//     if (_cfg->AutoClose){
+//         qDebug() << "CORE: Closing the BioTracker...";
+//         IController* ictrM = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::MAINWINDOW);
+//         ControllerMainWindow* ctrM = qobject_cast<ControllerMainWindow*>(ictrM);
+//         ctrM->exit();
+//     }
+// }
 
 void ControllerPlayer::receiveTrackCount(int trackNo){
     _trackCount = trackNo;

@@ -98,6 +98,7 @@ class MediaPlayer : public IModel {
 
     void emitNextMediaInBatch(const std::string path);
     void emitNextMediaInBatchLoaded(const std::string path);
+    void emitEndOfPlayback();
 
   public:
     void setTrackingActive();

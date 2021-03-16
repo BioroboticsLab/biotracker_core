@@ -88,6 +88,7 @@ class ControllerPlayer : public IControllerCfg {
 		void signalCurrentFrameNumberToPlugin(uint frameNumber);
         void emitNextMediaInBatch(const std::string path);
         void emitNextMediaInBatchLoaded(const std::string path);
+		void emitEndOfPlayback();
 
 	public Q_SLOTS:
 		/**

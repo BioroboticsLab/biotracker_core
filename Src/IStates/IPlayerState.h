@@ -97,6 +97,7 @@ public:
 Q_SIGNALS:
   void emitNextMediaInBatch(const std::string path);
   void emitNextMediaInBatchLoaded(const std::string path);
+  void emitEndOfPlayback();
 
 protected:
   MediaPlayerStateMachine* m_Player;

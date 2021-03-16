@@ -13,6 +13,7 @@ public:
     GuiContext(QObject *parent = 0, Config *cfg = nullptr);
 	~GuiContext() {
 		exit();
+        return;
 	}
 
     void loadBioTrackerPlugin(QString str);

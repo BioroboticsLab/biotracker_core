@@ -191,7 +191,7 @@ void ControllerDataExporter::receiveFileWritten(QFileInfo fname) {
     msgBox->setIcon(QMessageBox::Information);
 
     // is modal if program is closing, else not
-    if(_closing){
+    if(_closing && !_cfg->AutoClose){
         msgBox->setModal(true);
         msgBox->exec();
     }

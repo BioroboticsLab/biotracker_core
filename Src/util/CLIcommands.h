@@ -35,6 +35,7 @@ public:
 				("cfg", value<std::string>(), "Provide custom path to a config file")
 				("autoPlay,a", "Automatically play video")
 				("autoTrack,t",value<int>(), "Automatically enable tracking with the set number of tracks")
+				("autoClose,c","Automatically close program after last medium")
 				;
 
 			options_description gui("GUI options");
@@ -83,6 +84,10 @@ public:
 
 			if(vm.count("autoTrack")){
 				cfg->AutoTrack = vm["autoTrack"].as<int>();
+			}
+
+			if(vm.count("autoClose")){
+				cfg->AutoClose = true;
 			}
 		}
 		catch (std::exception& e) {
