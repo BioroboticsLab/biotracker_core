@@ -95,6 +95,15 @@ int ControllerPlayer::recordInput() {
 	return qobject_cast<MediaPlayer*>(m_Model)->toggleRecordImageStream();
 }
 
+void ControllerPlayer::prevMedium() {
+    qobject_cast<MediaPlayer*>(m_Model)->prevMediumCommand();
+	// emitPauseState(false);
+}
+
+void ControllerPlayer::nextMedium() {
+    qobject_cast<MediaPlayer*>(m_Model)->nextMediumCommand();
+}
+
 void ControllerPlayer::setTargetFps(double fps) {
     return qobject_cast<MediaPlayer*>(m_Model)->setTargetFPS(fps);
 }
@@ -169,15 +178,14 @@ void ControllerPlayer::receiveNextMediaInBatch(const std::string path){
     Q_EMIT emitNextMediaInBatch(path);
 }
 
-void ControllerPlayer::receiveNextMediaInBatchLoaded(const std::string path){
-    Q_EMIT emitNextMediaInBatchLoaded(path);
+void ControllerPlayer::receiveNextMediaInBatchLoaded(const std::string path, int batchIndex){
+    Q_EMIT emitNextMediaInBatchLoaded(path, batchIndex);
     
     IController* ctrTRCC = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
     QPointer< ControllerTrackedComponentCore > trCC = qobject_cast<ControllerTrackedComponentCore*>(ctrTRCC);
     for(int i=0; i<_trackCountEndOfBatch; i++){
         trCC->emitAddTrack();
     }
-
     qDebug() << "CORE:  Video loaded: " << QString::fromStdString(path);
 
     //set video name in video control widget
@@ -218,10 +226,10 @@ void ControllerPlayer::receiveCurrentFrameNumberToPlugin(uint frameNumber)
 	Q_EMIT signalCurrentFrameNumberToPlugin(frameNumber);
 }
 
-void ControllerPlayer::receiveMediumChanged(const std::string path)
+void ControllerPlayer::receiveMediumChanged(const std::string path, int batchIndex)
 {
     VideoControllWidget* vControl = static_cast<VideoControllWidget*>(m_View);
-    vControl->mediumChanged(path);
+    vControl->mediumChanged(path, batchIndex);
 }
 
 void ControllerPlayer::receiveMaxBatchNumber(int i)

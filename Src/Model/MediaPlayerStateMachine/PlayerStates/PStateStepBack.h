@@ -17,9 +17,17 @@ class PStateStepBack : public IPlayerState {
   public:
     PStateStepBack(MediaPlayerStateMachine* player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
+  /**
+   * This function sets the previous medium flag.
+   */
+  void setPrevInBatch(bool next);
+
     // IPlayerState interface
   public Q_SLOTS:
     void operate() override;
+
+  private:
+    bool m_prevInBatch;
 };
 
 #endif // PSTATESTEPBACK_H

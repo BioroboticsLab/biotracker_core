@@ -3,7 +3,8 @@
 #pragma once
 
 #include "Interfaces/IView/IViewWidget.h"
-#include <QTextBrowser>
+#include <QTextEdit>
+#include <QMutex>
 
 /**
 * This is the view of the notifications component.
@@ -18,15 +19,16 @@ public:
 	explicit NotificationLogBrowser(QWidget *parent = 0, IController *controller = 0, IModel *model = 0);
 	~NotificationLogBrowser();
 
-	void outputMessage(QtMsgType type, const QString &msg);
+	void outputMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 	// IViewWidget interface
 	public slots:
 	void getNotified();
 
 private:
-	QTextBrowser *browser;
+	QTextEdit *browser;
 	QFont m_font;
+	QMutex m_mutex;
 
 };
 

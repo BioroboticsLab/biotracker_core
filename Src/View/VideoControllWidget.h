@@ -37,7 +37,7 @@ class VideoControllWidget : public IViewWidget {
 
   public Q_SLOTS:
     void getNotified();
-    void mediumChanged(const std::string path);
+    void mediumChanged(const std::string path, int batchIndex);
     void getMaxBatchNumber(int number);
 
   private Q_SLOTS:
@@ -58,7 +58,7 @@ class VideoControllWidget : public IViewWidget {
 
     void on_sld_video_sliderMoved(int position);
 
-	void on_sld_video_actionTriggered(int action);
+	  void on_sld_video_actionTriggered(int action);
 
     void on_doubleSpinBoxTargetFps_editingFinished();
 
@@ -72,6 +72,9 @@ class VideoControllWidget : public IViewWidget {
     void on_actionScreenshot_triggered(bool checked = false);
     void on_actionRecord_cam_triggered(bool checked = false);
     void on_actionRecord_all_triggered(bool checked = false);
+
+    void on_pushButton_prevMedium_clicked(bool checked = false);
+    void on_pushButton_nextMedium_clicked(bool checked = false);
 
   private:
     Ui::VideoControllWidget* ui;

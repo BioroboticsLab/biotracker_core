@@ -125,6 +125,18 @@ void MediaPlayerStateMachine::receiveTargetFps(double fps) {
     static_cast<PStatePlay*>(m_States.value(IPlayerState::STATE_PLAY))->setFps(fps);
 }
 
+void MediaPlayerStateMachine::receivePrevMediumCommand() {
+	PStateStepBack* state = dynamic_cast<PStateStepBack*> (m_States.value(IPlayerState::PLAYER_STATES::STATE_STEP_BACK));
+	state->setPrevInBatch(true);
+	setNextState(IPlayerState::STATE_STEP_BACK);
+}
+
+void MediaPlayerStateMachine::receiveNextMediumCommand() {
+	PStateStepForw* state = dynamic_cast<PStateStepForw*> (m_States.value(IPlayerState::PLAYER_STATES::STATE_STEP_FORW));
+	state->setNextInBatch(true);
+	setNextState(IPlayerState::STATE_STEP_FORW);
+}
+
 void MediaPlayerStateMachine::receivetoggleRecordImageStream() {
 	if (m_stream)
 		m_PlayerParameters->m_RecI = m_stream->toggleRecord();

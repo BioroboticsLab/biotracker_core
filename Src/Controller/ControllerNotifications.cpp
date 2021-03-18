@@ -1,8 +1,9 @@
 #include "ControllerNotifications.h"
 #include "View/NotificationLogBrowser.h"
 #include "ControllerMainWindow.h"
-#include "qdebug.h"
 
+#include "qdebug.h"
+// #include <thread>
 #include <QFile> 
 
 IView*  view;
@@ -53,7 +54,8 @@ void messageHandler(QtMsgType type, const QMessageLogContext & context, const QS
 	//notification text browser
 	NotificationLogBrowser* log = dynamic_cast<NotificationLogBrowser*>(view);
 	if (log) {
-		log->outputMessage(type, msg);
+		// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		log->outputMessage(type, context, msg);
 	}
 
 	//log file

@@ -74,6 +74,14 @@ class ControllerPlayer : public IControllerCfg {
 		int recordOutput();
 
 		int recordInput();
+		/**
+		* Tells the IModel class MediaPlayer to load the previuos ImageStream.
+		*/
+		void prevMedium();
+		/**
+		* Tells the IModel class MediaPlayer to load the next ImageStream.
+		*/
+		void nextMedium();
 
         void setTargetFps(double fps);
 
@@ -87,7 +95,7 @@ class ControllerPlayer : public IControllerCfg {
 		void emitPauseState(bool state);
 		void signalCurrentFrameNumberToPlugin(uint frameNumber);
         void emitNextMediaInBatch(const std::string path);
-        void emitNextMediaInBatchLoaded(const std::string path);
+        void emitNextMediaInBatchLoaded(const std::string path, int batchIndex);
 		void emitEndOfPlayback();
 
 	public Q_SLOTS:
@@ -112,11 +120,11 @@ class ControllerPlayer : public IControllerCfg {
         */
         void setGoToFrame(int frame);
 
-		void receiveMediumChanged(const std::string path);
+		void receiveMediumChanged(const std::string path, int batchIndex);
 		void receiveMaxBatchNumber(int i);
 		
         void receiveNextMediaInBatch(const std::string path);
-        void receiveNextMediaInBatchLoaded(const std::string path);
+        void receiveNextMediaInBatchLoaded(const std::string path, int batchIndex);
 		void receiveTrackCount(int trackNo);
 
 	protected:

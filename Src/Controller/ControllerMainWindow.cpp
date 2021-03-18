@@ -30,7 +30,7 @@ void ControllerMainWindow::loadVideo(std::vector<boost::filesystem::path> files)
     Q_EMIT emitOnLoadMedia(files.front().string());
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadVideoStream(files);
-    Q_EMIT emitMediaLoaded(files.front().string());
+    Q_EMIT emitMediaLoaded(files.front().string(), files.size());
     qDebug() << "CORE:  Video loaded: " << QString::fromStdString(files.front().string());
 
     Q_EMIT emitFilesCount((int)files.size());
@@ -53,7 +53,7 @@ void ControllerMainWindow::loadPictures(std::vector<boost::filesystem::path> fil
     Q_EMIT emitOnLoadMedia(str);
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadPictures(files);
-    Q_EMIT emitMediaLoaded(str);
+    Q_EMIT emitMediaLoaded(str, files.size());
 
     qDebug() << "CORE:  Picture loaded: " << QString::fromStdString(files.front().string());
 
@@ -66,7 +66,7 @@ void ControllerMainWindow::loadCameraDevice(CameraConfiguration conf) {
     Q_EMIT emitOnLoadMedia("::Camera");
     IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::PLAYER);
     qobject_cast<ControllerPlayer*>(ctr)->loadCameraDevice(conf);
-    Q_EMIT emitMediaLoaded("::Camera");
+    Q_EMIT emitMediaLoaded("::Camera", 0);
 
     qDebug() << "CORE:  Camera loaded!";
 
@@ -291,7 +291,7 @@ void ControllerMainWindow::receiveEndOfPlayback(){
 
 void ControllerMainWindow::onNewMediumLoaded(const std::string path)
 {
-    Q_EMIT emitMediaLoaded(path);
+    Q_EMIT emitMediaLoaded(path, 0);
 }
 
 void ControllerMainWindow::exit() {

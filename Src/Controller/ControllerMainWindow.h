@@ -80,7 +80,7 @@ public:
 			void emitOnLoadMedia(const std::string path);
 
 			void emitPluginLoaded(const std::string path);
-			void emitMediaLoaded(const std::string path);
+			void emitMediaLoaded(const std::string path, int batchIndex);
 			void emitTrackLoaded(const std::string path);
 
 			void emitUndoCommand();
@@ -128,7 +128,6 @@ protected:
 	void rcvSelectPlugin(QString plugin);
 	void receiveCursorPosition(QPoint pos);
 	void receiveEndOfPlayback();
-
 
 private:
 	// Internal cleanup callback when a new video or imagestream is loaded.

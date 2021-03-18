@@ -39,6 +39,10 @@ namespace BioTracker {
 			return m_current_frame_number;
 		}
 
+		int ImageStream::currentBatchIndex() const {
+			return m_currentBatchIndex;
+		}
+
 		std::shared_ptr<cv::Mat> ImageStream::currentFrame() const {
 			return m_current_frame;
 		}
@@ -127,6 +131,13 @@ namespace BioTracker {
 		}
 
 		void ImageStream::stepToNextInBatch(){
+		}
+
+		bool ImageStream::hasPrevInBatch(){
+			return false;
+		}
+
+		void ImageStream::stepToPrevInBatch(){
 		}
 
 		std::vector<std::string> ImageStream::getBatchItems(){
@@ -268,7 +279,8 @@ namespace BioTracker {
 			explicit ImageStream3Video(Config *cfg, const std::vector<boost::filesystem::path> &files) 
 				: ImageStream(0, cfg)
 			{
-				openMedia(files);
+				m_currentBatchIndex = -1;
+				openMedia(files, 1);
 			}
 			virtual GuiParam::MediaType type() const override {
 				return GuiParam::MediaType::Video;
@@ -292,14 +304,25 @@ namespace BioTracker {
 			}
 			
 			virtual bool hasNextInBatch() override{
-				return !(m_batch.empty());
+				return m_currentBatchIndex < (m_batch.size()-1);
 			}
 
 			virtual void stepToNextInBatch() override{
-				if (m_batch.empty()) {
-					throw video_open_error("batch is empty");
+				if (m_currentBatchIndex == (m_batch.size()-1)) {
+					throw video_open_error("end of batch is empty");
 				}
-				openMedia(m_batch);
+				openMedia(m_batch, 1);
+			}
+
+			virtual bool hasPrevInBatch() override{
+				return m_currentBatchIndex != 0;
+			}
+
+			virtual void stepToPrevInBatch() override{
+				if (m_currentBatchIndex == 0) {
+					// throw video_open_error("batch is empty");
+				}
+				openMedia(m_batch, -1);
 			} 
 
 			virtual std::vector<std::string> getBatchItems() override{
@@ -312,22 +335,31 @@ namespace BioTracker {
 
 		private:
 
-			void openMedia(std::vector<boost::filesystem::path> files){
+			void openMedia(std::vector<boost::filesystem::path> files, int nextOrPrev){
+				
+				// skip if index would be out of range
+				if((m_currentBatchIndex == files.size()-1) && (nextOrPrev == 1)){
+					return;
+				}
+				if((m_currentBatchIndex == 0) && (nextOrPrev == -1)){
+					return;
+				}
+				m_currentBatchIndex += nextOrPrev;
 
-				m_capture.open(files.front().string());
+				m_capture.open(files[m_currentBatchIndex].string());
 				m_num_frames = static_cast<size_t>(m_capture.get(cv::CAP_PROP_FRAME_COUNT));
 				m_fps = m_capture.get(cv::CAP_PROP_FPS);
-				m_fileName = files.front().string();
+				m_fileName = files[m_currentBatchIndex].string();
 
-				if (!boost::filesystem::exists(files.front())) {
-					throw file_not_found("Could not find file " + files.front().string());
+				if (!boost::filesystem::exists(files[m_currentBatchIndex])) {
+					throw file_not_found("Could not find file " + files[m_currentBatchIndex].string());
 				}
 				if (!m_capture.isOpened()) {
 					throw video_open_error(":(");
 				}
 
                 m_batch = files;
-                m_batch.erase(m_batch.begin(), m_batch.begin()+1);
+                // m_batch.erase(m_batch.begin(), m_batch.begin()+1);
 
                 //Grab the fps from config file
                 double fps = _cfg->RecordFPS;

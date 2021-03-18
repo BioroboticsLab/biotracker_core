@@ -35,45 +35,53 @@ class MediaPlayer : public IModel {
 
   Q_SIGNALS:
     /**
-    * Emit the path to a video stream. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the path to a video stream. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void loadVideoStream(std::vector<boost::filesystem::path> files);
     /**
-    * Emit the path to pictures. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the path to pictures. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void loadPictures(std::vector<boost::filesystem::path> files);
     /**
-    * Emit the camera device number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the camera device number. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void loadCameraDevice(CameraConfiguration conf);
 
     /**
-    * Emit a frame number. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit a frame number. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void goToFrame(int frame);
     /**
-    * Emit the next frame command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the next frame command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void nextFrameCommand();
     /**
-    * Emit previous frame command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit previous frame command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void prevFrameCommand();
     /**
-    * Emit the play command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the play command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void playCommand();
     /**
-    * Emit stop command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit stop command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void stopCommand();
     /**
-    * Emit the pause command. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+    * Emit the pause command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
     */
     void pauseCommand();
+    /**
+    * Emit the previous medium command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
+    */
+    void prevMediumCommand();
+    /**
+    * Emit the next medium command. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
+    */
+    void nextMediumCommand();
 
     /**
-     * This SIGNAL will be emmited if a state operation should be executed. This signal will be received by the MediaPlayerStateMachine which runns in a separate Thread.
+     * This SIGNAL will be emmited if a state operation should be executed. This signal will be received by the MediaPlayerStateMachine which runs in a separate Thread.
      */
     void runPlayerOperation();
 
@@ -97,7 +105,7 @@ class MediaPlayer : public IModel {
 	void fwdPlayerParameters(playerParameters* parameters);
 
     void emitNextMediaInBatch(const std::string path);
-    void emitNextMediaInBatchLoaded(const std::string path);
+    void emitNextMediaInBatchLoaded(const std::string path, int batchIndex);
     void emitEndOfPlayback();
 
   public:

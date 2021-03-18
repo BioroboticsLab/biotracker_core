@@ -50,6 +50,11 @@ class ImageStream : public QObject {
     size_t currentFrameNumber() const;
 
     /**
+     * @return the current batch index
+     */
+    int currentBatchIndex() const;
+
+    /**
      * @return true, if the current frame is the last frame
      */
     bool lastFrame() const;
@@ -112,7 +117,11 @@ class ImageStream : public QObject {
 
     virtual bool hasNextInBatch();
 
-	virtual void stepToNextInBatch();
+	  virtual void stepToNextInBatch();
+
+    virtual bool hasPrevInBatch();
+
+	  virtual void stepToPrevInBatch();
 
     virtual std::vector<std::string> getBatchItems();
 
@@ -143,6 +152,7 @@ class ImageStream : public QObject {
 	size_t  m_current_frame_number;
 	std::string m_title;
     Config *_cfg;
+    int m_currentBatchIndex;
 
   private:
     /**

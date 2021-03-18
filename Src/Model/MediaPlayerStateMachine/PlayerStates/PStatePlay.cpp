@@ -19,7 +19,6 @@ PStatePlay::PStatePlay(MediaPlayerStateMachine* player,
 
     m_FrameNumber = 0;
 
-
 }
 
 void PStatePlay::operate() {
@@ -46,7 +45,7 @@ void PStatePlay::operate() {
         m_Mat = m_ImageStream->currentFrame();
         m_FrameNumber = m_ImageStream->currentFrameNumber();    
         nextState = IPlayerState::STATE_PLAY;
-        Q_EMIT emitNextMediaInBatchLoaded(m_ImageStream->currentFilename());
+        Q_EMIT emitNextMediaInBatchLoaded(m_ImageStream->currentFilename(), m_ImageStream->currentBatchIndex() );
     } else
     {
         nextState = IPlayerState::STATE_INITIAL_STREAM;

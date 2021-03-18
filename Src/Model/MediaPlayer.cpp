@@ -46,6 +46,9 @@ MediaPlayer::MediaPlayer(QObject* parent) :
     QObject::connect(this, &MediaPlayer::prevFrameCommand, m_Player, &MediaPlayerStateMachine::receivePrevFrameCommand);
     QObject::connect(this, &MediaPlayer::stopCommand, m_Player, &MediaPlayerStateMachine::receiveStopCommand);
     QObject::connect(this, &MediaPlayer::goToFrame, m_Player, &MediaPlayerStateMachine::receiveGoToFrame);
+    
+    QObject::connect(this, &MediaPlayer::prevMediumCommand, m_Player, &MediaPlayerStateMachine::receivePrevMediumCommand);
+    QObject::connect(this, &MediaPlayer::nextMediumCommand, m_Player, &MediaPlayerStateMachine::receiveNextMediumCommand);
 
     QObject::connect(this, &MediaPlayer::pauseCommand, this, &MediaPlayer::receiveTrackingPaused);
     QObject::connect(this, &MediaPlayer::stopCommand, this, &MediaPlayer::receiveTrackingPaused);
@@ -284,7 +287,6 @@ void MediaPlayer::receivePlayerParameters(playerParameters* param) {
     }
     Q_EMIT notifyView();
 }
-
 
 void MediaPlayer::rcvPauseState(bool state) {
     _paused = state;

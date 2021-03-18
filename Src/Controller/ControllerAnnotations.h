@@ -29,7 +29,7 @@ public:
 	public Q_SLOTS:
 
 	/// 
-	void reset(std::string filepath);
+	void reset(std::string filepath, int batchIndex = 0);
 	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
 	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
 	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);

@@ -292,6 +292,14 @@ void VideoControllWidget::on_actionRecord_all_triggered(bool checked) {
 		//ui->actionRecord_all->setIconSize(QSize(32, 32));
 	}
 }
+void VideoControllWidget::on_pushButton_prevMedium_clicked(bool checked) {
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+	controller->prevMedium();
+}
+void VideoControllWidget::on_pushButton_nextMedium_clicked(bool checked) {
+	ControllerPlayer* controller = dynamic_cast<ControllerPlayer*>(getController());
+	controller->nextMedium();
+}
 
 MainWindow* VideoControllWidget::getMainWindow()
 {
@@ -328,11 +336,10 @@ void VideoControllWidget::setupVideoToolbar() {
 	}
 }
 
-void VideoControllWidget::mediumChanged(const std::string path) {
+void VideoControllWidget::mediumChanged(const std::string path, int batchIndex) {
 	ui->medium_label->setText(QString::fromStdString(path));
 
-	int currNumber =  ui->medium_bCurr->text().toInt();
-	ui->medium_bCurr->setText(QString::number(currNumber + 1));
+	ui->medium_bCurr->setText(QString::number(batchIndex+1));
 
 }
 

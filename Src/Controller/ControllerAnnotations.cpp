@@ -25,7 +25,7 @@ void ControllerAnnotations::cleanup() {
 	delete getModel();
 }
 
-void ControllerAnnotations::reset(std::string filepath)
+void ControllerAnnotations::reset(std::string filepath, int batchIndex)
 {
 	// Replace the model with a fresh one.
 	delete getModel();

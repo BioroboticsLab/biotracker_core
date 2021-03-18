@@ -64,6 +64,9 @@ class MediaPlayerStateMachine : public IModel {
     void receiveGoToFrame(int frame);
     void receiveTargetFps(double fps);
 
+    void receivePrevMediumCommand();
+    void receiveNextMediumCommand();
+
 	  void receivetoggleRecordImageStream();
 
   Q_SIGNALS:
@@ -78,7 +81,7 @@ class MediaPlayerStateMachine : public IModel {
     void emitPlayerOperationDone();
 
     void emitNextMediaInBatch(const std::string path);
-    void emitNextMediaInBatchLoaded(const std::string path);
+    void emitNextMediaInBatchLoaded(const std::string path, int batchIndex);
     void emitEndOfPlayback();
 
   private:
