@@ -106,7 +106,7 @@ void TrackedComponentView::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 					//calculate the current pos and emit it to the commands component
 					selectedItem->emitMoveElement(shapeTrajectory, selectedItem->pos().toPoint() + QPoint(selectedItem->m_w / 2, selectedItem->m_h / 2),
 						event->pos().toPoint(), m_currentFrameNumber, 0);
-					selectedItem->setPos(event->pos());
+					selectedItem->setPos(event->pos() - QPoint(selectedItem->m_w / 2, selectedItem->m_h / 2));
 				}
 			}
 
