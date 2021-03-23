@@ -75,6 +75,7 @@ ComponentShape::ComponentShape(QGraphicsObject* parent,
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
 	setAcceptedMouseButtons(Qt::LeftButton);
+	setToolTip(QString::number(m_id));
 
 	setVisible(true);
 }
@@ -962,7 +963,10 @@ void ComponentShape::setMembers(CoreParameter* coreParams)
 	m_orientationLine = coreParams->m_trackOrientationLine;
 	m_showId = coreParams->m_trackShowId;
 
-	m_brushColor = *(coreParams->m_colorBrush);
+	// m_brushColor = *(coreParams->m_colorBrush);
+
+	int colorInt = (m_id % 12) + 7; // 12 colors in Qt::GlobalColor in range 7 to 18; m_id can be unlimited so first mod 12
+	m_brushColor = QColor(Qt::GlobalColor(colorInt));
 	m_penColor = *(coreParams->m_colorBorder);
 
 	m_dragged = false;
