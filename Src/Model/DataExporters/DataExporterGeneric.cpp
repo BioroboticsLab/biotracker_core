@@ -59,6 +59,14 @@ void DataExporterGeneric::cleanup()
     //Erase all tracking data from the tracking structure!
     _root->clear();
 
+    // close tmp file and textstream
+    if (_oFileTmp->isOpen()) {
+        _oFileTmp->close();
+    }
+    if (_ofs.device()){
+        _ofs.setDevice(0);
+    }
+
     //Remove temporary file
     QFile file(_tmpFile.c_str());
     file.remove();

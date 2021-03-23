@@ -23,7 +23,7 @@
  * receiveCvMat(std::shard_ptr<cv::Mat> mat, QString name) in order to render their images. Usually this would be the component MediaPlayer which will send the original cv::Mat from
  * an ImageStream to controller class ControllerTextureObject. An other component is the BioTracker Plugin. If a cv::Mat is manipulated by a Tracking Algorithm the Plugin is able to
  * send that cv::Mat to this component. The Parameter name will be listed in the combobox widget on the MainWindow widget.
- * The ControllerTextureObject class controlls the of the TrextureObject Component.
+ * The ControllerTextureObject class controlls the of the TextureObject Component.
  */
 class ControllerTextureObject : public IControllerCfg {
     Q_OBJECT

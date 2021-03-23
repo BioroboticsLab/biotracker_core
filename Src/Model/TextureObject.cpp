@@ -13,6 +13,10 @@ void TextureObject::set(const cv::Mat &img) {
 	//TODO Andi this cv::Mat is null sometimes when using the camera!?
 	if (&img == NULL)
 		return;
+
+    if(img.empty()){
+        return;
+    }
     if (img.channels() == 3) {
         img.convertTo(img, CV_8UC3);
         cv::cvtColor(img, m_img, cv::ColorConversionCodes::COLOR_BGR2RGB);
@@ -36,7 +40,9 @@ void TextureObject::set(const cv::Mat &img) {
             const double convertedMin = abs(static_cast<int>(min * sizeRatio));
             img.convertTo(img8U, CV_8U, sizeRatio, convertedMin);
         }
-        cv::cvtColor(img8U, m_img, cv::ColorConversionCodes::COLOR_GRAY2RGB);
+        if(!img8U.empty()){
+            cv::cvtColor(img8U, m_img, cv::ColorConversionCodes::COLOR_GRAY2RGB);
+        }
     } else {
         m_img = img;
     }

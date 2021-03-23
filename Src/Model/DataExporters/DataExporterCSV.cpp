@@ -279,12 +279,12 @@ void DataExporterCSV::writeAll(std::string f) {
         return;
     }
 
-   if (_oFileTmp->isOpen()) {
-        _oFileTmp->close();
-   }
-   if (_ofs.device()){
-       _ofs.setDevice(0);
-   }
+//    if (_oFileTmp->isOpen()) {
+//         _oFileTmp->close();
+//    }
+//    if (_ofs.device()){
+//        _ofs.setDevice(0);
+//    }
 
     //Find max length of all tracks
     int max = getMaxLinecount();

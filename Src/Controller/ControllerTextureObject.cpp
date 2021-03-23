@@ -41,7 +41,6 @@ void ControllerTextureObject::receiveCvMat(std::shared_ptr<cv::Mat> mat, QString
     checkIfTextureModelExists(name);
 
     m_TextureObjects.value(name)->set(*mat);
-
 }
 
 void ControllerTextureObject::createModel() {
