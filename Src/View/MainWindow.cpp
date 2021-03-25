@@ -228,7 +228,48 @@ void MainWindow::addVideoView(IView* videoView) {
 	m_graphView = dynamic_cast<GraphicsView*>(videoView);
 	m_graphView->setParent(ui->trackingArea);
 
-	ui->videoViewLayout->addWidget(m_graphView);
+	ui->videoViewLayout->addWidget(m_graphView, 0, 0);
+	this->addZoomButtons();
+}
+
+void MainWindow::addZoomButtons(){
+	//zoom pushbottons
+	QWidget* zoomButtons = new QWidget(ui->trackingArea);
+	QVBoxLayout* zoomButtonLayout = new QVBoxLayout;
+	zoomButtons->setLayout(zoomButtonLayout);
+	zoomButtons->setMaximumSize(60, 16777215);
+	QPushButton* zoomInButton = new QPushButton(QString("+"), ui->trackingArea);
+	QPushButton* zoomOutButton = new QPushButton(QString("-"), ui->trackingArea);
+	zoomInButton->setObjectName("zoomButton");
+	zoomOutButton->setObjectName("zoomButton");
+	QObject::connect(zoomInButton, &QPushButton::clicked, this, &MainWindow::zoomIn);
+	QObject::connect(zoomOutButton, &QPushButton::clicked, this, &MainWindow::zoomOut);
+
+	QString buttonStyles = QString("QPushButton#zoomButton {"
+			"background-color: rgba(229, 229, 229, 200);"
+			"border-style: outset;"
+			"border-width: 2px;"
+			"border-radius: 10px;"
+			"border-color: rgba(229, 229, 229, 200);"
+			"font: bold 14px;"
+			"max-width: 20px;"
+			"max-height: 20px;"
+			"min-width: 20px;"
+			"min-height: 20px;"
+			"padding: 6px;"
+		"}"
+		"QPushButton#zoomButton:pressed {"
+			"background-color: rgb(200, 200, 200);"
+			"border-style: inset;"
+		"}");
+	zoomButtons->setStyleSheet(buttonStyles);
+
+	zoomButtonLayout->addWidget(zoomInButton);
+	zoomButtonLayout->addWidget(zoomOutButton);
+
+	zoomButtonLayout->setContentsMargins(0,0,50,25);
+
+	ui->videoViewLayout->addWidget(zoomButtons, 0, 0, Qt::AlignRight | Qt::AlignBottom);
 }
 
 void MainWindow::addTrackerElementsView(IView *elemView)
@@ -665,6 +706,14 @@ void MainWindow::saveDataToFile() {
 
 void MainWindow::toggleNoShowWiz(bool toggle) {
 	_cfg->DisableWizard = toggle;//Todo implicit cast bool->int
+}
+
+void MainWindow::zoomIn(bool checked) {
+	m_graphView->scale(1.1, 1.1);
+}
+
+void MainWindow::zoomOut(bool checked) {
+	m_graphView->scale(0.9, 0.9);
 }
 
 void MainWindow::receiveSelectedCameraDevice(CameraConfiguration conf) {

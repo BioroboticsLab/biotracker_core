@@ -21,7 +21,7 @@ public:
 	void mouseMoveEvent(QMouseEvent*event) override;
 	void keyReleaseEvent(QKeyEvent *event) override;
 	void keyPressEvent(QKeyEvent *event) override;
-
+	void enterEvent(QEvent *event) override;
 
     // IGraphicsView interface
 public Q_SLOTS:

@@ -73,12 +73,16 @@ public:
 
 	void resetTrackerViews();
 
+	void addZoomButtons();
+
 Q_SIGNALS:
 	void selectPlugin(QString ct);
 
 	private Q_SLOTS:
 
 	void toggleNoShowWiz(bool toggle);
+	void zoomIn(bool checked);
+	void zoomOut(bool checked);
 
 	//menu->File
 	void on_actionOpen_Video_triggered();

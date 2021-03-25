@@ -150,6 +150,12 @@ void GraphicsView::mouseMoveEvent(QMouseEvent*event)
 	}
 }
 
+void GraphicsView::enterEvent(QEvent *event)
+    {
+        QGraphicsView::enterEvent(event);
+        viewport()->setCursor(Qt::CrossCursor);
+    }
+
 void GraphicsView::receiveToggleAntialiasingFull(bool toggle){
 	setRenderHint(QPainter::Antialiasing, toggle);
 }
