@@ -9,6 +9,10 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 #include <QStandardPaths>
+#include <QDebug>
+#include <QMessageBox>
+#include <QApplication>
+#include <QTimer>
 
 const QString Config::DefaultArena = "10,10;10,100;100,100;100,10";
 
@@ -64,8 +68,15 @@ void Config::load(QString dir, QString file)
         fin.open(QIODevice::ReadWrite);
         fin.close();
     }
+    try{
+        read_ini((dir + "/" + file).toStdString(), tree);
+    } 
+    catch (std::exception const& e){
+            qDebug() << e.what();
+            QMessageBox::critical(NULL, QString("Can't read config.ini file!"), QString("%1\n\n%2").arg(e.what(), "\n Closing BioTracker..."), QMessageBox::Ok, QMessageBox::NoButton);
+            QTimer::singleShot(250, qApp, SLOT(quit())); //TODO this is hacky! change return value of load() to bool for better quitting
+    }
     
-    read_ini((dir + "/" + file).toStdString(), tree);
 
     Config* config = this;
 
@@ -129,5 +140,13 @@ void Config::save(QString dir, QString file)
     tree.put(globalPrefix+"AreaDefinitions", config->AreaDefinitions);
     tree.put(globalPrefix+"UseRegistryLocations", config->UseRegistryLocations);
 
-    write_ini((dir + "/" + file).toStdString(), tree);
+    // write_ini((dir + "/" + file).toStdString(), tree);
+
+    try{
+        write_ini((dir + "/" + file).toStdString(), tree);
+    } 
+    catch (std::exception const& e){
+            qDebug() << e.what();
+            QTimer::singleShot(250, qApp, SLOT(quit()));
+    }
 }
