@@ -33,6 +33,8 @@ public:
     void loadFile(std::string file);
     void saveFile(std::string file);
 
+	std::string getMediaPath();
+
 Q_SIGNALS:
 	void emitResetUndoStack();
 	void emitViewUpdate();
@@ -43,6 +45,7 @@ Q_SIGNALS:
     void receiveFinalizeExperiment();
     void receiveFileWritten(QFileInfo fname);
 	void receiveTrialStarted(bool started);
+	void receiveMediaLoaded(std::string path, int numOfFiles);
 
 protected:
 	void createModel() override;
@@ -56,5 +59,6 @@ private:
 	IModelTrackedComponentFactory* _factory;
 	bool _trialStarted = false;
 	bool _closing = false;
+	std::string _currentMedium = "";
 };
 

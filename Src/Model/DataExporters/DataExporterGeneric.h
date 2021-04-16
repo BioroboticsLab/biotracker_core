@@ -22,6 +22,7 @@ public:
     void open(IModelTrackedTrajectory *root) override;
 
     void finalize() override;
+    void setFinalFileFromMediaName(QString path);
 
 protected:
 

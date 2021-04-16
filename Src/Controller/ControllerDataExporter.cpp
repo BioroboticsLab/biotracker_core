@@ -215,3 +215,19 @@ void ControllerDataExporter::receiveTrialStarted(bool started)
 	_trialStarted = started;
 }
 
+void ControllerDataExporter::receiveMediaLoaded(std::string path, int numOfFiles)
+{
+    if(_cfg->UseMediaName){
+        QString mediaPath = QString::fromStdString(path);
+        if (getModel()) {
+            dynamic_cast<DataExporterGeneric*>(getModel())->setFinalFileFromMediaName(mediaPath);
+        }
+    }
+    _currentMedium = path;
+}
+
+std::string ControllerDataExporter::getMediaPath(){
+    return _currentMedium;
+}
+
+

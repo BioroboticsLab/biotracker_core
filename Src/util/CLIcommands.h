@@ -36,6 +36,7 @@ public:
 				("autoPlay,a", "Automatically play video")
 				("autoTrack,t",value<int>(), "Automatically enable tracking with the set number of tracks")
 				("autoClose,c","Automatically close program after last medium")
+				("useMediaName,m", "Use tracked mediums name as name for tracking file")
 				;
 
 			options_description gui("GUI options");
@@ -89,6 +90,11 @@ public:
 			if(vm.count("autoClose")){
 				cfg->AutoClose = true;
 			}
+
+			if(vm.count("useMediaName")){
+				cfg->UseMediaName = true;
+			}
+
 		}
 		catch (std::exception& e) {
 			std::cout << e.what() << "\n";

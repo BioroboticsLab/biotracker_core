@@ -161,6 +161,7 @@ void ControllerMainWindow::connectModelToController() {
     ControllerDataExporter *contrl = static_cast<ControllerDataExporter*>(ctr2);
     QObject::connect(this, &ControllerMainWindow::emitOnLoadMedia, contrl, &ControllerDataExporter::receiveFinalizeExperiment, Qt::DirectConnection);
     QObject::connect(this, &ControllerMainWindow::emitOnLoadPlugin, contrl, &ControllerDataExporter::receiveReset, Qt::DirectConnection);
+    QObject::connect(this, &ControllerMainWindow::emitMediaLoaded, contrl, &ControllerDataExporter::receiveMediaLoaded, Qt::DirectConnection);
 }
 
 void ControllerMainWindow::connectControllerToController() {

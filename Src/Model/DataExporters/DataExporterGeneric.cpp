@@ -6,6 +6,8 @@
 #include <QTextStream>
 #include <qdatetime.h>
 
+using namespace BioTrackerUtilsMisc; //split
+
 DataExporterGeneric::DataExporterGeneric(QObject *parent) :
     IModelDataExporter(parent)
 {
@@ -20,6 +22,14 @@ void DataExporterGeneric::open(IModelTrackedTrajectory *root) {
     _tmpFile = _parent->generateBasename(true).toStdString() + ".tmp" + getSuffix().toStdString();
     _finalFile = _parent->generateBasename(false).toStdString() + getSuffix().toStdString();
 
+    if(_cfg->UseMediaName){
+
+        ControllerDataExporter *ctr = dynamic_cast<ControllerDataExporter*>(_parent);
+        std::string mPath = ctr->getMediaPath();
+        if(mPath != ""){
+            this->setFinalFileFromMediaName(QString::fromStdString(mPath));
+        }
+    }
 
     //_ofs.open(_tmpFile, std::ofstream::out);
 
@@ -77,6 +87,16 @@ void DataExporterGeneric::cleanup()
         Q_EMIT fileWritten(fi);
     }
     return;
+}
+
+void DataExporterGeneric::setFinalFileFromMediaName(QString path){
+    QFileInfo mediaFile(path);
+    QString mediaName = mediaFile.baseName();
+
+    QString outDir = _cfg->DirTracks;
+
+    std::string outPath = getTimeAndDate(outDir.toStdString() + mediaName.toStdString() + "_", "");
+    _finalFile = outPath + getSuffix().toStdString();
 }
 
 void DataExporterGeneric::finalize()

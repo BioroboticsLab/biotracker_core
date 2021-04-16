@@ -40,6 +40,7 @@ public:
     bool AutoPlay = false;
     int AutoTrack = -1;
     bool AutoClose = false;
+    bool UseMediaName = false;
 
     void load(QString dir, QString file = "config.ini") override;
     void save(QString dir, QString file) override;
