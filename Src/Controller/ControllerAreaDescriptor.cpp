@@ -126,19 +126,20 @@ void ControllerAreaDescriptor::rcvPlayerParameters(playerParameters* parameters)
             ad->setDimensions(_w, _h);
         }
         QVector<QString> v = getVertices(_currentFilename, _cfg->AreaDefinitions);
+		std::string v1_string = v[1].toStdString();
         if (!v.empty()) {
 			setTrackingAreaType(v[2].toInt());
             changeAreaDescriptorType(v[2]);
 			std::vector<std::string> strVerts;
 			int numberOfVerts = 4;
 			if(v[2].toInt() == 2){
-				numberOfVerts = split(v[1].toStdString(),strVerts,';');
+				numberOfVerts = split(v1_string, strVerts, ';');
 			}
 			changeNumberOfVerts(numberOfVerts);
         }
 		
 		AreaInfo* area = dynamic_cast<AreaInfo*>(getModel());
-		std::vector<cv::Point> pts = stringToCVPointVec(v[1].toStdString());
+		std::vector<cv::Point> pts = stringToCVPointVec(v1_string);
         area->_apperture->setVertices(pts);
 		// updateView();
 
