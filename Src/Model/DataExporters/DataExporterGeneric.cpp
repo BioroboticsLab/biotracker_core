@@ -91,7 +91,7 @@ void DataExporterGeneric::cleanup()
 
 void DataExporterGeneric::setFinalFileFromMediaName(QString path){
     QFileInfo mediaFile(path);
-    QString mediaName = mediaFile.baseName();
+    QString mediaName = mediaFile.completeBaseName();
 
     QString outDir = _cfg->DirTracks;
 
