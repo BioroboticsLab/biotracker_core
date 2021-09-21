@@ -24,7 +24,7 @@ void TextureObject::set(const cv::Mat &img) {
         // (usually 64F) so we need to map a [HUGE range] to -> [0 .. 255]
         double min, max;
         cv::minMaxLoc(img, &min, &max);
-        if (min >= 0 && min < 255 && max > 0 && max <= 255) {
+        if (min >= 0 && min < 255 && max >= 0 && max <= 255) {
             // do not refit if the range is actually inbetween [0 ... 255]
             img.convertTo(img8U, CV_8U);
         } else if (max > min) {
