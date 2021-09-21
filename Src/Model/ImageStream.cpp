@@ -395,7 +395,7 @@ namespace BioTracker {
 			*/
 			explicit ImageStream3OpenCVCamera(Config *cfg, CameraConfiguration conf)
 				: ImageStream(0, cfg)
-				, m_capture(conf._selector.index)
+				, m_capture(conf._selector.name)
 				, m_fps(m_capture.get(cv::CAP_PROP_FPS)) {
 				// Give the camera some extra time to get ready:
 				// Somehow opening it on first try sometimes does not succeed.

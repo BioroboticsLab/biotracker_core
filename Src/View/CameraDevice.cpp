@@ -60,7 +60,11 @@ void CameraDevice::on_showPreviewButton_clicked()
     {
     case CameraType::OpenCV:
     {
-        m_capture.open(conf._selector.index);
+        if (conf._selector.index == cv::CAP_XIAPI) {
+            m_capture.open(cv::CAP_XIAPI);
+        } else {
+            m_capture.open(conf._selector.name);
+        }
 
         for (auto num_tries = 0; !m_capture.isOpened() && num_tries < 50; ++num_tries)
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -145,7 +149,7 @@ void CameraDevice::listAllCameras()
     {
         ui->comboBox->addItem(
             cameras[index].description(),
-            QVariant::fromValue(CameraSelector{CameraType::OpenCV, index}));
+            QVariant::fromValue(CameraSelector{CameraType::OpenCV, index, cameras[index].deviceName().toStdString()}));
     }
 
     {
@@ -154,7 +158,7 @@ void CameraDevice::listAllCameras()
         {
             ui->comboBox->addItem(
                 "XIMEA default",
-                QVariant::fromValue(CameraSelector{CameraType::OpenCV, cv::CAP_XIAPI}));
+                QVariant::fromValue(CameraSelector{CameraType::OpenCV, cv::CAP_XIAPI, ""}));
         }
     }
 
@@ -170,7 +174,7 @@ void CameraDevice::listAllCameras()
         {
             ui->comboBox->addItem(
                 QString{devices[index].GetFriendlyName()},
-                QVariant::fromValue(CameraSelector{CameraType::Pylon, index}));
+                QVariant::fromValue(CameraSelector{CameraType::Pylon, index, ""}));
         }
     }
 #endif
