@@ -14,8 +14,9 @@ enum class CameraType
 
 struct CameraSelector
 {
-	CameraType type;
-	int        index;
+	CameraType  type;
+	int         index;
+	std::string name;
 };
 
 Q_DECLARE_METATYPE(CameraSelector);
