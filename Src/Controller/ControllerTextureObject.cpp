@@ -40,7 +40,7 @@ void ControllerTextureObject::connectControllerToController() {
 void ControllerTextureObject::receiveCvMat(std::shared_ptr<cv::Mat> mat, QString name) {
     checkIfTextureModelExists(name);
 
-    m_TextureObjects.value(name)->set(*mat);
+    m_TextureObjects.value(name)->set(mat);
 
 }
 

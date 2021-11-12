@@ -24,7 +24,7 @@ class TextureObject : public IModel {
   public:
     explicit TextureObject(QObject* parent = 0, QString name = "NoName");
 
-    void set(cv::Mat const& img);
+    void set(std::shared_ptr<cv::Mat> img);
     QString getName();
 
     QImage const& get() const {
