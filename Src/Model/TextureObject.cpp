@@ -24,6 +24,9 @@ void TextureObject::set(std::shared_ptr<cv::Mat> img) {
         // we assume that the 1d image has more than 8bit per pixel
         // (usually 64F) so we need to map a [HUGE range] to -> [0 .. 255]
         double min, max;
+        // FIXME: This still sometimes crashes when accessing the img data.
+        //        cv::Mat is reference counted, so all std::shared_ptr<cv::Mat>
+        //        instances should be replaced with cv::Mat.
         cv::minMaxLoc(*img, &min, &max);
         if (min >= 0 && min < 255 && max >= 0 && max <= 255) {
             // do not refit if the range is actually inbetween [0 ... 255]
