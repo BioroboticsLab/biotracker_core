@@ -5,7 +5,6 @@
 
 #include "QPainter"
 #include "Interfaces/IView/IViewWidget.h"
-#include "Model/TextureObject.h"
 
 class GLVideoView: public IViewOpenGLWidget
 {

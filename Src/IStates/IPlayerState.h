@@ -15,7 +15,6 @@
 #include "Interfaces/IModel/IModel.h"
 
 #include "Model/ImageStream.h"
-#include "Model/TextureObject.h"
 
 /**
  * The stateParameters struct represents the possible stats for the VideoControll buttons in the MainWindow widget.

@@ -6,7 +6,6 @@
 
 #include "Interfaces/IController/IController.h"
 
-#include "Model/TextureObject.h"
 #include "Model/Annotations.h"
 #include "View/GraphicsView.h"
 

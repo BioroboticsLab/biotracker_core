@@ -6,7 +6,6 @@
 #include "Controller/ControllerAnnotations.h"
 #include "Controller/ControllerTrackedComponentCore.h"
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
-#include "Model/TextureObject.h"
 #include "Controller/ControllerGraphicScene.h"
 #include "Controller/ControllerDataExporter.h"
 #include "Controller/ControllerAreaDescriptor.h"
