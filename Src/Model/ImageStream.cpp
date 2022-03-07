@@ -534,7 +534,7 @@ namespace BioTracker {
 				}
 
 				qDebug() << "\nStarting to record on camera " << m_camera.GetDeviceInfo().GetFriendlyName();
-				m_camera.StartGrabbing();
+				m_camera.StartGrabbing(Pylon::GrabStrategy_LatestImages, Pylon::GrabLoop_ProvidedByUser);
 				nextFrame_impl();
 
 				m_recording = false;
