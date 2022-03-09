@@ -152,7 +152,7 @@ void DataExporterCSV::loadFile(std::string file)
     QString loadedName = loadedMediaPath.fileName();
     QString sourceFileName = sourceNamePath.fileName();
 
-    if (loadedMediaPath != sourceNamePath){
+    if ((loadedMediaPath.isFile()) && (loadedMediaPath != sourceNamePath)){
         qDebug() << "CORE:  Paths of currently loaded medium and tracked medium in track file are different!";
         
         // if file names also differ, display a warning 

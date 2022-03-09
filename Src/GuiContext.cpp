@@ -80,6 +80,7 @@ void GuiContext::connectController()
     ControllerPlayer *contP = static_cast<ControllerPlayer*>(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLAYER));
     ControllerPlugin *contPlg = static_cast<ControllerPlugin*>(m_ControllersMap.value(ENUMS::CONTROLLERTYPE::PLUGIN));
 
+    // Activate tracking as per CLI
     if (_cfg->AutoTrack != -1){
         contMW->activeTracking();
 
@@ -95,6 +96,12 @@ void GuiContext::connectController()
     }
     else if (_cfg->AutoTrack==-1 && _cfg->AutoPlay){
         contP->play();
+    }
+
+    //Load track file as per CLI
+    if (!_cfg->LoadTrack.isEmpty())
+    {
+        contMW->loadTrajectoryFile(_cfg->LoadTrack.toStdString().c_str());
     }
 }
 

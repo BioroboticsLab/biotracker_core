@@ -37,6 +37,7 @@ public:
 				("autoTrack,t",value<int>(), "Automatically enable tracking with the set number of tracks")
 				("autoClose,c","Automatically close program after last medium")
 				("useMediaName,m", "Use tracked mediums name as name for tracking file")
+				("loadTrack,l", value<std::string>(), "Load tracking file")
 				;
 
 			options_description gui("GUI options");
@@ -93,6 +94,11 @@ public:
 
 			if(vm.count("useMediaName")){
 				cfg->UseMediaName = true;
+			}
+
+			if(vm.count("loadTrack")){
+				auto str = vm["loadTrack"].as<std::string>();
+				cfg->LoadTrack = QString(str.c_str());
 			}
 
 		}

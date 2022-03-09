@@ -41,6 +41,7 @@ public:
     int AutoTrack = -1;
     bool AutoClose = false;
     bool UseMediaName = false;
+    QString LoadTrack = "";
 
     void load(QString dir, QString file = "config.ini") override;
     void save(QString dir, QString file) override;
