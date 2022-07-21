@@ -275,17 +275,20 @@ void ControllerAnnotations::mouseMoveEvent(QMouseEvent*event, const QPoint &pos)
 	}
 }
 
-void ControllerAnnotations::setPlayerParameters(playerParameters* parameters)
-{
-	auto model = static_cast<Annotations*>(getModel());
-	model->setCurrentFrame(parameters->m_CurrentFrameNumber);
+void ControllerAnnotations::setPlayerParameters(
+    std::shared_ptr<const playerParameters> parameters) {
+  auto model = static_cast<Annotations *>(getModel());
+  model->setCurrentFrame(parameters->m_CurrentFrameNumber);
 
-	IController* ctr = m_BioTrackerContext->requestController(ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
-	auto trackedComponentCoreController = qobject_cast<ControllerTrackedComponentCore*>(ctr);
-	auto trackedTrajectoryModel = dynamic_cast<IModelTrackedTrajectory *>(trackedComponentCoreController->getModel());
-	if (trackedTrajectoryModel != nullptr)
-		model->updateTrackedAnnotations(trackedTrajectoryModel->getChildNodes());
-	updateView();
+  IController *ctr = m_BioTrackerContext->requestController(
+      ENUMS::CONTROLLERTYPE::TRACKEDCOMPONENTCORE);
+  auto trackedComponentCoreController =
+      qobject_cast<ControllerTrackedComponentCore *>(ctr);
+  auto trackedTrajectoryModel = dynamic_cast<IModelTrackedTrajectory *>(
+      trackedComponentCoreController->getModel());
+  if (trackedTrajectoryModel != nullptr)
+    model->updateTrackedAnnotations(trackedTrajectoryModel->getChildNodes());
+  updateView();
 }
 
 void ControllerAnnotations::receiveAddLabelAnnotation(){

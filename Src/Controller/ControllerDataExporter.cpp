@@ -140,7 +140,7 @@ void ControllerDataExporter::connectModelToController() {
     QObject::connect(mplay, &MediaPlayer::fwdPlayerParameters, this, &ControllerDataExporter::rcvPlayerParameters);
 }
 
-void ControllerDataExporter::rcvPlayerParameters(playerParameters* parameters) {
+void ControllerDataExporter::rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters) {
     if (qobject_cast<IModelDataExporter*>(m_Model) != nullptr) {
         qobject_cast<IModelDataExporter*>(m_Model)->setFps(parameters->m_fpsSourceVideo);
         qobject_cast<IModelDataExporter*>(m_Model)->setTitle(parameters->m_CurrentTitle);

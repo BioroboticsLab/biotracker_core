@@ -34,7 +34,7 @@ public:
 	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
 	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);
 	void keyPressEvent(QKeyEvent *event);
-	void setPlayerParameters(playerParameters* parameters);
+	void setPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
 	//annotation receivers
 	void receiveAddLabelAnnotation();

@@ -1,5 +1,6 @@
 #include "MediaPlayerStateMachine.h"
 
+#include "Model/MediaPlayerStateMachine/PlayerParameters.h"
 #include "PlayerStates/PStatePlay.h"
 #include "PlayerStates/PStateInitialStream.h"
 #include "PlayerStates/PStateStepForw.h"
@@ -10,26 +11,36 @@
 #include "PlayerStates/PStateGoToFrame.h"
 
 #include "util/types.h"
+#include <cassert>
 
 MediaPlayerStateMachine::MediaPlayerStateMachine(QObject* parent) :
 	IModel(parent),
 	m_ImageStream(BioTracker::Core::make_ImageStream3NoMedia()) {
+  m_PlayerParameters = playerParameters();
 
-	m_PlayerParameters = new playerParameters();
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL,
+		  (new PStateInitial(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL_STREAM,
+		  (new PStateInitialStream(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_FORW,
+		  (new PStateStepForw(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_PLAY,
+		  (new PStatePlay(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_PAUSE,
+		  (new PStatePause(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_BACK,
+		  (new PStateStepBack(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_WAIT,
+		  (new PStateWait(this, m_ImageStream)));
+  m_States.insert(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME,
+		  (new PStateGoToFrame(this, m_ImageStream)));
 
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL, (new PStateInitial(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_INITIAL_STREAM, (new PStateInitialStream(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_FORW, (new PStateStepForw(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_PLAY, (new PStatePlay(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_PAUSE, (new PStatePause(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_STEP_BACK, (new PStateStepBack(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_WAIT, (new PStateWait(this, m_ImageStream)));
-	m_States.insert(IPlayerState::PLAYER_STATES::STATE_GOTOFRAME, (new PStateGoToFrame(this, m_ImageStream)));
-
-	QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
-	for (i = m_States.begin(); i != m_States.end(); i++) {
-		QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatch, this, &MediaPlayerStateMachine::emitNextMediaInBatch);
-		QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatchLoaded, this, &MediaPlayerStateMachine::emitNextMediaInBatchLoaded);
+  QMap<IPlayerState::PLAYER_STATES, IPlayerState*>::iterator i;
+  for (i = m_States.begin(); i != m_States.end(); i++) {
+    QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatch, this,
+		     &MediaPlayerStateMachine::emitNextMediaInBatch);
+    QObject::connect(i.value(), &IPlayerState::emitNextMediaInBatchLoaded, this,
+		     &MediaPlayerStateMachine::emitNextMediaInBatchLoaded);
 	}
 
 	setNextState(IPlayerState::PLAYER_STATES::STATE_INITIAL);
@@ -53,8 +64,8 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(std::vector<boost::filesys
 
 	m_stream = BioTracker::Core::make_ImageStream3Video(_cfg, files);
 
-	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
-	
+	m_PlayerParameters.m_TotalNumbFrames = m_stream->numFrames();
+
 	for (auto x: m_States) {
 		x->changeImageStream(m_stream);
 	}
@@ -66,7 +77,7 @@ void MediaPlayerStateMachine::receiveLoadVideoCommand(std::vector<boost::filesys
 void MediaPlayerStateMachine::receiveLoadPictures(std::vector<boost::filesystem::path> files) {
 	m_stream = BioTracker::Core::make_ImageStream3Pictures(_cfg, files);
 
-	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
+	m_PlayerParameters.m_TotalNumbFrames = m_stream->numFrames();
 
 	for (auto x: m_States) {
 		x->changeImageStream(m_stream);
@@ -84,7 +95,7 @@ void MediaPlayerStateMachine::receiveLoadCameraDevice(CameraConfiguration conf) 
 
 	m_stream = BioTracker::Core::make_ImageStream3Camera(_cfg, conf);
 
-	m_PlayerParameters->m_TotalNumbFrames = m_stream->numFrames();
+	m_PlayerParameters.m_TotalNumbFrames = m_stream->numFrames();
 
 	for (auto x: m_States) {
 		x->changeImageStream(m_stream);
@@ -120,15 +131,16 @@ void MediaPlayerStateMachine::receiveGoToFrame(int frame) {
 }
 
 void MediaPlayerStateMachine::receiveTargetFps(double fps) {
-    m_PlayerParameters->m_fpsTarget = fps;
-    static_cast<PStatePlay*>(m_States.value(IPlayerState::STATE_PLAY))->setFps(fps);
+  m_PlayerParameters.m_fpsTarget = fps;
+  static_cast<PStatePlay*>(m_States.value(IPlayerState::STATE_PLAY))
+      ->setFps(fps);
 }
 
 void MediaPlayerStateMachine::receivetoggleRecordImageStream() {
 	if (m_stream)
-		m_PlayerParameters->m_RecI = m_stream->toggleRecord();
+	  m_PlayerParameters.m_RecI = m_stream->toggleRecord();
 	else
-		m_PlayerParameters->m_RecI = false;
+	  m_PlayerParameters.m_RecI = false;
 	emitSignals();
 	return;
 }
@@ -137,24 +149,27 @@ void MediaPlayerStateMachine::updatePlayerParameter() {
 
 	stateParameters stateParam = m_CurrentPlayerState->getStateParameters();
 
-	m_PlayerParameters->m_Back = stateParam.m_Back;
-	m_PlayerParameters->m_Forw = stateParam.m_Forw;
-	m_PlayerParameters->m_Paus = stateParam.m_Paus;
-	m_PlayerParameters->m_Play = stateParam.m_Play;
-	m_PlayerParameters->m_Stop = stateParam.m_Stop;
+	m_PlayerParameters.m_Back = stateParam.m_Back;
+	m_PlayerParameters.m_Forw = stateParam.m_Forw;
+	m_PlayerParameters.m_Paus = stateParam.m_Paus;
+	m_PlayerParameters.m_Play = stateParam.m_Play;
+	m_PlayerParameters.m_Stop = stateParam.m_Stop;
 
-	m_PlayerParameters->m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
-	m_PlayerParameters->m_TotalNumbFrames = m_CurrentPlayerState->m_ImageStream->numFrames();
+	m_PlayerParameters.m_CurrentFilename = m_CurrentPlayerState->getCurrentFileName();
+	m_PlayerParameters.m_TotalNumbFrames = m_CurrentPlayerState->m_ImageStream->numFrames();
 
-	m_PlayerParameters->m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
-	m_PlayerParameters->m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();
-	m_PlayerParameters->m_fpsSourceVideo = m_CurrentPlayerState->m_ImageStream->fps();
-	m_PlayerParameters->m_batchItems = m_CurrentPlayerState->getBatchItems();
+	m_PlayerParameters.m_CurrentFrame = m_CurrentPlayerState->getCurrentFrame();
+	m_PlayerParameters.m_CurrentFrameNumber = m_CurrentPlayerState->getCurrentFrameNumber();
+	m_PlayerParameters.m_fpsSourceVideo = m_CurrentPlayerState->m_ImageStream->fps();
+	m_PlayerParameters.m_batchItems = m_CurrentPlayerState->getBatchItems();
 }
 
 void MediaPlayerStateMachine::emitSignals() {
-
-	Q_EMIT emitPlayerParameters(m_PlayerParameters);
+  auto parametersCopy =
+      std::make_shared<const playerParameters>(m_PlayerParameters);
+  assert(parametersCopy->m_CurrentFrameNumber ==
+	 m_PlayerParameters.m_CurrentFrameNumber);
+  Q_EMIT emitPlayerParameters(parametersCopy);
 }
 
 void MediaPlayerStateMachine::setNextState(IPlayerState::PLAYER_STATES state) {

@@ -94,7 +94,7 @@ class MediaPlayer : public IModel {
 
 	void toggleRecordImageStreamCommand();
 
-	void fwdPlayerParameters(playerParameters* parameters);
+	void fwdPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
     void emitNextMediaInBatch(const std::string path);
     void emitNextMediaInBatchLoaded(const std::string path);
@@ -131,7 +131,7 @@ class MediaPlayer : public IModel {
     /**
      * MediaPlayer will receive the current playerParameters from the MediaPlayerStateMachine.
      */
-    void receivePlayerParameters(playerParameters* param);
+    void receivePlayerParameters(std::shared_ptr<const playerParameters> param);
 
     /**
      * If the MediaPlayerStateMachine is finished with executing the current state it will trigger this SLOT.

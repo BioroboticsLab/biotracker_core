@@ -219,7 +219,7 @@ QString MediaPlayer::takeScreenshot(GraphicsView *gv) {
 void MediaPlayer::receiveTrackingPaused() {
 }
 
-void MediaPlayer::receivePlayerParameters(playerParameters* param) {
+void MediaPlayer::receivePlayerParameters(std::shared_ptr<const playerParameters> param) {
 
     m_Back = param->m_Back;
     m_Paus = param->m_Paus;

@@ -25,7 +25,7 @@ public slots:
 	void setDisplayRectificationDefinition(bool b);
 	void setDisplayTrackingAreaDefinition(bool b);
 	void setTrackingAreaAsEllipse(bool b);
-    void rcvPlayerParameters(playerParameters* parameters);
+    void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
 private slots:
 	void trackingAreaType(int v);
