@@ -10,11 +10,11 @@
 #define IPLAYERSTATE_H
 
 #include <QObject>
-#include "QPointer"
+#include <fstream>
 
 #include "Interfaces/IModel/IModel.h"
-
 #include "Model/ImageStream.h"
+#include "QPointer"
 
 /**
  * The stateParameters struct represents the possible stats for the VideoControll buttons in the MainWindow widget.
