@@ -83,7 +83,7 @@ void AreaInfo::loadAreas() {
     _apperture->setVertices(p);
 }
 
-void AreaInfo::rcvPlayerParameters(playerParameters* parameters)
+void AreaInfo::rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters)
 {
     if (_parms == nullptr || _parms->m_CurrentFilename != parameters->m_CurrentFilename) {
         _rectInitialized = false;

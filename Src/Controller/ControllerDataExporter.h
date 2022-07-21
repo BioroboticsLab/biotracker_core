@@ -50,7 +50,7 @@ protected:
 	void connectModelToController() override;
 
 private Q_SLOTS:
-	void rcvPlayerParameters(playerParameters* parameters);
+	void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
 private:
 	IModelTrackedComponentFactory* _factory;

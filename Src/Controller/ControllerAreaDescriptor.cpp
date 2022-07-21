@@ -93,7 +93,7 @@ void ControllerAreaDescriptor::trackingAreaType(int v) {
 	gview->addGraphicsItem(static_cast<AreaDescriptor*>(m_ViewApperture));
 }
 
-void ControllerAreaDescriptor::rcvPlayerParameters(playerParameters* parameters)
+void ControllerAreaDescriptor::rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters)
 {
     //Best effort to save performance...
     //File has changed

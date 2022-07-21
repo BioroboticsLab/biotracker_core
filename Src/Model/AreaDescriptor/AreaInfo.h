@@ -50,12 +50,12 @@ private:
     bool _useEntireScreen = false;
     int _vdimX = 1;
     int _vdimY = 1;
-    playerParameters* _parms;
+    std::shared_ptr<const playerParameters> _parms;
     bool _rectInitialized = false;
 	QString _areaInfoCache;
 
 public Q_SLOTS:
-    void rcvPlayerParameters(playerParameters* parameters);
+    void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
 private:
     QString myType();

@@ -539,7 +539,7 @@ void CoreParameterView::on_pushButton_addTraj_clicked(){
 	emitAddTrack();
 }
 
-void CoreParameterView::rcvPlayerParameters(playerParameters* parameters) {
+void CoreParameterView::rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters) {
     QFileInfo f(parameters->m_CurrentFilename);
     _currentFile = f.baseName();
     ui->label_ExpSrcCnt->setText(_currentFile);

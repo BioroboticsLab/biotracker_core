@@ -105,7 +105,7 @@ public:
 	void on_pushButton_resetData_clicked();
 	void on_pushButton_addTraj_clicked();
 	public slots:
-	void rcvPlayerParameters(playerParameters* parameters);
+	void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
 
 
 public:

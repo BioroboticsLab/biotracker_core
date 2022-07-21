@@ -77,8 +77,9 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<std::vector<boost::filesystem::path>>("std::vector<boost::filesystem::path>");
     qRegisterMetaType<BiotrackerTypes::AreaType>("BiotrackerTypes::AreaType");
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
-    qRegisterMetaType<playerParameters*>("playerParameters*");
-	qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
+    qRegisterMetaType<std::shared_ptr<const playerParameters>>(
+        "std::shared_ptr<const playerParameters>");
+    qRegisterMetaType<CameraConfiguration>("CameraConfiguration");
     qRegisterMetaTypeStreamOperators<QList<IModelTrackedComponent*>>("QList<IModelTrackedComponent*>");
     
     qInstallMessageHandler(myMessageOutput);
