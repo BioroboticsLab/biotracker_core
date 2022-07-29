@@ -17,7 +17,6 @@ target_compile_definitions(${target} PRIVATE SOURCE_VERSION="${SOURCE_VERSION}")
 target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 target_link_libraries (${target} biotracker-utility)
-target_link_libraries (${target} robofish-behavior_loader)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Xml Network Widgets Multimedia MultimediaWidgets OpenGL)
 target_link_libraries (${target} Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network Qt5::Widgets Qt5::Multimedia Qt5::MultimediaWidgets Qt5::OpenGL)
@@ -167,6 +166,7 @@ target_sources(${target}
 PRIVATE
     "BioTracker3App.cpp"
     "GuiContext.cpp"
+    "PluginLoader.cpp"
     "main.cpp"
     "guiresources.qrc"
     "Controller/IControllerCfg.cpp"

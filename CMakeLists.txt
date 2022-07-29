@@ -18,7 +18,6 @@ set(HMNVLibDir "Not Found" CACHE FILEPATH "")
 
 if( CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR )
     find_package(biotracker-utility REQUIRED)
-    find_package(robofish-behavior_loader REQUIRED)
 endif()
 
 add_subdirectory(Src)
