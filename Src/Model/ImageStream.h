@@ -86,7 +86,7 @@ namespace BioTracker
              * - if the current frame position is invalid or an error occurred,
              * an empty image is returned.
              */
-            std::shared_ptr<cv::Mat> currentFrame() const;
+            cv::Mat currentFrame() const;
 
             /**
              * sets the current frame number and updates the current frame.
@@ -136,7 +136,7 @@ namespace BioTracker
             /**
              * sets the image returned by this->currentFrame();
              */
-            void set_current_frame(std::shared_ptr<cv::Mat> img);
+            void set_current_frame(cv::Mat img);
 
             /**
              * Sets the title of the current image stream.
@@ -155,10 +155,10 @@ namespace BioTracker
              */
             size_t m_frame_stride;
 
-            std::shared_ptr<cv::Mat> m_current_frame;
-            size_t                   m_current_frame_number;
-            std::string              m_title;
-            Config*                  _cfg;
+            cv::Mat     m_current_frame;
+            size_t      m_current_frame_number;
+            std::string m_title;
+            Config*     _cfg;
 
         private:
             /**

@@ -24,6 +24,7 @@
 #include "View/AnnotationsView.h"
 #include "Controller/ControllerMainWindow.h"
 #include "Controller/null_Controller.h"
+#include "Controller/ControllerTextureObject.h"
 
 #include "VideoControllWidget.h"
 
@@ -205,6 +206,38 @@ void MainWindow::setupUpperToolBar()
     chooseTrackerBox->setLayout(chooseTrackerBoxLayout);
 
     ui->toolBarMenu->addWidget(chooseTrackerBox);
+
+    /// Display image
+    {
+        auto container = new QGroupBox("Select tracking view image");
+
+        auto layout = new QHBoxLayout();
+
+        auto selector = new QComboBox();
+
+        auto textureController = qobject_cast<ControllerTextureObject*>(
+            getController()->getBioTrackerContext()->requestController(
+                ENUMS::CONTROLLERTYPE::TEXTUREOBJECT));
+
+        selector->setModel(textureController->textureNamesModel());
+
+        connect(selector,
+                QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this,
+                [=](int index) {
+                    auto imageName = selector->itemText(index);
+                    qDebug() << imageName;
+                    if (textureController->hasTexture(imageName)) {
+                        textureController->changeTextureModel(imageName);
+                    }
+                });
+
+        layout->addWidget(selector);
+
+        container->setLayout(layout);
+
+        ui->toolBarMenu->addWidget(container);
+    }
 }
 
 void MainWindow::checkTrackerGroupBox()

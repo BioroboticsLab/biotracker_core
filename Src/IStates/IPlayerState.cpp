@@ -13,7 +13,7 @@ IPlayerState::IPlayerState(
     m_FrameNumber = 0;
 }
 
-std::shared_ptr<cv::Mat> IPlayerState::getCurrentFrame()
+cv::Mat IPlayerState::getCurrentFrame()
 {
     return m_Mat;
 }

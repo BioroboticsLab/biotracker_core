@@ -13,9 +13,11 @@
 #include "QString"
 #include "Model/TextureObject.h"
 
+#include <QAbstractListModel>
 #include "QStringList"
 #include "QStringListModel"
 #include "QPointer"
+
 
 /**
  * This is the Controller class of the software component TextureObject. This
@@ -50,12 +52,13 @@ public:
 public:
     void connectControllerToController() override;
 
+    QAbstractListModel* textureNamesModel();
+    bool hasTexture(QString name);
+
 public Q_SLOTS:
-    /**
-     * This SLOT can be triggered by any component that wants to render a
-     * cv::Mat.
-     */
-    void receiveCvMat(std::shared_ptr<cv::Mat> mat, QString name);
+    void setTextureNames(QVector<QString> names);
+    void updateTexture(QString name, cv::Mat img);
+    void updateTextures(QMap<QString, cv::Mat> textures);
 
 protected:
     void createModel() override;
@@ -63,7 +66,6 @@ protected:
     void connectModelToController() override;
 
 private:
-    void checkIfTextureModelExists(QString name);
     void createNewTextureObjectModel(QString name);
     void changeTextureView(IModel* model);
 
@@ -72,7 +74,6 @@ private:
 
     QString m_DefaultTextureName = "Original";
 
-    QStringList                m_TextureViewNames;
     QPointer<QStringListModel> m_TextureViewNamesModel;
 };
 

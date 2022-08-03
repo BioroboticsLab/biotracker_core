@@ -107,12 +107,12 @@ public Q_SLOTS:
      * MediaPlayer class and hands it over to the ControllerTextureObject for
      * rendering.
      */
-    void receiveRenderImage(std::shared_ptr<cv::Mat> mat, QString name);
+    void receiveRenderImage(cv::Mat mat, QString name);
     /**
      * This SLOT receives a cv::Mat and its frame number and hands it over to
      * the ControllerPlugin for Tracking in the BioTracker Plugin.
      */
-    void receiveImageToTracker(std::shared_ptr<cv::Mat> mat, uint number);
+    void receiveImageToTracker(cv::Mat mat, uint number);
     /**
      * This SLOT receives a framenumber and hands it over to the
      * ControllerTrackedComponentCore for visualizing in the main app.

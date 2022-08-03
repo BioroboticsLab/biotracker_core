@@ -31,7 +31,7 @@ namespace BioTracker
 
         ImageStream::ImageStream(QObject* parent, Config* cfg)
         : QObject(parent)
-        , m_current_frame(new cv::Mat(cv::Size(0, 0), CV_8UC3))
+        , m_current_frame(cv::Mat(cv::Size(0, 0), CV_8UC3))
         , m_current_frame_number(0)
         {
             _cfg = cfg;
@@ -44,7 +44,7 @@ namespace BioTracker
             return m_current_frame_number;
         }
 
-        std::shared_ptr<cv::Mat> ImageStream::currentFrame() const
+        cv::Mat ImageStream::currentFrame() const
         {
             return m_current_frame;
         }
@@ -83,7 +83,7 @@ namespace BioTracker
 
         bool ImageStream::currentFrameIsEmpty() const
         {
-            return this->currentFrame()->empty();
+            return this->currentFrame().empty();
         }
 
         bool ImageStream::nextFrame()
@@ -113,14 +113,14 @@ namespace BioTracker
             }
         }
 
-        void ImageStream::set_current_frame(std::shared_ptr<cv::Mat> img)
+        void ImageStream::set_current_frame(cv::Mat img)
         {
-            m_current_frame.swap(img);
+            m_current_frame = img;
         }
 
         void ImageStream::clearImage()
         {
-            m_current_frame.reset();
+            m_current_frame        = cv::Mat(cv::Size(0, 0), CV_8UC3);
             m_current_frame_number = this->numFrames();
         }
 
@@ -212,13 +212,12 @@ namespace BioTracker
                 // load first image
                 if (this->numFrames() > 0) {
                     this->setFrameNumber_impl(0);
-                    std::string filename = m_picture_files[0].string();
-                    std::shared_ptr<cv::Mat> new_frame =
-                        std::make_shared<cv::Mat>(cv::imread(filename));
-                    m_w         = new_frame->size().width;
-                    m_h         = new_frame->size().height;
-                    m_recording = false;
-                    vCoder      = std::make_shared<VideoCoder>(m_fps, _cfg);
+                    auto filename  = m_picture_files[0].string();
+                    auto new_frame = cv::imread(filename);
+                    m_w            = new_frame.size().width;
+                    m_h            = new_frame.size().height;
+                    m_recording    = false;
+                    vCoder         = std::make_shared<VideoCoder>(m_fps, _cfg);
                 }
             }
             virtual GuiParam::MediaType type() const override
@@ -254,10 +253,8 @@ namespace BioTracker
                 m_currentFrame += static_cast<int>(m_frame_stride);
                 if (this->numFrames() > m_currentFrame) {
 
-                    const std::string& filename =
-                        m_picture_files[m_currentFrame].string();
-                    std::shared_ptr<cv::Mat> new_frame =
-                        std::make_shared<cv::Mat>(cv::imread(filename));
+                    auto filename  = m_picture_files[m_currentFrame].string();
+                    auto new_frame = cv::imread(filename);
                     this->set_current_frame(new_frame);
                     if (m_recording) {
                         if (vCoder)
@@ -270,17 +267,15 @@ namespace BioTracker
 
             virtual bool setFrameNumber_impl(size_t frame_number) override
             {
-                const std::string& filename =
-                    m_picture_files[frame_number].string();
-                std::shared_ptr<cv::Mat> new_frame = std::make_shared<cv::Mat>(
-                    cv::imread(filename));
+                auto filename  = m_picture_files[frame_number].string();
+                auto new_frame = cv::imread(filename);
                 this->set_current_frame(new_frame);
                 m_currentFrame = static_cast<int>(frame_number);
                 if (m_recording) {
                     if (vCoder)
                         vCoder->add(new_frame);
                 }
-                return !new_frame->empty();
+                return !new_frame.empty();
             }
             std::vector<boost::filesystem::path> m_picture_files;
             std::shared_ptr<VideoCoder>          vCoder;
@@ -402,11 +397,10 @@ namespace BioTracker
                 cv::Mat new_frame;
                 for (int i = 0; i < m_frame_stride; i++)
                     m_capture >> new_frame;
-                std::shared_ptr<cv::Mat> mat(new cv::Mat(new_frame));
-                this->set_current_frame(mat);
+                this->set_current_frame(new_frame);
                 if (m_recording) {
                     if (vCoder)
-                        vCoder->add(mat);
+                        vCoder->add(new_frame);
                 }
                 return !new_frame.empty();
             }
@@ -532,13 +526,12 @@ namespace BioTracker
                     m_capture >> new_frame;
                 }
 
-                std::shared_ptr<cv::Mat> mat(new cv::Mat(new_frame));
-                this->set_current_frame(mat);
+                this->set_current_frame(new_frame);
                 if (m_recording) {
                     if (vCoder)
-                        vCoder->add(mat);
+                        vCoder->add(new_frame);
                 }
-                return !mat->empty();
+                return !new_frame.empty();
             }
 
             virtual bool setFrameNumber_impl(size_t) override
@@ -678,13 +671,13 @@ namespace BioTracker
                 }
 
                 auto view   = toOpenCV(m_grabbed);
-                auto scaled = std::make_shared<cv::Mat>();
-                cv::resize(view, *scaled, m_imageSize);
+                auto scaled = view.clone();
+                cv::resize(scaled, scaled, m_imageSize);
                 set_current_frame(scaled);
                 if (m_recording && m_encoder)
                     m_encoder->add(scaled);
 
-                return !scaled->empty();
+                return !scaled.empty();
             }
 
             bool setFrameNumber_impl(size_t) override

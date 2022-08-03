@@ -6,6 +6,7 @@
 #include <mutex>
 #include <iostream>
 #include <memory>
+#include <optional>
 
 #include "Utility/misc.h"
 #ifdef WITH_CUDA
@@ -43,11 +44,11 @@ public:
 class ImageBuffer
 {
 public:
-    std::shared_ptr<cv::Mat> _img;
-    int                      _needsConversion;
+    std::optional<cv::Mat> _img;
+    int                    _needsConversion;
 
-    ImageBuffer(std::shared_ptr<cv::Mat> pimg, int ncv)
-    : _img(pimg)
+    ImageBuffer(cv::Mat img, int ncv)
+    : _img(img)
     , _needsConversion(ncv)
     {
     }
@@ -141,7 +142,7 @@ public:
 
     int toggle(int w, int h, double fps = -1);
 
-    void add(std::shared_ptr<cv::Mat> m, int needsConversion = 0);
+    void add(cv::Mat m, int needsConversion = 0);
 
     int  start();
     void stop();

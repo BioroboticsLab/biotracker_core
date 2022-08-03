@@ -61,7 +61,7 @@ void ControllerPlugin::loadPluginFromFileName(QString str)
     if (pluginLoader->loadPluginFromFilename(str)) {
         m_BioTrackerPlugin = qobject_cast<IBioTrackerPlugin*>(
             pluginLoader->getPluginInstance());
-        createPlugin();
+        initPlugin();
 
         // Add Plugin name to Main Window
         IController* ctrA = m_BioTrackerContext->requestController(
@@ -268,18 +268,18 @@ void ControllerPlugin::connectControllerToController()
                      Qt::DirectConnection);
 }
 
-void ControllerPlugin::createPlugin()
+void ControllerPlugin::initPlugin()
 {
     m_BioTrackerPlugin = qobject_cast<IBioTrackerPlugin*>(
         pluginLoader->getPluginInstance());
     if (!m_BioTrackerPlugin) {
         qFatal("Error at loading plugin.");
     }
-    m_BioTrackerPlugin->createPlugin();
-
-    m_BioTrackerPlugin->moveToThread(m_TrackingThread);
 
     connectPlugin();
+    m_BioTrackerPlugin->init();
+
+    m_BioTrackerPlugin->moveToThread(m_TrackingThread);
 
     IController* ctrAreaDesc = m_BioTrackerContext->requestController(
         ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
@@ -329,7 +329,7 @@ void ControllerPlugin::connectPlugin()
     QPointer<ControllerMainWindow> ctrMainWindow =
         qobject_cast<ControllerMainWindow*>(ctrE);
 
-    QObject* obj = dynamic_cast<QObject*>(m_BioTrackerPlugin);
+    auto obj = dynamic_cast<IBioTrackerPlugin*>(m_BioTrackerPlugin);
 
     QObject::connect(obj,
                      SIGNAL(emitTrackingDone(uint)),
@@ -337,19 +337,18 @@ void ControllerPlugin::connectPlugin()
                      SLOT(receiveTrackingDone(uint)));
 
     QObject::connect(obj,
-                     SIGNAL(emitCvMat(std::shared_ptr<cv::Mat>, QString)),
+                     &IBioTrackerPlugin::trackingImageNamesChanged,
                      ctrTexture,
-                     SLOT(receiveCvMat(std::shared_ptr<cv::Mat>, QString)));
+                     &ControllerTextureObject::setTextureNames);
+    QObject::connect(obj,
+                     &IBioTrackerPlugin::trackingImagesChanged,
+                     ctrTexture,
+                     &ControllerTextureObject::updateTextures);
 
     QObject::connect(obj,
                      SIGNAL(emitTrackingDone(uint)),
                      ctrCompView,
                      SLOT(receiveVisualizeTrackingModel(uint)));
-
-    QObject::connect(obj,
-                     SIGNAL(emitChangeDisplayImage(QString)),
-                     ctrPlayer,
-                     SLOT(receiveChangeDisplayImage(QString)));
 
     QObject::connect(ctAreaDesc,
                      SIGNAL(updateAreaDescriptor(IModelAreaDescriptor*)),
@@ -445,8 +444,7 @@ void ControllerPlugin::disconnectPlugin()
 
 // first send all the commands currently in the command queue then the next
 // image can be sent
-void ControllerPlugin::sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat,
-                                                uint number)
+void ControllerPlugin::sendCurrentFrameToPlugin(cv::Mat mat, uint number)
 {
     m_currentFrameNumber = number;
 

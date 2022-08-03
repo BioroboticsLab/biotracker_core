@@ -235,7 +235,7 @@ int VideoCoder::toggle(int w, int h, double fps)
     return m_recording;
 }
 
-void VideoCoder::add(std::shared_ptr<cv::Mat> m, int needsConversion)
+void VideoCoder::add(cv::Mat m, int needsConversion)
 {
     worker->ll.push(std::make_shared<ImageBuffer>(m, needsConversion),
                     m_dropFrames);

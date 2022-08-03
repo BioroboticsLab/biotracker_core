@@ -10,16 +10,16 @@ TextureObject::TextureObject(QObject* parent, QString name)
     m_texture = QImage(1, 1, QImage::Format_RGB888);
 }
 
-void TextureObject::set(std::shared_ptr<cv::Mat> img)
+void TextureObject::set(cv::Mat img)
 {
-    if (img->empty()) {
+    if (img.empty()) {
         return;
     }
 
-    if (img->channels() == 3) {
-        img->convertTo(m_img, CV_8UC3);
+    if (img.channels() == 3) {
+        img.convertTo(m_img, CV_8UC3);
         cv::cvtColor(m_img, m_img, cv::ColorConversionCodes::COLOR_BGR2RGB);
-    } else if (img->channels() == 1) {
+    } else if (img.channels() == 1) {
         // convert grayscale to "color"
         cv::Mat img8U;
 
@@ -27,12 +27,12 @@ void TextureObject::set(std::shared_ptr<cv::Mat> img)
         // (usually 64F) so we need to map a [HUGE range] to -> [0 .. 255]
         double min, max;
         // FIXME: This still sometimes crashes when accessing the img data.
-        //        cv::Mat is reference counted, so all std::shared_ptr<cv::Mat>
+        //        cv::Mat is reference counted, so all cv::Mat
         //        instances should be replaced with cv::Mat.
-        cv::minMaxLoc(*img, &min, &max);
+        cv::minMaxLoc(img, &min, &max);
         if (min >= 0 && min < 255 && max >= 0 && max <= 255) {
             // do not refit if the range is actually inbetween [0 ... 255]
-            img->convertTo(img8U, CV_8U);
+            img.convertTo(img8U, CV_8U);
         } else if (max > min) {
             // otherwise: the range is outside of native [0 ... 255] so we
             // actually need to do some refitting
@@ -41,11 +41,11 @@ void TextureObject::set(std::shared_ptr<cv::Mat> img)
             // max] range
             const double sizeRatio = 256.0 / abs(static_cast<int>(max - min));
             const double convertedMin = abs(static_cast<int>(min * sizeRatio));
-            img->convertTo(img8U, CV_8U, sizeRatio, convertedMin);
+            img.convertTo(img8U, CV_8U, sizeRatio, convertedMin);
         }
         cv::cvtColor(img8U, m_img, cv::ColorConversionCodes::COLOR_GRAY2RGB);
     } else {
-        img->copyTo(m_img);
+        img.copyTo(m_img);
     }
 
     m_texture = QImage(m_img.data,

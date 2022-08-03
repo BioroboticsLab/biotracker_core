@@ -8,6 +8,8 @@
 #ifndef PLAYERPARAMETERS_H
 #define PLAYERPARAMETERS_H
 
+#include <optional>
+
 /**
  * The playerParameters struct holds all data types of the current MediaPlayer
  * state.
@@ -29,7 +31,7 @@ struct playerParameters
     QString                  m_CurrentFilename;
     std::string              m_CurrentTitle;
     size_t                   m_CurrentFrameNumber;
-    std::shared_ptr<cv::Mat> m_CurrentFrame;
+    std::optional<cv::Mat>   m_CurrentFrame;
     double                   m_fpsSourceVideo;
     double                   m_fpsTarget;
     std::vector<std::string> m_batchItems;

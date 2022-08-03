@@ -73,19 +73,17 @@ void ControllerPlayer::setGoToFrame(int frame)
     qobject_cast<MediaPlayer*>(m_Model)->goToFrame(frame);
 }
 
-void ControllerPlayer::receiveRenderImage(std::shared_ptr<cv::Mat> mat,
-                                          QString                  name)
+void ControllerPlayer::receiveRenderImage(cv::Mat img, QString name)
 {
     IController* ctr = m_BioTrackerContext->requestController(
         ENUMS::CONTROLLERTYPE::TEXTUREOBJECT);
     QPointer<ControllerTextureObject> ctrTextureObject =
         qobject_cast<ControllerTextureObject*>(ctr);
 
-    ctrTextureObject->receiveCvMat(mat, name);
+    ctrTextureObject->updateTexture(name, img);
 }
 
-void ControllerPlayer::receiveImageToTracker(std::shared_ptr<cv::Mat> mat,
-                                             uint                     number)
+void ControllerPlayer::receiveImageToTracker(cv::Mat mat, uint number)
 {
     IController* ctr = m_BioTrackerContext->requestController(
         ENUMS::CONTROLLERTYPE::PLUGIN);

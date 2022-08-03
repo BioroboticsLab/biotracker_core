@@ -181,8 +181,8 @@ private:
         _currentElementView; /**< current visualisation view of tracker  */
     QGraphicsObject*
         _currentCoreView; /**< current visualisation view of core app  */
-    // QWidget* _currentTrackerP;						/**< current tracker paramter
-    // view
+    // QWidget* _currentTrackerP;						/**< current tracker
+    // paramter view
     // */
     QString _previouslySelectedTracker; /**< previous tracker  */
 

@@ -121,9 +121,9 @@ void ControllerAreaDescriptor::rcvPlayerParameters(
         _currentFilename = parameters->m_CurrentFilename;
 
         // Set area descriptor dimensions
-        AreaDescriptor* ad = static_cast<AreaDescriptor*>(m_ViewApperture);
-        std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
-        if (ad && m != nullptr) {
+        auto ad = static_cast<AreaDescriptor*>(m_ViewApperture);
+        auto m  = parameters->m_CurrentFrame;
+        if (ad && m) {
             _w = m->size().width;
             _h = m->size().height;
             ad->setDimensions(_w, _h);

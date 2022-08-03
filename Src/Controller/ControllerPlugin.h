@@ -79,7 +79,7 @@ public:
      * This function hands the received cv::Mat pointer and the current frame
      * number to the PluginLoader.
      */
-    void sendCurrentFrameToPlugin(std::shared_ptr<cv::Mat> mat, uint number);
+    void sendCurrentFrameToPlugin(cv::Mat mat, uint number);
 
     void selectPlugin(QString str);
 
@@ -103,7 +103,7 @@ signals:
                             uint                     frameNumber);
 
     void emitUpdateView();
-    void frameRetrieved(std::shared_ptr<cv::Mat> mat, uint frameNumber);
+    void frameRetrieved(cv::Mat mat, uint frameNumber);
     void signalCurrentFrameNumberToPlugin(uint frameNumber);
 
     // IController interface
@@ -113,9 +113,8 @@ protected:
     void connectModelToController() override;
     void connectControllerToController() override;
 
-    void createPlugin();
-
     void connectPlugin();
+    void initPlugin();
     void disconnectPlugin();
 
 private Q_SLOTS:

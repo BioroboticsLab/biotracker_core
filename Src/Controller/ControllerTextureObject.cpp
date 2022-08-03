@@ -6,21 +6,25 @@
 #include "Model/MediaPlayerStateMachine/MediaPlayerStateMachine.h"
 #include "View/TextureObjectView.h"
 
+#include <QDebug>
+
 ControllerTextureObject::ControllerTextureObject(QObject*              parent,
                                                  IBioTrackerContext*   context,
                                                  ENUMS::CONTROLLERTYPE ctr)
 : IControllerCfg(parent, context, ctr)
 {
     m_TextureViewNamesModel = new QStringListModel();
-    m_TextureViewNamesModel->setStringList(m_TextureViewNames);
+    createNewTextureObjectModel("Original");
 }
 
 void ControllerTextureObject::changeTextureModel(QString name)
 {
-    if (name == QString(""))
-        name = m_DefaultTextureName;
+    if (!hasTexture(name)) {
+        qCritical().noquote()
+            << QString("Invalid texture name '%1'").arg(name);
+        return;
+    }
 
-    checkIfTextureModelExists(name);
     m_Model = m_TextureObjects.value(name);
 
     changeTextureView(m_Model);
@@ -46,12 +50,43 @@ void ControllerTextureObject::connectControllerToController()
     ctrGraphics->addTextureObject(item);
 }
 
-void ControllerTextureObject::receiveCvMat(std::shared_ptr<cv::Mat> mat,
-                                           QString                  name)
+void ControllerTextureObject::setTextureNames(QVector<QString> names)
 {
-    checkIfTextureModelExists(name);
+    changeTextureModel("Original");
 
-    m_TextureObjects.value(name)->set(mat);
+    for (auto name : m_TextureViewNamesModel->stringList()) {
+        if (name != "Original") {
+            m_TextureObjects.remove(name);
+        }
+    }
+
+    m_TextureViewNamesModel->setStringList({"Original"});
+
+    for (auto name : names) {
+        createNewTextureObjectModel(name);
+    }
+}
+
+void ControllerTextureObject::updateTexture(QString name, cv::Mat img)
+{
+    if (name.isEmpty() || !hasTexture(name)) {
+        qCritical().noquote()
+            << QString("Invalid texture name '%1'").arg(name);
+        return;
+    }
+
+    if (!hasTexture(name)) {
+        createNewTextureObjectModel(name);
+    }
+
+    m_TextureObjects.value(name)->set(img);
+}
+
+void ControllerTextureObject::updateTextures(QMap<QString, cv::Mat> textures)
+{
+    for (const auto name : textures.keys()) {
+        updateTexture(name, textures[name]);
+    }
 }
 
 void ControllerTextureObject::createModel()
@@ -70,33 +105,42 @@ void ControllerTextureObject::connectModelToController()
 {
 }
 
-void ControllerTextureObject::checkIfTextureModelExists(QString name)
+bool ControllerTextureObject::hasTexture(QString name)
 {
-    if (name == QString(""))
-        name = m_DefaultTextureName;
+    if (name.isEmpty()) {
+        return false;
+    }
 
-    bool itemIsInList = false;
-    for (int i = 0; i < m_TextureViewNames.size(); ++i) {
-
-        if (m_TextureViewNames.at(i) == name) {
-            itemIsInList = true;
+    for (int i = 0; i < m_TextureViewNamesModel->rowCount(); ++i) {
+        if (m_TextureViewNamesModel->data(m_TextureViewNamesModel->index(i))
+                .toString() == name) {
+            return true;
         }
     }
 
-    if (!itemIsInList) {
-        createNewTextureObjectModel(name);
-    }
+    return false;
 }
 
 void ControllerTextureObject::createNewTextureObjectModel(QString name)
 {
-    TextureObject* newTextureModel = new TextureObject(this, name);
-    m_TextureObjects.insert(name, newTextureModel);
-    m_TextureViewNames.append(name);
-    m_TextureViewNamesModel->setStringList(m_TextureViewNames);
+    m_TextureObjects.insert(name, new TextureObject(this, name));
+
+    if (m_TextureViewNamesModel->insertRow(
+            m_TextureViewNamesModel->rowCount())) {
+        auto index = m_TextureViewNamesModel->index(
+            m_TextureViewNamesModel->rowCount() - 1);
+        m_TextureViewNamesModel->setData(index, name);
+    } else {
+        qFatal("Failed to add new texture model");
+    }
 }
 
 void ControllerTextureObject::changeTextureView(IModel* model)
 {
     m_View->setNewModel(model);
+}
+
+QAbstractListModel* ControllerTextureObject::textureNamesModel()
+{
+    return m_TextureViewNamesModel;
 }

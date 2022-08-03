@@ -82,13 +82,14 @@ int main(int argc, char* argv[])
 #endif
 
     qRegisterMetaType<cv::Mat>("cv::Mat");
-    qRegisterMetaType<std::shared_ptr<cv::Mat>>("std::shared_ptr<cv::Mat>");
     qRegisterMetaType<std::size_t>("std::size_t");
     qRegisterMetaType<size_t>("size_t");
     qRegisterMetaType<std::vector<boost::filesystem::path>>(
         "std::vector<boost::filesystem::path>");
     qRegisterMetaType<BiotrackerTypes::AreaType>("BiotrackerTypes::AreaType");
     qRegisterMetaType<QVector<bool>>("QVector<bool>");
+    qRegisterMetaType<QVector<QString>>("QVector<QString>");
+    qRegisterMetaType<QMap<QString, cv::Mat>>("QMap<QString, cv::Mat>");
     qRegisterMetaType<std::shared_ptr<const playerParameters>>(
         "std::shared_ptr<const playerParameters>");
     qRegisterMetaType<CameraConfiguration>("CameraConfiguration");

@@ -72,7 +72,7 @@ void AreaInfo::loadAreas()
 
     if (pair[1] == QString(DEFAULT_RECT)) {
         if (_parms) {
-            std::shared_ptr<cv::Mat> m = _parms->m_CurrentFrame;
+            auto m = _parms->m_CurrentFrame;
             reset(m->size().width, m->size().height);
         } else {
             reset(100, 100);
@@ -94,17 +94,17 @@ void AreaInfo::rcvPlayerParameters(
         _parms->m_CurrentFilename != parameters->m_CurrentFilename) {
         _rectInitialized = false;
     }
-    if (parameters->m_CurrentFrame == nullptr) {
+    if (!parameters->m_CurrentFrame) {
         return;
     }
 
-    _parms                     = parameters;
-    std::shared_ptr<cv::Mat> m = parameters->m_CurrentFrame;
-    if ((m->size().width != _vdimX || m->size().height != _vdimY) &&
+    _parms = parameters;
+    auto m = *parameters->m_CurrentFrame;
+    if ((m.size().width != _vdimX || m.size().height != _vdimY) &&
         _useEntireScreen) { // TODO: _useEntireScreen? if we do not update
                             // stuff in the very beginning, tracking
                             // rectification will break
-        reset(m->size().width, m->size().height);
+        reset(m.size().width, m.size().height);
         loadAreas();
         updateRectification();
     }

@@ -98,12 +98,12 @@ Q_SIGNALS:
      * class. This controller will give the data to the TextureObject
      * component.
      */
-    void renderCurrentImage(std::shared_ptr<cv::Mat> mat, QString name);
+    void renderCurrentImage(cv::Mat mat, QString name);
     /**
      * This SIGNAL is only emmited if Tracking Is Active. The PluginLoader
      * component will receive the cv::Mat and the current frame number.
      */
-    void trackCurrentImage(std::shared_ptr<cv::Mat> mat, uint number);
+    void trackCurrentImage(cv::Mat mat, uint number);
     /**
      * This SIGNAL is only emmited if Tracking Is inactive. The core
      * visualization controller will receive the framenumber and will try to
@@ -139,13 +139,13 @@ public:
     int toggleRecordGraphicsScenes(GraphicsView* gv);
     int toggleRecordImageStream();
 
-    size_t                   getTotalNumberOfFrames();
-    size_t                   getCurrentFrameNumber();
-    double                   getFpsOfSourceFile();
-    double                   getCurrentFPS();
-    double                   getTargetFPS();
-    QString                  getCurrentFileName();
-    std::shared_ptr<cv::Mat> getCurrentFrame();
+    size_t  getTotalNumberOfFrames();
+    size_t  getCurrentFrameNumber();
+    double  getFpsOfSourceFile();
+    double  getCurrentFPS();
+    double  getTargetFPS();
+    QString getCurrentFileName();
+    cv::Mat getCurrentFrame();
 
     QString takeScreenshot(GraphicsView* gv);
 
@@ -176,8 +176,6 @@ public Q_SLOTS:
      */
     void rcvPauseState(bool state);
 
-    void receiveChangeDisplayImage(QString str);
-
 private:
     // TODO Refactor members to _ instead of m_
 
@@ -198,13 +196,13 @@ private:
 
     QMap<IPlayerState::PLAYER_STATES, IPlayerState*> m_States;
 
-    size_t                   m_TotalNumbFrames;
-    size_t                   m_CurrentFrameNumber;
-    double                   m_fpsOfSourceFile;
-    double                   m_currentFPS;
-    double                   m_targetFPS;
-    QString                  m_CurrentFilename;
-    std::shared_ptr<cv::Mat> m_CurrentFrame;
+    size_t  m_TotalNumbFrames;
+    size_t  m_CurrentFrameNumber;
+    double  m_fpsOfSourceFile;
+    double  m_currentFPS;
+    double  m_targetFPS;
+    QString m_CurrentFilename;
+    cv::Mat m_CurrentFrame;
 
     bool m_Play;
     bool m_Forw;

@@ -222,7 +222,7 @@ QString MediaPlayer::getCurrentFileName()
     return m_CurrentFilename;
 }
 
-std::shared_ptr<cv::Mat> MediaPlayer::getCurrentFrame()
+cv::Mat MediaPlayer::getCurrentFrame()
 {
     return m_CurrentFrame;
 }
@@ -319,16 +319,13 @@ void MediaPlayer::receivePlayerParameters(
     m_RecO = param->m_RecO;
 
     m_CurrentFilename    = param->m_CurrentFilename;
-    m_CurrentFrame       = param->m_CurrentFrame;
     m_CurrentFrameNumber = param->m_CurrentFrameNumber;
     m_fpsOfSourceFile    = param->m_fpsSourceVideo;
     m_TotalNumbFrames    = param->m_TotalNumbFrames;
 
-    m_CurrentFrame          = param->m_CurrentFrame;
-    const bool isValidFrame = static_cast<bool>(m_CurrentFrame) &&
-                              !m_CurrentFrame->empty();
+    if (param->m_CurrentFrame && !param->m_CurrentFrame->empty()) {
+        m_CurrentFrame = *param->m_CurrentFrame;
 
-    if (isValidFrame) {
         Q_EMIT renderCurrentImage(m_CurrentFrame, m_NameOfCvMat);
 
         if (m_TrackingIsActive) {
@@ -367,16 +364,15 @@ void MediaPlayer::receivePlayerParameters(
                                 m_image.bits(),
                                 m_image.bytesPerLine());
 
-            auto copy = std::make_shared<cv::Mat>(view.clone());
-            cv::cvtColor(*copy,
-                         *copy,
-                         cv::ColorConversionCodes::COLOR_BGR2RGB);
+            auto copy = view.clone();
+            cv::cvtColor(copy, copy, cv::ColorConversionCodes::COLOR_BGR2RGB);
             m_videoc->add(copy);
         }
     } else {
-        qDebug()
+        qWarning()
             << "MediaPlayer: Received player parameters with invalid image.";
     }
+
     Q_EMIT notifyView();
 }
 
@@ -403,11 +399,6 @@ void MediaPlayer::receivePlayerOperationDone()
     emit runPlayerOperation();
 
     start = std::chrono::system_clock::now();
-}
-
-void MediaPlayer::receiveChangeDisplayImage(QString str)
-{
-    int x = 0;
 }
 
 int MediaPlayer::toggleRecordImageStream()

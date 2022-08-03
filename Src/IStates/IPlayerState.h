@@ -105,7 +105,7 @@ public:
     /**
      * Returns the current cv::Mat of the ImageStream.
      */
-    std::shared_ptr<cv::Mat> getCurrentFrame();
+    cv::Mat getCurrentFrame();
 
     /**
      * Returns the current frame number of the ImageStream.
@@ -125,9 +125,9 @@ protected:
 
     stateParameters m_StateParameters;
 
-    std::shared_ptr<cv::Mat> m_Mat;
-    size_t                   m_FrameNumber;
-    std::fstream             fs;
+    cv::Mat      m_Mat;
+    size_t       m_FrameNumber;
+    std::fstream fs;
 
     QString m_currentFileName;
 };
