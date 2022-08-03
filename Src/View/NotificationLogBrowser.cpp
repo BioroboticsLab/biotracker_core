@@ -1,53 +1,56 @@
 #include "NotificationLogBrowser.h"
 #include "QVBoxLayout"
 
-
-NotificationLogBrowser::NotificationLogBrowser(QWidget *parent, IController *controller, IModel *model) :
-	IViewWidget(parent, controller, model)
+NotificationLogBrowser::NotificationLogBrowser(QWidget*     parent,
+                                               IController* controller,
+                                               IModel*      model)
+: IViewWidget(parent, controller, model)
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
 
-	browser = new QTextBrowser(this);
-	browser->setLineWrapMode(QTextEdit::NoWrap);
+    browser = new QTextBrowser(this);
+    browser->setLineWrapMode(QTextEdit::NoWrap);
 
-	layout->addWidget(browser);
+    layout->addWidget(browser);
 
-	setLayout(layout);
+    setLayout(layout);
 
-	m_font = QFont();
-	m_font.setPointSize(8);
-	setFont(m_font);
+    m_font = QFont();
+    m_font.setPointSize(8);
+    setFont(m_font);
 
-	resize(200, 400);
+    resize(200, 400);
 
-	this->show();
-
+    this->show();
 }
 
 NotificationLogBrowser::~NotificationLogBrowser()
 {
 }
 
-void NotificationLogBrowser::outputMessage(QtMsgType type, const QString & msg)
+void NotificationLogBrowser::outputMessage(QtMsgType type, const QString& msg)
 {
-	switch (type) {
-	case QtDebugMsg:
-		browser->append(msg);
-		break;
+    switch (type) {
+    case QtDebugMsg:
+        browser->append(msg);
+        break;
 
-	case QtWarningMsg:
-		browser->append(tr("<span style='color:orange;'>- %1 </span>").arg(msg));
-		break;
+    case QtWarningMsg:
+        browser->append(
+            tr("<span style='color:orange;'>- %1 </span>").arg(msg));
+        break;
 
-	case QtCriticalMsg:
-		browser->append(tr("<span style='color:red;'>- %1 </span>").arg(msg));
-		break;
+    case QtCriticalMsg:
+        browser->append(tr("<span style='color:red;'>- %1 </span>").arg(msg));
+        break;
 
-	case QtFatalMsg:
-		browser->append(tr("<span style='color:red; font-weight:bold'>- %1 </span>").arg(msg));
-		break;
-	}
+    case QtFatalMsg:
+        browser->append(
+            tr("<span style='color:red; font-weight:bold'>- %1 </span>")
+                .arg(msg));
+        break;
+    }
 }
-void  NotificationLogBrowser::getNotified() {
-
+void NotificationLogBrowser::getNotified()
+{
 }

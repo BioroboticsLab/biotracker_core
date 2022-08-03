@@ -8,56 +8,64 @@
 
 class AreaInfo : public IModelAreaDescriptor
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	AreaInfo() = delete;
-	AreaInfo(QObject *parent = 0);
+    AreaInfo() = delete;
+    AreaInfo(QObject* parent = 0);
 
-	//TODO PORT
-	bool inTrackingArea(cv::Point2f point_cm) override; 
+    // TODO PORT
+    bool inTrackingArea(cv::Point2f point_cm) override;
 
-	/**
-	* Transform the provided pixel coordinates into world coordinates and return world coordinates.
-	* @param: pixelCoords, a list of points.
-	* @return: world coordinates in as a list.
-	*/
-	cv::Point2f pxToCm(cv::Point point_px) override;
+    /**
+     * Transform the provided pixel coordinates into world coordinates and
+     * return world coordinates.
+     * @param: pixelCoords, a list of points.
+     * @return: world coordinates in as a list.
+     */
+    cv::Point2f pxToCm(cv::Point point_px) override;
 
-	/**
-	* Transform the provided pixel point into world coordinates and return world point.
-	* @param: point, a pixel point, used opencv point
-	* @return: world point.
-	*/
-	cv::Point2f cmToPx(cv::Point2f point_cm) override;
+    /**
+     * Transform the provided pixel point into world coordinates and return
+     * world point.
+     * @param: point, a pixel point, used opencv point
+     * @return: world point.
+     */
+    cv::Point2f cmToPx(cv::Point2f point_cm) override;
 
-	void updateApperture();
+    void updateApperture();
 
-	void updateRectification();
+    void updateRectification();
 
-	void setRectificationDimensions(double w, double h);
+    void setRectificationDimensions(double w, double h);
 
     void reset(int w, int h);
     void loadAreas();
-    void setUseEntireScreen(bool b) { _useEntireScreen = b; };
-    bool getUseEntireScreen() { return _useEntireScreen; };
+    void setUseEntireScreen(bool b)
+    {
+        _useEntireScreen = b;
+    };
+    bool getUseEntireScreen()
+    {
+        return _useEntireScreen;
+    };
 
-	std::shared_ptr<AreaInfoElement> _rect;
-	std::shared_ptr<AreaInfoElement> _apperture;
+    std::shared_ptr<AreaInfoElement> _rect;
+    std::shared_ptr<AreaInfoElement> _apperture;
 
 private:
-
-    //If the user never changed the area, use the whole screen. Indicate by this switch
-    bool _useEntireScreen = false;
-    int _vdimX = 1;
-    int _vdimY = 1;
+    // If the user never changed the area, use the whole screen. Indicate by
+    // this switch
+    bool                                    _useEntireScreen = false;
+    int                                     _vdimX           = 1;
+    int                                     _vdimY           = 1;
     std::shared_ptr<const playerParameters> _parms;
-    bool _rectInitialized = false;
-	QString _areaInfoCache;
+    bool                                    _rectInitialized = false;
+    QString                                 _areaInfoCache;
 
 public Q_SLOTS:
-    void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
+    void rcvPlayerParameters(
+        std::shared_ptr<const playerParameters> parameters);
 
 private:
     QString myType();
 };
-

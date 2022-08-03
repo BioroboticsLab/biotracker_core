@@ -7,24 +7,24 @@
 class AreaDescriptor : public QObject, public IView, public QGraphicsItem
 {
     Q_OBJECT
-	Q_INTERFACES(QGraphicsItem)
+    Q_INTERFACES(QGraphicsItem)
 public:
-    AreaDescriptor(IController *controller, IModel *model);
-	~AreaDescriptor();
+    AreaDescriptor(IController* controller, IModel* model);
+    ~AreaDescriptor();
 
-	virtual void setBrush(QBrush brush) = 0;
-	virtual void setRect(std::vector<cv::Point> rect) = 0;
-	virtual std::vector<cv::Point> getRect() = 0;
-	virtual void updateRect() = 0;
+    virtual void                   setBrush(QBrush brush)               = 0;
+    virtual void                   setRect(std::vector<cv::Point> rect) = 0;
+    virtual std::vector<cv::Point> getRect()                            = 0;
+    virtual void                   updateRect()                         = 0;
 
-    void setDimensions(int x, int y) {
+    void setDimensions(int x, int y)
+    {
         _vdimX = x;
         _vdimY = y;
     }
+
 protected:
-
-    int _vdimX = 1;
-    int _vdimY = 1;
-    Config *_cfg;
+    int     _vdimX = 1;
+    int     _vdimY = 1;
+    Config* _cfg;
 };
-

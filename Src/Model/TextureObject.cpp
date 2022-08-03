@@ -1,15 +1,17 @@
 #include "TextureObject.h"
 
-TextureObject::TextureObject(QObject *parent, QString name) :
-    IModel(parent),
-    m_Name(name)
+TextureObject::TextureObject(QObject* parent, QString name)
+: IModel(parent)
+, m_Name(name)
 {
     // OpenCV's coordinate system originates in the upper left corner.
-    // OpenGL originates in the lower left. Thus the image has to be flipped vertically
+    // OpenGL originates in the lower left. Thus the image has to be flipped
+    // vertically
     m_texture = QImage(1, 1, QImage::Format_RGB888);
 }
 
-void TextureObject::set(std::shared_ptr<cv::Mat> img) {
+void TextureObject::set(std::shared_ptr<cv::Mat> img)
+{
     if (img->empty()) {
         return;
     }
@@ -35,8 +37,9 @@ void TextureObject::set(std::shared_ptr<cv::Mat> img) {
             // otherwise: the range is outside of native [0 ... 255] so we
             // actually need to do some refitting
 
-            // mapping 1-step out from [0 .. 255] range 1-step in the [min .. max] range
-            const double sizeRatio = 256.0/abs(static_cast<int>(max - min));
+            // mapping 1-step out from [0 .. 255] range 1-step in the [min ..
+            // max] range
+            const double sizeRatio = 256.0 / abs(static_cast<int>(max - min));
             const double convertedMin = abs(static_cast<int>(min * sizeRatio));
             img->convertTo(img8U, CV_8U, sizeRatio, convertedMin);
         }
@@ -45,13 +48,11 @@ void TextureObject::set(std::shared_ptr<cv::Mat> img) {
         img->copyTo(m_img);
     }
 
-    m_texture = QImage(
-                    m_img.data,
-                    m_img.cols,
-                    m_img.rows,
-                    static_cast<int>(m_img.step),
-                    QImage::Format_RGB888
-                );
+    m_texture = QImage(m_img.data,
+                       m_img.cols,
+                       m_img.rows,
+                       static_cast<int>(m_img.step),
+                       QImage::Format_RGB888);
 
     Q_EMIT notifyView();
 }

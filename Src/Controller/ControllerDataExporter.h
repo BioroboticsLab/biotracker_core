@@ -7,53 +7,61 @@
 #include "QThread"
 #include "Model/MediaPlayer.h"
 
-//POD class to bundle some infos
-struct SourceVideoMetadata {
-	std::string name;
-	std::string fps;
+// POD class to bundle some infos
+struct SourceVideoMetadata
+{
+    std::string name;
+    std::string fps;
 };
 
-class ControllerDataExporter : public IControllerCfg {
-	Q_OBJECT
+class ControllerDataExporter : public IControllerCfg
+{
+    Q_OBJECT
 public:
-	ControllerDataExporter(QObject* parent = 0, IBioTrackerContext* context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::NO_CTR);
-	~ControllerDataExporter();
+    ControllerDataExporter(
+        QObject*              parent  = 0,
+        IBioTrackerContext*   context = 0,
+        ENUMS::CONTROLLERTYPE ctr     = ENUMS::CONTROLLERTYPE::NO_CTR);
+    ~ControllerDataExporter();
     void cleanup();
 
-	// IController interface
+    // IController interface
 public:
-	void connectControllerToController() override;
-	void setDataStructure(IModel* exp);
-	void setComponentFactory(IModelTrackedComponentFactory* exp);
-	IModelTrackedComponentFactory* getComponentFactory() { return _factory; };
-	SourceVideoMetadata getSourceMetadata();
-    int getNumber(bool trial);
-    QString generateBasename(bool temporaryFile);
+    void connectControllerToController() override;
+    void setDataStructure(IModel* exp);
+    void setComponentFactory(IModelTrackedComponentFactory* exp);
+    IModelTrackedComponentFactory* getComponentFactory()
+    {
+        return _factory;
+    };
+    SourceVideoMetadata getSourceMetadata();
+    int                 getNumber(bool trial);
+    QString             generateBasename(bool temporaryFile);
 
     void loadFile(std::string file);
     void saveFile(std::string file);
 
 Q_SIGNALS:
-	void emitResetUndoStack();
-	void emitViewUpdate();
+    void emitResetUndoStack();
+    void emitViewUpdate();
 
-	public Q_SLOTS:
+public Q_SLOTS:
     void receiveReset();
-	void receiveTrackingDone(uint frame);
+    void receiveTrackingDone(uint frame);
     void receiveFinalizeExperiment();
     void receiveFileWritten(QFileInfo fname);
-	void receiveTrialStarted(bool started);
+    void receiveTrialStarted(bool started);
 
 protected:
-	void createModel() override;
-	void createView() override;
-	void connectModelToController() override;
+    void createModel() override;
+    void createView() override;
+    void connectModelToController() override;
 
 private Q_SLOTS:
-	void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
+    void rcvPlayerParameters(
+        std::shared_ptr<const playerParameters> parameters);
 
 private:
-	IModelTrackedComponentFactory* _factory;
-	bool _trialStarted = false;
+    IModelTrackedComponentFactory* _factory;
+    bool                           _trialStarted = false;
 };
-

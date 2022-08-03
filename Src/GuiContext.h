@@ -10,20 +10,21 @@ class GuiContext : public IBioTrackerContext
     Q_OBJECT
 
 public:
-    GuiContext(QObject *parent = 0, Config *cfg = nullptr);
-	~GuiContext() {
-		exit();
-	}
+    GuiContext(QObject* parent = 0, Config* cfg = nullptr);
+    ~GuiContext()
+    {
+        exit();
+    }
 
     void loadBioTrackerPlugin(QString str);
 
-	void exit();
+    void exit();
 
     // IBioTrackerContext interface
 protected:
-    void createAppController() override;
-    void connectController() override;
-	Config *_cfg;
+    void    createAppController() override;
+    void    connectController() override;
+    Config* _cfg;
 };
 
 #endif // GUICONTEXT_H

@@ -9,47 +9,55 @@
 
 class ControllerAreaDescriptor : public IControllerCfg
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ControllerAreaDescriptor(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
+    ControllerAreaDescriptor(
+        QObject*              parent  = 0,
+        IBioTrackerContext*   context = 0,
+        ENUMS::CONTROLLERTYPE ctr     = ENUMS::CONTROLLERTYPE::AREADESCRIPTOR);
 
-	void triggerUpdateAreaDescriptor();
+    void triggerUpdateAreaDescriptor();
 
 signals:
-	void updateAreaDescriptor(IModelAreaDescriptor *ad);
-    void currentVectorDrag(BiotrackerTypes::AreaType vectorType, int id, double x, double y);
+    void updateAreaDescriptor(IModelAreaDescriptor* ad);
+    void currentVectorDrag(BiotrackerTypes::AreaType vectorType,
+                           int                       id,
+                           double                    x,
+                           double                    y);
     void changeAreaDescriptorType(QString type);
 
 public slots:
-	void setRectificationDimensions(double w, double h);
-	void setDisplayRectificationDefinition(bool b);
-	void setDisplayTrackingAreaDefinition(bool b);
-	void setTrackingAreaAsEllipse(bool b);
-    void rcvPlayerParameters(std::shared_ptr<const playerParameters> parameters);
+    void setRectificationDimensions(double w, double h);
+    void setDisplayRectificationDefinition(bool b);
+    void setDisplayTrackingAreaDefinition(bool b);
+    void setTrackingAreaAsEllipse(bool b);
+    void rcvPlayerParameters(
+        std::shared_ptr<const playerParameters> parameters);
 
 private slots:
-	void trackingAreaType(int v);
+    void trackingAreaType(int v);
 
-	void mousePressEvent(QMouseEvent *event, const QPoint &pos);
-	void mouseReleaseEvent(QMouseEvent*event, const QPoint &pos);
-	void mouseMoveEvent(QMouseEvent*event, const QPoint &pos);
-	void keyReleaseEvent(QKeyEvent *event);
-	void updateView();
+    void mousePressEvent(QMouseEvent* event, const QPoint& pos);
+    void mouseReleaseEvent(QMouseEvent* event, const QPoint& pos);
+    void mouseMoveEvent(QMouseEvent* event, const QPoint& pos);
+    void keyReleaseEvent(QKeyEvent* event);
+    void updateView();
 
-	// IController interface
+    // IController interface
 protected:
-	void createModel() override;
-	void createView() override;
-	void connectModelToController() override;
-	void connectControllerToController() override;
+    void createModel() override;
+    void createView() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
+
 private:
-	int _watchingVertice;
+    int                       _watchingVertice;
     BiotrackerTypes::AreaType _watchingVerticeType;
 
-	IView *m_ViewApperture;
-    int _w = 1;
-    int _h = 1;
-    bool _visibleApperture = false;
-    bool _visibleRectification = false;
-    QString _currentFilename = "No Media";
+    IView*  m_ViewApperture;
+    int     _w                    = 1;
+    int     _h                    = 1;
+    bool    _visibleApperture     = false;
+    bool    _visibleRectification = false;
+    QString _currentFilename      = "No Media";
 };

@@ -7,37 +7,40 @@
 
 class ControllerCoreParameter : public IControllerCfg
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ControllerCoreParameter(QObject *parent = 0, IBioTrackerContext *context = 0, ENUMS::CONTROLLERTYPE ctr = ENUMS::CONTROLLERTYPE::COREPARAMETER);
+    ControllerCoreParameter(
+        QObject*              parent  = 0,
+        IBioTrackerContext*   context = 0,
+        ENUMS::CONTROLLERTYPE ctr     = ENUMS::CONTROLLERTYPE::COREPARAMETER);
 
-    //Triggers the view to re-send gui parameters
+    // Triggers the view to re-send gui parameters
     void triggerUpdate();
 
 signals:
-	//...
+    //...
 
-	private slots:
-	//...
-	void updateView();
-	//update track number
-	void receiveTrackNumber(int number);
+private slots:
+    //...
+    void updateView();
+    // update track number
+    void receiveTrackNumber(int number);
 
-	public slots:
-	void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
+public slots:
+    void setCorePermission(std::pair<ENUMS::COREPERMISSIONS, bool> permission);
     void changeAreaDescriptorType(QString type);
-	void receiveResetTrial();
+    void receiveResetTrial();
 
-    //Forwarded from data exporter
+    // Forwarded from data exporter
     int getTrialNumber();
 
-	// IController interface
+    // IController interface
 protected:
-	void createModel() override;
-	void createView() override;
-	void connectModelToController() override;
-	void connectControllerToController() override;
-private:
-	//...
+    void createModel() override;
+    void createView() override;
+    void connectModelToController() override;
+    void connectControllerToController() override;
 
+private:
+    //...
 };

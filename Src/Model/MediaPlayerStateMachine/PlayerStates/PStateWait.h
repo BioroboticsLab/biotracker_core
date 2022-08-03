@@ -1,10 +1,9 @@
 /****************************************************************************
-  **
-  ** This file is part of the BioTracker Framework
-  ** by Andreas Jörg
-  **
-  ****************************************************************************/
-
+ **
+ ** This file is part of the BioTracker Framework
+ ** by Andreas Jörg
+ **
+ ****************************************************************************/
 
 #ifndef PSTATEWAIT_H
 #define PSTATEWAIT_H
@@ -14,12 +13,14 @@
 /**
  * This state dose nothing. There is also no next state set by this state.
  */
-class PStateWait : public IPlayerState {
-  public:
-    PStateWait(MediaPlayerStateMachine* player, std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
+class PStateWait : public IPlayerState
+{
+public:
+    PStateWait(MediaPlayerStateMachine*                       player,
+               std::shared_ptr<BioTracker::Core::ImageStream> imageStream);
 
     // IPlayerState interface
-  public Q_SLOTS:
+public Q_SLOTS:
     void operate() override;
 };
 

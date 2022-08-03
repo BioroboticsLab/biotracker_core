@@ -2,5 +2,4 @@
 
 null_Model::null_Model()
 {
-
 }

@@ -6,7 +6,9 @@
 class GraphicsScene : public IViewGraphicsScene
 {
 public:
-    GraphicsScene(QObject *parent = 0, IController *controller = 0, IModel *model = 0);
+    GraphicsScene(QObject*     parent     = 0,
+                  IController* controller = 0,
+                  IModel*      model      = 0);
 
     // IViewGraphicsScene interface
 public Q_SLOTS:

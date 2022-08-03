@@ -13,12 +13,14 @@ TODO: This is still rather prototype'ish.
 */
 #include <qmap.h>
 
-using namespace BioTrackerUtilsMisc; //split
-namespace AreaMemory{
+using namespace BioTrackerUtilsMisc; // split
+namespace AreaMemory
+{
 
     QMap<QString, QVector<QString>> map;
 
-    QVector<QString> getVertices(QString file, QString areaFile, bool useLast) {
+    QVector<QString> getVertices(QString file, QString areaFile, bool useLast)
+    {
         if (map.size() == 0) {
             std::ifstream o;
             o.open(areaFile.toStdString(), std::ifstream::in);
@@ -33,7 +35,7 @@ namespace AreaMemory{
                             strs[1].c_str(),
                             strs[2].c_str(),
                             strs[3].c_str(),
-                            strs[4].c_str() };
+                            strs[4].c_str()};
                     }
                 }
             }
@@ -45,12 +47,13 @@ namespace AreaMemory{
         else {
             if (useLast && map.contains("Last")) {
                 return map.value("Last");
-            }else
+            } else
                 return DEFAULT_PAIR;
         }
     }
 
-    void setVertices(QString file, QVector<QString> values, QString areaFile) {
+    void setVertices(QString file, QVector<QString> values, QString areaFile)
+    {
         if (file.size() <= 1) {
             return;
         }
@@ -64,17 +67,18 @@ namespace AreaMemory{
             while (i.hasNext()) {
                 i.next();
                 o << i.key().toStdString() << "#" << i.value()[0].toStdString()
-                    << "#" << i.value()[1].toStdString()
-                    << "#" << i.value()[2].toStdString()
-                    << "#" << i.value()[3].toStdString() << std::endl;
+                  << "#" << i.value()[1].toStdString() << "#"
+                  << i.value()[2].toStdString() << "#"
+                  << i.value()[3].toStdString() << std::endl;
             }
         }
     }
 
-    std::vector<QPoint> toQPointVector(QString vertices) {
+    std::vector<QPoint> toQPointVector(QString vertices)
+    {
         std::vector<std::string> strs;
-        std::vector<QPoint> points;
-        std::string s = vertices.toStdString();
+        std::vector<QPoint>      points;
+        std::string              s = vertices.toStdString();
         split(s, strs, ';');
         for (int i = 0; i < strs.size(); i++) {
             std::vector<std::string> pt;

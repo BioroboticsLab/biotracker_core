@@ -15,62 +15,64 @@ AnnotationsView::~AnnotationsView()
 
 void AnnotationsView::prepareUpdate()
 {
-	prepareGeometryChange();
+    prepareGeometryChange();
 }
 
 void AnnotationsView::setColor(QColor color)
 {
-	_annoColor = color;
+    _annoColor = color;
 }
 
 QRectF AnnotationsView::boundingRect() const
 {
-	auto model = static_cast<const Annotations*>(getModel());
+    auto model = static_cast<const Annotations*>(getModel());
 
-	QRectF rect{};
-	for (auto &annotation : model->annotations)
-	{
-		rect = rect.united(annotation->boundingRect());
-	}
+    QRectF rect{};
+    for (auto& annotation : model->annotations) {
+        rect = rect.united(annotation->boundingRect());
+    }
 
-	if (model->currentAnnotation)
-		rect = rect.united(model->currentAnnotation->boundingRect());
-	return rect;
+    if (model->currentAnnotation)
+        rect = rect.united(model->currentAnnotation->boundingRect());
+    return rect;
 }
 
-
-void AnnotationsView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void AnnotationsView::paint(QPainter*                       painter,
+                            const QStyleOptionGraphicsItem* option,
+                            QWidget*                        widget)
 {
-	setZValue(-1);
-	auto model = static_cast<const Annotations*>(getModel());
-	const auto currentFrame = model->getCurrentFrame();
-	for (auto &annotation : model->annotations)
-	{
-		if (annotation->isHidden())
-			continue;
-		// Is the current frame in the annotation's range?
-		if ((currentFrame >= annotation->startFrame && currentFrame <= annotation->endFrame)
-			|| (currentFrame == annotation->startFrame && annotation->startFrame > annotation->endFrame))
-			painter->setPen(QPen(_annoColor, 3, Qt::SolidLine, Qt::RoundCap));
-		else
-		{
-			QColor transparentGray = Qt::gray;
-			transparentGray.setAlphaF(0.2);
-			painter->setPen(QPen(transparentGray, 2.5, Qt::DashLine, Qt::RoundCap));
-		}
-		annotation->paint(painter, option, widget);
-	}
+    setZValue(-1);
+    auto       model        = static_cast<const Annotations*>(getModel());
+    const auto currentFrame = model->getCurrentFrame();
+    for (auto& annotation : model->annotations) {
+        if (annotation->isHidden())
+            continue;
+        // Is the current frame in the annotation's range?
+        if ((currentFrame >= annotation->startFrame &&
+             currentFrame <= annotation->endFrame) ||
+            (currentFrame == annotation->startFrame &&
+             annotation->startFrame > annotation->endFrame))
+            painter->setPen(QPen(_annoColor, 3, Qt::SolidLine, Qt::RoundCap));
+        else {
+            QColor transparentGray = Qt::gray;
+            transparentGray.setAlphaF(0.2);
+            painter->setPen(
+                QPen(transparentGray, 2.5, Qt::DashLine, Qt::RoundCap));
+        }
+        annotation->paint(painter, option, widget);
+    }
 
-	if (model->currentAnnotation)
-	{
-		QColor transparentYellow = _annoColor;
-		transparentYellow.setAlphaF(0.5);
-		painter->setPen(QPen(transparentYellow, 3, Qt::SolidLine, Qt::RoundCap));
-		model->currentAnnotation->paint(painter, option, widget);
-	}
-	if (model->selection)
-	{
-		painter->setPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap));
-		Annotations::Annotation::drawHandleLocation(painter, *model->selection.handle, "");
-	}
+    if (model->currentAnnotation) {
+        QColor transparentYellow = _annoColor;
+        transparentYellow.setAlphaF(0.5);
+        painter->setPen(
+            QPen(transparentYellow, 3, Qt::SolidLine, Qt::RoundCap));
+        model->currentAnnotation->paint(painter, option, widget);
+    }
+    if (model->selection) {
+        painter->setPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap));
+        Annotations::Annotation::drawHandleLocation(painter,
+                                                    *model->selection.handle,
+                                                    "");
+    }
 }

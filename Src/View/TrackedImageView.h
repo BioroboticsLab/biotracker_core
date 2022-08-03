@@ -9,7 +9,7 @@
 class TrackedImageView : public IViewOpenGLWidget
 {
 public:
-    TrackedImageView(QWidget *parent, IController *controller, IModel *model);
+    TrackedImageView(QWidget* parent, IController* controller, IModel* model);
     ~TrackedImageView();
 
     // QOpenGLWidget interface

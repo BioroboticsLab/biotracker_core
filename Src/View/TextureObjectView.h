@@ -7,7 +7,9 @@ class TextureObjectView : public IViewGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    TextureObjectView(QObject *parent = 0, IController *controller = 0, IModel *model = 0);
+    TextureObjectView(QObject*     parent     = 0,
+                      IController* controller = 0,
+                      IModel*      model      = 0);
 
     // IGraphicsPixmapItem interface
 public Q_SLOTS:
@@ -17,8 +19,8 @@ public Q_SLOTS:
 protected:
     void connectModelView() override;
 
-	//member
-	QRectF _oldBoundingRect;
+    // member
+    QRectF _oldBoundingRect;
 };
 
 #endif // TEXTUREOBJECTVIEW_H

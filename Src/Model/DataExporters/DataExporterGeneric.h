@@ -10,35 +10,33 @@
 
 class DataExporterGeneric : public IModelDataExporter
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-    DataExporterGeneric(QObject *parent = 0);
+    DataExporterGeneric(QObject* parent = 0);
 
-    /**  
+    /**
      *  Opens a file for writing the passed tracking structure
      *  @param root Pointer to the tracking structure
-	 */ 
-    void open(IModelTrackedTrajectory *root) override;
+     */
+    void open(IModelTrackedTrajectory* root) override;
 
     void finalize() override;
 
 protected:
-
     int getMaxLinecount();
 
     void cleanup();
 
-    ControllerDataExporter *_parent = nullptr;
-    Config *_cfg;
+    ControllerDataExporter* _parent = nullptr;
+    Config*                 _cfg;
 
     std::ofstream _ofs;
 
-    //Name of the temporary file to write to
+    // Name of the temporary file to write to
     std::string _tmpFile;
 
-    //Name of the final file, holding a clean representation of the structure.
+    // Name of the final file, holding a clean representation of the structure.
     std::string _finalFile;
+
 private:
-
 };
-
