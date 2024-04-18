@@ -35,6 +35,13 @@ if __name__ == "__main__":
             "avutil-56",
             "swscale-5",
             "swresample-3",
+            "pcre2-16",
+            "zstd",
+            "harfbuzz",
+            "freetype",
+            "brotlidec",
+            "bz2",
+            "brotlicommon",
         ]
 
         opencv_components = [
